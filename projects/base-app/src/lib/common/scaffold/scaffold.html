@@ -1,0 +1,10 @@
+<main id="main-app-container">
+  <mat-toolbar>
+    <button mat-button><mat-icon>house</mat-icon> {{ title() }}</button>
+    <span class="spacer"></span>
+    <button mat-button><mat-icon>person</mat-icon> Admin</button>
+  </mat-toolbar>
+  <div id="router-outlet-container" class="mat-app-background mat-typography">
+    <router-outlet></router-outlet>
+  </div>
+</main>

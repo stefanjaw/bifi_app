@@ -1,0 +1,10 @@
+<section id="main-menu-container">
+  <div id="main-menu-options-container">
+    @for (item of menuItems(); track $index) {
+      <button (click)="goToOption(item.route)" matFab extended>
+        <mat-icon>{{ item.iconName }}</mat-icon
+        >{{ item.title }}
+      </button>
+    }
+  </div>
+</section>

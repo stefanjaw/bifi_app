@@ -1,0 +1,17 @@
+#main-app-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+mat-toolbar {
+  height: 75px;
+}
+
+#router-outlet-container {
+  width: 100vw;
+  height: calc(100vh - 75px);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
