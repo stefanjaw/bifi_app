@@ -1,0 +1,16 @@
+<mat-sidenav-container autosize id="settings-main-container">
+  <!-- navbar -->
+  <mat-sidenav mode="push" [opened]="isOpened()">
+    <mat-nav-list>
+      @for (menu of menuItems(); track $index) {
+        <a mat-list-item (click)="goToOption(menu.route)">
+          <mat-icon matListItemIcon>{{ menu.iconName }}</mat-icon>
+          <span matListItemTitle>{{ menu.title }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
