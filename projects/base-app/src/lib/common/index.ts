@@ -1,9 +1,11 @@
-import { SidenavManager } from './services/sidenav-manager';
-import { BaseMenuManager } from './libraries/base-menu-manager';
-import { MainMenu } from './components/main-menu/main-menu';
-import { Scaffold } from './components/scaffold/scaffold';
-import { menuItem } from './interfaces/menu-item';
-import { MainMenuManager } from './services/main-menu-manager';
-
-export { MainMenu, Scaffold, MainMenuManager, BaseMenuManager, SidenavManager };
-export type { menuItem };
+export { ApiRequestManager } from './services/api-request-manager';
+export type { libraryConfig } from './interfaces/library-config';
+export { LIBRARY_CONFIG } from './libraries/library-config-token';
+export { SidenavManager } from './services/sidenav-manager';
+export { BaseMenuManager } from './libraries/base-menu-manager';
+export { MainMenu } from './components/main-menu/main-menu';
+export { Scaffold } from './components/scaffold/scaffold';
+export type { menuItem } from './interfaces/menu-item';
+export { MainMenuManager } from './services/main-menu-manager';
+export { TableLayout } from './components/table-layout/table-layout';
+export type { tableColumn } from './interfaces/table-column';
