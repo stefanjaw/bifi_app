@@ -18,6 +18,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'coolcat99@example.com',
         name: 'Carlos',
         lastName: 'González',
+        companyRoles: [],
       },
       {
         _id: '2b3c4d5e6f',
@@ -25,6 +26,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'jazzmaster@example.com',
         name: 'Ana',
         lastName: 'Martínez',
+        companyRoles: [],
       },
       {
         _id: '3c4d5e6f7g',
@@ -32,6 +34,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'sunnydays@example.com',
         name: 'Miguel',
         lastName: 'Rojas',
+        companyRoles: [],
       },
       {
         _id: '4d5e6f7g8h',
@@ -39,6 +42,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'codehero@example.com',
         name: 'Laura',
         lastName: 'Morales',
+        companyRoles: [],
       },
       {
         _id: '5e6f7g8h9i',
@@ -46,6 +50,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'nightowl@example.com',
         name: 'Javier',
         lastName: 'Díaz',
+        companyRoles: [],
       },
       {
         _id: '6f7g8h9i0j',
@@ -53,6 +58,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'bookworm@example.com',
         name: 'Sofía',
         lastName: 'Herrera',
+        companyRoles: [],
       },
       {
         _id: '7g8h9i0j1k',
@@ -60,6 +66,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'traveler@example.com',
         name: 'Fernando',
         lastName: 'Vargas',
+        companyRoles: [],
       },
       {
         _id: '8h9i0j1k2l',
@@ -67,6 +74,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'guitargod@example.com',
         name: 'María',
         lastName: 'Castro',
+        companyRoles: [],
       },
       {
         _id: '9i0j1k2l3m',
@@ -74,6 +82,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'sportyspice@example.com',
         name: 'Ricardo',
         lastName: 'Pérez',
+        companyRoles: [],
       },
       {
         _id: '0j1k2l3m4n',
@@ -81,6 +90,7 @@ export class CrudUsers extends ApiRequestManager {
         email: 'artlover@example.com',
         name: 'Lucía',
         lastName: 'Sánchez',
+        companyRoles: [],
       },
     ];
   }
