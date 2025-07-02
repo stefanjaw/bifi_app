@@ -17,7 +17,43 @@ export class CompaniesList implements OnInit {
   columns = signal<tableColumn[]>([
     {
       field: 'name',
-      title: 'Company',
+      title: 'Company Name',
+      type: 'text',
+    },
+    {
+      field: 'legalId',
+      title: 'Legal ID',
+      type: 'text',
+    },
+    {
+      field: 'email',
+      title: 'Email',
+      type: 'text',
+    },
+    {
+      field: 'phone',
+      title: 'Phone',
+      type: 'text',
+    },
+    {
+      field: 'website',
+      title: 'Website',
+      type: 'text',
+      parseField: (value: string) => value?.replace(/^https?:\/\//, ''),
+    },
+    {
+      field: 'logoUrl',
+      title: 'Logo',
+      type: 'image',
+    },
+    {
+      field: 'address',
+      title: 'Address',
+      type: 'text',
+    },
+    {
+      field: 'ownerId',
+      title: 'Owner ID',
       type: 'text',
     },
   ]);
