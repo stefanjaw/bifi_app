@@ -32,6 +32,11 @@ export class SettingsMainMenu implements OnDestroy {
   }
 
   goToOption(route: string) {
+    this.forceSidenavClose();
     this.router.navigate([route]);
+  }
+
+  forceSidenavClose() {
+    this.sidenavManager.closeSidenav();
   }
 }
