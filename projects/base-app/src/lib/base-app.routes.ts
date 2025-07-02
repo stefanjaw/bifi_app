@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainMenu } from './common';
-import { CompaniesList, SettingsMainMenu } from './settings';
+import { CompaniesList, SettingsMainMenu, UsersList } from './settings';
 
 export const baseAppRoutes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -9,6 +9,11 @@ export const baseAppRoutes: Routes = [
     path: 'settings',
     component: SettingsMainMenu,
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'users',
+      },
       {
         path: 'companies',
         children: [
@@ -20,6 +25,20 @@ export const baseAppRoutes: Routes = [
           {
             path: 'list',
             component: CompaniesList,
+          },
+        ],
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'list',
+          },
+          {
+            path: 'list',
+            component: UsersList,
           },
         ],
       },
