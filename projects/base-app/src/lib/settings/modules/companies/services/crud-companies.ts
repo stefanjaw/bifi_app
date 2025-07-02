@@ -1,6 +1,6 @@
 import { company } from './../interfaces/company';
 import { Injectable } from '@angular/core';
-import { ApiRequestManager } from '../../../../common';
+import { ApiRequestManager } from '../../../../system';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,8 @@ export class CrudCompanies extends ApiRequestManager {
         email: 'contact@technova.com',
         phone: '+506 4000 1111',
         website: 'https://technova.com',
-        logoUrl: '/assets/logos/technova.png',
+        logoUrl:
+          'https://fedit.com/wp-content/uploads/2023/07/tecnova-logo.jpg',
         address: 'San José, Costa Rica',
         ownerId: 'u001',
         settings: { timezone: 'America/Costa_Rica' },
@@ -31,7 +32,8 @@ export class CrudCompanies extends ApiRequestManager {
         email: 'info@greencore.cr',
         phone: '+506 4000 2222',
         website: 'https://greencore.cr',
-        logoUrl: '/assets/logos/greencore.svg',
+        logoUrl:
+          'https://media.licdn.com/dms/image/v2/D4E0BAQErJg5f-LylOA/company-logo_200_200/company-logo_200_200/0/1732114160811/greencore_logo?e=2147483647&v=beta&t=mxKV1IZNPHuBBlbFetk9CS5Y4yNVAAK1yFX0i6qpG3Y',
         address: 'Heredia, Costa Rica',
         ownerId: 'u002',
         settings: { preferredLanguage: 'es' },
@@ -43,7 +45,8 @@ export class CrudCompanies extends ApiRequestManager {
         email: 'hello@oceanix.com',
         phone: '+506 4000 3333',
         website: 'https://oceanix.com',
-        logoUrl: '/assets/logos/oceanix.svg',
+        logoUrl:
+          'https://panorama.solutions/sites/default/files/organisation-logo/oceanic-global-logo-.png',
         address: 'Puntarenas, Costa Rica',
         ownerId: 'u003',
       },
@@ -54,7 +57,8 @@ export class CrudCompanies extends ApiRequestManager {
         email: 'support@nimbus.ai',
         phone: '+506 4000 4444',
         website: 'https://nimbus.ai',
-        logoUrl: '/assets/logos/nimbus.png',
+        logoUrl:
+          'https://media.licdn.com/dms/image/v2/D4D0BAQHbUqHdV1TSmQ/company-logo_200_200/company-logo_200_200/0/1711028558156/nimbus_intelligence_logo?e=2147483647&v=beta&t=62op9oKdt5knZNbF-bFVHXRADP5z5q4C6QLa2KeBEQ4',
         address: 'Cartago, Costa Rica',
         ownerId: 'u004',
         settings: { notifications: true },

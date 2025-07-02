@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestManager } from '../../../../common';
+import { ApiRequestManager } from '../../../../system';
 import { user } from '../interfaces/user';
 
 @Injectable({

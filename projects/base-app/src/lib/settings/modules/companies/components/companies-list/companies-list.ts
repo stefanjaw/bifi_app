@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
 import { company } from '../../interfaces/company';
-import { tableColumn, TableLayout } from '../../../../../common';
+import { tableColumn, TableLayout } from '../../../../../system';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 

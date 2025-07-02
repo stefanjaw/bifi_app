@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { BaseMenuManager } from '../../common';
+import { BaseMenuManager } from '../../system';
 
 @Injectable({
   providedIn: 'root',

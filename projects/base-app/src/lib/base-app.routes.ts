@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { MainMenu } from './common';
+import { MainMenu } from './system';
 import { CompaniesList, SettingsMainMenu, UsersList } from './settings';
 
 export const baseAppRoutes: Routes = [

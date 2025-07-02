@@ -4,7 +4,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
 import { SettingsMenuManager } from '../../services/settings-menu-manager';
 import { MatIcon } from '@angular/material/icon';
-import { SidenavManager } from '../../../common';
+import { SidenavManager } from '../../../system';
 
 @Component({
   selector: 'bifi-app-settings-main-menu',

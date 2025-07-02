@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { tableColumn, TableLayout } from '../../../../../common';
+import { tableColumn, TableLayout } from '../../../../../system';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { CrudUsers } from '../../services/crud-users';
