@@ -1,3 +1,4 @@
+export { ActionButton } from './components/action-button/action-button';
 export { ApiRequestManager } from './services/api-request-manager';
 export type { libraryConfig } from './interfaces/library-config';
 export { LIBRARY_CONFIG } from './libraries/library-config-token';
@@ -9,3 +10,4 @@ export type { menuItem } from './interfaces/menu-item';
 export { MainMenuManager } from './services/main-menu-manager';
 export { TableLayout } from './components/table-layout/table-layout';
 export type { tableColumn } from './interfaces/table-column';
+export type { pagination } from './interfaces/pagination';
