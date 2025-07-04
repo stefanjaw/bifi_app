@@ -5,9 +5,10 @@ import { ApiRequestManager } from '../../../../system';
 @Injectable({
   providedIn: 'root',
 })
-export class CrudCompanies extends ApiRequestManager {
+export class CrudCompanies extends ApiRequestManager<company> {
   constructor() {
     super();
+    super.endpoint = 'companies';
   }
 
   getCompanies(): company[] {
