@@ -1,4 +1,3 @@
-export { ActionButton } from './components/action-button/action-button';
 export { ApiRequestManager } from './services/api-request-manager';
 export type { libraryConfig } from './interfaces/library-config';
 export { LIBRARY_CONFIG } from './libraries/library-config-token';
