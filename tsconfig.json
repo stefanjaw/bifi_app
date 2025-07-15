@@ -4,9 +4,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "base-app": [
-        "./dist/base-app"
-      ]
+      "asset-roaster": ["./dist/asset-roaster"],
+      "base-app": ["./dist/base-app"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -34,6 +33,12 @@
     },
     {
       "path": "./projects/base-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/asset-roaster/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/asset-roaster/tsconfig.spec.json"
     }
   ]
 }

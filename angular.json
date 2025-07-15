@@ -28,6 +28,32 @@
           }
         }
       }
+    },
+    "asset-roaster": {
+      "projectType": "library",
+      "root": "projects/asset-roaster",
+      "sourceRoot": "projects/asset-roaster/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/asset-roaster/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/asset-roaster/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/asset-roaster/tsconfig.spec.json"
+          }
+        }
+      }
     }
   }
 }

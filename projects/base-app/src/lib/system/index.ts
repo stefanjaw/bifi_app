@@ -9,3 +9,6 @@ export type { menuItem } from './interfaces/menu-item';
 export { MainMenuManager } from './services/main-menu-manager';
 export { TableLayout } from './components/table-layout/table-layout';
 export type { tableColumn } from './interfaces/table-column';
+export type { pagination } from './interfaces/pagination';
+export type { paginationOptions } from './interfaces/pagination-options';
+export * from './libraries/object-utils';
