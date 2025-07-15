@@ -1,4 +1,11 @@
-<table mat-table [dataSource]="source()" class="mat-elevation-z8" matSort>
+@let isPaginated = isPaginatedFN(data());
+
+<table
+  mat-table
+  [dataSource]="elementsToDisplay()"
+  class="mat-elevation-z8"
+  matSort
+>
   <!-- Columns -->
   @for (column of columns(); track $index) {
     <ng-container [matColumnDef]="column.field">
@@ -13,8 +20,10 @@
 
       <!-- Content -->
       <td mat-cell *matCellDef="let element">
+        @let value = getValue(element, column.field);
+
         @if (column.parseField) {
-          <span>{{ column.parseField(element[column.field]) }}</span>
+          <span>{{ column.parseField(value) }}</span>
         } @else if (column.type === "image") {
           <span>
             <img
@@ -33,11 +42,10 @@
         } @else {
           <span>{{
             column.type === "date"
-              ? (element[column.field] | date)
+              ? (value | date)
               : column.type === "currency"
-                ? (element[column.field]
-                  | currency: column.currencySymbol || "$")
-                : element[column.field]
+                ? (value | currency: column.currencySymbol || "$")
+                : value
           }}</span>
         }
       </td>
@@ -66,9 +74,15 @@
   <tr mat-header-row *matHeaderRowDef="columnsAsString()"></tr>
   <tr mat-row *matRowDef="let row; columns: columnsAsString()"></tr>
 </table>
-<mat-paginator
-  [length]="100"
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 10, 25, 100]"
-  aria-label="Select page"
-></mat-paginator>
+@if (isPaginated) {
+  @let paginationData = castToPaginate();
+
+  <mat-paginator
+    [length]="paginationData.totalDocs"
+    [pageSize]="paginationData.limit"
+    [pageIndex]="paginationData.page - 1"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    aria-label="Select page"
+    (page)="page.emit($event)"
+  ></mat-paginator>
+}

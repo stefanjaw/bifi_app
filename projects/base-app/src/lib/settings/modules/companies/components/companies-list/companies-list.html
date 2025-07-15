@@ -1,15 +1,21 @@
 <section id="companies-list-container">
   <h1>Companies</h1>
 
-  <bifi-app-table-layout
-    style="width: 90%"
-    [columns]="columns()"
-    [data]="companies()"
-    [actions]="actions"
-  ></bifi-app-table-layout>
-
-  <ng-template #actions>
-    <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-    <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
-  </ng-template>
+  @if (companies.isLoading()) {
+    <mat-progress-spinner [diameter]="50"></mat-progress-spinner>
+  } @else if (companies.error()) {
+    <p>Ups, something went wrong</p>
+  } @else if (companies.hasValue()) {
+    <bifi-app-table-layout
+      style="width: 90%"
+      [columns]="columns()"
+      [data]="companies.value()"
+      (page)="changePage($event)"
+    >
+      <ng-template #actions>
+        <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
+        <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
+      </ng-template>
+    </bifi-app-table-layout>
+  }
 </section>

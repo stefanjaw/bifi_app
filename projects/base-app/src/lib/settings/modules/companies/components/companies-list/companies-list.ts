@@ -1,64 +1,59 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
-import { company } from '../../interfaces/company';
-import { tableColumn, TableLayout } from '../../../../../system';
+import {
+  paginationOptions,
+  tableColumn,
+  TableLayout,
+} from '../../../../../system';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { PageEvent } from '@angular/material/paginator';
+import { company } from '../../interfaces/company';
 
 @Component({
   selector: 'bifi-app-companies-list',
-  imports: [TableLayout, MatMenuItem, MatIcon],
+  imports: [TableLayout, MatMenuItem, MatIcon, MatProgressSpinner],
   templateUrl: './companies-list.html',
   styleUrl: './companies-list.css',
 })
-export class CompaniesList implements OnInit {
+export class CompaniesList {
   private crudCompanies = inject(CrudCompanies);
-  companies = signal<company[]>([]);
-  columns = signal<tableColumn[]>([
+  columns = signal<tableColumn<company>[]>([
     {
       field: 'name',
       title: 'Company Name',
       type: 'text',
     },
     {
-      field: 'legalId',
-      title: 'Legal ID',
+      field: 'countryId.name',
+      title: 'Country',
       type: 'text',
-    },
-    {
-      field: 'email',
-      title: 'Email',
-      type: 'text',
-    },
-    {
-      field: 'phone',
-      title: 'Phone',
-      type: 'text',
-    },
-    {
-      field: 'website',
-      title: 'Website',
-      type: 'text',
-      parseField: (value: string) => value?.replace(/^https?:\/\//, ''),
-    },
-    {
-      field: 'logoUrl',
-      title: 'Logo',
-      type: 'image',
     },
     {
       field: 'address',
       title: 'Address',
       type: 'text',
     },
-    {
-      field: 'ownerId',
-      title: 'Owner ID',
-      type: 'text',
-    },
   ]);
 
-  ngOnInit(): void {
-    this.companies.set(this.crudCompanies.getCompanies());
+  filters = signal<URLSearchParams>(new URLSearchParams());
+  paginationOptions = signal<paginationOptions>({
+    paginate: true,
+    page: 1,
+    limit: 5,
+  });
+
+  companies = this.crudCompanies.getWithPagination({
+    params: this.filters,
+    paginateOptions: this.paginationOptions,
+  });
+
+  changePage(page: PageEvent) {
+    this.paginationOptions.update((value) => ({
+      ...value,
+      limit: page.pageSize,
+      page: page.pageIndex + 1,
+    }));
   }
 }
