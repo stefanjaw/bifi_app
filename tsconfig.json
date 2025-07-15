@@ -4,12 +4,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "asset-roaster": [
-        "./dist/asset-roaster"
-      ],
-      "base-app": [
-        "./dist/base-app"
-      ]
+      "asset-roaster": ["./dist/asset-roaster"],
+      "base-app": ["./dist/base-app"]
     },
     "strict": true,
     "noImplicitOverride": true,
