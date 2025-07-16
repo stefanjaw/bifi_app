@@ -54,6 +54,85 @@
           }
         }
       }
+    },
+    "asset-roaster-demo": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/asset-roaster-demo",
+      "sourceRoot": "projects/asset-roaster-demo/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/asset-roaster-demo/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/asset-roaster-demo/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/asset-roaster-demo/public"
+              }
+            ],
+            "styles": [
+              "projects/asset-roaster-demo/src/custom-theme.scss",
+              "projects/asset-roaster-demo/src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "asset-roaster-demo:build:production"
+            },
+            "development": {
+              "buildTarget": "asset-roaster-demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "projects/asset-roaster-demo/tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/asset-roaster-demo/public"
+              }
+            ],
+            "styles": ["projects/asset-roaster-demo/src/styles.css"]
+          }
+        }
+      }
     }
   }
 }

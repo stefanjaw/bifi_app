@@ -5,10 +5,12 @@ import {
   input,
 } from '@angular/core';
 import { statusVariant, statusCardState } from './equipment-status-card.model';
+import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'lib-equipment-status-card',
-  imports: [],
+  imports: [CommonModule, MatIcon],
   templateUrl: './equipment-status-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,4 +1,3 @@
-import { ApiRequestManager } from '@base-app';
 import { Component } from '@angular/core';
 
 @Component({

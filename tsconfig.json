@@ -5,15 +5,10 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      // "asset-roaster": ["./dist/asset-roaster", "./dist/lib/asset-roaster/*"],
-      // "base-app": ["./dist/base-app"]
-      "@asset-roaster/*": [
-        "projects/asset-roaster/*",
-        "projects/asset-roaster"
-      ],
-      "@base-app/*": ["projects/base-app/*", "projects/base-app"],
-      "@asset-roaster": ["dist/asset-roaster/lib", "dist/asset-roaster"],
-      "@base-app": ["dist/base-app/lib", "dist/base-app"]
+      "asset-roaster/*": ["projects/asset-roaster/*", "projects/asset-roaster"],
+      "base-app/*": ["projects/base-app/*", "projects/base-app"],
+      "asset-roaster": ["dist/asset-roaster/*", "dist/asset-roaster"],
+      "base-app": ["dist/base-app/*", "dist/base-app"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -47,6 +42,18 @@
     },
     {
       "path": "./projects/asset-roaster/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
     }
   ]
 }
