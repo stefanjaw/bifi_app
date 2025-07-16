@@ -6,7 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { LIBRARY_CONFIG } from 'base-app';
+import { LIBRARY_CONFIG } from '@avalantec/base-app';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {

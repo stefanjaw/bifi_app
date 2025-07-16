@@ -1,0 +1,25 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declarationMap": false,
+    "baseUrl": "./",
+    "paths": {
+      "@avalantec/asset-roaster": [
+        "dist/asset-roaster/*",
+        "dist/asset-roaster"
+      ],
+      "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"],
+
+      "@avalantec/asset-roaster/*": [
+        "projects/asset-roaster/*",
+        "projects/asset-roaster"
+      ],
+      "@avalantec/base-app/*": ["projects/base-app/*", "projects/base-app"]
+    }
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial"
+  }
+}

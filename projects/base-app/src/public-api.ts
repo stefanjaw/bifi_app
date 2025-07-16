@@ -2,6 +2,4 @@
  * Public API Surface of base-app
  */
 
-export * from './lib/base-app.routes';
-export * from './lib/system';
-export * from './lib/settings';
+export * from './lib/index';

@@ -16,6 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class EquipmentStatusCardComponent {
   variant = input.required<statusVariant>();
+  units = input.required<number>();
 
   state = computed<statusCardState>(() => {
     const variant = this.variant();
@@ -26,6 +27,30 @@ export class EquipmentStatusCardComponent {
           title: 'Under Service',
           icon: 'warning',
           className: 'bg-orange-500 text-white',
+        };
+      case 'overdue':
+        return {
+          title: 'Overdue',
+          icon: 'warning',
+          className: 'bg-red-500 text-white',
+        };
+      case 'due':
+        return {
+          title: 'Due',
+          icon: 'warning',
+          className: 'bg-yellow-500 text-white',
+        };
+      case 'in-pm':
+        return {
+          title: 'In PM',
+          icon: 'settings',
+          className: 'bg-blue-500 text-white',
+        };
+      case 'pm-not-set':
+        return {
+          title: 'PM Not Set',
+          icon: 'settings',
+          className: 'bg-indigo-500 text-white',
         };
     }
 

@@ -1,3 +1,31 @@
-<p>equipment-list-page works!</p>
+<section class="flex flex-row gap-2 w-full">
+  <lib-equipment-status-card
+    [units]="0"
+    variant="under-service"
+    class="w-full"
+  ></lib-equipment-status-card>
 
-<lib-equipment-status-card variant="under-service"></lib-equipment-status-card>
+  <lib-equipment-status-card
+    [units]="0"
+    variant="overdue"
+    class="w-full"
+  ></lib-equipment-status-card>
+
+  <lib-equipment-status-card
+    [units]="0"
+    variant="due"
+    class="w-full"
+  ></lib-equipment-status-card>
+
+  <lib-equipment-status-card
+    [units]="0"
+    variant="in-pm"
+    class="w-full"
+  ></lib-equipment-status-card>
+
+  <lib-equipment-status-card
+    [units]="0"
+    variant="pm-not-set"
+    class="w-full"
+  ></lib-equipment-status-card>
+</section>

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { MainMenuManager, Scaffold } from 'base-app';
+import { MainMenuManager, Scaffold } from '@avalantec/base-app';
 
 @Component({
   selector: 'app-root',
