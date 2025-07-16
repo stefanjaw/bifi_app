@@ -5,6 +5,10 @@
 /* @source "../../../dist/asset-roaster/"; */
 @source "../../../projects/asset-roaster/";
 
+/* TailwindCSS: Style base app library */
+/* @source "../../../dist/base-app/"; */
+@source "../../../projects/base-app/";
+
 html,
 body {
   height: 100%;
