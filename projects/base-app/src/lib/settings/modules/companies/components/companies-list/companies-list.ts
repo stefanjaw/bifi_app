@@ -45,7 +45,7 @@ export class CompaniesList {
   });
 
   companies = this.crudCompanies.getWithPagination({
-    params: this.filters,
+    searchParams: this.filters,
     paginateOptions: this.paginationOptions,
   });
 

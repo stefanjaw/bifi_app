@@ -1,4 +1,4 @@
-import { signal, WritableSignal } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 import { menuItem } from '../interfaces/menu-item';
 
 // class to manage logic for menu managers

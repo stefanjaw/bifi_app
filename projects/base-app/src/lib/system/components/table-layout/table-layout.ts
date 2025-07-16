@@ -29,6 +29,7 @@ import { isPaginated } from '../../libraries/object-utils';
     CommonModule,
   ],
   templateUrl: './table-layout.html',
+  host: { class: 'shadow-xl/30' },
   styleUrl: './table-layout.css',
 })
 export class TableLayout<T extends Record<string, any>> {
