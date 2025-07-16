@@ -125,6 +125,7 @@ export class FilterManager {
     return {
       [filter.field]: {
         [operator]: value,
+        $options: 'i',
       },
     };
   }
