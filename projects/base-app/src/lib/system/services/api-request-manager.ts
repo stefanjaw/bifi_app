@@ -13,7 +13,7 @@ export class ApiRequestManager<T> {
   private readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   private _endpoint = '';
   private _httpClient = inject(HttpClient);
-  private _defaultSearchParams = signal<URLSearchParams>(new URLSearchParams());
+  private _defaultSearchParams = signal<Record<string, any>>({});
   private _defaultPaginateOptions = signal<paginationOptions>({
     page: 1,
     limit: 5,
@@ -83,37 +83,47 @@ export class ApiRequestManager<T> {
   }
 
   get({
-    params = new URLSearchParams(),
+    searchParams = this._defaultSearchParams,
     specificEndpoint = '',
   }: {
-    params?: URLSearchParams;
+    searchParams?: Signal<Record<string, any>>;
     specificEndpoint?: string;
   }): ResourceRef<T[]> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     return rxResource({
-      stream: () =>
-        this._httpClient
+      params: () => {
+        const params = searchParams();
+
+        return { params };
+      },
+      stream: ({ params: { params } }) => {
+        const query = new URLSearchParams({
+          searchParams: JSON.stringify(params),
+        });
+
+        return this._httpClient
           .get<T[]>(fullURL, {
-            params: new HttpParams({ fromString: params.toString() }),
+            params: new HttpParams({ fromString: query.toString() }),
           })
           .pipe(
             catchError((err: any) => {
               this.manageError(fullURL, err.message);
               return throwError(() => err);
             }),
-          ),
+          );
+      },
       defaultValue: [],
     });
   }
 
   getWithPagination({
     paginateOptions = this._defaultPaginateOptions,
-    params = this._defaultSearchParams,
+    searchParams = this._defaultSearchParams,
     specificEndpoint = '',
   }: {
     paginateOptions?: Signal<paginationOptions>;
-    params?: Signal<URLSearchParams>;
+    searchParams?: Signal<Record<string, any>>;
     specificEndpoint?: string;
   }): ResourceRef<pagination<T> | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
@@ -121,12 +131,15 @@ export class ApiRequestManager<T> {
     return rxResource({
       params: () => {
         const pagination = paginateOptions();
-        const query = params();
+        const params = searchParams();
 
-        return { pagination, query };
+        return { pagination, params };
       },
-      stream: ({ params: { query, pagination } }) => {
-        query.set('paginationOptions', JSON.stringify(pagination));
+      stream: ({ params: { params, pagination } }) => {
+        const query = new URLSearchParams({
+          searchParams: JSON.stringify(params),
+          paginationOptions: JSON.stringify(pagination),
+        });
 
         return this._httpClient
           .get<pagination<T> | undefined>(fullURL, {
