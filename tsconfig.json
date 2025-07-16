@@ -4,7 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "asset-roaster": ["./dist/asset-roaster"],
+      "asset-roaster": ["./dist/asset-roaster", "./dist/lib/asset-roaster/*"],
       "base-app": ["./dist/base-app"]
     },
     "strict": true,

@@ -1,7 +1,6 @@
 {
   "name": "asset-roaster",
   "version": "0.0.1",
-  "workspaces": ["../base-app"],
   "peerDependencies": {
     "@angular/common": "^20.1.0",
     "@angular/core": "^20.1.0",

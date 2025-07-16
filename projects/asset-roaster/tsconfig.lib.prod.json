@@ -3,7 +3,11 @@
 {
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
-    "declarationMap": false
+    "declarationMap": false,
+    "paths": {
+      // "@base-app": ["../../dist/base-app"],
+      // "@base-app/*": ["../../dist/base-app/*"],
+    }
   },
   "angularCompilerOptions": {
     "compilationMode": "partial"
