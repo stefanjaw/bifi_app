@@ -12,8 +12,8 @@
         "projects/asset-roaster"
       ],
       "@base-app/*": ["projects/base-app/*", "projects/base-app"],
-      "@asset-roaster": ["dist/asset-roaster/*", "dist/asset-roaster"],
-      "@base-app": ["dist/base-app/*", "dist/base-app"]
+      "@asset-roaster": ["dist/asset-roaster/lib", "dist/asset-roaster"],
+      "@base-app": ["dist/base-app/lib", "dist/base-app"]
     },
     "strict": true,
     "noImplicitOverride": true,
