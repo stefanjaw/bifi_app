@@ -3,9 +3,36 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "paths": {
-      "asset-roaster": ["./dist/asset-roaster"],
-      "base-app": ["./dist/base-app"]
+      // "@avalantec/asset-roaster/*": [
+      //   "projects/asset-roaster/*",
+      //   "projects/asset-roaster"
+      // ],
+      // "@avalantec/base-app/*": ["projects/base-app/*", "projects/base-app"],
+      // "@avalantec/asset-roaster": [
+      //   "dist/asset-roaster/*",
+      //   "dist/asset-roaster"
+      // ],
+      // "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"]
+
+      // "@avalantec/asset-roaster": [
+      //   "dist/asset-roaster/*",
+      //   "dist/asset-roaster"
+      // ],
+      // "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"],
+
+      // "@avalantec/asset-roaster/*": [
+      //   "projects/asset-roaster/*",
+      //   "projects/asset-roaster"
+      // ],
+      // "@avalantec/base-app/*": ["projects/base-app/*", "projects/base-app"]
+
+      // Works on localhost
+      "@avalantec/asset-roaster": ["projects/asset-roaster/src/lib"],
+      "@avalantec/asset-roaster/*": ["projects/asset-roaster/src/lib/*"],
+      "@avalantec/base-app": ["projects/base-app/src/lib"],
+      "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -39,6 +66,18 @@
     },
     {
       "path": "./projects/asset-roaster/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
     }
   ]
 }
