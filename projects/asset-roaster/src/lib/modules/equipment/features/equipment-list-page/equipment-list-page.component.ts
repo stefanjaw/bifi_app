@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { EquipmentStatusCardComponent } from '../../ui/equipment-status-card/equipment-status-card.component';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { EquipmentStatusCardComponent } from '@asset-roaster/src/lib/modules/equipment/ui/equipment-status-card/equipment-status-card.component';
 
 @Component({
   selector: 'app-equipment-list-page',

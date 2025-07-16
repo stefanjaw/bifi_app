@@ -6,11 +6,7 @@
     "outDir": "../../out-tsc/lib",
     "declaration": true,
     "declarationMap": true,
-    "types": [],
-    "paths": {
-      "@base-app": ["../../dist/base-app"],
-      "@base-app/*": ["../../dist/base-app/*"]
-    }
+    "types": []
   },
   "include": ["src/**/*.ts"],
   "exclude": ["**/*.spec.ts"]
