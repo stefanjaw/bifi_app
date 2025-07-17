@@ -37,6 +37,7 @@ export class SearchBar implements OnDestroy {
   searchText = model<string>('');
   filterManager = inject(FilterManager);
   searchFilters = input<filter<any>[]>([]);
+  label = input<string>('Search');
 
   ngOnDestroy(): void {
     this.filterManager.clearFilters();
