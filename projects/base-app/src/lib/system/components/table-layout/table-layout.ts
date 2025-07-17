@@ -4,6 +4,7 @@ import {
   contentChild,
   input,
   output,
+  ResourceRef,
   TemplateRef,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
@@ -16,6 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { pagination } from '../../interfaces/pagination';
 import { isPaginated } from '../../libraries/object-utils';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -27,6 +29,7 @@ import { isPaginated } from '../../libraries/object-utils';
     MatIconButton,
     MatIcon,
     CommonModule,
+    MatProgressBar,
   ],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30' },
@@ -37,16 +40,17 @@ export class TableLayout<T extends Record<string, any>> {
   page = output<PageEvent>();
 
   // Data managament
-  data = input<T[] | pagination<T>>([]);
+  data = input<ResourceRef<T[] | pagination<T> | undefined>>();
   isPaginatedFN = isPaginated;
   actions = contentChild('actions', {
     read: TemplateRef,
   });
 
   elementsToDisplay = computed(() => {
-    const data = this.data();
+    const data = this.data()?.value();
 
-    if (isPaginated(data)) return data.docs;
+    if (!data) return [];
+    else if (isPaginated(data)) return data.docs;
     else return data;
   });
 
@@ -73,6 +77,6 @@ export class TableLayout<T extends Record<string, any>> {
   }
 
   castToPaginate() {
-    return this.data() as pagination<T>;
+    return this.data()?.value() as pagination<T>;
   }
 }
