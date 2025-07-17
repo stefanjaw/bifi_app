@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { EquipmentStatusCardComponent } from '../../ui/equipment-status-card/equipment-status-card.component';
+import { ProductStatusCardComponent } from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.component';
 import {
   FilterManager,
   paginationOptions,
@@ -13,27 +13,27 @@ import {
   tableColumn,
   TableLayout,
 } from '@avalantec/base-app';
-import { CrudProductsService } from '@avalantec/asset-roaster/modules/equipment/services/crud-products.service';
+import { CrudProductsService } from '@avalantec/asset-roaster/modules/products/services/crud-products.service';
 import { PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
-import { product } from '../../interfaces/product.model';
+import { product } from '@avalantec/asset-roaster/modules/products/interfaces/product.model';
 import { MatMenuItem } from '@angular/material/menu';
-import { equipmentFilters } from '../../utils/equipment-filters';
+import { equipmentFilters } from '@avalantec/asset-roaster/modules/products/utils/equipment-filters';
 
 @Component({
-  selector: 'bifi-app-equipment-list-page',
+  selector: 'bifi-app-products-list',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
   imports: [
-    EquipmentStatusCardComponent,
+    ProductStatusCardComponent,
     TableLayout,
     MatIcon,
     MatMenuItem,
     SearchBar,
   ],
-  templateUrl: './equipment-list-page.component.html',
+  templateUrl: './products-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EquipmentListPageComponent {
+export class ProductsListComponent {
   columns = signal<tableColumn<product>[]>([
     {
       field: 'productModel',

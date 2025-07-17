@@ -8,7 +8,6 @@ export const assetRoasterRoutes: Routes = [
   },
   {
     path: 'equipment',
-    loadChildren: () =>
-      import('./modules/index').then((m) => m.EQUIPMENT_ROUTES),
+    loadChildren: () => import('./modules/index').then((m) => m.PRODUCT_ROUTES),
   },
 ];

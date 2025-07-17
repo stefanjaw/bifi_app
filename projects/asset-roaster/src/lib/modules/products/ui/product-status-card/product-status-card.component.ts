@@ -7,17 +7,17 @@ import {
 import {
   statusVariant,
   statusCardState,
-} from '../../interfaces/equipment-status-card.model';
+} from '@avalantec/asset-roaster/modules/products/interfaces/product-status-card.model';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  selector: 'bifi-app-equipment-status-card',
+  selector: 'bifi-app-product-status-card',
   imports: [CommonModule, MatIcon],
-  templateUrl: './equipment-status-card.component.html',
+  templateUrl: './product-status-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EquipmentStatusCardComponent {
+export class ProductStatusCardComponent {
   variant = input.required<statusVariant>();
   units = input.required<number>();
 
@@ -28,7 +28,7 @@ export class EquipmentStatusCardComponent {
       case 'under-service':
         return {
           title: 'Under Service',
-          icon: 'warning',
+          icon: 'handyman',
           className: 'bg-orange-500 text-white',
         };
       case 'overdue':
@@ -40,7 +40,7 @@ export class EquipmentStatusCardComponent {
       case 'due':
         return {
           title: 'Due',
-          icon: 'warning',
+          icon: 'access_time',
           className: 'bg-yellow-500 text-white',
         };
       case 'in-pm':
@@ -52,7 +52,7 @@ export class EquipmentStatusCardComponent {
       case 'pm-not-set':
         return {
           title: 'PM Not Set',
-          icon: 'settings',
+          icon: 'question_mark',
           className: 'bg-indigo-500 text-white',
         };
     }
