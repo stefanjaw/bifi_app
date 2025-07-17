@@ -1,4 +1,3 @@
-export { MessageCard } from './components/message-card/message-card';
 export { ApiRequestManager } from './services/api-request-manager';
 export { LIBRARY_CONFIG } from './libraries/library-config-token';
 export { SidenavManager } from './services/sidenav-manager';
