@@ -32,31 +32,19 @@
   ></bifi-app-equipment-status-card>
 </section>
 
-<bifi-app-search-bar [searchFilters]="equipmentFilters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [searchFilters]="equipmentFilters"
+  label="Search by Model, S/N or condition"
+></bifi-app-search-bar>
 
-@if (products.isLoading()) {
-  <mat-progress-spinner [diameter]="50"></mat-progress-spinner>
-} @else if (products.error()) {
-  <bifi-app-message-card
-    title="Ups, something went wrong"
-    subtitle="try again!"
-    icon="error"
-  ></bifi-app-message-card>
-} @else if (products.hasValue() && products.value().docs.length > 0) {
-  <bifi-app-table-layout
-    [columns]="columns()"
-    [data]="products.value()"
-    (page)="changePage($event)"
-  >
-    <ng-template #actions>
-      <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-      <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
-    </ng-template>
-  </bifi-app-table-layout>
-} @else {
-  <bifi-app-message-card
-    title="No Equipment Found"
-    subtitle="No equipment items match your current search term or filter selection."
-    icon="search"
-  ></bifi-app-message-card>
-}
+<!-- table -->
+<bifi-app-table-layout
+  [columns]="columns()"
+  [data]="products"
+  (page)="changePage($event)"
+>
+  <ng-template #actions>
+    <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
+    <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
+  </ng-template>
+</bifi-app-table-layout>

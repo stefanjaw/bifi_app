@@ -8,7 +8,6 @@ import {
 import { EquipmentStatusCardComponent } from '../../ui/equipment-status-card/equipment-status-card.component';
 import {
   FilterManager,
-  MessageCard,
   paginationOptions,
   SearchBar,
   tableColumn,
@@ -16,7 +15,6 @@ import {
 } from '@avalantec/base-app';
 import { CrudProductsService } from '@avalantec/asset-roaster/modules/equipment/services/crud-products.service';
 import { PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { product } from '../../interfaces/product.model';
 import { MatMenuItem } from '@angular/material/menu';
@@ -28,10 +26,8 @@ import { equipmentFilters } from '../../utils/equipment-filters';
   imports: [
     EquipmentStatusCardComponent,
     TableLayout,
-    MatProgressSpinner,
     MatIcon,
     MatMenuItem,
-    MessageCard,
     SearchBar,
   ],
   templateUrl: './equipment-list-page.component.html',

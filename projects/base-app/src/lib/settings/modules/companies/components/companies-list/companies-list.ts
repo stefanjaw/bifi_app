@@ -7,13 +7,12 @@ import {
 } from '../../../../../system';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { PageEvent } from '@angular/material/paginator';
 import { company } from '../../interfaces/company';
 
 @Component({
   selector: 'bifi-app-companies-list',
-  imports: [TableLayout, MatMenuItem, MatIcon, MatProgressSpinner],
+  imports: [TableLayout, MatMenuItem, MatIcon],
   templateUrl: './companies-list.html',
   styleUrl: './companies-list.css',
 })
