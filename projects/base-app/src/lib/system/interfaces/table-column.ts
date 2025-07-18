@@ -7,6 +7,7 @@ export interface tableColumn<
 > {
   field: deepKeys<T>;
   parseField?: (value: any) => string;
+  sortable?: boolean;
   title: string;
   type: 'text' | 'number' | 'date' | 'image' | 'currency';
   component?: DynamicComponent | ((row: T) => DynamicComponent);

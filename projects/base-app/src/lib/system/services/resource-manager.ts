@@ -11,6 +11,7 @@ import {
 import { PaginationManager } from './pagination-manager';
 import { FilterManager } from './filter-manager';
 import { ApiRequestManager } from './api-request-manager';
+import { SortManager } from '@avalantec/base-app/system/services/sort-manager';
 
 // Injection token to be used in the resource manager to access the ApiRequestManager
 const RESOURCE_API_SERVICE_TOKEN = new InjectionToken<
@@ -20,6 +21,7 @@ const RESOURCE_API_SERVICE_TOKEN = new InjectionToken<
 @Injectable()
 export class ResourceManager<T> {
   private paginationManager = inject(PaginationManager);
+  private sortManager = inject(SortManager);
   private filterManager = inject(FilterManager);
   private _searchParams = signal({});
   private service = inject<ApiRequestManager<T>>(RESOURCE_API_SERVICE_TOKEN);
@@ -45,12 +47,14 @@ export class ResourceManager<T> {
     this.destroy$.onDestroy(() => {
       this.paginationManager.resetPaginationOptions();
       this.filterManager.clearFilters();
+      this.sortManager.resetSorts();
     });
   }
 
   /** Paginated and filtered data */
   data = this.service.getWithPagination({
     searchParams: this.searchParams,
+    sort: this.sortManager.sort,
     paginateOptions: this.paginationManager.paginationOptions,
   });
 
@@ -65,8 +69,8 @@ export class ResourceManager<T> {
  * @param service The provider token of the api request manager service to be used by the resource manager.
  * @returns An array of providers that can be used in the component's or module's @NgModule decorator.
  */
-export function provideResourceManager(
-  service: ProviderToken<ApiRequestManager<unknown>>,
+export function provideResourceManager<T>(
+  service: ProviderToken<ApiRequestManager<T>>,
 ): Provider[] {
   return [
     {

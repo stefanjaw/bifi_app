@@ -8,7 +8,7 @@ export class FilterManager {
   protected _filters = signal<filter[]>([]);
 
   get filters() {
-    return this._filters;
+    return this._filters.asReadonly();
   }
 
   //#region Filter managament

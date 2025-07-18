@@ -1,25 +1,32 @@
-@if (data()?.isLoading()) {
-  <div class="flex flex-col justify-center items-center h-full w-full p-5">
-    <p>Loading...</p>
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
-} @else if (data()?.hasValue() && elementsToDisplay().length > 0) {
-  @let isPaginated = isPaginatedFN(data()?.value());
+@let hasValue = data()?.hasValue();
+@let isLoading = data()?.isLoading();
+@let error = data()?.error();
+
+@if ((hasValue && elementsToDisplay().length > 0) || isLoading) {
+  @let isPaginated = hasValue && isPaginatedFN(data()?.value());
+
+  @if (isLoading) {
+    <div class="flex flex-col justify-center items-center h-full w-full p-5">
+      <p>Loading...</p>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  }
 
   <table
     mat-table
     [dataSource]="elementsToDisplay()"
     class="mat-elevation-z8"
     matSort
+    (matSortChange)="sort($event)"
   >
     <!-- Columns -->
     @for (column of columns(); track $index) {
       <ng-container [matColumnDef]="column.field">
         <!-- Column header -->
-        @if (column.type === "image") {
+        @if (column.type === "image" || !column.sortable) {
           <th mat-header-cell *matHeaderCellDef>{{ column.title }}</th>
         } @else {
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
             {{ column.title }}
           </th>
         }
@@ -32,11 +39,19 @@
             <span>{{ column.parseField(value) }}</span>
           } @else if (column.component) {
             <!-- Get the dynamic component (use a callback or static value) -->
-            @let component = typeof column.component === "function" ? column.component(element) : column.component;
+            @let component =
+              typeof column.component === "function"
+                ? column.component(element)
+                : column.component;
 
             <ng-container *bifiAppDynamicComponent="component"></ng-container>
           } @else if (column.template) {
-            <ng-container *ngTemplateOutlet="column.template; context: { $implicit: element }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                column.template;
+                context: { $implicit: element }
+              "
+            ></ng-container>
           } @else if (column.type === "image") {
             <span>
               <img
@@ -57,11 +72,11 @@
               @if (column.type === "date") {
                 {{ value | date }}
               } @else if (column.type === "currency") {
-                {{ value | currency: column.currencySymbol || "$"}}
+                {{ value | currency: column.currencySymbol || "$" }}
               } @else {
                 {{ value }}
               }
-              </span>
+            </span>
           }
         </td>
       </ng-container>
@@ -105,7 +120,7 @@
       (page)="changePage($event)"
     ></mat-paginator>
   }
-} @else if (data()?.error()) {
+} @else if (error) {
   <div
     class="flex flex-col justify-center items-center h-full w-full rounded-md p-4"
   >
