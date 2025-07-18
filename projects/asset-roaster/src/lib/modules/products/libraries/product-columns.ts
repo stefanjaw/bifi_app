@@ -23,11 +23,13 @@ export const productColumns: tableColumn<product>[] = [
   },
   {
     field: 'productModel',
+    sortable: true,
     title: 'MODEL',
     type: 'text',
   },
   {
     field: 'serialNumber',
+    sortable: true,
     title: 'SERIAL NUMBER',
     type: 'text',
   },
@@ -44,6 +46,7 @@ export const productColumns: tableColumn<product>[] = [
   },
   {
     field: 'acquiredDate',
+    sortable: true,
     title: 'ACQUIRED DATE',
     type: 'date',
   },

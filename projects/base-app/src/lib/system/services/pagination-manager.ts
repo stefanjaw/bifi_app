@@ -12,7 +12,7 @@ export class PaginationManager {
   });
 
   get paginationOptions() {
-    return this._paginationOptions;
+    return this._paginationOptions.asReadonly();
   }
 
   /**

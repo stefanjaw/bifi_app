@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
+import { orderByQuery } from '@avalantec/base-app/system/interfaces/order-by';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,6 @@ export class ApiRequestManager<T> {
   private readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   private _endpoint = '';
   private _httpClient = inject(HttpClient);
-  private _defaultSearchParams = signal<Record<string, any>>({});
   private _defaultPaginateOptions = signal<paginationOptions>({
     page: 1,
     limit: 5,
@@ -111,23 +111,27 @@ export class ApiRequestManager<T> {
    * @returns A resource ref that resolves to an array of T or an empty array if the request fails.
    */
   get({
-    searchParams = this._defaultSearchParams,
+    searchParams,
+    sort,
     specificEndpoint = '',
   }: {
     searchParams?: Signal<Record<string, any>>;
+    sort?: Signal<orderByQuery<T>>;
     specificEndpoint?: string;
   }): ResourceRef<T[]> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     return rxResource({
       params: () => {
-        const params = searchParams();
+        const params = searchParams?.();
+        const sorts = sort?.();
 
-        return { params };
+        return { params, sorts };
       },
-      stream: ({ params: { params } }) => {
+      stream: ({ params: { params, sorts } }) => {
         const query = new URLSearchParams({
-          searchParams: JSON.stringify(params),
+          ...(params && { searchParams: JSON.stringify(params) }),
+          ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
         return this._httpClient
@@ -156,11 +160,13 @@ export class ApiRequestManager<T> {
 
   getWithPagination({
     paginateOptions = this._defaultPaginateOptions,
-    searchParams = this._defaultSearchParams,
+    searchParams,
+    sort,
     specificEndpoint = '',
   }: {
     paginateOptions?: Signal<paginationOptions>;
     searchParams?: Signal<Record<string, any>>;
+    sort?: Signal<orderByQuery<T>>;
     specificEndpoint?: string;
   }): ResourceRef<pagination<T> | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
@@ -168,14 +174,16 @@ export class ApiRequestManager<T> {
     return rxResource({
       params: () => {
         const pagination = paginateOptions();
-        const params = searchParams();
+        const params = searchParams?.();
+        const sorts = sort?.();
 
-        return { pagination, params };
+        return { pagination, params, sorts };
       },
-      stream: ({ params: { params, pagination } }) => {
+      stream: ({ params: { params, pagination, sorts } }) => {
         const query = new URLSearchParams({
-          searchParams: JSON.stringify(params),
           paginationOptions: JSON.stringify(pagination),
+          ...(params && { searchParams: JSON.stringify(params) }),
+          ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
         return this._httpClient
