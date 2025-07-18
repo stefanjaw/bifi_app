@@ -11,33 +11,33 @@ import { user } from '../../interfaces/user';
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
 })
-export class UsersList implements OnInit {
-  private crudUsers = inject(CrudUsers);
-  users = signal<user[]>([]);
-  columns = signal<tableColumn[]>([
-    {
-      field: 'username',
-      title: 'Username',
-      type: 'text',
-    },
-    {
-      field: 'email',
-      title: 'Email',
-      type: 'text',
-    },
-    {
-      field: 'name',
-      title: 'Name',
-      type: 'text',
-    },
-    {
-      field: 'lastName',
-      title: 'Last Name',
-      type: 'text',
-    },
-  ]);
+export class UsersList {
+  // private crudUsers = inject(CrudUsers);
+  // users = signal<user[]>([]);
+  // columns = signal<tableColumn[]>([
+  //   {
+  //     field: 'username',
+  //     title: 'Username',
+  //     type: 'text',
+  //   },
+  //   {
+  //     field: 'email',
+  //     title: 'Email',
+  //     type: 'text',
+  //   },
+  //   {
+  //     field: 'name',
+  //     title: 'Name',
+  //     type: 'text',
+  //   },
+  //   {
+  //     field: 'lastName',
+  //     title: 'Last Name',
+  //     type: 'text',
+  //   },
+  // ]);
 
-  ngOnInit(): void {
-    this.users.set(this.crudUsers.getUsers());
-  }
+  // ngOnInit(): void {
+  //   this.users.set(this.crudUsers.getUsers());
+  // }
 }

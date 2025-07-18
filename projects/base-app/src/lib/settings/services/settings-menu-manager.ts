@@ -9,8 +9,8 @@ export class SettingsMenuManager extends BaseMenuManager {
     const menuItems = signal([
       {
         iconName: 'people',
-        route: '/settings/users',
-        title: 'Users',
+        route: '/settings/contacts',
+        title: 'Contacts',
       },
       {
         iconName: 'other_houses',

@@ -1,4 +1,4 @@
 /*
  * Public API Surface of asset-roaster
  */
-export * from './lib/index';
+export * from './lib';

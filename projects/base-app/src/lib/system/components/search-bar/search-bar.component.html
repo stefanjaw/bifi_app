@@ -1,0 +1,21 @@
+<form (ngSubmit)="performSearch()">
+  <mat-form-field class="w-full">
+    <mat-label>{{ label() }}</mat-label>
+    <input name="searchText" matInput [(ngModel)]="searchText" />
+
+    <button mat-icon-button matSuffix (click)="performSearch()" type="submit">
+      <mat-icon>search</mat-icon>
+    </button>
+
+    @if (searchText()) {
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="searchText.set(''); performSearch()"
+        type="button"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</form>

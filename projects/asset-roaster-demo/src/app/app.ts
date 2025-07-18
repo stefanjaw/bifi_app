@@ -15,18 +15,8 @@ export class App implements OnInit {
     this.mainMenuManager.addItems([
       {
         iconName: 'handshake',
-        route: 'crm',
-        title: 'CRM',
-      },
-      {
-        iconName: 'date_range',
-        route: 'shifts',
-        title: 'Shifts',
-      },
-      {
-        iconName: 'date_range',
-        route: 'shifts',
-        title: 'Shifts',
+        route: 'asset-roaster',
+        title: 'Asset Roaster',
       },
     ]);
   }

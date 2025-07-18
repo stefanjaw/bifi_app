@@ -33,7 +33,7 @@
       "projectType": "library",
       "root": "projects/asset-roaster",
       "sourceRoot": "projects/asset-roaster/src",
-      "prefix": "lib",
+      "prefix": "bifi-app",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",

@@ -13,7 +13,7 @@ export class ApiRequestManager<T> {
   private readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   private _endpoint = '';
   private _httpClient = inject(HttpClient);
-  private _defaultSearchParams = signal<URLSearchParams>(new URLSearchParams());
+  private _defaultSearchParams = signal<Record<string, any>>({});
   private _defaultPaginateOptions = signal<paginationOptions>({
     page: 1,
     limit: 5,
@@ -27,6 +27,11 @@ export class ApiRequestManager<T> {
     return this._endpoint;
   }
 
+  /**
+   * Sets the endpoint for this api request manager.
+   * @param endpoint The endpoint to set.
+   * @throws {Error} If the endpoint contains a / symbol.
+   */
   set endpoint(endpoint: string) {
     if (endpoint.includes('/'))
       throw new Error('Endpoint cannot have the / symbol');
@@ -35,6 +40,13 @@ export class ApiRequestManager<T> {
   }
 
   //#region Functions to call api
+  /**
+   * Post data to the api.
+   *
+   * @param formData The form data to be sent.
+   * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
+   * @returns A resource ref that resolves to the response of the request, or undefined if the request fails.
+   */
   post({
     formData,
     specificEndpoint = '',
@@ -55,6 +67,15 @@ export class ApiRequestManager<T> {
       defaultValue: undefined,
     });
   }
+
+  /**
+   * Sends a PUT request to the API with the given _id and form data.
+   *
+   * @param {string} _id The id of the document to be updated.
+   * @param {FormData} formData The form data to be sent in the request.
+   * @param {string} [specificEndpoint] An optional specific endpoint to be used.
+   * @returns {ResourceRef<T | undefined>} A resource ref that resolves to the updated entity or undefined if the request fails.
+   */
 
   put({
     _id,
@@ -82,38 +103,64 @@ export class ApiRequestManager<T> {
     });
   }
 
+  /**
+   * Get data from the api.
+   *
+   * @param searchParams The search params as a signal. If not provided, the default search params will be used.
+   * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
+   * @returns A resource ref that resolves to an array of T or an empty array if the request fails.
+   */
   get({
-    params = new URLSearchParams(),
+    searchParams = this._defaultSearchParams,
     specificEndpoint = '',
   }: {
-    params?: URLSearchParams;
+    searchParams?: Signal<Record<string, any>>;
     specificEndpoint?: string;
   }): ResourceRef<T[]> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     return rxResource({
-      stream: () =>
-        this._httpClient
+      params: () => {
+        const params = searchParams();
+
+        return { params };
+      },
+      stream: ({ params: { params } }) => {
+        const query = new URLSearchParams({
+          searchParams: JSON.stringify(params),
+        });
+
+        return this._httpClient
           .get<T[]>(fullURL, {
-            params: new HttpParams({ fromString: params.toString() }),
+            params: new HttpParams({ fromString: query.toString() }),
           })
           .pipe(
             catchError((err: any) => {
               this.manageError(fullURL, err.message);
               return throwError(() => err);
             }),
-          ),
+          );
+      },
       defaultValue: [],
     });
   }
 
+  /**
+   * Fetches paginated data from the API using the provided search parameters and pagination options.
+   *
+   * @param {Signal<paginationOptions>} [paginateOptions=this._defaultPaginateOptions] - Signal for pagination options, including page number, limit, and whether to paginate.
+   * @param {Signal<Record<string, any>>} [searchParams=this._defaultSearchParams] - Signal for search parameters to filter the data.
+   * @param {string} [specificEndpoint=''] - Optional specific endpoint to append to the base URL.
+   * @returns {ResourceRef<pagination<T> | undefined>} A resource reference that resolves to the paginated data or undefined if an error occurs.
+   */
+
   getWithPagination({
     paginateOptions = this._defaultPaginateOptions,
-    params = this._defaultSearchParams,
+    searchParams = this._defaultSearchParams,
     specificEndpoint = '',
   }: {
     paginateOptions?: Signal<paginationOptions>;
-    params?: Signal<URLSearchParams>;
+    searchParams?: Signal<Record<string, any>>;
     specificEndpoint?: string;
   }): ResourceRef<pagination<T> | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
@@ -121,12 +168,15 @@ export class ApiRequestManager<T> {
     return rxResource({
       params: () => {
         const pagination = paginateOptions();
-        const query = params();
+        const params = searchParams();
 
-        return { pagination, query };
+        return { pagination, params };
       },
-      stream: ({ params: { query, pagination } }) => {
-        query.set('paginationOptions', JSON.stringify(pagination));
+      stream: ({ params: { params, pagination } }) => {
+        const query = new URLSearchParams({
+          searchParams: JSON.stringify(params),
+          paginationOptions: JSON.stringify(pagination),
+        });
 
         return this._httpClient
           .get<pagination<T> | undefined>(fullURL, {
@@ -143,6 +193,13 @@ export class ApiRequestManager<T> {
     });
   }
 
+  /**
+   * Send a DELETE request to the API with the given _id and specific endpoint.
+   *
+   * @param {string} _id The id of the document to be deleted.
+   * @param {string} [specificEndpoint=''] The specific endpoint to be used.
+   * @returns {ResourceRef<boolean>} A resource ref that resolves to true if the deletion was successful, or false if it failed.
+   */
   delete({
     _id,
     specificEndpoint = '',
@@ -173,9 +230,26 @@ export class ApiRequestManager<T> {
   //#endregion
 
   //#region UTILS
+  /**
+   * Returns the full URL for the API endpoint, including the
+   * {@link ApiRequestManager#endpoint} property and the {@link ApiRequestManager#_apiURL}
+   * property. If the `_apiURL` ends with a slash, it is removed to prevent
+   * double slashes in the URL.
+   *
+   * @returns The full URL for the API endpoint.
+   */
   private formatFullURL() {
     return `${this._apiURL}${this._apiURL[this._apiURL.length - 1] === '/' ? '' : '/'}${this.endpoint}`;
   }
+
+  /**
+   * Logs and throws an error with a formatted message indicating
+   * a failed POST request to the specified URL.
+   *
+   * @param fullURL - The full URL of the API endpoint.
+   * @param message - The error message detailing the failure.
+   * @throws Error - Throws an Error with the formatted message.
+   */
 
   private manageError(fullURL: string, message: string) {
     const error = new Error(`POST ${fullURL} failed: ${message}`);
