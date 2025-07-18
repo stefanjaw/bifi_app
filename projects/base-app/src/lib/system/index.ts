@@ -8,6 +8,13 @@ export { MainMenuManager } from './services/main-menu-manager';
 export { TableLayout } from './components/table-layout/table-layout';
 export { FilterManager } from './services/filter-manager';
 export { SearchBar } from './components/search-bar/search-bar.component';
+export { PaginationManager } from './services/pagination-manager';
+export {
+  ResourceManager,
+  provideResourceManager,
+} from './services/resource-manager';
+export { Badge } from './components/badge/badge';
+export type { DynamicComponent } from './interfaces/dynamic-component';
 export type { tableColumn } from './interfaces/table-column';
 export type { pagination } from './interfaces/pagination';
 export type { paginationOptions } from './interfaces/pagination-options';
@@ -15,4 +22,5 @@ export type { libraryConfig } from './interfaces/library-config';
 export type { menuItem } from './interfaces/menu-item';
 export type { filter, filterOperator } from './interfaces/filter';
 export type { deepKeys } from './interfaces/deep-keys';
+export type { BadgeVariant, BadgeState } from './components/badge/badge.model';
 export * from './libraries/object-utils';

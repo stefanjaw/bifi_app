@@ -33,16 +33,12 @@
 </section>
 
 <bifi-app-search-bar
-  [searchFilters]="equipmentFilters"
+  [searchFilters]="productFilters"
   label="Search by Model, S/N or condition"
 ></bifi-app-search-bar>
 
 <!-- table -->
-<bifi-app-table-layout
-  [columns]="columns()"
-  [data]="products"
-  (page)="changePage($event)"
->
+<bifi-app-table-layout [columns]="productColumns" [data]="products">
   <ng-template #actions>
     <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
     <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>

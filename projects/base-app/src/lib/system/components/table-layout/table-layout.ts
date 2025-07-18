@@ -2,8 +2,8 @@ import {
   Component,
   computed,
   contentChild,
+  inject,
   input,
-  output,
   ResourceRef,
   TemplateRef,
 } from '@angular/core';
@@ -18,6 +18,8 @@ import { MatIconButton } from '@angular/material/button';
 import { pagination } from '../../interfaces/pagination';
 import { isPaginated } from '../../libraries/object-utils';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { PaginationManager } from '../../services/pagination-manager';
+import { DynamicComponentDirective } from '../../directives/dynamic-component';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -30,16 +32,15 @@ import { MatProgressBar } from '@angular/material/progress-bar';
     MatIcon,
     CommonModule,
     MatProgressBar,
+    DynamicComponentDirective,
   ],
   templateUrl: './table-layout.html',
-  host: { class: 'shadow-xl/30' },
+  host: { class: 'shadow-xl/30 w-full' },
   styleUrl: './table-layout.css',
 })
 export class TableLayout<T extends Record<string, any>> {
-  // actions = input<TemplateRef<MatMenuItem[]>>();
-  page = output<PageEvent>();
-
   // Data managament
+  private paginationManager = inject(PaginationManager);
   data = input<ResourceRef<T[] | pagination<T> | undefined>>();
   isPaginatedFN = isPaginated;
   actions = contentChild('actions', {
@@ -74,6 +75,13 @@ export class TableLayout<T extends Record<string, any>> {
     }
 
     return object;
+  }
+
+  changePage(event: PageEvent) {
+    this.paginationManager.setPaginationOptions(
+      event.pageIndex + 1, // Page starts at 0
+      event.pageSize,
+    );
   }
 
   castToPaginate() {

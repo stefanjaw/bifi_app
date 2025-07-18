@@ -30,6 +30,13 @@
 
           @if (column.parseField) {
             <span>{{ column.parseField(value) }}</span>
+          } @else if (column.component) {
+            <!-- Get the dynamic component (use a callback or static value) -->
+            @let component = typeof column.component === "function" ? column.component(element) : column.component;
+
+            <ng-container *bifiAppDynamicComponent="component"></ng-container>
+          } @else if (column.template) {
+            <ng-container *ngTemplateOutlet="column.template; context: { $implicit: element }"></ng-container>
           } @else if (column.type === "image") {
             <span>
               <img
@@ -46,13 +53,15 @@
               />
             </span>
           } @else {
-            <span>{{
-              column.type === "date"
-                ? (value | date)
-                : column.type === "currency"
-                  ? (value | currency: column.currencySymbol || "$")
-                  : value
-            }}</span>
+            <span>
+              @if (column.type === "date") {
+                {{ value | date }}
+              } @else if (column.type === "currency") {
+                {{ value | currency: column.currencySymbol || "$"}}
+              } @else {
+                {{ value }}
+              }
+              </span>
           }
         </td>
       </ng-container>
@@ -93,7 +102,7 @@
       [pageIndex]="paginationData.page - 1"
       [pageSizeOptions]="[5, 10, 25, 100]"
       aria-label="Select page"
-      (page)="page.emit($event)"
+      (page)="changePage($event)"
     ></mat-paginator>
   }
 } @else if (data()?.error()) {

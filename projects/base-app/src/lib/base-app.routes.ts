@@ -12,35 +12,15 @@ export const baseAppRoutes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'users',
+        redirectTo: 'contacts',
       },
       {
         path: 'companies',
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            redirectTo: 'list',
-          },
-          {
-            path: 'list',
-            component: CompaniesList,
-          },
-        ],
+        loadChildren: () => import('./settings').then((m) => m.COMPANY_ROUTES),
       },
       {
-        path: 'users',
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            redirectTo: 'list',
-          },
-          {
-            path: 'list',
-            component: UsersList,
-          },
-        ],
+        path: 'contacts',
+        loadChildren: () => import('./settings').then((m) => m.CONTACT_ROUTES),
       },
     ],
   },

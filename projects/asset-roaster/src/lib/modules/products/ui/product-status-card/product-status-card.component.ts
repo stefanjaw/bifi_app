@@ -7,7 +7,7 @@ import {
 import {
   statusVariant,
   statusCardState,
-} from '@avalantec/asset-roaster/modules/products/interfaces/product-status-card.model';
+} from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.model';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 

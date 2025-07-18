@@ -1,8 +1,8 @@
 import { filter } from '@avalantec/base-app';
-import { product } from '../interfaces/product.model';
+import { product } from '../interfaces/product';
 
 // TODO: Add more filters, e.g. product type, vendor
-export const equipmentFilters: filter<product>[] = [
+export const productFilters: filter<product>[] = [
   {
     field: 'productModel',
     type: 'string',
