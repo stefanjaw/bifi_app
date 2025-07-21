@@ -1,0 +1,6 @@
+<section class="col-span-full flex justify-end gap-2">
+  <button mat-button [disabled]="isSubmitting() || formDisabled()">Save</button>
+  <button mat-button [disabled]="isSubmitting()" (click)="cancelClicked.emit()">
+    Cancel
+  </button>
+</section>

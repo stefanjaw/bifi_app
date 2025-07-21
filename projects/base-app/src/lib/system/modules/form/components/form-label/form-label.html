@@ -1,0 +1,10 @@
+<label
+  class="text-sm font-medium leading-none"
+  [htmlFor]="contextService.controlId()"
+>
+  <ng-content></ng-content>
+</label>
+
+@if (tooltip(); as tooltip) {
+  <mat-icon [matTooltip]="tooltip">question_mark</mat-icon>
+}

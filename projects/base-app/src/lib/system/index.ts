@@ -24,3 +24,4 @@ export type { filter, filterOperator } from './interfaces/filter';
 export type { deepKeys } from './interfaces/deep-keys';
 export type { BadgeVariant, BadgeState } from './components/badge/badge.model';
 export * from './libraries/object-utils';
+export * from './modules';
