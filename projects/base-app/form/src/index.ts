@@ -19,7 +19,6 @@ export * from './libraries/dirty-utils';
 export * from './libraries/error-state-tracker';
 export * from './libraries/form-control-utils';
 export * from './libraries/providers/form-errors';
-export * from './public-api';
 export * from './services/form-field-context';
 export * from './services/form-sections';
 export * from './services/form-translation';

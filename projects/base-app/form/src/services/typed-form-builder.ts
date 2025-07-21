@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
-import { FormGroupLike, InputControls, ControlsOf } from '../interfaces';
-import { BaseForm } from '../libraries';
+import { NonNullableFormBuilder } from '@angular/forms';
+import { FormGroupLike } from '../interfaces/form-helpers';
+import { InputControls, ControlsOf } from '../interfaces/typed-form-builder';
 
 @Injectable({
   providedIn: 'root',
@@ -29,65 +29,5 @@ export class TypedFormBuilder {
     } else {
       return data;
     }
-  }
-}
-
-/** Example form model */
-interface ExampleFormModel {
-  name: string;
-  exampleNullableField: string | null;
-  age: number;
-  exampleNestedForm: {
-    name: string;
-    age: number;
-  };
-  productIds: number[];
-  productArray: {
-    id: number;
-    name: string;
-  }[];
-}
-
-/** Inject the TypedFormBuilder */
-const typedFb = inject(TypedFormBuilder);
-
-/** Example on how to create a typed form */
-const testForm = typedFb.group<ExampleFormModel>({
-  name: ['', [Validators.required]],
-  exampleNullableField: [null],
-  age: [0],
-  exampleNestedForm: {
-    name: [''],
-    age: [0],
-  },
-  productIds: [],
-  productArray: [
-    {
-      id: 0,
-      name: '',
-    },
-  ],
-});
-
-/** Example Form Service that uses the BaseForm */
-@Injectable()
-class ExampleForm extends BaseForm<ExampleFormModel> {
-  override createForm() {
-    return this.fb.group<ExampleFormModel>({
-      name: ['', [Validators.required]],
-      exampleNullableField: [null],
-      age: [null!], // We use null! to start with a null value (instead of showing a 0)
-      exampleNestedForm: {
-        name: [''],
-        age: [null!], // We use null! to start with a null value (instead of showing a 0)
-      },
-      productIds: [],
-      productArray: [
-        {
-          id: 0,
-          name: '',
-        },
-      ],
-    });
   }
 }

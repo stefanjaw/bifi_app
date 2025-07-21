@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app';
+import { BaseForm } from '@avalantec/form';
 
 interface EquipmentFormModel {
   serialNumber: string;

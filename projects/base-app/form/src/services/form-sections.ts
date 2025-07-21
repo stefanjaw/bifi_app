@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { IFormSection } from '../interfaces';
+import { IFormSection } from '../interfaces/form-navigation';
 
 @Injectable({
   providedIn: 'root',
