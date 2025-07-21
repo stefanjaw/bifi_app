@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestManager } from '@avalantec/base-app/system';
 import { contact } from '../interfaces/contacts';
+import { ApiRequestManager } from 'projects/base-app/src/public-api';
 
 @Injectable({
   providedIn: 'root',

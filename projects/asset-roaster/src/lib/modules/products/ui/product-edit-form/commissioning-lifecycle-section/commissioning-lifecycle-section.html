@@ -1,0 +1,13 @@
+@if (!isEditMode()) {
+  <app-form-section title="Commissioning & Lifecycle" id="commissioning-lifecycle" [ordinal]="4">
+    <p-card>
+      <p-button 
+        label="Commission"
+        severity="success"
+        size="large"
+        class="w-full"
+        (onClick)="commission.emit()"
+      />
+    </p-card>
+  </app-form-section>
+}

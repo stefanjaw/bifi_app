@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  provideResourceManager,
-  ResourceManager,
-  SearchBar,
-  TableLayout,
-} from '@avalantec/base-app/system';
 import { CrudContacts } from '../../services/crud-contacts';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { contact } from '../../interfaces/contacts';
 import { contactColumns } from '../../libraries/contact-columns';
 import { contactFilters } from '../../libraries/contact-filters';
+import {
+  provideResourceManager,
+  ResourceManager,
+  SearchBar,
+  TableLayout,
+} from 'projects/base-app/src/public-api';
 
 @Component({
   selector: 'bifi-app-contacts-list',

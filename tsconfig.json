@@ -31,8 +31,13 @@
       // Works on localhost
       "@avalantec/asset-roaster": ["projects/asset-roaster/src/lib"],
       "@avalantec/asset-roaster/*": ["projects/asset-roaster/src/lib/*"],
+
+      // "@avalantec/base-app": ["projects/base-app/src/lib"],
+      // "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
+
       "@avalantec/base-app": ["projects/base-app/src/lib"],
-      "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
+      "@avalantec/base-app/*": ["projects/base-app/src/lib/*"],
+      "@avalantec/*": ["projects/base-app/*/src/index.ts"]
     },
     "strict": true,
     "noImplicitOverride": true,

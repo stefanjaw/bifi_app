@@ -23,7 +23,7 @@ import { isPaginated } from '../../libraries/object-utils';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { PaginationManager } from '../../services/pagination-manager';
 import { DynamicComponentDirective } from '../../directives/dynamic-component';
-import { SortManager } from '@avalantec/base-app/system/services/sort-manager';
+import { SortManager } from '../../services/sort-manager';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -63,7 +63,7 @@ export class TableLayout<T extends Record<string, any>> {
   });
 
   columnsAsString = computed(() => {
-    const columns = this.columns().map((column) => column.field.toString());
+    const columns = this.columns().map(column => column.field.toString());
 
     if (this.actions()) columns.push('actions');
     return columns;
@@ -90,7 +90,7 @@ export class TableLayout<T extends Record<string, any>> {
   protected changePage(event: PageEvent) {
     this.paginationManager.setPaginationOptions(
       event.pageIndex + 1, // Page starts at 0
-      event.pageSize,
+      event.pageSize
     );
   }
 

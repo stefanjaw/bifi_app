@@ -1,0 +1,10 @@
+<app-product-edit-form
+  [isEditMode]="isEditMode()"
+  [formService]="formService"
+  (toggleEdit)="toggleEditMode()"
+  (save)="handleSave()"
+  (cancel)="handleCancel()"
+  (backToDashboard)="handleBackToDashboard()"
+  (commission)="handleCommission()"
+  (addDocument)="handleAddDocument()"
+/>

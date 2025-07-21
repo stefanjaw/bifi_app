@@ -1,4 +1,4 @@
-import { tableColumn } from '@avalantec/base-app/system';
+import { tableColumn } from 'projects/base-app/src/public-api';
 import { contact } from '../interfaces/contacts';
 
 export const contactColumns: tableColumn<contact>[] = [

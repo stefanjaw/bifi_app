@@ -1,4 +1,4 @@
-import { filter } from '@avalantec/base-app/system';
+import { filter } from '../../../../system/interfaces/filter';
 import { company } from '../interfaces/company';
 
 export const companyFilters: filter<company>[] = [

@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <p-button 
+          icon="pi pi-chevron-left" 
+          [text]="true" 
+          severity="secondary"
+          size="small"
+        />
+        <h1 class="text-xl font-semibold text-gray-900">Equipment Details</h1>
+        <p-button 
+          icon="pi pi-chevron-right" 
+          [text]="true" 
+          severity="secondary"
+          size="small"
+        />
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        @if (isEditMode()) {
+          <p-button 
+            label="Cancel"
+            severity="secondary"
+            (onClick)="cancel.emit()"
+          />
+          <p-button 
+            label="Save Changes"
+            icon="pi pi-check"
+            severity="success"
+            (onClick)="save.emit()"
+          />
+        } @else {
+          <p-button 
+            label="Edit Details"
+            icon="pi pi-pencil"
+            (onClick)="toggleEdit.emit()"
+          />
+        }
+        <p-button 
+          label="Back to Dashboard"
+          icon="pi pi-arrow-left"
+          severity="info"
+          [outlined]="true"
+          (onClick)="backToDashboard.emit()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <app-form-layout title="">
+      <form 
+        [formGroup]="formService.form"
+        class="space-y-8"
+      >
+        <app-general-information-section 
+          [isEditMode]="isEditMode()" 
+          [formService]="formService"
+        />
+        
+        <app-documents-section 
+          [isEditMode]="isEditMode()"
+          (addDocument)="addDocument.emit()"
+        />
+        
+        <app-maintenance-service-section 
+          [isEditMode]="isEditMode()"
+          [formService]="formService"
+        />
+        
+        <app-commissioning-lifecycle-section 
+          [isEditMode]="isEditMode()"
+          (commission)="commission.emit()"
+        />
+        
+        <app-activity-history-section />
+      </form>
+    </app-form-layout>
+  </div>
+</div>

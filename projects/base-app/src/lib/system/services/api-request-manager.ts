@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
-import { orderByQuery } from '@avalantec/base-app/system/interfaces/order-by';
+import { orderByQuery } from '../interfaces/order-by';
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +33,7 @@ export class ApiRequestManager<T> {
    * @throws {Error} If the endpoint contains a / symbol.
    */
   set endpoint(endpoint: string) {
-    if (endpoint.includes('/'))
-      throw new Error('Endpoint cannot have the / symbol');
+    if (endpoint.includes('/')) throw new Error('Endpoint cannot have the / symbol');
 
     this._endpoint = endpoint;
   }
@@ -62,7 +61,7 @@ export class ApiRequestManager<T> {
           catchError((err: any) => {
             this.manageError(fullURL, err.message);
             return throwError(() => err);
-          }),
+          })
         ),
       defaultValue: undefined,
     });
@@ -97,7 +96,7 @@ export class ApiRequestManager<T> {
           catchError((err: any) => {
             this.manageError(fullURL, err.message);
             return throwError(() => err);
-          }),
+          })
         ),
       defaultValue: undefined,
     });
@@ -142,7 +141,7 @@ export class ApiRequestManager<T> {
             catchError((err: any) => {
               this.manageError(fullURL, err.message);
               return throwError(() => err);
-            }),
+            })
           );
       },
       defaultValue: [],
@@ -194,7 +193,7 @@ export class ApiRequestManager<T> {
             catchError((err: any) => {
               this.manageError(fullURL, err.message);
               return throwError(() => err);
-            }),
+            })
           );
       },
       defaultValue: undefined,
@@ -230,7 +229,7 @@ export class ApiRequestManager<T> {
             catchError((err: any) => {
               this.manageError(fullURL, err.message);
               return throwError(() => err);
-            }),
+            })
           ),
       defaultValue: false,
     });
