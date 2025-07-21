@@ -26,6 +26,16 @@
           "options": {
             "tsConfig": "projects/base-app/tsconfig.spec.json"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/base-app/**/*.ts",
+              "projects/base-app/**/*.html"
+            ],
+            "eslintConfig": "projects/base-app/eslint.config.js"
+          }
         }
       }
     },
@@ -66,7 +76,9 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/asset-roaster-demo/src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "projects/asset-roaster-demo/tsconfig.app.json",
             "assets": [
               {
@@ -121,7 +133,10 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/asset-roaster-demo/tsconfig.spec.json",
             "assets": [
               {
@@ -129,7 +144,9 @@
                 "input": "projects/asset-roaster-demo/public"
               }
             ],
-            "styles": ["projects/asset-roaster-demo/src/styles.css"]
+            "styles": [
+              "projects/asset-roaster-demo/src/styles.css"
+            ]
           }
         }
       }

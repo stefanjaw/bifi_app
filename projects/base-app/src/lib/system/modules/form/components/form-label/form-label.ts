@@ -1,16 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-} from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { Icon } from '@avalantec/base-app/system/directives/icon';
 import { FormFieldContext } from '@avalantec/base-app/system/modules/form/services/form-field-context';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'bifi-app-form-label',
-  imports: [MatTooltipModule, MatIconModule],
+  imports: [TooltipModule, Icon],
   host: {
     class: 'flex items-center gap-1',
   },

@@ -1,14 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-form-actions',
-  imports: [MatButtonModule],
+  imports: [ButtonModule],
   templateUrl: './form-actions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

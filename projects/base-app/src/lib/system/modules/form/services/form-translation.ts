@@ -1,5 +1,4 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ParamMap } from '@avalantec/base-app/system/modules/form/interfaces/form-errors';
 import { FORM_ERROR_TRANSLATIONS } from '@avalantec/base-app/system/modules/form/libraries/providers/form-errors';
 

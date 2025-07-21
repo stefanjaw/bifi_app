@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, effect, inject, signal } from '@angular/core';
-import { FormSection } from '@avalantec/base-app/system/modules/form/interfaces/form-navigation';
+import { IFormSection } from '@avalantec/base-app/system/modules/form/interfaces/form-navigation';
 import { FormSections } from '@avalantec/base-app/system/modules/form/services/form-sections';
 
 @Component({
@@ -37,7 +37,7 @@ export class FormNavigator implements OnDestroy {
     }
   }
 
-  private setupScrollListener(sections: FormSection[]) {
+  private setupScrollListener(sections: IFormSection[]) {
     this.scrollListener = this.throttle(() => {
       if (!this.isScrolling()) {
         this.updateActiveSection(sections);
@@ -50,7 +50,7 @@ export class FormNavigator implements OnDestroy {
     setTimeout(() => this.updateActiveSection(sections), 100);
   }
 
-  private updateActiveSection(sections: FormSection[]) {
+  private updateActiveSection(sections: IFormSection[]) {
     const scrollY = window.scrollY;
     const offset = 120; // Offset para activar la sección un poco antes
 
@@ -81,7 +81,7 @@ export class FormNavigator implements OnDestroy {
     };
   }
 
-  scrollTo(section: FormSection) {
+  scrollTo(section: IFormSection) {
     this.isScrolling.set(true);
     this.sectionsService.setActiveSection(section.id);
 

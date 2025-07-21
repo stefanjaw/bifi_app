@@ -1,23 +1,23 @@
 import { Injectable, signal } from '@angular/core';
-import { FormSection } from '@avalantec/base-app/system/modules/form/interfaces/form-navigation';
+import { IFormSection } from '@avalantec/base-app/system/modules/form/interfaces/form-navigation';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FormSections {
-  private _sections = signal<FormSection[]>([]);
+  private _sections = signal<IFormSection[]>([]);
   sections = this._sections.asReadonly();
 
   /** which section is currently “active” */
   activeSection = signal<string>('');
 
-  registerSection(section: FormSection) {
+  registerSection(section: IFormSection) {
     if (!this.activeSection()) this.setActiveSection(section.id);
-    this._sections.update((list) => [...list, section]);
+    this._sections.update(list => [...list, section]);
   }
 
   unregisterSection(id: string) {
-    this._sections.update((list) => list.filter((s) => s.id !== id));
+    this._sections.update(list => list.filter(s => s.id !== id));
   }
 
   setActiveSection(id: string) {

@@ -1,7 +1,8 @@
-export { FormActions } from '@avalantec/base-app/system/modules/form/components/form-actions/form-actions';
-export { FormError } from '@avalantec/base-app/system/modules/form/components/form-error/form-error';
-export { FormField } from '@avalantec/base-app/system/modules/form/components/form-field/form-field';
-export { FormLabel } from '@avalantec/base-app/system/modules/form/components/form-label/form-label';
-export { FormLayout } from '@avalantec/base-app/system/modules/form/components/form-layout/form-layout';
-export { FormNavigator } from '@avalantec/base-app/system/modules/form/components/form-navigator/form-navigator';
-export { FormSection } from '@avalantec/base-app/system/modules/form/components/form-section/form-section';
+export * from './form-actions/form-actions';
+export * from './form-error/form-error.model';
+export * from './form-error/form-error';
+export * from './form-field/form-field';
+export * from './form-label/form-label';
+export * from './form-layout/form-layout';
+export * from './form-navigator/form-navigator';
+export * from './form-section/form-section';
