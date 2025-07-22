@@ -4,278 +4,283 @@
   id="general-info"
   [ordinal]="1"
 >
-  <!-- Warning Banner -->
-  <p-message severity="warn" [closable]="false" class="mb-6 w-full">
-    <div class="flex items-start">
-      <div>
-        <div class="font-medium">Equipment: Awaiting Commissioning</div>
-        <div class="text-sm mt-1">
-          This equipment requires initial inspection and commissioning before use.
+  <section class="flex flex-col gap-6">
+    <!-- Warning Banner -->
+    <p-message severity="warn" [closable]="false" class="w-full">
+      <div class="flex items-start">
+        <div>
+          <div class="font-medium">Equipment: Awaiting Commissioning</div>
+          <div class="text-sm mt-1">
+            This equipment requires initial inspection and commissioning before use.
+          </div>
         </div>
       </div>
-    </div>
-  </p-message>
+    </p-message>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Left Column - Form Fields -->
-    <div class="lg:col-span-2">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Serial Number -->
-        <div class="md:col-span-2">
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Serial Number:</bifi-app-form-label>
-              <input pInputText formControlName="serialNumber" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <span class="text-sm font-medium text-gray-700">Serial Number:</span>
-              <span class="ml-2 text-sm text-gray-900">
-                {{ formService.form.get('serialNumber')?.value }}
-              </span>
-            </div>
-          }
-        </div>
-
-        <!-- Type -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Type</bifi-app-form-label>
-              <input pInputText formControlName="type" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Type:</div>
-              <div class="text-sm text-gray-900">
-                {{ formService.form.get('type')?.value || 'Not set' }}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Form Fields -->
+      <div class="lg:col-span-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Serial Number -->
+          <div class="md:col-span-2">
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Serial Number:</bifi-app-form-label>
+                <input pInputText formControlName="serialNumber" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <span class="text-sm font-medium text-gray-700">Serial Number:</span>
+                <span class="ml-2 text-sm text-gray-900">
+                  {{ formService.form.get('serialNumber')?.value }}
+                </span>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Make -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Make</bifi-app-form-label>
-              <input pInputText formControlName="make" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Make:</div>
-              <div class="text-sm text-gray-900">
-                {{ formService.form.get('make')?.value || 'Not set' }}
+          <!-- Type -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Type</bifi-app-form-label>
+                <input pInputText formControlName="type" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Type:</div>
+                <div class="text-sm text-gray-900">
+                  {{ formService.form.get('type')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Model -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Model</bifi-app-form-label>
-              <input pInputText formControlName="model" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Model:</div>
-              <div class="text-sm text-gray-900">
-                {{ formService.form.get('model')?.value || 'Not set' }}
+          <!-- Make -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Make</bifi-app-form-label>
+                <input pInputText formControlName="make" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Make:</div>
+                <div class="text-sm text-gray-900">
+                  {{ formService.form.get('make')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Date Acquired -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Date Acquired</bifi-app-form-label>
-              <p-date-picker
-                formControlName="dateAcquired"
-                [showIcon]="true"
-                inputId="dateAcquired"
-                class="w-full"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Date Acquired:</div>
-              <div class="text-sm text-gray-900">
-                {{ formService.form.get('dateAcquired')?.value || 'Not set' }}
+          <!-- Model -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Model</bifi-app-form-label>
+                <input pInputText formControlName="model" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Model:</div>
+                <div class="text-sm text-gray-900">
+                  {{ formService.form.get('model')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Vendor -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Vendor</bifi-app-form-label>
-              <input pInputText formControlName="vendor" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Vendor:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('vendor')?.value || 'Not set' }}
+          <!-- Date Acquired -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+                <p-date-picker
+                  formControlName="dateAcquired"
+                  [showIcon]="true"
+                  inputId="dateAcquired"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Date Acquired:</div>
+                <div class="text-sm text-gray-900">
+                  {{ formService.form.get('dateAcquired')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Condition -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
-              <input pInputText formControlName="condition" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Condition:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('condition')?.value || 'Not set' }}
+          <!-- Vendor -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Vendor</bifi-app-form-label>
+                <input pInputText formControlName="vendor" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Vendor:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('vendor')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Location -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Location</bifi-app-form-label>
-              <input pInputText formControlName="location" type="text" class="w-full" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Location:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('location')?.value || 'Not set' }}
+          <!-- Condition -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
+                <input pInputText formControlName="condition" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Condition:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('condition')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Price Paid -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="pricePaid"
-                type="text"
-                placeholder="e.g., USD 5000.00 or Contact Vendor"
-                class="w-full"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Price Paid:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('pricePaid')?.value || 'Not set' }}
+          <!-- Location -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Location</bifi-app-form-label>
+                <input pInputText formControlName="location" type="text" class="w-full" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Location:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('location')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Current Value -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Current Value (est.) (Optional)</bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="currentValue"
-                type="text"
-                placeholder="e.g., USD 3500.00"
-                class="w-full"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Current Value (est.):</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('currentValue')?.value || 'Not set' }}
+          <!-- Price Paid -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="pricePaid"
+                  type="text"
+                  placeholder="e.g., USD 5000.00 or Contact Vendor"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Price Paid:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('pricePaid')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Warranty Expiration Date -->
-        <div>
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
-              <p-date-picker
-                formControlName="warrantyExpirationDate"
-                inputId="warrantyDate"
-                class="w-full"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Warranty Expiration Date:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('warrantyExpirationDate')?.value || 'Not set' }}
+          <!-- Current Value -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Current Value (est.) (Optional)</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="currentValue"
+                  type="text"
+                  placeholder="e.g., USD 3500.00"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Current Value (est.):</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('currentValue')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- Remarks -->
-        <div class="md:col-span-2">
-          @if (isEditMode()) {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Remarks (Optional)</bifi-app-form-label>
-              <textarea
-                pInputTextarea
-                formControlName="remarks"
-                rows="4"
-                placeholder="Enter any additional remarks or notes about the equipment..."
-                class="w-full"
-              ></textarea>
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          } @else {
-            <div>
-              <div class="text-sm font-medium text-gray-700">Remarks:</div>
-              <div class="text-sm text-gray-500 italic">
-                {{ formService.form.get('remarks')?.value || 'Not set' }}
+          <!-- Warranty Expiration Date -->
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+                <p-date-picker
+                  formControlName="warrantyExpirationDate"
+                  inputId="warrantyDate"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Warranty Expiration Date:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('warrantyExpirationDate')?.value || 'Not set' }}
+                </div>
               </div>
-            </div>
-          }
+            }
+          </div>
+
+          <!-- Remarks -->
+          <div class="md:col-span-2">
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Remarks (Optional)</bifi-app-form-label>
+                <textarea
+                  pInputTextarea
+                  formControlName="remarks"
+                  rows="4"
+                  placeholder="Enter any additional remarks or notes about the equipment..."
+                  class="w-full"
+                ></textarea>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Remarks:</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ formService.form.get('remarks')?.value || 'Not set' }}
+                </div>
+              </div>
+            }
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Right Column - Equipment Photo -->
-    <div class="lg:col-span-1">
-      <p-card header="Equipment Photo" class="h-fit">
-        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <div class="text-gray-500 mb-4">No photo</div>
-          @if (isEditMode()) {
-            <p-button label="Choose File" icon="pi pi-upload" severity="info" [outlined]="true" />
-            <div class="text-xs text-gray-500 mt-2">No file chosen</div>
-          }
-        </div>
-      </p-card>
+      <!-- Right Column - Equipment Photo -->
+      <div class="lg:col-span-1">
+        <p-card
+          header="Equipment Photo"
+          styleClass="h-full bg-surface-50! border border-surface-300 rounded-md!"
+        >
+          <div class="rounded-lg p-8 text-center">
+            <div class="text-gray-500 mb-4">No photo</div>
+            @if (isEditMode()) {
+              <p-button label="Choose File" icon="pi pi-upload" severity="info" [outlined]="true" />
+              <div class="text-xs text-gray-500 mt-2">No file chosen</div>
+            }
+          </div>
+        </p-card>
+      </div>
     </div>
-  </div>
+  </section>
 </bifi-app-form-section>
