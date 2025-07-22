@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
@@ -7,36 +8,25 @@ import {
   ResourceRef,
   TemplateRef,
 } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
 import { pagination } from '../../interfaces/pagination';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { isPaginated } from '../../libraries/pagination-utils';
 import { DynamicComponentDirective } from '../../directives/dynamic-component';
 import { PaginationManager } from '../../services/pagination-manager';
 import { SortManager } from '../../services/sort-manager';
 import { tableColumn } from '../../interfaces/table-column';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { SortMeta } from 'primeng/api';
+import { ProgressBar } from 'primeng/progressbar';
+import { orderByQuery } from '../../interfaces/order-by';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'bifi-app-table-layout',
-  imports: [
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatMenuModule,
-    MatIconButton,
-    MatIcon,
-    CommonModule,
-    MatProgressBar,
-    DynamicComponentDirective,
-  ],
+  imports: [CommonModule, DynamicComponentDirective, TableModule, PaginatorModule, ProgressBar],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30 w-full' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableLayout<T extends Record<string, any>> {
   // Data managament
@@ -54,21 +44,25 @@ export class TableLayout<T extends Record<string, any>> {
     const data = this.data()?.value();
 
     if (!data) return [];
-    else if (isPaginated(data)) return data.docs;
+
+    if (isPaginated(data)) return data.docs;
     else return data;
   });
 
-  columnsAsString = computed(() => {
-    const columns = this.columns().map(column => column.field.toString());
+  // Pagination data
+  paginationData = computed(() => {
+    const data = this.data()?.value();
 
-    if (this.actions()) columns.push('actions');
-    return columns;
+    if (!data) return undefined;
+    else if (isPaginated(data)) return data;
+    else return undefined;
   });
 
   // References
   actions = contentChild('actions', {
     read: TemplateRef,
   });
+
   isPaginatedFN = isPaginated;
 
   protected getValue(object: any, path: string) {
@@ -83,23 +77,26 @@ export class TableLayout<T extends Record<string, any>> {
     return object;
   }
 
-  protected changePage(event: PageEvent) {
-    this.paginationManager.setPaginationOptions(
-      event.pageIndex + 1, // Page starts at 0
-      event.pageSize
+  lazyLoad(event: TableLazyLoadEvent) {
+    if (event.multiSortMeta) this.sort(event.multiSortMeta);
+    if (event.rows || event.first) {
+      // calculate page
+      const page = Math.floor((event.first || 1) / (event.rows || 5) + 1);
+      console.log('page', page);
+      this.changePage(page, event.rows || 5);
+    }
+  }
+
+  private changePage(page: number, limit: number) {
+    this.paginationManager.setPaginationOptions(page, limit);
+  }
+
+  private sort(multiSortMeta: SortMeta[]) {
+    this.sortManager.sortBy(
+      multiSortMeta.map(sort => ({
+        field: sort.field,
+        order: sort.order === 1 ? 'asc' : 'desc',
+      })) as orderByQuery<T>
     );
-  }
-
-  protected sort(event: Sort) {
-    const { active, direction } = event;
-
-    this.sortManager.sortBy({
-      fieldName: active,
-      value: direction || 'asc',
-    });
-  }
-
-  protected castToPaginate() {
-    return this.data()?.value() as pagination<T>;
   }
 }

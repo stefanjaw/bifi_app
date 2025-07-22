@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { orderByQuery, orderDirection } from '../interfaces/order-by';
+import { orderByQuery } from '../interfaces/order-by';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +23,8 @@ export class SortManager<T> {
    * @param {orderDirection} param.value - The order direction ('asc' or 'desc').
    */
 
-  sortBy({ fieldName, value }: { fieldName: string; value: orderDirection }) {
-    this._sort.set([
-      {
-        field: fieldName as never,
-        order: value,
-      },
-    ]);
+  sortBy(sortQuery: orderByQuery<T>) {
+    this._sort.set(sortQuery);
   }
 
   /**

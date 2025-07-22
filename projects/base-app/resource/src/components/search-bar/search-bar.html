@@ -1,21 +1,20 @@
-<form (ngSubmit)="performSearch()">
-  <mat-form-field class="w-full">
-    <mat-label>{{ label() }}</mat-label>
-    <input name="searchText" matInput [(ngModel)]="searchText" />
-
-    <button mat-icon-button matSuffix (click)="performSearch()" type="submit">
-      <mat-icon>search</mat-icon>
-    </button>
-
+<form (ngSubmit)="performSearch()" class="w-full flex items-center justify-center gap-2">
+  <p-iconfield [classList]="'w-full'">
+    <p-inputicon class="pi pi-search"></p-inputicon>
+    <input
+      pInputText
+      [placeholder]="label()"
+      [(ngModel)]="searchText"
+      [ngModelOptions]="{ standalone: true }"
+      autocomplete="off"
+      type="text"
+      class="w-full"
+    />
     @if (searchText()) {
-      <button
-        mat-icon-button
-        matSuffix
+      <p-inputIcon
+        class="pi pi-times cursor-pointer"
         (click)="searchText.set(''); performSearch()"
-        type="button"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
+      ></p-inputIcon>
     }
-  </mat-form-field>
+  </p-iconfield>
 </form>

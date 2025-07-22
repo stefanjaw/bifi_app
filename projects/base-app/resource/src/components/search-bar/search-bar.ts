@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, input, model, OnDestroy } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import { FilterManager } from '../../services/filter-manager';
 import { filter } from '../../interfaces/filter';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputText } from 'primeng/inputtext';
+import { InputIcon } from 'primeng/inputicon';
 
 @Component({
   selector: 'bifi-app-search-bar',
-  imports: [MatInput, MatFormField, MatIcon, MatIconButton, MatSuffix, MatLabel, FormsModule],
+  imports: [FormsModule, IconFieldModule, InputText, InputIcon],
   host: { class: 'w-full' },
   templateUrl: './search-bar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
