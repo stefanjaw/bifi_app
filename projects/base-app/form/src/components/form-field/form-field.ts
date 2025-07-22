@@ -37,7 +37,7 @@ export class FormField {
   // A form control is invalid when it is dirty (has been touched) and its value is invalid
   _computedClass = computed(() => {
     const baseClass =
-      '[&:has(.app-control.ng-invalid.ng-dirty:not(:focus))]:text-destructive flex flex-col gap-2 text-base';
+      '[&:has(.app-control.ng-invalid.ng-dirty)]:text-red-400 flex flex-col gap-2 text-base';
     const userClass = this.userClass();
 
     // Return an array of classes
