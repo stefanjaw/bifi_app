@@ -3,7 +3,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "declarationMap": false
+    "declarationMap": false,
+    "baseUrl": "./",
+    "paths": {
+      "@avalantec/asset-roaster": ["dist/asset-roaster/*", "dist/asset-roaster"],
+      "@avalantec/asset-roaster/*": ["projects/asset-roaster/*", "projects/asset-roaster"],
+
+      "@avalantec/base-app/*": ["dist/base-app/*", "dist/base-app"],
+      "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"]
+    }
   },
   "angularCompilerOptions": {
     "compilationMode": "partial"
