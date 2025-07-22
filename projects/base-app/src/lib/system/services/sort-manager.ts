@@ -1,8 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import {
-  orderByQuery,
-  orderDirection,
-} from '@avalantec/base-app/system/interfaces/order-by';
+import { orderByQuery, orderDirection } from '../interfaces/order-by';
 
 @Injectable({
   providedIn: 'root',

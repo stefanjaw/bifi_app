@@ -1,0 +1,16 @@
+<bifi-app-form-section title="Documents" id="documents" [ordinal]="2">
+  <section class="flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <div></div>
+      @if (isEditMode()) {
+        <p-button label="Add Document" icon="pi pi-plus" (onClick)="addDocument.emit()" />
+      }
+    </div>
+
+    @if (isEditMode()) {
+      <div class="text-sm text-gray-500 italic">Click "Add Document" to upload.</div>
+    } @else {
+      <div class="text-sm text-gray-500 italic">No documents uploaded.</div>
+    }
+  </section>
+</bifi-app-form-section>

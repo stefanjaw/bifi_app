@@ -1,0 +1,9 @@
+@if (!isEditMode()) {
+  <bifi-app-form-section
+    title="Commissioning & Lifecycle"
+    id="commissioning-lifecycle"
+    [ordinal]="4"
+  >
+    <p-button label="Commission" severity="success" class="w-full" (onClick)="commission.emit()" />
+  </bifi-app-form-section>
+}

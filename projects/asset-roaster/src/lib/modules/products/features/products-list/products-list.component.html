@@ -1,4 +1,11 @@
-<h1 class="text-2xl font-bold mb-4">Equipment Dashboard</h1>
+<section class="flex justify-between items-center gap-2 mb-4">
+  <h1 class="text-2xl font-bold">Equipment Dashboard</h1>
+  <div class="flex gap-2">
+    <p-button label="Import CSV" severity="success" icon="pi pi-upload"></p-button>
+    <p-button label="Export CSV" icon="pi pi-download"></p-button>
+    <p-button label="Add New Equipment" severity="secondary"></p-button>
+  </div>
+</section>
 
 <section class="flex flex-row gap-2 w-full mb-4">
   <bifi-app-product-status-card
@@ -40,7 +47,13 @@
 <!-- table -->
 <bifi-app-table-layout [columns]="productColumns" [data]="products">
   <ng-template #actions>
-    <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-    <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
+    <button mat-menu-item>
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+    <button mat-menu-item>
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
   </ng-template>
 </bifi-app-table-layout>

@@ -2,18 +2,15 @@ import {
   Component,
   computed,
   contentChild,
-  effect,
   inject,
   input,
-  OnInit,
   ResourceRef,
   TemplateRef,
-  viewChild,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { tableColumn } from '../../interfaces/table-column';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -23,7 +20,7 @@ import { isPaginated } from '../../libraries/object-utils';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { PaginationManager } from '../../services/pagination-manager';
 import { DynamicComponentDirective } from '../../directives/dynamic-component';
-import { SortManager } from '@avalantec/base-app/system/services/sort-manager';
+import { SortManager } from '../../services/sort-manager';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -63,7 +60,7 @@ export class TableLayout<T extends Record<string, any>> {
   });
 
   columnsAsString = computed(() => {
-    const columns = this.columns().map((column) => column.field.toString());
+    const columns = this.columns().map(column => column.field.toString());
 
     if (this.actions()) columns.push('actions');
     return columns;
@@ -78,7 +75,7 @@ export class TableLayout<T extends Record<string, any>> {
   protected getValue(object: any, path: string) {
     const splittedPath = path.split('.');
 
-    for (let key of splittedPath) {
+    for (const key of splittedPath) {
       object = object[key];
 
       if (!object) break;
@@ -90,7 +87,7 @@ export class TableLayout<T extends Record<string, any>> {
   protected changePage(event: PageEvent) {
     this.paginationManager.setPaginationOptions(
       event.pageIndex + 1, // Page starts at 0
-      event.pageSize,
+      event.pageSize
     );
   }
 

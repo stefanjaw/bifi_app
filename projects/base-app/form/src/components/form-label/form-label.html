@@ -1,0 +1,7 @@
+<label class="text-sm font-medium leading-none" [htmlFor]="contextService.controlId()">
+  <ng-content></ng-content>
+</label>
+
+@if (tooltip(); as tooltip) {
+  <i class="pi pi-question-circle" bifiAppIcon [pTooltip]="tooltip" tooltipPosition="right"></i>
+}

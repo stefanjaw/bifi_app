@@ -1,0 +1,65 @@
+<bifi-app-form-section
+  [formGroup]="formService.form"
+  title="Maintenance & Service"
+  id="maintenance-service"
+  [ordinal]="3"
+>
+  <section class="grid grid-cols-[auto_0.4fr] gap-6">
+    <p-card styleClass="bg-surface-50! border border-surface-300">
+      <div>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Preventive Maintenance</h3>
+
+        <div class="space-y-4">
+          <div>
+            @if (isEditMode()) {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="maintenanceInterval"
+                  type="text"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            } @else {
+              <div>
+                <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
+                <div class="text-sm text-gray-500 italic">Not Set</div>
+              </div>
+            }
+          </div>
+
+          <div>
+            <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
+            <div class="text-sm text-orange-600">
+              {{ formService.form.get('pmScheduleStatus')?.value }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="bg-surface-50! border border-surface-300">
+      <!-- Service Actions -->
+      <div>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Service Actions</h3>
+        @if (isEditMode()) {
+          <div class="text-sm text-gray-500 italic">
+            Service actions are disabled while editing equipment details.
+          </div>
+        } @else {
+          <div class="text-sm text-gray-500 italic">
+            Service actions are disabled while editing equipment details.
+          </div>
+        }
+      </div>
+
+      @if (isEditMode()) {
+        <div class="mt-6 pt-4 border-t border-gray-200 text-sm text-gray-500 italic">
+          Service actions are disabled while editing equipment details.
+        </div>
+      }
+    </p-card>
+  </section>
+</bifi-app-form-section>
