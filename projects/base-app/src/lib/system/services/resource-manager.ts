@@ -11,12 +11,12 @@ import {
 import { PaginationManager } from './pagination-manager';
 import { FilterManager } from './filter-manager';
 import { ApiRequestManager } from './api-request-manager';
-import { SortManager } from '@avalantec/base-app/system/services/sort-manager';
+import { SortManager } from './sort-manager';
 
 // Injection token to be used in the resource manager to access the ApiRequestManager
-const RESOURCE_API_SERVICE_TOKEN = new InjectionToken<
-  ApiRequestManager<unknown>
->('RESOURCE_API_SERVICE');
+const RESOURCE_API_SERVICE_TOKEN = new InjectionToken<ApiRequestManager<unknown>>(
+  'RESOURCE_API_SERVICE'
+);
 
 @Injectable()
 export class ResourceManager<T> {
@@ -70,7 +70,7 @@ export class ResourceManager<T> {
  * @returns An array of providers that can be used in the component's or module's @NgModule decorator.
  */
 export function provideResourceManager<T>(
-  service: ProviderToken<ApiRequestManager<T>>,
+  service: ProviderToken<ApiRequestManager<T>>
 ): Provider[] {
   return [
     {

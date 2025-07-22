@@ -1,63 +1,194 @@
-# BaseApp
+# BaseApp Architecture & Usage Guide
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+This document defines the official architectural guidelines, coding standards, and usage patterns for all projects using `@avalantec/base-app`. Adherence to these rules is **mandatory** to ensure maintainability, reusability, and consistency.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 1. Importing
 
-```bash
-ng generate component component-name
+Always import **everything** from the main barrel:
+
+```ts
+import { SomeComponent, someService } from '@avalantec/base-app';
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Do **not** import from internal paths.
 
-```bash
-ng generate --help
+---
+
+## 2. Project Structure
+
+Each feature module should follow this folder structure:
+
+```
+my-feature/
+├── features/      # Smart components (logic + services)
+├── ui/            # Dumb (presentational) components
+├── services/      # Module-specific services
+├── routes/        # Route files
+├── directives/    # Custom directives
+├── interfaces/    # Local TypeScript interfaces
+└── libraries/     # Utility functions
 ```
 
-## Building
+Example route (exporting public routes example)
 
-To build the library, run:
+```ts
+import { Routes } from '@angular/router';
 
-```bash
-ng build base-app
+export const PRODUCT_ROUTES: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'list',
+  },
+  {
+    path: 'list',
+    loadComponent: () =>
+      import('../features/products-list/products-list.component').then(
+        m => m.ProductsListComponent
+      ),
+  },
+];
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
+Use PrimeNG Angular component library (mandatory)
 
-### Publishing the Library
+---
 
-Once the project is built, you can publish your library by following these steps:
+## 3. Smart vs Dumb Components
 
-1. Navigate to the `dist` directory:
-   ```bash
-   cd dist/base-app
-   ```
+### Smart Components (`features/`)
 
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
+- May **inject services** using Angular's `inject()` function.
+- Contain business logic, data fetching, and state management.
+- May communicate with backend or other modules.
 
-## Running unit tests
+### Dumb Components (`ui/`)
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Purely presentational.
+- Communicate **only** via `input()` and `output()` (Angular Signals APIs).
+- **Must NOT inject** custom services (generic services like translation or form helpers are allowed).
+- Do **not** contain business logic.
 
-```bash
-ng test
+---
+
+## 4. Component File Conventions
+
+Each component lives in its own folder with these files:
+
+```
+user-form/
+├── user-form.ts         # Component logic (Standalone Component)
+├── user-form.html       # Template HTML
+├── user-form.model.ts   # (Optional) local interfaces/types only
 ```
 
-## Running end-to-end tests
+- The `.model.ts` file is for interfaces/types **used exclusively inside the component** to avoid polluting global scope. This file is optional and only if an interface that only exists for this component (like an input type) is needed.
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
+## 5. Naming Conventions
+
+- Use **no suffixes** like `.component.ts`, `.service.ts`, `.directive.ts`.
+- Files end simply with `.ts`.
+- Component class names omit the "Component" suffix.
+
+Example:
+
+```ts
+// File: user-form.ts
+export class UserForm {}
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Types and interfaces use **camelCase** starting with lowercase:
 
-## Additional Resources
+```ts
+interface userFormValues {
+  firstName: string;
+  lastName: string;
+}
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## 6. Dependency Injection
+
+Use Angular's new `inject()` function **inside** services and components instead of constructor injection.
+
+Example:
+
+```ts
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private http = inject(HttpClient);
+
+  fetchUsers() {
+    return this.http.get('/api/users');
+  }
+}
+```
+
+---
+
+## 7. Reactivity: Angular Signals Only
+
+We **strongly prefer** Angular Signals instead of RxJS Observables.
+
+Use only these APIs for reactivity:
+
+- `signal()`
+- `computed()`
+- `effect()`
+- `input()`
+- `output()`
+- `viewChild()`
+- `viewChildren()`
+- `viewContent()`
+- `model()`
+
+Example:
+
+```ts
+import { signal, computed, effect, input, output } from '@angular/core';
+
+const count = signal(0);
+const doubled = computed(() => count() * 2);
+
+effect(() => console.log('Doubled count:', doubled()));
+
+const userName = input<string>();
+const onSave = output<void>();
+```
+
+Avoid RxJS observables and operators such as `BehaviorSubject`, `subscribe()`, `switchMap()`, etc.
+Only use RxJS if necessary with DestroyRef and takeUntilDestroyed
+
+---
+
+## 8. Summary of Rules for Any App Using BaseApp
+
+- Import everything from `@avalantec/base-app` main barrel.
+- Use Angular Standalone Components without NgModules.
+- Separate Smart (`features/`) and Dumb (`ui/`) components.
+- Smart components **can inject** services using `inject()`.
+- Dumb components only use `input()` and `output()`.
+- Use Angular Signals API exclusively for reactive state.
+- Follow strict file and type naming conventions.
+- Organize modules with dedicated folders for services, directives, interfaces, and libraries.
+- Keep code modular, reusable, and maintainable.
+
+---
+
+## 9. License
+
+© Avalantec
+
+---
+
+```
+
+```

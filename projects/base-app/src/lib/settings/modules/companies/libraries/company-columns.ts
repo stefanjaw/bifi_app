@@ -1,4 +1,4 @@
-import { tableColumn } from '@avalantec/base-app/system';
+import { tableColumn } from '../../../../system/interfaces/table-column';
 import { company } from '../interfaces/company';
 
 export const companyColumns: tableColumn<company>[] = [

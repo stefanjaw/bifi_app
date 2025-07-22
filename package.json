@@ -9,17 +9,8 @@
     "test": "ng test",
     "build:base-app": "cd ./projects/base-app && ng build && cd ../../dist/base-app && npm pack",
     "build:asset-roaster": "cd ./projects/asset-roaster && ng build && cd ../../dist/asset-roaster && npm pack",
-    "build:all": "npm run build:base-app && npm run build:asset-roaster"
-  },
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
+    "build:all": "npm run build:base-app && npm run build:asset-roaster",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -31,12 +22,15 @@
     "@angular/material": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "@primeuix/themes": "^1.2.1",
     "@tailwindcss/postcss": "^4.1.11",
     "dayjs": "^1.11.13",
     "postcss": "^8.5.6",
-    "prettier": "^3.6.2",
+    "primeicons": "^7.0.0",
+    "primeng": "^20.0.0",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.11",
+    "tailwindcss-primeui": "^0.6.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
@@ -45,6 +39,12 @@
     "@angular/cli": "^20.1.0",
     "@angular/compiler-cli": "^20.1.0",
     "@types/jasmine": "~5.1.0",
+    "angular-eslint": "20.1.1",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "jasmine-core": "~5.7.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -52,6 +52,9 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^20.0.0",
-    "typescript": "~5.8.2"
+    "prettier": "^3.6.2",
+    "prettier-eslint": "^16.4.2",
+    "typescript": "~5.8.2",
+    "typescript-eslint": "8.34.1"
   }
 }

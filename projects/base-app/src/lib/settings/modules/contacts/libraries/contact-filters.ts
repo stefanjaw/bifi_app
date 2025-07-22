@@ -1,4 +1,4 @@
-import { filter } from '@avalantec/base-app/system';
+import { filter } from 'projects/base-app/src/public-api';
 import { contact } from '../interfaces/contacts';
 
 export const contactFilters: filter<contact>[] = [

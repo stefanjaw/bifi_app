@@ -1,0 +1,11 @@
+<ng-content select="bifi-app-form-label"></ng-content>
+<ng-content />
+
+@switch (hasDisplayedMessage()) {
+  @case ("error") {
+    <ng-content select="bifi-app-form-error"></ng-content>
+  }
+  @default {
+    <ng-content select="bifi-app-hint"></ng-content>
+  }
+}
