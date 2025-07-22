@@ -20,7 +20,7 @@ export type { pagination } from './interfaces/pagination';
 export type { paginationOptions } from './interfaces/pagination-options';
 export type { libraryConfig } from './interfaces/library-config';
 export type { menuItem } from './interfaces/menu-item';
-export type { filter, filterOperator } from './interfaces/filter';
+export type { filter, filterOperator, filterGroup } from './interfaces/filter';
 export type { deepKeys } from './interfaces/deep-keys';
 export type { BadgeVariant, BadgeState } from './components/badge/badge.model';
 export * from './libraries/object-utils';

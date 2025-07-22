@@ -117,6 +117,10 @@ export class FilterManager {
         operator = '$notRegex';
         value = `^${value}`;
         break;
+      case 'empty':
+        operator = '$size';
+        value = 0;
+        break;
       default:
         operator = filter.operator || '$eq';
         break;
@@ -125,7 +129,9 @@ export class FilterManager {
     return {
       [filter.field]: {
         [operator]: value,
-        $options: 'i',
+        ...((filter.operator === 'like' || filter.operator === 'not like') && {
+          $options: 'i',
+        }),
       },
     };
   }
@@ -140,11 +146,9 @@ export class FilterManager {
    * @param operator The operator to use for the mongoDB filter object.
    * @returns A mongoDB compatible filter object
    */
-  getFilterObject(operator: filterOperator) {
+  getFilterObject() {
     const filters = {
-      ['$' + operator]: this.filters().map((filter) =>
-        this.buildFilterObject(filter),
-      ),
+      ...this.filters().map((filter) => this.buildFilterObject(filter)),
     };
 
     return filters;

@@ -5,6 +5,7 @@
     [units]="0"
     variant="under-service"
     class="w-full"
+    (filter)="filterByCard($event)"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
@@ -17,18 +18,21 @@
     [units]="0"
     variant="due"
     class="w-full"
+    (filter)="filterByCard($event)"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
     [units]="0"
     variant="in-pm"
     class="w-full"
+    (filter)="filterByCard($event)"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
     [units]="0"
     variant="pm-not-set"
     class="w-full"
+    (filter)="filterByCard($event)"
   ></bifi-app-product-status-card>
 </section>
 
@@ -41,6 +45,5 @@
 <bifi-app-table-layout [columns]="productColumns" [data]="products">
   <ng-template #actions>
     <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-    <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
   </ng-template>
 </bifi-app-table-layout>

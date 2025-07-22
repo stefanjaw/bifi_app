@@ -2,6 +2,8 @@ import { productFilters } from '../../libraries/product-filters';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ProductStatusCardComponent } from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.component';
 import {
+  filter,
+  FilterManager,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -29,9 +31,15 @@ import { product } from '../../interfaces/product';
 })
 export class ProductsListComponent {
   private resourceManager = inject<ResourceManager<product>>(ResourceManager);
+  private filterManager = inject(FilterManager);
 
   productColumns = productColumns;
   productFilters = productFilters;
 
   products = this.resourceManager.data;
+
+  filterByCard(filters: filter<any>[]) {
+    this.filterManager.clearFilters();
+    this.filterManager.addFilters(filters);
+  }
 }

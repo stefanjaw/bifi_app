@@ -1,4 +1,10 @@
-<article [ngClass]="[state().className, 'flex flex-col gap-2 p-3 rounded-md']">
+<article
+  [ngClass]="[
+    state().className,
+    'flex flex-col gap-2 p-3 rounded-md cursor-pointer',
+  ]"
+  (click)="onClick()"
+>
   <header class="flex items-center justify-between">
     <h2 class="text-lg font-semibold">
       {{ state().title }}

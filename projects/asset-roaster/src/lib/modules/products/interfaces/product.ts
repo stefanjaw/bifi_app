@@ -2,6 +2,8 @@ import { contact } from '@avalantec/base-app';
 import { maintenanceWindow } from '../../maintenance-windows';
 import { room } from '../../facilities';
 import { productType } from '../../product-types';
+import { productMaintenance } from '../../product-maintenances';
+import { productComissionnig } from '../../product-comissioning';
 
 export interface product {
   _id: string;
@@ -13,15 +15,22 @@ export interface product {
   acquiredDate: Date;
   acquiredPrice: number;
   currentPrice: number;
-  condition: string;
+  condition: 'excellent' | 'good' | 'fair' | 'poor';
   maintenanceWindowIds: maintenanceWindow[];
   photo: string;
   locationId: room;
   warrantyDate: Date;
-  remarks: string;
+  remarks?: string;
+  status:
+    | 'active'
+    | 'awaiting-comissioning'
+    | 'under-service'
+    | 'decomissioned'
+    | 'in-pm';
+  minMaintenanceDate: string;
+  maintenanceDate: string;
+  maxMaintenanceDate: string;
+  productComission: productComissionnig;
+  productMaintenances: productMaintenance[];
   active: boolean;
-  productComission: string;
-  productMaintenance: string;
-  status: 'active' | 'awaiting-comissioning' | 'under-service';
-  pmDue: 'pm-not-set' | 'in-pm' | 'pm-due' | 'pm-overdue';
 }

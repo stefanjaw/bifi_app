@@ -51,23 +51,11 @@ export const productColumns: tableColumn<product>[] = [
     type: 'date',
   },
   {
-    field: 'pmDue',
-    parseField: (value: product['pmDue']) => {
-      switch (value) {
-        case 'pm-not-set':
-          return 'Not set';
-        case 'in-pm':
-          return 'In PM';
-        case 'pm-due':
-          return 'Due';
-        case 'pm-overdue':
-          return 'Overdue';
-      }
-    },
+    field: 'maintenanceDate',
+    sortable: true,
     title: 'NEXT PM DUE',
-    type: 'text',
+    type: 'date',
   },
-
   {
     field: 'status',
     component: (value: product) => {
@@ -88,6 +76,22 @@ export const productColumns: tableColumn<product>[] = [
               text: 'Under service',
               variant: 'warning',
             };
+          case 'decomissioned':
+            return {
+              text: 'Decomissioned',
+              variant: 'warning',
+            };
+          case 'in-pm':
+            return {
+              text: 'In PM',
+              variant: 'info',
+            };
+          default: {
+            return {
+              text: 'Unknown',
+              variant: 'warning',
+            };
+          }
         }
       })();
 

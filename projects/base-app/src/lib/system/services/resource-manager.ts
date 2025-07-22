@@ -36,7 +36,7 @@ export class ResourceManager<T> {
       const filters = this.filterManager.filters();
 
       if (filters.length > 0) {
-        this._searchParams.set(this.filterManager.getFilterObject('or'));
+        this._searchParams.set(this.filterManager.getFilterObject());
       } else {
         this._searchParams.set({});
       }
