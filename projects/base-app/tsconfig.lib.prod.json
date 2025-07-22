@@ -1,12 +1,21 @@
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "extends": "../../tsconfig.prod.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "declarationMap": false
   },
+  "exclude": ["node_modules"],
   "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true,
+    "fullTemplateTypeCheck": false,
+    "annotateForClosureCompiler": false,
+    "strictTemplates": false,
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
     "compilationMode": "partial"
-  },
-  "include": ["src/**/*.ts", "../../dist/**/*"]
+  }
 }

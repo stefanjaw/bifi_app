@@ -6,11 +6,11 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { LIBRARY_CONFIG } from '@avalantec/base-app';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { Noir } from 'projects/asset-roaster-demo/src/app/primeng.preset';
 import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [

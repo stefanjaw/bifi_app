@@ -1,18 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import {
   statusVariant,
   statusCardState,
 } from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.model';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { filter } from '@avalantec/base-app';
 import { product } from '../../interfaces/product';
+import { filter } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-product-status-card',
@@ -67,9 +61,7 @@ export class ProductStatusCardComponent {
 
   onClick() {
     if (this.variant() === 'under-service') {
-      this.filter.emit([
-        { field: 'status', value: 'under-service', operator: '==' },
-      ]);
+      this.filter.emit([{ field: 'status', value: 'under-service', operator: '==' }]);
     } else if (this.variant() === 'in-pm') {
       this.filter.emit([{ field: 'status', value: 'in-pm', operator: '==' }]);
     } else if (this.variant() === 'pm-not-set') {

@@ -1,12 +1,8 @@
-import {
-  contact,
-  tableColumn,
-  Badge,
-  DynamicComponent,
-  BadgeVariant,
-} from '@avalantec/base-app';
 import { product } from '../interfaces/product';
 import { productType } from '../../product-types';
+import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { Badge, BadgeVariant } from '@avalantec/base-app/core';
+import { contact } from '@avalantec/base-app/settings';
 
 export const productColumns: tableColumn<product>[] = [
   {

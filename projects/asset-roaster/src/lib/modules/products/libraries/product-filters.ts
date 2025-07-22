@@ -1,4 +1,4 @@
-import { filter } from '@avalantec/base-app';
+import { filter } from '@avalantec/base-app/resource';
 import { product } from '../interfaces/product';
 
 // TODO: Add more filters, e.g. product type, vendor

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { MainMenuManager, Scaffold } from '@avalantec/base-app';
+import { MainMenuManager, Scaffold } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-root',

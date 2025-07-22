@@ -1,9 +1,9 @@
-import { contact } from '@avalantec/base-app';
 import { maintenanceWindow } from '../../maintenance-windows';
 import { room } from '../../facilities';
 import { productType } from '../../product-types';
 import { productMaintenance } from '../../product-maintenances';
 import { productComissionnig } from '../../product-comissioning';
+import { contact } from '@avalantec/base-app/settings';
 
 export interface product {
   _id: string;
@@ -21,12 +21,7 @@ export interface product {
   locationId: room;
   warrantyDate: Date;
   remarks?: string;
-  status:
-    | 'active'
-    | 'awaiting-comissioning'
-    | 'under-service'
-    | 'decomissioned'
-    | 'in-pm';
+  status: 'active' | 'awaiting-comissioning' | 'under-service' | 'decomissioned' | 'in-pm';
   minMaintenanceDate: string;
   maintenanceDate: string;
   maxMaintenanceDate: string;

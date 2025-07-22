@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { FormNavigator } from '../form-navigator/form-navigator';
+// import { FormNavigator } from '../form-navigator/form-navigator';
 
 @Component({
   selector: 'bifi-app-form-layout',
-  imports: [FormNavigator],
+  imports: [],
   templateUrl: './form-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

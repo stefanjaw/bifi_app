@@ -1,0 +1,7 @@
+import { Routes } from '@angular/router';
+import { MainMenu } from './components/main-menu/main-menu';
+
+export const baseAppRoutes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
+  { path: 'home', component: MainMenu },
+];
