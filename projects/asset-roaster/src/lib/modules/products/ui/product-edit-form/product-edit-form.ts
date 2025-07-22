@@ -1,18 +1,28 @@
-import { Component, input, output } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app';
+import { Component, inject, input, output } from '@angular/core';
+import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
 import { DocumentsSection } from './documents-section/documents-section';
 import { MaintenanceServiceSection } from './maintenance-service-section/maintenance-service-section';
 import { CommissioningLifecycleSection } from './commissioning-lifecycle-section/commissioning-lifecycle-section';
 import { ActivityHistorySection } from './activity-history-section/activity-history-section';
-import type { EquipmentForm } from '../../services/equipment-form';
+import { EquipmentForm } from '../../services/equipment-form';
+import { ReactiveFormsModule } from '@angular/forms';
+import { DatePickerModule } from 'primeng/datepicker';
+import { CardModule } from 'primeng/card';
+import { MessageModule } from 'primeng/message';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
   imports: [
+    ReactiveFormsModule,
     AppFormExtensionsImports,
     ButtonModule,
+    DatePickerModule,
+    CardModule,
+    MessageModule,
+    InputTextModule,
     GeneralInformationSection,
     DocumentsSection,
     MaintenanceServiceSection,
@@ -23,7 +33,7 @@ import type { EquipmentForm } from '../../services/equipment-form';
 })
 export class ProductEditForm {
   isEditMode = input.required<boolean>();
-  formService = input.required<EquipmentForm>();
+  formService = inject(EquipmentForm);
 
   toggleEdit = output<void>();
   save = output<void>();

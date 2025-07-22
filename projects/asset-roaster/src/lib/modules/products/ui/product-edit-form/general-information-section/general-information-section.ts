@@ -1,18 +1,20 @@
-import { Component, input } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app';
+import { Component, inject, input } from '@angular/core';
+import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
-import type { EquipmentForm } from '../../../services/equipment-form';
+import { EquipmentForm } from '../../../services/equipment-form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'bifi-app-general-information-section',
   imports: [
     ...AppFormExtensionsImports,
+    ReactiveFormsModule,
     InputTextModule,
     DatePickerModule,
     TextareaModule,
@@ -25,5 +27,5 @@ import { TextareaModule } from 'primeng/textarea';
 })
 export class GeneralInformationSection {
   isEditMode = input.required<boolean>();
-  formService = input.required<EquipmentForm>();
+  formService = inject(EquipmentForm);
 }

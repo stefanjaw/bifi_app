@@ -22,6 +22,9 @@ interface EquipmentFormModel {
 
 @Injectable()
 export class EquipmentForm extends BaseForm<EquipmentFormModel> {
+  constructor() {
+    super();
+  }
   override createForm() {
     return this.fb.group<EquipmentFormModel>({
       serialNumber: ['0010101', [Validators.required]],

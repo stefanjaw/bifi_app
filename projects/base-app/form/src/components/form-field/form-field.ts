@@ -1,11 +1,11 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
   contentChildren,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   input,
@@ -25,7 +25,7 @@ import { FormControlExtension } from '../../directives/form-control-extension';
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormField implements AfterViewInit {
+export class FormField {
   readonly contextService = inject(FormFieldContext);
   protected readonly destroyRef = inject(DestroyRef);
   protected readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -61,19 +61,21 @@ export class FormField implements AfterViewInit {
       : 'hint'
   );
 
-  ngAfterViewInit(): void {
-    const extensionDirective = this.extensionDirective();
-    if (!extensionDirective) {
-      throw new Error('app-form-field must contain an Angular control.');
-    }
+  constructor() {
+    effect(() => {
+      const extensionDirective = this.extensionDirective();
+      if (!extensionDirective) {
+        return;
+      }
 
-    const ngControl = this.ngControl();
-    if (!ngControl) {
-      throw new Error('app-form-field must be used with a form control.');
-    }
+      const ngControl = this.ngControl();
+      if (!ngControl) {
+        return;
+      }
 
-    // Update the context -> Set the NgControl and the controlId to the extension directive id
-    this.contextService.ngControl.set(ngControl);
-    this.contextService.controlId.set(extensionDirective.id());
+      // Update the context -> Set the NgControl and the controlId to the extension directive id
+      this.contextService.ngControl.set(ngControl);
+      this.contextService.controlId.set(extensionDirective.id());
+    });
   }
 }

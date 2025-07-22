@@ -1,13 +1,14 @@
 <header class="flex gap-2 items-center">
-  @if (ordinal()) {
+  <!-- @if (ordinal()) {
     <span
       class="w-6 h-6 rounded-lg bg-primary text-primary-contrast flex items-center justify-center"
     >
       {{ ordinal() }}
     </span>
-  }
-  <h3 class="text-lg font-semibold">{{ title() }}</h3>
+  } -->
+  <h3 class="text-lg font-bold">{{ title() }}</h3>
 </header>
+<p-divider></p-divider>
 <div class="mt-6">
   <ng-content></ng-content>
 </div>

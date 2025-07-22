@@ -1,23 +1,28 @@
-<app-form-section title="Maintenance & Service" id="maintenance-service" [ordinal]="3">
+<bifi-app-form-section
+  [formGroup]="formService.form"
+  title="Maintenance & Service"
+  id="maintenance-service"
+  [ordinal]="3"
+>
   <p-card>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Preventive Maintenance -->
       <div>
         <h3 class="text-lg font-medium text-gray-900 mb-4">Preventive Maintenance</h3>
-        
+
         <div class="space-y-4">
           <div>
             @if (isEditMode()) {
-              <app-form-field>
-                <app-form-label>Maintenance Interval</app-form-label>
-                <input 
+              <bifi-app-form-field>
+                <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
+                <input
                   pInputText
-                  formControlName="maintenanceInterval" 
-                  type="text" 
+                  formControlName="maintenanceInterval"
+                  type="text"
                   class="w-full"
                 />
-                <app-form-error></app-form-error>
-              </app-form-field>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
             } @else {
               <div>
                 <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
@@ -49,11 +54,11 @@
         }
       </div>
     </div>
-    
+
     @if (isEditMode()) {
       <div class="mt-6 pt-4 border-t border-gray-200 text-sm text-gray-500 italic">
         Service actions are disabled while editing equipment details.
       </div>
     }
   </p-card>
-</app-form-section>
+</bifi-app-form-section>

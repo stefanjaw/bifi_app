@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app';
+import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { CardModule } from 'primeng/card';
 
 @Component({

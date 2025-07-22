@@ -1,6 +1,11 @@
 import { inject, signal } from '@angular/core';
 import { FormGroup, ValueChangeEvent } from '@angular/forms';
-import { FormGroupLike, FormValue, FormRawValue, FormValueState } from '../interfaces/form-helpers';
+import {
+  FormGroupLike,
+  FormValueState,
+  FormModelValue,
+  FormModelRawValue,
+} from '../interfaces/form-helpers';
 import { ControlsOf } from '../interfaces/typed-form-builder';
 import { getFormGroupDirtyValue } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
@@ -26,24 +31,24 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
   /**
    * Signal holding the current value of the form, typed as FormValue.
    */
-  value = signal<FormValue<typeof this.form>>(this.form.value);
+  value = signal<FormModelValue<TModel>>(this.form.value);
 
   /**
    * Signal holding the raw value of the form, including disabled controls.
    */
-  rawValue = signal<FormRawValue<typeof this.form>>(this.form.getRawValue());
+  rawValue = signal<FormModelRawValue<TModel>>(this.raw);
 
   /**
    * Signal holding the last valid raw value of the form.
    * Updated whenever the form is valid.
    */
-  lastValidRawValue = signal<FormRawValue<typeof this.form>>(this.form.getRawValue());
+  lastValidRawValue = signal<FormModelRawValue<TModel>>(this.raw);
 
   /**
    * Signal holding the dirty value of the form, typed as FormValue.
    * The dirty value represents the value of the form including only the controls the user has modified
    */
-  dirtyValue = signal<FormValue<typeof this.form>>({});
+  dirtyValue = signal<FormModelValue<TModel>>(this.form.value);
 
   /**
    * Constructor that sets up event handling for form value changes.
@@ -53,14 +58,19 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
     this.form.events.subscribe(event => {
       if (event instanceof ValueChangeEvent) {
         this.value.set(event.value);
-        this.rawValue.set(this.form.getRawValue());
+
+        this.rawValue.set(this.raw);
         this.dirtyValue.set(getFormGroupDirtyValue(this.form));
 
         if (this.form.valid) {
-          this.lastValidRawValue.set(this.form.getRawValue());
+          this.lastValidRawValue.set(this.raw);
         }
       }
     });
+  }
+
+  private get raw(): FormModelRawValue<TModel> {
+    return this.form.getRawValue() as FormModelRawValue<TModel>;
   }
 
   /**
@@ -92,15 +102,15 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    *
    * @param data - Partial form value object to patch the form with.
    */
-  patchValue(data: FormValue<typeof this.form>) {
+  patchValue(data: Parameters<(typeof this.form)['patchValue']>[0]) {
     this.form.patchValue(data);
   }
 
-  getValueState(): FormValueState<typeof this.form> {
+  getValueState(): FormValueState<TModel> {
     return {
       value: this.value(),
       dirtyValue: this.dirtyValue(),
       rawValue: this.rawValue(),
-    };
+    } as FormValueState<TModel>;
   }
 }

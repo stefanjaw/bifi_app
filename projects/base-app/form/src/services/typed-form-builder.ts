@@ -10,7 +10,9 @@ export class TypedFormBuilder {
   private fb = inject(NonNullableFormBuilder);
 
   group<T extends FormGroupLike>(data: InputControls<T>) {
-    return this.fb.group<ControlsOf<T>>(this.parseFormInput(data));
+    const payload = this.parseFormInput(data);
+    console.log('form group built payload', JSON.stringify(payload, null, 2));
+    return this.fb.group<ControlsOf<T>>(payload);
   }
 
   private parseFormInput(data: any) {
@@ -18,7 +20,10 @@ export class TypedFormBuilder {
       const clone: any = {};
 
       for (const key in data) {
-        if (typeof data[key] === 'object') {
+        if (Array.isArray(data[key])) {
+          clone[key] = data[key];
+        } else if (typeof data[key] === 'object') {
+          console.log('key is object', key);
           clone[key] = this.parseFormInput(data[key]);
         } else {
           clone[key] = data[key];

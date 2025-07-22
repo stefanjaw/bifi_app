@@ -8,9 +8,11 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormSections } from '../../services/form-sections';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'bifi-app-form-section',
+  imports: [DividerModule],
   host: { class: 'block bg-white p-7 rounded-lg', '[id]': 'id()' },
   templateUrl: './form-section.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

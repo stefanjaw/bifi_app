@@ -48,12 +48,12 @@ export class FormControlExtension implements AfterViewInit, OnDestroy {
    * or a {@link TouchedChangeEvent}, then update the error state.
    */
   ngAfterViewInit(): void {
-    const ngControl = this.injector.get(NgControl);
+    const ngControl = this.injector.get(NgControl, null);
 
     // Include the class app-control on the native element
     this.renderer2.addClass(this.nativeElement, 'app-control');
 
-    if (!ngControl.control) {
+    if (!ngControl || !ngControl.control) {
       // Do not apply the error state tracker if the control is not a form control
       return;
     }

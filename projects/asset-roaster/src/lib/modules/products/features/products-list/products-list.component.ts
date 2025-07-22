@@ -12,18 +12,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenuItem } from '@angular/material/menu';
 import { productColumns } from '../../libraries/product-columns';
 import { product } from '../../interfaces/product';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-products-list',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
   providers: [provideResourceManager(CrudProductsService)],
-  imports: [
-    ProductStatusCardComponent,
-    TableLayout,
-    MatIcon,
-    MatMenuItem,
-    SearchBar,
-  ],
+  imports: [ProductStatusCardComponent, ButtonModule, TableLayout, MatIcon, MatMenuItem, SearchBar],
   templateUrl: './products-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
