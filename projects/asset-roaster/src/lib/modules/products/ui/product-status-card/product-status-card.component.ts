@@ -1,15 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import {
   statusVariant,
   statusCardState,
 } from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.model';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { product } from '../../interfaces/product';
+import { filter } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-product-status-card',
@@ -20,6 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 export class ProductStatusCardComponent {
   variant = input.required<statusVariant>();
   units = input.required<number>();
+  filter = output<filter<product>[]>();
 
   state = computed<statusCardState>(() => {
     const variant = this.variant();
@@ -60,4 +58,35 @@ export class ProductStatusCardComponent {
     // temporal en lo que se agregan el resto
     return null!;
   });
+
+  onClick() {
+    if (this.variant() === 'under-service') {
+      this.filter.emit([{ field: 'status', value: 'under-service', operator: '==' }]);
+    } else if (this.variant() === 'in-pm') {
+      this.filter.emit([{ field: 'status', value: 'in-pm', operator: '==' }]);
+    } else if (this.variant() === 'pm-not-set') {
+      this.filter.emit([{ field: 'maintenanceWindowIds', operator: 'empty' }]);
+    } else if (this.variant() == 'due') {
+      this.filter.emit([
+        {
+          field: 'minMaintenanceDate',
+          value: new Date().toISOString(),
+          operator: '>=',
+        },
+        {
+          field: 'maxMaintenanceDate',
+          value: new Date().toISOString(),
+          operator: '<=',
+        },
+      ]);
+    } else if (this.variant() == 'overdue') {
+      this.filter.emit([
+        {
+          field: 'maxMaintenanceDate',
+          value: new Date().toISOString(),
+          operator: '>',
+        },
+      ]);
+    }
+  }
 }

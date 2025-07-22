@@ -1,4 +1,4 @@
-import { contact } from '@avalantec/base-app';
+import { contact } from '@avalantec/base-app/settings';
 import { room } from './room';
 
 export interface facility {

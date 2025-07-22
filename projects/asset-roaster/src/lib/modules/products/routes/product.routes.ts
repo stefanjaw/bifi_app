@@ -14,7 +14,7 @@ export const PRODUCT_ROUTES: Routes = [
       ),
   },
   {
-    path: 'maintenance',
+    path: 'maintenance/:id',
     loadComponent: () =>
       import('../features/product-maintenance/product-maintenance').then(m => m.ProductMaintenance),
   },

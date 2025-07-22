@@ -1,0 +1,20 @@
+<form (ngSubmit)="performSearch()" class="w-full flex items-center justify-center gap-2">
+  <p-iconfield [classList]="'w-full'">
+    <p-inputicon class="pi pi-search"></p-inputicon>
+    <input
+      pInputText
+      [placeholder]="label()"
+      [(ngModel)]="searchText"
+      [ngModelOptions]="{ standalone: true }"
+      autocomplete="off"
+      type="text"
+      class="w-full"
+    />
+    @if (searchText()) {
+      <p-inputIcon
+        class="pi pi-times cursor-pointer"
+        (click)="searchText.set(''); performSearch()"
+      ></p-inputIcon>
+    }
+  </p-iconfield>
+</form>

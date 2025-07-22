@@ -1,0 +1,136 @@
+@let hasValue = data()?.hasValue();
+@let isLoading = data()?.isLoading();
+@let error = data()?.error();
+@let isPaginated = hasValue && isPaginatedFN(data()?.value());
+
+@if ((hasValue && elementsToDisplay().length > 0) || isLoading) {
+  <p-table
+    sortMode="multiple"
+    (onLazyLoad)="lazyLoad($event)"
+    [lazy]="true"
+    [value]="elementsToDisplay()"
+    classList="w-full"
+    [paginator]="isPaginated"
+    [totalRecords]="paginationData()?.totalDocs || 0"
+    [pageLinks]="paginationData()?.totalPages || 0"
+    [rows]="paginationData()?.limit || 0"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+  >
+    <!-- headers -->
+    <ng-template #header>
+      <tr>
+        @for (column of columns(); track $index) {
+          @if (column.sortable) {
+            <th [pSortableColumn]="column.field">
+              <div class="flex items-center gap-2 whitespace-nowrap">
+                {{ column.title }}
+                <p-sortIcon [field]="column.field"></p-sortIcon>
+              </div>
+            </th>
+          } @else {
+            <th class="whitespace-nowrap">{{ column.title }}</th>
+          }
+        }
+
+        @if (actions()) {
+          <th></th>
+        }
+      </tr>
+    </ng-template>
+
+    <!-- body -->
+    <ng-template #body let-element>
+      <tr>
+        @for (column of columns(); track $index) {
+          <td>
+            @let value = getValue(element, column.field);
+
+            @if (column.parseField) {
+              <span>{{ column.parseField(value) }}</span>
+            } @else if (column.component) {
+              @let component =
+                typeof column.component === 'function'
+                  ? column.component(element)
+                  : column.component;
+
+              <ng-container *bifiAppDynamicComponent="component"></ng-container>
+            } @else if (column.template) {
+              <ng-container
+                *ngTemplateOutlet="column.template; context: { $implicit: element }"
+              ></ng-container>
+            } @else if (column.type === 'image') {
+              <span>
+                <img
+                  [src]="value"
+                  alt="image"
+                  style="
+                    width: 75px;
+                    height: 75px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin-top: 15px;
+                    margin-bottom: 15px;
+                  "
+                />
+              </span>
+            } @else {
+              <span>
+                @if (column.type === 'date') {
+                  {{ value ? (value | date) : 'Not set' }}
+                } @else if (column.type === 'currency') {
+                  {{ value ? (value | currency: column.currencySymbol || '$') : 'Not set' }}
+                } @else {
+                  {{ value || 'Not set' }}
+                }
+              </span>
+            }
+          </td>
+        }
+
+        @if (actions()) {
+          <td>
+            <div class="flex gap-2 items-center justify-center">
+              <ng-template
+                [ngTemplateOutlet]="actions()"
+                [ngTemplateOutletContext]="{ $implicit: element }"
+              ></ng-template>
+            </div>
+          </td>
+        }
+      </tr>
+    </ng-template>
+  </p-table>
+  @if (isLoading) {
+    <div class="flex flex-col justify-center items-center h-full w-full p-5">
+      <p>Loading...</p>
+      <p-progressbar mode="indeterminate" [style]="{ height: '6px' }" />
+    </div>
+  }
+  <!-- 
+  @if (isPaginated) {
+    @let paginationData = castToPaginate();
+
+    <mat-paginator
+      [length]="paginationData.totalDocs"
+      [pageSize]="paginationData.limit"
+      [pageIndex]="paginationData.page - 1"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select page"
+      (page)="changePage($event)"
+    ></mat-paginator>
+  }-->
+} @else if (error) {
+  <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
+    <!-- <mat-icon class="scale-200 mb-6">error</mat-icon> -->
+    <p class="mb-2 font-light text-2xl">Error</p>
+    <p class="mb-0 font-light">Something went wrong processing your request</p>
+  </div>
+} @else {
+  <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
+    <!-- <mat-icon class="scale-200 mb-6">search</mat-icon> -->
+    <p class="mb-2 font-light text-2xl">No Results Found</p>
+    <p class="mb-0 font-light">No results match your current search term or filter selection</p>
+  </div>
+}

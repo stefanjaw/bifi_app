@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormFieldContext } from '../../services/form-field-context';
-import { Icon } from '@avalantec/base-app';
+import { Icon } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-form-label',

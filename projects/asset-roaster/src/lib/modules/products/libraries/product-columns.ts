@@ -1,12 +1,8 @@
-import {
-  contact,
-  tableColumn,
-  Badge,
-  DynamicComponent,
-  BadgeVariant,
-} from '@avalantec/base-app';
 import { product } from '../interfaces/product';
 import { productType } from '../../product-types';
+import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { Badge, BadgeVariant } from '@avalantec/base-app/core';
+import { contact } from '@avalantec/base-app/settings';
 
 export const productColumns: tableColumn<product>[] = [
   {
@@ -51,25 +47,14 @@ export const productColumns: tableColumn<product>[] = [
     type: 'date',
   },
   {
-    field: 'pmDue',
-    parseField: (value: product['pmDue']) => {
-      switch (value) {
-        case 'pm-not-set':
-          return 'Not set';
-        case 'in-pm':
-          return 'In PM';
-        case 'pm-due':
-          return 'Due';
-        case 'pm-overdue':
-          return 'Overdue';
-      }
-    },
+    field: 'maintenanceDate',
+    sortable: true,
     title: 'NEXT PM DUE',
-    type: 'text',
+    type: 'date',
   },
-
   {
     field: 'status',
+    sortable: true,
     component: (value: product) => {
       const inputs: { text: string; variant: BadgeVariant } = (() => {
         switch (value.status) {
@@ -88,6 +73,22 @@ export const productColumns: tableColumn<product>[] = [
               text: 'Under service',
               variant: 'warning',
             };
+          case 'decomissioned':
+            return {
+              text: 'Decomissioned',
+              variant: 'warning',
+            };
+          case 'in-pm':
+            return {
+              text: 'In PM',
+              variant: 'info',
+            };
+          default: {
+            return {
+              text: 'Unknown',
+              variant: 'warning',
+            };
+          }
         }
       })();
 

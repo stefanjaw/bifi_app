@@ -5,29 +5,6 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      // "@avalantec/asset-roaster/*": [
-      //   "projects/asset-roaster/*",
-      //   "projects/asset-roaster"
-      // ],
-      // "@avalantec/base-app/*": ["projects/base-app/*", "projects/base-app"],
-      // "@avalantec/asset-roaster": [
-      //   "dist/asset-roaster/*",
-      //   "dist/asset-roaster"
-      // ],
-      // "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"]
-
-      // "@avalantec/asset-roaster": [
-      //   "dist/asset-roaster/*",
-      //   "dist/asset-roaster"
-      // ],
-      // "@avalantec/base-app": ["dist/base-app/*", "dist/base-app"],
-
-      // "@avalantec/asset-roaster/*": [
-      //   "projects/asset-roaster/*",
-      //   "projects/asset-roaster"
-      // ],
-      // "@avalantec/base-app/*": ["projects/base-app/*", "projects/base-app"]
-
       // Works on localhost
       "@avalantec/asset-roaster": ["projects/asset-roaster/src/lib"],
       "@avalantec/asset-roaster/*": ["projects/asset-roaster/src/lib/*"],
@@ -35,8 +12,8 @@
       // "@avalantec/base-app": ["projects/base-app/src/lib"],
       // "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
 
-      "@avalantec/base-app": ["projects/base-app/src/lib"],
-      "@avalantec/base-app/*": ["projects/base-app/src/lib/*", "projects/base-app/*/src/index.ts"]
+      "@avalantec/base-app": ["./projects/base-app/src"],
+      "@avalantec/base-app/*": ["./projects/base-app/*"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -48,7 +25,8 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "moduleResolution": "bundler"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -57,31 +35,6 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./projects/base-app/tsconfig.lib.json"
-    },
-    {
-      "path": "./projects/base-app/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/asset-roaster/tsconfig.lib.json"
-    },
-    {
-      "path": "./projects/asset-roaster/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/asset-roaster-demo/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/asset-roaster-demo/tsconfig.spec.json"
-    }
-  ]
+  "include": ["**/src/**/*", "**/dist/**/*", "**/types/**/*", "projects/base-app/core/index.ts", "projects/base-app/form/index.ts", "projects/base-app/resource/index.ts", "projects/base-app/settings/src/services", "projects/base-app/settings/index.ts", "projects/base-app/settings/src/modules", "projects/base-app/settings/src/components"],
+  "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { baseAppRoutes } from '@avalantec/base-app';
 import { assetRoasterRoutes } from '@avalantec/asset-roaster';
+import { baseAppRoutes } from '@avalantec/base-app/core';
+import { settingsRoutes } from '@avalantec/base-app/settings';
 
 export const routes: Routes = [
   {
@@ -10,5 +11,9 @@ export const routes: Routes = [
   {
     path: 'asset-roaster',
     children: assetRoasterRoutes,
+  },
+  {
+    path: 'settings',
+    children: settingsRoutes,
   },
 ];
