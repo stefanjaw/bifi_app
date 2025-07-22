@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MainMenuManager, Scaffold } from '@avalantec/base-app';
 
 @Component({

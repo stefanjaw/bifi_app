@@ -2,18 +2,15 @@ import {
   Component,
   computed,
   contentChild,
-  effect,
   inject,
   input,
-  OnInit,
   ResourceRef,
   TemplateRef,
-  viewChild,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { tableColumn } from '../../interfaces/table-column';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -78,7 +75,7 @@ export class TableLayout<T extends Record<string, any>> {
   protected getValue(object: any, path: string) {
     const splittedPath = path.split('.');
 
-    for (let key of splittedPath) {
+    for (const key of splittedPath) {
       object = object[key];
 
       if (!object) break;

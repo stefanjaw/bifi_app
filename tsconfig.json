@@ -36,8 +36,7 @@
       // "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
 
       "@avalantec/base-app": ["projects/base-app/src/lib"],
-      "@avalantec/base-app/*": ["projects/base-app/src/lib/*"],
-      "@avalantec/*": ["projects/base-app/*/src/index.ts"]
+      "@avalantec/base-app/*": ["projects/base-app/src/lib/*", "projects/base-app/*/src/index.ts"]
     },
     "strict": true,
     "noImplicitOverride": true,

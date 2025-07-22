@@ -1,9 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { tableColumn, TableLayout } from '../../../../../system';
+import { Component } from '@angular/core';
+import { TableLayout } from '../../../../../system';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
-import { CrudUsers } from '../../services/crud-users';
-import { user } from '../../interfaces/user';
 
 @Component({
   selector: 'bifi-app-users-list',
@@ -36,7 +34,6 @@ export class UsersList {
   //     type: 'text',
   //   },
   // ]);
-
   // ngOnInit(): void {
   //   this.users.set(this.crudUsers.getUsers());
   // }

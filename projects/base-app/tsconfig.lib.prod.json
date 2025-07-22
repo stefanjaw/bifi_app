@@ -7,5 +7,6 @@
   },
   "angularCompilerOptions": {
     "compilationMode": "partial"
-  }
+  },
+  "include": ["src/**/*.ts", "../../dist/**/*"]
 }
