@@ -50,7 +50,12 @@
 
 <!-- table -->
 <bifi-app-table-layout [columns]="productColumns" [data]="products">
-  <ng-template #actions>
-    <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
+  <ng-template #actions let-element>
+    <bifi-app-badge
+      routerLink="/asset-roaster/equipment/maintenance/{{ element._id }}"
+      class="cursor-pointer"
+      variant="warning"
+      text="View details"
+    ></bifi-app-badge>
   </ng-template>
 </bifi-app-table-layout>
