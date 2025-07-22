@@ -4,6 +4,7 @@ export * from './src/components/badge/badge';
 export * from './src/components/main-menu/main-menu';
 export * from './src/components/scaffold/scaffold';
 export * from './src/directives/icon';
+export * from './src/directives/text';
 export * from './src/interfaces/deep-keys';
 export * from './src/interfaces/library-config';
 export * from './src/interfaces/menu-item';

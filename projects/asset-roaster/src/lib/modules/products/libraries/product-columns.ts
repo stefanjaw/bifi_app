@@ -54,6 +54,7 @@ export const productColumns: tableColumn<product>[] = [
   },
   {
     field: 'status',
+    sortable: true,
     component: (value: product) => {
       const inputs: { text: string; variant: BadgeVariant } = (() => {
         switch (value.status) {
