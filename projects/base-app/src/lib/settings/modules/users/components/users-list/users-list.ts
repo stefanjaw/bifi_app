@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-import { TableLayout } from '../../../../../system';
-import { MatMenuItem } from '@angular/material/menu';
-import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'bifi-app-users-list',
-  imports: [TableLayout, MatMenuItem, MatIcon],
+  imports: [],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
 })

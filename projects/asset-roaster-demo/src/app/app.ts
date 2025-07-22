@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MainMenuManager, Scaffold } from '@avalantec/base-app';
 
 @Component({
-  selector: 'app-root',
+  selector: 'bifi-app-root',
   imports: [Scaffold],
   templateUrl: './app.html',
   styleUrl: './app.css',
