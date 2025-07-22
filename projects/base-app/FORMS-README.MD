@@ -6,7 +6,7 @@ This document defines the standards and implementation patterns for building for
 
 ## 1. Overview
 
-Forms in `@avalantec/base-app` are built using a consistent architecture based on:
+Forms in `@avalantec/base-app/form` are built using a consistent architecture based on:
 
 - A generic form layout structure.
 - Standalone Angular components.
@@ -18,7 +18,7 @@ Forms in `@avalantec/base-app` are built using a consistent architecture based o
 
 ## 2. Shared Form Components
 
-Import the full set of visual components for form rendering from `@avalantec/base-app`:
+Import the full set of visual components for form rendering from `@avalantec/base-app/form`:
 
 ```ts
 export const AppFormExtensionsImports = [
