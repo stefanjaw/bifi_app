@@ -7,7 +7,11 @@
   >
     Cancel
   </p-button>
-  <p-button type="submit" [disabled]="isSubmitting() || formDisabled()">
-    {{ saveLabel() || 'Save' }}
+  <p-button
+    type="submit"
+    [icon]="isSubmitting() ? 'pi pi-spinner' : undefined"
+    [disabled]="isSubmitting() || formDisabled()"
+  >
+    {{ isSubmitting() ? 'Saving...' : saveLabel() || 'Save' }}
   </p-button>
 </section>

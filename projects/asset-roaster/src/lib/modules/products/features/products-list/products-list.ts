@@ -11,17 +11,15 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { Badge } from '@avalantec/base-app/core';
-import { CrudProductsService } from '../../services/crud-products.service';
-import { ProductStatusCardComponent } from '../../ui/product-status-card/product-status-card.component';
+import { CrudProducts } from '../../services/crud-products';
+import { ProductStatusCardComponent } from '../../ui/product-status-card/product-status-card';
 import { ProductStatusSelect } from '../../ui/product-status-select/product-status-select';
-import { ProductFormDialog } from '@avalantec/asset-roaster/modules/products/features/product-form-dialog/product-form-dialog';
-import { FormValueState } from '@avalantec/base-app/form';
-import { CreateEquipmentFormModel } from '@avalantec/asset-roaster/modules/products/services/create-equipment-form';
+import { ProductFormDialog } from '../product-form-dialog/product-form-dialog';
 
 @Component({
   selector: 'bifi-app-products-list',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  providers: [provideResourceManager(CrudProductsService)],
+  providers: [provideResourceManager(CrudProducts)],
   imports: [
     RouterLink,
     ProductStatusCardComponent,
@@ -32,21 +30,14 @@ import { CreateEquipmentFormModel } from '@avalantec/asset-roaster/modules/produ
     ProductStatusSelect,
     ProductFormDialog,
   ],
-  templateUrl: './products-list.component.html',
+  templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductsListComponent {
+export class ProductsList {
   private resourceManager = inject<ResourceManager<product>>(ResourceManager);
 
   productColumns = productColumns;
   productFilters = productFilters;
 
   products = this.resourceManager.data;
-
-  // #region Create dialog
-  handleCreate(data: FormValueState<CreateEquipmentFormModel>) {
-    // this.closeCreateDialog();
-    console.log('create call', data);
-  }
-  // #endregion
 }

@@ -65,14 +65,22 @@ export class ApiRequestManager<T> {
   //   });
   // }
 
+  /**
+   * Post data to the api.
+   *
+   * @param data The data to be sent.
+   * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
+   * @returns An observable that resolves to the response of the request, or undefined if the request fails.
+   */
   post({
-    formData,
+    data,
     specificEndpoint = '',
   }: {
-    formData: FormData;
+    data: Record<string, any>;
     specificEndpoint?: string;
   }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
+    const formData = this.createFormDataFromObject(data);
 
     return this._httpClient.post<T | undefined>(fullURL, formData).pipe(
       catchError((err: any) => {
@@ -93,17 +101,18 @@ export class ApiRequestManager<T> {
 
   put({
     _id,
-    formData,
+    data,
     specificEndpoint = '',
   }: {
     _id: string;
-    formData: FormData;
+    data: Record<string, any>;
     specificEndpoint?: string;
   }): ResourceRef<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     // set id to the formData
-    formData.append('_id', _id);
+    data = { ...data, _id };
+    const formData = this.createFormDataFromObject(data);
 
     return rxResource({
       stream: () =>
@@ -278,6 +287,18 @@ export class ApiRequestManager<T> {
 
     console.error(error);
     throw error;
+  }
+
+  private createFormDataFromObject(data: Record<string, any>) {
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(data)) {
+      if (value instanceof File) formData.append(key, value, value.name);
+      else if (typeof value === 'object') formData.append(key, JSON.stringify(value));
+      else formData.append(key, value);
+    }
+
+    return formData;
   }
   //#endregion
 }

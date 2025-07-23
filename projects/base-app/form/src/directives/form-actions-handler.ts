@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/directive-selector */
 import { DestroyRef, Directive, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
@@ -44,7 +45,7 @@ export class FormActionsHandler<TForm extends FormGroup> {
 
       this.appSubmit.emit(data);
     } else {
-      alert('There are errors in the form.');
+      // alert('There are errors in the form.');
       // Helper function to mark invalid form controls as dirty (display errors)
       markAsDirty({
         group: this.form,

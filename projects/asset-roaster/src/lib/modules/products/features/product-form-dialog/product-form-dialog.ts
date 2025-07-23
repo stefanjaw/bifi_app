@@ -1,20 +1,30 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  output,
+  signal,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CrudProductType } from '@avalantec/asset-roaster/modules/product-types/services/crud-product-types';
 import {
-  CreateEquipmentForm,
-  CreateEquipmentFormModel,
-} from '@avalantec/asset-roaster/modules/products/services/create-equipment-form';
+  CreateProductForm,
+  CreateProductFormModel,
+} from '@avalantec/asset-roaster/modules/products/services/create-product-form';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
+import { contact, CrudContacts } from '@avalantec/base-app/settings';
 import { FormValueState } from 'dist/base-app/form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { CrudProductsService, productType } from 'projects/asset-roaster/src/public-api';
-import { firstValueFrom } from 'rxjs';
+import { forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { CrudProducts } from '../../services/crud-products';
+import { productType } from '../../../product-types';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -30,19 +40,26 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './product-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductFormDialog extends BaseDialog {
-  protected formService = inject(CreateEquipmentForm);
+export class ProductFormDialog extends BaseDialog implements OnDestroy {
+  // Services
+  protected formService = inject(CreateProductForm);
   private productTypesService = inject(CrudProductType);
-  private productService = inject(CrudProductsService);
+  private productsService = inject(CrudProducts);
+  private contactsService = inject(CrudContacts);
+  private destroy$ = new Subject<void>();
 
-  // Input
+  // Data
   productTypes = this.productTypesService.get({});
+  contacts = this.contactsService.get({});
 
   // State
   form = this.formService.form;
-  isLoading = this.productTypes.isLoading;
+  isLoading = this.productTypes.isLoading || this.contacts.isLoading;
+  isSubmitLoading = signal(false);
+  created = output<void>();
 
-  typeOptions = computed(() => {
+  // Computed options
+  productTypeOptions = computed(() => {
     const types = this.productTypes.value();
     return [
       {
@@ -53,31 +70,58 @@ export class ProductFormDialog extends BaseDialog {
     ];
   });
 
-  makeOptions = computed(() => {
-    // TODO get existing makes from backend
+  contactOptions = computed(() => {
+    const contacts = this.contacts.value();
     return [
       {
         _id: undefined,
         name: 'Other',
       },
+      ...contacts,
     ];
   });
 
+  /**
+   * Form control for the product type selection.
+   * @returns Form control for the product type selection.
+   */
   get typeIdControl() {
     return this.form.controls.productTypeIds;
   }
 
+  /**
+   * Form control for the make selection.
+   * @returns Form control for the make selection.
+   */
   get makeIdControl() {
     return this.form.controls.makeIds;
   }
 
-  isCreatingNewType() {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.unsubscribe();
+  }
+
+  /**
+   * Determines if the user is creating a new product type by checking if the
+   * product type selection control has been touched and if the selected value
+   * is undefined.
+   *
+   * @returns true if the user is creating a new product type, false otherwise
+   */
+  isCreatingNewProductType() {
     return this.typeIdControl.touched && this.typeIdControl.value === undefined;
   }
 
   isCreatingNewMake() {
     return this.makeIdControl.touched && this.makeIdControl.value === undefined;
   }
+
+  /**
+   * Opens the product form dialog and resets the form to its initial state.
+   * This ensures that any previously entered data is cleared when the dialog
+   * is opened anew.
+   */
 
   override openDialog(): void {
     this.formService.reset();
@@ -90,61 +134,64 @@ export class ProductFormDialog extends BaseDialog {
    *
    * @param data the form data
    */
-  async handleSubmit(data: FormValueState<CreateEquipmentFormModel>) {
-    this.closeDialog();
-    console.log('create call', data);
+  async handleSubmit(data: FormValueState<CreateProductFormModel>) {
+    this.isSubmitLoading.set(true);
 
     const { rawValue } = data;
 
-    const isCreatingType =
-      rawValue.productTypeIds === undefined && rawValue.createdType.name !== null;
+    // If the user is creating a new product type, create it first
+    let productTypeResource: Observable<productType | string | undefined>;
 
-    let createdResource: productType | undefined = undefined;
-    if (isCreatingType) {
-      const dataForCreatingType = new FormData();
-      dataForCreatingType.append('name', rawValue.createdType.name!);
-      dataForCreatingType.append('description', rawValue.createdType.description!);
+    // If the user is creating a new make, create it first
+    let makeResource: Observable<contact | string | undefined>;
 
-      alert('debug: creating product type');
-      createdResource = await firstValueFrom(
-        this.productTypesService.post({ formData: dataForCreatingType })
-      );
-    } else {
-      alert('debug: not creating product type');
-    }
+    // Construct resource
+    if (this.isCreatingNewProductType())
+      productTypeResource = this.productTypesService.post({
+        data: {
+          name: rawValue.createdType.name!,
+          description: rawValue.createdType.description!,
+        },
+      });
+    else productTypeResource = of(rawValue.productTypeIds!);
 
-    const productFormData = new FormData();
-    if (createdResource) {
-      productFormData.append('productTypeIds', JSON.stringify([createdResource!._id!]));
-    } else {
-      productFormData.append('productTypeIds', JSON.stringify([rawValue.productTypeIds!]));
-    }
+    // Construct resource
+    if (this.isCreatingNewMake())
+      makeResource = this.contactsService.post({
+        data: {
+          name: rawValue.createdMake.oemName!,
+          lastName: rawValue.createdMake.oemName!,
+        },
+      });
+    else makeResource = of(rawValue.makeIds!);
 
-    // Todo
-    // productFormData.append('makeIds', rawValue.makeIds!);
-    productFormData.append('productModel', rawValue.productModel!);
-    productFormData.append('serialNumber', rawValue.serialNumber!);
-    productFormData.append('acquiredDate', rawValue.acquiredDate.toISOString()!);
-
-    // TEST DEFAULT DATA
-    productFormData.append('locationId', '686d5d093d7740384a749084');
-    productFormData.append('acquiredPrice', '1000');
-    productFormData.append('currentPrice', '1000');
-    productFormData.append('condition', 'good');
-    productFormData.append('makeIds', JSON.stringify(['686c094bfbc71e54c1e5ad90']));
-
-    productFormData.append('vendorIds', JSON.stringify(['686c094bfbc71e54c1e5ad90']));
-
-    productFormData.append('warrantyDate', new Date().toISOString()!);
-
-    console.log('productFormData');
-    for (const [key, value] of productFormData.entries()) {
-      console.log(key, value);
-    }
-
-    alert('product post!');
-    this.productService.post({ formData: productFormData }).subscribe(value => {
-      alert('Product created ' + JSON.stringify(value, null, 2));
-    });
+    // Create the product type and make if needed
+    forkJoin([productTypeResource, makeResource])
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(([productType, make]) =>
+          this.productsService.post({
+            data: {
+              productTypeIds: typeof productType === 'string' ? [productType] : [productType?._id],
+              makeIds: typeof make === 'string' ? [make] : [make?._id],
+              productModel: rawValue.productModel,
+              serialNumber: rawValue.serialNumber,
+              acquiredDate: rawValue.acquiredDate.toISOString(),
+            },
+          })
+        )
+      )
+      .subscribe({
+        complete: () => {
+          this.isSubmitLoading.set(false);
+          this.formService.reset();
+          this.closeDialog();
+          this.created.emit();
+        },
+        error: e => {
+          this.isSubmitLoading.set(false);
+          alert(e.message);
+        },
+      });
   }
 }

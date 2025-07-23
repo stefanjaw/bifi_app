@@ -10,7 +10,7 @@ import { ProductStatusManager } from '../../services/product-status-manager';
 @Component({
   selector: 'bifi-app-product-status-card',
   imports: [CommonModule, MatIcon],
-  templateUrl: './product-status-card.component.html',
+  templateUrl: './product-status-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductStatusCardComponent {
