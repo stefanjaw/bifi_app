@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import {
   statusVariant,
   statusCardState,
-} from '@avalantec/asset-roaster/modules/products/ui/product-status-card/product-status-card.model';
+} from '@avalantec/asset-roaster/modules/products/interfaces/product-status-card';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { product } from '../../interfaces/product';
-import { filter } from '@avalantec/base-app/resource';
+import { ProductStatusManager } from '../../services/product-status-manager';
 
 @Component({
   selector: 'bifi-app-product-status-card',
@@ -15,9 +14,10 @@ import { filter } from '@avalantec/base-app/resource';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductStatusCardComponent {
+  protected productStatusManager = inject(ProductStatusManager);
+
   variant = input.required<statusVariant>();
   units = input.required<number>();
-  filter = output<filter<product>[]>();
 
   state = computed<statusCardState>(() => {
     const variant = this.variant();
@@ -27,66 +27,35 @@ export class ProductStatusCardComponent {
         return {
           title: 'Under Service',
           icon: 'handyman',
-          className: 'bg-orange-500 text-white',
+          className: 'bg-orange-500 hover:bg-orange-600 ring-orange-400',
         };
       case 'overdue':
         return {
           title: 'Overdue',
           icon: 'warning',
-          className: 'bg-red-500 text-white',
+          className: 'bg-red-500 hover:bg-red-600 ring-red-400',
         };
       case 'due':
         return {
           title: 'Due',
           icon: 'access_time',
-          className: 'bg-yellow-500 text-white',
+          className: ' bg-yellow-500 hover:bg-yellow-600 ring-yellow-400',
         };
       case 'in-pm':
         return {
           title: 'In PM',
           icon: 'settings',
-          className: 'bg-blue-500 text-white',
+          className: 'bg-teal-500 hover:bg-teal-600 ring-teal-400',
         };
       case 'pm-not-set':
         return {
           title: 'PM Not Set',
           icon: 'question_mark',
-          className: 'bg-indigo-500 text-white',
+          className: 'bg-indigo-500 hover:bg-indigo-600 ring-indigo-400',
         };
     }
 
     // temporal en lo que se agregan el resto
     return null!;
   });
-
-  onClick() {
-    if (this.variant() === 'under-service') {
-      this.filter.emit([{ field: 'status', value: 'under-service', operator: '==' }]);
-    } else if (this.variant() === 'in-pm') {
-      this.filter.emit([{ field: 'status', value: 'in-pm', operator: '==' }]);
-    } else if (this.variant() === 'pm-not-set') {
-      this.filter.emit([{ field: 'maintenanceWindowIds', operator: 'empty' }]);
-    } else if (this.variant() == 'due') {
-      this.filter.emit([
-        {
-          field: 'minMaintenanceDate',
-          value: new Date().toISOString(),
-          operator: '>=',
-        },
-        {
-          field: 'maxMaintenanceDate',
-          value: new Date().toISOString(),
-          operator: '<=',
-        },
-      ]);
-    } else if (this.variant() == 'overdue') {
-      this.filter.emit([
-        {
-          field: 'maxMaintenanceDate',
-          value: new Date().toISOString(),
-          operator: '>',
-        },
-      ]);
-    }
-  }
 }

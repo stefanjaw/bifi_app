@@ -14,6 +14,8 @@ import { InputIcon } from 'primeng/inputicon';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchBar implements OnDestroy {
+  private readonly filterId = 'search-bar';
+
   searchText = model<string>('');
   filterManager = inject(FilterManager);
   searchFilters = input<filter<any>[]>([]);
@@ -30,18 +32,20 @@ export class SearchBar implements OnDestroy {
    * the operator to 'like'. If the search bar is empty, it will clear all filters.
    */
   performSearch() {
-    this.filterManager.clearFilters();
+    this.filterManager.removeFilter(this.filterId);
 
     if (this.searchText()) {
-      this.filterManager.addFilters(
-        this.searchFilters()
+      this.filterManager.addFilter({
+        id: this.filterId,
+        operator: 'or',
+        filters: this.searchFilters()
           .filter(filter => filter.type === 'string')
           .map(filter => ({
             ...filter,
             value: this.searchText(),
             operator: 'like',
-          }))
-      );
+          })),
+      });
     }
   }
 }

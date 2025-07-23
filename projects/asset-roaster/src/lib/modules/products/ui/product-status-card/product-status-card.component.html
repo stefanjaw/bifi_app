@@ -1,9 +1,12 @@
 <article
   [ngClass]="[
     state().className,
-    'flex flex-col gap-2 p-3 rounded-md cursor-pointer',
+    productStatusManager.currentVariant() === this.variant() ? 'ring-4' : '',
+    'p-4 rounded-lg shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2  text-white',
   ]"
-  (click)="onClick()"
+  (click)="productStatusManager.filter(this.variant())"
+  (keyup)="productStatusManager.filter(this.variant())"
+  tabindex="0"
 >
   <header class="flex items-center justify-between">
     <h2 class="text-lg font-semibold">

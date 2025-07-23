@@ -19,6 +19,7 @@ export interface filter<T extends Record<string, any> = Record<string, any>> {
 }
 
 export interface filterGroup<T extends Record<string, any> = Record<string, any>> {
+  id: string; // id of the group to add or remove
   filters: filter<T>[];
   operator: filterOperator;
 }
