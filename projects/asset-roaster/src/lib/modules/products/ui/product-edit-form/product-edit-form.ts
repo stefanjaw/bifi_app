@@ -6,7 +6,7 @@ import { DocumentsSection } from './documents-section/documents-section';
 import { MaintenanceServiceSection } from './maintenance-service-section/maintenance-service-section';
 import { CommissioningLifecycleSection } from './commissioning-lifecycle-section/commissioning-lifecycle-section';
 import { ActivityHistorySection } from './activity-history-section/activity-history-section';
-import { EquipmentForm } from '../../services/equipment-form';
+import { UpdateProductForm } from '../../services/update-product-form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
@@ -33,7 +33,7 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class ProductEditForm {
   isEditMode = input.required<boolean>();
-  formService = inject(EquipmentForm);
+  formService = inject(UpdateProductForm);
 
   toggleEdit = output<void>();
   save = output<void>();

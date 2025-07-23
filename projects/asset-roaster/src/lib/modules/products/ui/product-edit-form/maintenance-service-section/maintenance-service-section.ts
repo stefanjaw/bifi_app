@@ -2,7 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
-import { EquipmentForm } from '../../../services/equipment-form';
+import { UpdateProductForm } from '../../../services/update-product-form';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -12,5 +12,5 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class MaintenanceServiceSection {
   isEditMode = input.required<boolean>();
-  formService = inject(EquipmentForm);
+  formService = inject(UpdateProductForm);
 }

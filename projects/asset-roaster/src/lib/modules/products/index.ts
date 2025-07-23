@@ -8,7 +8,7 @@ export * from './libraries/product-filters';
 export * from './routes/product.routes';
 export * from './services/create-product-form';
 export * from './services/crud-products';
-export * from './services/equipment-form';
+export * from './services/update-product-form';
 export * from './services/product-status-manager';
 export * from './ui/product-edit-form/activity-history-section/activity-history-section';
 export * from './ui/product-edit-form/commissioning-lifecycle-section/commissioning-lifecycle-section';

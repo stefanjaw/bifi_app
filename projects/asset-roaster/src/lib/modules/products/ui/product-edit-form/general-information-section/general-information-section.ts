@@ -5,10 +5,11 @@ import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
-import { EquipmentForm } from '../../../services/equipment-form';
+import { UpdateProductForm } from '../../../services/update-product-form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'bifi-app-general-information-section',
@@ -22,10 +23,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     FileUploadModule,
     CardModule,
     MessageModule,
+    CommonModule,
   ],
   templateUrl: './general-information-section.html',
 })
 export class GeneralInformationSection {
   isEditMode = input.required<boolean>();
-  formService = inject(EquipmentForm);
+  formService = inject(UpdateProductForm);
 }
