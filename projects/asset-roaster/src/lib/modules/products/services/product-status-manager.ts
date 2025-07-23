@@ -75,7 +75,7 @@ export class ProductStatusManager {
         {
           field: 'maxMaintenanceDate',
           value: new Date().toISOString(),
-          operator: '>',
+          operator: '<',
         },
       ],
     });
@@ -96,12 +96,12 @@ export class ProductStatusManager {
         {
           field: 'minMaintenanceDate',
           value: new Date().toISOString(),
-          operator: '>=',
+          operator: '<=',
         },
         {
           field: 'maxMaintenanceDate',
           value: new Date().toISOString(),
-          operator: '<=',
+          operator: '>=',
         },
       ],
     });
