@@ -2,7 +2,7 @@ import { pagination } from '../interfaces/pagination';
 import { inject, Injectable, ResourceRef, Signal, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
@@ -44,25 +44,42 @@ export class ApiRequestManager<T> {
    * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
    * @returns A resource ref that resolves to the response of the request, or undefined if the request fails.
    */
+  // post({
+  //   formData,
+  //   specificEndpoint = '',
+  // }: {
+  //   formData: FormData;
+  //   specificEndpoint?: string;
+  // }): ResourceRef<T | undefined> {
+  //   const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
+
+  //   return rxResource({
+  //     stream: () =>
+  //       this._httpClient.post<T | undefined>(fullURL, formData).pipe(
+  //         catchError((err: any) => {
+  //           this.manageError(fullURL, err.message);
+  //           return throwError(() => err);
+  //         })
+  //       ),
+  //     defaultValue: undefined,
+  //   });
+  // }
+
   post({
     formData,
     specificEndpoint = '',
   }: {
     formData: FormData;
     specificEndpoint?: string;
-  }): ResourceRef<T | undefined> {
+  }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
-    return rxResource({
-      stream: () =>
-        this._httpClient.post<T | undefined>(fullURL, formData).pipe(
-          catchError((err: any) => {
-            this.manageError(fullURL, err.message);
-            return throwError(() => err);
-          })
-        ),
-      defaultValue: undefined,
-    });
+    return this._httpClient.post<T | undefined>(fullURL, formData).pipe(
+      catchError((err: any) => {
+        this.manageError(fullURL, err.message);
+        return throwError(() => err);
+      })
+    );
   }
 
   /**

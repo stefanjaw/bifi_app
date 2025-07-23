@@ -11,6 +11,7 @@ export * from './src/interfaces/menu-item';
 export * from './src/interfaces/ts-helpers';
 export * from './src/libraries/base-menu-manager';
 export * from './src/libraries/library-config-token';
+export * from './src/libraries/base-dialog';
 export * from './src/libraries/object-utils';
 export * from './src/services/main-menu-manager';
 export * from './src/services/sidenav-manager';

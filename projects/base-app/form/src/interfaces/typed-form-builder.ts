@@ -8,6 +8,7 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { FormGroupLike } from './form-helpers';
+import { IsPlainObject } from '@avalantec/base-app/core';
 
 type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
@@ -16,7 +17,7 @@ export type ControlsOf<T extends FormGroupLike> = {
     ? T[K]
     : Required<T[K]> extends (infer R)[]
       ? FArray<R>
-      : Required<T[K]> extends Record<string, any>
+      : IsPlainObject<Required<T[K]>> extends true
         ? FormGroup<Required<ControlsOf<T[K]>>>
         : FormControl<T[K]>;
 };
@@ -26,7 +27,7 @@ export type InputControls<T extends FormGroupLike> = Prettify<{
     ? T[K]
     : Required<T[K]> extends (infer R)[]
       ? IFArray<R>
-      : Required<T[K]> extends Record<string, any>
+      : IsPlainObject<Required<T[K]>> extends true
         ? Required<InputControls<T[K]>>
         : PermissiveControlConfig<T[K]>;
 }>;

@@ -11,7 +11,8 @@ export class TypedFormBuilder {
 
   group<T extends FormGroupLike>(data: InputControls<T>) {
     const payload = this.parseFormInput(data);
-    console.log('form group built payload', JSON.stringify(payload, null, 2));
+    // TODO handle form arrays!
+    console.log('form group built payload', payload);
     return this.fb.group<ControlsOf<T>>(payload);
   }
 
@@ -24,7 +25,9 @@ export class TypedFormBuilder {
           clone[key] = data[key];
         } else if (typeof data[key] === 'object') {
           console.log('key is object', key);
-          clone[key] = this.parseFormInput(data[key]);
+          const payload = this.parseFormInput(data[key]);
+          console.log('payload', payload);
+          clone[key] = this.fb.group(payload);
         } else {
           clone[key] = data[key];
         }
