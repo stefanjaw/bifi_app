@@ -1,0 +1,32 @@
+@if (product()?.status === 'awaiting-comissioning') {
+  <p-message severity="warn" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-question-circle" bifiAppIcon="xl"></i>
+      <div>
+        <div class="font-medium">Equipment: Awaiting Commissioning</div>
+        <div class="text-sm mt-1">
+          This equipment requires initial inspection and commissioning before use.
+        </div>
+      </div>
+    </div>
+  </p-message>
+} @else if (product()?.status === 'active' || product()?.status === 'in-pm') {
+  <p-message severity="success" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-check-circle" bifiAppIcon="xl"></i>
+      <div>
+        <div class="font-medium">Equipment: Active</div>
+      </div>
+    </div>
+  </p-message>
+} @else if (product()?.status === 'under-service') {
+  <p-message severity="warn" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-question-circle" bifiAppIcon="xl"></i>
+      <div>
+        <div class="font-medium">Equipment: Under Service</div>
+        <div class="text-sm mt-1">This equipment is currently under service.</div>
+      </div>
+    </div>
+  </p-message>
+}

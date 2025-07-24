@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormValueState } from '../interfaces/form-helpers';
 import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
+import { ToastManager } from '@avalantec/base-app/core';
 
 @Directive({
   selector: '[formGroup][bifiAppFormActionsHandler]',
@@ -11,6 +12,7 @@ import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 export class FormActionsHandler<TForm extends FormGroup> {
   private group = inject(FormGroupDirective, { self: true });
   private destroy$ = inject(DestroyRef);
+  private toastManager = inject(ToastManager);
 
   appSubmit = output<FormValueState<TForm>>();
 
@@ -31,8 +33,7 @@ export class FormActionsHandler<TForm extends FormGroup> {
    */
   private submit() {
     if (!this.form.touched) {
-      // toast.error('You have not made any changes.');
-      alert('You have not made any changes.');
+      this.toastManager.showInfo('You have not made any changes.');
       return;
     }
 
@@ -45,7 +46,8 @@ export class FormActionsHandler<TForm extends FormGroup> {
 
       this.appSubmit.emit(data);
     } else {
-      // alert('There are errors in the form.');
+      this.toastManager.showError('There are errors in the form.');
+      
       // Helper function to mark invalid form controls as dirty (display errors)
       markAsDirty({
         group: this.form,

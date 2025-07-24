@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { statusVariant } from '../interfaces/product-status-card';
 import { FilterManager } from '@avalantec/base-app/resource';
 
@@ -12,6 +12,12 @@ export class ProductStatusManager {
 
   get currentVariant() {
     return this._currentVariant.asReadonly();
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.filterManager.filters().length === 0) this._currentVariant.set(undefined);
+    });
   }
 
   /**

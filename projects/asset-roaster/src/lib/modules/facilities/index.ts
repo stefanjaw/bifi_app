@@ -1,2 +1,4 @@
-export type { facility } from './interfaces/facility';
-export type { room } from './interfaces/room';
+export * from './interfaces/facility';
+export * from './interfaces/room';
+export * from './services/crud-facilities';
+export * from './services/crud-rooms';

@@ -11,6 +11,7 @@ import { Noir } from 'projects/asset-roaster-demo/src/app/primeng.preset';
 import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,5 +32,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch()),
+    MessageService,
   ],
 };

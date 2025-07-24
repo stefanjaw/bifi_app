@@ -17,7 +17,7 @@ interface UpdateProductFormModel {
   remarks: string | null;
   photo: string | null;
   maintenanceWindowIds: string | null;
-  pmScheduleStatus: string;
+  maintenanceDate: Date | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -42,9 +42,7 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       remarks: [null],
       photo: [null],
       maintenanceWindowIds: [null],
-      pmScheduleStatus: [
-        'This equipment is awaiting commissioning. PM schedule cannot be determined yet.',
-      ],
+      maintenanceDate: [null],
     });
   }
 }

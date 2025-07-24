@@ -10,8 +10,7 @@
   <p-button
     type="submit"
     [icon]="isSubmitting() ? 'pi pi-spinner' : undefined"
+    [label]="isSubmitting() ? 'Saving...' : saveLabel() || 'Save'"
     [disabled]="isSubmitting() || formDisabled()"
-  >
-    {{ isSubmitting() ? 'Saving...' : saveLabel() || 'Save' }}
-  </p-button>
+  ></p-button>
 </section>

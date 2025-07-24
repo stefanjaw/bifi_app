@@ -10,8 +10,13 @@ import { UpdateProductForm } from '../../services/update-product-form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
-import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
+import { product } from '../../interfaces/product';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { room } from '../../../facilities';
+import { maintenanceWindow } from '../../../maintenance-windows';
+import { productType } from '../../../product-types';
+import { contact } from '@avalantec/base-app/settings';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
@@ -21,24 +26,39 @@ import { InputTextModule } from 'primeng/inputtext';
     ButtonModule,
     DatePickerModule,
     CardModule,
-    MessageModule,
     InputTextModule,
     GeneralInformationSection,
     DocumentsSection,
     MaintenanceServiceSection,
     CommissioningLifecycleSection,
     ActivityHistorySection,
+    ProgressBarModule,
   ],
   templateUrl: './product-edit-form.html',
 })
 export class ProductEditForm {
+  product = input.required<product | null>();
+  isLoading = input.required<boolean>();
+  isSubmitLoading = input.required<boolean>();
   isEditMode = input.required<boolean>();
   formService = inject(UpdateProductForm);
 
+  // data to inject in children
+  productTypes = input<productType[]>([]);
+  contacts = input<contact[]>([]);
+  rooms = input<room[]>([]);
+  maintenaceWindows = input<maintenanceWindow[]>([]);
+
+  // outputs
   toggleEdit = output<void>();
   save = output<void>();
-  cancel = output<void>();
   backToDashboard = output<void>();
+  initiatePM = output<void>();
+  finishPM = output<void>();
   commission = output<void>();
+  decomission = output<void>();
   addDocument = output<void>();
+
+  /* eslint-disable @angular-eslint/no-output-native */
+  cancel = output<void>();
 }

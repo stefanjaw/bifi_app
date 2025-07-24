@@ -13,7 +13,7 @@ import {
   CreateProductForm,
   CreateProductFormModel,
 } from '@avalantec/asset-roaster/modules/products/services/create-product-form';
-import { BaseDialog } from '@avalantec/base-app/core';
+import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { contact, CrudContacts } from '@avalantec/base-app/settings';
 import { FormValueState } from 'dist/base-app/form';
@@ -46,6 +46,7 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
   private productTypesService = inject(CrudProductType);
   private productsService = inject(CrudProducts);
   private contactsService = inject(CrudContacts);
+  private toastManager = inject(ToastManager);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -187,10 +188,10 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
           this.formService.reset();
           this.closeDialog();
           this.created.emit();
+          this.toastManager.showSuccess('Product created successfully');
         },
-        error: e => {
+        error: () => {
           this.isSubmitLoading.set(false);
-          alert(e.message);
         },
       });
   }

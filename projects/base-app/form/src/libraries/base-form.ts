@@ -98,12 +98,19 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
   }
 
   /**
-   * Patches the form with the provided data.
+   * Patches the value of the form with the provided data.
    *
-   * @param data - Partial form value object to patch the form with.
+   * @param data - The data to patch the form with.
+   * @param options - Optional options for the patchValue call.
+   * @returns The patched form.
+   *
+   * @see https://angular.io/api/forms/FormGroup#patchValue
    */
-  patchValue(data: Parameters<(typeof this.form)['patchValue']>[0]) {
-    this.form.patchValue(data);
+  patchValue(
+    data: Parameters<(typeof this.form)['patchValue']>[0],
+    options: { onlySelf?: boolean; emitEvent?: boolean } = {}
+  ) {
+    this.form.patchValue(data, options);
   }
 
   getValueState(): FormValueState<TModel> {

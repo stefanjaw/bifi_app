@@ -1,1 +1,2 @@
-export type { maintenanceWindow } from './interfaces/maintenance-window';
+export * from './interfaces/maintenance-window';
+export * from './services/crud-maintenance-windows';

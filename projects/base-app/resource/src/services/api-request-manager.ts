@@ -5,13 +5,14 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, Observable, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
-import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
+import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiRequestManager<T> {
   private readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
+  private _toastManager = inject(ToastManager);
   private _endpoint = '';
   private _httpClient = inject(HttpClient);
   private _defaultPaginateOptions = signal<paginationOptions>({
@@ -84,21 +85,20 @@ export class ApiRequestManager<T> {
 
     return this._httpClient.post<T | undefined>(fullURL, formData).pipe(
       catchError((err: any) => {
-        this.manageError(fullURL, err.message);
+        this.manageError(fullURL, err.error.message);
         return throwError(() => err);
       })
     );
   }
 
   /**
-   * Sends a PUT request to the API with the given _id and form data.
+   * Puts data to the api.
    *
-   * @param {string} _id The id of the document to be updated.
-   * @param {FormData} formData The form data to be sent in the request.
-   * @param {string} [specificEndpoint] An optional specific endpoint to be used.
-   * @returns {ResourceRef<T | undefined>} A resource ref that resolves to the updated entity or undefined if the request fails.
+   * @param _id The id of the document to be updated.
+   * @param data The data to be sent.
+   * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
+   * @returns An observable that resolves to the response of the request, or undefined if the request fails.
    */
-
   put({
     _id,
     data,
@@ -107,23 +107,19 @@ export class ApiRequestManager<T> {
     _id: string;
     data: Record<string, any>;
     specificEndpoint?: string;
-  }): ResourceRef<T | undefined> {
+  }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     // set id to the formData
     data = { ...data, _id };
     const formData = this.createFormDataFromObject(data);
 
-    return rxResource({
-      stream: () =>
-        this._httpClient.put<T | undefined>(fullURL, formData).pipe(
-          catchError((err: any) => {
-            this.manageError(fullURL, err.message);
-            return throwError(() => err);
-          })
-        ),
-      defaultValue: undefined,
-    });
+    return this._httpClient.put<T | undefined>(fullURL, formData).pipe(
+      catchError((err: any) => {
+        this.manageError(fullURL, err.error.message);
+        return throwError(() => err);
+      })
+    );
   }
 
   /**
@@ -283,9 +279,8 @@ export class ApiRequestManager<T> {
    */
 
   private manageError(fullURL: string, message: string) {
+    this._toastManager.showError(message, 'Error');
     const error = new Error(`POST ${fullURL} failed: ${message}`);
-
-    console.error(error);
     throw error;
   }
 
