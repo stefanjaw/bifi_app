@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { maintenanceWindow } from '../../../../maintenance-windows';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
+import { preventiveMaintenanceStatus } from './maintenance-status.model';
 
 dayjs.extend(isBetween);
 
@@ -51,22 +52,20 @@ export class MaintenanceServiceSection {
     return product.maintenanceWindowIds?.length > 0;
   });
 
-  pmInitiated = computed(() => {
-    return !!this.product()?.productMaintenances.find(m => m.type === 'preventive-maintenance');
-  });
-
-  pmCanBeStarted = computed(() => {
+  // to check if PM can be started
+  canStartPM = computed(() => {
     const product = this.product();
 
-    if (!product) return false;
-
-    // check if service is initiated, if so, cannot start pm
-    if (product.productMaintenances.some(m => m.type === 'service')) return false;
-
-    if (!product.productComission) return false;
-
-    // check if pm is already initiated
-    if (this.pmInitiated()) return false;
+    // Some checkings
+    if (
+      !product ||
+      !product.productComission ||
+      product.productComission.outcome === 'fail' ||
+      product.status === 'decomissioned' ||
+      this.serviceStarted() ||
+      this.pmStarted()
+    )
+      return false;
 
     const today = dayjs();
     const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
@@ -75,57 +74,57 @@ export class MaintenanceServiceSection {
     return today.isBetween(minMaintenanceDate, maxMaintenanceDate);
   });
 
+  // to check if service can be started
+  canStartService = computed(() => {
+    const product = this.product();
+
+    if (
+      !product ||
+      !product.productComission ||
+      product.productComission.outcome === 'fail' ||
+      product.status === 'decomissioned'
+    )
+      return false;
+
+    return !this.serviceStarted() && !this.isEditMode();
+  });
+
+  // to check if PM is started
+  pmStarted = computed(() => {
+    return !!this.product()?.productMaintenances.find(m => m.type === 'preventive-maintenance');
+  });
+
+  // to check if service is started
+  serviceStarted = computed(() => {
+    return !!this.product()?.productMaintenances.find(m => m.type === 'service');
+  });
+
+  // to get current PM
+  currPM = computed(() => {
+    return this.product()?.productMaintenances.find(m => m.type === 'preventive-maintenance');
+  });
+
+  // to get current service
+  currService = computed(() => {
+    return this.product()?.productMaintenances.find(m => m.type === 'service');
+  });
+
   pmScheduleStatus = computed(() => {
     const product = this.product();
-    const pmInitiated = this.pmInitiated();
-    const pmCanBeStarted = this.pmCanBeStarted();
+    const canStartPM = this.canStartPM();
+    const pmStarted = this.pmStarted();
+    const serviceStarted = this.serviceStarted();
 
-    let status: {
-      label: string;
-      className: string;
-    } = {
-      label: '',
-      className: '',
-    };
+    let status: preventiveMaintenanceStatus = 'not-comissioned';
 
-    if (!product) return status;
+    if (!product || !product.productComission) return status;
 
-    // dates to reuse
-    const maintenanceDate = dayjs(product.maintenanceDate).format('MM/DD/YYYY');
-    const minMaintenanceDate = dayjs(product.minMaintenanceDate).format('MM/DD/YYYY');
-    const maxMaintenanceDate = dayjs(product.maxMaintenanceDate).format('MM/DD/YYYY');
-
-    if (!product.productComission) {
-      status = {
-        label: 'This equipment is awaiting commissioning. PM schedule cannot be determined yet.',
-        className: 'text-orange-500',
-      };
-    } else if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0) {
-      status = {
-        label:
-          'No active preventive maintenance schedule. Set an interval and first PM date to begin.',
-        className: '',
-      };
-    } else if (pmCanBeStarted && !pmInitiated) {
-      status = {
-        label: `PM Due on ${maintenanceDate}. (Window: ${minMaintenanceDate} - ${maxMaintenanceDate}).`,
-        className: 'text-green-500',
-      };
-    } else if (pmInitiated) {
-      const pmDate = dayjs(
-        product.productMaintenances.find(m => m.type === 'preventive-maintenance')?.date
-      ).format('MM/DD/YYYY');
-
-      status = {
-        label: `PM In Progress, initiated on ${pmDate}.`,
-        className: 'text-blue-500',
-      };
-    } else {
-      status = {
-        label: `Next Scheduled PM: ${maintenanceDate}.`,
-        className: '',
-      };
-    }
+    if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
+      status = 'not-scheduled';
+    else if (serviceStarted && !pmStarted) status = 'under-service';
+    else if (canStartPM) status = 'available';
+    else if (pmStarted) status = 'in-progress';
+    else status = 'finished';
 
     return status;
   });
@@ -148,5 +147,9 @@ export class MaintenanceServiceSection {
 
   handleFinishPM() {
     this.productMaintenanceContext.handleFinishPM();
+  }
+
+  handleOpenMaintenanceDialog() {
+    this.productMaintenanceContext.handleOpenMaintenanceDialog();
   }
 }

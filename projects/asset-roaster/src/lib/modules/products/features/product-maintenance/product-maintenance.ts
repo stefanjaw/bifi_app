@@ -11,15 +11,23 @@ import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { ToastManager } from '@avalantec/base-app/core';
 import { Subject, takeUntil } from 'rxjs';
 import {
-  ProductComissioningInitFormDialog,
+  ProductComissioningFormDialog,
   ProductDecomissioningFormDialog,
 } from '../../../product-comissioning';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
-import { CrudProductMaintenances } from '../../../product-maintenances';
+import {
+  CrudProductMaintenances,
+  ProductMaintenanceFormDialog,
+} from '../../../product-maintenances';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
-  imports: [ProductEditForm, ProductComissioningInitFormDialog, ProductDecomissioningFormDialog],
+  imports: [
+    ProductEditForm,
+    ProductComissioningFormDialog,
+    ProductDecomissioningFormDialog,
+    ProductMaintenanceFormDialog,
+  ],
   templateUrl: './product-maintenance.html',
 })
 export class ProductMaintenance implements OnDestroy {
@@ -75,8 +83,13 @@ export class ProductMaintenance implements OnDestroy {
   isEditMode = signal(false);
 
   // children
-  comissioningInitFormDialog = viewChild<ProductComissioningInitFormDialog>(ProductComissioningInitFormDialog);
-  decomissioningFormDialog = viewChild<ProductDecomissioningFormDialog>(ProductDecomissioningFormDialog);
+  comissioningInitFormDialog = viewChild<ProductComissioningFormDialog>(
+    ProductComissioningFormDialog
+  );
+  decomissioningFormDialog = viewChild<ProductDecomissioningFormDialog>(
+    ProductDecomissioningFormDialog
+  );
+  maintenanceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
 
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
@@ -193,6 +206,16 @@ export class ProductMaintenance implements OnDestroy {
    */
   handleOpenDecomissionDialog() {
     this.decomissioningFormDialog()?.openDialog();
+  }
+
+  /**
+   * Opens the maintenance dialog.
+   *
+   * This dialog is used to add a new maintenance record for the current product.
+   * It is only accessible from the product maintenance page.
+   */
+  handleOpenMaintenanceDialog() {
+    this.maintenanceFormDialog()?.openDialog();
   }
 
   handleAddDocument() {
@@ -335,6 +358,12 @@ export class ProductMaintenance implements OnDestroy {
           this.handleOpenDecomissionDialog();
           break;
         case 'decommission':
+          this.handleReloadProduct();
+          break;
+        case 'open-maintenance-dialog':
+          this.handleOpenMaintenanceDialog();
+          break;
+        case 'maintenance':
           this.handleReloadProduct();
           break;
         case 'add-document':
