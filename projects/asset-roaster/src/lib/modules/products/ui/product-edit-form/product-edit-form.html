@@ -2,7 +2,7 @@
   [formGroup]="formService.form"
   class="min-h-screen bg-gray-50"
   bifiAppFormActionsHandler
-  (appSubmit)="save.emit()"
+  (appSubmit)="handleSave()"
 >
   <!-- Header -->
   <div class="bg-white border-b border-gray-200 px-6 py-4">
@@ -15,7 +15,7 @@
 
       <div class="flex items-center space-x-3">
         @if (isEditMode()) {
-          <p-button label="Cancel" severity="secondary" (onClick)="cancel.emit()" type="button" />
+          <p-button label="Cancel" severity="secondary" (onClick)="handleCancel()" type="button" />
           <p-button
             [icon]="isSubmitLoading() ? 'pi pi-spinner' : undefined"
             [label]="isSubmitLoading() ? 'Saving...' : 'Save Changes'"
@@ -28,7 +28,7 @@
             [disabled]="isLoading()"
             label="Edit Details"
             icon="pi pi-pencil"
-            (onClick)="toggleEdit.emit()"
+            (onClick)="toggleEdit()"
             type="button"
           />
         }
@@ -37,7 +37,7 @@
           icon="pi pi-arrow-left"
           severity="info"
           [outlined]="true"
-          (onClick)="backToDashboard.emit()"
+          (onClick)="handleBackToDashboard()"
           type="button"
         />
       </div>
@@ -59,26 +59,19 @@
           />
 
           <!-- the documents of the product -->
-          <bifi-app-documents-section
-            [isEditMode]="isEditMode()"
-            (addDocument)="addDocument.emit()"
-          />
+          <bifi-app-documents-section [isEditMode]="isEditMode()" />
 
           <!-- the maintenance service of the product -->
           <bifi-app-maintenance-service-section
             [product]="product()"
             [maintenanceWindows]="maintenaceWindows()"
             [isEditMode]="isEditMode()"
-            (initiatePM)="initiatePM.emit()"
-            (finishPM)="finishPM.emit()"
           />
 
           <!-- the commissioning and lifecycle of the product -->
           <bifi-app-commissioning-lifecycle-section
             [product]="product()"
             [isEditMode]="isEditMode()"
-            (commission)="commission.emit()"
-            (decomission)="decomission.emit()"
           />
 
           <!-- the activity history of the product -->

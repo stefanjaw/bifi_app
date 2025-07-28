@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       <div></div>
       @if (isEditMode()) {
-        <p-button label="Add Document" icon="pi pi-plus" (onClick)="addDocument.emit()" />
+        <p-button label="Add Document" icon="pi pi-plus" (onClick)="handleAddDocument()" />
       }
     </div>
 

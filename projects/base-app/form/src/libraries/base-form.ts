@@ -9,6 +9,7 @@ import {
 import { ControlsOf } from '../interfaces/typed-form-builder';
 import { getFormGroupDirtyValue } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
+import { Subject } from 'rxjs';
 
 /**
  * Abstract class representing a base form structure with reactive value handling.
@@ -21,6 +22,11 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    * TypedFormBuilder instance for creating form groups with typed controls.
    */
   protected fb = inject(TypedFormBuilder);
+
+  /**
+   * Signal indicating whether the form has been submitted.
+   */
+  submitted = new Subject<boolean>();
 
   /**
    * The Angular FormGroup instance representing the form.

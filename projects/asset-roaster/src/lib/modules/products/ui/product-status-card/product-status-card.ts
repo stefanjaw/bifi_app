@@ -5,7 +5,7 @@ import {
 } from '@avalantec/asset-roaster/modules/products/interfaces/product-status-card';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { ProductStatusManager } from '../../services/product-status-manager';
+import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 
 @Component({
   selector: 'bifi-app-product-status-card',
@@ -14,7 +14,7 @@ import { ProductStatusManager } from '../../services/product-status-manager';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductStatusCardComponent {
-  protected productStatusManager = inject(ProductStatusManager);
+  protected productStatusManager = inject(ProductStatusFilterManager);
 
   variant = input.required<statusVariant>();
   units = input.required<number>();
