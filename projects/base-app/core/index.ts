@@ -16,3 +16,4 @@ export * from './src/libraries/object-utils';
 export * from './src/services/main-menu-manager';
 export * from './src/services/sidenav-manager';
 export * from './src/services/toast-manager';
+export * from './src/services/file-resolver';
