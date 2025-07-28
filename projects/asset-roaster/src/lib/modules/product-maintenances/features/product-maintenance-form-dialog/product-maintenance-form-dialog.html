@@ -1,1 +1,67 @@
-<p>maintenance-form works!</p>,
+<p-dialog
+  header="Perform Service"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <p [bifiAppText]="'small'" class="font-bold!">
+      {{ product()?.productTypeIds?.[0]?.name || 'No type' }} - {{ product()?.productModel }} (S/N:
+      {{ product()?.serialNumber }})
+    </p>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Type of Service</bifi-app-form-label>
+      <div class="flex flex-wrap md:flex-nowrap gap-4">
+        <div class="flex items-center w-full md:w-50 shadow p-3 rounded-md">
+          <p-radiobutton value="calibration" formControlName="name" inputId="calibration" />
+          <label for="calibration" [bifiAppText]="'small'" class="ml-2">Calibration</label>
+        </div>
+
+        <div class="flex items-center w-full md:w-50 shadow p-3 rounded-md">
+          <p-radiobutton value="verification" formControlName="name" inputId="verification" />
+          <label for="verification" [bifiAppText]="'small'" class="ml-2">Verification</label>
+        </div>
+      </div>
+      <div class="flex flex-wrap md:flex-nowrap gap-4">
+        <div class="flex items-center w-full md:w-50 shadow p-3 rounded-md">
+          <p-radiobutton
+            value="unscheduled-maintenance"
+            formControlName="name"
+            inputId="unscheduled-maintenance"
+          />
+          <label for="unscheduled-maintenance" [bifiAppText]="'small'" class="ml-2">
+            Unscheduled Maintenance
+          </label>
+        </div>
+
+        <div class="flex items-center w-full md:w-50 shadow p-3 rounded-md">
+          <p-radiobutton value="repair" formControlName="name" inputId="repair" />
+          <label for="repair" [bifiAppText]="'small'" class="ml-2">Repair</label>
+        </div>
+      </div>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Service Details / Reason</bifi-app-form-label>
+      <textarea
+        pInputTextarea
+        formControlName="description"
+        type="text"
+        placeholder="Describe the service or reason for repair"
+      ></textarea>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

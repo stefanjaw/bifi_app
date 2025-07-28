@@ -9,6 +9,8 @@ export type productMaintenanceContextEvent =
   | 'comission'
   | 'open-decommission-dialog'
   | 'decommission'
+  | 'open-maintenance-dialog'
+  | 'maintenance'
   | 'add-document'
   | 'finish-pm'
   | 'init-pm'
@@ -48,6 +50,14 @@ export class ProductMaintenanceContext {
 
   handleDecomission() {
     this._handleEvents.next('decommission');
+  }
+
+  handleOpenMaintenanceDialog() {
+    this._handleEvents.next('open-maintenance-dialog');
+  }
+
+  handleMaintenance() {
+    this._handleEvents.next('maintenance');
   }
 
   handleAddDocument() {

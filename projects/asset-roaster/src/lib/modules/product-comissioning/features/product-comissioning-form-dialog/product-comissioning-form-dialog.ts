@@ -23,7 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
 
 @Component({
-  selector: 'bifi-app-product-comissioning-init-form-dialog',
+  selector: 'bifi-app-product-comissioning-form-dialog',
   imports: [
     DialogModule,
     ReactiveFormsModule,
@@ -33,10 +33,10 @@ import { CrudProductComissioning } from '../../services/crud-product-comissionin
     Textarea,
     InputText,
   ],
-  templateUrl: './product-comissioning-init-form-dialog.html',
+  templateUrl: './product-comissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductComissioningInitFormDialog extends BaseDialog implements OnDestroy {
+export class ProductComissioningFormDialog extends BaseDialog implements OnDestroy {
   // services
   protected formService = inject(CreateComissioningForm);
   private productComissioningService = inject(CrudProductComissioning);
