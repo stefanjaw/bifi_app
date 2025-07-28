@@ -5,7 +5,7 @@ import { FilterManager } from '@avalantec/base-app/resource';
 @Injectable({
   providedIn: 'root',
 })
-export class ProductStatusManager {
+export class ProductStatusFilterManager {
   private readonly filterId = 'product-status';
   private _currentVariant = signal<statusVariant | undefined>(undefined);
   private filterManager = inject(FilterManager);

@@ -1,23 +1,17 @@
-@if (!isEditMode()) {
+@if (!isEditMode() && product()?.status !== 'decomissioned') {
   <bifi-app-form-section
     title="Commissioning & Lifecycle"
     id="commissioning-lifecycle"
     [ordinal]="4"
   >
-    @if (!product()?.productComission) {
+    @let productComissioning = product()?.productComission;
+
+    @if (!productComissioning || productComissioning.outcome === 'fail') {
       <p-button
-        label="Commission"
-        severity="success"
+        (onClick)="handleOpenComissionDialog()"
+        [label]="!productComissioning ? 'Commission' : 'Re-attempt Comission'"
+        [severity]="!productComissioning ? 'success' : 'warn'"
         class="w-full"
-        (onClick)="commission.emit()"
-        size="small"
-      />
-    } @else if (product()?.productComission?.outcome === 'fail') {
-      <p-button
-        label="Re-attempt Comission"
-        severity="warn"
-        class="w-full"
-        (onClick)="commission.emit()"
         size="small"
       />
     } @else {
@@ -25,7 +19,7 @@
         label="Decomission"
         severity="danger"
         class="w-full"
-        (onClick)="decomission.emit()"
+        (onClick)="handleOpenDecomissionDialog()"
         size="small"
       />
     }

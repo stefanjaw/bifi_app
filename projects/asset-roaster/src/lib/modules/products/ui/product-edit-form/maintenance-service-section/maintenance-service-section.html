@@ -73,7 +73,7 @@
 
           @if (pmCanBeStarted()) {
             <p-button
-              (onClick)="initiatePM.emit()"
+              (onClick)="handleInitPM()"
               size="small"
               label="Initiate PM"
               severity="success"
@@ -83,7 +83,7 @@
 
           @if (pmInitiated()) {
             <p-button
-              (onClick)="finishPM.emit()"
+              (onClick)="handleFinishPM()"
               size="small"
               label="Finish PM"
               severity="success"

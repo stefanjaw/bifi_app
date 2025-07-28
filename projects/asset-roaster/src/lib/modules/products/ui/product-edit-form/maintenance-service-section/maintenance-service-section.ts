@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { maintenanceWindow } from '../../../../maintenance-windows';
+import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 
 dayjs.extend(isBetween);
 
@@ -34,12 +35,9 @@ export class MaintenanceServiceSection {
   isEditMode = input.required<boolean>();
   product = input.required<product | null>();
 
-  // outputs
-  initiatePM = output<void>();
-  finishPM = output<void>();
-
   // services
-  formService = inject(UpdateProductForm);
+  protected formService = inject(UpdateProductForm);
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   // data
   maintenanceWindows = input<maintenanceWindow[]>([]);
@@ -63,7 +61,9 @@ export class MaintenanceServiceSection {
     if (!product) return false;
 
     // check if service is initiated, if so, cannot start pm
-    if (!product.productMaintenances.find(m => m.type === 'service')) return false;
+    if (product.productMaintenances.some(m => m.type === 'service')) return false;
+
+    if (!product.productComission) return false;
 
     // check if pm is already initiated
     if (this.pmInitiated()) return false;
@@ -140,5 +140,13 @@ export class MaintenanceServiceSection {
         this.formService.form.get('maintenanceDate')?.enable();
       }
     });
+  }
+
+  handleInitPM() {
+    this.productMaintenanceContext.handleInitPM();
+  }
+
+  handleFinishPM() {
+    this.productMaintenanceContext.handleFinishPM();
   }
 }

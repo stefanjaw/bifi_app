@@ -10,7 +10,7 @@ export type TextSize = 'title-1' | 'title-2' | 'title-3' | 'paragraph' | 'small'
   },
 })
 export class Text {
-  size = input<TextSize>('paragraph', { alias: 'appText' });
+  size = input<TextSize>('paragraph', { alias: 'bifiAppText' });
 
   textSize = computed(() => {
     const size = this.size();

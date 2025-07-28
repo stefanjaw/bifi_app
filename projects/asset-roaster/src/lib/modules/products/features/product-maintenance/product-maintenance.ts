@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CrudProducts } from '../../services/crud-products';
 import { UpdateProductForm } from '../../services/update-product-form';
@@ -10,10 +10,16 @@ import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { ToastManager } from '@avalantec/base-app/core';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  ProductComissioningInitFormDialog,
+  ProductDecomissioningFormDialog,
+} from '../../../product-comissioning';
+import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
+import { CrudProductMaintenances } from '../../../product-maintenances';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
-  imports: [ProductEditForm],
+  imports: [ProductEditForm, ProductComissioningInitFormDialog, ProductDecomissioningFormDialog],
   templateUrl: './product-maintenance.html',
 })
 export class ProductMaintenance implements OnDestroy {
@@ -23,9 +29,11 @@ export class ProductMaintenance implements OnDestroy {
   private contactsService = inject(CrudContacts);
   private roomsService = inject(CrudRooms);
   private maintenaceWindowsService = inject(CrudMaintenanceWindows);
+  private productMaintenancesService = inject(CrudProductMaintenances);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
   private destroy$ = new Subject<void>();
 
   // Coming in route as param
@@ -38,6 +46,7 @@ export class ProductMaintenance implements OnDestroy {
   rooms = this.roomsService.get({});
   maintenaceWindows = this.maintenaceWindowsService.get({});
 
+  // state
   loading = computed(() => {
     return (
       this.products.isLoading() ||
@@ -65,6 +74,10 @@ export class ProductMaintenance implements OnDestroy {
   // State
   isEditMode = signal(false);
 
+  // children
+  comissioningInitFormDialog = viewChild<ProductComissioningInitFormDialog>(ProductComissioningInitFormDialog);
+  decomissioningFormDialog = viewChild<ProductDecomissioningFormDialog>(ProductDecomissioningFormDialog);
+
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
    * This is needed because the `product` signal is used to fetch the product data and the form
@@ -78,8 +91,14 @@ export class ProductMaintenance implements OnDestroy {
       // set new values as initial state
       this.resetValueToInitialState(product);
     });
+
+    this.handleEvents();
   }
 
+  /**
+   * Called when the component is destroyed.
+   * Unsubscribes from the {@link destroy$} subject to prevent memory leaks.
+   */
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.unsubscribe();
@@ -137,7 +156,7 @@ export class ProductMaintenance implements OnDestroy {
       next: () => {
         this.submitLoading.set(false);
         this.isEditMode.set(false);
-        this.products.reload();
+        this.handleReloadProduct();
         this.toastManager.showSuccess('Product updated successfully');
       },
       error: () => {
@@ -156,30 +175,98 @@ export class ProductMaintenance implements OnDestroy {
   }
 
   /**
+   * Opens the comissioning initialization dialog.
+   *
+   * This dialog is used to add a new comissioning record for the current product.
+   * It is only accessible from the product maintenance page.
+   */
+  handleOpenComissionDialog() {
+    this.comissioningInitFormDialog()?.openDialog();
+  }
+
+  /**
+   * Opens the decomissioning dialog.
+   *
+   * This dialog is used to set the product status to 'decomissioned' and add a new
+   * comissioning record with the outcome 'decomissioned'.
+   * It is only accessible from the product maintenance page.
+   */
+  handleOpenDecomissionDialog() {
+    this.decomissioningFormDialog()?.openDialog();
+  }
+
+  handleAddDocument() {
+    console.log('Adding document');
+  }
+
+  handleFinishPM() {
+    const PM = this.product()?.productMaintenances.find(m => m.type === 'preventive-maintenance');
+
+    if (!PM) return;
+
+    this.productMaintenancesService
+      .put({
+        _id: PM._id,
+        data: {
+          productId: this.product()?._id || '',
+          name: 'PM',
+          date: new Date().toISOString(),
+          type: 'preventive-maintenance',
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.handleReloadProduct();
+          this.toastManager.showSuccess('PM initiated successfully');
+        },
+      });
+  }
+
+  /**
+   * Initiates a preventive maintenance record for the current product.
+   *
+   * This function adds a new record to the product maintenance collection with
+   * the type 'preventive-maintenance'. The date is set to the current date and
+   * time.
+   *
+   * After the record is added, the component reloads the product data and
+   * shows a success toast message.
+   */
+  handleInitiatePM() {
+    this.productMaintenancesService
+      .post({
+        data: {
+          productId: this.product()?._id || '',
+          name: 'PM',
+          date: new Date().toISOString(),
+          type: 'preventive-maintenance',
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.handleReloadProduct();
+          this.toastManager.showSuccess('PM initiated successfully');
+        },
+      });
+  }
+
+  /**
    * Navigates back to the equipment list page.
    */
   handleBackToDashboard() {
     this.router.navigate(['asset-roaster', 'equipment', 'list']);
   }
 
-  handleInitiatePM() {
-    console.log('Initiating PM');
-  }
-
-  handleFinishPM() {
-    console.log('Finishing PM');
-  }
-
-  handleCommission() {
-    console.log('Commissioning equipment');
-  }
-
-  handleDecommission() {
-    console.log('Decomissioning equipment');
-  }
-
-  handleAddDocument() {
-    console.log('Adding document');
+  /**
+   * Reloads the current product.
+   *
+   * This is useful when the product is edited outside of this component and the
+   * changes need to be reflected in the component.
+   */
+  handleReloadProduct() {
+    this.products.reload();
   }
 
   /**
@@ -214,5 +301,55 @@ export class ProductMaintenance implements OnDestroy {
 
     this.formService.form.markAsPristine();
     this.formService.form.markAsUntouched();
+  }
+
+  /**
+   * Subscribes to the handleEvents$ observable from the product maintenance context
+   * and handles various product maintenance events.
+   *
+   * Executes different actions depending on the event type, such as toggling edit mode,
+   * saving changes, canceling edits, managing commissioning and decommissioning processes,
+   * handling document additions, finishing or initiating preventive maintenance, and navigating
+   * back to the dashboard.
+   */
+
+  private handleEvents() {
+    this.productMaintenanceContext.handleEvents$.pipe(takeUntil(this.destroy$)).subscribe(event => {
+      switch (event) {
+        case 'toggle-edit':
+          this.toggleEditMode();
+          break;
+        case 'save':
+          this.handleSave();
+          break;
+        case 'cancel':
+          this.handleCancel();
+          break;
+        case 'open-comission-dialog':
+          this.handleOpenComissionDialog();
+          break;
+        case 'comission':
+          this.handleReloadProduct();
+          break;
+        case 'open-decommission-dialog':
+          this.handleOpenDecomissionDialog();
+          break;
+        case 'decommission':
+          this.handleReloadProduct();
+          break;
+        case 'add-document':
+          this.handleAddDocument();
+          break;
+        case 'finish-pm':
+          this.handleFinishPM();
+          break;
+        case 'init-pm':
+          this.handleInitiatePM();
+          break;
+        case 'back-to-dashboard':
+          this.handleBackToDashboard();
+          break;
+      }
+    });
   }
 }

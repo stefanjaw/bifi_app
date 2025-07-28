@@ -1,7 +1,8 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 
 @Component({
   selector: 'bifi-app-documents-section',
@@ -9,6 +10,11 @@ import { CardModule } from 'primeng/card';
   templateUrl: './documents-section.html',
 })
 export class DocumentsSection {
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
+
   isEditMode = input.required<boolean>();
-  addDocument = output<void>();
+
+  handleAddDocument() {
+    this.productMaintenanceContext.handleAddDocument();
+  }
 }

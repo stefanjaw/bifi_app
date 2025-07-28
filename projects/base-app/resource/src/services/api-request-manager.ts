@@ -232,7 +232,7 @@ export class ApiRequestManager<T> {
     specificEndpoint = '',
   }: {
     _id: string;
-    specificEndpoint: string;
+    specificEndpoint?: string;
   }): ResourceRef<boolean> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
     const params = new URLSearchParams({

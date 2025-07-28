@@ -4,19 +4,12 @@ import {
   computed,
   inject,
   OnDestroy,
-  output,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CrudProductType } from '@avalantec/asset-roaster/modules/product-types/services/crud-product-types';
-import {
-  CreateProductForm,
-  CreateProductFormModel,
-} from '@avalantec/asset-roaster/modules/products/services/create-product-form';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
+import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { contact, CrudContacts } from '@avalantec/base-app/settings';
-import { FormValueState } from 'dist/base-app/form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -24,7 +17,8 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { CrudProducts } from '../../services/crud-products';
-import { productType } from '../../../product-types';
+import { CrudProductType, productType } from '../../../product-types';
+import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -57,7 +51,6 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
   form = this.formService.form;
   isLoading = this.productTypes.isLoading || this.contacts.isLoading;
   isSubmitLoading = signal(false);
-  created = output<void>();
 
   // Computed options
   productTypeOptions = computed(() => {
@@ -187,7 +180,7 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
           this.isSubmitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          this.created.emit();
+          this.formService.submitted.next(true);
           this.toastManager.showSuccess('Product created successfully');
         },
         error: () => {
