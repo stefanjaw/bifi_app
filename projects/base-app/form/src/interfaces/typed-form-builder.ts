@@ -12,7 +12,7 @@ import { IsPlainObject } from '@avalantec/base-app/core';
 
 type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
-export type ControlsOf<T extends FormGroupLike> = {
+export type ControlsOf<T extends FormGroupLike> = Prettify<{
   [K in keyof T]-?: T[K] extends AbstractControl
     ? T[K]
     : Required<T[K]> extends (infer R)[]
@@ -20,7 +20,7 @@ export type ControlsOf<T extends FormGroupLike> = {
       : IsPlainObject<Required<T[K]>> extends true
         ? FormGroup<Required<ControlsOf<T[K]>>>
         : FormControl<T[K]>;
-};
+}>;
 
 export type InputControls<T extends FormGroupLike> = Prettify<{
   [K in keyof T]-?: T[K] extends AbstractControl
@@ -33,11 +33,17 @@ export type InputControls<T extends FormGroupLike> = Prettify<{
 }>;
 
 // An array of controls, if R is a record object, then it creates a form group, else it creates a normal control that is not nullable.
-export type FArray<R> = FormArray<
-  R extends Record<any, any> ? FormGroup<ControlsOf<R>> : FormControl<R>
->;
+export type FArray<R> = R extends FormGroupLike
+  ? FormArray<FormGroup<ControlsOf<R>>>
+  : FormArray<FormControl<R>>;
 
-export type IFArray<R> = R extends FormGroupLike ? R[] : R[];
+export type IFArray<R> = R extends FormGroupLike
+  ? {
+      formArrayElements: InputControls<R>[];
+    }
+  : {
+      formArrayElements: PermissiveControlConfig<R>[];
+    };
 
 // A Permissive control config (an array with a value and validators)
 export type PermissiveControlConfig<T> = (T | FormControlState<T> | ValidatorConfig)[];

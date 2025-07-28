@@ -1,7 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { inject, Injectable } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { AbstractControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { FormGroupLike } from '../interfaces/form-helpers';
-import { InputControls, ControlsOf } from '../interfaces/typed-form-builder';
+import {
+  InputControls,
+  ControlsOf,
+  IFArray,
+  PermissiveControlConfig,
+} from '../interfaces/typed-form-builder';
 
 @Injectable({
   providedIn: 'root',
@@ -10,32 +17,70 @@ export class TypedFormBuilder {
   private fb = inject(NonNullableFormBuilder);
 
   group<T extends FormGroupLike>(data: InputControls<T>) {
-    const payload = this.parseFormInput(data);
-    // TODO handle form arrays!
-    console.log('form group built payload', payload);
-    return this.fb.group<ControlsOf<T>>(payload);
+    const group = this.buildFormTree(data);
+    return group as FormGroup<ControlsOf<T>>;
   }
 
-  private parseFormInput(data: any) {
-    if (typeof data === 'object') {
-      const clone: any = {};
+  control<T>(value: PermissiveControlConfig<T>) {
+    return this.fb.control(value);
+  }
 
-      for (const key in data) {
-        if (Array.isArray(data[key])) {
-          clone[key] = data[key];
-        } else if (typeof data[key] === 'object') {
-          console.log('key is object', key);
-          const payload = this.parseFormInput(data[key]);
-          console.log('payload', payload);
-          clone[key] = this.fb.group(payload);
-        } else {
-          clone[key] = data[key];
-        }
-      }
-
-      return clone;
-    } else {
+  /**
+   * Recursively builds a form tree from the given data object.
+   *
+   * This function handles the following cases:
+   * - If data is an array, it is assumed to be a control with a value and validators.
+   * - If data is an object, it is assumed to be a form group, and each key will be processed recursively.
+   * - If data is a form array input, it is processed using the `formArrayElements` property.
+   * - If data is a primitive value, a form control is created with the given value.
+   *
+   * @param data - The data object to build the form tree from.
+   * @returns - The built form tree.
+   */
+  private buildFormTree(data: any): any {
+    if (Array.isArray(data)) {
+      // [value, validators]
       return data;
     }
+
+    if (typeof data === 'object' && data !== null) {
+      if (this.isFormArrayInput(data)) {
+        const parsedElements = data.formArrayElements.map((el: any) => this.buildFormTree(el));
+        return this.fb.array(parsedElements);
+      }
+
+      // Regular FormGroup: recurse each key
+      const group: Record<string, AbstractControl> = {};
+      for (const key in data) {
+        group[key] = this.buildFormTree(data[key]);
+      }
+
+      return this.fb.group(group);
+    }
+
+    // Primitive fallback
+    return this.fb.control(data);
+  }
+
+  isFormArrayInput(data: any): data is IFArray<any> {
+    return (
+      typeof data === 'object' &&
+      'formArrayElements' in data &&
+      Array.isArray(data.formArrayElements)
+    );
   }
 }
+
+type TestObject = {
+  name: string;
+  age: number;
+};
+
+type TestFormModel = {
+  arrayNumber: number[];
+  arrayObject: TestObject[];
+  singleObject: TestObject;
+};
+
+type InputTest = InputControls<TestFormModel>;
+type FormTest = ControlsOf<TestFormModel>;
