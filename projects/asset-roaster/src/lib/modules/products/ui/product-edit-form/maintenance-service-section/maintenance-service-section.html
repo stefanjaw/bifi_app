@@ -8,34 +8,88 @@
     <p-card styleClass="bg-surface-50! border border-surface-300">
       <div>
         <h3 class="text-lg font-medium text-gray-900 mb-4">Preventive Maintenance</h3>
-
         <div class="space-y-4">
           <div>
             @if (isEditMode()) {
-              <bifi-app-form-field>
+              <bifi-app-form-field class="mb-4">
                 <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="maintenanceInterval"
-                  type="text"
+                <p-select
+                  formControlName="maintenanceWindowIds"
+                  [options]="maintenanceWindows()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [filter]="true"
+                  placeholder="Select an interval"
+                ></p-select>
+
+                @if (isMaintenanceWindowsEditLocked()) {
+                  <bifi-app-form-hint>
+                    <small class="text-orange-300">
+                      Cannot change: PM has been logged for this schedule.
+                    </small>
+                  </bifi-app-form-hint>
+                }
+
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Maintenance Date</bifi-app-form-label>
+                <p-date-picker
+                  formControlName="maintenanceDate"
+                  [showIcon]="true"
+                  inputId="maintenanceDate"
                   class="w-full"
                 />
+
+                @if (isMaintenanceWindowsEditLocked()) {
+                  <bifi-app-form-hint>
+                    <small class="text-orange-300">
+                      Cannot change: PM has been logged for this schedule.
+                    </small>
+                  </bifi-app-form-hint>
+                }
+
                 <bifi-app-form-error></bifi-app-form-error>
               </bifi-app-form-field>
             } @else {
-              <div>
+              <div class="mb-4">
                 <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
-                <div class="text-sm text-gray-500 italic">Not Set</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ product()?.maintenanceWindowIds?.[0]?.name || 'Not set' }}
+                </div>
               </div>
             }
           </div>
 
-          <div>
+          <div class="mb-4">
+            @let status = pmScheduleStatus();
+
             <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
-            <div class="text-sm text-orange-600">
-              {{ formService.form.get('pmScheduleStatus')?.value }}
+            <div class="text-sm" [ngClass]="status.className">
+              {{ status.label }}
             </div>
           </div>
+
+          @if (pmCanBeStarted()) {
+            <p-button
+              (onClick)="initiatePM.emit()"
+              size="small"
+              label="Initiate PM"
+              severity="success"
+              type="button"
+            ></p-button>
+          }
+
+          @if (pmInitiated()) {
+            <p-button
+              (onClick)="finishPM.emit()"
+              size="small"
+              label="Finish PM"
+              severity="success"
+              type="button"
+            ></p-button>
+          }
         </div>
       </div>
     </p-card>

@@ -5,7 +5,7 @@ import { ApiRequestManager } from '@avalantec/base-app/resource';
 @Injectable({
   providedIn: 'root',
 })
-export class CrudProductsService extends ApiRequestManager<product> {
+export class CrudProducts extends ApiRequestManager<product> {
   constructor() {
     super();
     super.endpoint = 'products';

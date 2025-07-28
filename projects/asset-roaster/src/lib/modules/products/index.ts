@@ -1,11 +1,21 @@
-export { productFilters } from './libraries/product-filters';
-export type { product } from './interfaces/product';
-export { ProductsListComponent } from './features/products-list/products-list.component';
-export { PRODUCT_ROUTES } from './routes/product.routes';
-export type {
-  statusCardState,
-  statusVariant,
-} from './ui/product-status-card/product-status-card.model';
-export { ProductStatusCardComponent } from './ui/product-status-card/product-status-card.component';
-export { CrudProductsService } from './services/crud-products.service';
-export { productColumns } from './libraries/product-columns';
+export * from './features/product-form-dialog/product-form-dialog';
+export * from './features/product-maintenance/product-maintenance';
+export * from './features/products-list/products-list';
+export * from './interfaces/product-status-card';
+export * from './interfaces/product';
+export * from './libraries/product-columns';
+export * from './libraries/product-filters';
+export * from './routes/product.routes';
+export * from './services/create-product-form';
+export * from './services/crud-products';
+export * from './services/product-status-manager';
+export * from './services/update-product-form';
+export * from './ui/product-edit-form/activity-history-section/activity-history-section';
+export * from './ui/product-edit-form/commissioning-lifecycle-section/commissioning-lifecycle-section';
+export * from './ui/product-edit-form/documents-section/documents-section';
+export * from './ui/product-edit-form/general-information-section/general-information-section';
+export * from './ui/product-edit-form/maintenance-service-section/maintenance-service-section';
+export * from './ui/product-edit-form/product-edit-form';
+export * from './ui/product-edit-form/status-banner-section/status-banner-section';
+export * from './ui/product-status-card/product-status-card';
+export * from './ui/product-status-select/product-status-select';

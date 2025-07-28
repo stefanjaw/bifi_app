@@ -4,10 +4,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterOutlet } from '@angular/router';
 import { SidenavManager } from '../../services/sidenav-manager';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'bifi-app-scaffold',
-  imports: [MatToolbarModule, RouterOutlet, MatIcon, MatButtonModule],
+  imports: [MatToolbarModule, RouterOutlet, MatIcon, MatButtonModule, Toast],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',
 })

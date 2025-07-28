@@ -1,4 +1,9 @@
-<div class="min-h-screen bg-gray-50">
+<form
+  [formGroup]="formService.form"
+  class="min-h-screen bg-gray-50"
+  bifiAppFormActionsHandler
+  (appSubmit)="save.emit()"
+>
   <!-- Header -->
   <div class="bg-white border-b border-gray-200 px-6 py-4">
     <div class="flex items-center justify-between">
@@ -10,15 +15,22 @@
 
       <div class="flex items-center space-x-3">
         @if (isEditMode()) {
-          <p-button label="Cancel" severity="secondary" (onClick)="cancel.emit()" />
+          <p-button label="Cancel" severity="secondary" (onClick)="cancel.emit()" type="button" />
           <p-button
-            label="Save Changes"
+            [icon]="isSubmitLoading() ? 'pi pi-spinner' : undefined"
+            [label]="isSubmitLoading() ? 'Saving...' : 'Save Changes'"
             icon="pi pi-check"
             severity="success"
-            (onClick)="save.emit()"
+            type="submit"
           />
         } @else {
-          <p-button label="Edit Details" icon="pi pi-pencil" (onClick)="toggleEdit.emit()" />
+          <p-button
+            [disabled]="isLoading()"
+            label="Edit Details"
+            icon="pi pi-pencil"
+            (onClick)="toggleEdit.emit()"
+            type="button"
+          />
         }
         <p-button
           label="Back to Dashboard"
@@ -26,6 +38,7 @@
           severity="info"
           [outlined]="true"
           (onClick)="backToDashboard.emit()"
+          type="button"
         />
       </div>
     </div>
@@ -33,24 +46,47 @@
 
   <!-- Form Content -->
   <div class="max-w-7xl mx-auto px-6 py-8">
-    <bifi-app-form-layout title="">
-      <form [formGroup]="formService.form" class="flex flex-col gap-8">
-        <bifi-app-general-information-section [isEditMode]="isEditMode()" />
+    @if (!isLoading()) {
+      <bifi-app-form-layout title="">
+        <div class="flex flex-col gap-8">
+          <!-- the general information of the product -->
+          <bifi-app-general-information-section
+            [product]="product()"
+            [productTypes]="productTypes()"
+            [contacts]="contacts()"
+            [rooms]="rooms()"
+            [isEditMode]="isEditMode()"
+          />
 
-        <bifi-app-documents-section
-          [isEditMode]="isEditMode()"
-          (addDocument)="addDocument.emit()"
-        />
+          <!-- the documents of the product -->
+          <bifi-app-documents-section
+            [isEditMode]="isEditMode()"
+            (addDocument)="addDocument.emit()"
+          />
 
-        <bifi-app-maintenance-service-section [isEditMode]="isEditMode()" />
+          <!-- the maintenance service of the product -->
+          <bifi-app-maintenance-service-section
+            [product]="product()"
+            [maintenanceWindows]="maintenaceWindows()"
+            [isEditMode]="isEditMode()"
+            (initiatePM)="initiatePM.emit()"
+            (finishPM)="finishPM.emit()"
+          />
 
-        <bifi-app-commissioning-lifecycle-section
-          [isEditMode]="isEditMode()"
-          (commission)="commission.emit()"
-        />
+          <!-- the commissioning and lifecycle of the product -->
+          <bifi-app-commissioning-lifecycle-section
+            [product]="product()"
+            [isEditMode]="isEditMode()"
+            (commission)="commission.emit()"
+            (decomission)="decomission.emit()"
+          />
 
-        <bifi-app-activity-history-section />
-      </form>
-    </bifi-app-form-layout>
+          <!-- the activity history of the product -->
+          <bifi-app-activity-history-section />
+        </div>
+      </bifi-app-form-layout>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
   </div>
-</div>
+</form>

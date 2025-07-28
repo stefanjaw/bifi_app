@@ -1,11 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import { filter } from '../interfaces/filter';
+import { filter, filterGroup } from '../interfaces/filter';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FilterManager {
-  protected _filters = signal<filter[]>([]);
+  protected _filters = signal<filterGroup[]>([]);
 
   get filters() {
     return this._filters.asReadonly();
@@ -14,48 +14,49 @@ export class FilterManager {
   //#region Filter managament
 
   /**
-   * Adds a new filter to the current filters.
+   * Adds a new filter group to the current set of filters.
    *
-   * Appends the given filter to the end of the current filters array.
-   * @param newFilter The filter object to add to the current filters.
+   * Updates the filters signal to include the provided filter group.
+   *
+   * @param newFilter The filter group to add.
    */
-  addFilter(newFilter: filter) {
+
+  addFilter(newFilter: filterGroup<any>) {
     this._filters.update(filters => [...filters, newFilter]);
   }
 
   /**
-   * Removes a filter from the current filters.
+   * Removes a filter by its ID.
    *
-   * Iterates over the current filters and removes the first filter that has the given field.
-   * @param field The field of the filter to be removed.
+   * Updates the filters signal to exclude the filter with the specified ID.
+   *
+   * @param id The ID of the filter to remove.
    */
-  removeFilter(field: string) {
-    this._filters.update(filters => filters.filter(filter => filter.field !== field));
+
+  removeFilter(id: string) {
+    this._filters.update(filters => filters.filter(filter => filter.id !== id));
   }
 
   /**
-   * Adds multiple filters to the current filters.
+   * Adds multiple filters at once.
    *
-   * Iterates over the new filters and adds them to the current filters.
-   * The new filters are added to the end of the current filters.
+   * Updates the filters signal to add all filters in the given array.
    *
-   * @param newFilters An array of new filter objects to add to the current filters.
+   * @param newFilters The filters to add.
    */
-  addFilters(newFilters: filter[]) {
+  addFilters(newFilters: filterGroup<any>[]) {
     this._filters.update(filters => [...filters, ...newFilters]);
   }
 
   /**
-   * Removes multiple filters by field names.
+   * Removes multiple filters at once.
    *
-   * Iterates over the current filters and removes any filters
-   * whose field matches any of the specified fields in the input array.
+   * Updates the filters signal to remove all filters with IDs in the given array.
    *
-   * @param fields An array of field names to identify which filters to remove.
+   * @param ids The IDs of the filters to remove.
    */
-
-  removeFilters(fields: string[]) {
-    this._filters.update(filters => filters.filter(filter => !fields.includes(filter.field)));
+  removeFilters(ids: string[]) {
+    this._filters.update(filters => filters.filter(filter => !ids.includes(filter.id)));
   }
 
   /**
@@ -69,14 +70,20 @@ export class FilterManager {
   //#endregion
 
   /**
-   * Takes a filter object and returns a mongoDB compatible filter object.
-   * @example
-   * buildFilterObject({ field: 'name', operator: '==', value: 'John Doe' })
-   * returns { name: { $eq: 'John Doe' } }
-   * @param filter The filter object to transform
-   * @returns A mongoDB compatible filter object
+   * Converts a filter object into a MongoDB compatible query object.
+   *
+   * This function takes a filter object containing a field, operator, and value,
+   * and maps the operator to its MongoDB equivalent. For certain operators like
+   * 'like' and 'not like', additional processing is done to transform the value
+   * into a regex pattern with case-insensitive options. The function returns an
+   * object where the field is the key, and the value is an object with the MongoDB
+   * operator and corresponding value.
+   *
+   * @param filter - The filter object containing the field, operator, and value.
+   * @returns An object with the field as the key and a MongoDB query object as the value.
    */
-  private buildFilterObject(filter: filter) {
+
+  private buildFilterObject(filter: filter<any>) {
     let operator = '';
     let value = filter.value;
 
@@ -133,19 +140,30 @@ export class FilterManager {
   }
 
   /**
-   * Builds a mongoDB compatible filter object using the current filters.
-   * The built filter object will have the operator as the key and the value
-   * will be an array of filter objects transformed to mongoDB compatible format.
-   * @example
-   * getFilterObject('$or')
-   * returns { $or: [ { name: { $eq: 'John Doe' } }, { age: { $gt: 18 } } ] }
-   * @param operator The operator to use for the mongoDB filter object.
-   * @returns A mongoDB compatible filter object
+   * Builds a MongoDB query object from the current set of filters.
+   *
+   * Iterates over the filters signal and applies the buildFilterObject function
+   * to each filter. The results are aggregated into a single object where the
+   * field is the key, and the value is an object with the MongoDB operator and
+   * corresponding value. The operator is included in the key as a prefix, e.g.
+   * '$eq', '$gt', etc.
+   *
+   * @returns A MongoDB query object representing the current set of filters.
    */
   getFilterObject() {
-    const filters = {
-      ...this.filters().map(filter => this.buildFilterObject(filter)),
-    };
+    const arrayFilters = this.filters().map(filter => ({
+      ['$' + filter.operator]: filter.filters.map(filter => this.buildFilterObject(filter)),
+    }));
+
+    let filters = {};
+
+    arrayFilters.forEach(
+      filter =>
+        (filters = {
+          ...filters,
+          ...filter,
+        })
+    );
 
     return filters;
   }

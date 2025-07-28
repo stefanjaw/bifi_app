@@ -4,6 +4,30 @@
     id="commissioning-lifecycle"
     [ordinal]="4"
   >
-    <p-button label="Commission" severity="success" class="w-full" (onClick)="commission.emit()" />
+    @if (!product()?.productComission) {
+      <p-button
+        label="Commission"
+        severity="success"
+        class="w-full"
+        (onClick)="commission.emit()"
+        size="small"
+      />
+    } @else if (product()?.productComission?.outcome === 'fail') {
+      <p-button
+        label="Re-attempt Comission"
+        severity="warn"
+        class="w-full"
+        (onClick)="commission.emit()"
+        size="small"
+      />
+    } @else {
+      <p-button
+        label="Decomission"
+        severity="danger"
+        class="w-full"
+        (onClick)="decomission.emit()"
+        size="small"
+      />
+    }
   </bifi-app-form-section>
 }

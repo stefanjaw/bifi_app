@@ -17,7 +17,7 @@
         <bifi-app-form-label>Type of equipment</bifi-app-form-label>
         <p-select
           formControlName="productTypeIds"
-          [options]="typeOptions()"
+          [options]="productTypeOptions()"
           optionLabel="name"
           optionValue="_id"
           [filter]="true"
@@ -25,7 +25,7 @@
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
-      @if (isCreatingNewType()) {
+      @if (isCreatingNewProductType()) {
         <bifi-app-form-field formGroupName="createdType">
           <bifi-app-form-label>New Equipment Type Name</bifi-app-form-label>
           <input
@@ -54,7 +54,7 @@
         <bifi-app-form-label>Make</bifi-app-form-label>
         <p-select
           formControlName="makeIds"
-          [options]="makeOptions()"
+          [options]="contactOptions()"
           optionLabel="name"
           optionValue="_id"
           [filter]="true"
@@ -93,7 +93,10 @@
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
-      <bifi-app-form-actions (cancelClicked)="closeDialog()"></bifi-app-form-actions>
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="closeDialog()"
+      ></bifi-app-form-actions>
     </form>
   }
 </p-dialog>

@@ -1,12 +1,15 @@
 export type statusVariant =
+  | 'active'
+  | 'awaiting-comissioning'
   | 'under-service'
-  | 'overdue'
+  | 'decomissioned'
   | 'due'
+  | 'overdue'
   | 'in-pm'
   | 'pm-not-set';
 
-export type statusCardState = {
+export interface statusCardState {
   title: string;
   className: string;
   icon: string;
-};
+}
