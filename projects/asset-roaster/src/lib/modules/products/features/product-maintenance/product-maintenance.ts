@@ -105,7 +105,7 @@ export class ProductMaintenance implements OnDestroy {
 
     this.submitLoading.set(true);
 
-    const productResource = this.productsService.put({
+    const productRequest = this.productsService.put({
       _id: this.product()?._id || '',
       data: {
         ...value,
@@ -133,7 +133,7 @@ export class ProductMaintenance implements OnDestroy {
       },
     });
 
-    productResource.pipe(takeUntil(this.destroy$)).subscribe({
+    productRequest.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.submitLoading.set(false);
         this.isEditMode.set(false);
@@ -153,7 +153,6 @@ export class ProductMaintenance implements OnDestroy {
   handleCancel() {
     this.resetValueToInitialState(this.product());
     this.isEditMode.set(false);
-    console.log('Canceling changes');
   }
 
   /**
