@@ -277,7 +277,7 @@
           <div class="rounded-lg p-8 text-center">
             <div class="text-gray-500 mb-4">No photo</div>
             @if (isEditMode()) {
-              <p-button
+              <!-- <p-button
                 label="Choose File"
                 icon="pi pi-upload"
                 severity="info"
@@ -285,7 +285,23 @@
                 type="button"
               />
               <div class="text-xs text-gray-500 mt-2">No file chosen</div>
-              <input type="file" hidden #fileInput />
+              <input type="file" hidden #fileInput /> -->
+
+              <bifi-app-form-uploader formArrayName="photo" #uploader>
+                <p-fileupload
+                  #uploader
+                  [multiple]="true"
+                  maxFileSize="1000000"
+                  mode="advanced"
+                  [customUpload]="true"
+                  [showUploadButton]="false"
+                  [disabled]="uploader.disabled()"
+                >
+                  <ng-template #empty>
+                    <div>Drag and drop files to here to upload.</div>
+                  </ng-template>
+                </p-fileupload>
+              </bifi-app-form-uploader>
             }
           </div>
         </p-card>

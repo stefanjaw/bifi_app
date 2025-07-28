@@ -8,7 +8,7 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import { ToastManager } from '@avalantec/base-app/core';
+import { FileResolver, ToastManager } from '@avalantec/base-app/core';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -27,6 +27,8 @@ export class ProductMaintenance implements OnDestroy {
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
   private destroy$ = new Subject<void>();
+
+  private fileResolverService = inject(FileResolver);
 
   // Coming in route as param
   id = computed(() => ({ _id: this.route.snapshot.paramMap.get('id') ?? '' }));
@@ -189,11 +191,17 @@ export class ProductMaintenance implements OnDestroy {
    *
    * @param product The current state of the product.
    */
-  private resetValueToInitialState(product: product | null) {
+  private async resetValueToInitialState(product: product | null) {
     if (!product) {
       this.formService.reset();
       return;
     }
+
+    const parsedImage = product.photo
+      ? await this.fileResolverService.resolveFile(
+          `http://localhost:8080/api/files/${product.photo}`
+        )
+      : null;
 
     this.formService.patchValue({
       condition: product.condition,
@@ -210,6 +218,14 @@ export class ProductMaintenance implements OnDestroy {
       productTypeIds: product.productTypeIds?.[0]?._id || '',
       remarks: product.remarks,
       warrantyDate: product.warrantyDate ? new Date(product.warrantyDate) : null,
+      ...(parsedImage && {
+        photo: [
+          {
+            id: product.photo,
+            file: parsedImage,
+          },
+        ],
+      }),
     });
 
     this.formService.form.markAsPristine();
