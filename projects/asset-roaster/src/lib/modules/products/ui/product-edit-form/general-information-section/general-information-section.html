@@ -301,12 +301,12 @@
                   </ng-template>
                 </p-fileupload>
               </bifi-app-form-uploader>
-            } @else {}
-
-            @if (fileUrl(); as url) {
-              <img [src]="url" alt="" class="mx-auto" />
             } @else {
-              <div class="text-gray-500 mb-4">No photo</div>
+              @if (fileUrl(); as url) {
+                <img [src]="url" alt="" class="mx-auto" />
+              } @else {
+                <div class="text-gray-500 mb-4">No photo</div>
+              }
             }
           </div>
         </p-card>
