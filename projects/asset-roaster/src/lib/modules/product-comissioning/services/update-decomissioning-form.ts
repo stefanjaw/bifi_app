@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { BaseForm, ControlsOf } from '@avalantec/base-app/form';
 
-export interface DecomissioningFormModel {
+export interface UpdateDecomissioningFormModel {
   details: string;
 }
 
 @Injectable({ providedIn: 'root' })
-export class DecomissioningForm extends BaseForm<DecomissioningFormModel> {
+export class UpdateDecomissioningForm extends BaseForm<UpdateDecomissioningFormModel> {
   constructor() {
     super();
   }
 
-  override createForm(): FormGroup<ControlsOf<DecomissioningFormModel>> {
-    return this.fb.group<DecomissioningFormModel>({
+  override createForm(): FormGroup<ControlsOf<UpdateDecomissioningFormModel>> {
+    return this.fb.group<UpdateDecomissioningFormModel>({
       details: ['', [Validators.required]],
     });
   }

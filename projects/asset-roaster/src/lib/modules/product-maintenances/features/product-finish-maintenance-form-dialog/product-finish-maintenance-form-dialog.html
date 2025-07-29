@@ -1,0 +1,28 @@
+<p-dialog
+  [header]="
+    'Complete ' +
+    (maintenanceType() === 'service' ? 'Service' : 'PM') +
+    ' for ' +
+    product()?.productModel
+  "
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <p [bifiAppText]="'small'" class="font-bold!">
+      Comfirm complition of {{ productMaintenace()?.name }} initiated on:
+      {{ productMaintenace()?.date | date }}
+    </p>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

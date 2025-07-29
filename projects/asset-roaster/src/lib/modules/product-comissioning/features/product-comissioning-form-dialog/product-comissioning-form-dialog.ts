@@ -2,9 +2,9 @@ import { ProductMaintenanceContext } from '../../../products';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   input,
-  OnDestroy,
   signal,
 } from '@angular/core';
 import {
@@ -19,8 +19,8 @@ import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/fo
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
 import { InputText } from 'primeng/inputtext';
-import { Subject, takeUntil } from 'rxjs';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-comissioning-form-dialog',
@@ -36,7 +36,7 @@ import { CrudProductComissioning } from '../../services/crud-product-comissionin
   templateUrl: './product-comissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductComissioningFormDialog extends BaseDialog implements OnDestroy {
+export class ProductComissioningFormDialog extends BaseDialog {
   // services
   protected formService = inject(CreateComissioningForm);
   private productComissioningService = inject(CrudProductComissioning);
@@ -49,15 +49,7 @@ export class ProductComissioningFormDialog extends BaseDialog implements OnDestr
 
   // state
   submitLoading = signal<boolean>(false);
-  destroy$ = new Subject<void>();
-
-  /**
-   * Destroys the component, unsubscribing from the destroy subject.
-   */
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.unsubscribe();
-  }
+  destroy$ = inject(DestroyRef);
 
   /**
    * Opens the product form dialog and resets the form to its initial state.
@@ -89,7 +81,7 @@ export class ProductComissioningFormDialog extends BaseDialog implements OnDestr
           ...(rawValue.attachments && { attachments: rawValue.attachments }),
         },
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.submitLoading.set(false);

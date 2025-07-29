@@ -12,35 +12,35 @@
   </div>
 </section>
 
-<section class="flex flex-col lg:flex-row gap-2 mb-4">
+<section class="flex flex-col lg:flex-row gap-4 mb-4">
   <bifi-app-product-form-dialog #createDialog></bifi-app-product-form-dialog>
 
   <bifi-app-product-status-card
-    [units]="0"
+    [units]="productsUnderServiceCount.value() || 0"
     variant="under-service"
     class="w-full"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
-    [units]="0"
+    [units]="productsOverdueCount.value() || 0"
     variant="overdue"
     class="w-full"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
-    [units]="0"
+    [units]="productsDueCount.value() || 0"
     variant="due"
     class="w-full"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
-    [units]="0"
+    [units]="productsInPMCount.value() || 0"
     variant="in-pm"
     class="w-full"
   ></bifi-app-product-status-card>
 
   <bifi-app-product-status-card
-    [units]="0"
+    [units]="productsPMNotSetCount.value() || 0"
     variant="pm-not-set"
     class="w-full"
   ></bifi-app-product-status-card>

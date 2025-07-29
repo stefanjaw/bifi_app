@@ -4,16 +4,19 @@
 @let isPaginated = hasValue && isPaginatedFN(data()?.value());
 
 @if ((hasValue && elementsToDisplay().length > 0) || isLoading) {
+  @let pagination = paginationData();
+
   <p-table
     sortMode="multiple"
     (onLazyLoad)="lazyLoad($event)"
     [lazy]="true"
     [value]="elementsToDisplay()"
+    [first]="pagination?.page ? ((pagination?.page || 0) - 1) * (pagination?.limit || 0) : 0"
     classList="w-full"
     [paginator]="isPaginated"
-    [totalRecords]="paginationData()?.totalDocs || 0"
-    [pageLinks]="paginationData()?.totalPages || 0"
-    [rows]="paginationData()?.limit || 0"
+    [totalRecords]="pagination?.totalDocs || 0"
+    [pageLinks]="pagination?.totalPages || 0"
+    [rows]="pagination?.limit || 0"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
     [showCurrentPageReport]="true"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
@@ -108,19 +111,6 @@
       <p-progressbar mode="indeterminate" [style]="{ height: '6px' }" />
     </div>
   }
-  <!-- 
-  @if (isPaginated) {
-    @let paginationData = castToPaginate();
-
-    <mat-paginator
-      [length]="paginationData.totalDocs"
-      [pageSize]="paginationData.limit"
-      [pageIndex]="paginationData.page - 1"
-      [pageSizeOptions]="[5, 10, 25, 100]"
-      aria-label="Select page"
-      (page)="changePage($event)"
-    ></mat-paginator>
-  }-->
 } @else if (error) {
   <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
     <!-- <mat-icon class="scale-200 mb-6">error</mat-icon> -->

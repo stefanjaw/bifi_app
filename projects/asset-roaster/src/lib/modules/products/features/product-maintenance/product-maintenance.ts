@@ -17,6 +17,7 @@ import {
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import {
   CrudProductMaintenances,
+  ProductFinishMaintenanceFormDialog,
   ProductMaintenanceFormDialog,
 } from '../../../product-maintenances';
 
@@ -27,6 +28,7 @@ import {
     ProductComissioningFormDialog,
     ProductDecomissioningFormDialog,
     ProductMaintenanceFormDialog,
+    ProductFinishMaintenanceFormDialog,
   ],
   templateUrl: './product-maintenance.html',
 })
@@ -91,7 +93,9 @@ export class ProductMaintenance {
   decomissioningFormDialog = viewChild<ProductDecomissioningFormDialog>(
     ProductDecomissioningFormDialog
   );
-  maintenanceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
+  serviceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
+  finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishServiceDialog');
+  finishPMDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishPMDialog');
 
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
@@ -162,6 +166,7 @@ export class ProductMaintenance {
       next: () => {
         this.submitLoading.set(false);
         this.isEditMode.set(false);
+        this.productMaintenanceContext.handleSaved();
         this.handleReloadProduct();
         this.toastManager.showSuccess('Product updated successfully');
       },
@@ -202,41 +207,37 @@ export class ProductMaintenance {
   }
 
   /**
-   * Opens the maintenance dialog.
+   * Opens the service dialog.
    *
    * This dialog is used to add a new maintenance record for the current product.
    * It is only accessible from the product maintenance page.
    */
-  handleOpenMaintenanceDialog() {
-    this.maintenanceFormDialog()?.openDialog();
+  handleOpenServiceDialog() {
+    this.serviceFormDialog()?.openDialog();
+  }
+
+  /**
+   * Opens the finish service dialog.
+   *
+   * This dialog is used to close the current maintenance record with the outcome 'service'.
+   * It is only accessible from the product maintenance page.
+   */
+  handleOpenFinishServiceDialog() {
+    this.finishServiceDialog()?.openDialog();
+  }
+
+  /**
+   * Opens the finish PM dialog.
+   *
+   * This dialog is used to close the current maintenance record with the outcome 'preventive-maintenance'.
+   * It is only accessible from the product maintenance page.
+   */
+  handleOpenFinishPMDialog() {
+    this.finishPMDialog()?.openDialog();
   }
 
   handleAddDocument() {
     console.log('Adding document');
-  }
-
-  handleFinishPM() {
-    const PM = this.product()?.productMaintenances.find(m => m.type === 'preventive-maintenance');
-
-    if (!PM) return;
-
-    this.productMaintenancesService
-      .put({
-        _id: PM._id,
-        data: {
-          productId: this.product()?._id || '',
-          name: 'PM',
-          date: new Date().toISOString(),
-          type: 'preventive-maintenance',
-        },
-      })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.handleReloadProduct();
-          this.toastManager.showSuccess('PM initiated successfully');
-        },
-      });
   }
 
   /**
@@ -358,32 +359,33 @@ export class ProductMaintenance {
           case 'open-comission-dialog':
             this.handleOpenComissionDialog();
             break;
-          case 'comission':
-            this.handleReloadProduct();
-            break;
           case 'open-decommission-dialog':
             this.handleOpenDecomissionDialog();
             break;
-          case 'decommission':
-            this.handleReloadProduct();
+          case 'open-service-dialog':
+            this.handleOpenServiceDialog();
             break;
-          case 'open-maintenance-dialog':
-            this.handleOpenMaintenanceDialog();
-            break;
-          case 'maintenance':
-            this.handleReloadProduct();
+          case 'open-finish-service-dialog':
+            this.handleOpenFinishServiceDialog();
             break;
           case 'add-document':
             this.handleAddDocument();
             break;
-          case 'finish-pm':
-            this.handleFinishPM();
+          case 'open-finish-pm-dialog':
+            this.handleOpenFinishPMDialog();
             break;
           case 'init-pm':
             this.handleInitiatePM();
             break;
           case 'back-to-dashboard':
             this.handleBackToDashboard();
+            break;
+          case 'comission':
+          case 'decommission':
+          case 'service':
+          case 'finish-service':
+          case 'finish-pm':
+            this.handleReloadProduct();
             break;
         }
       });

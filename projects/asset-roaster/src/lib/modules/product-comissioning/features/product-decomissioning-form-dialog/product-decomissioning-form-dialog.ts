@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   input,
-  OnDestroy,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,8 +13,9 @@ import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
 import { CrudProducts, product, ProductMaintenanceContext } from '../../../products';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { DecomissioningForm, DecomissioningFormModel } from '../../services/decomissioning-form';
+import { forkJoin } from 'rxjs';
+import { UpdateDecomissioningForm, UpdateDecomissioningFormModel } from '../../services/update-decomissioning-form';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-decomissioning-form-dialog',
@@ -22,9 +23,9 @@ import { DecomissioningForm, DecomissioningFormModel } from '../../services/deco
   templateUrl: './product-decomissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductDecomissioningFormDialog extends BaseDialog implements OnDestroy {
+export class ProductDecomissioningFormDialog extends BaseDialog {
   // services
-  private formService = inject(DecomissioningForm);
+  private formService = inject(UpdateDecomissioningForm);
   private productComissioningService = inject(CrudProductComissioning);
   private productsService = inject(CrudProducts);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
@@ -36,15 +37,7 @@ export class ProductDecomissioningFormDialog extends BaseDialog implements OnDes
 
   // state
   submitLoading = signal<boolean>(false);
-  destroy$ = new Subject<void>();
-
-  /**
-   * Destroys the component, unsubscribing from the destroy subject.
-   */
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.unsubscribe();
-  }
+  destroy$ = inject(DestroyRef);
 
   /**
    * Opens the product form dialog and resets the form to its initial state.
@@ -63,7 +56,7 @@ export class ProductDecomissioningFormDialog extends BaseDialog implements OnDes
    *
    * @param data the form data
    */
-  handleSubmit(data: FormValueState<DecomissioningFormModel>) {
+  handleSubmit(data: FormValueState<UpdateDecomissioningFormModel>) {
     this.submitLoading.set(true);
 
     const productComissionnigRequest = this.productComissioningService.put({
@@ -82,7 +75,7 @@ export class ProductDecomissioningFormDialog extends BaseDialog implements OnDes
     });
 
     forkJoin([productComissionnigRequest, productsRequest])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.submitLoading.set(false);

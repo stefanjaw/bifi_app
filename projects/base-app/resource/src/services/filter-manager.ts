@@ -151,20 +151,35 @@ export class FilterManager {
    * @returns A MongoDB query object representing the current set of filters.
    */
   getFilterObject() {
-    const arrayFilters = this.filters().map(filter => ({
+    return this.getFilterObjectUtil(this._filters());
+  }
+
+  /**
+   * A utility function to convert a filterGroup array into a MongoDB query object.
+   *
+   * This function takes an array of filterGroups and applies the buildFilterObject
+   * function to each filter in the group. The results are aggregated into a single
+   * object where the field is the key, and the value is an object with the MongoDB
+   * operator and corresponding value.
+   *
+   * @param filters The array of filterGroups to convert.
+   * @returns A MongoDB query object representing the given filterGroups.
+   */
+  getFilterObjectUtil(filters: filterGroup<Record<string, any>>[]) {
+    const arrayFilters = filters.map(filter => ({
       ['$' + filter.operator]: filter.filters.map(filter => this.buildFilterObject(filter)),
     }));
 
-    let filters = {};
+    let parsedFilters = {};
 
     arrayFilters.forEach(
       filter =>
-        (filters = {
-          ...filters,
+        (parsedFilters = {
+          ...parsedFilters,
           ...filter,
         })
     );
 
-    return filters;
+    return parsedFilters;
   }
 }

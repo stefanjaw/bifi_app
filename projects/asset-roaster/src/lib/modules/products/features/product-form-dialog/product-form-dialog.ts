@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
-  OnDestroy,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,10 +15,12 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { forkJoin, Observable, of, switchMap } from 'rxjs';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudProductType, productType } from '../../../product-types';
 import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
+import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -34,14 +36,15 @@ import { CreateProductForm, CreateProductFormModel } from '../../services/create
   templateUrl: './product-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductFormDialog extends BaseDialog implements OnDestroy {
+export class ProductFormDialog extends BaseDialog {
   // Services
   protected formService = inject(CreateProductForm);
   private productTypesService = inject(CrudProductType);
   private productsService = inject(CrudProducts);
   private contactsService = inject(CrudContacts);
   private toastManager = inject(ToastManager);
-  private destroy$ = new Subject<void>();
+  private destroy$ = inject(DestroyRef);
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   // Data
   productTypes = this.productTypesService.get({});
@@ -89,11 +92,6 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
    */
   get makeIdControl() {
     return this.form.controls.makeIds;
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.unsubscribe();
   }
 
   /**
@@ -162,7 +160,7 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
     // Create the product type and make if needed
     forkJoin([productTypeResource, makeResource])
       .pipe(
-        takeUntil(this.destroy$),
+        takeUntilDestroyed(this.destroy$),
         switchMap(([productType, make]) =>
           this.productsService.post({
             data: {
@@ -180,7 +178,7 @@ export class ProductFormDialog extends BaseDialog implements OnDestroy {
           this.isSubmitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          this.formService.submitted.next(true);
+          this.productMaintenanceContext.handleSaved();
           this.toastManager.showSuccess('Product created successfully');
         },
         error: () => {
