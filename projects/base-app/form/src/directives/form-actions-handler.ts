@@ -47,7 +47,7 @@ export class FormActionsHandler<TForm extends FormGroup> {
       this.appSubmit.emit(data);
     } else {
       this.toastManager.showError('There are errors in the form.');
-      
+
       // Helper function to mark invalid form controls as dirty (display errors)
       markAsDirty({
         group: this.form,

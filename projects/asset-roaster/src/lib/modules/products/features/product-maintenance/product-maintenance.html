@@ -7,13 +7,15 @@
   [isLoading]="loading()"
   [isSubmitLoading]="submitLoading()"
   [isEditMode]="isEditMode()"
-  (toggleEdit)="toggleEditMode()"
-  (save)="handleSave()"
-  (cancel)="handleCancel()"
-  (backToDashboard)="handleBackToDashboard()"
-  (initiatePM)="handleInitiatePM()"
-  (finishPM)="handleFinishPM()"
-  (commission)="handleCommission()"
-  (decommission)="handleDecommission()"
-  (addDocument)="handleAddDocument()"
 />
+
+<!-- dialogs -->
+<bifi-app-product-comissioning-form-dialog
+  [product]="product()"
+></bifi-app-product-comissioning-form-dialog>
+<bifi-app-product-decomissioning-form-dialog
+  [product]="product()"
+></bifi-app-product-decomissioning-form-dialog>
+<bifi-app-product-maintenance-form-dialog
+  [product]="product()"
+></bifi-app-product-maintenance-form-dialog>

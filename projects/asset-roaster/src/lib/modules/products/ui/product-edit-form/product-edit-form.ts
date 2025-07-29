@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
@@ -17,6 +17,7 @@ import { room } from '../../../facilities';
 import { maintenanceWindow } from '../../../maintenance-windows';
 import { productType } from '../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
+import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
@@ -37,6 +38,8 @@ import { contact } from '@avalantec/base-app/settings';
   templateUrl: './product-edit-form.html',
 })
 export class ProductEditForm {
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
+
   product = input.required<product | null>();
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
@@ -49,16 +52,19 @@ export class ProductEditForm {
   rooms = input<room[]>([]);
   maintenaceWindows = input<maintenanceWindow[]>([]);
 
-  // outputs
-  toggleEdit = output<void>();
-  save = output<void>();
-  backToDashboard = output<void>();
-  initiatePM = output<void>();
-  finishPM = output<void>();
-  commission = output<void>();
-  decomission = output<void>();
-  addDocument = output<void>();
+  handleSave() {
+    this.productMaintenanceContext.handleSave();
+  }
 
-  /* eslint-disable @angular-eslint/no-output-native */
-  cancel = output<void>();
+  handleCancel() {
+    this.productMaintenanceContext.handleCancel();
+  }
+
+  toggleEdit() {
+    this.productMaintenanceContext.toggleEditMode();
+  }
+
+  handleBackToDashboard() {
+    this.productMaintenanceContext.handleBackToDashboard();
+  }
 }

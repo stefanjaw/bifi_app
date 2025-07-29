@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, model } from '@angular/core';
-import { ProductStatusManager } from '../../services/product-status-manager';
+import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { statusVariant } from '../../interfaces/product-status-card';
@@ -12,7 +12,7 @@ import { statusVariant } from '../../interfaces/product-status-card';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductStatusSelect {
-  protected productStatusManager = inject(ProductStatusManager);
+  protected productStatusManager = inject(ProductStatusFilterManager);
   protected readonly options: { label: string; variant: statusVariant | 'all' }[] = [
     {
       label: 'All Statuses',

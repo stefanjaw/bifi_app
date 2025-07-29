@@ -10,7 +10,7 @@ type IconSize = 'xs' | 'sm' | 'md' | 'base' | 'lg' | 'xl';
   },
 })
 export class Icon {
-  size = input<IconSize>('base', { alias: 'appIcon' });
+  size = input<IconSize>('base', { alias: 'bifiAppIcon' });
 
   fontSize = computed(() => {
     const size = this.size();

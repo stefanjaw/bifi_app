@@ -76,7 +76,7 @@ export const productColumns: tableColumn<product>[] = [
           case 'decomissioned':
             return {
               text: 'Decomissioned',
-              variant: 'warning',
+              variant: 'error',
             };
           case 'in-pm':
             return {
