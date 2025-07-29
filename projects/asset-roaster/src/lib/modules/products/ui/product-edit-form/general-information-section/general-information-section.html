@@ -302,8 +302,8 @@
                 </p-fileupload>
               </bifi-app-form-uploader>
             } @else {
-              @if (fileUrl(); as url) {
-                <img [src]="url" alt="" class="mx-auto" />
+              @if (uploadedFile(); as file) {
+                <img [src]="file.url" alt="Equipment photo" class="mx-auto" />
               } @else {
                 <div class="text-gray-500 mb-4">No photo</div>
               }
