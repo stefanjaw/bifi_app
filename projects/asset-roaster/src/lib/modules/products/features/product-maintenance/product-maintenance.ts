@@ -317,13 +317,15 @@ export class ProductMaintenance {
       productTypeIds: product.productTypeIds?.[0]?._id || '',
       remarks: product.remarks,
       warrantyDate: product.warrantyDate ? new Date(product.warrantyDate) : null,
-      ...(parsedImage && {
+      ...((parsedImage && {
         photo: [
           {
             id: product.photo,
             file: parsedImage,
           },
         ],
+      }) || {
+        photo: [],
       }),
     });
 

@@ -19,7 +19,7 @@ export class TypedFormBuilder {
 
   group<T extends FormGroupLike>(data: InputControls<T>) {
     const group = this.buildFormTree(data);
-    return group as FormGroup<ControlsOf<T>>;
+    return group as FormGroup<ControlsOf<T, true>>;
   }
 
   control<T>(value: PermissiveControlConfig<T>) {
@@ -93,4 +93,24 @@ type TestFormModel = {
 };
 
 type InputTest = InputControls<TestFormModel>;
-type FormTest = ControlsOf<TestFormModel>;
+type FormTest = ControlsOf<TestFormModel, true>;
+
+// const testBuilder = new TypedFormBuilder();
+// const form = testBuilder.group<TestFormModel>({
+//   string: [''],
+//   arrayNumber: {
+//     template: [],
+//     formArrayElements: [],
+//   },
+//   arrayObject: {
+//     template: {
+//       name: [''],
+//       age: [0],
+//     },
+//     formArrayElements: [],
+//   },
+//   singleObject: {
+//     name: [''],
+//     age: [0],
+//   },
+// });

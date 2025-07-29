@@ -32,7 +32,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    * The Angular FormGroup instance representing the form.
    * It is initialized by the concrete implementation of createForm().
    */
-  form: FormGroup<ControlsOf<TModel>> = this.createForm();
+  form: FormGroup<ControlsOf<TModel, true>> = this.createForm();
 
   /**
    * Signal holding the current value of the form, typed as FormValue.
@@ -84,7 +84,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    *
    * @returns A FormGroup instance typed with ControlsOf<TModel>.
    */
-  abstract createForm(): FormGroup<ControlsOf<TModel>>;
+  abstract createForm(): FormGroup<ControlsOf<TModel, true>>;
 
   /**
    * Resets the form to its initial state, clearing all values and marking all controls as pristine.

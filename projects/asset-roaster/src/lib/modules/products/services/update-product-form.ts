@@ -22,10 +22,6 @@ interface UpdateProductFormModel {
 
 @Injectable({ providedIn: 'root' })
 export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
-  constructor() {
-    super();
-  }
-
   override createForm() {
     return this.fb.group<UpdateProductFormModel>({
       serialNumber: ['0010101', [Validators.required]],
@@ -42,7 +38,7 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       remarks: [null],
       photo: {
         template: {
-          id: ['', [Validators.required]],
+          id: [''],
           file: [],
         },
         formArrayElements: [],
