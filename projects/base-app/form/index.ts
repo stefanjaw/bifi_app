@@ -1,6 +1,7 @@
 import { FormActions } from './src/components/form-actions/form-actions';
 import { FormError } from './src/components/form-error/form-error';
 import { FormField } from './src/components/form-field/form-field';
+import { FormUploader } from './src/components/form-image-uploader/form-uploader';
 import { FormLabel } from './src/components/form-label/form-label';
 import { FormLayout } from './src/components/form-layout/form-layout';
 import { FormNavigator } from './src/components/form-navigator/form-navigator';
@@ -19,6 +20,7 @@ export * from './src/components/form-layout/form-layout';
 export * from './src/components/form-navigator/form-navigator';
 export * from './src/components/form-section/form-section';
 export * from './src/components/hint/hint';
+export * from './src/components/form-image-uploader/form-uploader';
 export * from './src/directives/form-actions-handler';
 export * from './src/directives/form-control-extension';
 export * from './src/directives/translated-errors';
@@ -26,6 +28,7 @@ export * from './src/interfaces/form-errors';
 export * from './src/interfaces/form-helpers';
 export * from './src/interfaces/form-navigation';
 export * from './src/interfaces/typed-form-builder';
+export * from './src/interfaces/form-uploader-image';
 export * from './src/libraries/base-form';
 export * from './src/libraries/dirty-utils';
 export * from './src/libraries/error-state-tracker';
@@ -48,4 +51,5 @@ export const AppFormExtensionsImports = [
   TranslatedErrors,
   FormActions,
   FormActionsHandler,
+  FormUploader,
 ];

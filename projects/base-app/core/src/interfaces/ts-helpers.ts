@@ -10,5 +10,7 @@ export type IsPlainObject<T> = T extends object
       ? false
       : T extends any[]
         ? false
-        : true
+        : T extends File
+          ? false
+          : true
   : false;

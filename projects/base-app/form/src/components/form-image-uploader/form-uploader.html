@@ -1,0 +1,17 @@
+<div (click)="handleClick()" (keydown)="handleKeyDown($event)" tabindex="0">
+  <ng-content>
+    <p-fileupload
+      #uploader
+      [multiple]="true"
+      maxFileSize="1000000"
+      mode="advanced"
+      [customUpload]="true"
+      [showUploadButton]="false"
+      [disabled]="disabled()"
+    >
+      <ng-template #empty>
+        <div>Drag and drop files to here to upload.</div>
+      </ng-template>
+    </p-fileupload>
+  </ng-content>
+</div>

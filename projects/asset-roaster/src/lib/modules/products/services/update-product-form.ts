@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 interface UpdateProductFormModel {
   serialNumber: string;
@@ -15,7 +15,7 @@ interface UpdateProductFormModel {
   currentPrice: number | null;
   warrantyDate: Date | null;
   remarks: string | null;
-  photo: string | null;
+  photo: FormUploaderFile[];
   maintenanceWindowIds: string | null;
   maintenanceDate: Date | null;
 }
@@ -40,9 +40,22 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       currentPrice: [0],
       warrantyDate: [null],
       remarks: [null],
-      photo: [null],
+      photo: {
+        formArrayElements: [],
+      },
       maintenanceWindowIds: [null],
       maintenanceDate: [null],
     });
+  }
+
+  override patchValue(data: Partial<UpdateProductFormModel>): void {
+    if (data.photo) {
+      // Create the necessary form controls for the photo array
+      const { photo } = this.form.controls;
+
+      // Sync the photo array with the data
+      this.syncFileControl(photo, data.photo);
+    }
+    super.patchValue(data);
   }
 }

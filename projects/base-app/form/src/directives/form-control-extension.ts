@@ -17,7 +17,7 @@ let lastUsedId = 0;
 
 @Directive({
   // Match any element with the form control directive
-  selector: '[formControl], [formControlName], [formArray], [formArrayName]',
+  selector: '[formControl], [formControlName], [formArrayName]',
   host: {
     // Bind the id to the generated ID
     '[id]': 'id()',

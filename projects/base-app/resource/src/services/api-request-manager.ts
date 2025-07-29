@@ -6,6 +6,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import { isFormUploaderFile, isFormUploaderFileArray } from '../../../form/src/libraries/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -288,7 +289,10 @@ export class ApiRequestManager<T> {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {
-      if (value instanceof File) formData.append(key, value, value.name);
+      if (isFormUploaderFileArray(value))
+        value.forEach(file => formData.append(`${key}[]`, file.file));
+      else if (isFormUploaderFile(value)) formData.append(key, value.file);
+      else if (value instanceof File) formData.append(key, value, value.name);
       else if (typeof value === 'object') formData.append(key, JSON.stringify(value));
       else formData.append(key, value);
     }
