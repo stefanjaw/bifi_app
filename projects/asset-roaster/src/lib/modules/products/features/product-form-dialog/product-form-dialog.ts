@@ -14,9 +14,8 @@ import {
   CreateProductFormModel,
 } from '@avalantec/asset-roaster/modules/products/services/create-product-form';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
+import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { contact, CrudContacts } from '@avalantec/base-app/settings';
-import { FormValueState } from 'dist/base-app/form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';

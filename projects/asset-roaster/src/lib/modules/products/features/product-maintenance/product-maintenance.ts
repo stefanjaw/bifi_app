@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CrudProducts } from '../../services/crud-products';
 import { UpdateProductForm } from '../../services/update-product-form';
@@ -8,15 +8,15 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import { FileResolver, ToastManager } from '@avalantec/base-app/core';
-import { Subject, takeUntil } from 'rxjs';
+import { FileResolver, LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
   imports: [ProductEditForm],
   templateUrl: './product-maintenance.html',
 })
-export class ProductMaintenance implements OnDestroy {
+export class ProductMaintenance {
   private formService = inject(UpdateProductForm);
   private productsService = inject(CrudProducts);
   private productTypesService = inject(CrudProductType);
@@ -26,7 +26,8 @@ export class ProductMaintenance implements OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
-  private destroy$ = new Subject<void>();
+  private destroy$ = inject(DestroyRef);
+  private config = inject(LIBRARY_CONFIG);
 
   private fileResolverService = inject(FileResolver);
 
@@ -82,11 +83,6 @@ export class ProductMaintenance implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.unsubscribe();
-  }
-
   /**
    * Toggles the edit mode state of the component.
    * When invoked, it switches the `isEditMode` signal
@@ -103,7 +99,10 @@ export class ProductMaintenance implements OnDestroy {
    * The `submitLoading` signal is set to true while the save is in progress.
    */
   handleSave() {
-    const value = this.formService.dirtyValue();
+    const { dirtyValue: value } = this.formService.getValueState();
+
+    console.log('value for save', value);
+    console.log('photo control', this.formService.form.controls.photo, null, 2);
 
     this.submitLoading.set(true);
 
@@ -135,7 +134,7 @@ export class ProductMaintenance implements OnDestroy {
       },
     });
 
-    productRequest.pipe(takeUntil(this.destroy$)).subscribe({
+    productRequest.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.submitLoading.set(false);
         this.isEditMode.set(false);
@@ -198,9 +197,7 @@ export class ProductMaintenance implements OnDestroy {
     }
 
     const parsedImage = product.photo
-      ? await this.fileResolverService.resolveFile(
-          `http://localhost:8080/api/files/${product.photo}`
-        )
+      ? await this.fileResolverService.resolveFile(`${this.config.apiURL}files/${product.photo}`)
       : null;
 
     this.formService.patchValue({
@@ -230,5 +227,7 @@ export class ProductMaintenance implements OnDestroy {
 
     this.formService.form.markAsPristine();
     this.formService.form.markAsUntouched();
+
+    console.log('new form value', this.formService.form.value);
   }
 }

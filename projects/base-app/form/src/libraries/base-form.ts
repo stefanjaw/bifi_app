@@ -9,7 +9,7 @@ import {
 import { ControlsOf } from '../interfaces/typed-form-builder';
 import { getFormGroupDirtyValue } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
-import { FormUploaderFile } from '@avalantec/base-app/form/src/components/form-image-uploader/form-uploader.model';
+import { FormUploaderFile } from '../interfaces/form-uploader-image';
 
 /**
  * Abstract class representing a base form structure with reactive value handling.
@@ -141,7 +141,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
   getValueState(): FormValueState<TModel> {
     return {
       value: this.value(),
-      dirtyValue: this.dirtyValue(),
+      dirtyValue: getFormGroupDirtyValue(this.form),
       rawValue: this.rawValue(),
     } as FormValueState<TModel>;
   }

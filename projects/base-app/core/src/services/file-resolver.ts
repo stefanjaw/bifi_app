@@ -19,8 +19,6 @@ export class FileResolver {
       const fileName = url.split('/').pop() || 'image';
       const file = new File([blob], fileName, { type: blob.type });
 
-      console.log('loaded file', file);
-
       return file;
     } catch (error) {
       console.error(`Error converting URL ${url} to File`, error);
