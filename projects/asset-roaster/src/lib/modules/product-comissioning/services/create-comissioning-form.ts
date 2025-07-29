@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { BaseForm, ControlsOf, FormUploaderFile } from '@avalantec/base-app/form';
+import { Validators } from '@angular/forms';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface CreateComissioningFormModel {
   outcome: 'fail' | 'pass';
@@ -14,11 +14,15 @@ export class CreateComissioningForm extends BaseForm<CreateComissioningFormModel
     super();
   }
 
-  override createForm(): FormGroup<ControlsOf<CreateComissioningFormModel>> {
+  override createForm() {
     return this.fb.group<CreateComissioningFormModel>({
       outcome: ['fail', [Validators.required]],
       details: ['', [Validators.required]],
       attachments: {
+        template: {
+          id: [''],
+          file: [],
+        },
         formArrayElements: [],
       },
     });
