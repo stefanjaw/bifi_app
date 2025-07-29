@@ -29,6 +29,7 @@ export * from './src/interfaces/form-helpers';
 export * from './src/interfaces/form-navigation';
 export * from './src/interfaces/typed-form-builder';
 export * from './src/interfaces/form-uploader-image';
+export * from './src/interfaces/form-file';
 export * from './src/libraries/base-form';
 export * from './src/libraries/dirty-utils';
 export * from './src/libraries/error-state-tracker';
@@ -38,6 +39,7 @@ export * from './src/services/form-field-context';
 export * from './src/services/form-sections';
 export * from './src/services/form-translation';
 export * from './src/services/typed-form-builder';
+export * from './src/services/form-file-control-helper';
 
 export const AppFormExtensionsImports = [
   FormLayout,

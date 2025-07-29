@@ -9,40 +9,49 @@ import {
 } from '@angular/forms';
 import { FormGroupLike } from './form-helpers';
 import { IsPlainObject } from '@avalantec/base-app/core';
+import { TypedFormArrayExtension } from '../libraries/extensions/extended-form-array';
 
 type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
-export type ControlsOf<T extends FormGroupLike> = Prettify<{
+export type ControlsOf<T extends FormGroupLike, TUseExtendedArray = false> = Prettify<{
   [K in keyof T]-?: T[K] extends AbstractControl
     ? T[K]
     : Required<T[K]> extends (infer R)[]
-      ? FArray<R>
+      ? TUseExtendedArray extends true
+        ? ExtendedArrayControls<R>
+        : BaseArrayControls<R>
       : IsPlainObject<Required<T[K]>> extends true
         ? FormGroup<Required<ControlsOf<T[K]>>>
         : FormControl<T[K]>;
 }>;
 
-export type InputControls<T extends FormGroupLike> = Prettify<{
-  [K in keyof T]-?: T[K] extends AbstractControl
-    ? T[K]
-    : Required<T[K]> extends (infer R)[]
+export type InputControls<T> = Prettify<
+  IsPlainObject<Required<T>> extends true
+    ? {
+        [K in keyof T]-?: InputControls<T[K]>;
+      }
+    : Required<T> extends (infer R)[]
       ? IFArray<R>
-      : IsPlainObject<Required<T[K]>> extends true
-        ? Required<InputControls<T[K]>>
-        : PermissiveControlConfig<T[K]>;
-}>;
+      : PermissiveControlConfig<T>
+>;
 
 // An array of controls, if R is a record object, then it creates a form group, else it creates a normal control that is not nullable.
-export type FArray<R> = R extends FormGroupLike
+export type ExtendedArrayControls<R> = R extends FormGroupLike
+  ? TypedFormArrayExtension<FormGroup<ControlsOf<R>>>
+  : TypedFormArrayExtension<FormControl<R>>;
+
+export type BaseArrayControls<R> = R extends FormGroupLike
   ? FormArray<FormGroup<ControlsOf<R>>>
   : FormArray<FormControl<R>>;
 
 export type IFArray<R> = R extends FormGroupLike
   ? {
-      formArrayElements: InputControls<R>[];
+      template: InputControls<R>;
+      formArrayElements: R[];
     }
   : {
-      formArrayElements: PermissiveControlConfig<R>[];
+      template: PermissiveControlConfig<R>;
+      formArrayElements: R[];
     };
 
 // A Permissive control config (an array with a value and validators)
