@@ -22,15 +22,27 @@ export type ControlsOf<T extends FormGroupLike> = Prettify<{
         : FormControl<T[K]>;
 }>;
 
-export type InputControls<T extends FormGroupLike> = Prettify<{
-  [K in keyof T]-?: T[K] extends AbstractControl
-    ? T[K]
-    : Required<T[K]> extends (infer R)[]
+// export type InputControls<T extends FormGroupLike> = T extends FormGroupLike
+//   ? Prettify<{
+//       [K in keyof T]-?: Required<T[K]> extends (infer R)[]
+//         ? IFArray<R>
+//         : IsPlainObject<Required<T[K]>> extends true
+//           ? Required<InputControls<T[K]>>
+//           : PermissiveControlConfig<T[K]>;
+//     }>
+//   : T extends (infer R)[]
+//     ? IFArray<R>
+//     : PermissiveControlConfig<T>;
+
+export type InputControls<T> = Prettify<
+  IsPlainObject<Required<T>> extends true
+    ? {
+        [K in keyof T]-?: InputControls<T[K]>;
+      }
+    : Required<T> extends (infer R)[]
       ? IFArray<R>
-      : IsPlainObject<Required<T[K]>> extends true
-        ? Required<InputControls<T[K]>>
-        : PermissiveControlConfig<T[K]>;
-}>;
+      : PermissiveControlConfig<T>
+>;
 
 // An array of controls, if R is a record object, then it creates a form group, else it creates a normal control that is not nullable.
 export type FArray<R> = R extends FormGroupLike
@@ -39,10 +51,12 @@ export type FArray<R> = R extends FormGroupLike
 
 export type IFArray<R> = R extends FormGroupLike
   ? {
-      formArrayElements: InputControls<R>[];
+      template: InputControls<R>;
+      formArrayElements: R[];
     }
   : {
-      formArrayElements: PermissiveControlConfig<R>[];
+      template: PermissiveControlConfig<R>;
+      formArrayElements: R[];
     };
 
 // A Permissive control config (an array with a value and validators)

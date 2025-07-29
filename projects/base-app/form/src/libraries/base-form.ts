@@ -1,5 +1,5 @@
 import { inject, signal } from '@angular/core';
-import { FormArray, FormGroup, ValueChangeEvent } from '@angular/forms';
+import { FormGroup, ValueChangeEvent } from '@angular/forms';
 import {
   FormGroupLike,
   FormValueState,
@@ -9,7 +9,6 @@ import {
 import { ControlsOf } from '../interfaces/typed-form-builder';
 import { getFormGroupDirtyValue } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
-import { FormUploaderFile } from '../interfaces/form-uploader-image';
 import { Subject } from 'rxjs';
 
 /**
@@ -122,53 +121,11 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
     this.form.patchValue(data, options);
   }
 
-  // private patchFormArrays(currentControl: AbstractControl, requestedValue: unknown[]) {
-  //   if (currentControl instanceof FormArray) {
-  //     // Sync the control with the required value (create the necessary controls)
-  //     if (currentControl.length < requestedValue.length) {
-  //       const diff = requestedValue.length - currentControl.length;
-  //       for (let i = 0; i < diff; i++) {
-  //         const valueAt = requestedValue[i];
-  //         if (typeof valueAt === 'object' && valueAt !== null) {
-  //           // Create a form group to represent the object
-
-  //           const group = this.fb.group(valueAt);
-  //           currentControl.push(group);
-  //         } else {
-  //         // Otherwise, create a form control
-  //           currentControl.push(this.fb.control(valueAt));
-  //         }
-  //       }
-
-  //     }
-  //   }
-  // }
-
   getValueState(): FormValueState<TModel> {
     return {
       value: this.value(),
       dirtyValue: getFormGroupDirtyValue(this.form),
       rawValue: this.rawValue(),
     } as FormValueState<TModel>;
-  }
-
-  /**
-   * Synchronizes the state of a FormArray containing FormGroup controls with typed FormUploaderFile values
-   * with an array of FormUploaderFile objects.
-   * @param control - The FormArray to synchronize.
-   * @param files - The array of FormUploaderFile objects to synchronize with.
-   */
-  protected syncFileControl(
-    control: FormArray<FormGroup<ControlsOf<FormUploaderFile>>>,
-    files: FormUploaderFile[]
-  ) {
-    control.clear();
-    files.forEach(file => {
-      const group = this.fb.group<FormUploaderFile>({
-        id: [file.id],
-        file: [file.file],
-      });
-      control.push(group);
-    });
   }
 }

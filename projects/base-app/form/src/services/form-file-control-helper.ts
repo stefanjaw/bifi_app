@@ -61,7 +61,11 @@ export class FormFileControlHelper {
           return {
             id: data.id,
             file: data.file,
-            url: isSameFile ? prevItem!.url : URL.createObjectURL(data.file),
+            url: isSameFile
+              ? prevItem!.url
+              : data.file !== null
+                ? URL.createObjectURL(data.file)
+                : '',
           };
         });
 

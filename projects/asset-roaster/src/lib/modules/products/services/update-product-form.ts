@@ -41,21 +41,14 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       warrantyDate: [null],
       remarks: [null],
       photo: {
+        template: {
+          id: ['', [Validators.required]],
+          file: [],
+        },
         formArrayElements: [],
       },
       maintenanceWindowIds: [null],
       maintenanceDate: [null],
     });
-  }
-
-  override patchValue(data: Partial<UpdateProductFormModel>): void {
-    if (data.photo) {
-      // Create the necessary form controls for the photo array
-      const { photo } = this.form.controls;
-
-      // Sync the photo array with the data
-      this.syncFileControl(photo, data.photo);
-    }
-    super.patchValue(data);
   }
 }

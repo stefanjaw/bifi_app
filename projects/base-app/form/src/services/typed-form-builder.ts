@@ -9,6 +9,7 @@ import {
   IFArray,
   PermissiveControlConfig,
 } from '../interfaces/typed-form-builder';
+import { TypedFormArrayExtension } from '../libraries/extensions/extended-form-array';
 
 @Injectable({
   providedIn: 'root',
@@ -45,8 +46,16 @@ export class TypedFormBuilder {
 
     if (typeof data === 'object' && data !== null) {
       if (this.isFormArrayInput(data)) {
-        const parsedElements = data.formArrayElements.map((el: any) => this.buildFormTree(el));
-        return this.fb.array(parsedElements);
+        // Create an extended form array
+        const formArray = new TypedFormArrayExtension<any>([]);
+
+        // Set the control template
+        formArray.controlTemplate = () => this.buildFormTree(data.template);
+
+        // Patch the array value to generate the required controls
+        formArray.patchValue(data.formArrayElements);
+
+        return formArray;
       }
 
       // Regular FormGroup: recurse each key
@@ -72,11 +81,12 @@ export class TypedFormBuilder {
 }
 
 type TestObject = {
-  name: string;
+  name: string | null;
   age: number;
 };
 
 type TestFormModel = {
+  string: string | null;
   arrayNumber: number[];
   arrayObject: TestObject[];
   singleObject: TestObject;
