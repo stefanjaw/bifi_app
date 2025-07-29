@@ -41,11 +41,23 @@
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
-    <bifi-app-form-field>
+    <!-- <bifi-app-form-field>
       <bifi-app-form-label>Upload Inspection Report (PDF Optional)</bifi-app-form-label>
       <input type="file" formControlName="attachments" pInputText />
       <bifi-app-form-error></bifi-app-form-error>
-    </bifi-app-form-field>
+    </bifi-app-form-field> -->
+
+    <bifi-app-form-uploader formArrayName="attachments">
+      <p-fileUpload
+        showUploadButton="false"
+        showCancelButton="false"
+        name="files"
+        [multiple]="false"
+        accept="application/*"
+        maxFileSize="100000000"
+        mode="basic"
+      ></p-fileUpload>
+    </bifi-app-form-uploader>
 
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"

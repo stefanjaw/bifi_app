@@ -18,9 +18,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
-import { InputText } from 'primeng/inputtext';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
   selector: 'bifi-app-product-comissioning-form-dialog',
@@ -31,7 +31,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     Text,
     RadioButtonModule,
     Textarea,
-    InputText,
+    FileUploadModule,
   ],
   templateUrl: './product-comissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

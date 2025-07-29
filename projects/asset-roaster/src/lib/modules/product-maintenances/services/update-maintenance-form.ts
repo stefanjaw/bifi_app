@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { BaseForm, ControlsOf, FormUploaderFile } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface UpdateMaintenanceFormModel {
   attachments: FormUploaderFile[];
@@ -12,9 +11,13 @@ export class UpdateMaintenanceForm extends BaseForm<UpdateMaintenanceFormModel> 
     super();
   }
 
-  override createForm(): FormGroup<ControlsOf<UpdateMaintenanceFormModel>> {
+  override createForm() {
     return this.fb.group<UpdateMaintenanceFormModel>({
       attachments: {
+        template: {
+          id: [''],
+          file: [],
+        },
         formArrayElements: [],
       },
     });
