@@ -82,13 +82,13 @@ export class TableLayout<T extends Record<string, any>> {
     if (event.rows || event.first) {
       // calculate page
       const page = Math.floor((event.first || 1) / (event.rows || 5) + 1);
-      console.log('page', page);
       this.changePage(page, event.rows || 5);
     }
   }
 
   private changePage(page: number, limit: number) {
     this.paginationManager.setPaginationOptions(page, limit);
+    console.log('change page', page, limit);
   }
 
   private sort(multiSortMeta: SortMeta[]) {

@@ -1,41 +1,43 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { product, ProductMaintenanceContext } from '../../../products';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
-import {
-  CreateMaintenanceForm,
-  CreateMaintenanceFormModel,
-} from '../../services/create-maintenance-form';
-import { CrudProductMaintenances } from '../../services/crud-product-maintenances';
 import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Textarea } from 'primeng/textarea';
-import { RadioButtonModule } from 'primeng/radiobutton';
+import { FileUploadModule } from 'primeng/fileupload';
+import {
+  UpdateMaintenanceForm,
+  UpdateMaintenanceFormModel,
+} from '../../services/update-maintenance-form';
+import { CrudProductMaintenances } from '../../services/crud-product-maintenances';
+import { product, ProductMaintenanceContext } from '../../../products';
+import { productMaintenance } from '../../interfaces/product-maintenance';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'bifi-app-product-maintenance-form-dialog',
+  selector: 'bifi-app-product-finish-maintenance-form-dialog',
   imports: [
     DialogModule,
     ReactiveFormsModule,
+    FileUploadModule,
     AppFormExtensionsImports,
     Text,
-    Textarea,
-    RadioButtonModule,
+    CommonModule,
   ],
-  templateUrl: './product-maintenance-form-dialog.html',
+  templateUrl: './product-finish-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductMaintenanceFormDialog extends BaseDialog {
+export class ProductFinishMaintenanceFormDialog extends BaseDialog {
   // services
-  protected formService = inject(CreateMaintenanceForm);
+  protected formService = inject(UpdateMaintenanceForm);
   private productMaintenancesService = inject(CrudProductMaintenances);
   private toastManager = inject(ToastManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
@@ -43,10 +45,14 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
 
   // inputs
   product = input.required<product | null>();
+  maintenanceType = input.required<productMaintenance['type']>();
 
   // state
   submitLoading = signal<boolean>(false);
   destroy$ = inject(DestroyRef);
+  productMaintenace = computed(() =>
+    this.product()?.productMaintenances.find(m => m.type === this.maintenanceType())
+  );
 
   /**
    * Opens the product form dialog and resets the form to its initial state.
@@ -56,6 +62,7 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
 
   override openDialog(): void {
     this.formService.reset();
+    this.formService.form.markAsTouched();
     super.openDialog();
   }
 
@@ -64,18 +71,17 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
    *
    * @param data the form data
    */
-  handleSubmit(data: FormValueState<CreateMaintenanceFormModel>) {
+  handleSubmit(data: FormValueState<UpdateMaintenanceFormModel>) {
     this.submitLoading.set(true);
 
     const { rawValue } = data;
 
     this.productMaintenancesService
-      .post({
+      .put({
+        _id: this.productMaintenace()?._id || '',
         data: {
-          productId: this.product()?._id,
-          name: rawValue.name,
-          description: rawValue.description || '',
-          type: 'service',
+          attachments: rawValue.attachments,
+          active: 'false',
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -84,8 +90,15 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
           this.submitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          this.productMaintenanceContext.handleService();
-          this.toastManager.showSuccess('Service created successfully');
+          this.toastManager.showSuccess(
+            `${this.maintenanceType() === 'service' ? 'Service' : 'PM'} finished successfully`
+          );
+
+          if (this.maintenanceType() === 'service') {
+            this.productMaintenanceContext.handleFinishService();
+          } else {
+            this.productMaintenanceContext.handleFinishPM();
+          }
         },
         error: () => {
           this.submitLoading.set(false);

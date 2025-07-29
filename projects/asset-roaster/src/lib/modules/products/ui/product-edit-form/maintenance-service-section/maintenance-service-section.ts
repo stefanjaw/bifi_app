@@ -145,11 +145,15 @@ export class MaintenanceServiceSection {
     this.productMaintenanceContext.handleInitPM();
   }
 
-  handleFinishPM() {
-    this.productMaintenanceContext.handleFinishPM();
+  handleOpenFinishPMDialog() {
+    this.productMaintenanceContext.handleOpenFinishPMDialog();
   }
 
-  handleOpenMaintenanceDialog() {
-    this.productMaintenanceContext.handleOpenMaintenanceDialog();
+  handleOpenServiceDialog() {
+    this.productMaintenanceContext.handleOpenServiceDialog();
+  }
+
+  handleOpenFinishServiceDialog() {
+    this.productMaintenanceContext.handleOpenFinishServiceDialog();
   }
 }

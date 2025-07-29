@@ -16,6 +16,7 @@ export * from './ui/product-edit-form/commissioning-lifecycle-section/commission
 export * from './ui/product-edit-form/documents-section/documents-section';
 export * from './ui/product-edit-form/general-information-section/general-information-section';
 export * from './ui/product-edit-form/maintenance-service-section/maintenance-service-section';
+export * from './ui/product-edit-form/maintenance-service-section/maintenance-status.model';
 export * from './ui/product-edit-form/product-edit-form';
 export * from './ui/product-edit-form/status-banner-section/status-banner-section';
 export * from './ui/product-status-card/product-status-card';

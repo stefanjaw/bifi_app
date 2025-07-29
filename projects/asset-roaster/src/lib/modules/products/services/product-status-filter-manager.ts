@@ -1,6 +1,6 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { statusVariant } from '../interfaces/product-status-card';
-import { FilterManager } from '@avalantec/base-app/resource';
+import { filterGroup, FilterManager } from '@avalantec/base-app/resource';
 
 @Injectable({
   providedIn: 'root',
@@ -43,38 +43,45 @@ export class ProductStatusFilterManager {
       variant === 'active' ||
       variant === 'in-pm'
     )
-      this.filterByStatus(variant);
-    else if (variant === 'overdue') this.filterByOverdue();
-    else if (variant === 'due') this.filterByDue();
-    else if (variant === 'pm-not-set') this.filterByPMNotSet();
+      this.filterManager.addFilter(this.getFilterByStatus(variant));
+    else if (variant === 'overdue') this.filterManager.addFilter(this.getFilterByOverdue());
+    else if (variant === 'due') this.filterManager.addFilter(this.getFilterByDue());
+    else if (variant === 'pm-not-set') this.filterManager.addFilter(this.getFilterByPMNotSet());
 
     this._currentVariant.set(variant);
   }
 
+  //#region Creation of filter groups
+
   /**
-   * Filter the products by given status.
+   * Return a filter group for the given status.
    *
-   * Emits a filter group with id {@link filterId} containing a filter for the
+   * @param status The product status to filter by.
+   * @returns A filter group with id {@link filterId} containing a filter for the
    * 'status' field with value {@link status} and operator '=='.
-   *
-   * @param status The status to filter by.
-   */
-  private filterByStatus(status: string) {
-    this.filterManager.addFilter({
+   **/
+  getFilterByStatus(status: string): filterGroup<any> {
+    return {
       id: this.filterId,
       operator: 'and',
       filters: [{ field: 'status', value: status, operator: '==' }],
-    });
+    };
   }
 
   /**
-   * Filter the products by overdue status.
+   * Return a filter group that filters products where the maximum maintenance date is overdue.
    *
-   * Emits a filter group with id {@link filterId} containing a filter for the
-   * 'maxMaintenanceDate' field with value {@link Date.now()} and operator '>'.
-   */
-  private filterByOverdue() {
-    this.filterManager.addFilter({
+   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * and a single filter with field 'maxMaintenanceDate', value the current date and time
+   * as an ISO string, and operator '<'. This will filter out all products where the
+   * maximum maintenance date is not overdue.
+   *
+   * @returns A filter group with id {@link filterId} containing a filter for the
+   * 'maxMaintenanceDate' field with value the current date and time as an ISO string
+   * and operator '<'.
+   **/
+  getFilterByOverdue(): filterGroup<any> {
+    return {
       id: this.filterId,
       operator: 'and',
       filters: [
@@ -84,18 +91,25 @@ export class ProductStatusFilterManager {
           operator: '<',
         },
       ],
-    });
+    };
   }
 
   /**
-   * Filter the products by due status.
+   * Return a filter group that filters products where the maintenance date is due.
    *
-   * Emits a filter group with id {@link filterId} containing filters for the
-   * 'minMaintenanceDate' and 'maxMaintenanceDate' fields with value {@link Date.now()} and
-   * operators '>=' and '<=' respectively.
-   */
-  private filterByDue() {
-    this.filterManager.addFilter({
+   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * and two filters: one for the 'minMaintenanceDate' field with a value of the current
+   * date and time as an ISO string and operator '<=', and another for the 'maxMaintenanceDate'
+   * field with the same value and operator '>='. This will filter out all products where the
+   * maintenance date is not due.
+   *
+   * @returns A filter group with id {@link filterId} containing filters for the
+   * 'minMaintenanceDate' and 'maxMaintenanceDate' fields with the current date and time as
+   * their value and appropriate operators.
+   **/
+
+  getFilterByDue(): filterGroup<any> {
+    return {
       id: this.filterId,
       operator: 'and',
       filters: [
@@ -110,20 +124,25 @@ export class ProductStatusFilterManager {
           operator: '>=',
         },
       ],
-    });
+    };
   }
 
   /**
-   * Filter the products by PM not set status.
+   * Return a filter group that filters products where the maintenance window is not set.
    *
-   * Emits a filter group with id {@link filterId} containing a filter for the
+   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * and a single filter with field 'maintenanceWindowIds', operator 'empty'. This will
+   * filter out all products where the maintenance window is set.
+   *
+   * @returns A filter group with id {@link filterId} containing a filter for the
    * 'maintenanceWindowIds' field with operator 'empty'.
-   */
-  private filterByPMNotSet() {
-    this.filterManager.addFilter({
+   **/
+  getFilterByPMNotSet(): filterGroup<any> {
+    return {
       id: this.filterId,
       operator: 'and',
       filters: [{ field: 'maintenanceWindowIds', operator: 'empty' }],
-    });
+    };
   }
+  //#endregion
 }

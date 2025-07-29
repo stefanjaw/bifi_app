@@ -4,14 +4,18 @@ import { Subject } from 'rxjs';
 export type productMaintenanceContextEvent =
   | 'toggle-edit'
   | 'save'
+  | 'saved'
   | 'cancel'
   | 'open-comission-dialog'
   | 'comission'
   | 'open-decommission-dialog'
   | 'decommission'
-  | 'open-maintenance-dialog'
-  | 'maintenance'
+  | 'open-service-dialog'
+  | 'service'
+  | 'open-finish-service-dialog'
+  | 'finish-service'
   | 'add-document'
+  | 'open-finish-pm-dialog'
   | 'finish-pm'
   | 'init-pm'
   | 'back-to-dashboard';
@@ -30,6 +34,10 @@ export class ProductMaintenanceContext {
 
   handleSave() {
     this._handleEvents.next('save');
+  }
+
+  handleSaved() {
+    this._handleEvents.next('saved');
   }
 
   handleCancel() {
@@ -52,16 +60,28 @@ export class ProductMaintenanceContext {
     this._handleEvents.next('decommission');
   }
 
-  handleOpenMaintenanceDialog() {
-    this._handleEvents.next('open-maintenance-dialog');
+  handleOpenServiceDialog() {
+    this._handleEvents.next('open-service-dialog');
   }
 
-  handleMaintenance() {
-    this._handleEvents.next('maintenance');
+  handleService() {
+    this._handleEvents.next('service');
+  }
+
+  handleOpenFinishServiceDialog() {
+    this._handleEvents.next('open-finish-service-dialog');
+  }
+
+  handleFinishService() {
+    this._handleEvents.next('finish-service');
   }
 
   handleAddDocument() {
     this._handleEvents.next('add-document');
+  }
+
+  handleOpenFinishPMDialog() {
+    this._handleEvents.next('open-finish-pm-dialog');
   }
 
   handleFinishPM() {

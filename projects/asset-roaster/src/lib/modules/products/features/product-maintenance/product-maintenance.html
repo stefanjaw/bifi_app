@@ -19,3 +19,13 @@
 <bifi-app-product-maintenance-form-dialog
   [product]="product()"
 ></bifi-app-product-maintenance-form-dialog>
+<bifi-app-product-finish-maintenance-form-dialog
+  [product]="product()"
+  maintenanceType="service"
+  #finishServiceDialog
+></bifi-app-product-finish-maintenance-form-dialog>
+<bifi-app-product-finish-maintenance-form-dialog
+  [product]="product()"
+  maintenanceType="preventive-maintenance"
+  #finishPMDialog
+></bifi-app-product-finish-maintenance-form-dialog>

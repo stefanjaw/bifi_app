@@ -1,10 +1,11 @@
 import { productFilters } from '../../libraries/product-filters';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { productColumns } from '../../libraries/product-columns';
 import { product } from '../../interfaces/product';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import {
+  FilterManager,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -15,8 +16,9 @@ import { CrudProducts } from '../../services/crud-products';
 import { ProductStatusCardComponent } from '../../ui/product-status-card/product-status-card';
 import { ProductStatusSelect } from '../../ui/product-status-select/product-status-select';
 import { ProductFormDialog } from '../product-form-dialog/product-form-dialog';
-import { CreateProductForm } from '../../services/create-product-form';
-import { Subject, takeUntil } from 'rxjs';
+import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 
 @Component({
   selector: 'bifi-app-products-list',
@@ -35,34 +37,81 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductsList implements OnDestroy {
+export class ProductsList {
   private resourceManager = inject<ResourceManager<product>>(ResourceManager);
-  private createProductForm = inject(CreateProductForm);
-  private destroy$ = new Subject<void>();
+  private destroy$ = inject(DestroyRef);
+  private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   productColumns = productColumns;
   productFilters = productFilters;
 
   products = this.resourceManager.data;
 
+  //#region Counting of products by status
+  private productsService = inject(CrudProducts);
+  private productStatusFilterManager = inject(ProductStatusFilterManager);
+  private filterManager = inject(FilterManager);
+
+  //#region Queries
+  private productsUnderServiceQuery = signal(
+    this.filterManager.getFilterObjectUtil([
+      this.productStatusFilterManager.getFilterByStatus('under-service'),
+    ])
+  );
+  private productsInPMQuery = signal(
+    this.filterManager.getFilterObjectUtil([
+      this.productStatusFilterManager.getFilterByStatus('in-pm'),
+    ])
+  );
+  private productsOverdueQuery = signal(
+    this.filterManager.getFilterObjectUtil([this.productStatusFilterManager.getFilterByOverdue()])
+  );
+  private productsDueQuery = signal(
+    this.filterManager.getFilterObjectUtil([this.productStatusFilterManager.getFilterByDue()])
+  );
+
+  private productsPMNotSetQuery = signal(
+    this.filterManager.getFilterObjectUtil([this.productStatusFilterManager.getFilterByPMNotSet()])
+  );
+  //#endregion
+
+  //#region Counts
+  protected productsUnderServiceCount = this.productsService.getCount({
+    searchParams: this.productsUnderServiceQuery,
+  });
+  protected productsOverdueCount = this.productsService.getCount({
+    searchParams: this.productsOverdueQuery,
+  });
+  protected productsDueCount = this.productsService.getCount({
+    searchParams: this.productsDueQuery,
+  });
+  protected productsInPMCount = this.productsService.getCount({
+    searchParams: this.productsInPMQuery,
+  });
+  protected productsPMNotSetCount = this.productsService.getCount({
+    searchParams: this.productsPMNotSetQuery,
+  });
+  //#endregion
+  //#endregion
+
   /**
    * Subscribe to the submitted form event from the create product form.
    * If the form was submitted successfully, reload the list of products.
    */
   constructor() {
-    this.createProductForm.submitted.pipe(takeUntil(this.destroy$)).subscribe(saved => {
-      if (saved) this.products.reload();
-    });
-  }
+    this.productMaintenanceContext.handleEvents$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(event => {
+        if (event === 'saved') {
+          this.products.reload();
 
-  /**
-   * Lifecycle hook that is called when the component is destroyed.
-   * It completes and unsubscribes from the destroy$ subject to prevent
-   * memory leaks by ensuring that all subscriptions are cleaned up.
-   */
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.unsubscribe();
+          // reload counts
+          this.productsUnderServiceCount.reload();
+          this.productsOverdueCount.reload();
+          this.productsDueCount.reload();
+          this.productsInPMCount.reload();
+          this.productsPMNotSetCount.reload();
+        }
+      });
   }
 }

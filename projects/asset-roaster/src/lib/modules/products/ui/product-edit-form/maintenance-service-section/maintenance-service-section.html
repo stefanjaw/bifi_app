@@ -110,7 +110,7 @@
 
           @if (pmStarted()) {
             <p-button
-              (onClick)="handleFinishPM()"
+              (onClick)="handleOpenFinishPMDialog()"
               size="small"
               label="Finish PM"
               severity="success"
@@ -133,7 +133,7 @@
 
         @if (canStartService()) {
           <p-button
-            (onClick)="handleOpenMaintenanceDialog()"
+            (onClick)="handleOpenServiceDialog()"
             size="small"
             label="Initiate Service"
             severity="warn"
@@ -143,7 +143,13 @@
           <p class="mb-4">
             Service in progress: {{ currService()?.date | date }} ({{ currService()?.name }})
           </p>
-          <p-button size="small" label="Finish Service" severity="warn" type="button"></p-button>
+          <p-button
+            (onClick)="handleOpenFinishServiceDialog()"
+            size="small"
+            label="Finish Service"
+            severity="warn"
+            type="button"
+          ></p-button>
         }
       </div>
     </p-card>

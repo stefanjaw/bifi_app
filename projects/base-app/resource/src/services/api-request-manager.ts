@@ -221,6 +221,42 @@ export class ApiRequestManager<T> {
     });
   }
 
+  getCount({
+    searchParams,
+    specificEndpoint = '',
+  }: {
+    searchParams?: Signal<Record<string, any>>;
+    specificEndpoint?: string;
+  }): ResourceRef<number> {
+    const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
+
+    return rxResource({
+      params: () => {
+        const params = searchParams?.();
+
+        return { params };
+      },
+      stream: ({ params: { params } }) => {
+        const query = new URLSearchParams({
+          count: 'true',
+          ...(params && { searchParams: JSON.stringify(params) }),
+        });
+
+        return this._httpClient
+          .get<number>(fullURL, {
+            params: new HttpParams({ fromString: query.toString() }),
+          })
+          .pipe(
+            catchError((err: any) => {
+              this.manageError(fullURL, err.message);
+              return throwError(() => err);
+            })
+          );
+      },
+      defaultValue: 0,
+    });
+  }
+
   /**
    * Send a DELETE request to the API with the given _id and specific endpoint.
    *
