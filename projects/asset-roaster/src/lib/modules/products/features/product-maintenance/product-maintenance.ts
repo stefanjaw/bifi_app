@@ -10,8 +10,6 @@ import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { FileResolver, LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ToastManager } from '@avalantec/base-app/core';
-import { Subject, takeUntil } from 'rxjs';
 import {
   ProductComissioningFormDialog,
   ProductDecomissioningFormDialog,
@@ -232,7 +230,7 @@ export class ProductMaintenance {
           type: 'preventive-maintenance',
         },
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.handleReloadProduct();
@@ -261,7 +259,7 @@ export class ProductMaintenance {
           type: 'preventive-maintenance',
         },
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.handleReloadProduct();
@@ -344,48 +342,50 @@ export class ProductMaintenance {
    */
 
   private handleEvents() {
-    this.productMaintenanceContext.handleEvents$.pipe(takeUntil(this.destroy$)).subscribe(event => {
-      switch (event) {
-        case 'toggle-edit':
-          this.toggleEditMode();
-          break;
-        case 'save':
-          this.handleSave();
-          break;
-        case 'cancel':
-          this.handleCancel();
-          break;
-        case 'open-comission-dialog':
-          this.handleOpenComissionDialog();
-          break;
-        case 'comission':
-          this.handleReloadProduct();
-          break;
-        case 'open-decommission-dialog':
-          this.handleOpenDecomissionDialog();
-          break;
-        case 'decommission':
-          this.handleReloadProduct();
-          break;
-        case 'open-maintenance-dialog':
-          this.handleOpenMaintenanceDialog();
-          break;
-        case 'maintenance':
-          this.handleReloadProduct();
-          break;
-        case 'add-document':
-          this.handleAddDocument();
-          break;
-        case 'finish-pm':
-          this.handleFinishPM();
-          break;
-        case 'init-pm':
-          this.handleInitiatePM();
-          break;
-        case 'back-to-dashboard':
-          this.handleBackToDashboard();
-          break;
-      }
-    });
+    this.productMaintenanceContext.handleEvents$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(event => {
+        switch (event) {
+          case 'toggle-edit':
+            this.toggleEditMode();
+            break;
+          case 'save':
+            this.handleSave();
+            break;
+          case 'cancel':
+            this.handleCancel();
+            break;
+          case 'open-comission-dialog':
+            this.handleOpenComissionDialog();
+            break;
+          case 'comission':
+            this.handleReloadProduct();
+            break;
+          case 'open-decommission-dialog':
+            this.handleOpenDecomissionDialog();
+            break;
+          case 'decommission':
+            this.handleReloadProduct();
+            break;
+          case 'open-maintenance-dialog':
+            this.handleOpenMaintenanceDialog();
+            break;
+          case 'maintenance':
+            this.handleReloadProduct();
+            break;
+          case 'add-document':
+            this.handleAddDocument();
+            break;
+          case 'finish-pm':
+            this.handleFinishPM();
+            break;
+          case 'init-pm':
+            this.handleInitiatePM();
+            break;
+          case 'back-to-dashboard':
+            this.handleBackToDashboard();
+            break;
+        }
+      });
   }
 }

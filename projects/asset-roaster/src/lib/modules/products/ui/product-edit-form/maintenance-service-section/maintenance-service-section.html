@@ -33,25 +33,27 @@
                 <bifi-app-form-error></bifi-app-form-error>
               </bifi-app-form-field>
 
-              <bifi-app-form-field>
-                <bifi-app-form-label>Maintenance Date</bifi-app-form-label>
-                <p-date-picker
-                  formControlName="maintenanceDate"
-                  [showIcon]="true"
-                  inputId="maintenanceDate"
-                  class="w-full"
-                />
+              @if (formService.rawValue().maintenanceWindowIds) {
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Maintenance Date</bifi-app-form-label>
+                  <p-date-picker
+                    formControlName="maintenanceDate"
+                    [showIcon]="true"
+                    inputId="maintenanceDate"
+                    class="w-full"
+                  />
 
-                @if (isMaintenanceWindowsEditLocked()) {
-                  <bifi-app-form-hint>
-                    <small class="text-orange-300">
-                      Cannot change: PM has been logged for this schedule.
-                    </small>
-                  </bifi-app-form-hint>
-                }
+                  @if (isMaintenanceWindowsEditLocked()) {
+                    <bifi-app-form-hint>
+                      <small class="text-orange-300">
+                        Cannot change: PM has been logged for this schedule.
+                      </small>
+                    </bifi-app-form-hint>
+                  }
 
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+              }
             } @else {
               <div class="mb-4">
                 <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
@@ -138,7 +140,9 @@
             type="button"
           ></p-button>
         } @else if (serviceStarted()) {
-          <p class="mb-4">Service in progress: {{ currService()?.date | date }} ({{ currService()?.name }})</p>
+          <p class="mb-4">
+            Service in progress: {{ currService()?.date | date }} ({{ currService()?.name }})
+          </p>
           <p-button size="small" label="Finish Service" severity="warn" type="button"></p-button>
         }
       </div>
