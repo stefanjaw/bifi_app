@@ -8,7 +8,13 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import { FileResolver, LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import {
+  activityHistory,
+  CrudActivityHistories,
+  FileResolver,
+  LIBRARY_CONFIG,
+  ToastManager,
+} from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ProductComissioningFormDialog,
@@ -20,6 +26,7 @@ import {
   ProductFinishMaintenanceFormDialog,
   ProductMaintenanceFormDialog,
 } from '../../../product-maintenances';
+import { FilterManager, orderByQuery } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
@@ -40,16 +47,18 @@ export class ProductMaintenance {
   private roomsService = inject(CrudRooms);
   private maintenaceWindowsService = inject(CrudMaintenanceWindows);
   private productMaintenancesService = inject(CrudProductMaintenances);
+  private activityHistoriesService = inject(CrudActivityHistories);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
   private config = inject(LIBRARY_CONFIG);
   private fileResolverService = inject(FileResolver);
+  private filterManager = inject(FilterManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   // Coming in route as param
-  id = computed(() => ({ _id: this.route.snapshot.paramMap.get('id') ?? '' }));
+  id = signal({ _id: this.route.snapshot.paramMap.get('id') ?? '' });
   products = this.productsService.get({ searchParams: this.id });
 
   // Data
@@ -58,6 +67,36 @@ export class ProductMaintenance {
   rooms = this.roomsService.get({});
   maintenaceWindows = this.maintenaceWindowsService.get({});
 
+  // Histories
+  private activityHistoryQuery = signal(
+    this.filterManager.getFilterObjectUtil([
+      {
+        operator: 'or',
+        filters: [
+          {
+            operator: 'and',
+            filters: [
+              { field: 'model', operator: '==', value: 'Product' },
+              { field: 'modelId', operator: '==', value: this.id()._id },
+            ],
+          },
+          {
+            operator: 'and',
+            filters: [{ field: 'metadata.productId', operator: '==', value: this.id()._id }],
+          },
+        ],
+      },
+    ])
+  );
+  private activityHistoryOrder = signal<orderByQuery<activityHistory>>([
+    { field: 'performDate', order: 'desc' },
+  ]);
+
+  activityHistories = this.activityHistoriesService.get({
+    searchParams: this.activityHistoryQuery,
+    sort: this.activityHistoryOrder,
+  });
+
   // state
   loading = computed(() => {
     return (
@@ -65,7 +104,8 @@ export class ProductMaintenance {
       this.productTypes.isLoading() ||
       this.contacts.isLoading() ||
       this.rooms.isLoading() ||
-      this.maintenaceWindows.isLoading()
+      this.maintenaceWindows.isLoading() ||
+      this.activityHistories.isLoading()
     );
   });
 
@@ -284,6 +324,7 @@ export class ProductMaintenance {
    */
   handleReloadProduct() {
     this.products.reload();
+    this.activityHistories.reload();
   }
 
   /**

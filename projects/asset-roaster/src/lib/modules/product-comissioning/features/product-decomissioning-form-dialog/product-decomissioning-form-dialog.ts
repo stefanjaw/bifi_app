@@ -13,8 +13,11 @@ import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
 import { CrudProducts, product, ProductMaintenanceContext } from '../../../products';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
-import { forkJoin } from 'rxjs';
-import { UpdateDecomissioningForm, UpdateDecomissioningFormModel } from '../../services/update-decomissioning-form';
+import { switchMap } from 'rxjs';
+import {
+  UpdateDecomissioningForm,
+  UpdateDecomissioningFormModel,
+} from '../../services/update-decomissioning-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -59,14 +62,6 @@ export class ProductDecomissioningFormDialog extends BaseDialog {
   handleSubmit(data: FormValueState<UpdateDecomissioningFormModel>) {
     this.submitLoading.set(true);
 
-    const productComissionnigRequest = this.productComissioningService.put({
-      _id: this.product()?.productComission?._id || '',
-      data: {
-        active: false,
-        details: data.rawValue.details || '',
-      },
-    });
-
     const productsRequest = this.productsService.put({
       _id: this.product()?._id || '',
       data: {
@@ -74,15 +69,27 @@ export class ProductDecomissioningFormDialog extends BaseDialog {
       },
     });
 
-    forkJoin([productComissionnigRequest, productsRequest])
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.productComissioningService
+      .put({
+        _id: this.product()?.productComission?._id || '',
+        data: {
+          active: false,
+          details: data.rawValue.details || '',
+        },
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        switchMap(() => {
+          return productsRequest;
+        })
+      )
       .subscribe({
         next: () => {
           this.submitLoading.set(false);
           this.formService.reset();
-          this.closeDialog();
           this.productMaintenanceContext.handleDecomission();
           this.toastManager.showSuccess('Decomissioned successfully');
+          this.closeDialog();
         },
         error: () => {
           this.submitLoading.set(false);
