@@ -16,7 +16,7 @@
     (appSubmit)="handleSubmit($event)"
   >
     <p [bifiAppText]="'small'" class="font-bold!">
-      Comfirm complition of {{ productMaintenace()?.name }} initiated on:
+      Comfirm completion of {{ productMaintenace()?.name }} initiated on:
       {{ productMaintenace()?.date | date }}
     </p>
 
@@ -35,6 +35,7 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
+      saveLabel="Confirm {{ maintenanceType() === 'service' ? 'Service' : 'PM' }} Done"
     ></bifi-app-form-actions>
   </form>
 </p-dialog>
