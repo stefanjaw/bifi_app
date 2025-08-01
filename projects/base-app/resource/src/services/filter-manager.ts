@@ -56,7 +56,7 @@ export class FilterManager {
    * @param ids The IDs of the filters to remove.
    */
   removeFilters(ids: string[]) {
-    this._filters.update(filters => filters.filter(filter => !ids.includes(filter.id)));
+    this._filters.update(filters => filters.filter(filter => !ids.includes(filter?.id || '')));
   }
 
   /**
@@ -167,7 +167,11 @@ export class FilterManager {
    */
   getFilterObjectUtil(filters: filterGroup<Record<string, any>>[]) {
     const arrayFilters = filters.map(filter => ({
-      ['$' + filter.operator]: filter.filters.map(filter => this.buildFilterObject(filter)),
+      ['$' + filter.operator]: filter.filters.map(filter =>
+        this.isFilterGroup(filter)
+          ? this.getFilterObjectUtil([filter])
+          : this.buildFilterObject(filter)
+      ),
     }));
 
     let parsedFilters = {};
@@ -181,5 +185,20 @@ export class FilterManager {
     );
 
     return parsedFilters;
+  }
+
+  /**
+   * Type guard to check if a given filter is a filterGroup.
+   *
+   * A filterGroup is an object with a 'filters' property, so this function
+   * simply checks for the existence of that property.
+   *
+   * @param filter The object to check.
+   * @returns True if the object is a filterGroup, false otherwise.
+   */
+  private isFilterGroup(
+    filter: filter<Record<string, any>> | filterGroup<any>
+  ): filter is filterGroup<Record<string, any>> {
+    return 'filters' in filter;
   }
 }

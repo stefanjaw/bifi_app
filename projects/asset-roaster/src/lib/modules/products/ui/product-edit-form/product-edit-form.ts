@@ -18,6 +18,7 @@ import { maintenanceWindow } from '../../../maintenance-windows';
 import { productType } from '../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
+import { activityHistory } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
@@ -41,6 +42,7 @@ export class ProductEditForm {
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   product = input.required<product | null>();
+  activityHistories = input.required<activityHistory[]>();
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
   isEditMode = input.required<boolean>();

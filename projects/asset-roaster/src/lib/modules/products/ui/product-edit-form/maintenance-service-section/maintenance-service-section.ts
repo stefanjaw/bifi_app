@@ -119,7 +119,8 @@ export class MaintenanceServiceSection {
 
     if (!product || !product.productComission) return status;
 
-    if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
+    if (product.status === 'decomissioned') status = 'decomissioned';
+    else if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
       status = 'not-scheduled';
     else if (serviceStarted && !pmStarted) status = 'under-service';
     else if (canStartPM) status = 'available';

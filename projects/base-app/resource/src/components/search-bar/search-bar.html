@@ -11,10 +11,7 @@
       class="w-full"
     />
     @if (searchText()) {
-      <p-inputIcon
-        class="pi pi-times cursor-pointer"
-        (click)="searchText.set(''); performSearch()"
-      ></p-inputIcon>
+      <p-inputIcon class="pi pi-times cursor-pointer" (click)="searchText.set('')"></p-inputIcon>
     }
   </p-iconfield>
 </form>

@@ -70,7 +70,9 @@
 
             <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
 
-            @if (status === 'not-comissioned') {
+            @if (status === 'decomissioned') {
+              <div class="text-sm text-red-500">This equipment is decommissioned.</div>
+            } @else if (status === 'not-comissioned') {
               <div class="text-sm text-orange-500">
                 This equipment is awaiting commissioning. PM schedule cannot be determined yet.
               </div>

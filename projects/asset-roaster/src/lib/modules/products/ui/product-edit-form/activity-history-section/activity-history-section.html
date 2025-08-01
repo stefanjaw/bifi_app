@@ -1,3 +1,37 @@
 <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="5">
-  <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
+  @if (activityHistory.length > 0) {
+    <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
+  } @else {
+    @for (history of activityHistory(); track $index) {
+      <p-card class="shadow-2xl mb-3">
+        <ng-template #content>
+          <div class="flex justify-between items-center">
+            <bifi-app-badge variant="success">
+              {{ history.title }}
+            </bifi-app-badge>
+            <div>
+              <p class="text-sm text-gray-600">
+                Logged:
+                {{ history.performDate | date: 'MM/dd/yyyy h:mm a' }}
+              </p>
+
+              <p class="text-sm text-gray-600">Logged By: Username</p>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <p class="text-sm text-gray-600">
+              Performed:
+              {{ history.performDate | date: 'MM/dd/yyyy' }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+              Details:
+              {{ history.details }}
+            </p>
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  }
 </bifi-app-form-section>
