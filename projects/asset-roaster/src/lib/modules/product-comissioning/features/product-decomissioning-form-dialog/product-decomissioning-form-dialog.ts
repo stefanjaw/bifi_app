@@ -11,9 +11,8 @@ import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
-import { CrudProducts, product, ProductMaintenanceContext } from '../../../products';
+import { product, ProductMaintenanceContext } from '../../../products';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
-import { switchMap } from 'rxjs';
 import {
   UpdateDecomissioningForm,
   UpdateDecomissioningFormModel,
@@ -30,7 +29,6 @@ export class ProductDecomissioningFormDialog extends BaseDialog {
   // services
   private formService = inject(UpdateDecomissioningForm);
   private productComissioningService = inject(CrudProductComissioning);
-  private productsService = inject(CrudProducts);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
   private toastManager = inject(ToastManager);
   form = this.formService.form;
@@ -54,35 +52,21 @@ export class ProductDecomissioningFormDialog extends BaseDialog {
   }
 
   /**
-   * Handles the submission of the form and sets the product status to 'decomissioned',
-   * while also updating the product comissioning record to set it as inactive.
-   *
+   * Handles the submission of the form and decomissions the product.
    * @param data the form data
    */
   handleSubmit(data: FormValueState<UpdateDecomissioningFormModel>) {
     this.submitLoading.set(true);
 
-    const productsRequest = this.productsService.put({
-      _id: this.product()?._id || '',
-      data: {
-        status: 'decomissioned',
-      },
-    });
-
     this.productComissioningService
       .put({
         _id: this.product()?.productComission?._id || '',
         data: {
-          active: false,
           details: data.rawValue.details || '',
         },
+        specificEndpoint: 'decomission',
       })
-      .pipe(
-        takeUntilDestroyed(this.destroy$),
-        switchMap(() => {
-          return productsRequest;
-        })
-      )
+      .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.submitLoading.set(false);
