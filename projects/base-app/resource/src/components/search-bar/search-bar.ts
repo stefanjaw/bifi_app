@@ -1,10 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, input, model, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  model,
+  OnDestroy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilterManager } from '../../services/filter-manager';
 import { filter } from '../../interfaces/filter';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputText } from 'primeng/inputtext';
 import { InputIcon } from 'primeng/inputicon';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-search-bar',
@@ -14,12 +25,37 @@ import { InputIcon } from 'primeng/inputicon';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchBar implements OnDestroy {
-  private readonly filterId = 'search-bar';
+  private readonly FILTER_ID = 'search-bar';
+  private readonly DEBOUNCE_TIME = 500;
 
-  searchText = model<string>('');
+  private destroy$ = inject(DestroyRef);
   filterManager = inject(FilterManager);
+
+  // inputs
   searchFilters = input<filter<any>[]>([]);
   label = input<string>('Search');
+
+  // The search text input
+  searchText = model<string>('');
+  private searchTextDebounce$ = new Subject<string>();
+
+  /**
+   * This constructor sets up a subscription to the search text subject and
+   * performs a search whenever the user has stopped typing for 2 seconds.
+   * It also sets up an effect that will emit the current search text whenever it
+   * changes.
+   */
+  constructor() {
+    effect(() => this.searchTextDebounce$.next(this.searchText()));
+
+    this.searchTextDebounce$
+      .pipe(
+        debounceTime(this.DEBOUNCE_TIME),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroy$)
+      )
+      .subscribe(() => this.performSearch());
+  }
 
   ngOnDestroy(): void {
     this.filterManager.clearFilters();
@@ -32,11 +68,11 @@ export class SearchBar implements OnDestroy {
    * the operator to 'like'. If the search bar is empty, it will clear all filters.
    */
   performSearch() {
-    this.filterManager.removeFilter(this.filterId);
+    this.filterManager.removeFilter(this.FILTER_ID);
 
     if (this.searchText()) {
       this.filterManager.addFilter({
-        id: this.filterId,
+        id: this.FILTER_ID,
         operator: 'or',
         filters: this.searchFilters()
           .filter(filter => filter.type === 'string')

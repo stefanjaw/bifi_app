@@ -5,11 +5,18 @@
     @for (history of activityHistory(); track $index) {
       <p-card class="shadow-2xl mb-3">
         <ng-template #content>
-          <div>
+          <div class="flex justify-between items-center">
             <bifi-app-badge variant="success">
               {{ history.title }}
             </bifi-app-badge>
-            <div></div>
+            <div>
+              <p class="text-sm text-gray-600">
+                Logged:
+                {{ history.performDate | date: 'MM/dd/yyyy h:mm a' }}
+              </p>
+
+              <p class="text-sm text-gray-600">Logged By: Username</p>
+            </div>
           </div>
 
           <div class="mt-4">

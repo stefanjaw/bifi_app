@@ -6,7 +6,7 @@ import { filterGroup, FilterManager } from '@avalantec/base-app/resource';
   providedIn: 'root',
 })
 export class ProductStatusFilterManager {
-  private readonly filterId = 'product-status';
+  private readonly FILTER_ID = 'product-status';
   private _currentVariant = signal<statusVariant | undefined>(undefined);
   private filterManager = inject(FilterManager);
 
@@ -29,7 +29,7 @@ export class ProductStatusFilterManager {
    * @param variant The product status variant to filter by.
    **/
   filter(variant: statusVariant) {
-    this.filterManager.removeFilter(this.filterId);
+    this.filterManager.removeFilter(this.FILTER_ID);
 
     if (variant === this._currentVariant()) {
       this._currentVariant.set(undefined);
@@ -57,12 +57,12 @@ export class ProductStatusFilterManager {
    * Return a filter group for the given status.
    *
    * @param status The product status to filter by.
-   * @returns A filter group with id {@link filterId} containing a filter for the
+   * @returns A filter group with id {@link FILTER_ID} containing a filter for the
    * 'status' field with value {@link status} and operator '=='.
    **/
   getFilterByStatus(status: string): filterGroup<any> {
     return {
-      id: this.filterId,
+      id: this.FILTER_ID,
       operator: 'and',
       filters: [{ field: 'status', value: status, operator: '==' }],
     };
@@ -71,18 +71,18 @@ export class ProductStatusFilterManager {
   /**
    * Return a filter group that filters products where the maximum maintenance date is overdue.
    *
-   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * The filter group returned by this method has id {@link FILTER_ID}, operator 'and',
    * and a single filter with field 'maxMaintenanceDate', value the current date and time
    * as an ISO string, and operator '<'. This will filter out all products where the
    * maximum maintenance date is not overdue.
    *
-   * @returns A filter group with id {@link filterId} containing a filter for the
+   * @returns A filter group with id {@link FILTER_ID} containing a filter for the
    * 'maxMaintenanceDate' field with value the current date and time as an ISO string
    * and operator '<'.
    **/
   getFilterByOverdue(): filterGroup<any> {
     return {
-      id: this.filterId,
+      id: this.FILTER_ID,
       operator: 'and',
       filters: [
         {
@@ -97,20 +97,20 @@ export class ProductStatusFilterManager {
   /**
    * Return a filter group that filters products where the maintenance date is due.
    *
-   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * The filter group returned by this method has id {@link FILTER_ID}, operator 'and',
    * and two filters: one for the 'minMaintenanceDate' field with a value of the current
    * date and time as an ISO string and operator '<=', and another for the 'maxMaintenanceDate'
    * field with the same value and operator '>='. This will filter out all products where the
    * maintenance date is not due.
    *
-   * @returns A filter group with id {@link filterId} containing filters for the
+   * @returns A filter group with id {@link FILTER_ID} containing filters for the
    * 'minMaintenanceDate' and 'maxMaintenanceDate' fields with the current date and time as
    * their value and appropriate operators.
    **/
 
   getFilterByDue(): filterGroup<any> {
     return {
-      id: this.filterId,
+      id: this.FILTER_ID,
       operator: 'and',
       filters: [
         {
@@ -130,16 +130,16 @@ export class ProductStatusFilterManager {
   /**
    * Return a filter group that filters products where the maintenance window is not set.
    *
-   * The filter group returned by this method has id {@link filterId}, operator 'and',
+   * The filter group returned by this method has id {@link FILTER_ID}, operator 'and',
    * and a single filter with field 'maintenanceWindowIds', operator 'empty'. This will
    * filter out all products where the maintenance window is set.
    *
-   * @returns A filter group with id {@link filterId} containing a filter for the
+   * @returns A filter group with id {@link FILTER_ID} containing a filter for the
    * 'maintenanceWindowIds' field with operator 'empty'.
    **/
   getFilterByPMNotSet(): filterGroup<any> {
     return {
-      id: this.filterId,
+      id: this.FILTER_ID,
       operator: 'and',
       filters: [{ field: 'maintenanceWindowIds', operator: 'empty' }],
     };
