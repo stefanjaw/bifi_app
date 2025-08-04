@@ -12,6 +12,10 @@ import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
+import { provideAppAuth } from '@avalantec/base-app/auth';
+import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/providers';
+import { environment } from '../environments/environment.development';
+import { UserService } from '@avalantec/asset-roaster/modules/users/services/user';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +36,14 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch()),
+    provideAppAuth({
+      authProvider: {
+        type: 'FIREBASE',
+        token: APP_AUTH_SERVICE,
+        config: environment.firebaseConfig,
+      },
+      backendAuth: UserService,
+    }),
     MessageService,
   ],
 };
