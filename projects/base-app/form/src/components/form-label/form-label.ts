@@ -16,4 +16,6 @@ export class FormLabel {
   protected readonly contextService = inject(FormFieldContext);
 
   tooltip = input<string>();
+
+  controlId = this.contextService.controlId;
 }

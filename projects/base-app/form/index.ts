@@ -1,3 +1,4 @@
+import { FormPreview } from '@avalantec/base-app/form/src/components/form-preview/form-preview';
 import { FormActions } from './src/components/form-actions/form-actions';
 import { FormError } from './src/components/form-error/form-error';
 import { FormField } from './src/components/form-field/form-field';
@@ -21,6 +22,7 @@ export * from './src/components/form-navigator/form-navigator';
 export * from './src/components/form-section/form-section';
 export * from './src/components/hint/hint';
 export * from './src/components/form-image-uploader/form-uploader';
+export * from './src/components/form-preview/form-preview';
 export * from './src/directives/form-actions-handler';
 export * from './src/directives/form-control-extension';
 export * from './src/directives/translated-errors';
@@ -48,6 +50,7 @@ export const AppFormExtensionsImports = [
   FormError,
   FormField,
   FormLabel,
+  FormPreview,
   Hint,
   FormControlExtension,
   TranslatedErrors,

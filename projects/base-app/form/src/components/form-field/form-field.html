@@ -1,11 +1,25 @@
 <ng-content select="bifi-app-form-label"></ng-content>
-<ng-content />
 
 @switch (hasDisplayedMessage()) {
-  @case ("error") {
+  @case ('error') {
     <ng-content select="bifi-app-form-error"></ng-content>
   }
   @default {
     <ng-content select="bifi-app-hint"></ng-content>
+  }
+}
+
+@switch (hasDisplayedPreview()) {
+  @case ('preview') {
+    <ng-content select="bifi-app-form-preview">
+      <!-- By default, create a preview component -->
+      <bifi-app-form-preview
+        [variant]="previewVariant()"
+        [valueType]="previewValueType()"
+      ></bifi-app-form-preview>
+    </ng-content>
+  }
+  @default {
+    <ng-content />
   }
 }

@@ -1,19 +1,23 @@
 /* eslint-disable @angular-eslint/directive-selector */
-import { DestroyRef, Directive, inject, output } from '@angular/core';
+import { DestroyRef, Directive, effect, inject, input, OnInit, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormValueState } from '../interfaces/form-helpers';
 import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 import { ToastManager } from '@avalantec/base-app/core';
+import { FormContext } from '@avalantec/base-app/form/src/services/form-context';
 
 @Directive({
+  providers: [FormContext],
   selector: '[formGroup][bifiAppFormActionsHandler]',
 })
-export class FormActionsHandler<TForm extends FormGroup> {
+export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
+  private formContext = inject(FormContext, { self: true });
   private group = inject(FormGroupDirective, { self: true });
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);
 
+  isPreviewMode = input<boolean>(false);
   appSubmit = output<FormValueState<TForm>>();
 
   get form() {
@@ -22,6 +26,16 @@ export class FormActionsHandler<TForm extends FormGroup> {
 
   constructor() {
     this.group.ngSubmit.pipe(takeUntilDestroyed(this.destroy$)).subscribe(() => this.submit());
+
+    effect(() => {
+      // Sync the form context preview mode with the input
+      this.formContext.isPreviewMode.set(this.isPreviewMode());
+    });
+  }
+
+  ngOnInit(): void {
+    // Set the form context form
+    this.formContext.form.set(this.group);
   }
 
   /**

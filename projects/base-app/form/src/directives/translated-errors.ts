@@ -24,7 +24,7 @@ export class TranslatedErrors {
     }
 
     effect(() => {
-      const control = this.context?.ngControl();
+      const control = this.context?.abstractControl();
       if (!control) {
         return;
       }

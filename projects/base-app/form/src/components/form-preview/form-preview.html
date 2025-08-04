@@ -1,0 +1,19 @@
+@if (hasControlAttached()) {
+  <bifi-app-form-preview-container [variant]="variant()">
+    @if (previewTemplate(); as template) {
+      <ng-container
+        *ngTemplateOutlet="
+          template;
+          context: {
+            $implicit: formattedValue(),
+            control: control(),
+            variant: variant,
+            fallback: 'Not set',
+          }
+        "
+      ></ng-container>
+    } @else {
+      <span>{{ formattedValue() || 'Not set' }}</span>
+    }
+  </bifi-app-form-preview-container>
+}
