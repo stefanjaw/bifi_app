@@ -1,8 +1,13 @@
-import { Injectable, signal } from '@angular/core';
-import { NgControl } from '@angular/forms';
+import { computed, Injectable, signal } from '@angular/core';
+import { ControlContainer, NgControl } from '@angular/forms';
 
 @Injectable()
 export class FormFieldContext {
-  ngControl = signal<NgControl | null>(null);
+  // The NgControl or ControlContainer associated with the form field.
+  abstractControl = signal<NgControl | ControlContainer | null>(null);
+
+  // The assigned control id
   controlId = signal<string | null>(null);
+
+  hasControlAttached = computed(() => this.abstractControl() !== null);
 }

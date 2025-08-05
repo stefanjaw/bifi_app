@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { inject, Injectable } from '@angular/core';
-import { AbstractControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormGroup,
+  NonNullableFormBuilder,
+  ValidatorFn,
+} from '@angular/forms';
 import { FormGroupLike } from '../interfaces/form-helpers';
 import {
   InputControls,
@@ -17,9 +23,23 @@ import { TypedFormArrayExtension } from '../libraries/extensions/extended-form-a
 export class TypedFormBuilder {
   private fb = inject(NonNullableFormBuilder);
 
-  group<T extends FormGroupLike>(data: InputControls<T>) {
-    const group = this.buildFormTree(data);
-    return group as FormGroup<ControlsOf<T, true>>;
+  group<T extends FormGroupLike>(
+    data: InputControls<T>,
+    options?: {
+      validators?: ValidatorFn | ValidatorFn[];
+      asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
+    }
+  ) {
+    const group = this.buildFormTree(data) as FormGroup<ControlsOf<T, true>>;
+
+    if (options?.validators) {
+      group.setValidators(options.validators);
+    }
+    if (options?.asyncValidators) {
+      group.setAsyncValidators(options.asyncValidators);
+    }
+
+    return group;
   }
 
   control<T>(value: PermissiveControlConfig<T>) {

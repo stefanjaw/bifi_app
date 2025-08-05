@@ -1,13 +1,18 @@
-import { Injectable } from '@angular/core';
-import { user } from '../interfaces/user';
+import { Observable } from 'rxjs';
+import { baseUser } from '../interfaces/user';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
+import { IBackendAuthService } from '@avalantec/base-app/auth';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CrudUsers extends ApiRequestManager<user> {
+export class BaseCrudUsers<TUser = baseUser>
+  extends ApiRequestManager<TUser>
+  implements IBackendAuthService<TUser>
+{
   constructor() {
     super();
-    super.endpoint = 'users';
+    this.endpoint = 'users';
+  }
+
+  getMe(): Observable<TUser> {
+    return this._httpClient.get<TUser>(`${this.formatFullURL()}/me`);
   }
 }

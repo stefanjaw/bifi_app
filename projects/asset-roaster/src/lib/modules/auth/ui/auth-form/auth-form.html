@@ -1,0 +1,121 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <bifi-app-form-layout [title]="isLogin() ? 'Sign In to Your Account' : 'Create Your Account'">
+      <form
+        ngProjectAs="div"
+        [formGroup]="form"
+        bifiAppFormActionsHandler
+        (appSubmit)="onSubmit()"
+        class="space-y-6"
+      >
+        <bifi-app-form-section
+          [title]="isLogin() ? 'Sign In' : 'Sign Up'"
+          id="auth-form"
+          [ordinal]="1"
+        >
+          <section class="flex flex-col gap-4">
+            <!-- Email/Username Field -->
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ isLogin() ? 'Email or Username' : 'Email address' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="emailOrUsername"
+                [type]="isLogin() ? 'text' : 'email'"
+                [placeholder]="isLogin() ? 'demo / demo@example.com / user / user@example.com' : ''"
+                autocomplete="email"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <!-- Password Field -->
+            <bifi-app-form-field>
+              <bifi-app-form-label>Password</bifi-app-form-label>
+              <input
+                type="password"
+                formControlName="password"
+                [placeholder]="isLogin() ? 'admin / userpass' : ''"
+                [autocomplete]="isLogin() ? 'current-password' : 'new-password'"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <!-- Confirm Password Field (Register only) -->
+            <bifi-app-form-field *ngIf="!isLogin()">
+              <bifi-app-form-label>Confirm Password</bifi-app-form-label>
+              <input
+                type="password"
+                formControlName="confirmPassword"
+                placeholder=""
+                autocomplete="new-password"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <p-button
+              type="submit"
+              [disabled]="form.invalid || isLoading()"
+              [loading]="isLoading()"
+              styleClass="w-full"
+            >
+              {{
+                isLoading()
+                  ? isLogin()
+                    ? 'Signing In...'
+                    : 'Creating Account...'
+                  : isLogin()
+                    ? 'Sign In'
+                    : 'Create Account'
+              }}
+            </p-button>
+          </section>
+        </bifi-app-form-section>
+      </form>
+
+      <!-- Social Login Section -->
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-gray-50 text-gray-500">
+              {{ isLogin() ? 'Or continue with' : 'Or sign up with' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <div *ngFor="let provider of socialProviders()">
+            <button
+              type="button"
+              [disabled]="isLoading()"
+              (click)="onSocialLogin(provider.name.toLowerCase())"
+              class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span class="sr-only">{{ provider.ariaLabel }}</span>
+              <i [class]="provider.icon" class="w-5 h-5"></i>
+              <span class="ml-2">{{ provider.name }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toggle Mode Link -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          {{ isLogin() ? 'New to App?' : 'Already have an account?' }}
+          <button
+            type="button"
+            class="font-medium text-blue-600 hover:text-blue-500 ml-1"
+            (click)="onToggleMode()"
+            [disabled]="isLoading()"
+          >
+            {{ isLogin() ? 'Create an account' : 'Sign in' }}
+          </button>
+        </p>
+      </div>
+    </bifi-app-form-layout>
+  </div>
+</div>

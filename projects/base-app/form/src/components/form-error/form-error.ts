@@ -24,17 +24,17 @@ export class FormError {
 
   constructor() {
     effect(onCleanup => {
-      const ngControl = this.context!.ngControl();
+      const absControl = this.context!.abstractControl();
       const customMessageTranslations = this.customErrorTranslations();
 
-      if (!ngControl || !ngControl.control) {
+      if (!absControl || !absControl.control) {
         return;
       }
 
       // Refresh error state when reloading effect dependencies
-      this.refreshErrorState(ngControl.control.errors, customMessageTranslations);
+      this.refreshErrorState(absControl.control.errors, customMessageTranslations);
 
-      const control = ngControl.control;
+      const control = absControl.control;
 
       /**
        * Subscribe to the statusChanges of the control and refresh the error state when the status changes & the errors object changes

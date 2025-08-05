@@ -1,0 +1,9 @@
+<div
+  [ngClass]="{
+    'text-sm text-gray-700': variant() === 'text',
+    'text-sm text-gray-500 italic': variant() === 'italic',
+    'text-sm text-gray-900 p-1 rounded-md bg-gray-200 w-fit': variant() === 'tag',
+  }"
+>
+  <ng-content></ng-content>
+</div>

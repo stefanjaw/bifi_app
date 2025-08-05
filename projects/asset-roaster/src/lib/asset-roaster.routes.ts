@@ -7,7 +7,11 @@ export const assetRoasterRoutes: Routes = [
     redirectTo: 'equipment',
   },
   {
+    path: 'auth',
+    loadChildren: () => import('./modules/auth').then(m => m.AUTH_ROUTES),
+  },
+  {
     path: 'equipment',
-    loadChildren: () => import('./modules/index').then((m) => m.PRODUCT_ROUTES),
+    loadChildren: () => import('./modules/index').then(m => m.PRODUCT_ROUTES),
   },
 ];

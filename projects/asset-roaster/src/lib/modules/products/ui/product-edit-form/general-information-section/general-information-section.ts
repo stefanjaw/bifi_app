@@ -55,4 +55,8 @@ export class GeneralInformationSection {
   get photoArray() {
     return this.form.controls.photo;
   }
+
+  getTypeName(typeId: string) {
+    return this.productTypes().find(p => p._id === typeId)?.name;
+  }
 }

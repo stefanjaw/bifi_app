@@ -11,260 +11,168 @@
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          @if (isEditMode()) {
-            <div class="md:col-span-2">
-              <bifi-app-form-field>
-                <bifi-app-form-label>Serial Number:</bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="serialNumber"
-                  type="text"
-                  class="w-full"
-                  placeholder="SN00X"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Type</bifi-app-form-label>
-                <p-select
-                  formControlName="productTypeIds"
-                  [options]="productTypes()"
-                  optionLabel="name"
-                  optionValue="_id"
-                  [filter]="true"
-                  placeholder="Select a type"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Make</bifi-app-form-label>
-                <p-select
-                  formControlName="makeIds"
-                  [options]="contacts()"
-                  optionLabel="name"
-                  optionValue="_id"
-                  [filter]="true"
-                  placeholder="Select a maker"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Model</bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="productModel"
-                  type="text"
-                  placeholder="e.g, Optima XR220amx"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Date Acquired</bifi-app-form-label>
-                <p-date-picker
-                  formControlName="acquiredDate"
-                  [showIcon]="true"
-                  inputId="acquiredDate"
-                  class="w-full"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
-                <p-select
-                  formControlName="condition"
-                  [options]="['excellent', 'good', 'fair', 'poor']"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Vendor</bifi-app-form-label>
-                <p-select
-                  formControlName="vendorIds"
-                  [options]="contacts()"
-                  optionLabel="name"
-                  optionValue="_id"
-                  [filter]="true"
-                  placeholder="Select a vendor"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Location</bifi-app-form-label>
-                <p-select
-                  formControlName="locationId"
-                  [options]="rooms()"
-                  optionLabel="name"
-                  optionValue="_id"
-                  [filter]="true"
-                  placeholder="Select a location"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="acquiredPrice"
-                  type="number"
-                  placeholder="e.g., USD 5000.00 or Contact Vendor"
-                  class="w-full"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Current Value (est.) (Optional)</bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="currentPrice"
-                  type="number"
-                  placeholder="e.g., USD 3500.00"
-                  class="w-full"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div>
-              <bifi-app-form-field>
-                <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
-                <p-date-picker
-                  formControlName="warrantyDate"
-                  [showIcon]="true"
-                  inputId="warrantyDate"
-                  class="w-full"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-            <div class="md:col-span-2">
-              <bifi-app-form-field>
-                <bifi-app-form-label>Remarks (Optional)</bifi-app-form-label>
-                <textarea
-                  pInputTextarea
-                  formControlName="remarks"
-                  rows="4"
-                  placeholder="Enter any additional remarks or notes about the equipment..."
-                  class="w-full"
-                ></textarea>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
-          } @else {
-            <!-- * this information will be based on the current saved in BD product data, not the form -->
-            <div class="md:col-span-2">
-              <div>
-                <span class="text-sm font-medium text-gray-700">Serial Number:</span>
-                <span class="ml-2 text-sm text-gray-900 p-1 rounded-md bg-gray-200">
-                  {{ product()?.serialNumber || 'Not set' }}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Type:</div>
-                <div class="text-sm text-gray-900">
-                  {{ product()?.productTypeIds?.[0]?.name || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Make:</div>
-                <div class="text-sm text-gray-900">
-                  {{ product()?.makeIds?.[0]?.name || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Model:</div>
-                <div class="text-sm text-gray-900">
-                  {{ product()?.productModel || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Date Acquired:</div>
-                <div class="text-sm text-gray-900">
-                  {{ (product()?.acquiredDate | date) || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Condition:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ product()?.condition || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Vendor:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ product()?.vendorIds?.[0]?.name || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Location:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ product()?.locationId?.name || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Price Paid:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ (product()?.acquiredPrice | currency) || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Current Value (est.):</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ (product()?.currentPrice | currency) || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div class="text-sm font-medium text-gray-700">Warranty Expiration Date:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ (product()?.warrantyDate | date) || 'Not set' }}
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-2">
-              <div>
-                <div class="text-sm font-medium text-gray-700">Remarks:</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ product()?.remarks || 'Not set' }}
-                </div>
-              </div>
-            </div>
-          }
+          <div class="md:col-span-2">
+            <bifi-app-form-field previewVariant="tag">
+              <bifi-app-form-label>Serial Number:</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="serialNumber"
+                type="text"
+                class="w-full"
+                placeholder="SN00X"
+              />
+
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Type</bifi-app-form-label>
+
+              <bifi-app-form-preview>
+                <ng-template #preview let-typeId let-fallback>
+                  {{ product()!.productTypeIds![0].name || fallback }}
+                </ng-template>
+              </bifi-app-form-preview>
+
+              <p-select
+                formControlName="productTypeIds"
+                [options]="productTypes()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+                placeholder="Select a type"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Make</bifi-app-form-label>
+              <p-select
+                formControlName="makeIds"
+                [options]="contacts()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+                placeholder="Select a maker"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Model</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="productModel"
+                type="text"
+                placeholder="e.g, Optima XR220amx"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="text" previewValueType="date">
+              <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+              <p-date-picker
+                formControlName="acquiredDate"
+                [showIcon]="true"
+                inputId="acquiredDate"
+                class="w-full"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic">
+              <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
+              <p-select
+                formControlName="condition"
+                [options]="['excellent', 'good', 'fair', 'poor']"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic">
+              <bifi-app-form-label>Vendor</bifi-app-form-label>
+              <p-select
+                formControlName="vendorIds"
+                [options]="contacts()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+                placeholder="Select a vendor"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic">
+              <bifi-app-form-label>Location</bifi-app-form-label>
+              <p-select
+                formControlName="locationId"
+                [options]="rooms()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+                placeholder="Select a location"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic" previewValueType="currency">
+              <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="acquiredPrice"
+                type="number"
+                placeholder="e.g., USD 5000.00 or Contact Vendor"
+                class="w-full"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic" previewValueType="currency">
+              <bifi-app-form-label>Current Value (est.) (Optional)</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="currentPrice"
+                type="number"
+                placeholder="e.g., USD 3500.00"
+                class="w-full"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div>
+            <bifi-app-form-field previewVariant="italic" previewValueType="date">
+              <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+              <p-date-picker
+                formControlName="warrantyDate"
+                [showIcon]="true"
+                inputId="warrantyDate"
+                class="w-full"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <div class="md:col-span-2">
+            <bifi-app-form-field previewVariant="italic">
+              <bifi-app-form-label>Remarks (Optional)</bifi-app-form-label>
+              <textarea
+                pInputTextarea
+                formControlName="remarks"
+                rows="4"
+                placeholder="Enter any additional remarks or notes about the equipment..."
+                class="w-full"
+              ></textarea>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
         </div>
       </div>
 
