@@ -1,3 +1,4 @@
-export { UsersList } from './components/users-list/users-list';
-export type { baseUser } from './interfaces/user';
-export { BaseCrudUsers } from './services/crud-users';
+export * from './components/users-list/users-list';
+export * from './interfaces/user';
+export * from './services/base-crud-users';
+export * from './services/crud-users';

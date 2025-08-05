@@ -1,11 +1,11 @@
 import { WritableSignal } from '@angular/core';
-import { menuItem } from '../interfaces/menu-item';
+import { MenuItem } from 'primeng/api';
 
 // class to manage logic for menu managers
 export class BaseMenuManager {
-  private _menuItems: WritableSignal<menuItem[]>;
+  private _menuItems: WritableSignal<MenuItem[]>;
 
-  constructor(menuItems: WritableSignal<menuItem[]>) {
+  constructor(menuItems: WritableSignal<MenuItem[]>) {
     this._menuItems = menuItems;
   }
 
@@ -17,8 +17,8 @@ export class BaseMenuManager {
    * Adds a new item to the menu
    * @param newItem The new item to be added
    */
-  addItem(newItem: menuItem) {
-    this._menuItems.update((items) => [...items, newItem]);
+  addItem(newItem: MenuItem) {
+    this._menuItems.update(items => [...items, newItem]);
   }
 
   /**
@@ -27,7 +27,7 @@ export class BaseMenuManager {
    */
   removeItem(title: string) {
     const menuItems = this._menuItems();
-    const index = menuItems.findIndex((item) => item.title === title);
+    const index = menuItems.findIndex(item => item.title === title);
 
     if (index === -1) return;
 
@@ -39,8 +39,8 @@ export class BaseMenuManager {
    * Adds multiple items to the menu
    * @param newItems The items to be added
    */
-  addItems(newItems: menuItem[]) {
-    newItems.forEach((item) => this.addItem(item));
+  addItems(newItems: MenuItem[]) {
+    newItems.forEach(item => this.addItem(item));
   }
 
   /**
@@ -48,6 +48,6 @@ export class BaseMenuManager {
    * @param titles The titles of the menu items to be removed
    */
   removeItems(titles: string[]) {
-    titles.forEach((title) => this.removeItem(title));
+    titles.forEach(title => this.removeItem(title));
   }
 }

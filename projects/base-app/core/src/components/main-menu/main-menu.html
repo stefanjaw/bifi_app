@@ -1,10 +1,13 @@
 <section id="main-menu-container">
   <div id="main-menu-options-container">
     @for (item of menuItems(); track $index) {
-      <button (click)="goToOption(item.route)" matFab extended>
-        <mat-icon>{{ item.iconName }}</mat-icon
-        >{{ item.title }}
-      </button>
+      <p-button
+        [routerLink]="item.routerLink"
+        [label]="item.label"
+        [icon]="item.icon"
+        iconPos="bottom"
+        variant="outlined"
+      />
     }
   </div>
 </section>

@@ -31,7 +31,7 @@
 
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
-                  {{ product()!.productTypeIds![0].name || fallback }}
+                  {{ product()?.productTypeIds?.[0]?.name || fallback }}
                 </ng-template>
               </bifi-app-form-preview>
 

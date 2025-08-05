@@ -13,9 +13,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
 import { authTokenInterceptor, provideAppAuth } from '@avalantec/base-app/auth';
-import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/providers';
+import { APP_FRONTEND_AUTH_SERVICE } from '@avalantec/base-app/auth/src/libraries/providers/frontend-auth-provider';
 import { environment } from '../environments/environment.development';
-import { CrudUsers } from '@avalantec/asset-roaster';
+import { CrudUsers } from '@avalantec/base-app/settings';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,7 +31,7 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Noir,
         options: {
-          darkModeSelector: false || 'none',
+          darkModeSelector: false,
         },
       },
     }),
@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',
-        token: APP_AUTH_SERVICE,
+        token: APP_FRONTEND_AUTH_SERVICE,
         config: environment.firebaseConfig,
       },
       backendAuth: CrudUsers,

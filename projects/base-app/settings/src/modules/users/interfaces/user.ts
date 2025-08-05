@@ -1,11 +1,11 @@
-import { company } from '../../companies';
-import { role } from '../../roles';
-
-export interface baseUser {
+export interface user {
   _id: string;
+  authId: string;
+  provider: string;
   username: string;
   email: string;
-  name: string;
-  lastName: string;
-  companyRoles: { company: company; role: role }[];
+  picture: string;
+  // name: string;
+  // lastName: string;
+  // companyRoles: { company: company; role: role }[];
 }

@@ -1,22 +1,51 @@
-<main id="main-app-container">
-  <mat-toolbar>
-    @if (isSidenavAvailable()) {
-      <button (click)="isOpened() ? closeSidenav() : openSidenav()" mat-icon-button>
-        <mat-icon>menu</mat-icon>
-      </button>
-    }
-    <button (click)="goHome()" mat-button>
-      <mat-icon>house</mat-icon>
-      {{ title() }}
-    </button>
-    <span class="spacer"></span>
-    <button mat-button>
-      <mat-icon>person</mat-icon>
-      Admin
-    </button>
-  </mat-toolbar>
-  <div id="router-outlet-container" class="mat-app-background mat-typography">
-    <router-outlet></router-outlet>
-    <p-toast></p-toast>
-  </div>
-</main>
+@let loggedUser = user();
+
+@if (loggedUser) {
+  <p-toolbar styleClass="w-full h-[75px]">
+    <ng-template #start>
+      @if (isSidenavAvailable()) {
+        <p-button
+          icon="pi pi-bars"
+          (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
+          variant="text"
+          severity="contrast"
+        ></p-button>
+      }
+
+      <p-button
+        icon="pi pi-home"
+        [label]="title()"
+        (onClick)="goHome()"
+        variant="text"
+        severity="contrast"
+      ></p-button>
+    </ng-template>
+    <ng-template #end>
+      <div class="flex items-center gap-2">
+        <p-button
+          icon="pi pi-sign-out"
+          label="Logout"
+          (onClick)="logout()"
+          severity="contrast"
+          size="small"
+        />
+        <p-avatar
+          [image]="loggedUser.picture"
+          [style]="{ width: '32px', height: '32px' }"
+          [shape]="'circle'"
+        />
+      </div>
+    </ng-template>
+  </p-toolbar>
+}
+
+<div
+  class="w-full overflow-y-auto"
+  [ngClass]="{
+    'h-[calc(100vh-75px)]': loggedUser,
+    'h-[100vh]': !loggedUser,
+  }"
+>
+  <router-outlet></router-outlet>
+  <p-toast></p-toast>
+</div>

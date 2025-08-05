@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { Session } from '../interfaces/user';
+import { Session } from '../interfaces/session-user';
 import { LIB_AUTH_SERVICE } from '../libraries/providers/auth-service-provider';
 import { IAuthService } from '../interfaces/auth-service';
 
