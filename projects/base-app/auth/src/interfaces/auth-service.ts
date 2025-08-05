@@ -1,6 +1,6 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Session } from './user';
+import { Session } from './session-user';
 
 export interface IAuthService<TUser, TSession extends Session<TUser> = Session<TUser>> {
   session: Signal<TSession | null>;

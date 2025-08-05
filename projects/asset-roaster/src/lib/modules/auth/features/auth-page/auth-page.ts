@@ -2,7 +2,7 @@ import { Component, input, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthForm } from '../../ui/auth-form/auth-form';
 import type { authFormData, authFormModel, socialProvider } from '../../interfaces/auth.model';
-import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/providers';
+import { APP_FRONTEND_AUTH_SERVICE } from '@avalantec/base-app/auth/src/libraries/providers/frontend-auth-provider';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -11,7 +11,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './auth-page.html',
 })
 export class AuthPage {
-  private authService = inject(APP_AUTH_SERVICE);
+  private authService = inject(APP_FRONTEND_AUTH_SERVICE);
   private router = inject(Router);
   private messageService = inject(MessageService);
 

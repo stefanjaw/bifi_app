@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MainMenuManager } from '../../services/main-menu-manager';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-main-menu',
-  imports: [MatButtonModule, MatIcon],
+  imports: [ButtonModule, RouterLink],
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.css',
 })

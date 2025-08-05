@@ -1,31 +1,32 @@
 import { Injectable, signal } from '@angular/core';
 import { BaseMenuManager } from '@avalantec/base-app/core';
+import { MenuItem } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SettingsMenuManager extends BaseMenuManager {
   constructor() {
-    const menuItems = signal([
+    const menuItems = signal<MenuItem[]>([
       {
-        iconName: 'people',
-        route: '/settings/contacts',
-        title: 'Contacts',
+        icon: 'pi pi-question',
+        routerLink: ['/settings/contacts'],
+        label: 'Contacts',
       },
       {
-        iconName: 'other_houses',
-        route: '/settings/companies',
-        title: 'Companies',
+        icon: 'pi pi-fw',
+        routerLink: ['/settings/companies'],
+        label: 'Companies',
       },
       {
-        iconName: 'admin_panel_settings',
-        route: '/settings/roles',
-        title: 'Roles',
+        icon: 'pi pi-fw',
+        routerLink: ['/settings/roles'],
+        label: 'Roles',
       },
       {
-        iconName: 'check_circle',
-        route: '/settings/permissions',
-        title: 'Permissions',
+        icon: 'pi pi-fw',
+        routerLink: ['/settings/permissions'],
+        label: 'Permissions',
       },
     ]);
 

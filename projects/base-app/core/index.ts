@@ -8,7 +8,6 @@ export * from './src/directives/text';
 export * from './src/interfaces/activity-history';
 export * from './src/interfaces/deep-keys';
 export * from './src/interfaces/library-config';
-export * from './src/interfaces/menu-item';
 export * from './src/interfaces/ts-helpers';
 export * from './src/libraries/base-dialog';
 export * from './src/libraries/base-menu-manager';

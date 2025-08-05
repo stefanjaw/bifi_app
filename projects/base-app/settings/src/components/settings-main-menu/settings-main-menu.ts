@@ -1,42 +1,38 @@
-import { Component, inject, OnDestroy } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, effect, inject, model, OnDestroy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { SettingsMenuManager } from '../../services/settings-menu-manager';
-import { MatIcon } from '@angular/material/icon';
 import { SidenavManager } from '@avalantec/base-app/core';
+import { DrawerModule } from 'primeng/drawer';
+import { MenuModule } from 'primeng/menu';
 
 @Component({
   selector: 'bifi-app-settings-main-menu',
-  imports: [MatSidenavModule, MatListModule, MatIcon, RouterOutlet],
+  imports: [RouterOutlet, DrawerModule, MenuModule],
   templateUrl: './settings-main-menu.html',
   styleUrl: './settings-main-menu.css',
 })
 export class SettingsMainMenu implements OnDestroy {
   private menuManager = inject(SettingsMenuManager);
-  private router = inject(Router);
   private sidenavManager = inject(SidenavManager);
 
-  menuItems;
-  isOpened;
+  menuItems = this.menuManager.menuItems;
+  isOpened = model(this.sidenavManager.isOpened());
 
   constructor() {
-    // * SET ITEMS WHEN STARTING APP AND EACH TIME THESE ARE BEING UPDATED
-    this.menuItems = this.menuManager.menuItems;
-    this.isOpened = this.sidenavManager.isOpened;
     this.sidenavManager.setIsSidenavAvailable = true;
+
+    effect(() => {
+      const isOpened = this.sidenavManager.isOpened();
+      this.isOpened.set(isOpened);
+    });
+
+    effect(() => {
+      const isOpenedModel = this.isOpened();
+      if (!isOpenedModel) this.sidenavManager.closeSidenav();
+    });
   }
 
   ngOnDestroy(): void {
     this.sidenavManager.setIsSidenavAvailable = false;
-  }
-
-  goToOption(route: string) {
-    this.forceSidenavClose();
-    this.router.navigate([route]);
-  }
-
-  forceSidenavClose() {
-    this.sidenavManager.closeSidenav();
   }
 }

@@ -14,9 +14,9 @@ export class App implements OnInit {
   ngOnInit(): void {
     this.mainMenuManager.addItems([
       {
-        iconName: 'handshake',
-        route: 'asset-roaster',
-        title: 'Asset Roaster',
+        icon: 'pi pi-objects-column',
+        routerLink: ['/asset-roaster'],
+        label: 'Asset Roaster',
       },
     ]);
   }

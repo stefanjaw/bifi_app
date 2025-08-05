@@ -1,9 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileResolver {
+  private authService = inject(LIB_AUTH_SERVICE);
+
   /**
    * Given a URL, downloads the file and converts it to a File object.
    *
@@ -14,7 +18,13 @@ export class FileResolver {
    */
   async resolveFile(url: string): Promise<File | null> {
     try {
-      const response = await fetch(url);
+      const token = await firstValueFrom(this.authService.idToken$);
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const blob = await response.blob();
       const fileName = url.split('/').pop() || 'image';
       const file = new File([blob], fileName, { type: blob.type });

@@ -7,7 +7,7 @@
 
 <bifi-app-table-layout [columns]="contactColumns" [data]="contacts">
   <ng-template #actions>
-    <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-    <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
+    <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
+    <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
   </ng-template>
 </bifi-app-table-layout>

@@ -3,7 +3,7 @@ import { IAuthService } from '../interfaces/auth-service';
 import { IBackendAuthService } from '../interfaces/backend-auth-service';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { APP_BACKEND_AUTH_SERVICE } from './providers/backend-auth-provider';
-import { FirebaseSession } from '../interfaces/user';
+import { FirebaseSession } from '../interfaces/session-user';
 import { LIB_AUTH_SERVICE } from './providers/auth-service-provider';
 import { FirebaseAuth } from './firebase-auth';
 import { FirebaseRemoteConfigObject } from '@angular/fire/remote-config';

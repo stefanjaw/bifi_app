@@ -7,7 +7,6 @@ export const HTTP_INCLUE_AUTH_TOKEN = new HttpContextToken<boolean>(() => true);
 
 export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   if (!req.context.get(HTTP_INCLUE_AUTH_TOKEN)) return next(req);
-  const url = req.url;
 
   // Only include Firebase auth token on requests to the backend
   // if (!clientConfigService.isBackendUrl(url)) return next(req);
