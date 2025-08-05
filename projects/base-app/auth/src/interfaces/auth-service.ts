@@ -12,6 +12,8 @@ export interface IAuthService<TUser, TSession extends Session<TUser> = Session<T
   authStateReady$: Observable<void>;
   authStateReady: Promise<void>;
 
+  idToken$: Observable<string | null>;
+
   register(payload: unknown): Promise<boolean>;
   login(payload: unknown): Promise<boolean>;
   signWithGoogle(): Promise<boolean>;

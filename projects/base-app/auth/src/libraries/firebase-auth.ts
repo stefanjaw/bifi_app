@@ -52,6 +52,8 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
+  idToken$ = this.fireAuth.idToken;
+
   get authStateReady$(): Observable<void> {
     return toObservable(this._session, { injector: this.injector })
       .pipe(filter(user => user !== undefined))
@@ -63,6 +65,7 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
   }
 
   constructor() {
+    this.fireAuth.setPersistence('LOCAL');
     this.fireAuth.authState
       .pipe(
         takeUntilDestroyed(this.destroy$),
@@ -161,6 +164,8 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
         console.log("credentials user doesn't exist");
         throw new Error('User not found');
       }
+
+      // credentials.additionalUserInfo?.isNewUser
 
       // return new Promise(resolve => {
       //   this.backendAuth

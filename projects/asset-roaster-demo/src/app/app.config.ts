@@ -6,13 +6,13 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { Noir } from 'projects/asset-roaster-demo/src/app/primeng.preset';
 import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
-import { provideAppAuth } from '@avalantec/base-app/auth';
+import { authTokenInterceptor, provideAppAuth } from '@avalantec/base-app/auth';
 import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/providers';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/asset-roaster';
@@ -35,7 +35,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authTokenInterceptor])),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

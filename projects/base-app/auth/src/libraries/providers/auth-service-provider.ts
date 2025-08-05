@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { IAuthService } from '../../interfaces/auth-service';
 
-export const LIB_AUTH_SERVICE = new InjectionToken<IAuthService<any>>('APP_AUTH_SERVICE');
+export let LIB_AUTH_SERVICE = new InjectionToken<IAuthService<any>>('APP_AUTH_SERVICE');
 
 /**
  * Creates a strongly typed auth provider token for injection
@@ -10,5 +10,7 @@ export const LIB_AUTH_SERVICE = new InjectionToken<IAuthService<any>>('APP_AUTH_
  */
 export const createAuthServiceToken = <AuthService extends IAuthService<any>>() => {
   // Returns the strongly typed auth provider token
-  return new InjectionToken<AuthService>('APP_AUTH_SERVICE');
+  const token = new InjectionToken<AuthService>('APP_AUTH_SERVICE');
+  LIB_AUTH_SERVICE = token;
+  return token;
 };
