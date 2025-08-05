@@ -174,7 +174,7 @@ export class ProductFormDialog extends BaseDialog {
         )
       )
       .subscribe({
-        complete: () => {
+        next: () => {
           this.isSubmitLoading.set(false);
           this.formService.reset();
           this.closeDialog();

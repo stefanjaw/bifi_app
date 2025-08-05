@@ -49,6 +49,13 @@
           <div>
             <bifi-app-form-field>
               <bifi-app-form-label>Make</bifi-app-form-label>
+
+              <bifi-app-form-preview>
+                <ng-template #preview let-typeId let-fallback>
+                  {{ product()?.makeIds?.[0]?.name || fallback }}
+                </ng-template>
+              </bifi-app-form-preview>
+
               <p-select
                 formControlName="makeIds"
                 [options]="contacts()"
@@ -97,6 +104,13 @@
           <div>
             <bifi-app-form-field previewVariant="italic">
               <bifi-app-form-label>Vendor</bifi-app-form-label>
+
+              <bifi-app-form-preview>
+                <ng-template #preview let-typeId let-fallback>
+                  {{ product()?.vendorIds?.[0]?.name || fallback }}
+                </ng-template>
+              </bifi-app-form-preview>
+
               <p-select
                 formControlName="vendorIds"
                 [options]="contacts()"
@@ -111,6 +125,13 @@
           <div>
             <bifi-app-form-field previewVariant="italic">
               <bifi-app-form-label>Location</bifi-app-form-label>
+
+              <bifi-app-form-preview>
+                <ng-template #preview let-typeId let-fallback>
+                  {{ product()?.locationId?.name || fallback }}
+                </ng-template>
+              </bifi-app-form-preview>
+
               <p-select
                 formControlName="locationId"
                 [options]="rooms()"
