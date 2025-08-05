@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
 import { provideAppAuth } from '@avalantec/base-app/auth';
 import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/providers';
 import { environment } from '../environments/environment.development';
-import { UserService } from '@avalantec/asset-roaster/modules/users/services/user';
+import { CrudUsers } from '@avalantec/asset-roaster';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,7 +42,7 @@ export const appConfig: ApplicationConfig = {
         token: APP_AUTH_SERVICE,
         config: environment.firebaseConfig,
       },
-      backendAuth: UserService,
+      backendAuth: CrudUsers,
     }),
     MessageService,
   ],

@@ -12,11 +12,11 @@ import { isFormUploaderFile, isFormUploaderFileArray } from '../../../form/src/l
   providedIn: 'root',
 })
 export class ApiRequestManager<T> {
-  private readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
-  private _toastManager = inject(ToastManager);
+  protected readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
+  protected readonly _toastManager = inject(ToastManager);
   private _endpoint = '';
-  private _httpClient = inject(HttpClient);
-  private _defaultPaginateOptions = signal<paginationOptions>({
+  protected readonly _httpClient = inject(HttpClient);
+  protected readonly _defaultPaginateOptions = signal<paginationOptions>({
     page: 1,
     limit: 5,
     paginate: true,
@@ -302,7 +302,7 @@ export class ApiRequestManager<T> {
    *
    * @returns The full URL for the API endpoint.
    */
-  private formatFullURL() {
+  protected formatFullURL() {
     return `${this._apiURL}${this._apiURL[this._apiURL.length - 1] === '/' ? '' : '/'}${this.endpoint}`;
   }
 
@@ -315,13 +315,13 @@ export class ApiRequestManager<T> {
    * @throws Error - Throws an Error with the formatted message.
    */
 
-  private manageError(fullURL: string, message: string) {
+  protected manageError(fullURL: string, message: string) {
     this._toastManager.showError(message, 'Error');
     const error = new Error(`POST ${fullURL} failed: ${message}`);
     throw error;
   }
 
-  private createFormDataFromObject(data: Record<string, any>) {
+  protected createFormDataFromObject(data: Record<string, any>) {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {

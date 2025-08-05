@@ -15,7 +15,6 @@ import { StatusBannerSection } from '../status-banner-section/status-banner-sect
 import { productType } from '../../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { room } from '../../../../facilities';
-import { MatMenuContent } from '@angular/material/menu';
 
 @Component({
   selector: 'bifi-app-general-information-section',
@@ -31,7 +30,6 @@ import { MatMenuContent } from '@angular/material/menu';
     CommonModule,
     SelectModule,
     StatusBannerSection,
-    MatMenuContent,
   ],
   templateUrl: './general-information-section.html',
 })

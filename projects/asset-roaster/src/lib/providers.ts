@@ -1,9 +1,4 @@
-import { createAuthServiceToken, FirebaseSession } from '@avalantec/base-app/auth';
+import { createAuthServiceToken, FirebaseAuth } from '@avalantec/base-app/auth';
+import { user } from './modules/users/interfaces/user';
 
-export interface User {
-  name: string;
-  lastName: string;
-  email: string;
-}
-
-export const APP_AUTH_SERVICE = createAuthServiceToken<User, FirebaseSession<User>>();
+export const APP_AUTH_SERVICE = createAuthServiceToken<FirebaseAuth<user>>();

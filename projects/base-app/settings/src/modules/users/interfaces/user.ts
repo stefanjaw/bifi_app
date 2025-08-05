@@ -1,7 +1,7 @@
 import { company } from '../../companies';
 import { role } from '../../roles';
 
-export interface user {
+export interface baseUser {
   _id: string;
   username: string;
   email: string;
