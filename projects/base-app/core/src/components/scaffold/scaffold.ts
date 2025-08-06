@@ -46,7 +46,7 @@ export class Scaffold {
 
   logout() {
     this.authService.logout().then(() => {
-      this.router.navigate(['auth']);
+      this.router.navigate(['auth', 'signin']);
     });
   }
 }

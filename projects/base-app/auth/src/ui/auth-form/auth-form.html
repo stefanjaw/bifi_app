@@ -34,6 +34,7 @@
               <bifi-app-form-label>Password</bifi-app-form-label>
               <input
                 type="password"
+                pPassword
                 formControlName="password"
                 [placeholder]="isLogin() ? 'admin / userpass' : ''"
                 [autocomplete]="isLogin() ? 'current-password' : 'new-password'"
@@ -46,6 +47,7 @@
               <bifi-app-form-label>Confirm Password</bifi-app-form-label>
               <input
                 type="password"
+                pPassword
                 formControlName="confirmPassword"
                 placeholder=""
                 autocomplete="new-password"

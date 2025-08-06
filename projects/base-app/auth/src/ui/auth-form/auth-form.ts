@@ -7,7 +7,8 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { AuthFormService } from '../../services/auth-form';
-import type { authFormData, socialProvider } from '../../interfaces/auth.model';
+import { authSocialProvider } from '../../interfaces/auth-social-provider';
+import { authFormState } from '../../interfaces/auth-form-state';
 
 @Component({
   selector: 'bifi-app-auth-form',
@@ -28,8 +29,8 @@ export class AuthForm {
   private authFormService = inject(AuthFormService);
 
   // Inputs
-  formData = input.required<authFormData>();
-  socialProviders = input<socialProvider[]>([]);
+  formState = input.required<authFormState>();
+  socialProviders = input<authSocialProvider[]>([]);
 
   // Outputs
   handleSubmit = output<any>();
@@ -39,14 +40,13 @@ export class AuthForm {
   // Expose form for template
   form = this.authFormService.form;
 
-  isLogin = computed(() => this.formData().isLogin);
-  isLoading = computed(() => this.formData().isLoading);
-  error = computed(() => this.formData().error);
+  isLogin = computed(() => this.formState().isLogin);
+  isLoading = computed(() => this.formState().isLoading);
 
   constructor() {
     // Update form when mode changes
     effect(() => {
-      const data = this.formData();
+      const data = this.formState();
       this.authFormService.setLoginMode(data.isLogin);
     });
   }

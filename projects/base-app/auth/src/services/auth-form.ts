@@ -1,7 +1,12 @@
 import { effect, Injectable, signal } from '@angular/core';
 import { Validators, type AbstractControl, type ValidationErrors } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
-import type { authFormModel, registerFormModel } from '../interfaces/auth.model';
+
+export interface authFormModel {
+  emailOrUsername: string;
+  password: string;
+  confirmPassword?: string;
+}
 
 @Injectable()
 export class AuthFormService extends BaseForm<authFormModel> {
@@ -26,7 +31,7 @@ export class AuthFormService extends BaseForm<authFormModel> {
   }
 
   override createForm() {
-    return this.fb.group<registerFormModel>(
+    return this.fb.group<authFormModel>(
       {
         emailOrUsername: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
@@ -49,6 +54,7 @@ export class AuthFormService extends BaseForm<authFormModel> {
     if (password && confirmPassword && password !== confirmPassword) {
       return { passwordMismatch: true };
     }
+
     return null;
   };
 }
