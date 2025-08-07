@@ -218,4 +218,14 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
       return Promise.resolve(false);
     }
   }
+
+  /**
+   * Returns true if the user is authenticated and false otherwise.
+   *
+   * This property is a shortcut to check if the user is authenticated.
+   * It returns true if the session is not null and not undefined.
+   */
+  isAuthenticated(): boolean {
+    return this._session() !== null && this._session() !== undefined;
+  }
 }

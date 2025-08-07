@@ -13,7 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
 import { authTokenInterceptor, provideAppAuth } from '@avalantec/base-app/auth';
-import { APP_FRONTEND_AUTH_SERVICE } from '@avalantec/base-app/auth/src/libraries/providers/frontend-auth-provider';
+import { APP_FRONTEND_AUTH_SERVICE } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/settings';
 

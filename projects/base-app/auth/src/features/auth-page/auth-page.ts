@@ -1,11 +1,11 @@
 import { Component, input, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { APP_FRONTEND_AUTH_SERVICE } from '@avalantec/base-app/auth/src/libraries/providers/frontend-auth-provider';
 import { AuthForm } from '../../ui/auth-form/auth-form';
 import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { ToastManager } from '@avalantec/base-app/core';
 import { authFormState } from '../../interfaces/auth-form-state';
 import { authFormModel } from '../../services/auth-form';
+import { APP_FRONTEND_AUTH_SERVICE } from '../../libraries/providers/frontend-auth-provider';
 
 @Component({
   selector: 'bifi-app-auth-page',
