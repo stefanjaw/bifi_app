@@ -19,6 +19,7 @@ import { GoogleAuthProvider } from '@angular/fire/auth';
 import { IBackendAuthService } from '../interfaces/backend-auth-service';
 import firebase from 'firebase/compat/app';
 import { ToastManager } from '@avalantec/base-app/core';
+import { Router } from '@angular/router';
 
 type AuthenticateFnParams =
   | {
@@ -45,6 +46,7 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
   private destroy$ = inject(DestroyRef);
   private injector = inject(Injector);
   private toastManager = inject(ToastManager);
+  private router = inject(Router);
 
   /** Session signal, undefined state means that the user state has not yet been loaded */
   private _session = signal<FirebaseSession<TUser> | null | undefined>(undefined);
@@ -97,15 +99,19 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
         next: session => {
           if (!session || !session.fireUser || !session.appUser) {
             this._session.set(null);
+            this.router.navigate(['auth', 'signin']);
           } else {
             this._session.set({
               fireUser: session.fireUser,
               appUser: session.appUser,
             });
+
+            this.router.navigate(['home']);
           }
 
           this.isLoading.set(false);
         },
+        error: () => this.isLoading.set(false),
       });
   }
 
@@ -124,10 +130,7 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
 
     return this.backendAuth.getMe().pipe(
       catchError(err => throwError(() => err)),
-      map(user => {
-        console.log('meRequest', user);
-        return { fireUser: firebaseUser, appUser: user };
-      })
+      map(user => ({ fireUser: firebaseUser, appUser: user }))
     );
   }
 

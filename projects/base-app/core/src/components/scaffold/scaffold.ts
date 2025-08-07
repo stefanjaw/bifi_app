@@ -36,17 +36,11 @@ export class Scaffold {
   isOpened = this.sidenavManager.isOpened;
 
   // auth state management
+  protected authService = inject(APP_FRONTEND_AUTH_SERVICE);
   private authState = inject(AuthState);
-  private authService = inject(APP_FRONTEND_AUTH_SERVICE);
   user: Signal<user | undefined> = this.authState.user;
 
   goHome() {
     this.router.navigate(['home']);
-  }
-
-  logout() {
-    this.authService.logout().then(() => {
-      this.router.navigate(['auth', 'signin']);
-    });
   }
 }

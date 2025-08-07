@@ -50,43 +50,36 @@ export class AuthPage {
    * @param formValue The form values from the submission.
    */
   async handleSubmit(formValue: authFormModel) {
-    try {
-      const isLogin = this.isLogin();
+    const isLogin = this.isLogin();
 
-      let result;
+    let result;
 
-      // Login or register
-      if (isLogin) {
-        result = await this.authService.login({
-          email: formValue.emailOrUsername,
-          password: formValue.password,
-        });
-      } else {
-        result = await this.authService.register({
-          email: formValue.emailOrUsername,
-          password: formValue.password,
-        });
-      }
-
-      if (!result) {
-        this.toastManager.showError(
-          'Operation failed',
-          isLogin ? 'Login failed' : 'Registration failed'
-        );
-        return;
-      }
-
-      // Handle result
-      this.toastManager.showSuccess(
-        'Operation successful!',
-        isLogin ? 'Welcome back!' : 'Registration successful!'
-      );
-
-      // Navigate to dashboard or intended route
-      this.router.navigate(['home']);
-    } catch (error) {
-      console.error('Form submit error:', error);
+    // Login or register
+    if (isLogin) {
+      result = await this.authService.login({
+        email: formValue.emailOrUsername,
+        password: formValue.password,
+      });
+    } else {
+      result = await this.authService.register({
+        email: formValue.emailOrUsername,
+        password: formValue.password,
+      });
     }
+
+    if (!result) {
+      this.toastManager.showError(
+        'Operation failed',
+        isLogin ? 'Login failed' : 'Registration failed'
+      );
+      return;
+    }
+
+    // Handle result
+    this.toastManager.showSuccess(
+      'Operation successful!',
+      isLogin ? 'Welcome back!' : 'Registration successful!'
+    );
   }
 
   /**
@@ -99,21 +92,16 @@ export class AuthPage {
    * @example handleSocialLogin('google')
    */
   async handleSocialLogin(provider: string) {
-    try {
-      const success = await this.socialProviders()
-        .find(p => p.name.toLowerCase() === provider.toLowerCase())
-        ?.action();
+    const success = await this.socialProviders()
+      .find(p => p.name.toLowerCase() === provider.toLowerCase())
+      ?.action();
 
-      if (!success) {
-        this.toastManager.showError(`Failed to sign in with ${provider}`, 'Error');
-        return;
-      }
-
-      this.toastManager.showSuccess(`Signed in with ${provider} successfully`, 'Success');
-      this.router.navigate(['home']);
-    } catch (error) {
-      console.error('Social login error:', error);
+    if (!success) {
+      this.toastManager.showError(`Failed to sign in with ${provider}`, 'Error');
+      return;
     }
+
+    this.toastManager.showSuccess(`Signed in with ${provider} successfully`, 'Success');
   }
 
   /**
