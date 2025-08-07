@@ -185,6 +185,7 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
    */
   private async authenticate(payload: AuthenticateFnParams): Promise<boolean> {
     try {
+      
       let credentials: firebase.auth.UserCredential;
 
       switch (payload.method) {
@@ -210,9 +211,11 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
       // wait for the auth state to be ready
       await this.authStateReady;
 
+      this.toastManager.showSuccess('Authenticated successfully', 'Success');
+
       return true;
     } catch (error: any) {
-      this.toastManager.showError('Something went wrong logging in', 'Error');
+      this.toastManager.showError('Something went wrong with authentication', 'Error');
 
       if ('message' in error) {
         this.error.set(error.message);
