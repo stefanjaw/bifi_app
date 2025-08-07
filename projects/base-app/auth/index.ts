@@ -1,4 +1,8 @@
+export * from './src/features/auth-page/auth-page';
+export * from './src/guards/auth-guard';
+export * from './src/interfaces/auth-form-state';
 export * from './src/interfaces/auth-service';
+export * from './src/interfaces/auth-social-provider';
 export * from './src/interfaces/backend-auth-service';
 export * from './src/interfaces/session-user';
 export * from './src/libraries/firebase-auth';
@@ -7,4 +11,7 @@ export * from './src/libraries/provide-auth';
 export * from './src/libraries/providers/auth-service-provider';
 export * from './src/libraries/providers/backend-auth-provider';
 export * from './src/libraries/providers/frontend-auth-provider';
+export * from './src/routes/auth.routes';
+export * from './src/services/auth-form';
 export * from './src/services/auth-state';
+export * from './src/ui/auth-form/auth-form';

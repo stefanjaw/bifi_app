@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '@avalantec/base-app/auth';
 
 export const assetRoasterRoutes: Routes = [
   {
@@ -7,11 +8,8 @@ export const assetRoasterRoutes: Routes = [
     redirectTo: 'equipment',
   },
   {
-    path: 'auth',
-    loadChildren: () => import('./modules/auth').then(m => m.AUTH_ROUTES),
-  },
-  {
     path: 'equipment',
-    loadChildren: () => import('./modules/index').then(m => m.PRODUCT_ROUTES),
+    canActivate: [authGuard],
+    loadChildren: () => import('../modules/index').then(m => m.PRODUCT_ROUTES),
   },
 ];

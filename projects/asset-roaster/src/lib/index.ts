@@ -1,2 +1,2 @@
-export * from './asset-roaster.routes';
+export * from './routes/asset-roaster.routes';
 export * from './modules';

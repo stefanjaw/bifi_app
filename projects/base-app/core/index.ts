@@ -1,4 +1,4 @@
-export * from './src/base-app.routes';
+export * from './src/routes/base-app.routes';
 export * from './src/components/badge/badge.model';
 export * from './src/components/badge/badge';
 export * from './src/components/main-menu/main-menu';
