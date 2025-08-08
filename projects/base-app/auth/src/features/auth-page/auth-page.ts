@@ -64,6 +64,8 @@ export class AuthPage {
         password: formValue.password,
       });
     }
+
+    this.router.navigate(['/home']);
   }
 
   /**
@@ -79,6 +81,8 @@ export class AuthPage {
     await this.socialProviders()
       .find(p => p.name.toLowerCase() === provider.toLowerCase())
       ?.action();
+
+    this.router.navigate(['/home']);
   }
 
   /**
