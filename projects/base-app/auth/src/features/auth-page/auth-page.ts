@@ -4,7 +4,7 @@ import { AuthForm } from '../../ui/auth-form/auth-form';
 import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { authFormState } from '../../interfaces/auth-form-state';
 import { authFormModel } from '../../services/auth-form';
-import { APP_FRONTEND_AUTH_SERVICE } from '../../libraries/providers/frontend-auth-provider';
+import { LIB_AUTH_SERVICE } from '../../libraries/providers/auth-service-provider';
 
 @Component({
   selector: 'bifi-app-auth-page',
@@ -12,7 +12,7 @@ import { APP_FRONTEND_AUTH_SERVICE } from '../../libraries/providers/frontend-au
   templateUrl: './auth-page.html',
 })
 export class AuthPage {
-  private authService = inject(APP_FRONTEND_AUTH_SERVICE);
+  private authService = inject(LIB_AUTH_SERVICE);
   private router = inject(Router);
 
   // Input from router
