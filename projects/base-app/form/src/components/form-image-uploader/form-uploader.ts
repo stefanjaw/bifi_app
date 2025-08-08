@@ -16,10 +16,10 @@ import {
   FormGroup,
   NonNullableFormBuilder,
 } from '@angular/forms';
-import { FormUploaderFile } from '@avalantec/base-app/form/src/interfaces/form-uploader-image';
-import { ControlsOf } from '@avalantec/base-app/form/src/interfaces/typed-form-builder';
 import { FileRemoveEvent, FileSelectEvent, FileUpload } from 'primeng/fileupload';
 import { distinctUntilChanged, Subscription } from 'rxjs';
+import { ControlsOf } from '../../interfaces/typed-form-builder';
+import { FormUploaderFile } from '../../interfaces/form-uploader-image';
 
 @Component({
   selector: 'bifi-app-form-uploader',

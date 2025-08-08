@@ -1,4 +1,4 @@
-@let loggedUser = user();
+@let loggedUser = user;
 
 @if (loggedUser) {
   <p-toolbar styleClass="w-full h-[75px]">
@@ -30,7 +30,7 @@
           size="small"
         />
         <p-avatar
-          [image]="loggedUser.picture"
+          [image]="'loggedUser?.picture'"
           [style]="{ width: '32px', height: '32px' }"
           [shape]="'circle'"
         />

@@ -12,6 +12,5 @@ export * from './src/libraries/provide-auth';
 export * from './src/libraries/providers/auth-service-provider';
 export * from './src/libraries/providers/backend-auth-provider';
 export * from './src/libraries/providers/frontend-auth-provider';
-export * from './src/routes/auth.routes';
 export * from './src/services/auth-form';
 export * from './src/ui/auth-form/auth-form';

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@avalantec/base-app/auth';
 
-export const assetRoasterRoutes: Routes = [
+export const ASSET_ROASTER_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',

@@ -1,19 +1,20 @@
 import { Routes } from '@angular/router';
-import { assetRoasterRoutes } from '@avalantec/asset-roaster';
-import { baseAppRoutes } from '@avalantec/base-app/core';
-import { settingsRoutes } from '@avalantec/base-app/settings';
 
 export const routes: Routes = [
   {
     path: '',
-    children: baseAppRoutes,
+    loadChildren: () => import('@avalantec/base-app').then(m => m.BASE_APP_ROUTES),
   },
   {
-    path: 'asset-roaster',
-    children: assetRoasterRoutes,
+    path: 'auth',
+    loadChildren: () => import('@avalantec/base-app').then(m => m.AUTH_ROUTES),
   },
   {
     path: 'settings',
-    children: settingsRoutes,
+    loadChildren: () => import('@avalantec/base-app').then(m => m.SETTINGS_ROUTES),
+  },
+  {
+    path: 'asset-roaster',
+    loadChildren: () => import('@avalantec/asset-roaster').then(m => m.ASSET_ROASTER_ROUTES),
   },
 ];

@@ -19,7 +19,6 @@ import { GoogleAuthProvider } from '@angular/fire/auth';
 import { IBackendAuthService } from '../interfaces/backend-auth-service';
 import firebase from 'firebase/compat/app';
 import { ToastManager } from '@avalantec/base-app/core';
-import { Router } from '@angular/router';
 
 type AuthenticateFnParams =
   | {
@@ -46,7 +45,6 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
   private destroy$ = inject(DestroyRef);
   private injector = inject(Injector);
   private toastManager = inject(ToastManager);
-  private router = inject(Router);
 
   /** Session signal, undefined state means that the user state has not yet been loaded */
   private _session = signal<FirebaseSession<TUser> | null | undefined>(undefined);

@@ -18,7 +18,7 @@ import { maintenanceWindow } from '../../../maintenance-windows';
 import { productType } from '../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
-import { activityHistory } from '@avalantec/base-app/core';
+import { activityHistory } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-product-edit-form',

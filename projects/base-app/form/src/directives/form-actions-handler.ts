@@ -5,7 +5,7 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormValueState } from '../interfaces/form-helpers';
 import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 import { ToastManager } from '@avalantec/base-app/core';
-import { FormContext } from '@avalantec/base-app/form/src/services/form-context';
+import { FormContext } from '../services/form-context';
 
 @Directive({
   providers: [FormContext],

@@ -7,7 +7,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { CommonModule } from '@angular/common';
-import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
+// import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-scaffold',
@@ -35,15 +35,15 @@ export class Scaffold {
   isOpened = this.sidenavManager.isOpened;
 
   // auth state management
-  protected authService = inject(LIB_AUTH_SERVICE);
-  user = this.authService.user;
+  // protected authService = inject(LIB_AUTH_SERVICE);
+  user = null;
 
   goHome() {
     this.router.navigate(['home']);
   }
 
   logout() {
-    this.authService.logout();
+    // this.authService.logout();
     this.router.navigate(['auth', 'signin']);
   }
 }

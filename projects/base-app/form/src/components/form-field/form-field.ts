@@ -14,12 +14,9 @@ import { ControlContainer, NgControl } from '@angular/forms';
 import { FormError } from '../form-error/form-error';
 import { FormFieldContext } from '../../services/form-field-context';
 import { FormControlExtension } from '../../directives/form-control-extension';
-import { FormContext } from '@avalantec/base-app/form/src/services/form-context';
-import { FormPreview } from '@avalantec/base-app/form/src/components/form-preview/form-preview';
-import {
-  previewValueType,
-  previewVariant,
-} from '@avalantec/base-app/form/src/components/form-preview/form-preview.model';
+import { FormPreview } from '../form-preview/form-preview';
+import { FormContext } from '../../services/form-context';
+import { previewValueType, previewVariant } from '../form-preview/form-preview.model';
 
 @Component({
   selector: 'bifi-app-form-field',

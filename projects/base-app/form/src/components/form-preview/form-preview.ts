@@ -12,13 +12,10 @@ import {
   signal,
   TemplateRef,
 } from '@angular/core';
-import { FormPreviewContainer } from '@avalantec/base-app/form/src/components/form-preview/form-preview-container/form-preview-container';
-import {
-  previewValueType,
-  previewVariant,
-} from '@avalantec/base-app/form/src/components/form-preview/form-preview.model';
-import { FormFieldContext } from '@avalantec/base-app/form/src/services/form-field-context';
 import { startWith } from 'rxjs';
+import { FormPreviewContainer } from './form-preview-container/form-preview-container';
+import { previewValueType, previewVariant } from './form-preview.model';
+import { FormFieldContext } from '../../services/form-field-context';
 
 @Component({
   selector: 'bifi-app-form-preview',

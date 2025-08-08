@@ -1,4 +1,4 @@
-import { FormPreview } from '@avalantec/base-app/form/src/components/form-preview/form-preview';
+import { FormPreview } from './src/components/form-preview/form-preview';
 import { FormActions } from './src/components/form-actions/form-actions';
 import { FormError } from './src/components/form-error/form-error';
 import { FormField } from './src/components/form-field/form-field';
