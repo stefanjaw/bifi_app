@@ -99,14 +99,11 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
         next: session => {
           if (!session || !session.fireUser || !session.appUser) {
             this._session.set(null);
-            this.router.navigate(['auth', 'signin']);
           } else {
             this._session.set({
               fireUser: session.fireUser,
               appUser: session.appUser,
             });
-
-            this.router.navigate(['home']);
           }
 
           this.isLoading.set(false);
@@ -185,8 +182,9 @@ export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<
    */
   private async authenticate(payload: AuthenticateFnParams): Promise<boolean> {
     try {
-      
       let credentials: firebase.auth.UserCredential;
+
+      this._session.set(undefined);
 
       switch (payload.method) {
         case 'google':

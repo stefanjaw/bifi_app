@@ -1,14 +1,13 @@
-import { Component, inject, input, Signal } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { SidenavManager } from '../../services/sidenav-manager';
 import { Toast } from 'primeng/toast';
-import { APP_FRONTEND_AUTH_SERVICE, AuthState } from '@avalantec/base-app/auth';
-import { user } from '@avalantec/base-app/settings';
 import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { CommonModule } from '@angular/common';
+import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-scaffold',
@@ -36,11 +35,15 @@ export class Scaffold {
   isOpened = this.sidenavManager.isOpened;
 
   // auth state management
-  protected authService = inject(APP_FRONTEND_AUTH_SERVICE);
-  private authState = inject(AuthState);
-  user: Signal<user | undefined> = this.authState.user;
+  protected authService = inject(LIB_AUTH_SERVICE);
+  user = this.authService.user;
 
   goHome() {
     this.router.navigate(['home']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['auth', 'signin']);
   }
 }

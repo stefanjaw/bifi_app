@@ -6,7 +6,7 @@ import { LIB_AUTH_SERVICE } from '../libraries/providers/auth-service-provider';
  * Guard that checks if the user is authenticated and redirects to the login page if not.
  * @returns `true` if the user is authenticated, or a redirect to the login page if not.
  */
-export const authGuard: CanActivateFn = async () => {
+export const noAuthGuard: CanActivateFn = async () => {
   const authService = inject(LIB_AUTH_SERVICE);
   const router = inject(Router);
 
@@ -14,8 +14,8 @@ export const authGuard: CanActivateFn = async () => {
   await authService.authStateReady;
 
   // Check if the user is authenticated and redirect to the login page if not
-  if (!authService.session()) {
-    return router.parseUrl('/auth/signin');
+  if (authService.session()) {
+    return router.parseUrl('/home');
   }
 
   return true;
