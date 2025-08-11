@@ -129,32 +129,32 @@ class ExampleForm extends BaseForm<ExampleFormModel> {
 
 ## 4. Form Layout Example
 
-The app-form-layout and app-form-section are not mandatory, they depend on the form layout to use.
+The bifi-app-form-layout and bifi-app-form-section are not mandatory, they depend on the form layout to use.
 
 ```ts
 @Component({
-  selector: 'app-test-form',
+  selector: 'bifi-app-test-form',
   imports: [ReactiveFormsModule, AppFormExtensionsImports],
   template: `
-    <app-form-layout title="Example form">
+    <bifi-app-form-layout title="Example form">
       <form
         [formGroup]="form"
         bifiAppFormActionsHandler
         (appSubmit)="handleSubmit.emit()"
         class="flex flex-col gap-3 md:gap-6 lg:gap-10 md:mr-6"
       >
-        <app-form-section title="General information" id="form-general" [ordinal]="1">
+        <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
           <section class="max-w-xl grid gap-3 sm:grid-cols-2">
             <!-- Name field -->
-            <app-form-field>
-              <app-form-label>Name</app-form-label>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Name</bifi-app-form-label>
               <input pInputText formControlName="name" type="text" placeholder="Example name" />
-              <app-form-error></app-form-error>
-            </app-form-field>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
           </section>
-        </app-form-section>
+        </bifi-app-form-section>
       </form>
-    </app-form-layout>
+    </bifi-app-form-layout>
   `,
 })
 export class ExampleForm {
