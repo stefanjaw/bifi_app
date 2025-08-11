@@ -1,13 +1,14 @@
 import { Component, inject, input } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { SidenavManager } from '../../services/sidenav-manager';
 import { Toast } from 'primeng/toast';
 import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { CommonModule } from '@angular/common';
+import { SidenavManager } from '@avalantec/base-app/core';
 import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
+// import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-scaffold',
@@ -43,7 +44,7 @@ export class Scaffold {
   }
 
   logout() {
-    this.authService.logout();
+    // this.authService.logout();
     this.router.navigate(['auth', 'signin']);
   }
 }

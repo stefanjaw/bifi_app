@@ -57,6 +57,8 @@ export type IFArray<R> = R extends FormGroupLike
 // A Permissive control config (an array with a value and validators)
 export type PermissiveControlConfig<T> = (T | FormControlState<T> | ValidatorConfig)[];
 
+export type GroupReturn<T extends FormGroupLike> = FormGroup<ControlsOf<T, true>>;
+
 // Possible validator configs
 type ValidatorConfig = ValidatorFn | AsyncValidatorFn | ValidatorFn[] | AsyncValidatorFn[];
 

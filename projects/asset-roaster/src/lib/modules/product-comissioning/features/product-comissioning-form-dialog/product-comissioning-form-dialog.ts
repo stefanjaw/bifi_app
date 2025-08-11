@@ -15,7 +15,14 @@ import { DialogModule } from 'primeng/dialog';
 import { product } from '../../../products/interfaces/product';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormActions,
+  FormActionsHandler,
+  FormError,
+  FormField,
+  FormLabel,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
@@ -27,11 +34,15 @@ import { FileUploadModule } from 'primeng/fileupload';
   imports: [
     DialogModule,
     ReactiveFormsModule,
-    AppFormExtensionsImports,
     Text,
     RadioButtonModule,
     Textarea,
     FileUploadModule,
+    FormActionsHandler,
+    FormField,
+    FormLabel,
+    FormError,
+    FormActions,
   ],
   templateUrl: './product-comissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

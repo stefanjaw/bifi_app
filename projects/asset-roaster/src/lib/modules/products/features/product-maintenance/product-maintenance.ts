@@ -8,13 +8,7 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import {
-  activityHistory,
-  CrudActivityHistories,
-  FileResolver,
-  LIBRARY_CONFIG,
-  ToastManager,
-} from '@avalantec/base-app/core';
+import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ProductComissioningFormDialog,
@@ -26,7 +20,13 @@ import {
   ProductFinishMaintenanceFormDialog,
   ProductMaintenanceFormDialog,
 } from '../../../product-maintenances';
-import { FilterManager, orderByQuery } from '@avalantec/base-app/resource';
+import {
+  activityHistory,
+  CrudActivityHistories,
+  FileResolver,
+  FilterManager,
+  orderByQuery,
+} from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-product-maintenance',

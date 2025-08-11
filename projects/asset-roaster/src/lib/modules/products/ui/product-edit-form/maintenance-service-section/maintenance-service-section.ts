@@ -1,5 +1,4 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { UpdateProductForm } from '../../../services/update-product-form';
@@ -14,13 +13,13 @@ import { ButtonModule } from 'primeng/button';
 import { maintenanceWindow } from '../../../../maintenance-windows';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 import { preventiveMaintenanceStatus } from './maintenance-status.model';
+import { FormError, FormField, FormLabel, FormSection, Hint } from '@avalantec/base-app/form';
 
 dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-maintenance-service-section',
   imports: [
-    AppFormExtensionsImports,
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
@@ -28,6 +27,11 @@ dayjs.extend(isBetween);
     SelectModule,
     DatePickerModule,
     ButtonModule,
+    FormSection,
+    FormField,
+    FormLabel,
+    Hint,
+    FormError,
   ],
   templateUrl: './maintenance-service-section.html',
 })

@@ -12,7 +12,7 @@
       // "@avalantec/base-app": ["projects/base-app/src/lib"],
       // "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
 
-      "@avalantec/base-app": ["./projects/base-app/src"],
+      "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },
     "strict": true,
@@ -35,6 +35,17 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "include": ["**/src/**/*", "**/dist/**/*", "**/types/**/*", "projects/base-app/core/index.ts", "projects/base-app/form/index.ts", "projects/base-app/resource/index.ts", "projects/base-app/settings/src/services", "projects/base-app/settings/index.ts", "projects/base-app/settings/src/modules", "projects/base-app/settings/src/components"],
+  "include": [
+    "**/src/**/*",
+    "**/dist/**/*",
+    "**/types/**/*",
+    "projects/base-app/core/index.ts",
+    "projects/base-app/form/index.ts",
+    "projects/base-app/resource/index.ts",
+    "projects/base-app/settings/src/services",
+    "projects/base-app/settings/index.ts",
+    "projects/base-app/settings/src/modules",
+    "projects/base-app/settings/src/components"
+  ],
   "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

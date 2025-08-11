@@ -1,26 +1,37 @@
 import { Component, input, output, inject, effect, computed } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { AuthFormService } from '../../services/auth-form';
 import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { authFormState } from '../../interfaces/auth-form-state';
+import {
+  FormActionsHandler,
+  FormError,
+  FormField,
+  FormLabel,
+  FormLayout,
+  FormSection,
+} from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-auth-form',
   imports: [
-    CommonModule,
     ButtonModule,
     ReactiveFormsModule,
     ButtonModule,
     InputTextModule,
     PasswordModule,
     DividerModule,
-    AppFormExtensionsImports,
+    FormActionsHandler,
+    FormSection,
+    FormLayout,
+    FormField,
+    FormLabel,
+    FormError,
   ],
   providers: [AuthFormService],
   templateUrl: './auth-form.html',

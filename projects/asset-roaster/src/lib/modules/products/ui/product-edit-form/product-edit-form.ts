@@ -1,5 +1,4 @@
 import { Component, inject, input } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
 import { DocumentsSection } from './documents-section/documents-section';
@@ -18,13 +17,13 @@ import { maintenanceWindow } from '../../../maintenance-windows';
 import { productType } from '../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
-import { activityHistory } from '@avalantec/base-app/core';
+import { activityHistory } from '@avalantec/base-app/resource';
+import { FormActionsHandler, FormLayout } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
   imports: [
     ReactiveFormsModule,
-    AppFormExtensionsImports,
     ButtonModule,
     DatePickerModule,
     CardModule,
@@ -35,6 +34,8 @@ import { activityHistory } from '@avalantec/base-app/core';
     CommissioningLifecycleSection,
     ActivityHistorySection,
     ProgressBarModule,
+    FormActionsHandler,
+    FormLayout,
   ],
   templateUrl: './product-edit-form.html',
 })

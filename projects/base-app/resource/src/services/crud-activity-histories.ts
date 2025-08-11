@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestManager } from '@avalantec/base-app/resource';
+import { ApiRequestManager } from './api-request-manager';
 import { activityHistory } from '../interfaces/activity-history';
 
 @Injectable({

@@ -8,7 +8,14 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormActions,
+  FormActionsHandler,
+  FormError,
+  FormField,
+  FormLabel,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
 import { product, ProductMaintenanceContext } from '../../../products';
@@ -21,7 +28,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-decomissioning-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, AppFormExtensionsImports, Text, Textarea],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    Text,
+    Textarea,
+    FormActionsHandler,
+    FormLabel,
+    FormError,
+    FormActions,
+    FormField,
+  ],
   templateUrl: './product-decomissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

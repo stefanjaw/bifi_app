@@ -44,7 +44,7 @@ export class FileResolver {
    * @param urls The array of URLs to convert to File objects.
    * @returns A Promise that resolves to an array of File objects.
    */
-  private async resolveFiles(urls: string[]): Promise<File[]> {
+  async resolveFiles(urls: string[]): Promise<File[]> {
     const files = [];
     for (const url of urls) {
       const file = await this.resolveFile(url);

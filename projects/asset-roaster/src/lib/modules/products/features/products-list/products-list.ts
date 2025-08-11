@@ -11,7 +11,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
-import { Badge } from '@avalantec/base-app/core';
+import { Badge } from '@avalantec/base-app/ui';
 import { CrudProducts } from '../../services/crud-products';
 import { ProductStatusCardComponent } from '../../ui/product-status-card/product-status-card';
 import { ProductStatusSelect } from '../../ui/product-status-select/product-status-select';

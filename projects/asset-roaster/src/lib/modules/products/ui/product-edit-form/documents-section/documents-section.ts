@@ -1,12 +1,12 @@
 import { Component, inject, input } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
+import { FormSection } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-documents-section',
-  imports: [...AppFormExtensionsImports, ButtonModule, CardModule],
+  imports: [ButtonModule, CardModule, FormSection],
   templateUrl: './documents-section.html',
 })
 export class DocumentsSection {

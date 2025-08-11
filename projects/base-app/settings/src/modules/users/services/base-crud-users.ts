@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
-import { user } from '../interfaces/user';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
 import { IBackendAuthService } from '@avalantec/base-app/auth';
+import { user } from '@avalantec/base-app/core';
 
 export class BaseCrudUsers<TUser = user>
   extends ApiRequestManager<TUser>

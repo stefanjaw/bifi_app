@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
+import { FormActions, FormActionsHandler, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import {
@@ -28,9 +28,10 @@ import { CommonModule } from '@angular/common';
     DialogModule,
     ReactiveFormsModule,
     FileUploadModule,
-    AppFormExtensionsImports,
     Text,
     CommonModule,
+    FormActionsHandler,
+    FormActions,
   ],
   templateUrl: './product-finish-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
