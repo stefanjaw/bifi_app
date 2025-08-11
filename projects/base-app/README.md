@@ -6,10 +6,10 @@ This document defines the official architectural guidelines, coding standards, a
 
 ## 1. Importing
 
-Always import **everything** from the main barrel:
+Importing will depend on the library you are going to need
 
 ```ts
-import { SomeComponent, someService } from '@avalantec/base-app';
+import { SomeComponent, someService } from '@avalantec/base-app/library';
 ```
 
 Do **not** import from internal paths.
@@ -28,7 +28,10 @@ my-feature/
 ├── routes/        # Route files
 ├── directives/    # Custom directives
 ├── interfaces/    # Local TypeScript interfaces
-└── libraries/     # Utility functions
+└── libraries/     # Misc utilities
+└──── providers/   # Injection providers (when necessary)
+└──── pipes/       # Pipes
+└──── utils.ts     # Utility functions
 ```
 
 Example route (exporting public routes example)
@@ -81,7 +84,7 @@ Each component lives in its own folder with these files:
 user-form/
 ├── user-form.ts         # Component logic (Standalone Component)
 ├── user-form.html       # Template HTML
-├── user-form.model.ts   # (Optional) local interfaces/types only
+├── user-form.model.ts   # (Optional) local interfaces/types only for the component
 ```
 
 - The `.model.ts` file is for interfaces/types **used exclusively inside the component** to avoid polluting global scope. This file is optional and only if an interface that only exists for this component (like an input type) is needed.
@@ -171,7 +174,7 @@ Only use RxJS if necessary with DestroyRef and takeUntilDestroyed
 
 ## 8. Summary of Rules for Any App Using BaseApp
 
-- Import everything from `@avalantec/base-app` main barrel.
+- Import everything from `@avalantec/base-app` main barrel or library specific entry point such as `@avalantec/base-app/form`.
 - Use Angular Standalone Components without NgModules.
 - Separate Smart (`features/`) and Dumb (`ui/`) components.
 - Smart components **can inject** services using `inject()`.

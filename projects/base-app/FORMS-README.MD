@@ -14,6 +14,14 @@ Forms in `@avalantec/base-app/form` are built using a consistent architecture ba
 - A form service pattern based on `BaseForm<T>` and `TypedFormBuilder`.
 - A set of shared components, directives, and helpers imported via `AppFormExtensionsImports`.
 
+### Importing
+
+```ts
+import { AppFormExtensionsImports } from '@avalantec/base-app/forms';
+```
+
+Do **not** import from internal paths.
+
 ---
 
 ## 2. Shared Form Components
@@ -79,6 +87,7 @@ interface ExampleFormModel {
 @Injectable()
 class ExampleForm extends BaseForm<ExampleFormModel> {
   override createForm() {
+    // This uses an underlying custom form group build
     return this.fb.group<ExampleFormModel>({
       name: ['', [Validators.required]],
       exampleNullableField: [null],
@@ -88,12 +97,15 @@ class ExampleForm extends BaseForm<ExampleFormModel> {
         age: [null!], // We use null! to start with a null value (instead of showing a 0)
       },
       productIds: [],
-      productArray: [
-        {
-          id: 0,
-          name: '',
+      productArray: {
+        // Template is used for automatically creating new controls with a template and validators
+        template: {
+          id: [''],
+          name: [null!],
         },
-      ],
+        // Initial value elements that match the model type
+        formArrayElements: [],
+      },
     });
   }
 }
@@ -101,7 +113,7 @@ class ExampleForm extends BaseForm<ExampleFormModel> {
 
 ### Signals Exposed
 
-- `value`: Signal representing current value (less used).
+- `value`: Signal representing current value (all optional because only enabled controls are included) (less used).
 - `rawValue`: Includes disabled controls. Useful for create actions.
 - `dirtyValue`: Changed values only. Ideal for update operations.
 - `lastValidRawValue`: Useful for rollback or debugging.
@@ -117,10 +129,12 @@ class ExampleForm extends BaseForm<ExampleFormModel> {
 
 ## 4. Form Layout Example
 
+The app-form-layout and app-form-section are not mandatory, they depend on the form layout to use.
+
 ```ts
 @Component({
   selector: 'app-test-form',
-  imports: [AppFormExtensionsImports],
+  imports: [ReactiveFormsModule, AppFormExtensionsImports],
   template: `
     <app-form-layout title="Example form">
       <form
@@ -143,7 +157,9 @@ class ExampleForm extends BaseForm<ExampleFormModel> {
     </app-form-layout>
   `,
 })
-export class ExampleForm {}
+export class ExampleForm {
+  handleSubmit = output<FormValueState<ExampleFormModel>>();
+}
 ```
 
 ---
@@ -153,13 +169,12 @@ export class ExampleForm {}
 Submit handling is always done from the smart component via `(appSubmit)`:
 
 ```ts
-handleSubmit() {
-  const state = this.formService.getFormValueState();
+handleSubmit(state: FormValueState<ExampleFormModel>) {
   const raw = state.rawValue; // for create
   const changes = state.dirtyValue; // for update
 }
 ```
 
-The smart component should emit the event or execute the backend logic.
+The smart component should listen to the dumb component event and execute backend logic.
 
 ---
