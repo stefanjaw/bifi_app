@@ -1,13 +1,13 @@
-import { ProductMaintenanceContext } from './../../../services/product-maintenance-context';
 import { Component, inject, input } from '@angular/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { product } from '../../../interfaces/product';
+import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
+import { FormSection } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-commissioning-lifecycle-section',
-  imports: [AppFormExtensionsImports, ButtonModule, CardModule],
+  imports: [ButtonModule, CardModule, FormSection],
   templateUrl: './commissioning-lifecycle-section.html',
 })
 export class CommissioningLifecycleSection {

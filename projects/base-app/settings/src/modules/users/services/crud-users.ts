@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BaseCrudUsers } from '@avalantec/base-app/settings';
-import { user } from '../interfaces/user';
+import { user } from '@avalantec/base-app/core';
+import { BaseCrudUsers } from './base-crud-users';
 
 @Injectable({
   providedIn: 'root',

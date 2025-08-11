@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/directive-selector */
 import { Directive, effect, inject, input } from '@angular/core';
 import { FormError } from '../components/form-error/form-error';
 import { FormFieldContext } from '../services/form-field-context';

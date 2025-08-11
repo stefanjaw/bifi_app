@@ -13,7 +13,14 @@ import {
   CreateMaintenanceFormModel,
 } from '../../services/create-maintenance-form';
 import { CrudProductMaintenances } from '../../services/crud-product-maintenances';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormActions,
+  FormActionsHandler,
+  FormError,
+  FormField,
+  FormLabel,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Textarea } from 'primeng/textarea';
@@ -25,10 +32,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     DialogModule,
     ReactiveFormsModule,
-    AppFormExtensionsImports,
     Text,
     Textarea,
     RadioButtonModule,
+    FormActionsHandler,
+    FormField,
+    FormLabel,
+    FormError,
+    FormActions,
   ],
   templateUrl: './product-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { contact, CrudContacts } from '@avalantec/base-app/settings';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -21,6 +20,14 @@ import { CrudProductType, productType } from '../../../product-types';
 import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  FormActions,
+  FormActionsHandler,
+  FormError,
+  FormField,
+  FormLabel,
+  FormValueState,
+} from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -28,10 +35,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ReactiveFormsModule,
     DatePickerModule,
     DialogModule,
-    AppFormExtensionsImports,
     SelectModule,
     InputTextModule,
     TextareaModule,
+    FormActionsHandler,
+    FormField,
+    FormLabel,
+    FormError,
+    FormActions,
   ],
   templateUrl: './product-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

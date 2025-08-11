@@ -1,7 +1,7 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Session } from './session-user';
-import { user } from '@avalantec/base-app/settings';
+import { user } from '@avalantec/base-app/core';
 
 export interface IAuthService<
   TUser extends user,

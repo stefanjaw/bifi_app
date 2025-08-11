@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { product } from '@avalantec/asset-roaster/modules/products/interfaces/product';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
+import { product } from '../interfaces/product';
 
 @Injectable({
   providedIn: 'root',

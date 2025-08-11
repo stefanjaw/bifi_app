@@ -19,6 +19,7 @@ import { GoogleAuthProvider } from '@angular/fire/auth';
 import { IBackendAuthService } from '../interfaces/backend-auth-service';
 import firebase from 'firebase/compat/app';
 import { ToastManager } from '@avalantec/base-app/core';
+import { user } from '@avalantec/base-app/core';
 
 type AuthenticateFnParams =
   | {
@@ -39,7 +40,9 @@ type AuthenticateFnParams =
       };
     };
 
-export class FirebaseAuth<TUser> implements IAuthService<TUser, FirebaseSession<TUser>> {
+export class FirebaseAuth<TUser extends user>
+  implements IAuthService<TUser, FirebaseSession<TUser>>
+{
   private fireAuth = inject(AngularFireAuth);
   private backendAuth: IBackendAuthService<TUser> = inject(APP_BACKEND_AUTH_SERVICE);
   private destroy$ = inject(DestroyRef);
