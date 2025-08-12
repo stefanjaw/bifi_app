@@ -10,6 +10,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "dayjs": "^1.11.13",
+    "tailwindcss-primeui": "^0.6.1",
     "@avalantec/base-app": "^0.0.1"
   },
   "dependencies": {
