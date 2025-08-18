@@ -8,14 +8,7 @@ import { DividerModule } from 'primeng/divider';
 import { AuthFormService } from '../../services/auth-form';
 import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { authFormState } from '../../interfaces/auth-form-state';
-import {
-  FormActionsHandler,
-  FormError,
-  FormField,
-  FormLabel,
-  FormLayout,
-  FormSection,
-} from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-auth-form',
@@ -26,12 +19,7 @@ import {
     InputTextModule,
     PasswordModule,
     DividerModule,
-    FormActionsHandler,
-    FormSection,
-    FormLayout,
-    FormField,
-    FormLabel,
-    FormError,
+    FormModule,
   ],
   providers: [AuthFormService],
   templateUrl: './auth-form.html',

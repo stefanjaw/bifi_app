@@ -50,9 +50,9 @@ export class AuthFormService extends BaseForm<authFormModel> {
     const confirmPasswordValue = confirmPassword.value;
 
     // If the passwords do not match, set an error on both controls
-    if (passwordValue !== confirmPasswordValue) {
-      password.setErrors({ passwordMatch: true });
-      confirmPassword.setErrors({ passwordMatch: true });
+    if (passwordValue !== confirmPasswordValue && password.dirty && confirmPassword.dirty) {
+      password.setErrors({ passwordMatch: true, ...password.errors });
+      confirmPassword.setErrors({ passwordMatch: true, ...confirmPassword.errors });
 
       return { passwordMatch: true };
     }
@@ -61,12 +61,14 @@ export class AuthFormService extends BaseForm<authFormModel> {
     if (confirmPassword.hasError('passwordMatch')) {
       const { passwordMatch, ...errors } = confirmPassword.errors || {};
       confirmPassword.setErrors(Object.keys(errors).length ? errors : null);
+      confirmPassword.updateValueAndValidity();
     }
 
     // Remove the error if passwords match
     if (password.hasError('passwordMatch')) {
       const { passwordMatch, ...errors } = password.errors || {};
       password.setErrors(Object.keys(errors).length ? errors : null);
+      password.updateValueAndValidity();
     }
 
     return null;

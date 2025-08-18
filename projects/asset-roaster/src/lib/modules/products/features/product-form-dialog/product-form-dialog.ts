@@ -20,14 +20,7 @@ import { CrudProductType, productType } from '../../../product-types';
 import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  FormActions,
-  FormActionsHandler,
-  FormError,
-  FormField,
-  FormLabel,
-  FormValueState,
-} from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -38,11 +31,7 @@ import {
     SelectModule,
     InputTextModule,
     TextareaModule,
-    FormActionsHandler,
-    FormField,
-    FormLabel,
-    FormError,
-    FormActions,
+    FormModule,
   ],
   templateUrl: './product-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

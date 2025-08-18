@@ -14,6 +14,7 @@ export * from './src/components/hint/hint';
 export * from './src/directives/form-actions-handler';
 export * from './src/directives/form-control-extension';
 export * from './src/directives/translated-errors';
+export * from './src/form-module/form-module';
 export * from './src/interfaces/form-errors';
 export * from './src/interfaces/form-file';
 export * from './src/interfaces/form-helpers';

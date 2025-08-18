@@ -13,34 +13,16 @@ import {
   CreateMaintenanceFormModel,
 } from '../../services/create-maintenance-form';
 import { CrudProductMaintenances } from '../../services/crud-product-maintenances';
-import {
-  FormActions,
-  FormActionsHandler,
-  FormError,
-  FormField,
-  FormLabel,
-  FormValueState,
-} from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Textarea } from 'primeng/textarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-maintenance-form-dialog',
-  imports: [
-    DialogModule,
-    ReactiveFormsModule,
-    Text,
-    Textarea,
-    RadioButtonModule,
-    FormActionsHandler,
-    FormField,
-    FormLabel,
-    FormError,
-    FormActions,
-  ],
+  imports: [DialogModule, ReactiveFormsModule, Text, Textarea, RadioButtonModule, FormModule],
   templateUrl: './product-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

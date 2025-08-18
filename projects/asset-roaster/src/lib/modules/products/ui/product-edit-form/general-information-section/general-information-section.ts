@@ -14,14 +14,7 @@ import { StatusBannerSection } from '../status-banner-section/status-banner-sect
 import { productType } from '../../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { room } from '../../../../facilities';
-import {
-  FormError,
-  FormField,
-  FormFileControlHelper,
-  FormLabel,
-  FormPreview,
-  FormSection,
-} from '@avalantec/base-app/form';
+import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-general-information-section',
@@ -36,11 +29,7 @@ import {
     CommonModule,
     SelectModule,
     StatusBannerSection,
-    FormSection,
-    FormField,
-    FormLabel,
-    FormError,
-    FormPreview,
+    FormModule,
   ],
   templateUrl: './general-information-section.html',
 })

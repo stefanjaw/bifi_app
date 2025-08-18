@@ -18,7 +18,7 @@ import { productType } from '../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { activityHistory } from '@avalantec/base-app/resource';
-import { FormActionsHandler, FormLayout } from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
@@ -34,8 +34,7 @@ import { FormActionsHandler, FormLayout } from '@avalantec/base-app/form';
     CommissioningLifecycleSection,
     ActivityHistorySection,
     ProgressBarModule,
-    FormActionsHandler,
-    FormLayout,
+    FormModule,
   ],
   templateUrl: './product-edit-form.html',
 })

@@ -3,11 +3,11 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { product } from '../../../interfaces/product';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
-import { FormSection } from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-commissioning-lifecycle-section',
-  imports: [ButtonModule, CardModule, FormSection],
+  imports: [ButtonModule, CardModule, FormModule],
   templateUrl: './commissioning-lifecycle-section.html',
 })
 export class CommissioningLifecycleSection {

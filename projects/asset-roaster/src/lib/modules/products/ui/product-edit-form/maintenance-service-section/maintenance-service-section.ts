@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { maintenanceWindow } from '../../../../maintenance-windows';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 import { preventiveMaintenanceStatus } from './maintenance-status.model';
-import { FormError, FormField, FormLabel, FormSection, Hint } from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 
 dayjs.extend(isBetween);
 
@@ -27,11 +27,7 @@ dayjs.extend(isBetween);
     SelectModule,
     DatePickerModule,
     ButtonModule,
-    FormSection,
-    FormField,
-    FormLabel,
-    Hint,
-    FormError,
+    FormModule,
   ],
   templateUrl: './maintenance-service-section.html',
 })
