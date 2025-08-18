@@ -14,8 +14,7 @@ import { filter } from '../../interfaces/filter';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputText } from 'primeng/inputtext';
 import { InputIcon } from 'primeng/inputicon';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debouncedSignal } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-search-bar',
@@ -37,24 +36,13 @@ export class SearchBar implements OnDestroy {
 
   // The search text input
   searchText = model<string>('');
-  private searchTextDebounce$ = new Subject<string>();
+  debounce = debouncedSignal({ signal: this.searchText, debounce: this.DEBOUNCE_TIME });
 
-  /**
-   * This constructor sets up a subscription to the search text subject and
-   * performs a search whenever the user has stopped typing for 2 seconds.
-   * It also sets up an effect that will emit the current search text whenever it
-   * changes.
-   */
   constructor() {
-    effect(() => this.searchTextDebounce$.next(this.searchText()));
-
-    this.searchTextDebounce$
-      .pipe(
-        debounceTime(this.DEBOUNCE_TIME),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroy$)
-      )
-      .subscribe(() => this.performSearch());
+    effect(() => {
+      // Whenever the search text changes, we perform the search
+      this.performSearch();
+    });
   }
 
   ngOnDestroy(): void {
@@ -70,7 +58,7 @@ export class SearchBar implements OnDestroy {
   performSearch() {
     this.filterManager.removeFilter(this.FILTER_ID);
 
-    if (this.searchText()) {
+    if (this.debounce()) {
       this.filterManager.addFilter({
         id: this.FILTER_ID,
         operator: 'or',
@@ -78,7 +66,7 @@ export class SearchBar implements OnDestroy {
           .filter(filter => filter.type === 'string')
           .map(filter => ({
             ...filter,
-            value: this.searchText(),
+            value: this.debounce(),
             operator: 'like',
           })),
       });

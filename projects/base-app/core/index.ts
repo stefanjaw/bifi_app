@@ -7,6 +7,7 @@ export * from './src/interfaces/ts-helpers';
 export * from './src/interfaces/user';
 export * from './src/libraries/base-dialog';
 export * from './src/libraries/base-menu-manager';
+export * from './src/libraries/debounce-signal';
 export * from './src/libraries/library-config-token';
 export * from './src/libraries/object-utils';
 export * from './src/services/main-menu-manager';
