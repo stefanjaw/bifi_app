@@ -14,6 +14,7 @@ import {
   ControlsOf,
   IFArray,
   PermissiveControlConfig,
+  GroupReturn,
 } from '../interfaces/typed-form-builder';
 import { TypedFormArrayExtension } from '../libraries/extensions/extended-form-array';
 
@@ -29,7 +30,7 @@ export class TypedFormBuilder {
       validators?: ValidatorFn | ValidatorFn[];
       asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
     }
-  ) {
+  ): GroupReturn<T> {
     const group = this.buildFormTree(data) as FormGroup<ControlsOf<T, true>>;
 
     if (options?.validators) {

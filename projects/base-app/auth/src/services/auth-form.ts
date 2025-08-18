@@ -20,8 +20,10 @@ export class AuthFormService extends BaseForm<authFormModel> {
 
       if (isLogin) {
         form.controls.confirmPassword.disable();
+        form.removeValidators(this.passwordMatchValidator);
       } else {
         form.controls.confirmPassword.enable();
+        form.addValidators(this.passwordMatchValidator);
       }
     });
   }
@@ -31,28 +33,42 @@ export class AuthFormService extends BaseForm<authFormModel> {
   }
 
   override createForm() {
-    return this.fb.group<authFormModel>(
-      {
-        emailOrUsername: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required]],
-      },
-      { validators: this.passwordMatchValidator }
-    );
+    return this.fb.group<authFormModel>({
+      emailOrUsername: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    });
   }
 
   private passwordMatchValidator = (control: AbstractControl): ValidationErrors | null => {
-    if (this.isLoginMode()) return null;
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
 
-    const password = control.get('password')?.value;
+    if (!password || !confirmPassword) return null;
 
-    const confirmPasswordControl = control.get('confirmPassword');
-    if (!confirmPasswordControl || !confirmPasswordControl.enabled) return null;
+    const passwordValue = password.value;
+    const confirmPasswordValue = confirmPassword.value;
 
-    const confirmPassword = control.get('confirmPassword')?.value;
+    // If the passwords do not match, set an error on both controls
+    if (passwordValue !== confirmPasswordValue && password.dirty && confirmPassword.dirty) {
+      password.setErrors({ passwordMatch: true, ...password.errors });
+      confirmPassword.setErrors({ passwordMatch: true, ...confirmPassword.errors });
 
-    if (password && confirmPassword && password !== confirmPassword) {
-      return { passwordMismatch: true };
+      return { passwordMatch: true };
+    }
+
+    // Remove the error if passwords match
+    if (confirmPassword.hasError('passwordMatch')) {
+      const { passwordMatch, ...errors } = confirmPassword.errors || {};
+      confirmPassword.setErrors(Object.keys(errors).length ? errors : null);
+      confirmPassword.updateValueAndValidity();
+    }
+
+    // Remove the error if passwords match
+    if (password.hasError('passwordMatch')) {
+      const { passwordMatch, ...errors } = password.errors || {};
+      password.setErrors(Object.keys(errors).length ? errors : null);
+      password.updateValueAndValidity();
     }
 
     return null;

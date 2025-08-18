@@ -1,14 +1,5 @@
 <ng-content select="bifi-app-form-label"></ng-content>
 
-@switch (hasDisplayedMessage()) {
-  @case ('error') {
-    <ng-content select="bifi-app-form-error"></ng-content>
-  }
-  @default {
-    <ng-content select="bifi-app-hint"></ng-content>
-  }
-}
-
 @switch (hasDisplayedPreview()) {
   @case ('preview') {
     <ng-content select="bifi-app-form-preview">
@@ -21,5 +12,14 @@
   }
   @default {
     <ng-content />
+  }
+}
+
+@switch (hasDisplayedMessage()) {
+  @case ('error') {
+    <ng-content select="bifi-app-form-error"></ng-content>
+  }
+  @default {
+    <ng-content select="bifi-app-hint"></ng-content>
   }
 }

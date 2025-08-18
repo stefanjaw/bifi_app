@@ -1,5 +1,4 @@
 import { Component, inject, input } from '@angular/core';
-import { AppFormExtensionsImports, FormFileControlHelper } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -15,11 +14,11 @@ import { StatusBannerSection } from '../status-banner-section/status-banner-sect
 import { productType } from '../../../../product-types';
 import { contact } from '@avalantec/base-app/settings';
 import { room } from '../../../../facilities';
+import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-general-information-section',
   imports: [
-    AppFormExtensionsImports,
     ReactiveFormsModule,
     InputTextModule,
     DatePickerModule,
@@ -30,6 +29,7 @@ import { room } from '../../../../facilities';
     CommonModule,
     SelectModule,
     StatusBannerSection,
+    FormModule,
   ],
   templateUrl: './general-information-section.html',
 })

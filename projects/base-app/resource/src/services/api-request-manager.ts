@@ -6,7 +6,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
-import { isFormUploaderFile, isFormUploaderFileArray } from '../../../form/src/libraries/utils';
+import { isFormUploaderFile, isFormUploaderFileArray } from '@avalantec/base-app/form';
 
 @Injectable({
   providedIn: 'root',

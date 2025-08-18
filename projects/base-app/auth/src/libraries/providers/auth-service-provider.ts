@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { IAuthService } from '../../interfaces/auth-service';
-import { user } from '@avalantec/base-app/settings';
+import { user } from '@avalantec/base-app/core';
 
 export let LIB_AUTH_SERVICE = new InjectionToken<IAuthService<user>>('APP_AUTH_SERVICE');
 

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import {
@@ -24,14 +24,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'bifi-app-product-finish-maintenance-form-dialog',
-  imports: [
-    DialogModule,
-    ReactiveFormsModule,
-    FileUploadModule,
-    AppFormExtensionsImports,
-    Text,
-    CommonModule,
-  ],
+  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, Text, CommonModule, FormModule],
   templateUrl: './product-finish-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

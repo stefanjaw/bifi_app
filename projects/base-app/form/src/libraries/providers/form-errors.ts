@@ -15,6 +15,7 @@ const defaultErrors: FormErrorMessages = {
   max: ({ max }) => `This field must be at most ${max}.`,
   pattern: () => `Invalid format.`,
   null: `This field is required.`,
+  passwordMatch: `Passwords do not match.`,
 };
 
 /**

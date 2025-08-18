@@ -15,23 +15,23 @@ import { DialogModule } from 'primeng/dialog';
 import { product } from '../../../products/interfaces/product';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AppFormExtensionsImports, FormValueState } from '@avalantec/base-app/form';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
 import { CrudProductComissioning } from '../../services/crud-product-comissioning';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FileUploadModule } from 'primeng/fileupload';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-product-comissioning-form-dialog',
   imports: [
     DialogModule,
     ReactiveFormsModule,
-    AppFormExtensionsImports,
     Text,
     RadioButtonModule,
     Textarea,
     FileUploadModule,
+    FormModule,
   ],
   templateUrl: './product-comissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

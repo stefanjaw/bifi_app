@@ -1,12 +1,8 @@
 import { Routes } from '@angular/router';
-import { MainMenu } from '../components/main-menu/main-menu';
 import { authGuard } from '@avalantec/base-app/auth';
+import { MainMenu } from '@avalantec/base-app/core';
 
-export const baseAppRoutes: Routes = [
+export const BASE_APP_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', canActivate: [authGuard], component: MainMenu },
-  {
-    path: 'auth',
-    loadChildren: () => import('@avalantec/base-app/auth').then(m => m.AUTH_ROUTES),
-  },
 ];

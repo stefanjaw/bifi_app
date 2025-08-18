@@ -32,8 +32,8 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       vendorIds: [''],
       condition: [null],
       locationId: [''],
-      acquiredPrice: [0],
-      currentPrice: [0],
+      acquiredPrice: [0, Validators.min(1)],
+      currentPrice: [0, Validators.min(1)],
       warrantyDate: [null],
       remarks: [null],
       photo: {

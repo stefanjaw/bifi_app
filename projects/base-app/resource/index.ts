@@ -1,6 +1,7 @@
 export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
 export * from './src/directives/dynamic-component';
+export * from './src/interfaces/activity-history';
 export * from './src/interfaces/dynamic-component';
 export * from './src/interfaces/filter';
 export * from './src/interfaces/order-by';
@@ -9,6 +10,8 @@ export * from './src/interfaces/pagination';
 export * from './src/interfaces/table-column';
 export * from './src/libraries/pagination-utils';
 export * from './src/services/api-request-manager';
+export * from './src/services/crud-activity-histories';
+export * from './src/services/file-resolver';
 export * from './src/services/filter-manager';
 export * from './src/services/pagination-manager';
 export * from './src/services/resource-manager';

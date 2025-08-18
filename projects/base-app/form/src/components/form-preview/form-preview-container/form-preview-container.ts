@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { previewVariant } from '@avalantec/base-app/form/src/components/form-preview/form-preview.model';
+import { previewVariant } from '../form-preview.model';
 
 @Component({
   selector: 'bifi-app-form-preview-container',

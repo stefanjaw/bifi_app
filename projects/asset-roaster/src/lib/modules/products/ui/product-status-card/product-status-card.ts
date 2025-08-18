@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import {
-  statusVariant,
-  statusCardState,
-} from '@avalantec/asset-roaster/modules/products/interfaces/product-status-card';
 import { CommonModule } from '@angular/common';
 import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 import { Icon } from '@avalantec/base-app/core';
+import { statusCardState, statusVariant } from '../../interfaces/product-status-card';
 
 @Component({
   selector: 'bifi-app-product-status-card',

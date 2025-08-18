@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { activityHistory, Badge } from '@avalantec/base-app/core';
-import { AppFormExtensionsImports } from '@avalantec/base-app/form';
+import { Badge } from '@avalantec/base-app/ui';
+import { activityHistory } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
-  imports: [AppFormExtensionsImports, CardModule, Badge, CommonModule],
+  imports: [CardModule, Badge, CommonModule, FormModule],
   templateUrl: './activity-history-section.html',
 })
 export class ActivityHistorySection {
