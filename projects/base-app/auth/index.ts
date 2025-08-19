@@ -1,3 +1,4 @@
+export * from './src/directives/has-permission';
 export * from './src/features/auth-page/auth-page';
 export * from './src/guards/auth-guard';
 export * from './src/guards/no-auth-guard';

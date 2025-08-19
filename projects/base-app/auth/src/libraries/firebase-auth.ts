@@ -40,9 +40,7 @@ type AuthenticateFnParams =
       };
     };
 
-export class FirebaseAuth<TUser extends user>
-  implements IAuthService<TUser, FirebaseSession<TUser>>
-{
+export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, FirebaseSession<TUser>> {
   private fireAuth = inject(AngularFireAuth);
   private backendAuth: IBackendAuthService<TUser> = inject(APP_BACKEND_AUTH_SERVICE);
   private destroy$ = inject(DestroyRef);
@@ -84,6 +82,7 @@ export class FirebaseAuth<TUser extends user>
    * and the error is logged to the console.
    */
   constructor() {
+    super();
     this.fireAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
     this.fireAuth.authState
