@@ -4,7 +4,7 @@ import { contact } from '../interfaces/contacts';
 export const contactColumns: tableColumn<contact>[] = [
   {
     field: 'name',
-    title: 'Company Name',
+    title: 'Contact Name',
     type: 'text',
   },
   {

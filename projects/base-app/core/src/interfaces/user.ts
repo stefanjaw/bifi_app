@@ -13,7 +13,8 @@ export interface policy<TResource extends resource, TModel> {
   action: policyAction;
   conditions: condition<TModel>[];
 }
-interface role {
+
+export interface role {
   _id: string;
   name: string;
   policies: policy<any, any>[];

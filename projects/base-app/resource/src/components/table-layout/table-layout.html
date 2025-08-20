@@ -113,13 +113,13 @@
   }
 } @else if (error) {
   <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
-    <!-- <mat-icon class="scale-200 mb-6">error</mat-icon> -->
+    <i class="pi pi-exclamation-triangle mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
     <p class="mb-2 font-light text-2xl">Error</p>
     <p class="mb-0 font-light">Something went wrong processing your request</p>
   </div>
 } @else {
   <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
-    <!-- <mat-icon class="scale-200 mb-6">search</mat-icon> -->
+    <i class="pi pi-search mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
     <p class="mb-2 font-light text-2xl">No Results Found</p>
     <p class="mb-0 font-light">No results match your current search term or filter selection</p>
   </div>

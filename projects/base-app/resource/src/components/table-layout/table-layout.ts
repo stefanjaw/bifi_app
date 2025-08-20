@@ -20,10 +20,18 @@ import { SortMeta } from 'primeng/api';
 import { ProgressBar } from 'primeng/progressbar';
 import { orderByQuery } from '../../interfaces/order-by';
 import { PaginatorModule } from 'primeng/paginator';
+import { Icon } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-table-layout',
-  imports: [CommonModule, DynamicComponentDirective, TableModule, PaginatorModule, ProgressBar],
+  imports: [
+    CommonModule,
+    DynamicComponentDirective,
+    TableModule,
+    PaginatorModule,
+    ProgressBar,
+    Icon,
+  ],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30 w-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,
