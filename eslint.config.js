@@ -31,7 +31,7 @@ module.exports = tseslint.config(
         'error',
         {
           type: 'attribute',
-          prefix: 'bifi-app',
+          prefix: 'bifiApp',
           style: 'camelCase',
         },
       ],

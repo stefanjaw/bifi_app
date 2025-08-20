@@ -19,6 +19,7 @@ import { ProductFormDialog } from '../product-form-dialog/product-form-dialog';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-products-list',
@@ -33,6 +34,7 @@ import { ProductStatusFilterManager } from '../../services/product-status-filter
     Badge,
     ProductStatusSelect,
     ProductFormDialog,
+    HasPermission,
   ],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
