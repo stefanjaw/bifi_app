@@ -10,11 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { policy } from '@avalantec/base-app/core';
 import { policyColumns } from '../../libraries/policy-columns';
 import { policyFilters } from '../../libraries/policy-filters';
+import { PolicyFormDialog } from '../policy-form-dialog/policy-form-dialog';
 
 @Component({
   selector: 'bifi-app-policies-list',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [TableLayout, ButtonModule, SearchBar],
+  imports: [TableLayout, ButtonModule, SearchBar, PolicyFormDialog],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

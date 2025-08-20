@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { conditionOperator, policyAction, resource } from '@avalantec/base-app/core';
+import { BaseForm } from '@avalantec/base-app/form';
+
+export interface PolicyFormModel {
+  resource: resource;
+  action: policyAction;
+  conditions: { key: string; operator: conditionOperator; value: string }[];
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PolicyForm extends BaseForm<PolicyFormModel> {
+  override createForm() {
+    return this.fb.group<PolicyFormModel>({
+      resource: ['', [Validators.required]],
+      action: ['read', [Validators.required]],
+      conditions: {
+        template: {
+          key: ['', [Validators.required]],
+          operator: ['==', [Validators.required]],
+          value: ['', [Validators.required]],
+        },
+        formArrayElements: [],
+      },
+    });
+  }
+}

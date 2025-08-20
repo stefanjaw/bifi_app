@@ -1,5 +1,14 @@
 <h1 class="text-2xl font-bold mb-4">Policies</h1>
 
+<div class="flex gap-2">
+  <p-button
+    label="Add New Policy"
+    severity="secondary"
+    icon="pi pi-plus"
+    (onClick)="createDialog.openDialog()"
+  ></p-button>
+</div>
+
 <bifi-app-search-bar
   label="Search by resource and action"
   [searchFilters]="policyFilters"
@@ -11,3 +20,5 @@
     <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
   </ng-template>
 </bifi-app-table-layout>
+
+<bifi-app-policy-form-dialog #createDialog></bifi-app-policy-form-dialog>
