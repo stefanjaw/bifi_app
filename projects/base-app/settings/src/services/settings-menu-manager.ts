@@ -24,13 +24,19 @@ export class SettingsMenuManager extends BaseMenuManager {
       },
       {
         icon: 'pi pi-user',
+        routerLink: ['/settings/users'],
+        label: 'Users',
+        command: () => this.sidenavManager.closeSidenav(),
+      },
+      {
+        icon: 'pi pi-user',
         routerLink: ['/settings/roles'],
         label: 'Roles',
         command: () => this.sidenavManager.closeSidenav(),
       },
       {
         icon: 'pi pi-check',
-        routerLink: ['/settings/permissions'],
+        routerLink: ['/settings/policies'],
         label: 'Policies',
         command: () => this.sidenavManager.closeSidenav(),
       },

@@ -20,4 +20,22 @@ export const SETTINGS_ROUTES: Routes = [
     component: SettingsMainMenu,
     loadChildren: () => import('@avalantec/base-app/settings').then(m => m.CONTACT_ROUTES),
   },
+  {
+    path: 'users',
+    canActivate: [authGuard],
+    component: SettingsMainMenu,
+    loadChildren: () => import('@avalantec/base-app/settings').then(m => m.USER_ROUTES),
+  },
+  {
+    path: 'roles',
+    canActivate: [authGuard],
+    component: SettingsMainMenu,
+    // loadChildren: () => import('@avalantec/base-app/settings').then(m => m.ROLE_ROUTES),
+  },
+  {
+    path: 'policies',
+    canActivate: [authGuard],
+    component: SettingsMainMenu,
+    // loadChildren: () => import('@avalantec/base-app/settings').then(m => m.PERMISSION_ROUTES),
+  },
 ];
