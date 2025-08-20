@@ -36,6 +36,6 @@ export const SETTINGS_ROUTES: Routes = [
     path: 'policies',
     canActivate: [authGuard],
     component: SettingsMainMenu,
-    // loadChildren: () => import('@avalantec/base-app/settings').then(m => m.PERMISSION_ROUTES),
+    loadChildren: () => import('@avalantec/base-app/settings').then(m => m.POLICY_ROUTES),
   },
 ];

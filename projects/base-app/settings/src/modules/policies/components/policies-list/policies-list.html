@@ -1,0 +1,13 @@
+<h1 class="text-2xl font-bold mb-4">Policies</h1>
+
+<bifi-app-search-bar
+  label="Search by resource and action"
+  [searchFilters]="policyFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="policyColumns" [data]="policies">
+  <ng-template #actions>
+    <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
+    <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
+  </ng-template>
+</bifi-app-table-layout>

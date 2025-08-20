@@ -10,9 +10,8 @@ export const roleColumns: tableColumn<role>[] = [
   },
   {
     field: 'policies',
-    title: 'Total POoicies',
+    title: 'Total Policies',
     parseField: (value: role['policies']) => `${value.length} Policies`,
     type: 'text',
-    sortable: true,
   },
 ];
