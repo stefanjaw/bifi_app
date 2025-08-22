@@ -33,7 +33,7 @@ export class TypedFormArrayExtension<
    * It creates a new control with the given data and then calls the `push` method of the form array.
    * @param data The data to use to create the new control.
    */
-  pushItem(data: TControlValueItem) {
+  pushItem(data?: TControlValueItem) {
     this.push(this.createControl(data));
   }
 
