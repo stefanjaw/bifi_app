@@ -1,23 +1,22 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   effect,
   inject,
   input,
-  ResourceRef,
+  output,
   signal,
 } from '@angular/core';
 import {
   BaseDialog,
+  condition,
   conditionOperator,
   policy,
   policyAction,
   ToastManager,
 } from '@avalantec/base-app/core';
 import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
-import { ActivatedRoute } from '@angular/router';
 import { CrudPolicies } from '../../services/crud-policies';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +24,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
@@ -34,32 +34,18 @@ import { Button } from 'primeng/button';
 })
 export class PolicyFormDialog extends BaseDialog {
   protected formService = inject(PolicyForm);
-  private policysService = inject(CrudPolicies);
+  private policiesService = inject(CrudPolicies);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
-  private route = inject(ActivatedRoute);
 
-  id = input('');
-  searchParams = computed(() => ({ _id: this.id() ?? '' }));
+  // Outputs
+  policySaved = output();
 
-  // Data
-  policies!: ResourceRef<policy<string, string>[]> | undefined;
-
-  // Computed
-  policy = computed(() => {
-    if (
-      this.policies?.isLoading() ||
-      !this.policies?.hasValue() ||
-      this.policies.value().length === 0
-    )
-      return null;
-
-    return this.policies.value()[0];
-  });
+  // Inputs
+  policy = input<policy<string, string> | undefined>(undefined);
 
   // State
   form = this.formService.form;
-  isLoading = this.policies?.isLoading || signal(false);
   isSubmitLoading = signal(false);
   isUpdate = signal(false);
 
@@ -80,27 +66,24 @@ export class PolicyFormDialog extends BaseDialog {
   ];
 
   /**
-   * Handles fetching the policy when the id input changes.
+   * @description
+   * Handle the policy input change.
    *
-   * Patches the form with the policy data when it is loaded.
+   * If policy is not defined, reset the form and set isUpdate to false.
+   * If policy is defined, set isUpdate to true and patch the form value
+   * with the policy data.
    */
   constructor() {
     super();
 
     effect(() => {
-      const id = this.id();
-
-      if (!id) return;
-
-      if (!this.policies)
-        this.policies = this.policysService.get({ searchParams: this.searchParams });
-      else this.policies.reload();
-    });
-
-    effect(() => {
       const policy = this.policy();
 
-      if (!policy) return;
+      if (!policy) {
+        this.isUpdate.set(false);
+        this.formService.reset();
+        return;
+      }
 
       this.isUpdate.set(true);
 
@@ -118,13 +101,35 @@ export class PolicyFormDialog extends BaseDialog {
     });
   }
 
-  override openDialog(): void {
-    this.formService.reset();
-    super.openDialog();
-  }
-
+  /**
+   * Handles submitting the policy form.
+   *
+   * If the policy is being updated, it will call the policies service put method.
+   * If the policy is being created, it will call the policies service post method.
+   *
+   * @param data - The form value state
+   */
   async handleSubmit(data: FormValueState<PolicyFormModel>) {
-    console.log(data);
+    this.isSubmitLoading.set(true);
+
+    const { rawValue } = data;
+
+    const action = this.isUpdate()
+      ? this.policiesService.put({ _id: this.policy()?._id || '', data: rawValue })
+      : this.policiesService.post({ data: rawValue });
+
+    action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.formService.reset();
+        this.closeDialog();
+        this.policySaved.emit();
+        this.toastManager.showSuccess('Policy created successfully');
+      },
+      error: () => {
+        this.isSubmitLoading.set(false);
+      },
+    });
   }
 
   /**
@@ -132,17 +137,8 @@ export class PolicyFormDialog extends BaseDialog {
    *
    * This will add a new condition to the form with default values.
    */
-  addCondition() {
-    this.formService.patchValue({
-      conditions: [
-        ...this.form.controls.conditions.value,
-        {
-          key: '',
-          operator: '==',
-          value: '',
-        },
-      ],
-    });
+  addCondition(condition: condition<string> | undefined = undefined) {
+    this.formService.createCondition(condition);
   }
 
   /**
@@ -152,6 +148,6 @@ export class PolicyFormDialog extends BaseDialog {
    * @param index The index of the condition to remove.
    */
   removeCondition(index: number) {
-    this.form.controls.conditions.value.splice(index);
+    this.form.controls.conditions.removeAt(index);
   }
 }

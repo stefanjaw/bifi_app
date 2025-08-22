@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { conditionOperator, policyAction, resource } from '@avalantec/base-app/core';
+import { condition, conditionOperator, policyAction, resource } from '@avalantec/base-app/core';
 import { BaseForm } from '@avalantec/base-app/form';
 
 export interface PolicyFormModel {
@@ -25,6 +25,14 @@ export class PolicyForm extends BaseForm<PolicyFormModel> {
         },
         formArrayElements: [],
       },
+    });
+  }
+
+  createCondition(condition: condition<string> | undefined = undefined) {
+    this.form.controls.conditions.pushItem({
+      key: (condition?.key as string) || '',
+      operator: condition?.operator || '==',
+      value: (condition?.value as string) || '',
     });
   }
 }

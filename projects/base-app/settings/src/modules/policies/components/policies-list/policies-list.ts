@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -29,4 +29,6 @@ export class PoliciesList {
   policyFilters = policyFilters;
 
   policies = this.resourceManager.data;
+
+  currPolicy = signal<policy<string, string> | undefined>(undefined);
 }
