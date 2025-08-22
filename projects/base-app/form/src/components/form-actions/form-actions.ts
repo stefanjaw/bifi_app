@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 export class FormActions {
   isSubmitting = input<boolean>();
   formDisabled = input<boolean>();
+  position = input<'start' | 'end'>('end');
 
   cancelClicked = output<void>();
 
