@@ -10,12 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { policy } from '@avalantec/base-app/core';
 import { policyColumns } from '../../libraries/policy-columns';
 import { policyFilters } from '../../libraries/policy-filters';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-policies-list',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [TableLayout, ButtonModule, SearchBar],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -33,10 +33,10 @@ export class PoliciesList {
   policies = this.resourceManager.data;
 
   goToCreate() {
-    this.router.navigate(['create'], { relativeTo: this.route });
+    this.router.navigate(['create'], { relativeTo: this.route.parent });
   }
 
   goToEdit(_id: string) {
-    this.router.navigate(['edit', _id], { relativeTo: this.route });
+    this.router.navigate(['edit', _id], { relativeTo: this.route.parent });
   }
 }

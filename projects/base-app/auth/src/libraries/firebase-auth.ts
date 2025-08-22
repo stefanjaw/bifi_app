@@ -126,7 +126,11 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     }
 
     return this.backendAuth.getMe().pipe(
-      catchError(err => throwError(() => err)),
+      catchError(err => {
+        // If the user is not found, we return an empty object
+        console.log('User not found, error in me request', err);
+        return of(null);
+      }),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
     );
   }
