@@ -1,48 +1,51 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   effect,
   inject,
   input,
-  output,
   signal,
 } from '@angular/core';
-import {
-  BaseDialog,
-  condition,
-  conditionOperator,
-  policy,
-  policyAction,
-  ToastManager,
-} from '@avalantec/base-app/core';
+import { condition, conditionOperator, policyAction, ToastManager } from '@avalantec/base-app/core';
 import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
 import { CrudPolicies } from '../../services/crud-policies';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
-  imports: [FormModule, ReactiveFormsModule, DialogModule, SelectModule, InputText, Button],
+  imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
   templateUrl: './policy-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PolicyFormDialog extends BaseDialog {
+export class PolicyFormDialog {
   protected formService = inject(PolicyForm);
   private policiesService = inject(CrudPolicies);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
-
-  // Outputs
-  policySaved = output();
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Inputs
-  policy = input<policy<string, string> | undefined>(undefined);
+  id = input<string>('');
+  searchParams = computed(() => ({ _id: this.id() }));
+  policies = this.policiesService.get({ searchParams: this.searchParams });
+
+  policy = computed(() => {
+    const policies = this.policies.value();
+
+    if (!policies || policies.length === 0) return undefined;
+
+    return policies[0];
+  });
 
   // State
   form = this.formService.form;
@@ -74,8 +77,6 @@ export class PolicyFormDialog extends BaseDialog {
    * with the policy data.
    */
   constructor() {
-    super();
-
     effect(() => {
       const policy = this.policy();
 
@@ -121,10 +122,8 @@ export class PolicyFormDialog extends BaseDialog {
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.isSubmitLoading.set(false);
-        this.formService.reset();
-        this.closeDialog();
-        this.policySaved.emit();
         this.toastManager.showSuccess('Policy created successfully');
+        this.router.navigate(['../list'], { relativeTo: this.route });
       },
       error: () => {
         this.isSubmitLoading.set(false);
