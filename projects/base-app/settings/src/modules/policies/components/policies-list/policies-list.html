@@ -5,7 +5,7 @@
     label="Add New Policy"
     severity="secondary"
     icon="pi pi-plus"
-    (onClick)="currPolicy.set(undefined); dialog.openDialog()"
+    (onClick)="goToCreate()"
   ></p-button>
 </div>
 
@@ -20,14 +20,8 @@
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
-      (onClick)="currPolicy.set(element); dialog.openDialog()"
+      (onClick)="goToEdit(element._id)"
     ></p-button>
     <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
   </ng-template>
 </bifi-app-table-layout>
-
-<bifi-app-policy-form-dialog
-  #dialog
-  [policy]="currPolicy()"
-  (policySaved)="policies.reload()"
-></bifi-app-policy-form-dialog>
