@@ -11,5 +11,5 @@ import { pagination } from '../interfaces/pagination';
  * @returns {object is pagination<T>}
  */
 export const isPaginated = <T>(object: any): object is pagination<T> => {
-  return 'docs' in object;
+  return object !== null && object !== undefined && typeof object === 'object' && 'docs' in object;
 };

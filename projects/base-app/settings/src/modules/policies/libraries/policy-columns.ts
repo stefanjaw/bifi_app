@@ -1,7 +1,7 @@
 import { policy } from '@avalantec/base-app/core';
 import { tableColumn } from '@avalantec/base-app/resource';
 
-export const policyColumns: tableColumn<policy<string, string>>[] = [
+export const policyColumns: tableColumn<policy<any, any>>[] = [
   {
     field: 'resource',
     title: 'Resource',

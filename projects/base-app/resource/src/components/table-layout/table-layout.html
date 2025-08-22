@@ -1,16 +1,12 @@
-@let hasValue = data()?.hasValue();
-@let isLoading = data()?.isLoading();
-@let error = data()?.error();
-@let isPaginated = hasValue && isPaginatedFN(data()?.value());
-
-@if ((hasValue && elementsToDisplay().length > 0) || isLoading) {
-  @let pagination = paginationData();
+@if ((resourceState().hasValue && resourceState().value.length > 0) || resourceState().isLoading) {
+  @let pagination = resourceState().pagination;
+  @let isPaginated = !!pagination;
 
   <p-table
     sortMode="multiple"
     (onLazyLoad)="lazyLoad($event)"
     [lazy]="true"
-    [value]="elementsToDisplay()"
+    [value]="resourceState().value"
     [first]="pagination?.page ? ((pagination?.page || 0) - 1) * (pagination?.limit || 0) : 0"
     classList="w-full"
     [paginator]="isPaginated"
@@ -105,13 +101,13 @@
       </tr>
     </ng-template>
   </p-table>
-  @if (isLoading) {
+  @if (resourceState().isLoading) {
     <div class="flex flex-col justify-center items-center h-full w-full p-5">
       <p>Loading...</p>
       <p-progressbar mode="indeterminate" [style]="{ height: '6px' }" />
     </div>
   }
-} @else if (error) {
+} @else if (resourceState().error) {
   <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
     <i class="pi pi-exclamation-triangle mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
     <p class="mb-2 font-light text-2xl">Error</p>

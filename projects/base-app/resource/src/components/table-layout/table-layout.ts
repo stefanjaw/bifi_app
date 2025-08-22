@@ -9,7 +9,6 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { pagination } from '../../interfaces/pagination';
 import { isPaginated } from '../../libraries/pagination-utils';
 import { DynamicComponentDirective } from '../../directives/dynamic-component';
 import { PaginationManager } from '../../services/pagination-manager';
@@ -21,6 +20,8 @@ import { ProgressBar } from 'primeng/progressbar';
 import { orderByQuery } from '../../interfaces/order-by';
 import { PaginatorModule } from 'primeng/paginator';
 import { Icon } from '@avalantec/base-app/core';
+import { tableRows } from '../../interfaces/table-row';
+import { pagination } from '../../interfaces/pagination';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -42,28 +43,55 @@ export class TableLayout<T extends Record<string, any>> {
   private sortManager = inject<SortManager<T>>(SortManager);
 
   // Inputs
-  data = input<ResourceRef<T[] | pagination<T> | undefined>>();
+  data = input<ResourceRef<tableRows<T>> | tableRows<T>>();
 
   // Columns managament
   columns = input<tableColumn<T>[]>([]);
 
   // State
-  elementsToDisplay = computed(() => {
-    const data = this.data()?.value();
+  resourceState = computed(() => {
+    const data = this.data();
+    let isLoading = false;
+    let error = null;
+    let hasValue = false;
+    let value: T[] = [];
+    let pagination: pagination<T> | null = null;
+    let isDataPaginated = false;
 
-    if (!data) return [];
+    if (Array.isArray(data)) {
+      // Case 1: When we get an array of items, assign the data
+      value = data;
+    } else if (this.isPaginatedFN(data)) {
+      // Case 2: When we get a paginated object, assign the data and the pagination object
+      value = data.docs;
+      pagination = data;
+      isDataPaginated = true;
+    } else {
+      // Case 3: When we get a resource ref, assign the data
+      isLoading = data?.isLoading() || false;
+      error = data?.error();
+      hasValue = data?.hasValue() || false;
 
-    if (isPaginated(data)) return data.docs;
-    else return data;
-  });
+      // Get the resource value and update the props
+      const resourceValue = data?.value();
+      if (Array.isArray(resourceValue)) {
+        value = resourceValue;
+      } else if (isPaginated<T>(resourceValue)) {
+        value = resourceValue.docs;
+        pagination = resourceValue;
+        isDataPaginated = true;
+      }
+    }
 
-  // Pagination data
-  paginationData = computed(() => {
-    const data = this.data()?.value();
-
-    if (!data) return undefined;
-    else if (isPaginated(data)) return data;
-    else return undefined;
+    return {
+      isLoading,
+      error,
+      hasValue,
+      isPaginated,
+      pagination,
+      isDataPaginated,
+      value,
+    };
   });
 
   // References

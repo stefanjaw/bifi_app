@@ -1,0 +1,42 @@
+@if (isLoading()) {
+  <p>Loading...</p>
+} @else if (error()) {
+  <p>Something went wrong... {{ error() }}</p>
+} @else {
+  <bifi-app-form-layout title="Role settings">
+    <form
+      ngProjectAs="div"
+      [formGroup]="form"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit($event)"
+      class="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8"
+    >
+      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+        <section class="w-xl grid gap-3 sm:grid-cols-2">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="Role name" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <!-- <bifi-app-form-field>
+            <bifi-app-form-label>Active</bifi-app-form-label>
+            <p-inputSwitch formControlName="active"></p-inputSwitch>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field> -->
+        </section>
+      </bifi-app-form-section>
+
+      @if (isEdit()) {
+        <bifi-app-form-section title="Policies" id="policies" [ordinal]="2">
+          <bifi-app-table-layout [columns]="policyCols" [data]="policies()">
+            <ng-template #actions>
+              <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
+              <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
+            </ng-template>
+          </bifi-app-table-layout>
+        </bifi-app-form-section>
+      }
+    </form>
+  </bifi-app-form-layout>
+}

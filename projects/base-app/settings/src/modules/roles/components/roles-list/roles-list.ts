@@ -10,11 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { role } from '@avalantec/base-app/core';
 import { roleColumns } from '../../libraries/role-columns';
 import { roleFilters } from '../../libraries/role-filters';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-roles-list',
   providers: [provideResourceManager(CrudRoles)],
-  imports: [TableLayout, ButtonModule, SearchBar],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

@@ -1,5 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { MainMenuManager } from '@avalantec/base-app/core';
+import { Component } from '@angular/core';
 import { Scaffold } from '@avalantec/base-app/ui';
 
 @Component({
@@ -8,17 +7,17 @@ import { Scaffold } from '@avalantec/base-app/ui';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit {
+export class App {
   protected title = 'bifi_app_testing';
-  private mainMenuManager = inject(MainMenuManager);
+  // private mainMenuManager = inject(MainMenuManager);
 
-  ngOnInit(): void {
-    this.mainMenuManager.addItems([
-      {
-        icon: 'pi pi-objects-column',
-        routerLink: ['/asset-roaster'],
-        label: 'Asset Roaster',
-      },
-    ]);
-  }
+  // ngOnInit(): void {
+  //   this.mainMenuManager.addItems([
+  //     {
+  //       icon: 'pi pi-objects-column',
+  //       routerLink: ['/asset-roaster'],
+  //       label: 'Asset Roaster',
+  //     },
+  //   ]);
+  // }
 }

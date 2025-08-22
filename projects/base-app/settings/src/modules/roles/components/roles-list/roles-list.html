@@ -1,5 +1,14 @@
 <h1 class="text-2xl font-bold mb-4">Roles</h1>
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Role"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+  ></p-button>
+</div>
+
 <bifi-app-search-bar label="Search by name" [searchFilters]="roleFilters"></bifi-app-search-bar>
 
 <bifi-app-table-layout [columns]="roleColumns" [data]="roles">

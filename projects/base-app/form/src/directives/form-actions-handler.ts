@@ -9,7 +9,7 @@ import { FormContext } from '../services/form-context';
 
 @Directive({
   providers: [FormContext],
-  selector: '[formGroup][bifiAppFormActionsHandler]',
+  selector: '[bifiAppFormActionsHandler]',
 })
 export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
   private formContext = inject(FormContext, { self: true });

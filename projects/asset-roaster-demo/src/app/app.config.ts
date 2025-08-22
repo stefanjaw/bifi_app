@@ -16,6 +16,7 @@ import { authTokenInterceptor, provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/settings';
 import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/modules/user/user';
+import { provideAssetRoster } from '@avalantec/asset-roaster';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch(), withInterceptors([authTokenInterceptor])),
+    provideAssetRoster(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

@@ -81,3 +81,7 @@ export function provideResourceManager<T>(
     ResourceManager,
   ];
 }
+
+export function injectResourceManager<T>() {
+  return inject(ResourceManager<T>);
+}
