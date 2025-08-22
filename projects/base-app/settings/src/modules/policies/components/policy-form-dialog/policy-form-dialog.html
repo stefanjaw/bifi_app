@@ -1,77 +1,105 @@
-<form
-  [formGroup]="form"
-  class="min-h-screen bg-gray-50"
-  bifiAppFormActionsHandler
-  (appSubmit)="handleSubmit($event)"
->
-  <div class="max-w-7xl mx-auto px-6 py-8">
-    @if (!policies.isLoading()) {
-      <bifi-app-form-field>
-        <bifi-app-form-label>Resource</bifi-app-form-label>
-        <input pInputText formControlName="resource" type="text" placeholder="e.g products" />
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
+<bifi-app-form-layout title="{{ isUpdate() ? 'Update' : 'Create' }} Policy" class="w-[90%]">
+  <div>
+    <form
+      [formGroup]="form"
+      class="min-h-screen bg-gray-50"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit($event)"
+    >
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        class="mb-4"
+      ></bifi-app-form-actions>
 
-      <bifi-app-form-field>
-        <bifi-app-form-label>Actions</bifi-app-form-label>
-        <p-select
-          formControlName="action"
-          [options]="actionOptions"
-          optionLabel="label"
-          optionValue="value"
-          [filter]="true"
-        ></p-select>
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
+      @if (!loading()) {
+        <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Name</bifi-app-form-label>
+              <input pInputText formControlName="name" type="text" placeholder="e.g Product READ" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
 
-      <p-button label="Add Condition" severity="secondary" (onClick)="addCondition()"></p-button>
-      <div formArrayName="conditions" class="flex flex-col gap-4 w-full">
-        @for (control of form.controls.conditions.controls; track control; let i = $index) {
-          <bifi-app-form-layout [title]="`${i + 1}. Condition`" [formGroupName]="i">
-            <div class="flex flex-col justify-between align-center gap-4">
-              <bifi-app-form-field>
-                <bifi-app-form-label>Resource</bifi-app-form-label>
-                <input pInputText formControlName="key" type="text" />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Resource</bifi-app-form-label>
+              <input pInputText formControlName="resource" type="text" placeholder="e.g products" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
 
-              <bifi-app-form-field>
-                <bifi-app-form-label>Condition</bifi-app-form-label>
-                <p-select
-                  formControlName="operator"
-                  [options]="conditionOperatorOptions"
-                  optionLabel="label"
-                  optionValue="value"
-                  [filter]="true"
-                ></p-select>
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Actions</bifi-app-form-label>
+              <p-select
+                formControlName="action"
+                [options]="actionOptions"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        </bifi-app-form-section>
 
-              <bifi-app-form-field>
-                <bifi-app-form-label>Value</bifi-app-form-label>
-                <input pInputText formControlName="value" type="text" />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
+        <bifi-app-form-section title="Conditions" id="form-conditions" [ordinal]="2">
+          <p-button
+            label="Add Condition"
+            icon="pi pi-plus"
+            severity="secondary"
+            (onClick)="addCondition()"
+            styleClass="mb-4"
+          ></p-button>
 
-              <p-button
-                icon="pi pi-times"
-                severity="danger"
-                variant="text"
-                severity="danger"
-                (onClick)="removeCondition(i)"
-              ></p-button>
-            </div>
-          </bifi-app-form-layout>
-        }
-      </div>
-    } @else {
-      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
-    }
+          <div formArrayName="conditions" class="flex flex-col gap-4 w-full">
+            @for (control of form.controls.conditions.controls; track control; let i = $index) {
+              <bifi-app-form-section
+                [title]="`${i + 1}. Condition`"
+                [formGroupName]="i"
+                [ordinal]="i + 1"
+                [id]="`condition-${i}`"
+              >
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Key</bifi-app-form-label>
+                    <input pInputText formControlName="key" type="text" />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Condition</bifi-app-form-label>
+                    <p-select
+                      formControlName="operator"
+                      [options]="conditionOperatorOptions"
+                      optionLabel="label"
+                      optionValue="value"
+                      [filter]="true"
+                    ></p-select>
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Value</bifi-app-form-label>
+                    <input pInputText formControlName="value" type="text" />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <div class="flex justify-end">
+                    <p-button
+                      icon="pi pi-times"
+                      severity="danger"
+                      variant="text"
+                      severity="danger"
+                      (onClick)="removeCondition(i)"
+                    ></p-button>
+                  </div>
+                </div>
+              </bifi-app-form-section>
+            }
+          </div>
+        </bifi-app-form-section>
+      } @else {
+        <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+      }
+    </form>
   </div>
-
-  <bifi-app-form-actions
-    [isSubmitting]="isSubmitLoading()"
-    (cancelClicked)="form.reset()"
-    cancelLabel="Reset"
-  ></bifi-app-form-actions>
-</form>
+</bifi-app-form-layout>

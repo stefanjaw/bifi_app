@@ -4,6 +4,7 @@ import { condition, conditionOperator, policyAction, resource } from '@avalantec
 import { BaseForm } from '@avalantec/base-app/form';
 
 export interface PolicyFormModel {
+  name: string;
   resource: resource;
   action: policyAction;
   conditions: { key: string; operator: conditionOperator; value: string }[];
@@ -12,9 +13,10 @@ export interface PolicyFormModel {
 @Injectable({
   providedIn: 'root',
 })
-export class PolicyForm extends BaseForm<PolicyFormModel> {
+export class CrudPolicyForm extends BaseForm<PolicyFormModel> {
   override createForm() {
     return this.fb.group<PolicyFormModel>({
+      name: ['', [Validators.required]],
       resource: ['', [Validators.required]],
       action: ['read', [Validators.required]],
       conditions: {

@@ -5,11 +5,10 @@ import {
   DestroyRef,
   effect,
   inject,
-  input,
+  OnInit,
   signal,
 } from '@angular/core';
 import { condition, conditionOperator, policyAction, ToastManager } from '@avalantec/base-app/core';
-import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
 import { CrudPolicies } from '../../services/crud-policies';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,15 +18,19 @@ import { Button } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { CrudPolicyForm, PolicyFormModel } from '../../services/crud-policy-form';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
   imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
+  host: {
+    class: 'flex flex-col gap-3 w-full items-center justify-centern pt-4 pb-4',
+  },
   templateUrl: './policy-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PolicyFormDialog {
-  protected formService = inject(PolicyForm);
+export class PolicyFormDialog implements OnInit {
+  protected formService = inject(CrudPolicyForm);
   private policiesService = inject(CrudPolicies);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
@@ -35,12 +38,11 @@ export class PolicyFormDialog {
   private route = inject(ActivatedRoute);
 
   // Inputs
-  id = input<string>('');
-  searchParams = computed(() => ({ _id: this.id() }));
-  policies = this.policiesService.get({ searchParams: this.searchParams });
+  id = signal({ _id: this.route.snapshot.paramMap.get('id') ?? '' });
+  policies = this.id()._id !== '' ? this.policiesService.get({ searchParams: this.id }) : null;
 
   policy = computed(() => {
-    const policies = this.policies.value();
+    const policies = this.policies?.value();
 
     if (!policies || policies.length === 0) return undefined;
 
@@ -49,6 +51,7 @@ export class PolicyFormDialog {
 
   // State
   form = this.formService.form;
+  loading = computed(() => (this.policies ? this.policies.isLoading() : false));
   isSubmitLoading = signal(false);
   isUpdate = signal(false);
 
@@ -89,6 +92,7 @@ export class PolicyFormDialog {
       this.isUpdate.set(true);
 
       this.formService.patchValue({
+        name: policy.name,
         resource: policy.resource,
         action: policy.action,
         conditions: [
@@ -100,6 +104,10 @@ export class PolicyFormDialog {
         ],
       });
     });
+  }
+
+  ngOnInit(): void {
+    this.formService.reset();
   }
 
   /**
@@ -123,7 +131,7 @@ export class PolicyFormDialog {
       next: () => {
         this.isSubmitLoading.set(false);
         this.toastManager.showSuccess('Policy created successfully');
-        this.router.navigate(['../list'], { relativeTo: this.route });
+        this.goBack();
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -148,5 +156,16 @@ export class PolicyFormDialog {
    */
   removeCondition(index: number) {
     this.form.controls.conditions.removeAt(index);
+  }
+
+  /**
+   * Navigates back to the list of policies.
+   *
+   * If the policy is being updated, it will navigate to the list of policies.
+   * If the policy is being created, it will navigate to the list of policies.
+   */
+  goBack() {
+    const route = this.isUpdate() ? '../../list' : '../list';
+    this.router.navigate([route], { relativeTo: this.route });
   }
 }
