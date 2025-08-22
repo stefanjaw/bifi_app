@@ -10,6 +10,7 @@ export interface condition<TModel> {
 
 export interface policy<TResource extends resource, TModel> {
   _id: string;
+  name: string;
   resource: TResource;
   action: policyAction;
   conditions: condition<TModel>[];
