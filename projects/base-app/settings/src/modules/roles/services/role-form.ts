@@ -4,6 +4,7 @@ import { BaseForm } from '@avalantec/base-app/form';
 
 export interface roleFormModel {
   name: string;
+  policies: string[];
   active: boolean;
 }
 
@@ -14,6 +15,10 @@ export class RoleForm extends BaseForm<roleFormModel> {
   override createForm() {
     return this.fb.group<roleFormModel>({
       name: ['', [Validators.required]],
+      policies: {
+        template: [''],
+        formArrayElements: [],
+      },
       active: [true],
     });
   }

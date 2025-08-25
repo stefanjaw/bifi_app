@@ -61,11 +61,13 @@ export class TableLayout<T extends Record<string, any>> {
     if (Array.isArray(data)) {
       // Case 1: When we get an array of items, assign the data
       value = data;
+      hasValue = true;
     } else if (this.isPaginatedFN(data)) {
       // Case 2: When we get a paginated object, assign the data and the pagination object
       value = data.docs;
       pagination = data;
       isDataPaginated = true;
+      hasValue = true;
     } else {
       // Case 3: When we get a resource ref, assign the data
       isLoading = data?.isLoading() || false;

@@ -62,7 +62,7 @@ export class TypedFormBuilder {
   private buildFormTree(data: any): any {
     if (Array.isArray(data)) {
       // [value, validators]
-      return data;
+      return this.fb.control(data?.[0] || null, data?.[1] || null, data?.[2] || null);
     }
 
     if (typeof data === 'object' && data !== null) {
@@ -71,6 +71,7 @@ export class TypedFormBuilder {
         const formArray = new TypedFormArrayExtension<any>([]);
 
         // Set the control template
+        console.log('');
         formArray.controlTemplate = () => this.buildFormTree(data.template);
 
         // Patch the array value to generate the required controls

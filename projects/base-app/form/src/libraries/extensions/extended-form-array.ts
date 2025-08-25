@@ -101,6 +101,7 @@ export class TypedFormArrayExtension<
    */
   createControl(data?: TControlValueItem): TControl {
     const control = this.controlTemplate();
+    console.log('created control from template', control);
 
     if (data) {
       control.patchValue(data);

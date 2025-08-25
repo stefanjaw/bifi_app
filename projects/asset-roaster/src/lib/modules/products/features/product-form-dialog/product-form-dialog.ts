@@ -52,7 +52,7 @@ export class ProductFormDialog extends BaseDialog {
 
   // State
   form = this.formService.form;
-  isLoading = this.productTypes.isLoading || this.contacts.isLoading;
+  isLoading = computed(() => this.productTypes.isLoading() || this.contacts.isLoading());
   isSubmitLoading = signal(false);
 
   // Computed options

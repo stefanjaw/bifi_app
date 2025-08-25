@@ -21,7 +21,7 @@ export class CreateComissioningForm extends BaseForm<CreateComissioningFormModel
       attachments: {
         template: {
           id: [''],
-          file: [],
+          file: [null!],
         },
         formArrayElements: [],
       },

@@ -2,7 +2,7 @@ import { pagination } from '../interfaces/pagination';
 import { inject, Injectable, ResourceRef, Signal, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
@@ -133,25 +133,32 @@ export class ApiRequestManager<T> {
   get({
     searchParams,
     sort,
+    triggerRequest,
     specificEndpoint = '',
   }: {
     searchParams?: Signal<Record<string, any>>;
     sort?: Signal<orderByQuery<T>>;
+    triggerRequest?: Signal<boolean>;
     specificEndpoint?: string;
   }): ResourceRef<T[]> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     return rxResource({
       params: () => {
+        const trigger = triggerRequest?.();
+        if (trigger === false) return undefined;
+
         const params = searchParams?.();
         const sorts = sort?.();
 
         return { params, sorts };
       },
-      stream: ({ params: { params, sorts } }) => {
+      stream: ({ params: requestParams }) => {
+        if (!requestParams) return of([]);
+
         const query = new URLSearchParams({
-          ...(params && { searchParams: JSON.stringify(params) }),
-          ...(sorts && { orderBy: JSON.stringify(sorts) }),
+          ...(requestParams.params && { searchParams: JSON.stringify(requestParams.params) }),
+          ...(requestParams.sorts && { orderBy: JSON.stringify(requestParams.sorts) }),
         });
 
         return this._httpClient

@@ -3,14 +3,20 @@
 } @else if (error()) {
   <p>Something went wrong... {{ error() }}</p>
 } @else {
-  <bifi-app-form-layout title="Role settings">
+  <bifi-app-form-layout title="Role settings" class="block px-4 bg-gray-50 py-4">
     <form
       ngProjectAs="div"
       [formGroup]="form"
       bifiAppFormActionsHandler
       (appSubmit)="handleSubmit($event)"
-      class="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8"
+      class="min-h-screen flex flex-col gap-6"
     >
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        class="mb-4"
+      ></bifi-app-form-actions>
+
       <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
         <section class="w-xl grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field>
@@ -27,16 +33,32 @@
         </section>
       </bifi-app-form-section>
 
-      @if (isEdit()) {
-        <bifi-app-form-section title="Policies" id="policies" [ordinal]="2">
-          <bifi-app-table-layout [columns]="policyCols" [data]="policies()">
-            <ng-template #actions>
-              <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
-              <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
-            </ng-template>
-          </bifi-app-table-layout>
-        </bifi-app-form-section>
-      }
+      <bifi-app-form-section title="Policies" id="policies" [ordinal]="2">
+        <p-button
+          label="Add New Policy"
+          severity="secondary"
+          icon="pi pi-plus"
+          (onClick)="selectPolicyDialog.openDialog()"
+          styleClass="mb-4"
+        ></p-button>
+
+        <bifi-app-table-layout [columns]="policyCols" [data]="policyData()">
+          <ng-template #actions let-row>
+            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
+            <p-button
+              severity="danger"
+              label="Remove"
+              icon="pi pi-trash"
+              (click)="handlePolicyRemove(row._id)"
+            ></p-button>
+          </ng-template>
+        </bifi-app-table-layout>
+      </bifi-app-form-section>
     </form>
   </bifi-app-form-layout>
+
+  <bifi-app-select-policy-dialog
+    #selectPolicyDialog
+    (selected)="handlePolicySelect($event)"
+  ></bifi-app-select-policy-dialog>
 }

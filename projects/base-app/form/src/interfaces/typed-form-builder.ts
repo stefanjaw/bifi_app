@@ -1,5 +1,6 @@
 import {
   AbstractControl,
+  AbstractControlOptions,
   AsyncValidatorFn,
   FormArray,
   FormControl,
@@ -55,11 +56,13 @@ export type IFArray<R> = R extends FormGroupLike
     };
 
 // A Permissive control config (an array with a value and validators)
-export type PermissiveControlConfig<T> = (T | FormControlState<T> | ValidatorConfig)[];
+// export type PermissiveControlConfig<T> = (T | FormControlState<T> | ValidatorConfig)[];
+export type PermissiveControlConfig<T> = [
+  T | FormControlState<T>,
+  (ValidatorFn | ValidatorFn[] | AbstractControlOptions | null)?,
+  (AsyncValidatorFn | AsyncValidatorFn[] | null)?,
+];
 
 export type GroupReturn<T extends FormGroupLike> = FormGroup<ControlsOf<T, true>>;
-
-// Possible validator configs
-type ValidatorConfig = ValidatorFn | AsyncValidatorFn | ValidatorFn[] | AsyncValidatorFn[];
 
 type Required<T> = T extends null | undefined ? never : T;

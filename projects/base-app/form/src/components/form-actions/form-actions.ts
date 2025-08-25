@@ -12,6 +12,7 @@ export class FormActions {
   formDisabled = input<boolean>();
   position = input<'start' | 'end'>('end');
 
+  submitClicked = output<void>();
   cancelClicked = output<void>();
 
   cancelLabel = input<string>();

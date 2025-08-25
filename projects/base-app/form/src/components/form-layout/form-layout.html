@@ -4,7 +4,7 @@
     <bifi-app-form-navigator></bifi-app-form-navigator>
   </aside> -->
   <div>
-    <h3 class="text-lg font-semibold mb-3">{{ title() }}</h3>
+    <h3 [bifiAppText]="titleVariant()" class="mb-3">{{ title() }}</h3>
     <ng-content select="div"></ng-content>
   </div>
 </div>

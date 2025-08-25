@@ -11,6 +11,7 @@
   </p-button>
   <p-button
     type="submit"
+    (onClick)="submitClicked.emit()"
     [icon]="isSubmitting() ? 'pi pi-spinner' : undefined"
     [label]="isSubmitting() ? 'Saving...' : saveLabel() || 'Save'"
     [disabled]="isSubmitting() || formDisabled()"
