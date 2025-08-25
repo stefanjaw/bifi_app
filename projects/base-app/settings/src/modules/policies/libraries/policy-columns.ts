@@ -3,6 +3,12 @@ import { tableColumn } from '@avalantec/base-app/resource';
 
 export const policyColumns: tableColumn<policy<any, any>>[] = [
   {
+    field: 'name',
+    title: 'Policy Name',
+    type: 'text',
+    sortable: true,
+  },
+  {
     field: 'resource',
     title: 'Resource',
     type: 'text',
