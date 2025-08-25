@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { ArrayValidators, BaseForm } from '@avalantec/base-app/form';
 
 export interface roleFormModel {
   name: string;
@@ -17,6 +17,7 @@ export class RoleForm extends BaseForm<roleFormModel> {
       name: ['', [Validators.required]],
       policies: {
         template: [''],
+        validators: [ArrayValidators.minLength(1)],
         formArrayElements: [],
       },
       active: [true],

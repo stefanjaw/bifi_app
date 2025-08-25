@@ -16,6 +16,9 @@ const defaultErrors: FormErrorMessages = {
   pattern: () => `Invalid format.`,
   null: `This field is required.`,
   passwordMatch: `Passwords do not match.`,
+  arrayMinLength: ({ requiredLength }) => `This field must have at least ${requiredLength} items.`,
+  arrayMaxLength: ({ requiredLength }) =>
+    `This field must not have more than ${requiredLength} items.`,
 };
 
 /**

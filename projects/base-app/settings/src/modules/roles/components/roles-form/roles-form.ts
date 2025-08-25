@@ -47,7 +47,10 @@ export class RolesForm {
   policyCols = policyColumns;
 
   // Role list
-  roleListResource = this.crudRoles.get({ searchParams: computed(() => ({ _id: this.id })) });
+  roleListResource = this.crudRoles.get({
+    triggerRequest: computed(() => this.id() !== undefined),
+    searchParams: computed(() => ({ _id: this.id })),
+  });
 
   // Role to edit
   role = computed(() => this.roleListResource.value()?.[0]);
@@ -71,6 +74,7 @@ export class RolesForm {
           policies: role.policies.map(p => p._id),
           active: role.active,
         });
+        this.formService.resetDirtyState();
         this.policyData.set(role.policies);
       } else {
         this.formService.reset();
@@ -80,7 +84,6 @@ export class RolesForm {
   }
 
   handleSubmit(values: FormValueState<roleFormModel>) {
-    console.log('values', values);
     const action = this.isUpdate()
       ? this.crudRoles.put({ _id: this.id(), data: values.rawValue })
       : this.crudRoles.post({ data: values.rawValue });

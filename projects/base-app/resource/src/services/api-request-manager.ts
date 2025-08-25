@@ -331,6 +331,8 @@ export class ApiRequestManager<T> {
   protected createFormDataFromObject(data: Record<string, any>) {
     const formData = new FormData();
 
+    console.log('parsing data', data);
+
     for (const [key, value] of Object.entries(data)) {
       if (isFormUploaderFileArray(value))
         value.forEach(file => formData.append(`${key}[]`, file.file));
@@ -338,6 +340,11 @@ export class ApiRequestManager<T> {
       else if (value instanceof File) formData.append(key, value, value.name);
       else if (typeof value === 'object') formData.append(key, JSON.stringify(value));
       else formData.append(key, value);
+    }
+
+    console.log('result:');
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
     }
 
     return formData;

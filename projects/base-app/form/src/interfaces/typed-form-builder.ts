@@ -45,15 +45,17 @@ export type BaseArrayControls<R> = R extends FormGroupLike
   ? FormArray<FormGroup<ControlsOf<R>>>
   : FormArray<FormControl<R>>;
 
-export type IFArray<R> = R extends FormGroupLike
+export type IFArray<R> = {
+  formArrayElements: R[];
+  validators?: ValidatorFn | ValidatorFn[];
+  asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
+} & (R extends FormGroupLike
   ? {
       template: InputControls<R>;
-      formArrayElements: R[];
     }
   : {
       template: PermissiveControlConfig<R>;
-      formArrayElements: R[];
-    };
+    });
 
 // A Permissive control config (an array with a value and validators)
 // export type PermissiveControlConfig<T> = (T | FormControlState<T> | ValidatorConfig)[];

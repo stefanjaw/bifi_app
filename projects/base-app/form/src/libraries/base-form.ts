@@ -121,6 +121,10 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
     this.form.patchValue(data, options);
   }
 
+  resetDirtyState() {
+    this.form.markAsPristine();
+  }
+
   getValueState(): FormValueState<TModel> {
     return {
       value: this.value(),

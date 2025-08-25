@@ -46,7 +46,7 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
    * If the form is invalid, marks invalid form controls as dirty (display errors)
    */
   private submit() {
-    if (!this.form.touched) {
+    if (!this.form.dirty) {
       this.toastManager.showInfo('You have not made any changes.');
       return;
     }

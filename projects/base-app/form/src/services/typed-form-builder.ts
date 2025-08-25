@@ -4,7 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
-  FormGroup,
   NonNullableFormBuilder,
   ValidatorFn,
 } from '@angular/forms';
@@ -31,7 +30,7 @@ export class TypedFormBuilder {
       asyncValidators?: AsyncValidatorFn | AsyncValidatorFn[];
     }
   ): GroupReturn<T> {
-    const group = this.buildFormTree(data) as FormGroup<ControlsOf<T, true>>;
+    const group = this.buildFormTree(data) as GroupReturn<T>;
 
     if (options?.validators) {
       group.setValidators(options.validators);
@@ -71,11 +70,18 @@ export class TypedFormBuilder {
         const formArray = new TypedFormArrayExtension<any>([]);
 
         // Set the control template
-        console.log('');
         formArray.controlTemplate = () => this.buildFormTree(data.template);
+
+        // Set the validators
+        if (data.asyncValidators) formArray.setAsyncValidators(data.asyncValidators);
+
+        if (data.validators) formArray.setValidators(data.validators);
 
         // Patch the array value to generate the required controls
         formArray.patchValue(data.formArrayElements);
+
+        // Mark the form array as pristine (to prevent automatic dirty state)
+        formArray.markAsPristine();
 
         return formArray;
       }
