@@ -4,6 +4,7 @@ import { productType } from '../../product-types';
 import { productMaintenance } from '../../product-maintenances';
 import { productComissionnig } from '../../product-comissioning';
 import { contact } from '@avalantec/base-app/settings';
+import { file } from '@avalantec/base-app/resource';
 
 export interface product {
   _id: string;
@@ -27,5 +28,6 @@ export interface product {
   maxMaintenanceDate: string;
   productComission: productComissionnig;
   productMaintenances: productMaintenance[];
+  documents?: file[];
   active: boolean;
 }

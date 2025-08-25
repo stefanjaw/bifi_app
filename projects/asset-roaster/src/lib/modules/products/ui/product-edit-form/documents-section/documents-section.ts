@@ -1,3 +1,4 @@
+import { product } from '../../../interfaces/product';
 import { Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -13,6 +14,7 @@ export class DocumentsSection {
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   isEditMode = input.required<boolean>();
+  product = input.required<product | null>();
 
   handleAddDocument() {
     this.productMaintenanceContext.handleAddDocument();

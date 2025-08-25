@@ -3,6 +3,7 @@ export * from './src/components/table-layout/table-layout';
 export * from './src/directives/dynamic-component';
 export * from './src/interfaces/activity-history';
 export * from './src/interfaces/dynamic-component';
+export * from './src/interfaces/file';
 export * from './src/interfaces/filter';
 export * from './src/interfaces/order-by';
 export * from './src/interfaces/pagination-options';
