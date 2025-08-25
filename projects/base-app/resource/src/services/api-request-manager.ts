@@ -77,12 +77,14 @@ export class ApiRequestManager<T> {
   post({
     data,
     specificEndpoint = '',
+    fileFields = [],
   }: {
     data: Record<string, any>;
     specificEndpoint?: string;
+    fileFields?: string[];
   }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
-    const formData = this.createFormDataFromObject(data);
+    const formData = this.createFormDataFromObject(data, fileFields);
 
     return this._httpClient.post<T | undefined>(fullURL, formData).pipe(
       catchError((err: any) => {
@@ -103,17 +105,19 @@ export class ApiRequestManager<T> {
   put({
     _id,
     data,
+    fileFields = [],
     specificEndpoint = '',
   }: {
     _id: string;
     data: Record<string, any>;
+    fileFields?: string[];
     specificEndpoint?: string;
   }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     // set id to the formData
     data = { ...data, _id };
-    const formData = this.createFormDataFromObject(data);
+    const formData = this.createFormDataFromObject(data, fileFields);
 
     return this._httpClient.put<T | undefined>(fullURL, formData).pipe(
       catchError((err: any) => {
@@ -328,7 +332,10 @@ export class ApiRequestManager<T> {
     throw error;
   }
 
-  protected createFormDataFromObject(data: Record<string, any>) {
+  protected createFormDataFromObject(
+    data: Record<string, any>,
+    fileFields: string[] = []
+  ): FormData {
     const formData = new FormData();
 
     console.log('parsing data', data);
@@ -339,6 +346,11 @@ export class ApiRequestManager<T> {
       else if (isFormUploaderFile(value)) formData.append(key, value.file);
       else if (value instanceof File) formData.append(key, value, value.name);
       else if (typeof value === 'object') formData.append(key, JSON.stringify(value));
+      else if (
+        (fileFields.includes(key) && Array.isArray(value) && value.length === 0) ||
+        value === null
+      )
+        formData.append(key, null!);
       else formData.append(key, value);
     }
 
