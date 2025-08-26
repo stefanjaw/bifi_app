@@ -7,13 +7,10 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import {
-  HTTP_NOTIFICATION_CONFIG_TOKEN,
-  NotificationConfig,
-  TranslateKey,
-} from './notification.context';
+import { HTTP_NOTIFICATION_CONFIG_TOKEN } from './notification.context';
 import { inject } from '@angular/core';
 import { ToastManager } from '@avalantec/base-app/core';
+import { NotificationMessageResolver } from '../../../services/notification-message-resolver';
 
 export const notificationInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -21,15 +18,27 @@ export const notificationInterceptor: HttpInterceptorFn = (
 ): Observable<HttpEvent<unknown>> => {
   const config = req.context.get(HTTP_NOTIFICATION_CONFIG_TOKEN);
   const toastService = inject(ToastManager);
+  const notificationMessageResolver = inject(NotificationMessageResolver);
 
-  // Si no hay configuración, ignorar el interceptor
-  if (!config) return next(req);
+  // Maneja la solicitud si es POST, PUT, DELETE o PATCH, o si recibe una configuración
+  const canHandleRequest =
+    req.method === 'POST' ||
+    req.method === 'PUT' ||
+    req.method === 'DELETE' ||
+    req.method === 'PATCH' ||
+    (config !== null && config.enable !== false);
+
+  if (!canHandleRequest) return next(req);
 
   const {
     loading: loadingMessage,
     success: successMessage,
     error: errorMessage,
-  } = getMessages(config);
+  } = notificationMessageResolver.resolveMessages({
+    config: config?.notification,
+    elementName: config?.elementName || 'element',
+    method: req.method,
+  });
 
   // Mostrar toast de "loading" (infinito)
   const toastId = loadingMessage
@@ -64,29 +73,3 @@ export const notificationInterceptor: HttpInterceptorFn = (
     })
   );
 };
-
-function getMessages(config: NotificationConfig) {
-  let success: string | undefined = undefined;
-  let error: string | undefined = undefined;
-  let loading: string | undefined = undefined;
-
-  if (config instanceof TranslateKey) {
-    // const data = transloco.translateObject(config.key, config.params, config.scope);
-    // console.log('translated object notifications', data);
-    // if (typeof data === 'object') {
-    //   if (data.success) success = data.success;
-    //   if (data.error) error = data.error;
-    //   if (data.loading) loading = data.loading;
-    // } else {
-    //   console.log('Could not find translation for key', config);
-    // }
-  } else {
-    if (config.successMessage) success = config.successMessage;
-
-    if (config.errorMessage) error = config.errorMessage;
-
-    if (config.loadingMessage) loading = config.loadingMessage;
-  }
-
-  return { success, error, loading };
-}

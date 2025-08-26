@@ -1,6 +1,6 @@
 import { HttpContextToken } from '@angular/common/http';
 
-export const HTTP_NOTIFICATION_CONFIG_TOKEN = new HttpContextToken<NotificationConfig | null>(
+export const HTTP_NOTIFICATION_CONFIG_TOKEN = new HttpContextToken<NotificationTokenConfig | null>(
   () => null
 );
 
@@ -15,10 +15,16 @@ export class TranslateKey {
 }
 
 // Tipos para la configuración
-export type NotificationConfig =
+export type Notification =
   | TranslateKey
   | {
       loadingMessage?: string;
       successMessage?: string;
       errorMessage?: string;
     };
+
+export interface NotificationTokenConfig {
+  elementName: string;
+  enable?: boolean;
+  notification?: Notification;
+}

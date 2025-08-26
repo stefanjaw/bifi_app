@@ -1,4 +1,4 @@
-import { NotificationConfig } from '../libraries/interceptors/notification/notification.context';
+import { Notification } from '../libraries/interceptors/notification/notification.context';
 
 /**
  * Supported base request types for generic API actions.
@@ -12,7 +12,9 @@ export type ApiRequestType =
   | 'delete';
 
 export interface ApiActionConfig {
-  notificationConfig?: NotificationConfig | null;
+  entityName?: string;
+  enableToast?: boolean;
+  notificationConfig?: Notification;
 }
 
 export type ApiRequestManagerConfig = Partial<Record<ApiRequestType, ApiActionConfig>>;

@@ -16,21 +16,32 @@ import { ApiRequestManagerConfig, ApiRequestType } from '../interfaces/api';
 import { HTTP_NOTIFICATION_CONFIG_TOKEN } from '../libraries/interceptors/notification/notification.context';
 
 export class ApiRequestManager<T> {
+  protected readonly _httpClient = inject(HttpClient);
   protected readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   protected readonly _toastManager = inject(ToastManager);
+
   private _endpoint = '';
-  protected readonly _httpClient = inject(HttpClient);
+  private _config: ApiRequestManagerConfig = {};
+  private _elementName = 'element';
   protected readonly _defaultPaginateOptions = signal<paginationOptions>({
     page: 1,
     limit: 5,
     paginate: true,
   });
 
-  private _config: ApiRequestManagerConfig = {};
-
-  constructor(params?: Pick<ApiRequestManager<T>, 'endpoint' | 'config'>) {
+  constructor(params?: Pick<ApiRequestManager<T>, 'endpoint' | 'config' | 'elementName'>) {
     if (params) Object.assign(this, params);
   }
+
+  // get and set element name
+  get elementName() {
+    return this._elementName;
+  }
+  set elementName(elementName: string) {
+    this._elementName = elementName.toLowerCase();
+  }
+
+  // get and set config
 
   get config() {
     return this._config;
@@ -335,17 +346,25 @@ export class ApiRequestManager<T> {
   }
   //#endregion
 
+  /**
+   * Creates an HTTP context for the given request type.
+   *
+   * This function creates a new HTTP context and sets the
+   * {@link HTTP_NOTIFICATION_CONFIG_TOKEN} context token to the
+   * notification configuration for the given request type.
+   *
+   * @param request - The type of request to create the context for.
+   * @returns The created HTTP context.
+   */
   private createHttpContext(request: ApiRequestType): HttpContext {
     const httpContext = new HttpContext();
 
-    if (this.config[request]) {
-      const actionConfig = this.config[request];
+    const actionConfig = this.config[request];
 
-      if (actionConfig.notificationConfig) {
-        console.log('notification config', actionConfig.notificationConfig);
-        httpContext.set(HTTP_NOTIFICATION_CONFIG_TOKEN, actionConfig.notificationConfig);
-      }
-    }
+    httpContext.set(HTTP_NOTIFICATION_CONFIG_TOKEN, {
+      elementName: this.elementName,
+      notification: actionConfig?.notificationConfig,
+    });
 
     return httpContext;
   }
