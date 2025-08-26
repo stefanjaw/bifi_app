@@ -91,6 +91,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    */
   reset() {
     this.form.reset();
+    this.resetDirtyState();
   }
 
   /**
