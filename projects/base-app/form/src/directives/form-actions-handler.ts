@@ -9,7 +9,7 @@ import { FormContext } from '../services/form-context';
 
 @Directive({
   providers: [FormContext],
-  selector: '[formGroup][bifiAppFormActionsHandler]',
+  selector: '[bifiAppFormActionsHandler]',
 })
 export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
   private formContext = inject(FormContext, { self: true });
@@ -46,7 +46,7 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
    * If the form is invalid, marks invalid form controls as dirty (display errors)
    */
   private submit() {
-    if (!this.form.touched) {
+    if (!this.form.dirty) {
       this.toastManager.showInfo('You have not made any changes.');
       return;
     }

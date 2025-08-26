@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, model, signal } from '@angular/core';
-import { ValidationErrors } from '@angular/forms';
+import { ControlContainer, NgControl, ValidationErrors } from '@angular/forms';
 import { FormErrorComponentValidationErrorsValue } from './form-error.model';
 import { distinctUntilChanged, map } from 'rxjs';
 import { FormFieldContext } from '../../services/form-field-context';
@@ -8,13 +8,17 @@ import { FormTranslation } from '../../services/form-translation';
 @Component({
   selector: 'bifi-app-form-error',
   standalone: true,
-  host: { class: 'text-destructive' },
+  host: { class: 'text-red-400' },
   template: ` {{ error() }} `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormError {
   private formTranslationService = inject(FormTranslation);
   private context = inject(FormFieldContext, { optional: true });
+
+  // Inject the NgControl (FormControl) or ControlContainer (FormGroup, FormArray) to be used if no form field context is provided or if the context does not provide a form control
+  controlContainer = inject(ControlContainer, { optional: true });
+  ngControl = inject(NgControl, { optional: true });
 
   // Signal that holds the custom error messages, this can be a callback function that takes the form control as an argument or a static object
   customErrorTranslations = model<FormErrorComponentValidationErrorsValue | undefined>(undefined);
@@ -24,9 +28,13 @@ export class FormError {
 
   constructor() {
     effect(onCleanup => {
-      const absControl = this.context!.abstractControl();
+      // Get the abstract control
+      const absControl = this.controlContainer || this.ngControl || this.context?.abstractControl();
+
+      // Get the custom error messages
       const customMessageTranslations = this.customErrorTranslations();
 
+      // If there is no abstract control or no control, return
       if (!absControl || !absControl.control) {
         return;
       }

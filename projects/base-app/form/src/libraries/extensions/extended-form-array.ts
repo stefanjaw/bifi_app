@@ -33,8 +33,31 @@ export class TypedFormArrayExtension<
    * It creates a new control with the given data and then calls the `push` method of the form array.
    * @param data The data to use to create the new control.
    */
-  pushItem(data: TControlValueItem) {
+  pushItem(data?: TControlValueItem) {
     this.push(this.createControl(data));
+  }
+
+  /**
+   * Pushes a new item to the end of the form array.
+   * It creates a new control with the given data and then calls the `push` method of the form array.
+   * Marks the form array as dirty.
+   * @param control The control to add to the form array.
+   * @param options An options object that can be used to turn off the emitEvent trigger.
+   */
+  override push(control: TControl, options?: { emitEvent?: boolean }): void {
+    super.push(control, options);
+    this.markAsDirty();
+  }
+
+  /**
+   * Removes the control at the specified index from the form array.
+   * Calls the `removeAt` method of the form array and then marks the form array as dirty.
+   * @param index The position of the control to remove.
+   * @param options An options object that can be used to turn off the emitEvent trigger.
+   */
+  override removeAt(index: number, options?: { emitEvent?: boolean }): void {
+    super.removeAt(index, options);
+    this.markAsDirty();
   }
 
   /**

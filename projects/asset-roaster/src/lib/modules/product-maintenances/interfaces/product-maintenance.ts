@@ -1,3 +1,4 @@
+import { file } from '@avalantec/base-app/resource';
 import { product } from '../../products';
 
 export interface productMaintenance {
@@ -5,7 +6,7 @@ export interface productMaintenance {
   productId: product;
   name: string;
   description?: string;
-  attachments: string[];
+  attachments: file[];
   date: string;
   type: 'service' | 'preventive-maintenance';
   active: boolean;

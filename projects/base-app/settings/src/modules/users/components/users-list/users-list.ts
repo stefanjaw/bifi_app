@@ -1,37 +1,32 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  provideResourceManager,
+  ResourceManager,
+  SearchBar,
+  TableLayout,
+} from '@avalantec/base-app/resource';
+import { ButtonModule } from 'primeng/button';
+import { CrudUsers } from '../../services/crud-users';
+import { user } from '@avalantec/base-app/core';
+import { userColumns } from '../../libraries/user-columns';
+import { userFilters } from '../../libraries/user-filters';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-users-list',
-  imports: [],
+  providers: [provideResourceManager(CrudUsers)],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  host: {
+    class: 'flex flex-col gap-2 p-6 ms-4 me-4',
+  },
   templateUrl: './users-list.html',
-  styleUrl: './users-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersList {
-  // private crudUsers = inject(CrudUsers);
-  // users = signal<user[]>([]);
-  // columns = signal<tableColumn[]>([
-  //   {
-  //     field: 'username',
-  //     title: 'Username',
-  //     type: 'text',
-  //   },
-  //   {
-  //     field: 'email',
-  //     title: 'Email',
-  //     type: 'text',
-  //   },
-  //   {
-  //     field: 'name',
-  //     title: 'Name',
-  //     type: 'text',
-  //   },
-  //   {
-  //     field: 'lastName',
-  //     title: 'Last Name',
-  //     type: 'text',
-  //   },
-  // ]);
-  // ngOnInit(): void {
-  //   this.users.set(this.crudUsers.getUsers());
-  // }
+  private resourceManager = inject<ResourceManager<user>>(ResourceManager);
+
+  userColumns = userColumns;
+  userFilters = userFilters;
+
+  users = this.resourceManager.data;
 }

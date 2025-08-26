@@ -8,6 +8,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { CommonModule } from '@angular/common';
 import { SidenavManager } from '@avalantec/base-app/core';
 import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
+import { NgxSonnerToaster } from 'ngx-sonner';
 // import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 
 @Component({
@@ -20,6 +21,7 @@ import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
     ButtonModule,
     AvatarModule,
     CommonModule,
+    NgxSonnerToaster,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',

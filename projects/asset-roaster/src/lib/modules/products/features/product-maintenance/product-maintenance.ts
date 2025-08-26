@@ -176,6 +176,7 @@ export class ProductMaintenance {
 
     const productRequest = this.productsService.put({
       _id: this.product()?._id || '',
+      fileFields: ['photo'],
       data: {
         ...value,
         ...(value.productTypeIds && {

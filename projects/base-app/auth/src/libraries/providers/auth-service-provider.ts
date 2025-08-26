@@ -1,4 +1,4 @@
-import { InjectionToken } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { IAuthService } from '../../interfaces/auth-service';
 import { user } from '@avalantec/base-app/core';
 
@@ -15,3 +15,9 @@ export const createAuthServiceToken = <AuthService extends IAuthService<user>>()
   LIB_AUTH_SERVICE = token;
   return token;
 };
+
+export function injectAuthService<
+  AuthService extends IAuthService<user> = IAuthService<user>,
+>(): AuthService {
+  return inject(LIB_AUTH_SERVICE) as AuthService;
+}

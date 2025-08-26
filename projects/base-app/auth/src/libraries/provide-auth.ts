@@ -8,6 +8,7 @@ import { LIB_AUTH_SERVICE } from './providers/auth-service-provider';
 import { FirebaseAuth } from './firebase-auth';
 import { FirebaseRemoteConfigObject } from '@angular/fire/remote-config';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { AUTH_ENABLED_TOKEN } from './providers/enable-auth-provider';
 
 interface FirebaseAuthProviderSettings<
   TSession extends FirebaseSession<any> = FirebaseSession<any>,
@@ -69,6 +70,9 @@ export const provideAppAuth = <TUser>({
   }
 
   providers.push({ provide: APP_BACKEND_AUTH_SERVICE, useClass: backendAuth });
+
+  // Auth enabled token
+  providers.push({ provide: AUTH_ENABLED_TOKEN, useValue: true });
 
   return providers;
 };

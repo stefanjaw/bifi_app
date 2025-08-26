@@ -1,1 +1,10 @@
-export type { role } from './interfaces/role';
+export * from './components/roles-form/roles-form';
+export * from './components/roles-form/select-policy-dialog/select-policy-dialog';
+export * from './components/roles-list/roles-list';
+export * from './interfaces/resource-config';
+export * from './libraries/role-columns';
+export * from './libraries/role-filters';
+export * from './routes/role-routes';
+export * from './services/crud-roles';
+export * from './services/resource-list';
+export * from './services/role-form';

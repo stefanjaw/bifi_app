@@ -1,14 +1,18 @@
-<!-- <section id="users-list-container">
-  <h1>Users</h1>
+<h1 class="text-2xl font-bold mb-4">Users</h1>
 
-  <bifi-app-table-layout
-    style="width: 90%"
-    [columns]="columns()"
-    [data]="users()"
-  >
-    <ng-template #actions>
-      <button mat-menu-item><mat-icon>edit</mat-icon>Edit</button>
-      <button mat-menu-item><mat-icon>delete</mat-icon>Delete</button>
-    </ng-template>
-  </bifi-app-table-layout>
-</section> -->
+<bifi-app-search-bar
+  label="Search by username, email or provider"
+  [searchFilters]="userFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="userColumns" [data]="users">
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      [routerLink]="['../edit/', row._id]"
+    ></p-button>
+    <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
+  </ng-template>
+</bifi-app-table-layout>

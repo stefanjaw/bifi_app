@@ -5,5 +5,5 @@ export function isFormUploaderFile(data: unknown): data is FormUploaderFile {
 }
 
 export function isFormUploaderFileArray(data: unknown): data is FormUploaderFile[] {
-  return Array.isArray(data) && data.every(isFormUploaderFile);
+  return Array.isArray(data) && data.length > 0 && data.every(isFormUploaderFile);
 }

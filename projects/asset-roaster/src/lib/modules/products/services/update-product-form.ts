@@ -39,7 +39,7 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
       photo: {
         template: {
           id: [''],
-          file: [],
+          file: [null!],
         },
         formArrayElements: [],
       },

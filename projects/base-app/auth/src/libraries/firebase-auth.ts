@@ -40,9 +40,7 @@ type AuthenticateFnParams =
       };
     };
 
-export class FirebaseAuth<TUser extends user>
-  implements IAuthService<TUser, FirebaseSession<TUser>>
-{
+export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, FirebaseSession<TUser>> {
   private fireAuth = inject(AngularFireAuth);
   private backendAuth: IBackendAuthService<TUser> = inject(APP_BACKEND_AUTH_SERVICE);
   private destroy$ = inject(DestroyRef);
@@ -84,6 +82,7 @@ export class FirebaseAuth<TUser extends user>
    * and the error is logged to the console.
    */
   constructor() {
+    super();
     this.fireAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
     this.fireAuth.authState
@@ -127,7 +126,11 @@ export class FirebaseAuth<TUser extends user>
     }
 
     return this.backendAuth.getMe().pipe(
-      catchError(err => throwError(() => err)),
+      catchError(err => {
+        // If the user is not found, we return an empty object
+        console.log('User not found, error in me request', err);
+        return of(null);
+      }),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
     );
   }
@@ -210,11 +213,11 @@ export class FirebaseAuth<TUser extends user>
       // wait for the auth state to be ready
       await this.authStateReady;
 
-      this.toastManager.showSuccess('Authenticated successfully', 'Success');
+      this.toastManager.showSuccess('Authenticated successfully!');
 
       return true;
     } catch (error: any) {
-      this.toastManager.showError('Something went wrong with authentication', 'Error');
+      this.toastManager.showError('Something went wrong authenticating you...');
 
       if ('message' in error) {
         this.error.set(error.message);

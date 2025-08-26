@@ -1,3 +1,4 @@
+export * from './src/directives/has-permission';
 export * from './src/features/auth-page/auth-page';
 export * from './src/guards/auth-guard';
 export * from './src/guards/no-auth-guard';
@@ -11,5 +12,6 @@ export * from './src/libraries/interceptors/auth-token';
 export * from './src/libraries/provide-auth';
 export * from './src/libraries/providers/auth-service-provider';
 export * from './src/libraries/providers/backend-auth-provider';
+export * from './src/libraries/providers/interceptors';
 export * from './src/services/auth-form';
 export * from './src/ui/auth-form/auth-form';

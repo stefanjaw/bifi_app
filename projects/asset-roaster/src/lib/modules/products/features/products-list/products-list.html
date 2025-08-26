@@ -9,6 +9,8 @@
       icon="pi pi-plus"
       (onClick)="createDialog.openDialog()"
     ></p-button>
+
+    <span *bifiAppHasPermission="'product:read'">Test!! you can read</span>
   </div>
 </section>
 

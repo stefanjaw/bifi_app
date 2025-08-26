@@ -16,7 +16,7 @@ export class UpdateMaintenanceForm extends BaseForm<UpdateMaintenanceFormModel> 
       attachments: {
         template: {
           id: [''],
-          file: [],
+          file: [null!],
         },
         formArrayElements: [],
       },
