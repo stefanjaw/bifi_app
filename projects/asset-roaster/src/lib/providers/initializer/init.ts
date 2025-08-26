@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { MainMenuManager } from '@avalantec/base-app/core';
 import { ResourceList } from '@avalantec/base-app/settings';
+import { PrimeIcons } from 'primeng/api';
 
 export function initializeAssetRoster() {
   initializeMenu();
@@ -12,7 +13,7 @@ function initializeMenu() {
 
   menuManager.addItems([
     {
-      icon: 'pi pi-objects-column',
+      icon: PrimeIcons.OBJECTS_COLUMN,
       routerLink: ['/asset-roaster'],
       label: 'Asset Roaster',
     },
