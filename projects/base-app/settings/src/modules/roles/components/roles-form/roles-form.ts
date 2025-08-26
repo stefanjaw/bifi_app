@@ -20,6 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { policy, ToastManager } from '@avalantec/base-app/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SelectPolicyDialog } from './select-policy-dialog/select-policy-dialog';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'bifi-app-roles-form',
@@ -30,6 +31,7 @@ import { SelectPolicyDialog } from './select-policy-dialog/select-policy-dialog'
     InputTextModule,
     ButtonModule,
     TableLayout,
+    ProgressBarModule,
     SelectPolicyDialog,
   ],
   templateUrl: './roles-form.html',
@@ -58,7 +60,7 @@ export class RolesForm {
   form = this.formService.form;
 
   isUpdate = computed(() => !!this.role());
-  isLoading = this.roleResource.isLoading;
+  loading = this.roleResource.isLoading;
   error = this.roleResource.error;
   policyData = signal<policy<any, any>[]>([]);
   isSubmitLoading = signal<boolean>(false);

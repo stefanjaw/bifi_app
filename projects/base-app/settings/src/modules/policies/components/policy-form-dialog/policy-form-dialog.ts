@@ -5,6 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  input,
   OnInit,
   signal,
 } from '@angular/core';
@@ -23,9 +24,6 @@ import { CrudPolicyForm, PolicyFormModel } from '../../services/crud-policy-form
 @Component({
   selector: 'bifi-app-policy-form-dialog',
   imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
-  host: {
-    class: 'flex flex-col gap-3 w-full items-center justify-centern pt-4 pb-4',
-  },
   templateUrl: './policy-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,22 +36,20 @@ export class PolicyFormDialog implements OnInit {
   private route = inject(ActivatedRoute);
 
   // Inputs
-  id = signal({ _id: this.route.snapshot.paramMap.get('id') ?? '' });
-  policies = this.id()._id !== '' ? this.policiesService.get({ searchParams: this.id }) : null;
-
-  policy = computed(() => {
-    const policies = this.policies?.value();
-
-    if (!policies || policies.length === 0) return undefined;
-
-    return policies[0];
+  id = input.required<string>();
+  policyResource = this.policiesService.get({
+    id: this.id,
+    triggerRequest: computed(() => this.id() !== undefined),
   });
+
+  policy = this.policyResource.value;
 
   // State
   form = this.formService.form;
-  loading = computed(() => (this.policies ? this.policies.isLoading() : false));
+  loading = this.policyResource.isLoading;
   isSubmitLoading = signal(false);
-  isUpdate = signal(false);
+  isUpdate = computed(() => !!this.policy());
+  error = this.policyResource.error;
 
   // Options
   actionOptions: { label: string; value: policyAction }[] = [
@@ -72,37 +68,29 @@ export class PolicyFormDialog implements OnInit {
   ];
 
   /**
-   * @description
-   * Handle the policy input change.
-   *
-   * If policy is not defined, reset the form and set isUpdate to false.
-   * If policy is defined, set isUpdate to true and patch the form value
-   * with the policy data.
+   * Sets the form values based on the current policy in the route, if any.
+   * If there is no policy, resets the form.
    */
   constructor() {
     effect(() => {
       const policy = this.policy();
 
-      if (!policy) {
-        this.isUpdate.set(false);
+      if (policy) {
+        this.formService.patchValue({
+          name: policy.name,
+          resource: policy.resource,
+          action: policy.action,
+          conditions: [
+            ...policy.conditions.map(c => ({
+              key: c.key as string,
+              operator: c.operator,
+              value: c.value,
+            })),
+          ],
+        });
+      } else {
         this.formService.reset();
-        return;
       }
-
-      this.isUpdate.set(true);
-
-      this.formService.patchValue({
-        name: policy.name,
-        resource: policy.resource,
-        action: policy.action,
-        conditions: [
-          ...policy.conditions.map(c => ({
-            key: c.key as string,
-            operator: c.operator,
-            value: c.value,
-          })),
-        ],
-      });
     });
   }
 

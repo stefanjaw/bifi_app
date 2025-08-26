@@ -1,22 +1,22 @@
-@if (isLoading()) {
-  <p>Loading...</p>
-} @else if (error()) {
-  <p>Something went wrong... {{ error() }}</p>
-} @else {
-  <bifi-app-form-layout title="Role settings" class="block px-4 bg-gray-50 py-4">
-    <form
-      ngProjectAs="div"
-      [formGroup]="form"
-      bifiAppFormActionsHandler
-      (appSubmit)="handleSubmit($event)"
-      class="min-h-screen flex flex-col gap-6"
-    >
-      <bifi-app-form-actions
-        [isSubmitting]="isSubmitLoading()"
-        (cancelClicked)="goBack()"
-        class="mb-4"
-      ></bifi-app-form-actions>
+<bifi-app-form-layout
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Role"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+    ></bifi-app-form-actions>
 
+    @if (!loading()) {
       <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
         <section class="w-xl grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field>
@@ -56,11 +56,15 @@
 
         <bifi-app-form-error formArrayName="policies"></bifi-app-form-error>
       </bifi-app-form-section>
-    </form>
-  </bifi-app-form-layout>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
 
-  <bifi-app-select-policy-dialog
-    #selectPolicyDialog
-    (selected)="handlePolicySelect($event)"
-  ></bifi-app-select-policy-dialog>
-}
+<bifi-app-select-policy-dialog
+  #selectPolicyDialog
+  (selected)="handlePolicySelect($event)"
+></bifi-app-select-policy-dialog>
