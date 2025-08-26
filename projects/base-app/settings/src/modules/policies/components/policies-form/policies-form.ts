@@ -20,9 +20,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
+import { provideResourceManager } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
+  providers: [provideResourceManager(CrudPolicies)],
   imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
   templateUrl: './policies-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

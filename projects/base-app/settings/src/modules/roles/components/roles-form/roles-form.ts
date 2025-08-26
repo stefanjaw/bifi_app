@@ -86,6 +86,8 @@ export class RolesForm {
   }
 
   handleSubmit(values: FormValueState<roleFormModel>) {
+    this.isSubmitLoading.set(true);
+
     const action = this.isUpdate()
       ? this.crudRoles.put({ _id: this.id(), data: values.rawValue })
       : this.crudRoles.post({ data: values.rawValue });
