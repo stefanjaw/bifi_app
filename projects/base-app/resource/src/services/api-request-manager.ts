@@ -1,8 +1,8 @@
 import { pagination } from '../interfaces/pagination';
-import { inject, Injectable, ResourceRef, Signal, signal } from '@angular/core';
-import { HttpClient, HttpParams, httpResource } from '@angular/common/http';
+import { inject, ResourceRef, Signal, signal } from '@angular/core';
+import { HttpClient, HttpContext, HttpParams, httpResource } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import {
@@ -12,28 +12,9 @@ import {
   ToastManager,
 } from '@avalantec/base-app/core';
 import { isFormUploaderFile, isFormUploaderFileArray } from '@avalantec/base-app/form';
+import { ApiRequestManagerConfig, ApiRequestType } from '../interfaces/api';
+import { HTTP_NOTIFICATION_CONFIG_TOKEN } from '../libraries/interceptors/notification/notification.context';
 
-/**
- * Supported base request types for generic API actions.
- */
-export type BaseApiRequest = 'get' | 'getAll' | 'search' | 'create' | 'update' | 'delete';
-
-// export interface BaseApiServiceActionConfig {
-//   notificationConfig?: NotificationConfig | null;
-//   schema?: z.ZodSchema | null;
-//   cache?: boolean;
-//   ttl?: number;
-//   tags?: string[];
-//   revalidateTags?: string[];
-// }
-
-// export type BaseApiServiceActionsConfig = Partial<
-//   Record<BaseApiRequest, BaseApiServiceActionConfig>
-// >;
-
-@Injectable({
-  providedIn: 'root',
-})
 export class ApiRequestManager<T> {
   protected readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   protected readonly _toastManager = inject(ToastManager);
@@ -45,11 +26,24 @@ export class ApiRequestManager<T> {
     paginate: true,
   });
 
+  private _config: ApiRequestManagerConfig = {};
+
+  constructor(params?: Pick<ApiRequestManager<T>, 'endpoint' | 'config'>) {
+    if (params) Object.assign(this, params);
+  }
+
+  get config() {
+    return this._config;
+  }
+
+  set config(config: ApiRequestManagerConfig) {
+    this._config = config;
+  }
+
   // set and get endpoint
   get endpoint() {
     return this._endpoint;
   }
-
   /**
    * Sets the endpoint for this api request manager.
    * @param endpoint The endpoint to set.
@@ -62,33 +56,6 @@ export class ApiRequestManager<T> {
   }
 
   //#region Functions to call api
-  /**
-   * Post data to the api.
-   *
-   * @param formData The form data to be sent.
-   * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
-   * @returns A resource ref that resolves to the response of the request, or undefined if the request fails.
-   */
-  // post({
-  //   formData,
-  //   specificEndpoint = '',
-  // }: {
-  //   formData: FormData;
-  //   specificEndpoint?: string;
-  // }): ResourceRef<T | undefined> {
-  //   const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
-
-  //   return rxResource({
-  //     stream: () =>
-  //       this._httpClient.post<T | undefined>(fullURL, formData).pipe(
-  //         catchError((err: any) => {
-  //           this.manageError(fullURL, err.message);
-  //           return throwError(() => err);
-  //         })
-  //       ),
-  //     defaultValue: undefined,
-  //   });
-  // }
 
   /**
    * Post data to the api.
@@ -109,12 +76,7 @@ export class ApiRequestManager<T> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
     const formData = this.createFormDataFromObject(data, fileFields);
 
-    return this._httpClient.post<T | undefined>(fullURL, formData).pipe(
-      catchError((err: any) => {
-        this.manageError(fullURL, err.error.message);
-        return throwError(() => err);
-      })
-    );
+    return this._httpClient.post<T | undefined>(fullURL, formData);
   }
 
   /**
@@ -142,12 +104,9 @@ export class ApiRequestManager<T> {
     data = { ...data, _id };
     const formData = this.createFormDataFromObject(data, fileFields);
 
-    return this._httpClient.put<T | undefined>(fullURL, formData).pipe(
-      catchError((err: any) => {
-        this.manageError(fullURL, err.error.message);
-        return throwError(() => err);
-      })
-    );
+    return this._httpClient.put<T | undefined>(fullURL, formData, {
+      context: this.createHttpContext('update'),
+    });
   }
 
   get({
@@ -162,7 +121,7 @@ export class ApiRequestManager<T> {
     sort?: Signal<orderByQuery<T>>;
     triggerRequest?: Signal<boolean>;
     specificEndpoint?: maybeSignal<string>;
-  }): ResourceRef<T | null>;
+  }): ResourceRef<T | undefined>;
 
   get({
     searchParams,
@@ -195,7 +154,8 @@ export class ApiRequestManager<T> {
     sort?: maybeSignal<orderByQuery<T>>;
     triggerRequest?: maybeSignal<boolean>;
     specificEndpoint?: maybeSignal<string>;
-  }): ResourceRef<T | T[] | null> {
+  }): ResourceRef<T | T[] | undefined> {
+    const isGetById = id !== undefined;
     return httpResource(
       () => {
         const _id = mayBeSignalValue(id);
@@ -217,11 +177,11 @@ export class ApiRequestManager<T> {
         return {
           url: `${this.formatFullURL()}${_path ? '/' + _path : ''}${_id ? `/${_id}` : ''}`,
           params: new HttpParams({ fromString: query.toString() }),
-          // context:
+          context: this.createHttpContext(isGetById ? 'get' : 'getAll'),
         };
       },
       {
-        defaultValue: id ? null : [],
+        defaultValue: isGetById ? undefined : [],
       }
     );
   }
@@ -263,16 +223,10 @@ export class ApiRequestManager<T> {
           ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
-        return this._httpClient
-          .get<pagination<T> | undefined>(fullURL, {
-            params: new HttpParams({ fromString: query.toString() }),
-          })
-          .pipe(
-            catchError((err: any) => {
-              this.manageError(fullURL, err.message);
-              return throwError(() => err);
-            })
-          );
+        return this._httpClient.get<pagination<T> | undefined>(fullURL, {
+          params: new HttpParams({ fromString: query.toString() }),
+          context: this.createHttpContext('getWithPagination'),
+        });
       },
       defaultValue: undefined,
     });
@@ -299,16 +253,9 @@ export class ApiRequestManager<T> {
           ...(params && { searchParams: JSON.stringify(params) }),
         });
 
-        return this._httpClient
-          .get<number>(fullURL, {
-            params: new HttpParams({ fromString: query.toString() }),
-          })
-          .pipe(
-            catchError((err: any) => {
-              this.manageError(fullURL, err.message);
-              return throwError(() => err);
-            })
-          );
+        return this._httpClient.get<number>(fullURL, {
+          params: new HttpParams({ fromString: query.toString() }),
+        });
       },
       defaultValue: 0,
     });
@@ -335,16 +282,10 @@ export class ApiRequestManager<T> {
 
     return rxResource({
       stream: () =>
-        this._httpClient
-          .delete<boolean>(fullURL, {
-            params: new HttpParams({ fromString: params.toString() }),
-          })
-          .pipe(
-            catchError((err: any) => {
-              this.manageError(fullURL, err.message);
-              return throwError(() => err);
-            })
-          ),
+        this._httpClient.delete<boolean>(fullURL, {
+          params: new HttpParams({ fromString: params.toString() }),
+          context: this.createHttpContext('delete'),
+        }),
       defaultValue: false,
     });
   }
@@ -361,21 +302,6 @@ export class ApiRequestManager<T> {
    */
   protected formatFullURL() {
     return `${this._apiURL}${this._apiURL[this._apiURL.length - 1] === '/' ? '' : '/'}${this.endpoint}`;
-  }
-
-  /**
-   * Logs and throws an error with a formatted message indicating
-   * a failed POST request to the specified URL.
-   *
-   * @param fullURL - The full URL of the API endpoint.
-   * @param message - The error message detailing the failure.
-   * @throws Error - Throws an Error with the formatted message.
-   */
-
-  protected manageError(fullURL: string, message: string) {
-    this._toastManager.showError(message, 'Error');
-    const error = new Error(`POST ${fullURL} failed: ${message}`);
-    throw error;
   }
 
   protected createFormDataFromObject(
@@ -408,4 +334,19 @@ export class ApiRequestManager<T> {
     return formData;
   }
   //#endregion
+
+  private createHttpContext(request: ApiRequestType): HttpContext {
+    const httpContext = new HttpContext();
+
+    if (this.config[request]) {
+      const actionConfig = this.config[request];
+
+      if (actionConfig.notificationConfig) {
+        console.log('notification config', actionConfig.notificationConfig);
+        httpContext.set(HTTP_NOTIFICATION_CONFIG_TOKEN, actionConfig.notificationConfig);
+      }
+    }
+
+    return httpContext;
+  }
 }

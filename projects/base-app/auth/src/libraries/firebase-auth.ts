@@ -213,11 +213,11 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
       // wait for the auth state to be ready
       await this.authStateReady;
 
-      this.toastManager.showSuccess('Authenticated successfully', 'Success');
+      this.toastManager.showSuccess('Authenticated successfully!');
 
       return true;
     } catch (error: any) {
-      this.toastManager.showError('Something went wrong with authentication', 'Error');
+      this.toastManager.showError('Something went wrong authenticating you...');
 
       if ('message' in error) {
         this.error.set(error.message);
