@@ -13,7 +13,7 @@ export interface PolicyFormModel {
 @Injectable({
   providedIn: 'root',
 })
-export class CrudPolicyForm extends BaseForm<PolicyFormModel> {
+export class PolicyForm extends BaseForm<PolicyFormModel> {
   override createForm() {
     return this.fb.group<PolicyFormModel>({
       name: ['', [Validators.required]],
