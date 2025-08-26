@@ -4,7 +4,17 @@
     <bifi-app-form-navigator></bifi-app-form-navigator>
   </aside> -->
   <div>
-    <h3 [bifiAppText]="titleVariant()" class="mb-3">{{ title() }}</h3>
+    <h3
+      [bifiAppText]="titleVariant()"
+      class="mb-3 w-full"
+      [ngClass]="{
+        'text-start': titlePosition() === 'left',
+        'text-center': titlePosition() === 'center',
+        'text-end': titlePosition() === 'right',
+      }"
+    >
+      {{ title() }}
+    </h3>
     <ng-content select="div"></ng-content>
   </div>
 </div>
