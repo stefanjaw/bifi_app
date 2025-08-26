@@ -6,8 +6,13 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout [columns]="userColumns" [data]="users">
-  <ng-template #actions>
-    <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      [routerLink]="['../edit/', row._id]"
+    ></p-button>
     <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
   </ng-template>
 </bifi-app-table-layout>

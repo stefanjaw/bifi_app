@@ -10,11 +10,12 @@ import { CrudUsers } from '../../services/crud-users';
 import { user } from '@avalantec/base-app/core';
 import { userColumns } from '../../libraries/user-columns';
 import { userFilters } from '../../libraries/user-filters';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-users-list',
   providers: [provideResourceManager(CrudUsers)],
-  imports: [TableLayout, ButtonModule, SearchBar],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

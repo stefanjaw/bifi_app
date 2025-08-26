@@ -1,0 +1,25 @@
+<p-dialog
+  header="Select Role"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md"
+>
+  <bifi-app-form-field class="mb-8 min-h-40">
+    <bifi-app-form-label>Role</bifi-app-form-label>
+    <p-select
+      [formControl]="role"
+      [options]="roles()"
+      optionLabel="name"
+      optionValue="_id"
+      [filter]="true"
+    ></p-select>
+    <bifi-app-form-error></bifi-app-form-error>
+  </bifi-app-form-field>
+
+  <bifi-app-form-actions
+    [isSubmitting]="false"
+    [formDisabled]="!role.valid || !role.value"
+    (submitClicked)="handleSubmit()"
+    (cancelClicked)="closeDialog()"
+  ></bifi-app-form-actions>
+</p-dialog>

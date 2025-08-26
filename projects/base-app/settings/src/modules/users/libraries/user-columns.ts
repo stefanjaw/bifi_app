@@ -22,7 +22,7 @@ export const userColumns: tableColumn<user>[] = [
   },
   {
     field: 'roles',
-    title: 'Email',
+    title: 'Roles',
     type: 'text',
     parseField(value: user['roles']) {
       return value.map(role => role.name).join(', ');
