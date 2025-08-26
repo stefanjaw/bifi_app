@@ -1,12 +1,35 @@
 import { pagination } from '../interfaces/pagination';
 import { inject, Injectable, ResourceRef, Signal, signal } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, httpResource } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
-import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import {
+  LIBRARY_CONFIG,
+  maybeSignal,
+  mayBeSignalValue,
+  ToastManager,
+} from '@avalantec/base-app/core';
 import { isFormUploaderFile, isFormUploaderFileArray } from '@avalantec/base-app/form';
+
+/**
+ * Supported base request types for generic API actions.
+ */
+export type BaseApiRequest = 'get' | 'getAll' | 'search' | 'create' | 'update' | 'delete';
+
+// export interface BaseApiServiceActionConfig {
+//   notificationConfig?: NotificationConfig | null;
+//   schema?: z.ZodSchema | null;
+//   cache?: boolean;
+//   ttl?: number;
+//   tags?: string[];
+//   revalidateTags?: string[];
+// }
+
+// export type BaseApiServiceActionsConfig = Partial<
+//   Record<BaseApiRequest, BaseApiServiceActionConfig>
+// >;
 
 @Injectable({
   providedIn: 'root',
@@ -127,6 +150,32 @@ export class ApiRequestManager<T> {
     );
   }
 
+  get({
+    id,
+    searchParams,
+    sort,
+    triggerRequest,
+    specificEndpoint,
+  }: {
+    id: maybeSignal<string>;
+    searchParams?: Signal<Record<string, any>>;
+    sort?: Signal<orderByQuery<T>>;
+    triggerRequest?: Signal<boolean>;
+    specificEndpoint?: maybeSignal<string>;
+  }): ResourceRef<T | null>;
+
+  get({
+    searchParams,
+    sort,
+    triggerRequest,
+    specificEndpoint,
+  }: {
+    searchParams?: maybeSignal<Record<string, any>>;
+    sort?: maybeSignal<orderByQuery<T>>;
+    triggerRequest?: maybeSignal<boolean>;
+    specificEndpoint?: maybeSignal<string>;
+  }): ResourceRef<T[]>;
+
   /**
    * Get data from the api.
    *
@@ -135,49 +184,46 @@ export class ApiRequestManager<T> {
    * @returns A resource ref that resolves to an array of T or an empty array if the request fails.
    */
   get({
+    id,
     searchParams,
     sort,
     triggerRequest,
     specificEndpoint = '',
   }: {
-    searchParams?: Signal<Record<string, any>>;
-    sort?: Signal<orderByQuery<T>>;
-    triggerRequest?: Signal<boolean>;
-    specificEndpoint?: string;
-  }): ResourceRef<T[]> {
-    const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
+    id?: maybeSignal<string>;
+    searchParams?: maybeSignal<Record<string, any>>;
+    sort?: maybeSignal<orderByQuery<T>>;
+    triggerRequest?: maybeSignal<boolean>;
+    specificEndpoint?: maybeSignal<string>;
+  }): ResourceRef<T | T[] | null> {
+    return httpResource(
+      () => {
+        const _id = mayBeSignalValue(id);
+        const _path = mayBeSignalValue(specificEndpoint);
+        const _trigger = mayBeSignalValue(triggerRequest);
 
-    return rxResource({
-      params: () => {
-        const trigger = triggerRequest?.();
-        if (trigger === false) return undefined;
+        if (_trigger === false) {
+          return undefined;
+        }
 
-        const params = searchParams?.();
-        const sorts = sort?.();
-
-        return { params, sorts };
-      },
-      stream: ({ params: requestParams }) => {
-        if (!requestParams) return of([]);
+        const params = mayBeSignalValue(searchParams);
+        const sorts = mayBeSignalValue(sort);
 
         const query = new URLSearchParams({
-          ...(requestParams.params && { searchParams: JSON.stringify(requestParams.params) }),
-          ...(requestParams.sorts && { orderBy: JSON.stringify(requestParams.sorts) }),
+          ...(params && { searchParams: JSON.stringify(params) }),
+          ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
-        return this._httpClient
-          .get<T[]>(fullURL, {
-            params: new HttpParams({ fromString: query.toString() }),
-          })
-          .pipe(
-            catchError((err: any) => {
-              this.manageError(fullURL, err.message);
-              return throwError(() => err);
-            })
-          );
+        return {
+          url: `${this.formatFullURL()}${_path ? '/' + _path : ''}${_id ? `/${_id}` : ''}`,
+          params: new HttpParams({ fromString: query.toString() }),
+          // context:
+        };
       },
-      defaultValue: [],
-    });
+      {
+        defaultValue: id ? null : [],
+      }
+    );
   }
 
   /**

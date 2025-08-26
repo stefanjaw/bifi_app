@@ -46,27 +46,27 @@ export class RolesForm {
   id = input.required<string>();
   policyCols = policyColumns;
 
-  // Role list
-  roleListResource = this.crudRoles.get({
+  roleResource = this.crudRoles.get({
+    id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
-    searchParams: computed(() => ({ _id: this.id })),
   });
 
   // Role to edit
-  role = computed(() => this.roleListResource.value()?.[0]);
+  role = this.roleResource.value;
 
   // Form
   form = this.formService.form;
 
   isUpdate = computed(() => !!this.role());
-  isLoading = this.roleListResource.isLoading;
-  error = this.roleListResource.error;
+  isLoading = this.roleResource.isLoading;
+  error = this.roleResource.error;
   policyData = signal<policy<any, any>[]>([]);
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
     effect(() => {
       const role = this.role();
+      console.log('role ', role);
 
       if (role) {
         this.formService.patchValue({
