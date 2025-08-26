@@ -6,17 +6,18 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { Noir } from 'projects/asset-roaster-demo/src/app/primeng.preset';
 import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
-import { authTokenInterceptor, provideAppAuth } from '@avalantec/base-app/auth';
+import { provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/settings';
 import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/modules/user/user';
 import { provideAssetRoster } from '@avalantec/asset-roaster';
+import { withLibraryInterceptors } from '@avalantec/base-app';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,7 +37,13 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideHttpClient(withFetch(), withInterceptors([authTokenInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withLibraryInterceptors({
+        auth: true,
+        customInterceptors: [],
+      })
+    ),
     provideAssetRoster(),
     provideAppAuth({
       authProvider: {

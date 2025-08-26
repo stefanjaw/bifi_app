@@ -1,56 +1,70 @@
-import { inject, Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { Injectable } from '@angular/core';
+import { toast } from 'ngx-sonner';
+
+interface ToastConfig {
+  id?: string | number;
+  description?: string;
+  duration?: number;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastManager {
-  messageService = inject(MessageService);
-
   /**
    * Show a success toast notification.
    *
-   * @param message The message to be shown inside the toast.
-   * @param title Optional title of the toast.
+   * @param message The success message to be shown inside the toast.
+   * @param config Optional configuration for the toast.
    */
-  showSuccess(message: string, title?: string) {
-    this.messageService.add({ severity: 'success', summary: title, detail: message });
+  showSuccess(message: string, config?: ToastConfig) {
+    return toast.success(message, config);
+  }
+
+  /**
+   * Show a loading toast notification.
+   *
+   * @param message The message to be shown inside the toast.
+   * @param config Optional configuration for the toast.
+   */
+  showLoading(message: string, config?: ToastConfig) {
+    return toast.loading(message, config);
   }
 
   /**
    * Show an error toast notification.
    *
    * @param message The error message to be shown inside the toast.
-   * @param title Optional title of the toast.
+   * @param config Optional configuration for the toast.
    */
-  showError(message: string, title?: string) {
-    this.messageService.add({ severity: 'error', summary: title, detail: message });
+  showError(message: string, config?: ToastConfig) {
+    return toast.error(message, config);
   }
 
   /**
-   * Show an informational toast notification.
+   * Show an information toast notification.
    *
-   * @param message The informational message to be shown inside the toast.
-   * @param title Optional title of the toast.
+   * @param message The message to be shown inside the toast.
+   * @param config Optional configuration for the toast.
    */
-  showInfo(message: string, title?: string) {
-    this.messageService.add({ severity: 'info', summary: title, detail: message });
+  showInfo(message: string, config?: ToastConfig) {
+    return toast.info(message, config);
   }
 
   /**
    * Show a warning toast notification.
    *
    * @param message The warning message to be shown inside the toast.
-   * @param title Optional title of the toast.
+   * @param config Optional configuration for the toast.
    */
-  showWarning(message: string, title?: string) {
-    this.messageService.add({ severity: 'warn', summary: title, detail: message });
+  showWarning(message: string, config?: ToastConfig) {
+    return toast.warning(message, config);
   }
 
   /**
    * Clear all toast notifications.
    */
   clear() {
-    this.messageService.clear();
+    // Clear all toast notifications
   }
 }

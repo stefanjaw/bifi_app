@@ -7,7 +7,10 @@ import { ApiRequestManager } from '@avalantec/base-app/resource';
 })
 export class CrudRoles extends ApiRequestManager<role> {
   constructor() {
-    super();
-    this.endpoint = 'roles';
+    super({
+      endpoint: 'roles',
+      elementName: 'role',
+      config: {},
+    });
   }
 }

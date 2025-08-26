@@ -7,7 +7,7 @@ import {
   FormModelRawValue,
 } from '../interfaces/form-helpers';
 import { ControlsOf } from '../interfaces/typed-form-builder';
-import { getFormGroupDirtyValue } from './dirty-utils';
+import { getFormGroupDirtyValue, markAsDirty } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
 import { Subject } from 'rxjs';
 
@@ -91,6 +91,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    */
   reset() {
     this.form.reset();
+    this.resetDirtyState();
   }
 
   /**
@@ -122,7 +123,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
   }
 
   resetDirtyState() {
-    this.form.markAsPristine();
+    markAsDirty({ group: this.form, dirtyValue: false });
   }
 
   getValueState(): FormValueState<TModel> {

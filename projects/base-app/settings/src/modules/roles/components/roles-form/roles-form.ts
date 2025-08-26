@@ -96,7 +96,6 @@ export class RolesForm {
       next: () => {
         this.isSubmitLoading.set(false);
 
-        this.toastManager.showSuccess('Role created successfully');
         this.formService.reset();
         this.goBack();
       },
