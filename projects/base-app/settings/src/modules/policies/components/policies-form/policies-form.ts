@@ -19,7 +19,7 @@ import { Button } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { CrudPolicyForm, PolicyFormModel } from '../../services/crud-policy-form';
+import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
@@ -28,7 +28,7 @@ import { CrudPolicyForm, PolicyFormModel } from '../../services/crud-policy-form
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoliciesForm implements OnInit {
-  protected formService = inject(CrudPolicyForm);
+  protected formService = inject(PolicyForm);
   private policiesService = inject(CrudPolicies);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);

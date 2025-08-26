@@ -4,4 +4,4 @@ export * from './libraries/policy-columns';
 export * from './libraries/policy-filters';
 export * from './routes/policy-routes';
 export * from './services/crud-policies';
-export * from './services/crud-policy-form';
+export * from './services/policy-form';
