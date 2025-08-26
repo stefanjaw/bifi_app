@@ -14,11 +14,11 @@ export const POLICY_ROUTES: Routes = [
   {
     path: 'create',
     loadComponent: () =>
-      import('../components/policy-form-dialog/policy-form-dialog').then(m => m.PolicyFormDialog),
+      import('../components/policies-form/policies-form').then(m => m.PoliciesForm),
   },
   {
     path: 'edit/:id',
     loadComponent: () =>
-      import('../components/policy-form-dialog/policy-form-dialog').then(m => m.PolicyFormDialog),
+      import('../components/policies-form/policies-form').then(m => m.PoliciesForm),
   },
 ];

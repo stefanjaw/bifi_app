@@ -24,10 +24,10 @@ import { CrudPolicyForm, PolicyFormModel } from '../../services/crud-policy-form
 @Component({
   selector: 'bifi-app-policy-form-dialog',
   imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
-  templateUrl: './policy-form-dialog.html',
+  templateUrl: './policies-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PolicyFormDialog implements OnInit {
+export class PoliciesForm implements OnInit {
   protected formService = inject(CrudPolicyForm);
   private policiesService = inject(CrudPolicies);
   private toastManager = inject(ToastManager);
