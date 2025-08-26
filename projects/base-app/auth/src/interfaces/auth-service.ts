@@ -1,9 +1,14 @@
 import { computed, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Session } from './session-user';
-import { resource, user, policyAction, condition } from '@avalantec/base-app/core';
-import { maybeSignal } from '@avalantec/base-app/core/src/interfaces/signal-utils';
-import { mayBeSignalValue } from '@avalantec/base-app/core/src/libraries/maybe-signal-await';
+import {
+  resource,
+  user,
+  policyAction,
+  condition,
+  mayBeSignalValue,
+} from '@avalantec/base-app/core';
+import { maybeSignal } from '@avalantec/base-app/core';
 
 export abstract class IAuthService<
   TUser extends user,
