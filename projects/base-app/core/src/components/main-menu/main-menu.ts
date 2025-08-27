@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MainMenuManager } from '../../services/main-menu-manager';
+import { MainMenuManager } from '@avalantec/base-app';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

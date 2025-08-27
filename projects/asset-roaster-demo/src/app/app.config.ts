@@ -17,7 +17,7 @@ import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/settings';
 import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster/modules/user/user';
 import { provideAssetRoster } from '@avalantec/asset-roaster';
-import { withLibraryInterceptors } from '@avalantec/base-app';
+import { withLibraryInterceptors } from '@avalantec/base-app/routing';
 
 export const appConfig: ApplicationConfig = {
   providers: [

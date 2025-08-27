@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { BaseMenuManager } from '../libraries/base-menu-manager';
+import { BaseMenuManager } from '@avalantec/base-app/routing';
+import { BASE_APP_ROUTES } from '@avalantec/base-app';
 import { MenuItem } from 'primeng/api';
 
 @Injectable({
@@ -15,6 +16,6 @@ export class MainMenuManager extends BaseMenuManager {
       },
     ]);
 
-    super(menuItems);
+    super(menuItems, BASE_APP_ROUTES);
   }
 }
