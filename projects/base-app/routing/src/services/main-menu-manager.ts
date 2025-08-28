@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { BaseMenuManager } from '../libraries/base-menu-manager';
 import { MenuItem } from 'primeng/api';
+import { BaseMenuManager } from '../libraries/base-menu-manager';
+import { BASE_APP_ROUTES } from '../routing/base-app.routes';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,6 @@ export class MainMenuManager extends BaseMenuManager {
       },
     ]);
 
-    super(menuItems);
+    super(menuItems, BASE_APP_ROUTES);
   }
 }

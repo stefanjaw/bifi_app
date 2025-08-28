@@ -1,4 +1,3 @@
-export * from './src/components/main-menu/main-menu';
 export * from './src/directives/icon';
 export * from './src/directives/structural-conditional';
 export * from './src/directives/text';
@@ -9,11 +8,9 @@ export * from './src/interfaces/signal-utils';
 export * from './src/interfaces/ts-helpers';
 export * from './src/interfaces/user';
 export * from './src/libraries/base-dialog';
-export * from './src/libraries/base-menu-manager';
 export * from './src/libraries/debounce-signal';
 export * from './src/libraries/library-config-token';
 export * from './src/libraries/maybe-signal-await';
 export * from './src/libraries/object-utils';
-export * from './src/services/main-menu-manager';
 export * from './src/services/sidenav-manager';
 export * from './src/services/toast-manager';

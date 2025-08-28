@@ -1,6 +1,6 @@
 import { authGuard } from '@avalantec/base-app/auth';
 import { Routes } from '@angular/router';
-import { SettingsMainMenu } from '@avalantec/base-app/settings';
+import { SettingsMainMenu } from '../components/settings-main-menu/settings-main-menu';
 
 export const SETTINGS_ROUTES: Routes = [
   {

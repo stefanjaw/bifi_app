@@ -1,9 +1,9 @@
 import { Component, effect, inject, model, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SettingsMenuManager } from '../../services/settings-menu-manager';
 import { SidenavManager } from '@avalantec/base-app/core';
 import { DrawerModule } from 'primeng/drawer';
 import { MenuModule } from 'primeng/menu';
+import { SettingsMenuManager } from '../../services/settings-menu-manager';
 
 @Component({
   selector: 'bifi-app-settings-main-menu',

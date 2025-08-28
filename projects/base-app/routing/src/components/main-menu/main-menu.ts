@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MainMenuManager } from '../../services/main-menu-manager';
 import { ButtonModule } from 'primeng/button';
+import { MainMenuManager } from '../../services/main-menu-manager';
 
 @Component({
   selector: 'bifi-app-main-menu',
