@@ -1,4 +1,3 @@
-export * from './src/components/main-menu/main-menu';
 export * from './src/directives/icon';
 export * from './src/directives/structural-conditional';
 export * from './src/directives/text';

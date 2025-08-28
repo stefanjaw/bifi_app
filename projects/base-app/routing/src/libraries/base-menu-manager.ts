@@ -19,15 +19,39 @@ export class BaseMenuManager {
   /**
    * Adds a new item to the menu. The new item should include a routerLink to define the route path.
    * @param newItem The new item to be added. This should include a routerLink to define the route path.
-   * @param routes The routes to be added for the new item
-   * @param route The route to be added for the new item. If not provided, the routerLink will be used to define the route path.
+   * @param routes The routes to be added for the new item. If not provided, the route will be created
+   *               using the routerLink of the new item.
+   * @param route The route to be added for the new item. If not provided, the routerLink of the new item
+   *              will be used to create the route.
    */
-  addItem(newItem: MenuItem, routes: Routes, route: Route | undefined = undefined) {
+  addItem({
+    newItem,
+    routes = undefined,
+    route = undefined,
+  }: {
+    /**
+     * The new item to be added. This should include a routerLink to define the route path.
+     */
+    newItem: MenuItem;
+    /**
+     * The routes to be added for the new item. If not provided, the route will be created
+     * using the routerLink of the new item.
+     */
+    routes?: Routes;
+    /**
+     * The route to be added for the new item. If not provided, the routerLink of the new item
+     * will be used to create the route.
+     */
+    route?: Route;
+  }) {
     // Update the menu items by adding the new item
     this._menuItems.update(items => [...items, newItem]);
 
-    // Update the routes by adding the routes for the new item
-    if (!route) {
+    // Add the routes for the new item
+    if (!routes && !route) throw new Error('Either routes or route must be provided');
+
+    if (!route && routes) {
+      // Create a new route with the path from the new item
       const newPath = Array.isArray(newItem.routerLink)
         ? newItem.routerLink.join('/')
         : newItem.routerLink;
@@ -37,7 +61,7 @@ export class BaseMenuManager {
         path: newPath.charAt(0) === '/' ? newPath.slice(1) : newPath,
         children: routes,
       });
-    } else {
+    } else if (route && !routes) {
       // Use the route provided
       this._routes.push(route);
     }
@@ -77,11 +101,13 @@ export class BaseMenuManager {
    * @param newItems An array of objects with a `menuItem` property representing the item to be added
    * and a `routes` property representing the routes to be added for the item
    */
-  addItems(newItems: { menuItem: MenuItem; routes: Routes; route?: Route }[]) {
+  addItems(newItems: { menuItem: MenuItem; routes?: Routes; route?: Route }[]) {
     /**
      * For each item in the array, call `addItem` with the item and the routes
      */
-    newItems.forEach(item => this.addItem(item.menuItem, item.routes, item.route));
+    newItems.forEach(item =>
+      this.addItem({ newItem: item.menuItem, routes: item.routes, route: item.route })
+    );
   }
 
   /**

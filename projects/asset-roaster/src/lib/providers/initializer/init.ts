@@ -2,9 +2,14 @@ import { inject } from '@angular/core';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
 import { ResourceList } from '@avalantec/base-app/settings';
 import { PrimeIcons } from 'primeng/api';
-import { MAINTENANCE_WINDOWS_ROUTES } from '../../modules/maintenance-windows/routes/maintenance-windows.routes';
-import { MainMenuManager, SettingsMenuManager } from '@avalantec/base-app/src';
+import {
+  MainMenuManager,
+  SettingsMainMenu,
+  SettingsMenuManager,
+} from '@avalantec/base-app/routing';
 import { authGuard } from '@avalantec/base-app/auth';
+import { MAINTENANCE_WINDOWS_ROUTES } from '../../modules';
+import { SidenavManager } from '@avalantec/base-app/core';
 
 export function initializeAssetRoster() {
   initializeMenu();
@@ -14,29 +19,31 @@ export function initializeAssetRoster() {
 function initializeMenu() {
   const mainMenuManager = inject(MainMenuManager);
   const settingsMenuManager = inject(SettingsMenuManager);
+  const sidenavManager = inject(SidenavManager);
 
-  mainMenuManager.addItem(
-    {
+  mainMenuManager.addItem({
+    newItem: {
       icon: PrimeIcons.OBJECTS_COLUMN,
       routerLink: ['/asset-roaster'],
       label: 'Asset Roaster',
     },
-    ASSET_ROASTER_ROUTES
-  );
+    routes: ASSET_ROASTER_ROUTES,
+  });
 
-  settingsMenuManager.addItem(
-    {
+  settingsMenuManager.addItem({
+    newItem: {
       icon: PrimeIcons.CLOCK,
-      routerLink: ['/maintenance-windows'],
+      routerLink: ['/settings/maintenance-windows'],
       label: 'Maintenance Windows',
+      command: () => sidenavManager.closeSidenav(),
     },
-    MAINTENANCE_WINDOWS_ROUTES,
-    {
+    route: {
       path: 'maintenance-windows',
       canActivate: [authGuard],
-      loadComponent: () => import('@avalantec/base-app/settings').then(m => m.SettingsMainMenu),
-    }
-  );
+      component: SettingsMainMenu,
+      children: MAINTENANCE_WINDOWS_ROUTES,
+    },
+  });
 }
 
 function initializeResources() {
