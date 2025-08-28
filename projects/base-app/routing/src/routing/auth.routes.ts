@@ -1,5 +1,5 @@
 import type { Routes } from '@angular/router';
-import { noAuthGuard } from '../../auth/src/guards/no-auth-guard';
+import { noAuthGuard } from '@avalantec/base-app/auth';
 
 export const AUTH_ROUTES: Routes = [
   {
@@ -10,15 +10,13 @@ export const AUTH_ROUTES: Routes = [
   {
     path: 'signin',
     canActivate: [noAuthGuard],
-    loadComponent: () =>
-      import('../../auth/src/features/auth-page/auth-page').then(m => m.AuthPage),
+    loadComponent: () => import('@avalantec/base-app/auth').then(m => m.AuthPage),
     data: { isLogin: true },
   },
   {
     path: 'signup',
     canActivate: [noAuthGuard],
-    loadComponent: () =>
-      import('../../auth/src/features/auth-page/auth-page').then(m => m.AuthPage),
+    loadComponent: () => import('@avalantec/base-app/auth').then(m => m.AuthPage),
     data: { isLogin: false },
   },
 ];

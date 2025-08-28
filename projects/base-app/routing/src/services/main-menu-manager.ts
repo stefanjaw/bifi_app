@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { BaseMenuManager } from '@avalantec/base-app/routing';
-import { BASE_APP_ROUTES } from '@avalantec/base-app';
 import { MenuItem } from 'primeng/api';
+import { BaseMenuManager } from '../libraries/base-menu-manager';
+import { BASE_APP_ROUTES } from '../routing/base-app.routes';
 
 @Injectable({
   providedIn: 'root',

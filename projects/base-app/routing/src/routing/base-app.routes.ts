@@ -7,15 +7,15 @@ export const BASE_APP_ROUTES: Routes = [
   {
     path: 'home',
     canActivate: [authGuard],
-    loadComponent: () => import('@avalantec/base-app/core').then(m => m.MainMenu),
+    loadComponent: () => import('../components/main-menu/main-menu').then(m => m.MainMenu),
   },
   {
     path: 'settings',
     canActivate: [authGuard],
-    loadChildren: () => import('../routes/settings.routes').then(m => m.SETTINGS_ROUTES),
+    loadChildren: () => import('./settings.routes').then(m => m.SETTINGS_ROUTES),
   },
   {
     path: 'auth',
-    loadChildren: () => import('../routes/auth.routes').then(m => m.AUTH_ROUTES),
+    loadChildren: () => import('./auth.routes').then(m => m.AUTH_ROUTES),
   },
 ];
