@@ -17,7 +17,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { policyColumns } from '../../../policies';
 import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { policy, ToastManager } from '@avalantec/base-app/core';
+import { policy } from '@avalantec/base-app/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SelectPolicyDialog } from './select-policy-dialog/select-policy-dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -41,7 +41,6 @@ export class RolesForm {
   private readonly crudRoles = inject(CrudRoles);
   private readonly formService = inject(RoleForm);
   private readonly destroy$ = inject(DestroyRef);
-  private readonly toastManager = inject(ToastManager);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 

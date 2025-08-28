@@ -9,7 +9,7 @@ import { CrudMaintenanceWindows } from '../../services/crud-maintenance-windows'
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { maintenanceWindow } from '../../interfaces/maintenance-window';
-import { maintenanceWindowColumns } from '../../libraries/maintenace-window-columns';
+import { maintenanceWindowColumns } from '../../libraries/maintenance-window-columns';
 import { maintenanceWindowFilters } from '../../libraries/maintenance-window-filters';
 
 @Component({

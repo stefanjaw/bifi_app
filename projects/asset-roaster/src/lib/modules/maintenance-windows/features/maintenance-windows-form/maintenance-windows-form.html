@@ -1,1 +1,74 @@
-<p>maintenance-windows-form works!</p>,
+<bifi-app-form-layout
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Maintenance Window"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+        <section class="w-xl grid gap-3 sm:grid-cols-2">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="Name" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </section>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Window Information" id="window-info" [ordinal]="2">
+        <section class="w-xl grid gap-3 sm:grid-cols-1">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Days before</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="daysBefore"
+              type="number"
+              placeholder="Days before"
+              min="1"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Days after</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="daysAfter"
+              type="number"
+              placeholder="Days after"
+              min="1"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Recurrency</bifi-app-form-label>
+            <p-select
+              formControlName="recurrency"
+              [options]="recurrencyOptions"
+              optionValue="value"
+              optionLabel="label"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </section>
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
