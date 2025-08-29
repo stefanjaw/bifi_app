@@ -16,7 +16,7 @@ export class DocumentsSection {
   private fileResolver = inject(FileResolver);
 
   isEditMode = input.required<boolean>();
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 
   handleAddDocument() {
     this.productMaintenanceContext.handleAddDocument();

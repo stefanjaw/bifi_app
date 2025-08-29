@@ -35,7 +35,7 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
   form = this.formService.form;
 
   // inputs
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 
   // state
   submitLoading = signal<boolean>(false);

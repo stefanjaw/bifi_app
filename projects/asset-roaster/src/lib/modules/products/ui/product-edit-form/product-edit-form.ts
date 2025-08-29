@@ -41,7 +41,7 @@ import { FormModule } from '@avalantec/base-app/form';
 export class ProductEditForm {
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
   activityHistories = input.required<activityHistory[]>();
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
