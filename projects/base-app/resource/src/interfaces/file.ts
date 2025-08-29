@@ -3,4 +3,5 @@ export interface file {
   name: string;
   mimeType?: string;
   size?: number;
+  fileMetadata?: Record<string, unknown>;
 }

@@ -30,3 +30,9 @@
   maintenanceType="preventive-maintenance"
   #finishPMDialog
 ></bifi-app-product-finish-maintenance-form-dialog>
+
+<!-- Document upload -->
+<bifi-app-product-document-dialog
+  #documentDialog
+  (submitted)="handleDocumentAdded($event)"
+></bifi-app-product-document-dialog>

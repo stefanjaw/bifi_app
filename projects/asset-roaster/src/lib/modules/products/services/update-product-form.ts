@@ -16,6 +16,10 @@ interface UpdateProductFormModel {
   warrantyDate: Date | null;
   remarks: string | null;
   photo: FormUploaderFile[];
+  attachments: FormUploaderFile[];
+  attachmentsMetadata: {
+    descriptor: string;
+  }[];
   maintenanceWindowIds: string | null;
   maintenanceDate: Date | null;
 }
@@ -40,6 +44,19 @@ export class UpdateProductForm extends BaseForm<UpdateProductFormModel> {
         template: {
           id: [''],
           file: [null!],
+        },
+        formArrayElements: [],
+      },
+      attachments: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
+      attachmentsMetadata: {
+        template: {
+          descriptor: [''],
         },
         formArrayElements: [],
       },

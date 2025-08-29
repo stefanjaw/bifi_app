@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { firstValueFrom } from 'rxjs';
+import { file } from '../interfaces/file';
 
 type ResolveFileProps =
   | {
@@ -9,6 +10,12 @@ type ResolveFileProps =
     }
   | {
       url: string;
+    }
+  | {
+      file: File;
+    }
+  | {
+      metadata: file;
     };
 
 @Injectable({
@@ -27,11 +34,15 @@ export class FileResolver {
    * @param props The ResolveFileProps object with either 'id' or 'url' properties.
    * @returns The URL to the file.
    */
-  private resolveUrl(props: ResolveFileProps) {
+  private resolveUrl(props: ResolveFileProps): string {
     if ('id' in props) {
       return `${this.libraryConfig.apiURL}/files/${props.id}`;
-    } else {
+    } else if ('url' in props) {
       return props.url;
+    } else if ('file' in props) {
+      return URL.createObjectURL(props.file);
+    } else {
+      return this.resolveUrl({ id: props.metadata.fileId });
     }
   }
 
@@ -44,10 +55,14 @@ export class FileResolver {
    * @returns A Promise that resolves to a File object, or null if there is an error.
    */
   async resolveFile(props: ResolveFileProps): Promise<File | null> {
+    if ('file' in props) {
+      return props.file;
+    }
+
     const url = this.resolveUrl(props);
     try {
       const blob = await firstValueFrom(this.httpClient.get(url, { responseType: 'blob' }));
-      const fileName = url.split('/').pop() || 'image';
+      const fileName = 'metadata' in props ? props.metadata.name : url.split('/').pop() || 'image';
       const file = new File([blob], fileName, { type: blob.type });
 
       return file;

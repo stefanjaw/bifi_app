@@ -36,6 +36,8 @@ import {
   FilterManager,
   orderByQuery,
 } from '@avalantec/base-app/resource';
+import { ProductAddDocumentFormDialog } from '../product-document-dialog/product-document-dialog';
+import { addDocumentFormModel } from '../../services/add-document-form';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
@@ -45,6 +47,7 @@ import {
     ProductDecomissioningFormDialog,
     ProductMaintenanceFormDialog,
     ProductFinishMaintenanceFormDialog,
+    ProductAddDocumentFormDialog,
   ],
   templateUrl: './product-maintenance.html',
 })
@@ -138,6 +141,7 @@ export class ProductMaintenance {
   serviceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
   finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishServiceDialog');
   finishPMDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishPMDialog');
+  documentDialog = viewChild<ProductAddDocumentFormDialog>('documentDialog');
 
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
@@ -279,8 +283,36 @@ export class ProductMaintenance {
     this.finishPMDialog()?.openDialog();
   }
 
+  /**
+   * Opens the document upload dialog.
+   *
+   * This dialog is used to add a new document to the current product.
+   * It is only accessible from the product maintenance page.
+   */
   handleAddDocument() {
-    console.log('Adding document');
+    this.documentDialog()?.openDialog();
+  }
+
+  /**
+   * Handles the document upload dialog submit event.
+   *
+   * This method is called after the user has successfully uploaded a document.
+   * It adds the uploaded file to the attachments array and adds the descriptor
+   * to the descriptor array.
+   *
+   * @param data The form data from the document upload dialog.
+   */
+  handleDocumentAdded(data: addDocumentFormModel) {
+    const attachmentsControl = this.formService.form.controls.attachments;
+    const metadatasControl = this.formService.form.controls.attachmentsMetadata;
+
+    //  Add the uploaded file to the attachments array
+    attachmentsControl.pushItem(data.files[0]);
+
+    // Add the descriptor to the descriptor array
+    metadatasControl.pushItem({
+      descriptor: data.descriptor,
+    });
   }
 
   /**
@@ -349,6 +381,17 @@ export class ProductMaintenance {
         })
       : null;
 
+    const parsedDocuments = await Promise.all(
+      product.attachments?.map(async file => ({
+        id: file.fileId,
+        file: (await this.fileResolverService.resolveFile({ metadata: file }))!,
+      })) || []
+    );
+
+    const parsedMetadata = product.attachments?.map(doc => ({
+      descriptor: (doc.fileMetadata?.['descriptor'] as string) || '',
+    }));
+
     this.formService.patchValue({
       condition: product.condition,
       currentPrice: product.currentPrice,
@@ -374,6 +417,8 @@ export class ProductMaintenance {
       }) || {
         photo: [],
       }),
+      attachments: parsedDocuments,
+      attachmentsMetadata: parsedMetadata,
     });
 
     this.formService.form.markAsPristine();

@@ -6,6 +6,8 @@ import { productComissionnig } from '../../product-comissioning';
 import { contact } from '@avalantec/base-app/settings';
 import { file } from '@avalantec/base-app/resource';
 
+export type productAttachmentDescriptor = string;
+
 export interface product {
   _id: string;
   productTypeIds: productType[];
