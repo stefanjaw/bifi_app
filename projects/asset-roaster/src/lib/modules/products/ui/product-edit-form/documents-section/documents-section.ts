@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 import { FormModule, FormUploaderFile } from '@avalantec/base-app/form';
 import { FileResolver } from '@avalantec/base-app/resource';
-import { UpdateProductForm } from 'projects/asset-roaster/src/public-api';
+import { UpdateProductForm } from '../../../services/update-product-form';
 
 @Component({
   selector: 'bifi-app-documents-section',
