@@ -1,12 +1,39 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
+import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { firstValueFrom } from 'rxjs';
+
+type ResolveFileProps =
+  | {
+      id: string;
+    }
+  | {
+      url: string;
+    };
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileResolver {
-  private authService = inject(LIB_AUTH_SERVICE);
+  private libraryConfig = inject(LIBRARY_CONFIG);
+  private httpClient = inject(HttpClient);
+
+  /**
+   * Given a ResolveFileProps object, returns the URL to the file.
+   *
+   * If the object has an 'id' property, it returns the URL to the file resource
+   * with the given id. Otherwise, it returns the value of the 'url' property.
+   *
+   * @param props The ResolveFileProps object with either 'id' or 'url' properties.
+   * @returns The URL to the file.
+   */
+  private resolveUrl(props: ResolveFileProps) {
+    if ('id' in props) {
+      return `${this.libraryConfig.apiURL}/files/${props.id}`;
+    } else {
+      return props.url;
+    }
+  }
 
   /**
    * Given a URL, downloads the file and converts it to a File object.
@@ -16,16 +43,10 @@ export class FileResolver {
    * @param url The URL to convert to a File object.
    * @returns A Promise that resolves to a File object, or null if there is an error.
    */
-  async resolveFile(url: string): Promise<File | null> {
+  async resolveFile(props: ResolveFileProps): Promise<File | null> {
+    const url = this.resolveUrl(props);
     try {
-      const token = await firstValueFrom(this.authService.idToken$);
-
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const blob = await response.blob();
+      const blob = await firstValueFrom(this.httpClient.get(url, { responseType: 'blob' }));
       const fileName = url.split('/').pop() || 'image';
       const file = new File([blob], fileName, { type: blob.type });
 
@@ -44,14 +65,32 @@ export class FileResolver {
    * @param urls The array of URLs to convert to File objects.
    * @returns A Promise that resolves to an array of File objects.
    */
-  async resolveFiles(urls: string[]): Promise<File[]> {
+  async resolveFiles(props: ResolveFileProps[]): Promise<File[]> {
     const files = [];
-    for (const url of urls) {
-      const file = await this.resolveFile(url);
+    for (const prop of props) {
+      const file = await this.resolveFile(prop);
       if (file) {
         files.push(file);
       }
     }
     return files;
+  }
+
+  /**
+   * Downloads a file from the given URL and opens it in a new browser tab.
+   *
+   * If there is an error downloading the file, throws an error.
+   *
+   * @param url The URL of the file to download.
+   * @returns A Promise that resolves when the file is downloaded and opened in a new browser tab.
+   */
+  async downloadFileInBrowser(props: ResolveFileProps) {
+    const file = await this.resolveFile(props);
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      window.open(blobUrl, '_blank');
+    } else {
+      throw new Error('Error downloading file');
+    }
   }
 }

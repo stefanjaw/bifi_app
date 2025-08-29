@@ -29,5 +29,6 @@ export interface product {
   productComission: productComissionnig;
   productMaintenances: productMaintenance[];
   documents?: file[];
+  attachments: file[];
   active: boolean;
 }
