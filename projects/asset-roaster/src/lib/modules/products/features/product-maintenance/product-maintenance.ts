@@ -8,7 +8,7 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import { ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ProductComissioningFormDialog,
@@ -52,7 +52,6 @@ export class ProductMaintenance {
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
-  private config = inject(LIBRARY_CONFIG);
   private fileResolverService = inject(FileResolver);
   private filterManager = inject(FilterManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
@@ -342,7 +341,9 @@ export class ProductMaintenance {
     }
 
     const parsedImage = product.photo
-      ? await this.fileResolverService.resolveFile(`${this.config.apiURL}files/${product.photo}`)
+      ? await this.fileResolverService.resolveFile({
+          id: product.photo,
+        })
       : null;
 
     this.formService.patchValue({

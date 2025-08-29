@@ -28,7 +28,6 @@ export interface product {
   maxMaintenanceDate: string;
   productComission: productComissionnig;
   productMaintenances: productMaintenance[];
-  documents?: file[];
-  attachments: file[];
+  attachments?: file[];
   active: boolean;
 }
