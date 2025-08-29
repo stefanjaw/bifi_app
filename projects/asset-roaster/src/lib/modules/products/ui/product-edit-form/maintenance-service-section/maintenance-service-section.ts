@@ -34,7 +34,7 @@ dayjs.extend(isBetween);
 export class MaintenanceServiceSection {
   // inputs
   isEditMode = input.required<boolean>();
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 
   // services
   protected formService = inject(UpdateProductForm);

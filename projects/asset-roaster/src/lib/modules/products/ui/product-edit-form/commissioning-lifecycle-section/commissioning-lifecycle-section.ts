@@ -13,7 +13,7 @@ import { FormModule } from '@avalantec/base-app/form';
 export class CommissioningLifecycleSection {
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
   isEditMode = input.required<boolean>();
 
   handleOpenComissionDialog() {

@@ -11,5 +11,5 @@ import { Icon } from '@avalantec/base-app/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusBannerSection {
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 }

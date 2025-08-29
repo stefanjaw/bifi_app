@@ -1,5 +1,14 @@
-import { Component, computed, effect, inject, DestroyRef, signal, viewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  DestroyRef,
+  signal,
+  viewChild,
+  input,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { CrudProducts } from '../../services/crud-products';
 import { UpdateProductForm } from '../../services/update-product-form';
 import { ProductEditForm } from '../../ui/product-edit-form/product-edit-form';
@@ -8,7 +17,7 @@ import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/settings';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
-import { LIBRARY_CONFIG, ToastManager } from '@avalantec/base-app/core';
+import { ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ProductComissioningFormDialog,
@@ -27,6 +36,8 @@ import {
   FilterManager,
   orderByQuery,
 } from '@avalantec/base-app/resource';
+import { ProductAddDocumentFormDialog } from '../product-document-dialog/product-document-dialog';
+import { addDocumentFormModel } from '../../services/add-document-form';
 
 @Component({
   selector: 'bifi-app-product-maintenance',
@@ -36,6 +47,7 @@ import {
     ProductDecomissioningFormDialog,
     ProductMaintenanceFormDialog,
     ProductFinishMaintenanceFormDialog,
+    ProductAddDocumentFormDialog,
   ],
   templateUrl: './product-maintenance.html',
 })
@@ -49,17 +61,19 @@ export class ProductMaintenance {
   private productMaintenancesService = inject(CrudProductMaintenances);
   private activityHistoriesService = inject(CrudActivityHistories);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
-  private config = inject(LIBRARY_CONFIG);
   private fileResolverService = inject(FileResolver);
   private filterManager = inject(FilterManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   // Coming in route as param
-  id = signal({ _id: this.route.snapshot.paramMap.get('id') ?? '' });
-  products = this.productsService.get({ searchParams: this.id });
+  id = input.required<string>();
+
+  productResource = this.productsService.get({
+    id: this.id,
+    triggerRequest: computed(() => this.id() !== undefined),
+  });
 
   // Data
   productTypes = this.productTypesService.get({});
@@ -68,8 +82,8 @@ export class ProductMaintenance {
   maintenaceWindows = this.maintenaceWindowsService.get({});
 
   // Histories
-  private activityHistoryQuery = signal(
-    this.filterManager.getFilterObjectUtil([
+  private activityHistoryQuery = computed(() => {
+    return this.filterManager.getFilterObjectUtil([
       {
         operator: 'or',
         filters: [
@@ -77,17 +91,18 @@ export class ProductMaintenance {
             operator: 'and',
             filters: [
               { field: 'model', operator: '==', value: 'Product' },
-              { field: 'modelId', operator: '==', value: this.id()._id },
+              { field: 'modelId', operator: '==', value: this.id() },
             ],
           },
           {
             operator: 'and',
-            filters: [{ field: 'metadata.productId', operator: '==', value: this.id()._id }],
+            filters: [{ field: 'metadata.productId', operator: '==', value: this.id() }],
           },
         ],
       },
-    ])
-  );
+    ]);
+  });
+
   private activityHistoryOrder = signal<orderByQuery<activityHistory>>([
     { field: 'performDate', order: 'desc' },
   ]);
@@ -100,7 +115,7 @@ export class ProductMaintenance {
   // state
   loading = computed(() => {
     return (
-      this.products.isLoading() ||
+      this.productResource.isLoading() ||
       this.productTypes.isLoading() ||
       this.contacts.isLoading() ||
       this.rooms.isLoading() ||
@@ -112,17 +127,7 @@ export class ProductMaintenance {
   submitLoading = signal(false);
 
   // get first product and store it
-  product = computed(() => {
-    if (
-      this.products.isLoading() ||
-      !this.products.hasValue() ||
-      this.products.value().length === 0
-    )
-      return null;
-
-    return this.products.value()[0];
-  });
-
+  product = this.productResource.value;
   // State
   isEditMode = signal(false);
 
@@ -136,6 +141,7 @@ export class ProductMaintenance {
   serviceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
   finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishServiceDialog');
   finishPMDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishPMDialog');
+  documentDialog = viewChild<ProductAddDocumentFormDialog>('documentDialog');
 
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
@@ -277,8 +283,36 @@ export class ProductMaintenance {
     this.finishPMDialog()?.openDialog();
   }
 
+  /**
+   * Opens the document upload dialog.
+   *
+   * This dialog is used to add a new document to the current product.
+   * It is only accessible from the product maintenance page.
+   */
   handleAddDocument() {
-    console.log('Adding document');
+    this.documentDialog()?.openDialog();
+  }
+
+  /**
+   * Handles the document upload dialog submit event.
+   *
+   * This method is called after the user has successfully uploaded a document.
+   * It adds the uploaded file to the attachments array and adds the descriptor
+   * to the descriptor array.
+   *
+   * @param data The form data from the document upload dialog.
+   */
+  handleDocumentAdded(data: addDocumentFormModel) {
+    const attachmentsControl = this.formService.form.controls.attachments;
+    const metadatasControl = this.formService.form.controls.attachmentsMetadata;
+
+    //  Add the uploaded file to the attachments array
+    attachmentsControl.pushItem(data.files[0]);
+
+    // Add the descriptor to the descriptor array
+    metadatasControl.pushItem({
+      descriptor: data.descriptor,
+    });
   }
 
   /**
@@ -324,7 +358,7 @@ export class ProductMaintenance {
    * changes need to be reflected in the component.
    */
   handleReloadProduct() {
-    this.products.reload();
+    this.productResource.reload();
     this.activityHistories.reload();
   }
 
@@ -335,15 +369,28 @@ export class ProductMaintenance {
    *
    * @param product The current state of the product.
    */
-  private async resetValueToInitialState(product: product | null) {
+  private async resetValueToInitialState(product: product | undefined) {
     if (!product) {
       this.formService.reset();
       return;
     }
 
     const parsedImage = product.photo
-      ? await this.fileResolverService.resolveFile(`${this.config.apiURL}files/${product.photo}`)
+      ? await this.fileResolverService.resolveFile({
+          id: product.photo,
+        })
       : null;
+
+    const parsedDocuments = await Promise.all(
+      product.attachments?.map(async file => ({
+        id: file.fileId,
+        file: (await this.fileResolverService.resolveFile({ metadata: file }))!,
+      })) || []
+    );
+
+    const parsedMetadata = product.attachments?.map(doc => ({
+      descriptor: (doc.fileMetadata?.['descriptor'] as string) || '',
+    }));
 
     this.formService.patchValue({
       condition: product.condition,
@@ -370,6 +417,8 @@ export class ProductMaintenance {
       }) || {
         photo: [],
       }),
+      attachments: parsedDocuments,
+      attachmentsMetadata: parsedMetadata,
     });
 
     this.formService.form.markAsPristine();

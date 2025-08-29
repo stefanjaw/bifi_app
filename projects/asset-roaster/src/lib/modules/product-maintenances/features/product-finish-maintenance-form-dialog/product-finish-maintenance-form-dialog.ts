@@ -37,7 +37,7 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
   form = this.formService.form;
 
   // inputs
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
   maintenanceType = input.required<productMaintenance['type']>();
 
   // state

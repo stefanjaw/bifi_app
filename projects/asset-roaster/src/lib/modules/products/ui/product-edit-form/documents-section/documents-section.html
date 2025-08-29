@@ -14,11 +14,17 @@
     }
 
     <div class="flex flex-col gap-2 mt-4">
-      @for (document of product()?.documents; track $index) {
+      @for (documentControl of attachmentsControl.controls; track $index) {
+        @let document = documentControl.getRawValue();
         <div class="flex items-center justify-between gap-2 rounded border border-gray-200 p-2">
-          <p>{{ document.name }}</p>
+          <p>{{ document.file.name }}</p>
 
-          <p-button label="View" severity="secondary" icon="pi pi-file"></p-button>
+          <p-button
+            label="View"
+            severity="secondary"
+            icon="pi pi-file"
+            (onClick)="downloadFile(document)"
+          ></p-button>
         </div>
       }
     </div>

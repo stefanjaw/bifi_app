@@ -1,0 +1,52 @@
+<p-dialog
+  header="Add New Document"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6 min-h-96"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <bifi-app-form-field>
+      <bifi-app-form-label>Document Desciptor</bifi-app-form-label>
+      <p-select
+        (onChange)="handleDescriptorChange($event.value)"
+        [options]="descriptorOptions"
+      ></p-select>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    @if (isOther()) {
+      <bifi-app-form-field>
+        <bifi-app-form-label>Description for "Other"</bifi-app-form-label>
+        <input
+          pInputText
+          formControlName="descriptor"
+          type="text"
+          placeholder="e.g, Warranty Card, Calibration Certificate"
+        />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+    }
+
+    <bifi-app-form-uploader formArrayName="files">
+      <p-fileUpload
+        showUploadButton="false"
+        showCancelButton="false"
+        name="files"
+        [multiple]="false"
+        accept="application/*"
+        maxFileSize="100000000"
+        mode="basic"
+      ></p-fileUpload>
+    </bifi-app-form-uploader>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>
