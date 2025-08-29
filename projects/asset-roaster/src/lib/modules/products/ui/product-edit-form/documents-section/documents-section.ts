@@ -14,7 +14,7 @@ export class DocumentsSection {
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   isEditMode = input.required<boolean>();
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 
   handleAddDocument() {
     this.productMaintenanceContext.handleAddDocument();

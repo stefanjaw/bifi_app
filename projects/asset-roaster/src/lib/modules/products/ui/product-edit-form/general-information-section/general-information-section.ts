@@ -36,7 +36,7 @@ import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 export class GeneralInformationSection {
   private fileHelper = inject(FormFileControlHelper);
 
-  product = input.required<product | null>();
+  product = input.required<product | undefined>();
 
   // * DATA
   productTypes = input<productType[]>([]);
