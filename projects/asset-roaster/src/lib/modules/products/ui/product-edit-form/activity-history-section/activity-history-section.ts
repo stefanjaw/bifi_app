@@ -1,15 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Badge } from '@avalantec/base-app/ui';
-import { activityHistory } from '@avalantec/base-app/resource';
+import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
+import { product } from '../../../interfaces/product';
+import { productComissionnig } from '../../../../product-comissioning';
+import { productMaintenance } from '../../../../product-maintenances';
+import { Button } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
-  imports: [CardModule, Badge, CommonModule, FormModule],
+  imports: [CardModule, Badge, CommonModule, FormModule, Button],
   templateUrl: './activity-history-section.html',
 })
 export class ActivityHistorySection {
-  activityHistory = input.required<activityHistory[]>();
+  private fileResolver = inject(FileResolver);
+
+  activityHistory =
+    input.required<activityHistory<product | productComissionnig | productMaintenance>[]>();
+
+  async downloadFile(attachment: file) {
+    this.fileResolver.downloadFileInBrowser({ metadata: attachment });
+  }
 }
