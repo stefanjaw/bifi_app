@@ -21,12 +21,14 @@ import { ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ProductComissioningFormDialog,
+  productComissionning,
   ProductDecomissioningFormDialog,
 } from '../../../product-comissioning';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import {
   CrudProductMaintenances,
   ProductFinishMaintenanceFormDialog,
+  productMaintenance,
   ProductMaintenanceFormDialog,
 } from '../../../product-maintenances';
 import {
@@ -107,7 +109,9 @@ export class ProductMaintenance {
     { field: 'performDate', order: 'desc' },
   ]);
 
-  activityHistories = this.activityHistoriesService.get({
+  activityHistories = this.activityHistoriesService.get<
+    activityHistory<product | productComissionning | productMaintenance>
+  >({
     searchParams: this.activityHistoryQuery,
     sort: this.activityHistoryOrder,
   });

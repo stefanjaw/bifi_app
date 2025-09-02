@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
-import { productComissionnig } from '../interfaces/product-comissioning';
+import { productComissionning } from '../interfaces/product-comissioning';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CrudProductComissioning extends ApiRequestManager<productComissionnig> {
+export class CrudProductComissioning extends ApiRequestManager<productComissionning> {
   constructor() {
     super();
     super.endpoint = 'product-comissioning';

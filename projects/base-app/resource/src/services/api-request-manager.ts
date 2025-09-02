@@ -120,7 +120,7 @@ export class ApiRequestManager<T> {
     });
   }
 
-  get({
+  get<TRequestReturnType extends T = T>({
     id,
     searchParams,
     sort,
@@ -132,9 +132,9 @@ export class ApiRequestManager<T> {
     sort?: Signal<orderByQuery<T>>;
     triggerRequest?: Signal<boolean>;
     specificEndpoint?: maybeSignal<string>;
-  }): ResourceRef<T | undefined>;
+  }): ResourceRef<TRequestReturnType | undefined>;
 
-  get({
+  get<TRequestReturnType extends T = T>({
     searchParams,
     sort,
     triggerRequest,
@@ -144,7 +144,7 @@ export class ApiRequestManager<T> {
     sort?: maybeSignal<orderByQuery<T>>;
     triggerRequest?: maybeSignal<boolean>;
     specificEndpoint?: maybeSignal<string>;
-  }): ResourceRef<T[]>;
+  }): ResourceRef<TRequestReturnType[]>;
 
   /**
    * Get data from the api.
@@ -153,7 +153,7 @@ export class ApiRequestManager<T> {
    * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
    * @returns A resource ref that resolves to an array of T or an empty array if the request fails.
    */
-  get({
+  get<TRequestReturnType extends T = T>({
     id,
     searchParams,
     sort,
@@ -165,7 +165,7 @@ export class ApiRequestManager<T> {
     sort?: maybeSignal<orderByQuery<T>>;
     triggerRequest?: maybeSignal<boolean>;
     specificEndpoint?: maybeSignal<string>;
-  }): ResourceRef<T | T[] | undefined> {
+  }): ResourceRef<TRequestReturnType | TRequestReturnType[] | undefined> {
     const isGetById = id !== undefined;
     return httpResource(
       () => {

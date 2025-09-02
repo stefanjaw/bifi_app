@@ -1,4 +1,4 @@
-export interface activityHistory<TDocument = Record<string, unknown>> {
+export interface activityHistory<TDocument = any> {
   _id: string;
   title: string;
   details?: string;

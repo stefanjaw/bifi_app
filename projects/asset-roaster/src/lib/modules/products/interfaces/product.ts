@@ -2,7 +2,7 @@ import { maintenanceWindow } from '../../maintenance-windows';
 import { room } from '../../facilities';
 import { productType } from '../../product-types';
 import { productMaintenance } from '../../product-maintenances';
-import { productComissionnig } from '../../product-comissioning';
+import { productComissionning } from '../../product-comissioning';
 import { contact } from '@avalantec/base-app/settings';
 import { file } from '@avalantec/base-app/resource';
 
@@ -28,7 +28,7 @@ export interface product {
   minMaintenanceDate: string;
   maintenanceDate: string;
   maxMaintenanceDate: string;
-  productComission: productComissionnig;
+  productComission: productComissionning;
   productMaintenances: productMaintenance[];
   attachments?: file[];
   active: boolean;
