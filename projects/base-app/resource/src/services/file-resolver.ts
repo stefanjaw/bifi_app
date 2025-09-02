@@ -101,6 +101,7 @@ export class FileResolver {
    */
   async downloadFileInBrowser(props: ResolveFileProps) {
     const file = await this.resolveFile(props);
+
     if (file) {
       const blobUrl = URL.createObjectURL(file);
       window.open(blobUrl, '_blank');

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { Badge } from '@avalantec/base-app/ui';
-import { activityHistory, FileResolver } from '@avalantec/base-app/resource';
+import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
-import { FormModule, FormUploaderFile } from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 import { product } from '../../../interfaces/product';
 import { productComissionnig } from '../../../../product-comissioning';
 import { productMaintenance } from '../../../../product-maintenances';
@@ -20,7 +20,7 @@ export class ActivityHistorySection {
   activityHistory =
     input.required<activityHistory<product | productComissionnig | productMaintenance>[]>();
 
-  downloadFile(attachment: FormUploaderFile) {
-    this.fileResolver.downloadFileInBrowser({ file: attachment.file });
+  async downloadFile(attachment: file) {
+    this.fileResolver.downloadFileInBrowser({ metadata: attachment });
   }
 }
