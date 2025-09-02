@@ -47,7 +47,7 @@ export function markAsDirty(params: MarkAsDirtyOptions) {
 
     if (child instanceof FormGroup) {
       // Recursively mark all controls in nested form groups as dirty
-      markAsDirty(params);
+      markAsDirty({ group: child, target, dirtyValue, emitEvent });
     } else {
       toggleFunction(child);
     }

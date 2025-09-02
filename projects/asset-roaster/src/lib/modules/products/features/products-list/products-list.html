@@ -15,8 +15,6 @@
 </section>
 
 <section class="flex flex-col lg:flex-row gap-4 mb-4">
-  <bifi-app-product-form-dialog #createDialog></bifi-app-product-form-dialog>
-
   <bifi-app-product-status-card
     [units]="productsUnderServiceCount.value() || 0"
     variant="under-service"
@@ -68,3 +66,5 @@
     ></bifi-app-badge>
   </ng-template>
 </bifi-app-table-layout>
+
+<bifi-app-product-form-dialog #createDialog></bifi-app-product-form-dialog>

@@ -7,19 +7,18 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
+import { BaseDialog } from '@avalantec/base-app/core';
 import { contact, CrudContacts } from '@avalantec/base-app/settings';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { forkJoin, Observable, of, switchMap } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudProductType, productType } from '../../../product-types';
 import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 
 @Component({
@@ -42,13 +41,12 @@ export class ProductFormDialog extends BaseDialog {
   private productTypesService = inject(CrudProductType);
   private productsService = inject(CrudProducts);
   private contactsService = inject(CrudContacts);
-  private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
 
   // Data
-  productTypes = this.productTypesService.get({});
-  contacts = this.contactsService.get({});
+  productTypes = this.productTypesService.get({ triggerRequest: this.dialogState });
+  contacts = this.contactsService.get({ triggerRequest: this.dialogState });
 
   // State
   form = this.formService.form;
@@ -137,53 +135,51 @@ export class ProductFormDialog extends BaseDialog {
     // If the user is creating a new make, create it first
     let makeResource: Observable<contact | string | undefined>;
 
-    // Construct resource
-    if (this.isCreatingNewProductType())
-      productTypeResource = this.productTypesService.post({
-        data: {
-          name: rawValue.createdType.name!,
-          description: rawValue.createdType.description!,
-        },
-      });
-    else productTypeResource = of(rawValue.productTypeIds!);
+    try {
+      // Construct type resource
+      if (this.isCreatingNewProductType())
+        productTypeResource = this.productTypesService.post({
+          data: {
+            name: rawValue.createdType.name!,
+            description: rawValue.createdType.description!,
+          },
+        });
+      else productTypeResource = of(rawValue.productTypeIds!);
 
-    // Construct resource
-    if (this.isCreatingNewMake())
-      makeResource = this.contactsService.post({
-        data: {
-          name: rawValue.createdMake.oemName!,
-          lastName: rawValue.createdMake.oemName!,
-        },
-      });
-    else makeResource = of(rawValue.makeIds!);
+      // Construct make resource
+      if (this.isCreatingNewMake())
+        makeResource = this.contactsService.post({
+          data: {
+            name: rawValue.createdMake.oemName!,
+            lastName: rawValue.createdMake.oemName!,
+          },
+        });
+      else makeResource = of(rawValue.makeIds!);
 
-    // Create the product type and make if needed
-    forkJoin([productTypeResource, makeResource])
-      .pipe(
-        takeUntilDestroyed(this.destroy$),
-        switchMap(([productType, make]) =>
-          this.productsService.post({
-            data: {
-              productTypeIds: typeof productType === 'string' ? [productType] : [productType?._id],
-              makeIds: typeof make === 'string' ? [make] : [make?._id],
-              productModel: rawValue.productModel,
-              serialNumber: rawValue.serialNumber,
-              acquiredDate: rawValue.acquiredDate.toISOString(),
-            },
-          })
-        )
-      )
-      .subscribe({
-        next: () => {
-          this.isSubmitLoading.set(false);
-          this.formService.reset();
-          this.closeDialog();
-          this.productMaintenanceContext.handleSaved();
-          this.toastManager.showSuccess('Product created successfully');
-        },
-        error: () => {
-          this.isSubmitLoading.set(false);
+      const type = await firstValueFrom(productTypeResource);
+      const make = await firstValueFrom(makeResource);
+
+      // Construct product resource
+      const productResource = this.productsService.post({
+        data: {
+          productTypeIds: typeof type === 'string' ? [type] : [type?._id],
+          makeIds: typeof make === 'string' ? [make] : [make?._id],
+          productModel: rawValue.productModel,
+          serialNumber: rawValue.serialNumber,
+          acquiredDate: rawValue.acquiredDate.toISOString(),
         },
       });
+
+      const product = await firstValueFrom(productResource);
+
+      if (!product) throw new Error('Failed to create product');
+
+      this.isSubmitLoading.set(false);
+      this.formService.reset();
+      this.closeDialog();
+      this.productMaintenanceContext.handleSaved();
+    } catch {
+      this.isSubmitLoading.set(false);
+    }
   }
 }
