@@ -22,13 +22,13 @@ export class SettingsMainMenu implements OnDestroy {
     this.sidenavManager.setSidenavAvailable(true);
 
     effect(() => {
-      const isServiceOpened = this.sidenavManager.opened();
-      const isLocallyOpened = this.isOpened();
+      const isSidenavOpen = this.sidenavManager.opened();
+      this.isOpened.set(isSidenavOpen);
+    });
 
-      if (isServiceOpened !== isLocallyOpened) {
-        this.isOpened.set(isServiceOpened);
-        this.sidenavManager.setOpenSidenav(isServiceOpened);
-      }
+    effect(() => {
+      const isLocallyOpen = this.isOpened();
+      this.sidenavManager.setOpenSidenav(isLocallyOpen);
     });
   }
 
