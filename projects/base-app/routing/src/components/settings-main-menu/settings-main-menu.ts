@@ -16,23 +16,23 @@ export class SettingsMainMenu implements OnDestroy {
   private sidenavManager = inject(SidenavManager);
 
   menuItems = this.menuManager.menuItems;
-  isOpened = model(this.sidenavManager.isOpened());
+  isOpened = model(this.sidenavManager.opened());
 
   constructor() {
-    this.sidenavManager.setIsSidenavAvailable = true;
+    this.sidenavManager.setSidenavAvailable(true);
 
     effect(() => {
-      const isOpened = this.sidenavManager.isOpened();
-      this.isOpened.set(isOpened);
-    });
+      const isServiceOpened = this.sidenavManager.opened();
+      const isLocallyOpened = this.isOpened();
 
-    effect(() => {
-      const isOpenedModel = this.isOpened();
-      if (!isOpenedModel) this.sidenavManager.closeSidenav();
+      if (isServiceOpened !== isLocallyOpened) {
+        this.isOpened.set(isServiceOpened);
+        this.sidenavManager.setOpenSidenav(isServiceOpened);
+      }
     });
   }
 
   ngOnDestroy(): void {
-    this.sidenavManager.setIsSidenavAvailable = false;
+    this.sidenavManager.setSidenavAvailable(false);
   }
 }

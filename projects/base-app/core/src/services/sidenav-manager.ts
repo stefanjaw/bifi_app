@@ -4,26 +4,25 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class SidenavManager {
-  private _isOpened = signal<boolean>(false);
-  private _isSidenavAvailable = signal<boolean>(false);
+  private _opened = signal<boolean>(false);
+  private _sidenavAvailable = signal<boolean>(false);
 
-  get isOpened() {
-    return this._isOpened;
-  }
+  sidenavAvailable = this._sidenavAvailable.asReadonly();
+  opened = this._opened.asReadonly();
 
-  get isSidenavAvailable() {
-    return this._isSidenavAvailable;
-  }
-
-  set setIsSidenavAvailable(value: boolean) {
-    this._isSidenavAvailable.set(value);
+  setSidenavAvailable(value: boolean) {
+    this._sidenavAvailable.set(value);
   }
 
   openSidenav() {
-    this._isOpened.set(true);
+    this._opened.set(true);
   }
 
   closeSidenav() {
-    this._isOpened.set(false);
+    this._opened.set(false);
+  }
+
+  setOpenSidenav(value: boolean) {
+    this._opened.set(value);
   }
 }

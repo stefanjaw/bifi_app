@@ -34,8 +34,8 @@ export class Scaffold {
 
   // sidenav managament
   protected sidenavManager = inject(SidenavManager);
-  isSidenavAvailable = this.sidenavManager.isSidenavAvailable;
-  isOpened = this.sidenavManager.isOpened;
+  isSidenavAvailable = this.sidenavManager.sidenavAvailable;
+  isOpened = this.sidenavManager.opened;
 
   // auth state management
   protected authService = inject(LIB_AUTH_SERVICE);
