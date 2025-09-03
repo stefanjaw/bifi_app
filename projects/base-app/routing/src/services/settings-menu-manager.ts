@@ -44,6 +44,6 @@ export class SettingsMenuManager extends BaseMenuManager {
       },
     ]);
 
-    super(menuItems, SETTINGS_ROUTES);
+    super(menuItems, SETTINGS_ROUTES[0].children!);
   }
 }

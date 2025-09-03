@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
 
 export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   {
@@ -9,7 +8,6 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   },
   {
     path: 'list',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('../features/maintenance-windows-list/maintenance-windows-list').then(
         m => m.MaintenanceWindowsList
@@ -17,7 +15,6 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   },
   {
     path: 'create',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm
@@ -25,7 +22,6 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   },
   {
     path: 'edit/:id',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm

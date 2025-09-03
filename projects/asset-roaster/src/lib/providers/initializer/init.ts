@@ -2,12 +2,7 @@ import { inject } from '@angular/core';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
 import { ResourceList } from '@avalantec/base-app/settings';
 import { PrimeIcons } from 'primeng/api';
-import {
-  MainMenuManager,
-  SettingsMainMenu,
-  SettingsMenuManager,
-} from '@avalantec/base-app/routing';
-import { authGuard } from '@avalantec/base-app/auth';
+import { MainMenuManager, SettingsMenuManager } from '@avalantec/base-app/routing';
 import { MAINTENANCE_WINDOWS_ROUTES } from '../../modules';
 import { SidenavManager } from '@avalantec/base-app/core';
 
@@ -39,8 +34,6 @@ function initializeMenu() {
     },
     route: {
       path: 'maintenance-windows',
-      canActivate: [authGuard],
-      component: SettingsMainMenu,
       children: MAINTENANCE_WINDOWS_ROUTES,
     },
   });
