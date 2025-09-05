@@ -14,11 +14,13 @@ import {
 import { isFormUploaderFile, isFormUploaderFileArray } from '@avalantec/base-app/form';
 import { ApiRequestManagerConfig, ApiRequestType } from '../interfaces/api';
 import { HTTP_NOTIFICATION_CONFIG_TOKEN } from '../libraries/interceptors/notification/notification.context';
+import { FileResolver } from './file-resolver';
 
 export class ApiRequestManager<T> {
   protected readonly _httpClient = inject(HttpClient);
   protected readonly _apiURL = inject(LIBRARY_CONFIG).apiURL;
   protected readonly _toastManager = inject(ToastManager);
+  protected readonly _fileResolver = inject(FileResolver);
 
   private _endpoint = '';
   private _config: ApiRequestManagerConfig = {};
@@ -299,6 +301,17 @@ export class ApiRequestManager<T> {
         }),
       defaultValue: false,
     });
+  }
+
+  /**
+   * Exports all documents of the collection in CSV format to a file.
+   *
+   * Sends a GET request to the API endpoint with the "export" suffix and uses the
+   * FileResolver to download the file in the browser. The file is named "export.csv".
+   */
+  exportCSV() {
+    const fullURL = `${this.formatFullURL()}/export`;
+    this._fileResolver.downloadFileInBrowser({ url: fullURL });
   }
   //#endregion
 

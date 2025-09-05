@@ -43,6 +43,7 @@ export class ProductsList {
   private resourceManager = inject<ResourceManager<product>>(ResourceManager);
   private destroy$ = inject(DestroyRef);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
+  private productsService = inject(CrudProducts);
 
   productColumns = productColumns;
   productFilters = productFilters;
@@ -50,11 +51,10 @@ export class ProductsList {
   products = this.resourceManager.data;
 
   //#region Counting of products by status
-  private productsService = inject(CrudProducts);
   private productStatusFilterManager = inject(ProductStatusFilterManager);
   private filterManager = inject(FilterManager);
 
-  //#region Queries
+  // Queries
   private productsUnderServiceQuery = signal(
     this.filterManager.getFilterObjectUtil([
       this.productStatusFilterManager.getFilterByStatus('under-service'),
@@ -75,9 +75,8 @@ export class ProductsList {
   private productsPMNotSetQuery = signal(
     this.filterManager.getFilterObjectUtil([this.productStatusFilterManager.getFilterByPMNotSet()])
   );
-  //#endregion
 
-  //#region Counts
+  // Counts
   protected productsUnderServiceCount = this.productsService.getCount({
     searchParams: this.productsUnderServiceQuery,
   });
@@ -93,7 +92,6 @@ export class ProductsList {
   protected productsPMNotSetCount = this.productsService.getCount({
     searchParams: this.productsPMNotSetQuery,
   });
-  //#endregion
   //#endregion
 
   /**
@@ -115,5 +113,9 @@ export class ProductsList {
           this.productsPMNotSetCount.reload();
         }
       });
+  }
+
+  exportCSV() {
+    this.productsService.exportCSV();
   }
 }
