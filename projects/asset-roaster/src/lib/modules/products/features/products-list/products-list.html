@@ -1,7 +1,12 @@
 <section class="flex justify-between items-center gap-2 mb-4">
   <h1 class="text-2xl font-bold">Equipment Dashboard</h1>
   <div class="flex gap-2">
-    <p-button label="Import CSV" severity="success" icon="pi pi-upload"></p-button>
+    <p-button
+      label="Import CSV"
+      severity="success"
+      icon="pi pi-upload"
+      (onClick)="fileInput.click()"
+    ></p-button>
     <p-button label="Export CSV" icon="pi pi-download" (onClick)="exportCSV()"></p-button>
     <p-button
       label="Add New Equipment"
@@ -11,6 +16,7 @@
     ></p-button>
 
     <span *bifiAppHasPermission="'product:read'">Test!! you can read</span>
+    <input hidden type="file" #fileInput (change)="importCSV($event)" />
   </div>
 </section>
 

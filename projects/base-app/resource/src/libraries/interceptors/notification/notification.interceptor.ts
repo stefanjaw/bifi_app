@@ -64,7 +64,7 @@ export const notificationInterceptor: HttpInterceptorFn = (
       error: err => {
         if (errorMessage) {
           const message =
-            errorMessage?.replace('{{ message }}', err.message) ||
+            errorMessage?.replace('{{ message }}', err.error.message) ||
             err.message ||
             'An error occurred';
           toastService.showError(message, { id: toastId, duration: 5000 });

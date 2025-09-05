@@ -115,7 +115,24 @@ export class ProductsList {
       });
   }
 
+  /**
+   * Exports all products in CSV format.
+   * @returns A Buffer containing the CSV data.
+   */
   exportCSV() {
     this.productsService.exportCSV();
+  }
+
+  importCSV(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const csv = target.files?.[0];
+
+    // reset file input
+    target.value = '';
+
+    this.productsService
+      .post({ data: { csv }, specificEndpoint: 'import' })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.products.reload() });
   }
 }
