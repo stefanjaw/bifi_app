@@ -16,7 +16,7 @@
     ></p-button>
 
     <span *bifiAppHasPermission="'product:read'">Test!! you can read</span>
-    <input hidden type="file" #fileInput (change)="importCSV($event)" />
+    <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
   </div>
 </section>
 

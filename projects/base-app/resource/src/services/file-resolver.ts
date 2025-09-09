@@ -99,12 +99,23 @@ export class FileResolver {
    * @param url The URL of the file to download.
    * @returns A Promise that resolves when the file is downloaded and opened in a new browser tab.
    */
-  async downloadFileInBrowser(props: ResolveFileProps) {
+  async downloadFileInBrowser(props: ResolveFileProps, mode: 'download' | 'open' = 'open') {
     const file = await this.resolveFile(props);
 
-    if (file) {
+    if (file && mode === 'open') {
       const blobUrl = URL.createObjectURL(file);
       window.open(blobUrl, '_blank');
+    } else if (file && mode === 'download') {
+      const blobUrl = URL.createObjectURL(file);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = file.name ?? 'download'; // give a default name
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(blobUrl);
     } else {
       throw new Error('Error downloading file');
     }

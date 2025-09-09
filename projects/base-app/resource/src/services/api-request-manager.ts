@@ -311,7 +311,7 @@ export class ApiRequestManager<T> {
    */
   exportCSV() {
     const fullURL = `${this.formatFullURL()}/export`;
-    this._fileResolver.downloadFileInBrowser({ url: fullURL });
+    this._fileResolver.downloadFileInBrowser({ url: fullURL }, 'download');
   }
   //#endregion
 
