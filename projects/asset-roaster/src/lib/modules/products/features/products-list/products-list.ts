@@ -133,6 +133,17 @@ export class ProductsList {
     this.productsService
       .post({ data: { csv }, specificEndpoint: 'import' })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({ next: () => this.products.reload() });
+      .subscribe({
+        next: () => {
+          this.products.reload();
+
+          // reload counts
+          this.productsUnderServiceCount.reload();
+          this.productsOverdueCount.reload();
+          this.productsDueCount.reload();
+          this.productsInPMCount.reload();
+          this.productsPMNotSetCount.reload();
+        },
+      });
   }
 }
