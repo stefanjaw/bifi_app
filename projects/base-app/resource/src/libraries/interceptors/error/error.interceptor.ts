@@ -18,38 +18,35 @@ export const errorInterceptor: HttpInterceptorFn = (
     catchError((error: unknown) => {
       let processedError: appError;
 
-      // 1. Manejar errores de HTTP (4xx, 5xx)
       if (error instanceof HttpErrorResponse) {
-        // Si el error es de tipo HttpErrorResponse, extraer el cuerpo del error (body response)
         const errorBody = error.error;
         let parsedErrorMessage: string | null = null;
 
         if (typeof errorBody === 'object') {
-          // Si el cuerpo del error es un objeto, extraer el mensaje
-          if (errorBody.message) parsedErrorMessage = errorBody.message;
+          // Si hay un array de errores de validación, los formatea
+          if (Array.isArray(errorBody.errors) && errorBody.errors.length > 0) {
+            parsedErrorMessage = errorBody.errors
+              .map(
+                (err: any) =>
+                  `${err.path}: ${Array.isArray(err.messages) ? err.messages.join(', ') : err.messages}`
+              )
+              .join('\n');
+          } else if (errorBody.message) {
+            parsedErrorMessage = errorBody.message;
+          }
         }
 
         processedError = {
           status: error.status,
           message: parsedErrorMessage || error.message,
         };
-      }
-      // 2. Manejar errores de Zod (del interceptor)
-      // else if (isZodValidationError(error)) {
-      //   processedError = {
-      //     status: 0,
-      //     message: 'Invalid data format received from server.',
-      //   };
-      // }
-      // 3. Otros errores inesperados
-      else {
+      } else {
         processedError = {
           status: 0,
           message: 'An unexpected error occurred',
         };
       }
 
-      // Re-lanzar el error procesado
       return throwError(() => processedError);
     })
   );

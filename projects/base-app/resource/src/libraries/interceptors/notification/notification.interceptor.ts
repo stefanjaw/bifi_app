@@ -62,13 +62,27 @@ export const notificationInterceptor: HttpInterceptorFn = (
         }
       },
       error: err => {
-        if (errorMessage) {
-          const message =
-            errorMessage?.replace('{{ message }}', err.error.message) ||
-            err.message ||
-            'An error occurred';
-          toastService.showError(message, { id: toastId, duration: 5000 });
+        let backendMessage = '';
+
+        // Procesa errores de validación tipo array
+        if (err?.error && Array.isArray(err.error.errors) && err.error.errors.length > 0) {
+          backendMessage = err.error.errors
+            .map(
+              (e: any) =>
+                `${e.path}: ${Array.isArray(e.messages) ? e.messages.join(', ') : e.messages}`
+            )
+            .join('\n');
+        } else if (err?.error?.message) {
+          backendMessage = err.error.message;
+        } else if (err?.message) {
+          backendMessage = err.message;
+        } else {
+          backendMessage = 'An error occurred';
         }
+
+        const message = errorMessage?.replace('{{ message }}', backendMessage) || backendMessage;
+
+        toastService.showError(message, { id: toastId, duration: 5000 });
       },
     })
   );
