@@ -112,7 +112,6 @@ export class ProductFormDialog extends BaseDialog {
    * This ensures that any previously entered data is cleared when the dialog
    * is opened anew.
    */
-
   override openDialog(): void {
     this.formService.reset();
     super.openDialog();

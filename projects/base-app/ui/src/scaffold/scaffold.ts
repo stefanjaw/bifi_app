@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { SidenavManager } from '@avalantec/base-app/core';
 import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 import { NgxSonnerToaster } from 'ngx-sonner';
+import { BugReportingFormDialog } from '@avalantec/base-app/bug-reporting';
 // import { LIB_AUTH_SERVICE } from '@avalantec/base-app/auth';
 
 @Component({
@@ -22,6 +23,7 @@ import { NgxSonnerToaster } from 'ngx-sonner';
     AvatarModule,
     CommonModule,
     NgxSonnerToaster,
+    BugReportingFormDialog,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',

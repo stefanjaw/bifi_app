@@ -1,0 +1,48 @@
+<p-dialog
+  header="Report a Bug"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <bifi-app-form-field>
+      <bifi-app-form-label>Subject</bifi-app-form-label>
+      <input pInputText formControlName="subject" type="text" placeholder="e.g Page is broken" />
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Description</bifi-app-form-label>
+      <textarea
+        pInputTextarea
+        formControlName="description"
+        rows="3"
+        type="text"
+        placeholder="e.g Page is broken"
+      ></textarea>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-uploader formArrayName="files">
+      <p-fileUpload
+        showUploadButton="false"
+        showCancelButton="false"
+        name="files"
+        [multiple]="false"
+        accept="application/*"
+        maxFileSize="100000000"
+        mode="basic"
+      ></p-fileUpload>
+    </bifi-app-form-uploader>
+
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="closeDialog()"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

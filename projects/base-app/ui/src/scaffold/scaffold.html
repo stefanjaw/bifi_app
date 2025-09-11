@@ -23,6 +23,14 @@
     <ng-template #end>
       <div class="flex items-center gap-2">
         <p-button
+          icon="pi pi-exclamation-triangle"
+          label="Report Bug"
+          severity="danger"
+          size="small"
+          variant="text"
+          (onClick)="bugReportingFormDialog.openDialog()"
+        ></p-button>
+        <p-button
           icon="pi pi-sign-out"
           label="Logout"
           (onClick)="logout()"
@@ -50,3 +58,5 @@
   <p-toast></p-toast>
   <ngx-sonner-toaster position="top-right"></ngx-sonner-toaster>
 </div>
+
+<bifi-app-bug-reporting-form-dialog #bugReportingFormDialog></bifi-app-bug-reporting-form-dialog>
