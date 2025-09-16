@@ -52,10 +52,10 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
    * This ensures that any previously entered data is cleared when the dialog
    * is opened anew.
    */
-
   override openDialog(): void {
     this.formService.reset();
     this.formService.form.markAsTouched();
+    this.formService.form.markAsDirty();
     super.openDialog();
   }
 
