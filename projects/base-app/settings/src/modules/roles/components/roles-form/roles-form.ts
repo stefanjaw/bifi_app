@@ -104,9 +104,9 @@ export class RolesForm {
     });
   }
 
-  handlePolicySelect(policy: policy<any, any>) {
-    this.policyData.update(current => [...current, policy]);
-    this.form.controls.policies.pushItem(policy._id);
+  handlePolicySelect(policies: policy<any, any>[]) {
+    this.policyData.update(current => [...current, ...policies]);
+    policies.forEach(p => this.form.controls.policies.pushItem(p._id));
   }
 
   handlePolicyRemove(id: string) {
