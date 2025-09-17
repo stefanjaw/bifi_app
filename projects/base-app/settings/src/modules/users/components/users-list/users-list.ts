@@ -11,11 +11,12 @@ import { user } from '@avalantec/base-app/core';
 import { userColumns } from '../../libraries/user-columns';
 import { userFilters } from '../../libraries/user-filters';
 import { RouterLink } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-users-list',
   providers: [provideResourceManager(CrudUsers)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

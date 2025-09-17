@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MainMenuManager } from '../../services/main-menu-manager';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-main-menu',
-  imports: [ButtonModule, RouterLink],
+  imports: [ButtonModule, RouterLink, HasPermission],
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.css',
 })

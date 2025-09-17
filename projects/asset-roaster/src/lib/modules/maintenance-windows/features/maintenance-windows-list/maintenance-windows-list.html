@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
+    *bifiAppHasPermission="'maintenance-windows:create'"
   ></p-button>
 </div>
 
@@ -21,6 +22,7 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
+      *bifiAppHasPermission="'maintenance-windows:update'"
     ></p-button>
     <!-- <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button> -->
   </ng-template>

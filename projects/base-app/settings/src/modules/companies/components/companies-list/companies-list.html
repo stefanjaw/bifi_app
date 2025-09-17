@@ -7,7 +7,17 @@
 
 <bifi-app-table-layout [columns]="companyColumns" [data]="companies">
   <ng-template #actions>
-    <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button>
-    <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
+    <p-button
+      *bifiAppHasPermission="'companies:update'"
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+    ></p-button>
+    <p-button
+      *bifiAppHasPermission="'companies:delete'"
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+    ></p-button>
   </ng-template>
 </bifi-app-table-layout>

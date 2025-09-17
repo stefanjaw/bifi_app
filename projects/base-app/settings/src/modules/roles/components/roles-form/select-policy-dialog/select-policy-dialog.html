@@ -6,13 +6,13 @@
 >
   <bifi-app-form-field class="mb-8 min-h-40">
     <bifi-app-form-label>Policy</bifi-app-form-label>
-    <p-select
+    <p-multiSelect
       [formControl]="policy"
       [options]="policies()"
       optionLabel="name"
       optionValue="_id"
       [filter]="true"
-    ></p-select>
+    ></p-multiSelect>
     <bifi-app-form-error></bifi-app-form-error>
   </bifi-app-form-field>
 

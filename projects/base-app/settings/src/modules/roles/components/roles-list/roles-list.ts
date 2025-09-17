@@ -11,11 +11,12 @@ import { role } from '@avalantec/base-app/core';
 import { roleColumns } from '../../libraries/role-columns';
 import { roleFilters } from '../../libraries/role-filters';
 import { RouterLink } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-roles-list',
   providers: [provideResourceManager(CrudRoles)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

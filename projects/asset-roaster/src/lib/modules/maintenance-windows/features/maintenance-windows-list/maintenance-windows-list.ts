@@ -11,11 +11,12 @@ import { RouterLink } from '@angular/router';
 import { maintenanceWindow } from '../../interfaces/maintenance-window';
 import { maintenanceWindowColumns } from '../../libraries/maintenance-window-columns';
 import { maintenanceWindowFilters } from '../../libraries/maintenance-window-filters';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-maintenance-windows-list',
   providers: [provideResourceManager(CrudMaintenanceWindows)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

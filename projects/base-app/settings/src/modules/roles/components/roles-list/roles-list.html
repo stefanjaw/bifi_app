@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
+    *bifiAppHasPermission="'roles:create'"
   ></p-button>
 </div>
 
@@ -18,7 +19,13 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
+      *bifiAppHasPermission="'roles:update'"
     ></p-button>
-    <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button>
+    <p-button
+      *bifiAppHasPermission="'roles:delete'"
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+    ></p-button>
   </ng-template>
 </bifi-app-table-layout>

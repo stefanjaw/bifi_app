@@ -10,6 +10,7 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-contacts-list',
@@ -17,7 +18,7 @@ import { ButtonModule } from 'primeng/button';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar],
+  imports: [TableLayout, ButtonModule, SearchBar, HasPermission],
   templateUrl: './contacts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
