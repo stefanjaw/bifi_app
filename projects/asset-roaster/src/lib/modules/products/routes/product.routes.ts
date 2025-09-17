@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HasPermission } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const PRODUCT_ROUTES: Routes = [
   {
@@ -9,14 +9,14 @@ export const PRODUCT_ROUTES: Routes = [
   },
   {
     path: 'list',
-    canActivate: [HasPermission],
+    canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/products-list/products-list').then(m => m.ProductsList),
     data: { permission: 'products:read' },
   },
   {
     path: 'maintenance/:id',
-    canActivate: [HasPermission],
+    canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/product-maintenance/product-maintenance').then(m => m.ProductMaintenance),
     data: { permission: 'products:update' },
