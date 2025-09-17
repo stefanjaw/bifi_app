@@ -2,8 +2,7 @@
 import { computed, Directive, effect, input } from '@angular/core';
 import { injectAuthService } from '../libraries/providers/auth-service-provider';
 import { BaseStructuralConditional, policyAction, resource } from '@avalantec/base-app/core';
-
-type permission = `${resource}:${policyAction}`;
+import { permission } from '../interfaces/permission';
 
 @Directive({
   selector: '[bifiAppHasPermission]',
