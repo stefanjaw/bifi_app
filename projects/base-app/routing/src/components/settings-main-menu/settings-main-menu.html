@@ -1,5 +1,17 @@
 <p-drawer [(visible)]="isOpened" header="Settings">
-  <p-menu [model]="menuItems()"></p-menu>
+  <p-menu [model]="menuItems()">
+    <ng-template #item let-item>
+      <a
+        *bifiAppHasPermission="`${item['resource']}:read`"
+        pRipple
+        class="flex items-center p-menu-item-link"
+        [routerLink]="item.routerLink"
+      >
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label }}</span>
+      </a>
+    </ng-template>
+  </p-menu>
 </p-drawer>
 
 <main id="settings-main-container">

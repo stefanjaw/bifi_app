@@ -6,16 +6,22 @@
       severity="success"
       icon="pi pi-upload"
       (onClick)="fileInput.click()"
+      *bifiAppHasPermission="'products/import:create'"
     ></p-button>
-    <p-button label="Export CSV" icon="pi pi-download" (onClick)="exportCSV()"></p-button>
+    <p-button
+      label="Export CSV"
+      icon="pi pi-download"
+      (onClick)="exportCSV()"
+      *bifiAppHasPermission="'products/export:read'"
+    ></p-button>
     <p-button
       label="Add New Equipment"
       severity="secondary"
       icon="pi pi-plus"
       (onClick)="createDialog.openDialog()"
+      *bifiAppHasPermission="'products:create'"
     ></p-button>
 
-    <span *bifiAppHasPermission="'product:read'">Test!! you can read</span>
     <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
   </div>
 </section>
@@ -69,6 +75,7 @@
       class="cursor-pointer"
       variant="warning"
       text="View details"
+      *bifiAppHasPermission="'products:update'"
     ></bifi-app-badge>
   </ng-template>
 </bifi-app-table-layout>

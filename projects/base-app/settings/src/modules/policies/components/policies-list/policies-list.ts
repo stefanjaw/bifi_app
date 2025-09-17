@@ -11,11 +11,12 @@ import { policy } from '@avalantec/base-app/core';
 import { policyColumns } from '../../libraries/policy-columns';
 import { policyFilters } from '../../libraries/policy-filters';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-policies-list',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

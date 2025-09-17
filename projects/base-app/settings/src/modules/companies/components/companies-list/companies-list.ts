@@ -10,6 +10,7 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-companies-list',
@@ -17,7 +18,7 @@ import { ButtonModule } from 'primeng/button';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
   templateUrl: './companies-list.html',
   styleUrl: './companies-list.css',
 })

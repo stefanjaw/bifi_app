@@ -21,6 +21,7 @@ function initializeMenu() {
       icon: PrimeIcons.OBJECTS_COLUMN,
       routerLink: ['/asset-roaster'],
       label: 'Asset Roaster',
+      resource: 'products',
     },
     routes: ASSET_ROASTER_ROUTES,
   });
@@ -30,6 +31,7 @@ function initializeMenu() {
       icon: PrimeIcons.CLOCK,
       routerLink: ['/settings/maintenance-windows'],
       label: 'Maintenance Windows',
+      resource: 'maintenance-windows',
       command: () => sidenavManager.closeSidenav(),
     },
     route: {
