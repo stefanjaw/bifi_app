@@ -10,7 +10,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
 import { injectAuthService } from '@avalantec/base-app/auth';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-bug-reporting-form-dialog',
@@ -29,7 +28,6 @@ export class BugReportingFormDialog extends BaseDialog {
   protected formService = inject(BugReportingForm);
   private destroy$ = inject(DestroyRef);
   private bugReportingService = inject(CrudBugReporting);
-  private router = inject(Router);
   private authService = injectAuthService();
 
   // State
@@ -59,7 +57,7 @@ export class BugReportingFormDialog extends BaseDialog {
 
     // Create a new bug report in the backend
     this.bugReportingService
-      .post({ data: { ...data.rawValue, email, platform: this.router.url } })
+      .post({ data: { ...data.rawValue, email, platform: window.location.href } })
       // Automatically unsubscribe from the observable once the component is destroyed
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
