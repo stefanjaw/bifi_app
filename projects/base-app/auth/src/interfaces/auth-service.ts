@@ -1,4 +1,4 @@
-import { computed, Signal } from '@angular/core';
+import { computed, inject, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Session } from './session-user';
 import {
@@ -7,6 +7,7 @@ import {
   policyAction,
   condition,
   mayBeSignalValue,
+  LIBRARY_CONFIG,
 } from '@avalantec/base-app/core';
 import { maybeSignal } from '@avalantec/base-app/core';
 
@@ -31,6 +32,8 @@ export abstract class IAuthService<
   abstract logout(): Promise<boolean>;
 
   abstract clearError(): void;
+
+  private readonly rbacEnable = inject(LIBRARY_CONFIG).rbacEnable;
 
   createPermissionSignal<TModel = unknown>(
     resource: maybeSignal<resource>,
@@ -58,6 +61,8 @@ export abstract class IAuthService<
     resourceData?: TModel,
     context = {}
   ): boolean {
+    if (!this.rbacEnable) return true;
+
     // Get all user's policies
     const userPolicies = user.roles.flatMap(role => role.policies);
 
