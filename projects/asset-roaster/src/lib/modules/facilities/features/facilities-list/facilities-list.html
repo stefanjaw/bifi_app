@@ -1,0 +1,28 @@
+<h1 class="text-2xl font-bold mb-4">Facilities</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Facility"
+    severity="secondary"
+    icon="pi pi-plus"
+    *bifiAppHasPermission="'facilities:create'"
+  ></p-button>
+
+  <!-- [routerLink]="['../create']" -->
+</div>
+
+<bifi-app-search-bar label="Search by name" [searchFilters]="facilityFilters"></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="facilityColumns" [data]="facilities">
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      *bifiAppHasPermission="'facilities:update'"
+    ></p-button>
+
+    <!-- [routerLink]="['../edit/', row._id]" -->
+    <!-- <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button> -->
+  </ng-template>
+</bifi-app-table-layout>

@@ -1,0 +1,31 @@
+<h1 class="text-2xl font-bold mb-4">Rooms</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Room"
+    severity="secondary"
+    icon="pi pi-plus"
+    *bifiAppHasPermission="'rooms:create'"
+  ></p-button>
+
+  <!-- [routerLink]="['../create']" -->
+</div>
+
+<bifi-app-search-bar
+  label="Search by name, code and address"
+  [searchFilters]="roomFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="roomColumns" [data]="rooms">
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      *bifiAppHasPermission="'rooms:update'"
+    ></p-button>
+
+    <!-- [routerLink]="['../edit/', row._id]" -->
+    <!-- <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button> -->
+  </ng-template>
+</bifi-app-table-layout>
