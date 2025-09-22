@@ -9,7 +9,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { condition, conditionOperator, policyAction, ToastManager } from '@avalantec/base-app/core';
+import { condition, conditionOperator, policyAction } from '@avalantec/base-app/core';
 import { CrudPolicies } from '../../services/crud-policies';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +32,6 @@ import { provideResourceManager } from '@avalantec/base-app/resource';
 export class PoliciesForm implements OnInit {
   protected formService = inject(PolicyForm);
   private policiesService = inject(CrudPolicies);
-  private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -120,7 +119,6 @@ export class PoliciesForm implements OnInit {
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.isSubmitLoading.set(false);
-        this.toastManager.showSuccess('Policy created successfully');
         this.goBack();
       },
       error: () => {

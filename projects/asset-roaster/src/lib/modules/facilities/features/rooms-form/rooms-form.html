@@ -1,5 +1,6 @@
+]
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Maintenance Window"
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Room"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,48 +19,32 @@
 
     @if (!loading()) {
       <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
-        <section class="w-full grid gap-3 sm:grid-cols-2">
-          <bifi-app-form-field>
+        <section class="grid gap-3 sm:grid-cols-2 w-full">
+          <bifi-app-form-field class="mb-3">
             <bifi-app-form-label>Name</bifi-app-form-label>
             <input pInputText formControlName="name" type="text" placeholder="Name" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
-        </section>
-      </bifi-app-form-section>
 
-      <bifi-app-form-section title="Window Information" id="window-info" [ordinal]="2">
-        <section class="w-full grid gap-3 sm:grid-cols-1">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Days before</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="daysBefore"
-              type="number"
-              placeholder="Days before"
-              min="1"
-            />
+          <bifi-app-form-field class="mb-3">
+            <bifi-app-form-label>Code</bifi-app-form-label>
+            <input pInputText formControlName="code" type="text" placeholder="Code" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="mb-3">
+            <bifi-app-form-label>Address</bifi-app-form-label>
+            <input pInputText formControlName="address" type="text" placeholder="Code" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Days after</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="daysAfter"
-              type="number"
-              placeholder="Days after"
-              min="1"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Recurrency</bifi-app-form-label>
+            <bifi-app-form-label>Facility</bifi-app-form-label>
             <p-select
-              formControlName="recurrency"
-              [options]="recurrencyOptions"
-              optionValue="value"
-              optionLabel="label"
+              formControlName="facilityId"
+              [options]="facilities()"
+              optionLabel="name"
+              optionValue="_id"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>

@@ -1,6 +1,8 @@
-export type { contact } from './interfaces/contacts';
-export { CrudContacts } from './services/crud-contacts';
-export { ContactsList } from './components/contacts-list/contacts-list';
-export { contactColumns } from './libraries/contact-columns';
-export { contactFilters } from './libraries/contact-filters';
-export { CONTACT_ROUTES } from './routes/contact-routes';
+export * from './components/contacts-form/contacts-form';
+export * from './components/contacts-list/contacts-list';
+export * from './interfaces/contacts';
+export * from './libraries/contact-columns';
+export * from './libraries/contact-filters';
+export * from './routes/contact-routes';
+export * from './services/contact-form';
+export * from './services/crud-contacts';

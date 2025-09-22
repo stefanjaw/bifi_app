@@ -1,17 +1,28 @@
 <h1 class="text-2xl font-bold mb-4">Contacts</h1>
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Contact"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'contacts:create'"
+  ></p-button>
+</div>
+
 <bifi-app-search-bar
   label="Search by name, last name, phone number and email"
   [searchFilters]="contactFilters"
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout [columns]="contactColumns" [data]="contacts">
-  <ng-template #actions>
+  <ng-template #actions let-element>
     <p-button
       *bifiAppHasPermission="'contacts:update'"
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
+      [routerLink]="['../edit/', element._id]"
     ></p-button>
     <p-button
       *bifiAppHasPermission="'contacts:delete'"

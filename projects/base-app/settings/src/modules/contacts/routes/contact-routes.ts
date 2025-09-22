@@ -14,4 +14,18 @@ export const CONTACT_ROUTES: Routes = [
       import('../components/contacts-list/contacts-list').then(m => m.ContactsList),
     data: { permission: 'contacts:read' },
   },
+  {
+    path: 'create',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/contacts-form/contacts-form').then(m => m.ContactsForm),
+    data: { permission: 'contacts:create' },
+  },
+  {
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/contacts-form/contacts-form').then(m => m.ContactsForm),
+    data: { permission: 'contacts:update' },
+  },
 ];

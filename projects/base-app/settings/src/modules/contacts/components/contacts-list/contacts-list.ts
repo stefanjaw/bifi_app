@@ -11,6 +11,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-contacts-list',
@@ -18,7 +19,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink],
   templateUrl: './contacts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
