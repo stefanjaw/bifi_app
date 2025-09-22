@@ -1,28 +1,28 @@
-<h1 class="text-2xl font-bold mb-4">Rooms</h1>
+<h1 class="text-2xl font-bold mb-4">Product Types</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Room"
+    label="Add New Product Type"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'rooms:create'"
+    *bifiAppHasPermission="'productTypes:create'"
   ></p-button>
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, code and address"
-  [searchFilters]="roomFilters"
+  label="Search by name and description"
+  [searchFilters]="productTypeFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="roomColumns" [data]="rooms">
+<bifi-app-table-layout [columns]="productTypeColumns" [data]="productTypes">
   <ng-template #actions let-row>
     <p-button
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'rooms:update'"
+      *bifiAppHasPermission="'productTypes:update'"
     ></p-button>
     <!-- <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button> -->
   </ng-template>

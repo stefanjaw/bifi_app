@@ -3,7 +3,12 @@ import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
 import { ResourceList } from '@avalantec/base-app/settings';
 import { PrimeIcons } from 'primeng/api';
 import { MainMenuManager, SettingsMenuManager } from '@avalantec/base-app/routing';
-import { FACILITIES_ROUTES, MAINTENANCE_WINDOWS_ROUTES, ROOMS_ROUTES } from '../../modules';
+import {
+  FACILITIES_ROUTES,
+  MAINTENANCE_WINDOWS_ROUTES,
+  PRODUCT_TYPES_ROUTES,
+  ROOMS_ROUTES,
+} from '../../modules';
 import { SidenavManager } from '@avalantec/base-app/core';
 
 export function initializeAssetRoster() {
@@ -16,6 +21,7 @@ function initializeMenu() {
   const settingsMenuManager = inject(SettingsMenuManager);
   const sidenavManager = inject(SidenavManager);
 
+  // main menu
   mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.OBJECTS_COLUMN,
@@ -26,6 +32,7 @@ function initializeMenu() {
     routes: ASSET_ROASTER_ROUTES,
   });
 
+  // settigns
   settingsMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.CLOCK,
@@ -65,6 +72,20 @@ function initializeMenu() {
     route: {
       path: 'facilities',
       children: FACILITIES_ROUTES,
+    },
+  });
+
+  settingsMenuManager.addItem({
+    newItem: {
+      icon: PrimeIcons.LIST,
+      routerLink: ['/settings/product-types'],
+      label: 'Product Types',
+      resource: 'productTypes',
+      command: () => sidenavManager.closeSidenav(),
+    },
+    route: {
+      path: 'product-types',
+      children: PRODUCT_TYPES_ROUTES,
     },
   });
 }

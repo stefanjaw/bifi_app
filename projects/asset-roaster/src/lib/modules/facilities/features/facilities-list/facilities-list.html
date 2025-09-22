@@ -5,10 +5,9 @@
     label="Add New Facility"
     severity="secondary"
     icon="pi pi-plus"
+    [routerLink]="['../create']"
     *bifiAppHasPermission="'facilities:create'"
   ></p-button>
-
-  <!-- [routerLink]="['../create']" -->
 </div>
 
 <bifi-app-search-bar label="Search by name" [searchFilters]="facilityFilters"></bifi-app-search-bar>
@@ -19,10 +18,9 @@
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
+      [routerLink]="['../edit/', row._id]"
       *bifiAppHasPermission="'facilities:update'"
     ></p-button>
-
-    <!-- [routerLink]="['../edit/', row._id]" -->
     <!-- <p-button severity="danger" label="Delete" icon="pi pi-trash"></p-button> -->
   </ng-template>
 </bifi-app-table-layout>
