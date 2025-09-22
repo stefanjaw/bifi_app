@@ -12,6 +12,20 @@ export const PRODUCT_TYPES_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/product-types-list/product-types-list').then(m => m.ProductTypesList),
-    data: { permission: 'productTypes:read' },
+    data: { permission: 'product-types:read' },
+  },
+  {
+    path: 'create',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/product-types-form/product-types-form').then(m => m.ProductTypesForm),
+    data: { permission: 'product-types:create' },
+  },
+  {
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/product-types-form/product-types-form').then(m => m.ProductTypesForm),
+    data: { permission: 'product-types:update' },
   },
 ];
