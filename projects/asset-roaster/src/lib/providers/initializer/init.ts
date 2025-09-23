@@ -25,8 +25,8 @@ function initializeMenu() {
   mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.OBJECTS_COLUMN,
-      routerLink: ['/asset-roaster'],
-      label: 'Asset Roaster',
+      routerLink: ['/asset-roster'],
+      label: 'Asset Roster',
       resource: 'products',
     },
     routes: ASSET_ROASTER_ROUTES,
