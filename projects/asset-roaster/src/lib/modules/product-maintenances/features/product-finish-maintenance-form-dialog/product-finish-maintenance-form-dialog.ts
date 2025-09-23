@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
+import { BaseDialog, Text } from '@avalantec/base-app/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -21,10 +21,19 @@ import { product, ProductMaintenanceContext } from '../../../products';
 import { productMaintenance } from '../../interfaces/product-maintenance';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'bifi-app-product-finish-maintenance-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, Text, CommonModule, FormModule],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    FileUploadModule,
+    Text,
+    CommonModule,
+    FormModule,
+    TextareaModule,
+  ],
   templateUrl: './product-finish-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,7 +41,6 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
   // services
   protected formService = inject(UpdateMaintenanceForm);
   private productMaintenancesService = inject(CrudProductMaintenances);
-  private toastManager = inject(ToastManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
   form = this.formService.form;
 
@@ -75,6 +83,7 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
         data: {
           attachments: rawValue.attachments,
           active: 'false',
+          notes: rawValue.notes,
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -83,9 +92,6 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
           this.submitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          this.toastManager.showSuccess(
-            `${this.maintenanceType() === 'service' ? 'Service' : 'PM'} finished successfully`
-          );
 
           if (this.maintenanceType() === 'service') {
             this.productMaintenanceContext.handleFinishService();

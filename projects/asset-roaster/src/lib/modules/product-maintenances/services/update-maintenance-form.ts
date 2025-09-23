@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface UpdateMaintenanceFormModel {
+  notes?: string;
   attachments: FormUploaderFile[];
 }
 
@@ -13,6 +14,7 @@ export class UpdateMaintenanceForm extends BaseForm<UpdateMaintenanceFormModel> 
 
   override createForm() {
     return this.fb.group<UpdateMaintenanceFormModel>({
+      notes: [''],
       attachments: {
         template: {
           id: [''],

@@ -6,6 +6,7 @@ export interface productMaintenance {
   productId: product;
   name: string;
   description?: string;
+  notes?: string;
   attachments: file[];
   date: string;
   type: 'service' | 'preventive-maintenance';

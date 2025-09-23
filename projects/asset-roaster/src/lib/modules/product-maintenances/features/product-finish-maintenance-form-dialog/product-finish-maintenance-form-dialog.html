@@ -20,6 +20,17 @@
       {{ productMaintenace()?.date | date }}
     </p>
 
+    <bifi-app-form-field>
+      <bifi-app-form-label>Notes</bifi-app-form-label>
+      <textarea
+        pInputTextarea
+        formControlName="notes"
+        type="text"
+        placeholder="Eg. No issues"
+      ></textarea>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
     <bifi-app-form-uploader formArrayName="attachments">
       <p-fileUpload
         showUploadButton="false"
