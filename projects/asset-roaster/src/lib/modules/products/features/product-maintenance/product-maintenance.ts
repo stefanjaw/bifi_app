@@ -352,7 +352,7 @@ export class ProductMaintenance {
    * Navigates back to the equipment list page.
    */
   handleBackToDashboard() {
-    this.router.navigate(['asset-roaster', 'equipment', 'list']);
+    this.router.navigate(['asset-roster', 'equipment', 'list']);
   }
 
   /**
