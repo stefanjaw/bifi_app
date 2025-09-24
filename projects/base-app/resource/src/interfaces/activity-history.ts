@@ -1,3 +1,5 @@
+import { user } from '@avalantec/base-app/core';
+
 export interface activityHistory<TDocument = any> {
   _id: string;
   title: string;
@@ -5,5 +7,6 @@ export interface activityHistory<TDocument = any> {
   performDate: Date;
   model: string;
   modelId: TDocument;
+  userId?: user;
   metadata?: any;
 }

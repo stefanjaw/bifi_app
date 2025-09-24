@@ -15,7 +15,9 @@
                 {{ history.performDate | date: 'MM/dd/yyyy h:mm a' }}
               </p>
 
-              <p class="text-sm text-gray-600">Logged By: Username</p>
+              <p class="text-sm text-gray-600">
+                Logged By: {{ history.userId?.username || 'No User' }}
+              </p>
             </div>
           </div>
 
