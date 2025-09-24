@@ -93,7 +93,7 @@
               </div>
             } @else if (status === 'in-progress') {
               <div class="text-sm text-blue-500">
-                PM in progress, initiated on {{ currPM()?.date | date }}.
+                PM in progress, initiated on {{ currPM()?.dateStart | date }}.
               </div>
             } @else if (status === 'finished') {
               <div class="text-sm">Next Scheduled PM: {{ product()?.maintenanceDate | date }}</div>
@@ -143,7 +143,7 @@
           ></p-button>
         } @else if (serviceStarted()) {
           <p class="mb-4">
-            Service in progress: {{ currService()?.date | date }} ({{ currService()?.name }})
+            Service in progress: {{ currService()?.dateStart | date }} ({{ currService()?.name }})
           </p>
           <p-button
             (onClick)="handleOpenFinishServiceDialog()"

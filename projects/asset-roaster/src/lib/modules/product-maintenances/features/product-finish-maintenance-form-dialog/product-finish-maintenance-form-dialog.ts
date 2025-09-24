@@ -84,6 +84,7 @@ export class ProductFinishMaintenanceFormDialog extends BaseDialog {
           attachments: rawValue.attachments,
           active: 'false',
           notes: rawValue.notes,
+          dateEnd: new Date().toISOString(),
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))

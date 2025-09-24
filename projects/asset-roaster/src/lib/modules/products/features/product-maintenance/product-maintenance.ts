@@ -335,7 +335,7 @@ export class ProductMaintenance {
         data: {
           productId: this.product()?._id || '',
           name: 'PM',
-          date: new Date().toISOString(),
+          dateStart: new Date().toISOString(),
           type: 'preventive-maintenance',
         },
       })

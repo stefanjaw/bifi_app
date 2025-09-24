@@ -8,7 +8,8 @@ export interface productMaintenance {
   description?: string;
   notes?: string;
   attachments: file[];
-  date: string;
+  dateStart: string;
+  dateEnd: string;
   type: 'service' | 'preventive-maintenance';
   active: boolean;
 }

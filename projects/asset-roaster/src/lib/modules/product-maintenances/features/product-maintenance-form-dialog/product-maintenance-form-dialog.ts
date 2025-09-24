@@ -69,6 +69,7 @@ export class ProductMaintenanceFormDialog extends BaseDialog {
           name: rawValue.name,
           description: rawValue.description || '',
           type: 'service',
+          dateStart: new Date().toISOString(),
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
