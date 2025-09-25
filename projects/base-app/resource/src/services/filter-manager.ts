@@ -114,11 +114,9 @@ export class FilterManager {
         break;
       case 'like':
         operator = '$regex';
-        value = `^${value}`;
         break;
       case 'not like':
         operator = '$notRegex';
-        value = `^${value}`;
         break;
       case 'empty':
         operator = '$size';

@@ -12,27 +12,39 @@ export const productFilters: filter<product>[] = [
     type: 'string',
   },
   {
-    field: 'acquiredDate',
-    type: 'date',
-  },
-  {
-    field: 'acquiredPrice',
-    type: 'number',
-  },
-  {
-    field: 'currentPrice',
-    type: 'number',
-  },
-  {
     field: 'condition',
     type: 'string',
   },
   {
-    field: 'warrantyDate',
-    type: 'date',
+    field: 'productTypeIds.name',
+    type: 'string',
   },
   {
-    field: 'active',
-    type: 'boolean',
+    field: 'vendorIds.name',
+    type: 'string',
   },
+  {
+    field: 'makeIds.name',
+    type: 'string',
+  },
+  // {
+  //   field: 'acquiredDate',
+  //   type: 'date',
+  // },
+  // {
+  //   field: 'acquiredPrice',
+  //   type: 'number',
+  // },
+  // {
+  //   field: 'currentPrice',
+  //   type: 'number',
+  // },
+  // {
+  //   field: 'warrantyDate',
+  //   type: 'date',
+  // },
+  // {
+  //   field: 'active',
+  //   type: 'boolean',
+  // },
 ];
