@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
-import { Badge } from '@avalantec/base-app/ui';
+import { Badge, BadgeVariant } from '@avalantec/base-app/ui';
 import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
@@ -22,5 +22,18 @@ export class ActivityHistorySection {
 
   async downloadFile(attachment: file) {
     this.fileResolver.downloadFileInBrowser({ metadata: attachment });
+  }
+
+  getBadgeVariant(activity: activityHistory<any>): BadgeVariant {
+    switch (activity.title?.toLowerCase()) {
+      case 'comissioned':
+        return 'success';
+      case 'comission failed':
+        return 'warning';
+      case 'decomissioned':
+        return 'error';
+      default:
+        return 'info';
+    }
   }
 }

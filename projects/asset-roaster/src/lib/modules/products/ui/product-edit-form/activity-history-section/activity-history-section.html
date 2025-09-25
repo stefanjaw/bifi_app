@@ -6,7 +6,7 @@
       <p-card class="shadow-2xl mb-3">
         <ng-template #content>
           <div class="flex justify-between items-center">
-            <bifi-app-badge variant="success">
+            <bifi-app-badge [variant]="getBadgeVariant(history)">
               {{ history.title | titlecase }}
             </bifi-app-badge>
             <div>
