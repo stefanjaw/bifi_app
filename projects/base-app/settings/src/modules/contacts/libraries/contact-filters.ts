@@ -18,4 +18,8 @@ export const contactFilters: filter<contact>[] = [
     field: 'email',
     type: 'string',
   },
+  {
+    field: 'parentId.name',
+    type: 'string',
+  }
 ];
