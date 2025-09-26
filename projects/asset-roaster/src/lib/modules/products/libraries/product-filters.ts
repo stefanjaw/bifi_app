@@ -27,6 +27,10 @@ export const productFilters: filter<product>[] = [
     field: 'makeIds.name',
     type: 'string',
   },
+  {
+    field: 'locationId.name',
+    type: 'string',
+  }
   // {
   //   field: 'acquiredDate',
   //   type: 'date',
