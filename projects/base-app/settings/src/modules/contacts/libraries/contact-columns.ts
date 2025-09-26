@@ -22,4 +22,9 @@ export const contactColumns: tableColumn<contact>[] = [
     title: 'Email',
     type: 'text',
   },
+  {
+    field: 'parentId.name',
+    title: 'Parent Contact',
+    type: 'text',
+  },
 ];

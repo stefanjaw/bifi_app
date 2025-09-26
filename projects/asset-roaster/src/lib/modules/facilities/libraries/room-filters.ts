@@ -14,4 +14,8 @@ export const roomFilters: filter<room>[] = [
     field: 'address',
     type: 'string',
   },
+  {
+    field: 'facilityId.name',
+    type: 'string',
+  },
 ];

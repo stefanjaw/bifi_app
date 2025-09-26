@@ -10,4 +10,8 @@ export const policyFilters: filter<policy<string, string>>[] = [
     field: 'action',
     type: 'string',
   },
+  {
+    field: 'name',
+    type: 'string',
+  },
 ];

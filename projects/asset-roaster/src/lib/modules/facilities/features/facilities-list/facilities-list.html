@@ -10,7 +10,10 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by name" [searchFilters]="facilityFilters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  label="Search by name or main place"
+  [searchFilters]="facilityFilters"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout [columns]="facilityColumns" [data]="facilities">
   <ng-template #actions let-row>
