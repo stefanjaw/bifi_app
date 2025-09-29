@@ -1,0 +1,32 @@
+<p-dialog
+  [header]="header()"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <bifi-app-form-uploader formArrayName="file">
+      <p-fileUpload
+        #fileUpload
+        showUploadButton="false"
+        showCancelButton="false"
+        name="files"
+        [multiple]="false"
+        accept="application/*"
+        maxFileSize="100000000"
+        mode="basic"
+      ></p-fileUpload>
+    </bifi-app-form-uploader>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      saveLabel="Add File"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

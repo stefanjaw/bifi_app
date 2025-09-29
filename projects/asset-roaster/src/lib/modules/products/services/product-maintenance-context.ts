@@ -18,7 +18,8 @@ export type productMaintenanceContextEvent =
   | 'open-finish-pm-dialog'
   | 'finish-pm'
   | 'init-pm'
-  | 'back-to-dashboard';
+  | 'back-to-dashboard'
+  | 'activity-history-add-file';
 
 @Injectable({
   providedIn: 'root',
@@ -94,5 +95,9 @@ export class ProductMaintenanceContext {
 
   handleBackToDashboard() {
     this._handleEvents.next('back-to-dashboard');
+  }
+
+  handleActivityHistoryAddFile() {
+    this._handleEvents.next('activity-history-add-file');
   }
 }

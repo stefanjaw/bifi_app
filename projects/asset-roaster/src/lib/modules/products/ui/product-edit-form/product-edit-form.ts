@@ -45,7 +45,7 @@ export class ProductEditForm {
 
   product = input.required<product | undefined>();
   activityHistories =
-    input.required<activityHistory<product | productComissionning | productMaintenance>[]>();
+    input.required<activityHistory<productComissionning | productMaintenance>[]>();
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
   isEditMode = input.required<boolean>();

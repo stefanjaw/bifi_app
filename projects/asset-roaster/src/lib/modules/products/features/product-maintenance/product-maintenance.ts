@@ -110,7 +110,7 @@ export class ProductMaintenance {
   ]);
 
   activityHistories = this.activityHistoriesService.get<
-    activityHistory<product | productComissionning | productMaintenance>
+    activityHistory<productComissionning | productMaintenance>
   >({
     searchParams: this.activityHistoryQuery,
     sort: this.activityHistoryOrder,
@@ -483,6 +483,9 @@ export class ProductMaintenance {
           case 'finish-service':
           case 'finish-pm':
             this.handleReloadProduct();
+            break;
+          case 'activity-history-add-file':
+            this.activityHistories.reload();
             break;
         }
       });

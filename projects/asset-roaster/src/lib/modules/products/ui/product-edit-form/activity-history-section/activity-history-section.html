@@ -36,7 +36,11 @@
         <!-- footer -->
         <ng-template #footer>
           <div class="flex justify-start gap-3">
-            @if (history.modelId.attachments && history.modelId.attachments.length > 0) {
+            @if (
+              history.modelId.attachments &&
+              history.modelId.attachments.length > 0 &&
+              history.title !== 'Decomissioned'
+            ) {
               @let attachment = history.modelId.attachments[0];
 
               <p-button
@@ -46,17 +50,25 @@
                 variant="text"
                 (onClick)="downloadFile(attachment)"
               ></p-button>
-            } @else {
+            } @else if (history.title !== 'Decomissioned') {
               <p-button
                 label="Add Attachment"
                 severity="primary"
                 icon="pi pi-plus"
                 variant="text"
+                (onClick)="selectedHistoryDocument.set(history.modelId); addFileDialog.openDialog()"
               ></p-button>
+            } @else {
+              <div class="text-sm text-gray-500 italic">No attachment available.</div>
             }
           </div>
         </ng-template>
       </p-card>
     }
   }
+
+  <bifi-app-product-activity-history-add-file-dialog
+    #addFileDialog
+    [activityHistoryDocument]="selectedHistoryDocument()"
+  ></bifi-app-product-activity-history-add-file-dialog>
 </bifi-app-form-section>
