@@ -79,7 +79,7 @@ function initializeMenu() {
     newItem: {
       icon: PrimeIcons.LIST,
       routerLink: ['/settings/product-types'],
-      label: 'Product Types',
+      label: 'Equipment Types',
       resource: 'productTypes',
       command: () => sidenavManager.closeSidenav(),
     },

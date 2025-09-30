@@ -4,7 +4,7 @@ import { productType } from '../interfaces/product-type';
 export const productTypeColumns: tableColumn<productType>[] = [
   {
     field: 'name',
-    title: 'Facility Name',
+    title: 'Equipment Type Name',
     type: 'text',
     sortable: true,
   },
