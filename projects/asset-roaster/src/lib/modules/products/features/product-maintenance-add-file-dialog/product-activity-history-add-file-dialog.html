@@ -28,6 +28,7 @@
       (cancelClicked)="closeDialog()"
       saveLabel="Add File"
       cancelLabel="Cancel"
+      [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>
 </p-dialog>

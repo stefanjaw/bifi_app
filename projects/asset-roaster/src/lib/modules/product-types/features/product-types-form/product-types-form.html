@@ -14,6 +14,7 @@
       [isSubmitting]="isSubmitLoading()"
       (cancelClicked)="goBack()"
       class="mb-4"
+      [formChanged]="form.dirty"
     ></bifi-app-form-actions>
 
     @if (!loading()) {
@@ -26,7 +27,11 @@
 
         <bifi-app-form-field>
           <bifi-app-form-label>Description</bifi-app-form-label>
-          <textarea pInputTextarea formControlName="description" placeholder="Description"></textarea>
+          <textarea
+            pInputTextarea
+            formControlName="description"
+            placeholder="Description"
+          ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </bifi-app-form-section>

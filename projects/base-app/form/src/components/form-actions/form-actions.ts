@@ -17,4 +17,6 @@ export class FormActions {
 
   cancelLabel = input<string>('Go back');
   saveLabel = input<string>();
+
+  formChanged = input.required<boolean>();
 }

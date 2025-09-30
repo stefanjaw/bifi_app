@@ -9,11 +9,13 @@
     [label]="cancelLabel()"
     icon="pi pi-arrow-left"
   ></p-button>
-  <p-button
-    type="submit"
-    (onClick)="submitClicked.emit()"
-    [icon]="isSubmitting() ? 'pi pi-spinner' : undefined"
-    [label]="isSubmitting() ? 'Saving...' : saveLabel() || 'Save'"
-    [disabled]="isSubmitting() || formDisabled()"
-  ></p-button>
+  @if (formChanged()) {
+    <p-button
+      type="submit"
+      (onClick)="submitClicked.emit()"
+      [icon]="isSubmitting() ? 'pi pi-spinner' : 'pi pi-cloud-upload'"
+      [label]="isSubmitting() ? 'Saving...' : saveLabel() || 'Save'"
+      [disabled]="isSubmitting() || formDisabled()"
+    ></p-button>
+  }
 </section>

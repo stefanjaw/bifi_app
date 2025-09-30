@@ -14,6 +14,7 @@
       [isSubmitting]="isSubmitLoading()"
       (cancelClicked)="goBack()"
       class="mb-4"
+      [formChanged]="form.dirty"
     ></bifi-app-form-actions>
 
     @if (!loading()) {

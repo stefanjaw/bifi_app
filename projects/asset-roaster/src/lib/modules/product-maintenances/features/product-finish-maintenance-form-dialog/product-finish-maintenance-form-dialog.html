@@ -48,6 +48,7 @@
       (cancelClicked)="closeDialog()"
       saveLabel="Confirm {{ maintenanceType() === 'service' ? 'Service' : 'PM' }} Done"
       cancelLabel="Cancel"
+      [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>
 </p-dialog>

@@ -63,6 +63,7 @@
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
       cancelLabel="Cancel"
+      [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>
 </p-dialog>
