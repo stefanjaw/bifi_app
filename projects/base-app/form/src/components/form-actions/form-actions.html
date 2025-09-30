@@ -6,9 +6,9 @@
     [disabled]="isSubmitting()"
     (click)="cancelClicked.emit()"
     variant="outlined"
-  >
-    Cancel
-  </p-button>
+    [label]="cancelLabel()"
+    icon="pi pi-arrow-left"
+  ></p-button>
   <p-button
     type="submit"
     (onClick)="submitClicked.emit()"

@@ -15,6 +15,6 @@ export class FormActions {
   submitClicked = output<void>();
   cancelClicked = output<void>();
 
-  cancelLabel = input<string>();
+  cancelLabel = input<string>('Go back');
   saveLabel = input<string>();
 }
