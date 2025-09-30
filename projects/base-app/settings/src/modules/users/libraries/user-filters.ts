@@ -18,4 +18,8 @@ export const userFilters: filter<user>[] = [
     field: 'roles.name',
     type: 'string',
   },
+  {
+    field: 'contactId.name',
+    type: 'string',
+  },
 ];

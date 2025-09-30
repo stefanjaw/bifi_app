@@ -1,3 +1,5 @@
+import { contact } from '@avalantec/base-app/settings';
+
 export type resource = string;
 export type policyAction = 'create' | 'read' | 'update' | 'delete';
 export type conditionOperator = '==' | '!=' | '>' | '<' | 'in';
@@ -31,6 +33,7 @@ export interface user {
   email: string;
   picture: string;
   roles: role[];
+  contactId?: contact;
   // name: string;
   // lastName: string;
   // companyRoles: { company: company; role: role }[];
