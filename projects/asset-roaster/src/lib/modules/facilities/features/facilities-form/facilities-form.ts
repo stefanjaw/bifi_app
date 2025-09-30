@@ -73,7 +73,7 @@ export class FacilitiesForm {
       if (facility) {
         this.form.patchValue({
           name: facility.name,
-          mainPlace: facility.mainPlace._id,
+          contactId: facility.contactId._id,
         });
         this.formService.resetDirtyState();
       } else {

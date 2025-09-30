@@ -10,7 +10,7 @@ export const facilityColumns: tableColumn<facility>[] = [
     sortable: true,
   },
   {
-    field: 'mainPlace.name',
+    field: 'contactId.name',
     title: 'Main Place',
     type: 'text',
     sortable: true,

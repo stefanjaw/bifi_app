@@ -7,7 +7,7 @@ export const facilityFilters: filter<facility>[] = [
     type: 'string',
   },
   {
-    field: 'mainPlace.name',
+    field: 'contactId.name',
     type: 'string',
   },
 ];

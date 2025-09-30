@@ -4,7 +4,7 @@ import { room } from './room';
 export interface facility {
   _id: string;
   name: string;
-  mainPlace: contact;
+  contactId: contact;
   rooms: room[];
   active: boolean;
 }

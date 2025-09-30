@@ -4,7 +4,7 @@ import { BaseForm } from '@avalantec/base-app/form';
 
 export interface FacilityFormModel {
   name: string;
-  mainPlace: string;
+  contactId: string;
 }
 
 @Injectable({
@@ -14,7 +14,7 @@ export class FacilityForm extends BaseForm<FacilityFormModel> {
   override createForm() {
     return this.fb.group<FacilityFormModel>({
       name: ['', [Validators.required]],
-      mainPlace: ['', [Validators.required]],
+      contactId: ['', [Validators.required]],
     });
   }
 }
