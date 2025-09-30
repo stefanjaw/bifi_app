@@ -21,6 +21,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectRoleDialog } from './select-role-dialog/select-role-dialog';
 import { ButtonModule } from 'primeng/button';
 import { role } from '@avalantec/base-app/core';
+import { CrudContacts } from '../../../contacts';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'bifi-app-users-form',
@@ -33,12 +35,14 @@ import { role } from '@avalantec/base-app/core';
     SelectRoleDialog,
     ButtonModule,
     TableLayout,
+    SelectModule,
   ],
   templateUrl: './users-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersForm {
   private readonly crudUsers = inject(CrudUsers);
+  private readonly crudContacts = inject(CrudContacts);
   private readonly formService = inject(UserForm);
   private readonly destroy$ = inject(DestroyRef);
   private readonly router = inject(Router);
@@ -52,13 +56,17 @@ export class UsersForm {
     triggerRequest: computed(() => this.id() !== undefined),
   });
 
+  contactsResource = this.crudContacts.get({});
+
   // Data
   user = this.userResource.value;
+  contacts = this.contactsResource.value;
 
   // Form
   form = this.formService.form;
+
   // isUpdate = computed(() => !!this.user()); its gonna be always update
-  loading = this.userResource.isLoading;
+  loading = computed(() => this.userResource.isLoading() || this.contactsResource.isLoading());
   error = this.userResource.error;
   rolesData = signal<role[]>([]);
   isSubmitLoading = signal<boolean>(false);

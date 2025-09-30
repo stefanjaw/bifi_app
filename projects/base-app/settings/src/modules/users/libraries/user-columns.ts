@@ -28,4 +28,9 @@ export const userColumns: tableColumn<user>[] = [
       return value.map(role => role.name).join(', ');
     },
   },
+  {
+    field: 'contactId.name',
+    title: 'Contact Name',
+    type: 'text',
+  },
 ];

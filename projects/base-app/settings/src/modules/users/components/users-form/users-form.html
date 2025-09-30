@@ -30,6 +30,17 @@
             <input pInputText formControlName="email" type="text" placeholder="Email" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Related Contact</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contacts()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </section>
       </bifi-app-form-section>
 
