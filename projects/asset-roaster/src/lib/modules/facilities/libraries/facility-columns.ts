@@ -5,7 +5,7 @@ import { room } from '../interfaces/room';
 export const facilityColumns: tableColumn<facility>[] = [
   {
     field: 'name',
-    title: 'Facility Name',
+    title: 'Equipment Type Name',
     type: 'text',
     sortable: true,
   },
