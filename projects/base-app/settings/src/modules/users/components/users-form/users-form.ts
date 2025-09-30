@@ -81,6 +81,7 @@ export class UsersForm {
           email: user.email,
           picture: user.picture,
           roles: user.roles.map(role => role._id),
+          contactId: user.contactId?._id || '',
         });
         this.formService.resetDirtyState();
         this.rolesData.set(user.roles);
