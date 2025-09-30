@@ -279,7 +279,7 @@ export class ApiRequestManager<T> {
    *
    * @param {string} _id The id of the document to be deleted.
    * @param {string} [specificEndpoint=''] The specific endpoint to be used.
-   * @returns {ResourceRef<boolean>} A resource ref that resolves to true if the deletion was successful, or false if it failed.
+   * @returns {Observable<boolean>} A httpCLient that resolves to true if the deletion was successful, or false if it failed.
    */
   delete({
     _id,
@@ -287,19 +287,15 @@ export class ApiRequestManager<T> {
   }: {
     _id: string;
     specificEndpoint?: string;
-  }): ResourceRef<boolean> {
+  }): Observable<boolean> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
     const params = new URLSearchParams({
       _id: _id,
     });
 
-    return rxResource({
-      stream: () =>
-        this._httpClient.delete<boolean>(fullURL, {
-          params: new HttpParams({ fromString: params.toString() }),
-          context: this.createHttpContext('delete'),
-        }),
-      defaultValue: false,
+    return this._httpClient.delete<boolean>(fullURL, {
+      params: new HttpParams({ fromString: params.toString() }),
+      context: this.createHttpContext('delete'),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
 import { company } from '../../interfaces/company';
 import { companyColumns } from '../../libraries/company-columns';
@@ -11,6 +11,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-companies-list',
@@ -24,9 +25,22 @@ import { HasPermission } from '@avalantec/base-app/auth';
 })
 export class CompaniesList {
   private resourceManager = inject<ResourceManager<company>>(ResourceManager);
+  private crudCompanies = inject(CrudCompanies);
+  private destroy$ = inject(DestroyRef);
 
   companyColumns = companyColumns;
   companyFilters = companyFilters;
 
   companies = this.resourceManager.data;
+
+  deleteCompany(id: string) {
+    this.crudCompanies
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.companies.reload();
+        },
+      });
+  }
 }

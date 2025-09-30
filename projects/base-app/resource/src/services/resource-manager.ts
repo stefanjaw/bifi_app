@@ -41,6 +41,8 @@ export class ResourceManager<T> {
         this._searchParams.set({});
       }
 
+      this._searchParams.update(params => ({ ...params, $and: [{ active: true }] }));
+
       this.paginationManager.resetPaginationOptions();
     });
 
