@@ -79,6 +79,7 @@ export class RolesForm {
         this.policyData.set(role.policies);
       } else {
         this.formService.reset();
+        this.formService.form.controls.policies.clear();
         this.policyData.set([]);
       }
     });

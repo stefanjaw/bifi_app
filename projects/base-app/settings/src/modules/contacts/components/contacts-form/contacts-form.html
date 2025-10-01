@@ -18,7 +18,11 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
+      <bifi-app-form-section
+        title="General information"
+        id="contact-general-information"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Name</bifi-app-form-label>
@@ -67,7 +71,11 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Contact information" id="form-conditions" [ordinal]="2">
+      <bifi-app-form-section
+        title="Contact information"
+        id="contact-contacting-information"
+        [ordinal]="2"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Email</bifi-app-form-label>
@@ -92,6 +100,28 @@
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
+
+      <bifi-app-form-section title="Child Contacts" id="contact-children-information" [ordinal]="3">
+        <p-button
+          label="Add New Child Contact"
+          severity="secondary"
+          icon="pi pi-plus"
+          (onClick)="selectChildContactDialog.openDialog()"
+          styleClass="mb-4"
+        ></p-button>
+
+        <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()">
+          <ng-template #actions let-row>
+            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
+            <p-button
+              severity="danger"
+              label="Remove"
+              icon="pi pi-trash"
+              (click)="handleContactRemove(row._id)"
+            ></p-button>
+          </ng-template>
+        </bifi-app-table-layout>
+      </bifi-app-form-section>
     } @else if (error()) {
       <p>Something went wrong... {{ error() }}</p>
     } @else {
@@ -99,3 +129,9 @@
     }
   </form>
 </bifi-app-form-layout>
+
+<bifi-app-select-child-contact-dialog
+  #selectChildContactDialog
+  [childContactOptions]="childOptions() || []"
+  (selected)="handleContactSelect($event)"
+></bifi-app-select-child-contact-dialog>
