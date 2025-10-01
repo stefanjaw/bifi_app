@@ -33,4 +33,10 @@ export const contactColumns: tableColumn<contact>[] = [
     type: 'text',
     sortable: true,
   },
+  {
+    field: 'childIds',
+    title: 'Child Contacts',
+    type: 'text',
+    parseField: (row: contact[]) => row?.map(child => child.name).join(', ') || 'Not set',
+  },
 ];
