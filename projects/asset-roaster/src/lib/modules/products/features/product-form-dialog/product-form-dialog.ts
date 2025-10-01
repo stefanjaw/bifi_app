@@ -151,6 +151,7 @@ export class ProductFormDialog extends BaseDialog {
           data: {
             name: rawValue.createdMake.oemName!,
             lastName: rawValue.createdMake.oemName!,
+            type: 'company',
           },
         });
       else makeResource = of(rawValue.makeIds!);
