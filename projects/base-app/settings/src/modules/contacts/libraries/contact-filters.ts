@@ -21,5 +21,9 @@ export const contactFilters: filter<contact>[] = [
   {
     field: 'parentId.name',
     type: 'string',
-  }
+  },
+  {
+    field: 'type',
+    type: 'string',
+  },
 ];

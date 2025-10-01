@@ -8,6 +8,7 @@ export interface ContactFormModel {
   phoneNumber: string;
   email: string;
   parentId?: string;
+  type: 'individual' | 'company';
 }
 
 @Injectable({
@@ -21,6 +22,7 @@ export class ContactForm extends BaseForm<ContactFormModel> {
       phoneNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       parentId: [''],
+      type: ['individual', [Validators.required]],
     });
   }
 }

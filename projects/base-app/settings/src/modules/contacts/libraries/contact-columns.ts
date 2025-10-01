@@ -27,4 +27,10 @@ export const contactColumns: tableColumn<contact>[] = [
     title: 'Parent Contact',
     type: 'text',
   },
+  {
+    field: 'type',
+    title: 'Type',
+    type: 'text',
+    sortable: true,
+  },
 ];

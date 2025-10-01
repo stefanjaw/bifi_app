@@ -43,6 +43,27 @@
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Type</bifi-app-form-label>
+
+            <div class="flex flex-wrap gap-4">
+              <div class="flex items-center">
+                <p-radiobutton
+                  formControlName="type"
+                  value="individual"
+                  inputId="type-individual"
+                />
+                <label for="type-individual" class="ml-2">Individual</label>
+              </div>
+              <div class="flex items-center">
+                <p-radiobutton formControlName="type" value="company" inputId="type-company" />
+                <label for="type-company" class="ml-2">Company</label>
+              </div>
+            </div>
+
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 

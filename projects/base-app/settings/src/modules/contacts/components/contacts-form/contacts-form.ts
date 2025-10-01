@@ -19,6 +19,7 @@ import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -29,6 +30,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputText,
     ButtonModule,
     ProgressBarModule,
+    RadioButtonModule,
   ],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
