@@ -3,7 +3,7 @@ import { room } from '../../facilities';
 import { productType } from '../../product-types';
 import { productMaintenance } from '../../product-maintenances';
 import { productComissionning } from '../../product-comissioning';
-import { contact } from '@avalantec/base-app/settings';
+import { contact } from '@avalantec/base-app/core';
 import { file } from '@avalantec/base-app/resource';
 
 export type productAttachmentDescriptor = string;

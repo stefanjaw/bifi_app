@@ -1,5 +1,5 @@
+import { contact } from '@avalantec/base-app/core';
 import { tableColumn } from '@avalantec/base-app/resource';
-import { contact } from '../interfaces/contacts';
 
 export const contactColumns: tableColumn<contact>[] = [
   {

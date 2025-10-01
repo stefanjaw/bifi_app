@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BaseDialog } from '@avalantec/base-app/core';
+import { BaseDialog, contact } from '@avalantec/base-app/core';
 import { FormModule } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { contact } from '../../../interfaces/contacts';
 
 @Component({
   selector: 'bifi-app-select-child-contact-dialog',

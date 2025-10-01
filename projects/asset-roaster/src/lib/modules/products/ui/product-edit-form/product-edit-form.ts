@@ -15,12 +15,12 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { room } from '../../../facilities';
 import { maintenanceWindow } from '../../../maintenance-windows';
 import { productType } from '../../../product-types';
-import { contact } from '@avalantec/base-app/settings';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { activityHistory } from '@avalantec/base-app/resource';
 import { FormModule } from '@avalantec/base-app/form';
 import { productMaintenance } from '../../../product-maintenances/interfaces/product-maintenance';
 import { productComissionning } from '../../../product-comissioning/interfaces/product-comissioning';
+import { contact } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-product-edit-form',

@@ -19,10 +19,10 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { contact } from '../../interfaces/contacts';
-import { contactColumns } from '../../libraries/contact-columns';
 import { TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
+import { contactColumns } from '../../libraries/contact-columns';
+import { contact } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-contacts-form',
