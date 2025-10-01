@@ -27,4 +27,16 @@ export const contactColumns: tableColumn<contact>[] = [
     title: 'Parent Contact',
     type: 'text',
   },
+  {
+    field: 'type',
+    title: 'Type',
+    type: 'text',
+    sortable: true,
+  },
+  {
+    field: 'childIds',
+    title: 'Child Contacts',
+    type: 'text',
+    parseField: (row: contact[]) => row?.map(child => child.name).join(', ') || 'Not set',
+  },
 ];

@@ -5,5 +5,7 @@ export interface contact {
   phoneNumber?: string;
   email?: string;
   parentId?: contact;
+  type: 'individual' | 'company';
+  childIds?: contact[];
   active: boolean;
 }
