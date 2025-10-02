@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { CrudContacts } from '../../services/crud-contacts';
 import { contact } from '../../interfaces/contacts';
 import { contactColumns } from '../../libraries/contact-columns';
@@ -12,6 +12,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-contacts-list',
@@ -25,9 +26,23 @@ import { RouterLink } from '@angular/router';
 })
 export class ContactsList {
   private resourceManager = inject<ResourceManager<contact>>(ResourceManager);
-
+  private crudContacts = inject(CrudContacts);
+  private destroy$ = inject(DestroyRef);
+  
   contactColumns = contactColumns;
   contactFilters = contactFilters;
 
+
   contacts = this.resourceManager.data;
+
+  deleteContact(id: string) {
+    this.crudContacts
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.contacts.reload();
+        },
+      });
+}
 }
