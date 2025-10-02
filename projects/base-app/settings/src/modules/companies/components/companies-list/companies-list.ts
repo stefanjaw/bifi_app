@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
 import { company } from '../../interfaces/company';
 import { companyColumns } from '../../libraries/company-columns';
@@ -21,7 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   },
   imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
   templateUrl: './companies-list.html',
-  styleUrl: './companies-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompaniesList {
   private resourceManager = inject<ResourceManager<company>>(ResourceManager);
