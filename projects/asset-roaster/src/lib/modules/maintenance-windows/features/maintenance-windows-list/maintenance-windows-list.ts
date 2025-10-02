@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -12,6 +12,7 @@ import { maintenanceWindow } from '../../interfaces/maintenance-window';
 import { maintenanceWindowColumns } from '../../libraries/maintenance-window-columns';
 import { maintenanceWindowFilters } from '../../libraries/maintenance-window-filters';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-maintenance-windows-list',
@@ -25,9 +26,23 @@ import { HasPermission } from '@avalantec/base-app/auth';
 })
 export class MaintenanceWindowsList {
   private resourceManager = inject<ResourceManager<maintenanceWindow>>(ResourceManager);
+  private crudMaintenanceWindows = inject(CrudMaintenanceWindows);
+  private destroy$ = inject(DestroyRef);
 
   maintenanceWindowColumns = maintenanceWindowColumns;
   maintenanceWindowFilters = maintenanceWindowFilters;
 
   maintenanceWindows = this.resourceManager.data;
+  
+  deleteMaintenanceWindow(id: string) {
+    this.crudMaintenanceWindows
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.maintenanceWindows.reload();
+        },
+      });
+  }
 }
+  

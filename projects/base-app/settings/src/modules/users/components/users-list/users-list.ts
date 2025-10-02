@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -12,6 +12,7 @@ import { userColumns } from '../../libraries/user-columns';
 import { userFilters } from '../../libraries/user-filters';
 import { RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-users-list',
@@ -25,9 +26,22 @@ import { HasPermission } from '@avalantec/base-app/auth';
 })
 export class UsersList {
   private resourceManager = inject<ResourceManager<user>>(ResourceManager);
+  private crudUsers = inject(CrudUsers);
+  private destroy$ = inject(DestroyRef);
 
   userColumns = userColumns;
   userFilters = userFilters;
 
   users = this.resourceManager.data;
+
+  deleteUser(id: string) {
+    this.crudUsers
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.users.reload();
+        },
+      });
+  }
 }
