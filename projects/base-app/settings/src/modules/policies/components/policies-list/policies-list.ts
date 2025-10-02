@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -12,6 +12,7 @@ import { policyColumns } from '../../libraries/policy-columns';
 import { policyFilters } from '../../libraries/policy-filters';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-policies-list',
@@ -27,11 +28,24 @@ export class PoliciesList {
   private resourceManager = inject<ResourceManager<policy<string, string>>>(ResourceManager);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private crudPolicies = inject(CrudPolicies);
+  private destroy$ = inject(DestroyRef);
 
   policyColumns = policyColumns;
   policyFilters = policyFilters;
 
   policies = this.resourceManager.data;
+
+  deletePolicy(id: string) {
+    this.crudPolicies
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.policies.reload();
+        },
+      });
+  }
 
   goToCreate() {
     this.router.navigate(['create'], { relativeTo: this.route.parent });

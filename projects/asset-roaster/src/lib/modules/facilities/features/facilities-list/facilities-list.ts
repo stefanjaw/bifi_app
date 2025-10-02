@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import {
@@ -12,6 +12,7 @@ import { CrudFacilities } from '../../services/crud-facilities';
 import { facility } from '../../interfaces/facility';
 import { facilityColumns } from '../../libraries/facility-columns';
 import { facilityFilters } from '../../libraries/facility-filters';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-facilities-list',
@@ -25,9 +26,22 @@ import { facilityFilters } from '../../libraries/facility-filters';
 })
 export class FacilitiesList {
   private resourceManager = inject<ResourceManager<facility>>(ResourceManager);
+  private crudFacilities = inject(CrudFacilities);
+  private destroy$ = inject(DestroyRef);
 
   facilityColumns = facilityColumns;
   facilityFilters = facilityFilters;
 
   facilities = this.resourceManager.data;
+
+  deleteFacility(id: string) {
+    this.crudFacilities
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.facilities.reload();
+        },
+      });
+  }
 }
