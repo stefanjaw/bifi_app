@@ -14,4 +14,18 @@ export const COMPANY_ROUTES: Routes = [
       import('../components/companies-list/companies-list').then(m => m.CompaniesList),
     data: { permission: 'companies:read' },
   },
+  {
+    path: 'create',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/companies-form/companies-form').then(m => m.CompaniesForm),
+    data: { permission: 'companies:create' },
+  },
+  {
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/companies-form/companies-form').then(m => m.CompaniesForm),
+    data: { permission: 'companies:update' },
+  },
 ];

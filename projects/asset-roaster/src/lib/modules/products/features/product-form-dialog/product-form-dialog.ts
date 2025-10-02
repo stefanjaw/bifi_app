@@ -8,18 +8,18 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog } from '@avalantec/base-app/core';
-import { contact, CrudContacts } from '@avalantec/base-app/settings';
+import { CrudContacts } from '@avalantec/base-app/settings';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { firstValueFrom, Observable, of } from 'rxjs';
 import { CrudProducts } from '../../services/crud-products';
-import { CrudProductType, productType } from '../../../product-types';
+import { CrudProductType } from '../../../product-types';
 import { CreateProductForm, CreateProductFormModel } from '../../services/create-product-form';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-product-form-dialog',
@@ -128,57 +128,44 @@ export class ProductFormDialog extends BaseDialog {
 
     const { rawValue } = data;
 
-    // If the user is creating a new product type, create it first
-    let productTypeResource: Observable<productType | string | undefined>;
-
-    // If the user is creating a new make, create it first
-    let makeResource: Observable<contact | string | undefined>;
-
-    try {
-      // Construct type resource
-      if (this.isCreatingNewProductType())
-        productTypeResource = this.productTypesService.post({
-          data: {
-            name: rawValue.createdType.name!,
-            description: rawValue.createdType.description!,
-          },
-        });
-      else productTypeResource = of(rawValue.productTypeIds!);
-
-      // Construct make resource
-      if (this.isCreatingNewMake())
-        makeResource = this.contactsService.post({
-          data: {
-            name: rawValue.createdMake.oemName!,
-            lastName: rawValue.createdMake.oemName!,
-          },
-        });
-      else makeResource = of(rawValue.makeIds!);
-
-      const type = await firstValueFrom(productTypeResource);
-      const make = await firstValueFrom(makeResource);
-
-      // Construct product resource
-      const productResource = this.productsService.post({
+    this.productsService
+      .post({
         data: {
-          productTypeIds: typeof type === 'string' ? [type] : [type?._id],
-          makeIds: typeof make === 'string' ? [make] : [make?._id],
           productModel: rawValue.productModel,
           serialNumber: rawValue.serialNumber,
           acquiredDate: rawValue.acquiredDate.toISOString(),
+          ...(this.isCreatingNewProductType() && {
+            productTypeInformation: {
+              name: rawValue.createdType.name!,
+              description: rawValue.createdType.description!,
+            },
+          }),
+          ...(this.isCreatingNewMake() && {
+            makeInformation: {
+              name: rawValue.createdMake.oemName!,
+              lastName: rawValue.createdMake.oemName!,
+              type: 'company',
+            },
+          }),
+          ...(!this.isCreatingNewProductType() && {
+            productTypeIds: [rawValue.productTypeIds],
+          }),
+          ...(!this.isCreatingNewMake() && {
+            makeIds: [rawValue.makeIds],
+          }),
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isSubmitLoading.set(false);
+          this.formService.reset();
+          this.closeDialog();
+          this.productMaintenanceContext.handleSaved();
+        },
+        error: () => {
+          this.isSubmitLoading.set(false);
         },
       });
-
-      const product = await firstValueFrom(productResource);
-
-      if (!product) throw new Error('Failed to create product');
-
-      this.isSubmitLoading.set(false);
-      this.formService.reset();
-      this.closeDialog();
-      this.productMaintenanceContext.handleSaved();
-    } catch {
-      this.isSubmitLoading.set(false);
-    }
   }
 }

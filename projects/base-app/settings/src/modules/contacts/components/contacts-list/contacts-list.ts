@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { CrudContacts } from '../../services/crud-contacts';
-import { contact } from '../../interfaces/contacts';
 import { contactColumns } from '../../libraries/contact-columns';
 import { contactFilters } from '../../libraries/contact-filters';
 import {
@@ -13,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { contact } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-contacts-list',
