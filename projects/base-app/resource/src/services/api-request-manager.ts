@@ -128,12 +128,14 @@ export class ApiRequestManager<T> {
     sort,
     triggerRequest,
     specificEndpoint,
+    getInactive,
   }: {
     id: maybeSignal<string>;
     searchParams?: Signal<Record<string, any>>;
     sort?: Signal<orderByQuery<T>>;
     triggerRequest?: Signal<boolean>;
     specificEndpoint?: maybeSignal<string>;
+    getInactive?: maybeSignal<boolean>;
   }): ResourceRef<TRequestReturnType | undefined>;
 
   get<TRequestReturnType extends T = T>({
@@ -141,11 +143,13 @@ export class ApiRequestManager<T> {
     sort,
     triggerRequest,
     specificEndpoint,
+    getInactive,
   }: {
     searchParams?: maybeSignal<Record<string, any>>;
     sort?: maybeSignal<orderByQuery<T>>;
     triggerRequest?: maybeSignal<boolean>;
     specificEndpoint?: maybeSignal<string>;
+    getInactive?: maybeSignal<boolean>;
   }): ResourceRef<TRequestReturnType[]>;
 
   /**
@@ -161,12 +165,14 @@ export class ApiRequestManager<T> {
     sort,
     triggerRequest,
     specificEndpoint = '',
+    getInactive = false,
   }: {
     id?: maybeSignal<string>;
     searchParams?: maybeSignal<Record<string, any>>;
     sort?: maybeSignal<orderByQuery<T>>;
     triggerRequest?: maybeSignal<boolean>;
     specificEndpoint?: maybeSignal<string>;
+    getInactive?: maybeSignal<boolean>;
   }): ResourceRef<TRequestReturnType | TRequestReturnType[] | undefined> {
     const isGetById = id !== undefined;
     return httpResource(
@@ -183,7 +189,12 @@ export class ApiRequestManager<T> {
         const sorts = mayBeSignalValue(sort);
 
         const query = new URLSearchParams({
-          ...(params && { searchParams: JSON.stringify(params) }),
+          ...((params || !getInactive) && {
+            searchParams: JSON.stringify({
+              ...params,
+              ...(!getInactive && { active: true }),
+            }),
+          }),
           ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
@@ -213,11 +224,13 @@ export class ApiRequestManager<T> {
     searchParams,
     sort,
     specificEndpoint = '',
+    getInactive = false,
   }: {
     paginateOptions?: Signal<paginationOptions>;
     searchParams?: Signal<Record<string, any>>;
     sort?: Signal<orderByQuery<T>>;
     specificEndpoint?: string;
+    getInactive?: maybeSignal<boolean>;
   }): ResourceRef<pagination<T> | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
@@ -232,7 +245,12 @@ export class ApiRequestManager<T> {
       stream: ({ params: { params, pagination, sorts } }) => {
         const query = new URLSearchParams({
           paginationOptions: JSON.stringify(pagination),
-          ...(params && { searchParams: JSON.stringify(params) }),
+          ...((params || !getInactive) && {
+            searchParams: JSON.stringify({
+              ...params,
+              ...(!getInactive && { active: true }),
+            }),
+          }),
           ...(sorts && { orderBy: JSON.stringify(sorts) }),
         });
 
@@ -248,9 +266,11 @@ export class ApiRequestManager<T> {
   getCount({
     searchParams,
     specificEndpoint = '',
+    getInactive = false,
   }: {
     searchParams?: Signal<Record<string, any>>;
     specificEndpoint?: string;
+    getInactive?: maybeSignal<boolean>;
   }): ResourceRef<number> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
@@ -263,7 +283,12 @@ export class ApiRequestManager<T> {
       stream: ({ params: { params } }) => {
         const query = new URLSearchParams({
           count: 'true',
-          ...(params && { searchParams: JSON.stringify(params) }),
+          ...((params || !getInactive) && {
+            searchParams: JSON.stringify({
+              ...params,
+              ...(!getInactive && { active: true }),
+            }),
+          }),
         });
 
         return this._httpClient.get<number>(fullURL, {
