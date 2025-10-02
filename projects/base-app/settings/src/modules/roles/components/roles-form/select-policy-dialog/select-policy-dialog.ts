@@ -34,11 +34,16 @@ export class SelectPolicyDialog extends BaseDialog {
 
     // Reload the policies
     this.policyResource.reload();
+
+    // Reset selection when dialog is opened
+    this.policy.setValue([]);
   }
 
   handleSubmit() {
     const policyId = this.policy.value;
-    const policies = this.policies().filter(p => policyId?.includes(p._id))!;
+    const policies = this.policies()
+      .filter(p => policyId?.includes(p._id))
+      .filter(p => !!p);
 
     this.selected.emit(policies);
     this.closeDialog();

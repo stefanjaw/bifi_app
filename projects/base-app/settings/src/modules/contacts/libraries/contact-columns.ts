@@ -1,5 +1,5 @@
+import { contact } from '@avalantec/base-app/core';
 import { tableColumn } from '@avalantec/base-app/resource';
-import { contact } from '../interfaces/contacts';
 
 export const contactColumns: tableColumn<contact>[] = [
   {
@@ -26,5 +26,17 @@ export const contactColumns: tableColumn<contact>[] = [
     field: 'parentId.name',
     title: 'Parent Contact',
     type: 'text',
+  },
+  {
+    field: 'type',
+    title: 'Type',
+    type: 'text',
+    sortable: true,
+  },
+  {
+    field: 'childIds',
+    title: 'Child Contacts',
+    type: 'text',
+    parseField: (row: contact[]) => row?.map(child => child.name).join(', ') || 'Not set',
   },
 ];

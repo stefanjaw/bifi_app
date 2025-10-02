@@ -1,4 +1,4 @@
-import { contact } from '@avalantec/base-app/settings';
+import { contact } from './contacts';
 
 export type resource = string;
 export type policyAction = 'create' | 'read' | 'update' | 'delete';

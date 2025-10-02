@@ -12,7 +12,7 @@ import { SelectModule } from 'primeng/select';
 import { product } from '../../../interfaces/product';
 import { StatusBannerSection } from '../status-banner-section/status-banner-section';
 import { productType } from '../../../../product-types';
-import { contact } from '@avalantec/base-app/settings';
+import { contact } from '@avalantec/base-app/core';
 import { room } from '../../../../facilities';
 import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 

@@ -1,7 +1,7 @@
 import { product } from '../interfaces/product';
 import { productType } from '../../product-types';
 import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
-import { contact } from '@avalantec/base-app/settings';
+import { contact } from '@avalantec/base-app/core';
 import { Badge, BadgeVariant } from '@avalantec/base-app/ui';
 
 export const productColumns: tableColumn<product>[] = [

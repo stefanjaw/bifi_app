@@ -6,7 +6,6 @@ import {
   effect,
   inject,
   input,
-  OnInit,
   signal,
 } from '@angular/core';
 import { ContactForm, ContactFormModel } from '../../services/contact-form';
@@ -19,6 +18,11 @@ import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableLayout } from '@avalantec/base-app/resource';
+import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
+import { contactColumns } from '../../libraries/contact-columns';
+import { contact } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -29,41 +33,58 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputText,
     ButtonModule,
     ProgressBarModule,
+    RadioButtonModule,
+    TableLayout,
+    SelectChildContactDialog,
   ],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContactsForm implements OnInit {
+export class ContactsForm {
   private formService = inject(ContactForm);
-  private contactsService = inject(CrudContacts);
+  private crudContacts = inject(CrudContacts);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   // inputs
   id = input.required<string>();
+  contactCols = contactColumns;
 
-  contactResource = this.contactsService.get({
+  contactResource = this.crudContacts.get({
     id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
   });
 
-  parentOptionsResource = this.contactsService.get({});
+  // for parent contact select and children list
+  contactsResource = this.crudContacts.get({});
 
   // data
   contact = this.contactResource.value;
+
   parentOptions = computed(() =>
-    this.parentOptionsResource.value().filter(c => c._id !== this.contact()?._id)
+    this.contactsResource.value().filter(c => c._id !== this.contact()?._id)
   );
+
+  childOptions = computed(() => {
+    const contacts = this.contactsResource.value();
+    const { childIds } = this.formService.value();
+
+    return contacts.filter(
+      c =>
+        c._id !== this.contact()?._id &&
+        !childIds?.includes(c._id) &&
+        (!c.parentId || c.parentId?._id === this.contact()?._id)
+    );
+  });
 
   // state
   form = this.formService.form;
-  isLoading = computed(
-    () => this.contactResource.isLoading() || this.parentOptionsResource.isLoading()
-  );
+  isLoading = computed(() => this.contactResource.isLoading() || this.contactsResource.isLoading());
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.contact());
   error = this.contactResource.error;
+  childIdsData = signal<contact[]>([]);
 
   /**
    * Constructor that initializes the form values if the contact is being updated.
@@ -80,15 +101,17 @@ export class ContactsForm implements OnInit {
           parentId: contact.parentId?._id,
           email: contact.email,
           phoneNumber: contact.phoneNumber,
+          childIds: contact.childIds?.map(c => c._id) || [],
         });
+
+        this.formService.resetDirtyState();
+        this.childIdsData.set(contact.childIds || []);
       } else {
         this.formService.reset();
+        this.formService.form.controls.childIds.clear();
+        this.childIdsData.set([]);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.formService.reset();
   }
 
   /**
@@ -107,8 +130,8 @@ export class ContactsForm implements OnInit {
     if (!rawValue.parentId) delete rawValue.parentId;
 
     const action = this.isUpdate()
-      ? this.contactsService.put({ _id: this.contact()?._id || '', data: rawValue })
-      : this.contactsService.post({ data: rawValue });
+      ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })
+      : this.crudContacts.post({ data: rawValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
@@ -119,6 +142,20 @@ export class ContactsForm implements OnInit {
         this.isSubmitLoading.set(false);
       },
     });
+  }
+
+  handleContactSelect(contacts: contact[]) {
+    this.childIdsData.update(current => [...current, ...contacts]);
+    contacts.forEach(p => this.form.controls.childIds.pushItem(p._id));
+  }
+
+  handleContactRemove(id: string) {
+    this.childIdsData.update(current => current.filter(p => p._id !== id));
+    const index = this.form.controls.childIds.value.indexOf(id);
+
+    if (index > -1) {
+      this.form.controls.childIds.removeAt(index);
+    }
   }
 
   /**

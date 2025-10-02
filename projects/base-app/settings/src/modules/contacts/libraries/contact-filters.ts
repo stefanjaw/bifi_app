@@ -1,5 +1,5 @@
+import { contact } from '@avalantec/base-app/core';
 import { filter } from '@avalantec/base-app/resource';
-import { contact } from '../interfaces/contacts';
 
 export const contactFilters: filter<contact>[] = [
   {
@@ -21,5 +21,9 @@ export const contactFilters: filter<contact>[] = [
   {
     field: 'parentId.name',
     type: 'string',
-  }
+  },
+  {
+    field: 'type',
+    type: 'string',
+  },
 ];

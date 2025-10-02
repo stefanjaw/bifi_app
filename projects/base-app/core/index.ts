@@ -2,6 +2,7 @@ export * from './src/directives/icon';
 export * from './src/directives/structural-conditional';
 export * from './src/directives/text';
 export * from './src/interfaces/app';
+export * from './src/interfaces/contacts';
 export * from './src/interfaces/deep-keys';
 export * from './src/interfaces/library-config';
 export * from './src/interfaces/signal-utils';
