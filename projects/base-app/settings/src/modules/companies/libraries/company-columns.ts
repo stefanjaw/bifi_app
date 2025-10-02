@@ -17,4 +17,9 @@ export const companyColumns: tableColumn<company>[] = [
     title: 'Address',
     type: 'text',
   },
+  {
+    field: 'contactId.name',
+    title: 'Related Contact',
+    type: 'text',
+  },
 ];

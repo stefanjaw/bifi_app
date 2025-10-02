@@ -1,7 +1,17 @@
 <h1 class="text-2xl font-bold mb-4">Companies</h1>
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Company"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'companies:create'"
+  ></p-button>
+</div>
+
 <bifi-app-search-bar
-  label="Search by name and address"
+  label="Search by name, related contact, country and address"
   [searchFilters]="companyFilters"
 ></bifi-app-search-bar>
 
@@ -12,6 +22,7 @@
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
+      routerLink="../edit/{{ element._id }}"
     ></p-button>
     <p-button
       *bifiAppHasPermission="'companies:delete'"

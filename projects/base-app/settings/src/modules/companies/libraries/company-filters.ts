@@ -10,4 +10,12 @@ export const companyFilters: filter<company>[] = [
     field: 'address',
     type: 'string',
   },
+  {
+    field: 'countryId.name',
+    type: 'string',
+  },
+  {
+    field: 'contactId.name',
+    type: 'string',
+  },
 ];

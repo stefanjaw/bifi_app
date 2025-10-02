@@ -12,6 +12,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-companies-list',
@@ -19,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
   templateUrl: './companies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
