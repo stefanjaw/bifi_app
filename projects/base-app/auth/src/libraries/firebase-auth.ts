@@ -129,6 +129,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
       catchError(err => {
         // If the user is not found, we return an empty object
         console.log('User not found, error in me request', err);
+        this.toastManager.showError('Something went wrong authenticating you...');
         return of(null);
       }),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
