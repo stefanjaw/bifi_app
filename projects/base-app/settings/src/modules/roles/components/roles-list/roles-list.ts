@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -12,6 +12,7 @@ import { roleColumns } from '../../libraries/role-columns';
 import { roleFilters } from '../../libraries/role-filters';
 import { RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-roles-list',
@@ -25,9 +26,22 @@ import { HasPermission } from '@avalantec/base-app/auth';
 })
 export class RolesList {
   private resourceManager = inject<ResourceManager<role>>(ResourceManager);
+  private crudRoles = inject(CrudRoles);
+  private destroy$ = inject(DestroyRef);
 
   roleColumns = roleColumns;
   roleFilters = roleFilters;
 
   roles = this.resourceManager.data;
+
+  deleteRole(id: string) {
+    this.crudRoles
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.roles.reload();
+        },
+      });
+  }
 }
