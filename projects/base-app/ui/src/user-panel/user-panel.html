@@ -1,0 +1,19 @@
+<div class="m-0">
+  <p-menu #userMenu [popup]="true" [model]="items"></p-menu>
+
+  <p-button
+    class="p-0 m-0"
+    aria-label="user panel"
+    variant="text"
+    (click)="userMenu.toggle($event)"
+  >
+    <p-avatar
+      [image]="user()?.picture"
+      [style]="{ width: '32px', height: '32px' }"
+      [shape]="'circle'"
+    ></p-avatar>
+    <span>{{ user()?.contactId?.name || user()?.username }}</span>
+  </p-button>
+</div>
+
+<bifi-app-bug-reporting-form-dialog></bifi-app-bug-reporting-form-dialog>

@@ -1,7 +1,7 @@
 @let loggedUser = user();
 
 @if (loggedUser) {
-  <p-toolbar styleClass="w-full h-[75px]">
+  <p-toolbar class="w-full h-[75px]">
     <ng-template #start>
       @if (isSidenavAvailable()) {
         <p-button
@@ -22,26 +22,7 @@
     </ng-template>
     <ng-template #end>
       <div class="flex items-center gap-2">
-        <p-button
-          icon="pi pi-exclamation-triangle"
-          label="Report Bug"
-          severity="danger"
-          size="small"
-          variant="text"
-          (onClick)="bugReportingFormDialog.openDialog()"
-        ></p-button>
-        <p-button
-          icon="pi pi-sign-out"
-          label="Logout"
-          (onClick)="logout()"
-          severity="contrast"
-          size="small"
-        />
-        <p-avatar
-          [image]="loggedUser?.picture"
-          [style]="{ width: '32px', height: '32px' }"
-          [shape]="'circle'"
-        />
+        <bifi-app-user-panel></bifi-app-user-panel>
       </div>
     </ng-template>
   </p-toolbar>
@@ -58,5 +39,3 @@
   <p-toast></p-toast>
   <ngx-sonner-toaster position="top-right"></ngx-sonner-toaster>
 </div>
-
-<bifi-app-bug-reporting-form-dialog #bugReportingFormDialog></bifi-app-bug-reporting-form-dialog>
