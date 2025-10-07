@@ -25,14 +25,29 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+            <bifi-app-form-label>Type</bifi-app-form-label>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Last Name</bifi-app-form-label>
-            <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+            <div class="flex justify-start flex-wrap gap-4 pt-2">
+              <div class="flex items-center">
+                <p-radiobutton
+                  formControlName="type"
+                  value="individual"
+                  inputId="type-individual"
+                  size="large"
+                />
+                <label for="type-individual" class="ml-2">Individual</label>
+              </div>
+              <div class="flex items-center">
+                <p-radiobutton
+                  formControlName="type"
+                  value="company"
+                  inputId="type-company"
+                  size="large"
+                />
+                <label for="type-company" class="ml-2">Company</label>
+              </div>
+            </div>
+
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -49,25 +64,18 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
-
-            <div class="flex flex-wrap gap-4">
-              <div class="flex items-center">
-                <p-radiobutton
-                  formControlName="type"
-                  value="individual"
-                  inputId="type-individual"
-                />
-                <label for="type-individual" class="ml-2">Individual</label>
-              </div>
-              <div class="flex items-center">
-                <p-radiobutton formControlName="type" value="company" inputId="type-company" />
-                <label for="type-company" class="ml-2">Company</label>
-              </div>
-            </div>
-
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          @if (contactType() === 'individual') {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Last Name</bifi-app-form-label>
+              <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
         </div>
       </bifi-app-form-section>
 

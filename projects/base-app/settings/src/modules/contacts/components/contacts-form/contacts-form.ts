@@ -80,6 +80,8 @@ export class ContactsForm {
 
   // state
   form = this.formService.form;
+  contactType = this.formService.type;
+
   isLoading = computed(() => this.contactResource.isLoading() || this.contactsResource.isLoading());
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.contact());
@@ -102,6 +104,7 @@ export class ContactsForm {
           email: contact.email,
           phoneNumber: contact.phoneNumber,
           childIds: contact.childIds?.map(c => c._id) || [],
+          type: contact.type,
         });
 
         this.formService.resetDirtyState();
