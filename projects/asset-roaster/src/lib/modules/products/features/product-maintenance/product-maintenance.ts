@@ -114,6 +114,7 @@ export class ProductMaintenance {
   >({
     searchParams: this.activityHistoryQuery,
     sort: this.activityHistoryOrder,
+    getInactive: true,
   });
 
   // state
