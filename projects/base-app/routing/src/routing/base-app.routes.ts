@@ -15,6 +15,11 @@ export const BASE_APP_ROUTES: Routes = [
     loadChildren: () => import('./settings.routes').then(m => m.SETTINGS_ROUTES),
   },
   {
+    path: 'contacts',
+    canActivate: [authGuard],
+    loadChildren: () => import('@avalantec/base-app/contacts').then(m => m.CONTACT_ROUTES),
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./auth.routes').then(m => m.AUTH_ROUTES),
   },

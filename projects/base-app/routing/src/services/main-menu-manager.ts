@@ -14,6 +14,11 @@ export class MainMenuManager extends BaseMenuManager {
         routerLink: ['/settings'],
         label: 'Settings',
       },
+      {
+        icon: 'pi pi-address-book',
+        routerLink: ['/contacts'],
+        label: 'Contacts',
+      },
     ]);
 
     super(menuItems, BASE_APP_ROUTES);

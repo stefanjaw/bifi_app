@@ -13,13 +13,6 @@ export class SettingsMenuManager extends BaseMenuManager {
   constructor() {
     const menuItems = signal<MenuItem[]>([
       {
-        icon: 'pi pi-users',
-        routerLink: ['/settings/contacts'],
-        label: 'Contacts',
-        resource: 'contacts',
-        command: () => this.sidenavManager.closeSidenav(),
-      },
-      {
         icon: 'pi pi-building',
         routerLink: ['/settings/companies'],
         label: 'Companies',

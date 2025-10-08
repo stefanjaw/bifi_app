@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog } from '@avalantec/base-app/core';
-import { CrudContacts } from '@avalantec/base-app/settings';
+import { CrudContacts } from '@avalantec/base-app/contacts';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';

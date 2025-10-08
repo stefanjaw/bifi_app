@@ -15,7 +15,7 @@ import { ProductEditForm } from '../../ui/product-edit-form/product-edit-form';
 import { product } from '../../interfaces/product';
 import { CrudProductType } from '../../../product-types';
 import { CrudRooms } from '../../../facilities';
-import { CrudContacts } from '@avalantec/base-app/settings';
+import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

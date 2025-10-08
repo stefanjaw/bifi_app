@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { CompanyForm, CompanyFormModel } from '../../services/company-form';
 import { CrudCompanies } from '../../services/crud-companies';
-import { CrudContacts } from '../../../contacts';
 import { CrudCountries } from '../../../countries';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -21,6 +20,7 @@ import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
+import { CrudContacts } from '@avalantec/base-app/contacts';
 
 @Component({
   selector: 'bifi-app-companies-form',

@@ -17,7 +17,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { FacilityForm, FacilityFormModel } from '../../services/facility-form';
 import { CrudFacilities } from '../../services/crud-facilities';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CrudContacts } from '@avalantec/base-app/settings';
+import { CrudContacts } from '@avalantec/base-app/contacts';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectModule } from 'primeng/select';
 import { roomColumns } from '../../libraries/room-columns';

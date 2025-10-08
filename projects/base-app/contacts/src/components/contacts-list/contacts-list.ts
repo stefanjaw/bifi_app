@@ -28,10 +28,9 @@ export class ContactsList {
   private resourceManager = inject<ResourceManager<contact>>(ResourceManager);
   private crudContacts = inject(CrudContacts);
   private destroy$ = inject(DestroyRef);
-  
+
   contactColumns = contactColumns;
   contactFilters = contactFilters;
-
 
   contacts = this.resourceManager.data;
 
@@ -44,5 +43,5 @@ export class ContactsList {
           if (res) this.contacts.reload();
         },
       });
-}
+  }
 }

@@ -21,8 +21,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectRoleDialog } from './select-role-dialog/select-role-dialog';
 import { ButtonModule } from 'primeng/button';
 import { role } from '@avalantec/base-app/core';
-import { CrudContacts } from '../../../contacts';
 import { SelectModule } from 'primeng/select';
+import { CrudContacts } from '@avalantec/base-app/contacts';
 
 @Component({
   selector: 'bifi-app-users-form',

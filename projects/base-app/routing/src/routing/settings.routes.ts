@@ -11,15 +11,11 @@ export const SETTINGS_ROUTES: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'contacts',
+        redirectTo: 'companies',
       },
       {
         path: 'companies',
         loadChildren: () => import('@avalantec/base-app/settings').then(m => m.COMPANY_ROUTES),
-      },
-      {
-        path: 'contacts',
-        loadChildren: () => import('@avalantec/base-app/settings').then(m => m.CONTACT_ROUTES),
       },
       {
         path: 'users',
