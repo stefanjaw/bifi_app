@@ -48,6 +48,9 @@ export class TableLayout<T extends Record<string, any>> {
   // Columns managament
   columns = input<tableColumn<T>[]>([]);
 
+  // Table options
+  onClickRow = input<(row: T) => void>();
+
   // State
   resourceState = computed(() => {
     const data = this.data();

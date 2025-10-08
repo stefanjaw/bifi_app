@@ -10,7 +10,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { contact } from '@avalantec/base-app/core';
 
@@ -29,10 +29,18 @@ export class ContactsList {
   private crudContacts = inject(CrudContacts);
   private destroy$ = inject(DestroyRef);
 
+  // Router
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   contactColumns = contactColumns;
   contactFilters = contactFilters;
 
   contacts = this.resourceManager.data;
+
+  goToEditContact = (element: contact) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  };
 
   deleteContact(id: string) {
     this.crudContacts

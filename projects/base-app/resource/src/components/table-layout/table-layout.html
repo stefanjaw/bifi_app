@@ -41,7 +41,10 @@
 
     <!-- body -->
     <ng-template #body let-element>
-      <tr>
+      <tr
+        (click)="onClickRow() ? onClickRow()?.(element) : null"
+        [ngClass]="{ 'cursor-pointer hover:bg-gray-200!': onClickRow() }"
+      >
         @for (column of columns(); track $index) {
           <td>
             @let value = getValue(element, column.field);

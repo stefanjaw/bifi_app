@@ -21,20 +21,13 @@
   [searchFilters]="contactFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="contactColumns" [data]="contacts">
+<bifi-app-table-layout [columns]="contactColumns" [data]="contacts" [onClickRow]="goToEditContact">
   <ng-template #actions let-element>
-    <p-button
-      *bifiAppHasPermission="'contacts:update'"
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', element._id]"
-    ></p-button>
     <p-button
       *bifiAppHasPermission="'contacts:delete'"
       severity="danger"
       label="Delete"
-      (onClick)="deleteContact(element._id)"
+      (onClick)="deleteContact(element._id); $event.stopPropagation()"
       icon="pi pi-trash"
     ></p-button>
   </ng-template>
