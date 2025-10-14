@@ -14,18 +14,18 @@ export const COUNTRY_ROUTES: Routes = [
       import('../components/countries-list/countries-list').then(m => m.CountriesList),
     data: { permission: 'countries:read' },
   },
- // {
-//     path: 'create',
-//     canActivate: [permissionGuard],
-//     loadComponent: () =>
-//       import('../components/countries-form/countries-form').then(m => m.CountriesForm),
-//     data: { permission: 'countries:create' },
-//   },
-//   {
-//     path: 'edit/:id',
-//     canActivate: [permissionGuard],
-//     loadComponent: () =>
-//       import('../components/countries-form/countries-form').then(m => m.CountriesForm),
-//     data: { permission: 'countries:update' },
-//   },
+ {
+    path: 'create',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/countries-form/countries-form').then(m => m.CountriesForm),
+    data: { permission: 'countries:create' },
+  },
+  {
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/countries-form/countries-form').then(m => m.CountriesForm),
+    data: { permission: 'countries:update' },
+  },
 ];
