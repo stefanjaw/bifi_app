@@ -29,6 +29,10 @@ export const SETTINGS_ROUTES: Routes = [
         path: 'policies',
         loadChildren: () => import('@avalantec/base-app/settings').then(m => m.POLICY_ROUTES),
       },
+      {
+        path: 'countries',
+        loadChildren: () => import('@avalantec/base-app/settings').then(m => m.COUNTRY_ROUTES),
+      },
     ],
   },
 ];

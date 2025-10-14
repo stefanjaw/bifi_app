@@ -40,8 +40,15 @@ export class SettingsMenuManager extends BaseMenuManager {
         resource: 'policies',
         command: () => this.sidenavManager.closeSidenav(),
       },
+      {
+        icon: 'pi pi-globe',
+        routerLink: ['/settings/countries'],
+        label: 'Countries',
+        resource: 'countries',
+        command: () => this.sidenavManager.closeSidenav(),
+      }
     ]);
 
-    super(menuItems, SETTINGS_ROUTES[0].children!);
+    super(menuItems, SETTINGS_ROUTES[0].children!); 
   }
 }
