@@ -11,11 +11,11 @@
     classList="w-full"
     [paginator]="isPaginated"
     [totalRecords]="pagination?.totalDocs || 0"
-    [pageLinks]="pagination?.totalPages || 0"
     [rows]="pagination?.limit || 0"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
     [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} ({totalPages} pages)"
+    [pageLinks]="5"
   >
     <!-- headers -->
     <ng-template #header>
