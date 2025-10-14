@@ -1,0 +1,43 @@
+<h1 class="text-2xl font-bold mb-4">Countries</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Country"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'countries:create'"
+  ></p-button>
+  <p-button
+    label="Populate Countries"
+    severity="success"
+    icon="pi pi-refresh"
+    *bifiAppHasPermission="'countries/populate:create'"
+    (onClick)="populateCountries()"
+    [disabled]="populationLoading()"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name, code, currency code and currency symbol"
+  [searchFilters]="countryFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="countryColumns" [data]="countries">
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      [routerLink]="['../edit/', row._id]"
+      *bifiAppHasPermission="'countries:update'"
+    ></p-button>
+    <p-button
+      *bifiAppHasPermission="'countries:delete'"
+      severity="danger"
+      label="Delete"
+      (onClick)="deleteCountry(row._id)"
+      icon="pi pi-trash"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

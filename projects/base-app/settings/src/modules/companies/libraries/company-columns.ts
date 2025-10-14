@@ -6,6 +6,7 @@ export const companyColumns: tableColumn<company>[] = [
     field: 'name',
     title: 'Company Name',
     type: 'text',
+    sortable: true,
   },
   {
     field: 'countryId.name',
@@ -16,6 +17,7 @@ export const companyColumns: tableColumn<company>[] = [
     field: 'address',
     title: 'Address',
     type: 'text',
+    sortable: true,
   },
   {
     field: 'contactId.name',
