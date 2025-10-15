@@ -58,6 +58,7 @@
               [options]="parentOptions()"
               optionLabel="name"
               optionValue="_id"
+              placeholder="Select a parent"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
@@ -109,7 +110,46 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Child Contacts" id="contact-children-information" [ordinal]="3">
+      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Country</bifi-app-form-label>
+            <p-select
+              formControlName="countryId"
+              [options]="countryOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              placeholder="Select a country"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Street Address</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="streetAddress"
+              type="text"
+              placeholder="e.g 123 Main St"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Street Address 2</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="streetAddress2"
+              type="text"
+              placeholder="e.g Apt 4B"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Child Contacts" id="contact-children-information" [ordinal]="4">
         <p-button
           label="Add New Child Contact"
           severity="secondary"

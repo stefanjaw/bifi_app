@@ -26,4 +26,16 @@ export const contactFilters: filter<contact>[] = [
     field: 'type',
     type: 'string',
   },
+  {
+    field: 'countryId.name',
+    type: 'string',
+  },
+  {
+    field: 'streetAddress',
+    type: 'string',
+  },
+  {
+    field: 'streetAddress2',
+    type: 'string',
+  },
 ];
