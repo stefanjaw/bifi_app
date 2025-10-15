@@ -43,4 +43,19 @@ export const contactColumns: tableColumn<contact>[] = [
     type: 'text',
     parseField: (row: contact[]) => row?.map(child => child.name).join(', ') || 'Not set',
   },
+  {
+    field: 'countryId.name',
+    title: 'Country',
+    type: 'text',
+  },
+  {
+    field: 'streetAddress',
+    title: 'Street Address',
+    type: 'text',
+  },
+  {
+    field: 'streetAddress2',
+    title: 'Street Address 2',
+    type: 'text',
+  },
 ];

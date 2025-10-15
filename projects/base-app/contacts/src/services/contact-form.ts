@@ -11,6 +11,9 @@ export interface ContactFormModel {
   parentId?: string;
   type: 'individual' | 'company';
   childIds?: string[];
+  countryId?: string;
+  streetAddress?: string;
+  streetAddress2?: string;
 }
 
 @Injectable({
@@ -48,6 +51,9 @@ export class ContactForm extends BaseForm<ContactFormModel> {
         template: [''],
         formArrayElements: [],
       },
+      countryId: [''],
+      streetAddress: [''],
+      streetAddress2: [''],
     });
   }
 }

@@ -23,6 +23,7 @@ import { TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
 import { contact } from '@avalantec/base-app/core';
+import { CrudCountries } from '@avalantec/base-app/settings';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -43,6 +44,7 @@ import { contact } from '@avalantec/base-app/core';
 export class ContactsForm {
   private formService = inject(ContactForm);
   private crudContacts = inject(CrudContacts);
+  private crudCountries = inject(CrudCountries);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -56,11 +58,15 @@ export class ContactsForm {
     triggerRequest: computed(() => this.id() !== undefined),
   });
 
+  // get countries for country select
+  countriesResource = this.crudCountries.get({});
+
   // for parent contact select and children list
   contactsResource = this.crudContacts.get({});
 
   // data
   contact = this.contactResource.value;
+  countryOptions = this.countriesResource.value;
 
   parentOptions = computed(() =>
     this.contactsResource.value().filter(c => c._id !== this.contact()?._id)
@@ -82,7 +88,12 @@ export class ContactsForm {
   form = this.formService.form;
   contactType = this.formService.type;
 
-  isLoading = computed(() => this.contactResource.isLoading() || this.contactsResource.isLoading());
+  isLoading = computed(
+    () =>
+      this.contactResource.isLoading() ||
+      this.contactsResource.isLoading() ||
+      this.countriesResource.isLoading()
+  );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.contact());
   error = this.contactResource.error;
@@ -105,6 +116,9 @@ export class ContactsForm {
           phoneNumber: contact.phoneNumber,
           childIds: contact.childIds?.map(c => c._id) || [],
           type: contact.type,
+          countryId: contact.countryId?._id,
+          streetAddress: contact.streetAddress,
+          streetAddress2: contact.streetAddress2,
         });
 
         this.formService.resetDirtyState();
@@ -131,6 +145,9 @@ export class ContactsForm {
     const { rawValue } = data;
 
     if (!rawValue.parentId) delete rawValue.parentId;
+    if (!rawValue.countryId) delete rawValue.countryId;
+    if (!rawValue.streetAddress) delete rawValue.streetAddress;
+    if (!rawValue.streetAddress2) delete rawValue.streetAddress2;
 
     const action = this.isUpdate()
       ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })
