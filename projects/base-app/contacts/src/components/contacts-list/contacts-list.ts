@@ -12,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { contact } from '@avalantec/base-app/core';
+import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-contacts-list',

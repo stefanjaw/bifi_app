@@ -22,8 +22,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
-import { contact } from '@avalantec/base-app/core';
-import { CrudCountries } from '@avalantec/base-app/settings';
+import { CrudCountries } from '@avalantec/base-app/countries';
+import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-contacts-form',

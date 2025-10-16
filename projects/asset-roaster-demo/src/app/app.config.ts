@@ -12,10 +12,9 @@ import { providePrimeNG } from 'primeng/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MessageService } from 'primeng/api';
-import { provideAppAuth } from '@avalantec/base-app/auth';
+import { APP_AUTH_SERVICE, provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
-import { CrudUsers } from '@avalantec/base-app/settings';
-import { APP_AUTH_SERVICE } from '@avalantec/asset-roaster';
+import { CrudUsers } from '@avalantec/base-app/users';
 import { provideAssetRoster } from '@avalantec/asset-roaster';
 import { withLibraryInterceptors } from '@avalantec/base-app/routing';
 

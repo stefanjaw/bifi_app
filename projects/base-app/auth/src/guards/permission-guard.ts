@@ -1,7 +1,7 @@
 import { CanActivateFn } from '@angular/router';
 import { injectAuthService } from '../libraries/providers/auth-service-provider';
 import { permission } from '../interfaces/permission';
-import { policyAction } from '@avalantec/base-app/core';
+import { policyAction } from '@avalantec/base-app/interfaces';
 
 export const permissionGuard: CanActivateFn = async route => {
   const authService = injectAuthService();

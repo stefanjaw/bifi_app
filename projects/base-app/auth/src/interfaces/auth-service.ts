@@ -1,15 +1,9 @@
 import { computed, inject, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Session } from './session-user';
-import {
-  resource,
-  user,
-  policyAction,
-  condition,
-  mayBeSignalValue,
-  LIBRARY_CONFIG,
-} from '@avalantec/base-app/core';
+import { mayBeSignalValue, LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { maybeSignal } from '@avalantec/base-app/core';
+import { condition, policyAction, resource, user } from '@avalantec/base-app/interfaces';
 
 export abstract class IAuthService<
   TUser extends user,

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { contact } from '@avalantec/base-app/core';
+import { contact } from '@avalantec/base-app/interfaces';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
 
 @Injectable({

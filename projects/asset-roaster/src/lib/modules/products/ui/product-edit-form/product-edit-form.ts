@@ -20,7 +20,7 @@ import { activityHistory } from '@avalantec/base-app/resource';
 import { FormModule } from '@avalantec/base-app/form';
 import { productMaintenance } from '../../../product-maintenances/interfaces/product-maintenance';
 import { productComissionning } from '../../../product-comissioning/interfaces/product-comissioning';
-import { contact } from '@avalantec/base-app/core';
+import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-product-edit-form',
