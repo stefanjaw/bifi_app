@@ -104,11 +104,15 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
               fireUser: session.fireUser,
               appUser: session.appUser,
             });
+
+            this.toastManager?.showSuccess('Successfully logged in');
           }
 
           this.isLoading.set(false);
         },
-        error: () => this.isLoading.set(false),
+        error: () => {
+          this.isLoading.set(false);
+        },
       });
   }
 
@@ -128,8 +132,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     return this.backendAuth.getMe().pipe(
       catchError(err => {
         // If the user is not found, we return an empty object
-        console.log('User not found, error in me request', err);
-        this.toastManager.showError('Something went wrong authenticating you...');
+        this.toastManager.showError(err.message);
         return of(null);
       }),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
@@ -214,11 +217,9 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
       // wait for the auth state to be ready
       await this.authStateReady;
 
-      this.toastManager.showSuccess('Authenticated successfully!');
-
       return true;
     } catch (error: any) {
-      this.toastManager.showError('Something went wrong authenticating you...');
+      this.toastManager.showError('Authentication error: ' + error?.message || error);
 
       if ('message' in error) {
         this.error.set(error.message);
