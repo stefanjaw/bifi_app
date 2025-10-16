@@ -5,13 +5,13 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   catchError,
   filter,
+  finalize,
   firstValueFrom,
   map,
   Observable,
   of,
   switchMap,
   tap,
-  throwError,
 } from 'rxjs';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { APP_BACKEND_AUTH_SERVICE } from './providers/backend-auth-provider';
@@ -93,24 +93,26 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
           this._session.set(undefined);
         }),
         switchMap(_fireUser => this.meRequest(_fireUser)),
-        catchError(err => throwError(() => err))
+        catchError(() => {
+          this._session.set(null);
+          return of(null);
+        }),
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
         next: session => {
           if (!session || !session.fireUser || !session.appUser) {
             this._session.set(null);
-          } else {
-            this._session.set({
-              fireUser: session.fireUser,
-              appUser: session.appUser,
-            });
-
-            this.toastManager?.showSuccess('Successfully logged in');
+            this.isLoading.set(false);
+            return;
           }
 
-          this.isLoading.set(false);
-        },
-        error: () => {
+          this._session.set({
+            fireUser: session.fireUser,
+            appUser: session.appUser,
+          });
+
+          this.toastManager?.showSuccess('Successfully logged in');
           this.isLoading.set(false);
         },
       });
@@ -133,6 +135,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
       catchError(err => {
         // If the user is not found, we return an empty object
         this.toastManager.showError(err.message);
+
         return of(null);
       }),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
