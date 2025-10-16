@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
-import { ResourceList } from '@avalantec/base-app/settings';
 import { PrimeIcons } from 'primeng/api';
 import { MainMenuManager, SettingsMenuManager } from '@avalantec/base-app/routing';
 import {
@@ -10,6 +9,7 @@ import {
   ROOMS_ROUTES,
 } from '../../modules';
 import { SidenavManager } from '@avalantec/base-app/core';
+import { ResourceList } from '@avalantec/base-app/roles';
 
 export function initializeAssetRoster() {
   initializeMenu();

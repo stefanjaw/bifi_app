@@ -13,6 +13,7 @@ export * from './src/libraries/firebase-auth';
 export * from './src/libraries/interceptors/auth-token';
 export * from './src/libraries/provide-auth';
 export * from './src/libraries/providers/auth-service-provider';
+export * from './src/libraries/providers/auth-service';
 export * from './src/libraries/providers/backend-auth-provider';
 export * from './src/libraries/providers/enable-auth-provider';
 export * from './src/libraries/providers/interceptors';

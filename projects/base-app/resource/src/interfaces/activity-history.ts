@@ -1,4 +1,4 @@
-import { user } from '@avalantec/base-app/core';
+import { user } from '@avalantec/base-app/interfaces';
 
 export interface activityHistory<TDocument = any> {
   _id: string;

@@ -1,8 +1,9 @@
 /* eslint-disable @angular-eslint/directive-selector */
 import { computed, Directive, effect, input } from '@angular/core';
 import { injectAuthService } from '../libraries/providers/auth-service-provider';
-import { BaseStructuralConditional, policyAction, resource } from '@avalantec/base-app/core';
+import { BaseStructuralConditional } from '@avalantec/base-app/core';
 import { permission } from '../interfaces/permission';
+import { policyAction, resource } from '@avalantec/base-app/interfaces';
 
 @Directive({
   selector: '[bifiAppHasPermission]',

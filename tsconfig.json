@@ -46,6 +46,6 @@
     "projects/base-app/settings/index.ts",
     "projects/base-app/settings/src/modules",
     "projects/base-app/settings/src/components"
-  ],
+, "projects/base-app/interfaces/user.ts"  ],
   "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

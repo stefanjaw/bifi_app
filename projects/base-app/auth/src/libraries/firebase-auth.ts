@@ -19,7 +19,7 @@ import { GoogleAuthProvider } from '@angular/fire/auth';
 import { IBackendAuthService } from '../interfaces/backend-auth-service';
 import firebase from 'firebase/compat/app';
 import { ToastManager } from '@avalantec/base-app/core';
-import { user } from '@avalantec/base-app/core';
+import { user } from '@avalantec/base-app/interfaces';
 
 type AuthenticateFnParams =
   | {
