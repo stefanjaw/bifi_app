@@ -41,7 +41,7 @@ type AuthenticateFnParams =
     };
 
 export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, FirebaseSession<TUser>> {
-  private fireAuth = inject(AngularFireAuth);
+  public readonly authClient = inject(AngularFireAuth);
   private backendAuth: IBackendAuthService<TUser> = inject(APP_BACKEND_AUTH_SERVICE);
   private destroy$ = inject(DestroyRef);
   private injector = inject(Injector);
@@ -57,7 +57,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
-  idToken$ = this.fireAuth.idToken;
+  idToken$ = this.authClient.idToken;
 
   get authStateReady$(): Observable<void> {
     return toObservable(this._session, { injector: this.injector })
@@ -85,9 +85,9 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
   constructor() {
     super();
 
-    this.fireAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    this.authClient.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-    this.fireAuth.authState
+    this.authClient.authState
       .pipe(
         takeUntilDestroyed(this.destroy$),
         tap(() => {
@@ -139,7 +139,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
         // If the user is not found, we return an empty object
         this.toastManager.showError(err.message);
         // Sign out from Firebase as well in this case
-        this.fireAuth.signOut();
+        this.authClient.signOut();
 
         return of(null);
       }),
@@ -150,7 +150,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
 
   async logout(): Promise<boolean> {
     this._session.set(null);
-    await this.fireAuth.signOut();
+    await this.authClient.signOut();
     return Promise.resolve(true);
   }
 
@@ -205,16 +205,16 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
 
       switch (payload.method) {
         case 'google':
-          credentials = await this.fireAuth.signInWithPopup(new GoogleAuthProvider());
+          credentials = await this.authClient.signInWithPopup(new GoogleAuthProvider());
           break;
         case 'register':
-          credentials = await this.fireAuth.createUserWithEmailAndPassword(
+          credentials = await this.authClient.createUserWithEmailAndPassword(
             payload.params.email,
             payload.params.password
           );
           break;
         default:
-          credentials = await this.fireAuth.signInWithEmailAndPassword(
+          credentials = await this.authClient.signInWithEmailAndPassword(
             payload.params.email,
             payload.params.password
           );
