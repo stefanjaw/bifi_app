@@ -1,0 +1,79 @@
+<bifi-app-form-layout title="Update User" titlePosition="center" class="block px-4 bg-gray-50 py-4">
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+        <div class="mb-6">
+          <img [src]="user()?.picture" alt="User Photo" class="w-32 h-32 rounded-full" />
+        </div>
+
+        <section class="w-full grid gap-3 sm:grid-cols-2">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Username</bifi-app-form-label>
+            <input pInputText formControlName="username" type="text" placeholder="Username" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Email</bifi-app-form-label>
+            <input pInputText formControlName="email" type="text" placeholder="Email" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Related Contact</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contacts()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </section>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Roles" id="roles" [ordinal]="2">
+        <p-button
+          label="Add New Role"
+          severity="secondary"
+          icon="pi pi-plus"
+          (onClick)="selectRoleDialog.openDialog()"
+          styleClass="mb-4"
+        ></p-button>
+
+        <bifi-app-table-layout [columns]="roleCols" [data]="rolesData()">
+          <ng-template #actions let-row>
+            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
+            <p-button
+              severity="danger"
+              label="Remove"
+              icon="pi pi-trash"
+              (click)="handleRoleRemove(row._id)"
+            ></p-button>
+          </ng-template>
+        </bifi-app-table-layout>
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
+
+<bifi-app-select-role-dialog
+  #selectRoleDialog
+  (selected)="handleRoleSelect($event)"
+></bifi-app-select-role-dialog>
