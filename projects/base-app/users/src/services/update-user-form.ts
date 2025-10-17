@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ArrayValidators, BaseForm } from '@avalantec/base-app/form';
 
-export interface UserFormModel {
+export interface UpdateUserFormModel {
   username?: string;
   email?: string;
   picture?: string;
@@ -13,9 +13,9 @@ export interface UserFormModel {
 @Injectable({
   providedIn: 'root',
 })
-export class UserForm extends BaseForm<UserFormModel> {
+export class UpdateUserForm extends BaseForm<UpdateUserFormModel> {
   override createForm() {
-    return this.fb.group<UserFormModel>({
+    return this.fb.group<UpdateUserFormModel>({
       username: [{ value: '', disabled: true }],
       email: [{ value: '', disabled: true }],
       picture: [{ value: '', disabled: true }],
