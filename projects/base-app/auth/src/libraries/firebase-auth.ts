@@ -4,8 +4,8 @@ import { computed, DestroyRef, inject, Injector, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   catchError,
+  distinctUntilChanged,
   filter,
-  finalize,
   firstValueFrom,
   map,
   Observable,
@@ -49,6 +49,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
 
   /** Session signal, undefined state means that the user state has not yet been loaded */
   private _session = signal<FirebaseSession<TUser> | null | undefined>(undefined);
+
   /** Public access readonly session signal */
   public session = computed(() => this._session() || null);
   public user = computed(() => this._session()?.appUser || null);
@@ -83,6 +84,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
    */
   constructor() {
     super();
+
     this.fireAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
     this.fireAuth.authState
@@ -92,27 +94,26 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
           this.isLoading.set(true);
           this._session.set(undefined);
         }),
-        switchMap(_fireUser => this.meRequest(_fireUser)),
+        distinctUntilChanged((a, b) => (a?.uid ?? null) === (b?.uid ?? null)),
+        switchMap(firebaseUser => this.meRequest(firebaseUser)),
         catchError(() => {
           this._session.set(null);
           return of(null);
-        }),
-        finalize(() => this.isLoading.set(false))
+        })
       )
       .subscribe({
-        next: session => {
+        next: async session => {
           if (!session || !session.fireUser || !session.appUser) {
             this._session.set(null);
-            this.isLoading.set(false);
-            return;
+          } else {
+            this._session.set({
+              fireUser: session.fireUser,
+              appUser: session.appUser,
+            });
+
+            this.toastManager?.showSuccess('Successfully logged in');
           }
 
-          this._session.set({
-            fireUser: session.fireUser,
-            appUser: session.appUser,
-          });
-
-          this.toastManager?.showSuccess('Successfully logged in');
           this.isLoading.set(false);
         },
       });
@@ -126,7 +127,9 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
    *
    * @returns An observable that emits a {@link Session} object.
    */
-  private meRequest(firebaseUser: firebase.User | null) {
+  private meRequest(
+    firebaseUser: firebase.User | null
+  ): Observable<{ fireUser: firebase.User; appUser: TUser | null } | null> {
     if (!firebaseUser) {
       return of(null);
     }
@@ -135,9 +138,12 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
       catchError(err => {
         // If the user is not found, we return an empty object
         this.toastManager.showError(err.message);
+        // Sign out from Firebase as well in this case
+        this.fireAuth.signOut();
 
         return of(null);
       }),
+      takeUntilDestroyed(this.destroy$),
       map(user => ({ fireUser: firebaseUser, appUser: user }))
     );
   }
