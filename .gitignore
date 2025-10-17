@@ -48,3 +48,7 @@ environment.ts
 
 #json files
 package-lock.json
+
+#Ignore graphs
+asset-roaster-graph.svg
+base-app-graph.svg

@@ -10,7 +10,10 @@
     "build:base-app": "cd ./projects/base-app && ng build && cd ../../dist/base-app && npm pack",
     "build:asset-roaster": "cd ./projects/asset-roaster && ng build && cd ../../dist/asset-roaster && npm pack",
     "build:all": "npm run build:base-app && npm run build:asset-roaster",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "generate:base-app-graph": "npx depcruise --config .dependency-cruiser.js projects/base-app --output-type dot | dot -Tsvg -o base-app-graph.svg",
+    "generate:asset-roaster-graph": "npx depcruise --config .dependency-cruiser.js projects/asset-roaster --output-type dot | dot -Tsvg -o asset-roaster-graph.svg",
+    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roaster-graph"
   },
   "private": true,
   "dependencies": {
@@ -41,6 +44,7 @@
     "@angular/compiler-cli": "^20.1.4",
     "@types/jasmine": "~5.1.0",
     "angular-eslint": "20.1.1",
+    "dependency-cruiser": "^17.1.0",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
