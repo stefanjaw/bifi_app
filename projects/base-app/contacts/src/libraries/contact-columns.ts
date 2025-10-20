@@ -49,13 +49,33 @@ export const contactColumns: tableColumn<contact>[] = [
     type: 'text',
   },
   {
+    field: 'state',
+    title: 'State',
+    type: 'text',
+    sortable: true,
+  },
+  {
+    field: 'city',
+    title: 'City',
+    type: 'text',
+    sortable: true,
+  },
+  {
+    field: 'zipCode',
+    title: 'Zip Code',
+    type: 'text',
+    sortable: true,
+  },
+  {
     field: 'streetAddress',
     title: 'Street Address',
     type: 'text',
+    sortable: true,
   },
   {
     field: 'streetAddress2',
     title: 'Street Address 2',
     type: 'text',
+    sortable: true,
   },
 ];
