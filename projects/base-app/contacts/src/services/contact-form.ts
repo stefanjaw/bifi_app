@@ -12,6 +12,9 @@ export interface ContactFormModel {
   type: 'individual' | 'company';
   childIds?: string[];
   countryId?: string;
+  state?: string;
+  city?: string;
+  zipCode?: string;
   streetAddress?: string;
   streetAddress2?: string;
 }
@@ -52,6 +55,9 @@ export class ContactForm extends BaseForm<ContactFormModel> {
         formArrayElements: [],
       },
       countryId: [''],
+      state: [''],
+      city: [''],
+      zipCode: [''],
       streetAddress: [''],
       streetAddress2: [''],
     });

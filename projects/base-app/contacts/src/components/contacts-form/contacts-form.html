@@ -126,6 +126,24 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
+            <bifi-app-form-label>State</bifi-app-form-label>
+            <input pInputText formControlName="state" type="text" placeholder="e.g California" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>City</bifi-app-form-label>
+            <input pInputText formControlName="city" type="text" placeholder="e.g Los Angeles" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Zip Code</bifi-app-form-label>
+            <input pInputText formControlName="zipCode" type="text" placeholder="e.g 90001" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Street Address</bifi-app-form-label>
             <input
               pInputText
@@ -158,17 +176,18 @@
           styleClass="mb-4"
         ></p-button>
 
-        <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()">
-          <ng-template #actions let-row>
-            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
-            <p-button
-              severity="danger"
-              label="Remove"
-              icon="pi pi-trash"
-              (click)="handleContactRemove(row._id)"
-            ></p-button>
-          </ng-template>
-        </bifi-app-table-layout>
+        <div class="max-w-[90vw]">
+          <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()" class="w-full">
+            <ng-template #actions let-row>
+              <p-button
+                severity="danger"
+                label="Remove"
+                icon="pi pi-trash"
+                (click)="handleContactRemove(row._id)"
+              ></p-button>
+            </ng-template>
+          </bifi-app-table-layout>
+        </div>
       </bifi-app-form-section>
     } @else if (error()) {
       <p>Something went wrong... {{ error() }}</p>

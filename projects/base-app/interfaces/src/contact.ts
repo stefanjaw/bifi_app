@@ -10,6 +10,9 @@ export interface contact {
   type: 'individual' | 'company';
   childIds?: contact[];
   countryId?: country;
+  state?: string;
+  city?: string;
+  zipCode?: string;
   streetAddress?: string;
   streetAddress2?: string;
   active: boolean;

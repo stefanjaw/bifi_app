@@ -117,6 +117,9 @@ export class ContactsForm {
           childIds: contact.childIds?.map(c => c._id) || [],
           type: contact.type,
           countryId: contact.countryId?._id,
+          state: contact.state,
+          city: contact.city,
+          zipCode: contact.zipCode,
           streetAddress: contact.streetAddress,
           streetAddress2: contact.streetAddress2,
         });
@@ -146,6 +149,9 @@ export class ContactsForm {
 
     if (!rawValue.parentId) delete rawValue.parentId;
     if (!rawValue.countryId) delete rawValue.countryId;
+    if (!rawValue.city) delete rawValue.city;
+    if (!rawValue.state) delete rawValue.state;
+    if (!rawValue.zipCode) delete rawValue.zipCode;
     if (!rawValue.streetAddress) delete rawValue.streetAddress;
     if (!rawValue.streetAddress2) delete rawValue.streetAddress2;
 
