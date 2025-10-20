@@ -113,6 +113,7 @@ export class ContactsForm {
           lastName: contact.lastName,
           parentId: contact.parentId?._id,
           email: contact.email,
+          website: contact.website,
           phoneNumber: contact.phoneNumber,
           childIds: contact.childIds?.map(c => c._id) || [],
           type: contact.type,
@@ -154,6 +155,7 @@ export class ContactsForm {
     if (!rawValue.zipCode) delete rawValue.zipCode;
     if (!rawValue.streetAddress) delete rawValue.streetAddress;
     if (!rawValue.streetAddress2) delete rawValue.streetAddress2;
+    if (!rawValue.website) delete rawValue.website;
 
     const action = this.isUpdate()
       ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })

@@ -27,6 +27,12 @@ export const contactColumns: tableColumn<contact>[] = [
     sortable: true,
   },
   {
+    field: 'website',
+    title: 'Website',
+    type: 'text',
+    sortable: true,
+  },
+  {
     field: 'parentId.name',
     title: 'Parent Contact',
     type: 'text',

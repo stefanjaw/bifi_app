@@ -8,6 +8,7 @@ export interface ContactFormModel {
   lastName: string;
   phoneNumber: string;
   email: string;
+  website?: string;
   parentId?: string;
   type: 'individual' | 'company';
   childIds?: string[];
@@ -48,6 +49,10 @@ export class ContactForm extends BaseForm<ContactFormModel> {
       lastName: ['', [Validators.required]],
       phoneNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
+      website: [
+        '',
+        // [Validators.pattern(/^(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w\-.]*)*\/?$/)],
+      ],
       parentId: [''],
       type: ['individual', [Validators.required]],
       childIds: {

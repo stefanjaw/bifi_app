@@ -19,6 +19,10 @@ export const contactFilters: filter<contact>[] = [
     type: 'string',
   },
   {
+    field: 'website',
+    type: 'string',
+  },
+  {
     field: 'parentId.name',
     type: 'string',
   },

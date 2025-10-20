@@ -107,6 +107,19 @@
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          @if (contactType() === 'company') {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Website</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="website"
+                type="text"
+                placeholder="e.g www.website.com"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
         </div>
       </bifi-app-form-section>
 

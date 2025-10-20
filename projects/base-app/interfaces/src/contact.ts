@@ -6,6 +6,7 @@ export interface contact {
   lastName: string;
   phoneNumber?: string;
   email?: string;
+  website?: string;
   parentId?: contact;
   type: 'individual' | 'company';
   childIds?: contact[];
