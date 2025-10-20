@@ -10,14 +10,14 @@ import {
 } from '@angular/core';
 import { CrudUsers } from '../../services/crud-users';
 import { provideResourceManager, TableLayout } from '@avalantec/base-app/resource';
-import { UserForm, UserFormModel } from '../../services/user-form';
+import { UpdateUserForm, UpdateUserFormModel } from '../../services/update-user-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SelectRoleDialog } from './select-role-dialog/select-role-dialog';
+import { SelectRoleDialog } from '../select-role-dialog/select-role-dialog';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { CrudContacts } from '@avalantec/base-app/contacts';
@@ -25,7 +25,7 @@ import { roleColumns } from '@avalantec/base-app/roles';
 import { role } from '@avalantec/base-app/interfaces';
 
 @Component({
-  selector: 'bifi-app-users-form',
+  selector: 'bifi-app-update-users-form',
   providers: [provideResourceManager(CrudUsers)],
   imports: [
     ReactiveFormsModule,
@@ -37,13 +37,13 @@ import { role } from '@avalantec/base-app/interfaces';
     TableLayout,
     SelectModule,
   ],
-  templateUrl: './users-form.html',
+  templateUrl: './update-users-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UsersForm {
+export class UpdateUsersForm {
   private readonly crudUsers = inject(CrudUsers);
   private readonly crudContacts = inject(CrudContacts);
-  private readonly formService = inject(UserForm);
+  private readonly formService = inject(UpdateUserForm);
   private readonly destroy$ = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -92,7 +92,7 @@ export class UsersForm {
     });
   }
 
-  handleSubmit(values: FormValueState<UserFormModel>) {
+  handleSubmit(values: FormValueState<UpdateUserFormModel>) {
     const { value } = values;
 
     this.isSubmitLoading.set(true);

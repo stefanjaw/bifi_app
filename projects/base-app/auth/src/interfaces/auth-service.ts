@@ -4,11 +4,13 @@ import { Session } from './session-user';
 import { mayBeSignalValue, LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { maybeSignal } from '@avalantec/base-app/core';
 import { condition, policyAction, resource, user } from '@avalantec/base-app/interfaces';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 export abstract class IAuthService<
   TUser extends user,
   TSession extends Session<TUser> = Session<TUser>,
 > {
+  abstract authClient: AngularFireAuth | any;
   abstract session: Signal<TSession | null>;
   abstract user: Signal<TUser | null>;
 
