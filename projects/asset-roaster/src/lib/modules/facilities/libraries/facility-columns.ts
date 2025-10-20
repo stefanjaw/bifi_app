@@ -5,13 +5,13 @@ import { room } from '../interfaces/room';
 export const facilityColumns: tableColumn<facility>[] = [
   {
     field: 'name',
-    title: 'Equipment Type Name',
+    title: 'Facility name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'contactId.name',
-    title: 'Main Place',
+    title: 'Related to contact',
     type: 'text',
     sortable: true,
   },
