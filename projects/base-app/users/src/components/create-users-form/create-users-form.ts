@@ -19,7 +19,6 @@ import { ButtonModule } from 'primeng/button';
 import { roleColumns } from '@avalantec/base-app/roles';
 import { role } from '@avalantec/base-app/interfaces';
 import { CreateUserForm, CreateUserFormModel } from '../../services/create-user-form';
-// import { injectAuthService } from '@avalantec/base-app/auth';
 import { ToastManager } from '@avalantec/base-app/core';
 import { PasswordModule } from 'primeng/password';
 
@@ -44,7 +43,6 @@ export class CreateUsersForm implements OnInit {
   private readonly destroy$ = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  // private readonly auth = injectAuthService();
   private toastManager = inject(ToastManager);
 
   id = input.required<string>();
@@ -67,15 +65,9 @@ export class CreateUsersForm implements OnInit {
 
       this.isSubmitLoading.set(true);
 
-      // const { user } = (await this.auth.authClient.createUserWithEmailAndPassword(
-      //   rawValue.email,
-      //   rawValue.password
-      // )) as { user?: { uid?: string } };
-
       this.crudUsers
         .post({
           data: {
-            authId: '123',
             provider: 'password',
             username: rawValue.username,
             email: rawValue.email,
@@ -88,6 +80,7 @@ export class CreateUsersForm implements OnInit {
               active: true,
             },
             roles: rawValue.roles,
+            password: rawValue.password,
           },
         })
         .pipe(takeUntilDestroyed(this.destroy$))
