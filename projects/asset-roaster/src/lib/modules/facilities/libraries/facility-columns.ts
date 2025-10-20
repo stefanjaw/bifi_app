@@ -11,7 +11,7 @@ export const facilityColumns: tableColumn<facility>[] = [
   },
   {
     field: 'contactId.name',
-    title: 'Related to',
+    title: 'Related to contact',
     type: 'text',
     sortable: true,
   },
