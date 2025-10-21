@@ -13,11 +13,12 @@ import { countryColumns } from '../../libraries/countries-columns';
 import { countryFilters } from '../../libraries/countries-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { country } from '@avalantec/base-app/interfaces';
+import { DebugMode } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-countries-list',
   providers: [provideResourceManager(CrudCountries)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, DebugMode],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

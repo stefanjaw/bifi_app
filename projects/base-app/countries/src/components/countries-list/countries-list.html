@@ -12,7 +12,7 @@
     label="Populate Countries"
     severity="success"
     icon="pi pi-refresh"
-    *bifiAppHasPermission="'countries/populate:create'"
+    *bifiAppDebugMode
     (onClick)="populateCountries()"
     [disabled]="populationLoading()"
   ></p-button>

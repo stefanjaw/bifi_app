@@ -5,7 +5,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { SidenavManager } from '@avalantec/base-app/core';
+import { DebugManager, SidenavManager } from '@avalantec/base-app/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
 import { injectAuthService } from '@avalantec/base-app/auth';
@@ -30,6 +30,7 @@ export class Scaffold {
   brandIcon = input('');
 
   private router = inject(Router);
+  debugManager = inject(DebugManager);
 
   // auth state
   private authService = injectAuthService();

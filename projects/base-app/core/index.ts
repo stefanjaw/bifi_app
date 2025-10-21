@@ -1,6 +1,8 @@
+export * from './src/directives/debug-mode';
 export * from './src/directives/icon';
 export * from './src/directives/structural-conditional';
 export * from './src/directives/text';
+export * from './src/guards/debug-mode-guard';
 export * from './src/interfaces/app';
 export * from './src/interfaces/deep-keys';
 export * from './src/interfaces/library-config';
@@ -11,5 +13,6 @@ export * from './src/libraries/debounce-signal';
 export * from './src/libraries/library-config-token';
 export * from './src/libraries/maybe-signal-await';
 export * from './src/libraries/object-utils';
+export * from './src/services/debug-manager';
 export * from './src/services/sidenav-manager';
 export * from './src/services/toast-manager';

@@ -21,6 +21,19 @@
       ></p-button>
     </ng-template>
     <ng-template #end>
+      @if (debugManager.debugEnable()) {
+        <small class="text-red-500 font-bold me-3">
+          Debug is enabled
+          <p-button
+            size="small"
+            label="Desactivate"
+            variant="text"
+            severity="danger"
+            (onClick)="debugManager.toggleDebug()"
+          ></p-button>
+        </small>
+      }
+
       <div class="flex items-center gap-2">
         <bifi-app-user-panel></bifi-app-user-panel>
       </div>
