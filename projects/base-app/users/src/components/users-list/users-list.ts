@@ -10,7 +10,7 @@ import { CrudUsers } from '../../services/crud-users';
 import { userColumns } from '../../libraries/user-columns';
 import { userFilters } from '../../libraries/user-filters';
 import { RouterLink } from '@angular/router';
-import { HasPermission } from '@avalantec/base-app/auth';
+import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { user } from '@avalantec/base-app/interfaces';
 
@@ -28,11 +28,14 @@ export class UsersList {
   private resourceManager = inject<ResourceManager<user>>(ResourceManager);
   private crudUsers = inject(CrudUsers);
   private destroy$ = inject(DestroyRef);
+  private auth = injectAuthService();
 
   userColumns = userColumns;
   userFilters = userFilters;
 
   users = this.resourceManager.data;
+  showInactiveRecords = this.resourceManager.toggleInactiveRecords;
+  showInactiveStatus = this.resourceManager.getInactiveStatus;
 
   deleteUser(id: string) {
     this.crudUsers
@@ -43,5 +46,23 @@ export class UsersList {
           if (res) this.users.reload();
         },
       });
+  }
+
+  reactiveUser(id: string) {
+    this.crudUsers
+      .put({
+        _id: id,
+        data: { active: true },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.users.reload();
+        },
+      });
+  }
+
+  isUserSameAsLoggedInUser(user: user) {
+    return this.auth.user()?._id === user._id;
   }
 }

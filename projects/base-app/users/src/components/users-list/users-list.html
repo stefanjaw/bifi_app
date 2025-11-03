@@ -8,6 +8,12 @@
     [routerLink]="['../create']"
     *bifiAppHasPermission="'users:create'"
   ></p-button>
+  <p-button
+    label="Show Inactive"
+    severity="info"
+    [icon]="showInactiveStatus() ? 'pi pi-eye' : 'pi pi-eye-slash'"
+    (onClick)="showInactiveRecords()"
+  ></p-button>
 </div>
 
 <bifi-app-search-bar
@@ -17,19 +23,31 @@
 
 <bifi-app-table-layout [columns]="userColumns" [data]="users">
   <ng-template #actions let-row>
-    <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'users:update'"
-    ></p-button>
+    @if (row.active) {
+      <p-button
+        severity="secondary"
+        label="Edit"
+        icon="pi pi-pencil"
+        [routerLink]="['../edit/', row._id]"
+        *bifiAppHasPermission="'users:update'"
+      ></p-button>
+    }
+    @if (!row.active) {
+      <p-button
+        *bifiAppHasPermission="'users:update'"
+        severity="secondary"
+        label="Reactivate"
+        (onClick)="reactiveUser(row._id)"
+        icon="pi pi-eye"
+      ></p-button>
+    }
     <p-button
       *bifiAppHasPermission="'users:delete'"
       severity="danger"
       label="Delete"
       (onClick)="deleteUser(row._id)"
       icon="pi pi-trash"
+      [disabled]="isUserSameAsLoggedInUser(row)"
     ></p-button>
   </ng-template>
 </bifi-app-table-layout>

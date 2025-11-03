@@ -10,4 +10,5 @@ export interface user {
   picture: string;
   roles: role[];
   contactId?: contact;
+  active: boolean;
 }

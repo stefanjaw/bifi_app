@@ -26,6 +26,9 @@ export class ResourceManager<T> {
   private _searchParams = signal({});
   private service = inject<ApiRequestManager<T>>(RESOURCE_API_SERVICE_TOKEN);
   private destroy$ = inject(DestroyRef);
+  private _getInactive = signal(false);
+
+  toggleInactiveRecords = () => this._getInactive.update(value => !value);
 
   /**
    * Handles the side effects of setting the search params and resetting the pagination options based on the presence of filters.
@@ -48,6 +51,7 @@ export class ResourceManager<T> {
       this.paginationManager.resetPaginationOptions();
       this.filterManager.clearFilters();
       this.sortManager.resetSorts();
+      this._getInactive.set(false);
     });
   }
 
@@ -56,10 +60,15 @@ export class ResourceManager<T> {
     searchParams: this.searchParams,
     sort: this.sortManager.sort,
     paginateOptions: this.paginationManager.paginationOptions,
+    getInactive: this._getInactive,
   });
 
   get searchParams() {
     return this._searchParams;
+  }
+
+  get getInactiveStatus() {
+    return this._getInactive;
   }
 }
 

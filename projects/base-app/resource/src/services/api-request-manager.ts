@@ -187,12 +187,14 @@ export class ApiRequestManager<T> {
 
         const params = mayBeSignalValue(searchParams);
         const sorts = mayBeSignalValue(sort);
+        const inactive = mayBeSignalValue(getInactive);
 
         const query = new URLSearchParams({
-          ...((params || !getInactive) && {
+          ...((params || !inactive) && {
             searchParams: JSON.stringify({
               ...params,
-              ...(!getInactive && { active: true }),
+              ...(!inactive && { active: true }),
+              ...(inactive && { active: false }),
             }),
           }),
           ...(sorts && { orderBy: JSON.stringify(sorts) }),
@@ -226,9 +228,9 @@ export class ApiRequestManager<T> {
     specificEndpoint = '',
     getInactive = false,
   }: {
-    paginateOptions?: Signal<paginationOptions>;
-    searchParams?: Signal<Record<string, any>>;
-    sort?: Signal<orderByQuery<T>>;
+    paginateOptions?: maybeSignal<paginationOptions>;
+    searchParams?: maybeSignal<Record<string, any>>;
+    sort?: maybeSignal<orderByQuery<T>>;
     specificEndpoint?: string;
     getInactive?: maybeSignal<boolean>;
   }): ResourceRef<pagination<T> | undefined> {
@@ -236,19 +238,21 @@ export class ApiRequestManager<T> {
 
     return rxResource({
       params: () => {
-        const pagination = paginateOptions();
-        const params = searchParams?.();
-        const sorts = sort?.();
+        const pagination = mayBeSignalValue(paginateOptions);
+        const params = mayBeSignalValue(searchParams);
+        const sorts = mayBeSignalValue(sort);
+        const inactive = mayBeSignalValue(getInactive);
 
-        return { pagination, params, sorts };
+        return { pagination, params, sorts, inactive };
       },
-      stream: ({ params: { params, pagination, sorts } }) => {
+      stream: ({ params: { params, pagination, sorts, inactive } }) => {
         const query = new URLSearchParams({
           paginationOptions: JSON.stringify(pagination),
-          ...((params || !getInactive) && {
+          ...((params || !inactive) && {
             searchParams: JSON.stringify({
               ...params,
-              ...(!getInactive && { active: true }),
+              ...(!inactive && { active: true }),
+              ...(inactive && { active: false }),
             }),
           }),
           ...(sorts && { orderBy: JSON.stringify(sorts) }),
@@ -268,7 +272,7 @@ export class ApiRequestManager<T> {
     specificEndpoint = '',
     getInactive = false,
   }: {
-    searchParams?: Signal<Record<string, any>>;
+    searchParams?: maybeSignal<Record<string, any>>;
     specificEndpoint?: string;
     getInactive?: maybeSignal<boolean>;
   }): ResourceRef<number> {
@@ -276,17 +280,19 @@ export class ApiRequestManager<T> {
 
     return rxResource({
       params: () => {
-        const params = searchParams?.();
+        const params = mayBeSignalValue(searchParams);
+        const inactive = mayBeSignalValue(getInactive);
 
-        return { params };
+        return { params, inactive };
       },
-      stream: ({ params: { params } }) => {
+      stream: ({ params: { params, inactive } }) => {
         const query = new URLSearchParams({
           count: 'true',
-          ...((params || !getInactive) && {
+          ...((params || !inactive) && {
             searchParams: JSON.stringify({
               ...params,
-              ...(!getInactive && { active: true }),
+              ...(!inactive && { active: true }),
+              ...(inactive && { active: false }),
             }),
           }),
         });
