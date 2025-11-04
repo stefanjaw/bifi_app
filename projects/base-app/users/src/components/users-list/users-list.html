@@ -9,10 +9,10 @@
     *bifiAppHasPermission="'users:create'"
   ></p-button>
   <p-button
-    label="Show Inactive"
+    [label]="showInactiveStatus() ? 'Show Active' : 'Show Inactive'"
     severity="info"
-    [icon]="showInactiveStatus() ? 'pi pi-eye' : 'pi pi-eye-slash'"
-    (onClick)="showInactiveRecords()"
+    [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
+    (onClick)="toggleInactiveRecords()"
   ></p-button>
 </div>
 
@@ -31,8 +31,18 @@
         [routerLink]="['../edit/', row._id]"
         *bifiAppHasPermission="'users:update'"
       ></p-button>
-    }
-    @if (!row.active) {
+      <p-button
+        *bifiAppHasPermission="'users:delete'"
+        severity="danger"
+        label="Inactivate"
+        (onClick)="deleteUser(row._id)"
+        icon="pi pi-trash"
+        [disabled]="isUserSameAsLoggedInUser(row)"
+        [tooltipDisabled]="!isUserSameAsLoggedInUser(row)"
+        pTooltip="You cannot inactivate yourself!"
+        tooltipPosition="top"
+      ></p-button>
+    } @else {
       <p-button
         *bifiAppHasPermission="'users:update'"
         severity="secondary"
@@ -41,13 +51,5 @@
         icon="pi pi-eye"
       ></p-button>
     }
-    <p-button
-      *bifiAppHasPermission="'users:delete'"
-      severity="danger"
-      label="Delete"
-      (onClick)="deleteUser(row._id)"
-      icon="pi pi-trash"
-      [disabled]="isUserSameAsLoggedInUser(row)"
-    ></p-button>
   </ng-template>
 </bifi-app-table-layout>

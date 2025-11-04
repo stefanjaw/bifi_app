@@ -13,11 +13,12 @@ import { RouterLink } from '@angular/router';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { user } from '@avalantec/base-app/interfaces';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'bifi-app-users-list',
   providers: [provideResourceManager(CrudUsers)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, TooltipModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -34,7 +35,7 @@ export class UsersList {
   userFilters = userFilters;
 
   users = this.resourceManager.data;
-  showInactiveRecords = this.resourceManager.toggleInactiveRecords;
+  toggleInactiveRecords = this.resourceManager.toggleInactiveRecords;
   showInactiveStatus = this.resourceManager.getInactiveStatus;
 
   deleteUser(id: string) {
