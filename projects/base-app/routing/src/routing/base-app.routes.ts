@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@avalantec/base-app/auth';
+import { SETTINGS_ROUTES } from './settings.routes';
+import { CONTACT_ROUTES } from '@avalantec/base-app/contacts';
+import { AUTH_ROUTES } from './auth.routes';
 
 // * Routes outside of the base app will be loaded in the corresponding library
 export const BASE_APP_ROUTES: Routes = [
@@ -12,15 +15,15 @@ export const BASE_APP_ROUTES: Routes = [
   {
     path: 'settings',
     canActivate: [authGuard],
-    loadChildren: () => import('./settings.routes').then(m => m.SETTINGS_ROUTES),
+    children: SETTINGS_ROUTES,
   },
   {
     path: 'contacts',
     canActivate: [authGuard],
-    loadChildren: () => import('@avalantec/base-app/contacts').then(m => m.CONTACT_ROUTES),
+    children: CONTACT_ROUTES,
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth.routes').then(m => m.AUTH_ROUTES),
+    children: AUTH_ROUTES,
   },
 ];

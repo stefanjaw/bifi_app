@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
 import { PrimeIcons } from 'primeng/api';
-import { MainMenuManager, SettingsMenuManager } from '@avalantec/base-app/routing';
+import { MainMenuManager } from '@avalantec/base-app/routing';
 import {
   FACILITIES_ROUTES,
   MAINTENANCE_WINDOWS_ROUTES,
@@ -17,7 +17,6 @@ export function initializeAssetRoster() {
 
 function initializeMenu() {
   const mainMenuManager = inject(MainMenuManager);
-  const settingsMenuManager = inject(SettingsMenuManager);
 
   // main menu
   mainMenuManager.addItem({
@@ -26,12 +25,13 @@ function initializeMenu() {
       routerLink: ['/asset-roster'],
       label: 'Asset Roster',
       resource: 'products',
+      showInMainMenu: true,
     },
     routes: ASSET_ROASTER_ROUTES,
   });
 
   // settigns
-  settingsMenuManager.addItem({
+  mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.CLOCK,
       routerLink: ['/settings/maintenance-windows'],
@@ -42,9 +42,10 @@ function initializeMenu() {
       path: 'maintenance-windows',
       children: MAINTENANCE_WINDOWS_ROUTES,
     },
+    childOf: 'settings',
   });
 
-  settingsMenuManager.addItem({
+  mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.BUILDING,
       routerLink: ['/settings/rooms'],
@@ -55,9 +56,10 @@ function initializeMenu() {
       path: 'rooms',
       children: ROOMS_ROUTES,
     },
+    childOf: 'settings',
   });
 
-  settingsMenuManager.addItem({
+  mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.ADDRESS_BOOK,
       routerLink: ['/settings/facilities'],
@@ -68,9 +70,10 @@ function initializeMenu() {
       path: 'facilities',
       children: FACILITIES_ROUTES,
     },
+    childOf: 'settings',
   });
 
-  settingsMenuManager.addItem({
+  mainMenuManager.addItem({
     newItem: {
       icon: PrimeIcons.LIST,
       routerLink: ['/settings/product-types'],
@@ -81,6 +84,7 @@ function initializeMenu() {
       path: 'product-types',
       children: PRODUCT_TYPES_ROUTES,
     },
+    childOf: 'settings',
   });
 }
 

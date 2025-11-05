@@ -1,31 +1,15 @@
-import { inject, WritableSignal } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 import { Route, Routes } from '@angular/router';
-import { SidenavManager } from '@avalantec/base-app/core';
 import { MenuItem } from 'primeng/api';
 
 // class to manage logic for menu managers
 export class BaseMenuManager {
   private _menuItems: WritableSignal<MenuItem[]>;
   private _routes: Routes;
-  private _sidenavManager = inject(SidenavManager);
 
   constructor(menuItems: WritableSignal<MenuItem[]>, routes: Routes) {
     this._menuItems = menuItems;
     this._routes = routes;
-
-    this._menuItems.update(items =>
-      items.map(item => {
-        // Wrap the command to also close the sidenav when the item is clicked
-        const originalCommand = item.command;
-
-        item.command = event => {
-          if (originalCommand) originalCommand(event);
-          this._sidenavManager.closeSidenav();
-        };
-
-        return item;
-      })
-    );
   }
 
   get menuItems() {
@@ -44,6 +28,7 @@ export class BaseMenuManager {
     newItem,
     routes = undefined,
     route = undefined,
+    childOf = undefined,
   }: {
     /**
      * The new item to be added. This should include a routerLink to define the route path.
@@ -59,20 +44,80 @@ export class BaseMenuManager {
      * will be used to create the route.
      */
     route?: Route;
+    childOf?: string;
   }) {
-    // Wrap the command to also close the sidenav when the item is clicked
-    const originalCommand = newItem.command;
+    // Update the menu items by adding it the new item
+    this._menuItems.update(items => {
+      if (childOf) {
+        // Find the parent item
+        // Split the childOf path into segments
+        const splittedPath = childOf.split('/');
 
-    newItem.command = event => {
-      if (originalCommand) originalCommand(event);
-      this._sidenavManager.closeSidenav();
-    };
+        // Start from the root routes
+        let currentMenu = items;
 
-    // Update the menu items by adding t he new item
-    this._menuItems.update(items => [...items, newItem]);
+        // Traverse the routes to find the parent
+        for (const pathSegment of splittedPath) {
+          const foundItem = items.find(r =>
+            (r.routerLink as string[]).some(link => link.includes(pathSegment))
+          );
 
-    // Add the routes for the new item
+          if (foundItem) {
+            if (!foundItem.items) {
+              foundItem.items = [];
+            }
+            currentMenu = foundItem.items;
+          } else {
+            currentMenu = [];
+            break;
+          }
+        }
+
+        currentMenu.push(newItem);
+      } else {
+        items.push(newItem);
+      }
+
+      return items;
+    });
+
+    // Add the routes for the new item to the routes array
+    // Ensure that either routes or route is provided
     if (!routes && !route) throw new Error('Either routes or route must be provided');
+
+    // search for correct base array to add child routes
+    let parent: Routes | undefined = undefined;
+
+    // If childOf is provided, find the parent route
+    if (childOf) {
+      // Split the childOf path into segments
+      const splittedPath = childOf.split('/');
+
+      // Start from the root routes
+      let currentRoutes = this._routes;
+
+      // Traverse the routes to find the parent
+      for (const pathSegment of splittedPath) {
+        const foundRoute = currentRoutes.find(r => r.path === pathSegment);
+
+        if (foundRoute) {
+          if (!foundRoute.children) {
+            foundRoute.children = [];
+          }
+          currentRoutes = foundRoute.children;
+        } else {
+          currentRoutes = [];
+          break;
+        }
+      }
+
+      parent = currentRoutes;
+    } else {
+      parent = this._routes;
+    }
+
+    // If parent is not found, throw an error
+    if (!parent) throw new Error(`Parent route with path ${childOf} not found`);
 
     if (!route && routes) {
       // Create a new route with the path from the new item
@@ -81,13 +126,13 @@ export class BaseMenuManager {
         : newItem.routerLink;
 
       // Create a new route with the path from the new item
-      this._routes.push({
+      parent.push({
         path: newPath.charAt(0) === '/' ? newPath.slice(1) : newPath,
         children: routes,
       });
     } else if (route && !routes) {
       // Use the route provided
-      this._routes.push(route);
+      parent.push(route);
     }
   }
 
@@ -95,42 +140,47 @@ export class BaseMenuManager {
    * Removes an item from the menu
    * @param title The title of the menu item to be removed
    */
-  removeItem(title: string) {
-    const menuItems = this._menuItems();
-    const menuIndex = menuItems.findIndex(item => item.title === title);
+  // removeItem(title: string) {
+  //   const menuItems = this._menuItems();
+  //   const menuIndex = menuItems.findIndex(item => item.title === title);
 
-    // If the item is not found, do nothing
-    if (menuIndex === -1) return;
+  //   // If the item is not found, do nothing
+  //   if (menuIndex === -1) return;
 
-    // Remove the item from the menu
-    menuItems.splice(menuIndex, 1);
+  //   // Remove the item from the menu
+  //   menuItems.splice(menuIndex, 1);
 
-    // Update the menu items signal
-    this._menuItems.set(menuItems);
+  //   // Update the menu items signal
+  //   this._menuItems.set(menuItems);
 
-    // Find the index of the route in the routes array
-    const routerIndex = this._routes.findIndex(route =>
-      route.path?.includes(menuItems[menuIndex].routerLink)
-    );
+  //   // Find the index of the route in the routes array
+  //   const routerIndex = this._routes.findIndex(route =>
+  //     route.path?.includes(menuItems[menuIndex].routerLink)
+  //   );
 
-    // If the route is not found, do nothing
-    if (routerIndex === -1) return;
+  //   // If the route is not found, do nothing
+  //   if (routerIndex === -1) return;
 
-    // Remove the route from the routes array
-    this._routes.splice(routerIndex, 1);
-  }
+  //   // Remove the route from the routes array
+  //   this._routes.splice(routerIndex, 1);
+  // }
 
   /**
    * Adds multiple items to the menu
    * @param newItems An array of objects with a `menuItem` property representing the item to be added
    * and a `routes` property representing the routes to be added for the item
    */
-  addItems(newItems: { menuItem: MenuItem; routes?: Routes; route?: Route }[]) {
+  addItems(newItems: { menuItem: MenuItem; routes?: Routes; route?: Route; childOf?: string }[]) {
     /**
      * For each item in the array, call `addItem` with the item and the routes
      */
     newItems.forEach(item =>
-      this.addItem({ newItem: item.menuItem, routes: item.routes, route: item.route })
+      this.addItem({
+        newItem: item.menuItem,
+        routes: item.routes,
+        route: item.route,
+        childOf: item.childOf,
+      })
     );
   }
 
@@ -138,7 +188,7 @@ export class BaseMenuManager {
    * Removes multiple items from the menu
    * @param titles The titles of the menu items to be removed
    */
-  removeItems(titles: string[]) {
-    titles.forEach(title => this.removeItem(title));
-  }
+  // removeItems(titles: string[]) {
+  //   titles.forEach(title => this.removeItem(title));
+  // }
 }

@@ -1,5 +1,5 @@
-import { Component, inject, input } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, effect, inject, input, model } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -8,7 +8,11 @@ import { CommonModule } from '@angular/common';
 import { DebugManager, SidenavManager } from '@avalantec/base-app/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
-import { injectAuthService } from '@avalantec/base-app/auth';
+import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
+import { DrawerModule } from 'primeng/drawer';
+import { RippleModule } from 'primeng/ripple';
+import { MainMenuManager } from '@avalantec/base-app/routing';
+import { PanelMenuModule } from 'primeng/panelmenu';
 
 @Component({
   selector: 'bifi-app-scaffold',
@@ -21,6 +25,11 @@ import { injectAuthService } from '@avalantec/base-app/auth';
     CommonModule,
     NgxSonnerToaster,
     UserPanel,
+    DrawerModule,
+    PanelMenuModule,
+    RippleModule,
+    HasPermission,
+    RouterLink,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',
@@ -38,8 +47,23 @@ export class Scaffold {
 
   // sidenav managament
   protected sidenavManager = inject(SidenavManager);
-  isSidenavAvailable = this.sidenavManager.sidenavAvailable;
-  isOpened = this.sidenavManager.opened;
+  isOpened = model(this.sidenavManager.opened());
+
+  // menu managament
+  private menuManager = inject(MainMenuManager);
+  menuItems = this.menuManager.menuItems;
+
+  constructor() {
+    effect(() => {
+      const isSidenavOpen = this.sidenavManager.opened();
+      this.isOpened.set(isSidenavOpen);
+    });
+
+    effect(() => {
+      const isLocallyOpen = this.isOpened();
+      this.sidenavManager.setOpenSidenav(isLocallyOpen);
+    });
+  }
 
   goHome() {
     this.router.navigate(['home']);

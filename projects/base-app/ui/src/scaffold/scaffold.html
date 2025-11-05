@@ -3,14 +3,12 @@
 @if (loggedUser) {
   <p-toolbar class="w-full h-[75px]">
     <ng-template #start>
-      @if (isSidenavAvailable()) {
-        <p-button
-          icon="pi pi-bars"
-          (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
-          variant="text"
-          severity="contrast"
-        ></p-button>
-      }
+      <p-button
+        icon="pi pi-bars"
+        (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
+        variant="text"
+        severity="contrast"
+      ></p-button>
 
       <p-button
         icon="pi pi-home"
@@ -40,6 +38,48 @@
     </ng-template>
   </p-toolbar>
 }
+
+<p-drawer [(visible)]="isOpened" header="Apps">
+  <div class="flex flex-col gap-2 w-full">
+    @for (menuItem of menuItems(); track $index) {
+      @if (menuItem.items) {
+        <p-panelmenu
+          [model]="[
+            {
+              label: menuItem.label,
+              icon: menuItem.icon,
+              items: menuItem.items,
+            },
+          ]"
+        >
+          <ng-template #item let-item>
+            <a
+              *bifiAppHasPermission="`${item['resource']}:read`"
+              pRipple
+              class="flex items-center p-menu-item-link"
+              [routerLink]="item.routerLink"
+              (click)="sidenavManager.closeSidenav()"
+            >
+              <span [class]="item.icon"></span>
+              <span class="ml-2">{{ item.label }}</span>
+            </a>
+          </ng-template>
+        </p-panelmenu>
+      } @else {
+        <a
+          *bifiAppHasPermission="`${menuItem['resource']}:read`"
+          pRipple
+          class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2"
+          [routerLink]="menuItem.routerLink"
+          (click)="sidenavManager.closeSidenav()"
+        >
+          <span [class]="menuItem.icon"></span>
+          <span class="ml-2">{{ menuItem.label }}</span>
+        </a>
+      }
+    }
+  </div>
+</p-drawer>
 
 <div
   class="w-full overflow-y-auto"
