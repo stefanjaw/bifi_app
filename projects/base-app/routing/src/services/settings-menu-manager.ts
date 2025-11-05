@@ -1,5 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { SidenavManager } from '@avalantec/base-app/core';
+import { Injectable, signal } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BaseMenuManager } from '../libraries/base-menu-manager';
 import { SETTINGS_ROUTES } from '../routing/settings.routes';
@@ -8,8 +7,6 @@ import { SETTINGS_ROUTES } from '../routing/settings.routes';
   providedIn: 'root',
 })
 export class SettingsMenuManager extends BaseMenuManager {
-  private sidenavManager = inject(SidenavManager);
-
   constructor() {
     const menuItems = signal<MenuItem[]>([
       {
@@ -17,38 +14,33 @@ export class SettingsMenuManager extends BaseMenuManager {
         routerLink: ['/settings/companies'],
         label: 'Companies',
         resource: 'companies',
-        command: () => this.sidenavManager.closeSidenav(),
       },
       {
         icon: 'pi pi-user',
         routerLink: ['/settings/users'],
         label: 'Users',
         resource: 'users',
-        command: () => this.sidenavManager.closeSidenav(),
       },
       {
         icon: 'pi pi-user',
         routerLink: ['/settings/roles'],
         label: 'Roles',
         resource: 'roles',
-        command: () => this.sidenavManager.closeSidenav(),
       },
       {
         icon: 'pi pi-check',
         routerLink: ['/settings/policies'],
         label: 'Policies',
         resource: 'policies',
-        command: () => this.sidenavManager.closeSidenav(),
       },
       {
         icon: 'pi pi-globe',
         routerLink: ['/settings/countries'],
         label: 'Countries',
         resource: 'countries',
-        command: () => this.sidenavManager.closeSidenav(),
-      }
+      },
     ]);
 
-    super(menuItems, SETTINGS_ROUTES[0].children!); 
+    super(menuItems, SETTINGS_ROUTES);
   }
 }

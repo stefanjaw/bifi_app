@@ -1,15 +1,31 @@
-import { WritableSignal } from '@angular/core';
+import { inject, WritableSignal } from '@angular/core';
 import { Route, Routes } from '@angular/router';
+import { SidenavManager } from '@avalantec/base-app/core';
 import { MenuItem } from 'primeng/api';
 
 // class to manage logic for menu managers
 export class BaseMenuManager {
   private _menuItems: WritableSignal<MenuItem[]>;
   private _routes: Routes;
+  private _sidenavManager = inject(SidenavManager);
 
   constructor(menuItems: WritableSignal<MenuItem[]>, routes: Routes) {
     this._menuItems = menuItems;
     this._routes = routes;
+
+    this._menuItems.update(items =>
+      items.map(item => {
+        // Wrap the command to also close the sidenav when the item is clicked
+        const originalCommand = item.command;
+
+        item.command = event => {
+          if (originalCommand) originalCommand(event);
+          this._sidenavManager.closeSidenav();
+        };
+
+        return item;
+      })
+    );
   }
 
   get menuItems() {
@@ -44,7 +60,15 @@ export class BaseMenuManager {
      */
     route?: Route;
   }) {
-    // Update the menu items by adding the new item
+    // Wrap the command to also close the sidenav when the item is clicked
+    const originalCommand = newItem.command;
+
+    newItem.command = event => {
+      if (originalCommand) originalCommand(event);
+      this._sidenavManager.closeSidenav();
+    };
+
+    // Update the menu items by adding t he new item
     this._menuItems.update(items => [...items, newItem]);
 
     // Add the routes for the new item

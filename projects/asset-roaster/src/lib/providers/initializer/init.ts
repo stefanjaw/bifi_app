@@ -8,7 +8,6 @@ import {
   PRODUCT_TYPES_ROUTES,
   ROOMS_ROUTES,
 } from '../../modules';
-import { SidenavManager } from '@avalantec/base-app/core';
 import { ResourceList } from '@avalantec/base-app/roles';
 
 export function initializeAssetRoster() {
@@ -19,7 +18,6 @@ export function initializeAssetRoster() {
 function initializeMenu() {
   const mainMenuManager = inject(MainMenuManager);
   const settingsMenuManager = inject(SettingsMenuManager);
-  const sidenavManager = inject(SidenavManager);
 
   // main menu
   mainMenuManager.addItem({
@@ -39,7 +37,6 @@ function initializeMenu() {
       routerLink: ['/settings/maintenance-windows'],
       label: 'Maintenance Windows',
       resource: 'maintenance-windows',
-      command: () => sidenavManager.closeSidenav(),
     },
     route: {
       path: 'maintenance-windows',
@@ -53,7 +50,6 @@ function initializeMenu() {
       routerLink: ['/settings/rooms'],
       label: 'Rooms',
       resource: 'rooms',
-      command: () => sidenavManager.closeSidenav(),
     },
     route: {
       path: 'rooms',
@@ -67,7 +63,6 @@ function initializeMenu() {
       routerLink: ['/settings/facilities'],
       label: 'Facilities',
       resource: 'facilities',
-      command: () => sidenavManager.closeSidenav(),
     },
     route: {
       path: 'facilities',
@@ -81,7 +76,6 @@ function initializeMenu() {
       routerLink: ['/settings/product-types'],
       label: 'Equipment Types',
       resource: 'productTypes',
-      command: () => sidenavManager.closeSidenav(),
     },
     route: {
       path: 'product-types',

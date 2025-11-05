@@ -1,4 +1,4 @@
-import { Component, effect, inject, model, OnDestroy } from '@angular/core';
+import { Component, effect, inject, model } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { SidenavManager } from '@avalantec/base-app/core';
 import { DrawerModule } from 'primeng/drawer';
@@ -13,7 +13,7 @@ import { RippleModule } from 'primeng/ripple';
   templateUrl: './settings-main-menu.html',
   styleUrl: './settings-main-menu.css',
 })
-export class SettingsMainMenu implements OnDestroy {
+export class SettingsMainMenu {
   private menuManager = inject(SettingsMenuManager);
   public sidenavManager = inject(SidenavManager);
 
@@ -21,8 +21,6 @@ export class SettingsMainMenu implements OnDestroy {
   isOpened = model(this.sidenavManager.opened());
 
   constructor() {
-    this.sidenavManager.setSidenavAvailable(true);
-
     effect(() => {
       const isSidenavOpen = this.sidenavManager.opened();
       this.isOpened.set(isSidenavOpen);
@@ -32,9 +30,5 @@ export class SettingsMainMenu implements OnDestroy {
       const isLocallyOpen = this.isOpened();
       this.sidenavManager.setOpenSidenav(isLocallyOpen);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.sidenavManager.setSidenavAvailable(false);
   }
 }
