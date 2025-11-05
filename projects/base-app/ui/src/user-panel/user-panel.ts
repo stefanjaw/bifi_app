@@ -33,9 +33,9 @@ export class UserPanel {
       // command: () => this.onProfile(),
     },
     {
-      label: 'Settings (Preview)',
+      label: 'Settings',
       icon: 'pi pi-cog',
-      // command: () => this.onSettings(),
+      command: () => this.router.navigate(['settings']),
     },
     {
       separator: true,
