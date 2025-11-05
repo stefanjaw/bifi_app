@@ -56,12 +56,16 @@
             <a
               *bifiAppHasPermission="`${item['resource']}:read`"
               pRipple
-              class="flex items-center p-menu-item-link"
-              [routerLink]="item.routerLink"
-              (click)="sidenavManager.closeSidenav()"
+              class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2"
+              [routerLink]="item.routerLink || undefined"
+              (click)="!item.items ? sidenavManager.closeSidenav() : null"
             >
               <span [class]="item.icon"></span>
               <span class="ml-2">{{ item.label }}</span>
+
+              @if (item.items) {
+                <span class="pi pi-angle-down ml-auto mt-1"></span>
+              }
             </a>
           </ng-template>
         </p-panelmenu>
@@ -69,7 +73,7 @@
         <a
           *bifiAppHasPermission="`${menuItem['resource']}:read`"
           pRipple
-          class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2"
+          class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2 ms-1"
           [routerLink]="menuItem.routerLink"
           (click)="sidenavManager.closeSidenav()"
         >
