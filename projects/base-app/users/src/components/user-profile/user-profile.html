@@ -13,57 +13,80 @@
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
 
-    <bifi-app-form-section title="General Information" id="general-info" [ordinal]="1">
-      <!-- <div class="mb-6">
+    @if (!loading()) {
+      <bifi-app-form-section title="Profile Information" id="general-info" [ordinal]="1">
+        <!-- <div class="mb-6">
             <img [src]="user()?.picture" alt="User Photo" class="w-32 h-32 rounded-full" />
             </div> -->
 
-      <section class="w-full grid gap-3 sm:grid-cols-2">
-        <bifi-app-form-field>
-          <bifi-app-form-label>Username</bifi-app-form-label>
-          <input pInputText formControlName="username" type="text" placeholder="Username" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-        <bifi-app-form-field>
-          <bifi-app-form-label>Email</bifi-app-form-label>
-          <input pInputText formControlName="email" type="text" placeholder="Email" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>{{ type() === 'individual' ? 'First Name' : 'Company Name' }}</bifi-app-form-label>
-          <input pInputText formControlName="name" type="text" placeholder="{{ type() === 'individual' ? 'First Name' : 'Company Name' }}" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        @if (type() === 'individual') {
+        <section class="w-full grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field>
-            <bifi-app-form-label>Last Name</bifi-app-form-label>
-            <input pInputText formControlName="lastName" type="text" placeholder="Last Name" />
+            <bifi-app-form-label>Username</bifi-app-form-label>
+            <input pInputText formControlName="username" type="text" placeholder="Username" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
-        }
+          <bifi-app-form-field>
+            <bifi-app-form-label>Email</bifi-app-form-label>
+            <input pInputText formControlName="email" type="text" placeholder="Email" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
 
-        <bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ type() === 'individual' ? 'First Name' : 'Company Name' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              placeholder="{{ type() === 'individual' ? 'First Name' : 'Company Name' }}"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          @if (type() === 'individual') {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Last Name</bifi-app-form-label>
+              <input pInputText formControlName="lastName" type="text" placeholder="Last Name" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Phone Number</bifi-app-form-label>
-            <input pInputText formControlName="phoneNumber" type="text" placeholder="Phone Number" />
+            <input
+              pInputText
+              formControlName="phoneNumber"
+              type="text"
+              placeholder="Phone Number"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
-        <bifi-app-form-field>
-          <bifi-app-form-label>Contact email</bifi-app-form-label>
-          <input pInputText formControlName="contactEmail" type="text" placeholder="Contact email" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        @if (type() === 'company') {
           <bifi-app-form-field>
-            <bifi-app-form-label>Website</bifi-app-form-label>
-            <input pInputText formControlName="website" type="text" placeholder="Website" />
+            <bifi-app-form-label>Contact email</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="contactEmail"
+              type="text"
+              placeholder="Contact email"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
-        }
-      </section>
-    </bifi-app-form-section>
+
+          @if (type() === 'company') {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Website</bifi-app-form-label>
+              <input pInputText formControlName="website" type="text" placeholder="Website" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
+        </section>
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
   </form>
 </bifi-app-form-layout>
