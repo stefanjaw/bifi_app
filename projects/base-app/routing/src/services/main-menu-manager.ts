@@ -21,6 +21,12 @@ export class MainMenuManager extends BaseMenuManager {
         showInMainMenu: true,
         items: [
           {
+            icon: 'pi pi-user',
+            routerLink: ['/settings/profile'],
+            label: 'Profile',
+            resource: 'profile',
+          },
+          {
             icon: 'pi pi-building',
             routerLink: ['/settings/companies'],
             label: 'Companies',

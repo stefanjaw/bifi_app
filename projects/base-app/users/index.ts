@@ -9,3 +9,4 @@ export * from './src/services/base-crud-users';
 export * from './src/services/create-user-form';
 export * from './src/services/crud-users';
 export * from './src/services/update-user-form';
+export * from './src/components/user-profile/user-profile';

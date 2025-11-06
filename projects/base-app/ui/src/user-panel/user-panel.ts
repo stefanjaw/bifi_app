@@ -28,9 +28,9 @@ export class UserPanel {
     },
     { separator: true },
     {
-      label: 'Profile (Preview)',
+      label: 'Profile',
       icon: 'pi pi-user',
-      // command: () => this.onProfile(),
+      command: () => this.router.navigate(['settings', 'profile']),
     },
     {
       label: 'Settings',
