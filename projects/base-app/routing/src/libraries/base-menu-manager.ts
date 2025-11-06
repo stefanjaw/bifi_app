@@ -58,8 +58,10 @@ export class BaseMenuManager {
 
         // Traverse the routes to find the parent
         for (const pathSegment of splittedPath) {
-          const foundItem = items.find(r =>
-            (r.routerLink as string[]).some(link => link.includes(pathSegment))
+          const foundItem = currentMenu.find(r =>
+            (r.routerLink as string[])?.some(
+              link => link.includes(pathSegment) || r['resource'] === pathSegment
+            )
           );
 
           if (foundItem) {
@@ -68,7 +70,7 @@ export class BaseMenuManager {
             }
             currentMenu = foundItem.items;
           } else {
-            currentMenu = [];
+            // If the route is not found, use previous currentMenu as parent
             break;
           }
         }
@@ -83,7 +85,7 @@ export class BaseMenuManager {
 
     // Add the routes for the new item to the routes array
     // Ensure that either routes or route is provided
-    if (!routes && !route) throw new Error('Either routes or route must be provided');
+    if (!routes && !route) return;
 
     // search for correct base array to add child routes
     let parent: Routes | undefined = undefined;
@@ -106,7 +108,7 @@ export class BaseMenuManager {
           }
           currentRoutes = foundRoute.children;
         } else {
-          currentRoutes = [];
+          // If the route is not found, use previous currentRoutes as parent
           break;
         }
       }

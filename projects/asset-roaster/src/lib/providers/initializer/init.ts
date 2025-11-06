@@ -33,56 +33,56 @@ function initializeMenu() {
   // settigns
   mainMenuManager.addItem({
     newItem: {
-      icon: PrimeIcons.CLOCK,
-      routerLink: ['/settings/maintenance-windows'],
-      label: 'Maintenance Windows',
-      resource: 'maintenance-windows',
+      icon: PrimeIcons.COG,
+      label: 'Asset Roster',
+      resource: 'asset-roster',
+      items: [
+        {
+          icon: PrimeIcons.CLOCK,
+          routerLink: ['/settings/asset-roster/maintenance-windows'],
+          label: 'Maintenance Windows',
+          resource: 'maintenance-windows',
+        },
+        {
+          icon: PrimeIcons.BUILDING,
+          routerLink: ['/settings/asset-roster/rooms'],
+          label: 'Rooms',
+          resource: 'rooms',
+        },
+        {
+          icon: PrimeIcons.ADDRESS_BOOK,
+          routerLink: ['/settings/asset-roster/facilities'],
+          label: 'Facilities',
+          resource: 'facilities',
+        },
+        {
+          icon: PrimeIcons.LIST,
+          routerLink: ['/settings/asset-roster/product-types'],
+          label: 'Equipment Types',
+          resource: 'productTypes',
+        },
+      ],
     },
     route: {
-      path: 'maintenance-windows',
-      children: MAINTENANCE_WINDOWS_ROUTES,
-    },
-    childOf: 'settings',
-  });
-
-  mainMenuManager.addItem({
-    newItem: {
-      icon: PrimeIcons.BUILDING,
-      routerLink: ['/settings/rooms'],
-      label: 'Rooms',
-      resource: 'rooms',
-    },
-    route: {
-      path: 'rooms',
-      children: ROOMS_ROUTES,
-    },
-    childOf: 'settings',
-  });
-
-  mainMenuManager.addItem({
-    newItem: {
-      icon: PrimeIcons.ADDRESS_BOOK,
-      routerLink: ['/settings/facilities'],
-      label: 'Facilities',
-      resource: 'facilities',
-    },
-    route: {
-      path: 'facilities',
-      children: FACILITIES_ROUTES,
-    },
-    childOf: 'settings',
-  });
-
-  mainMenuManager.addItem({
-    newItem: {
-      icon: PrimeIcons.LIST,
-      routerLink: ['/settings/product-types'],
-      label: 'Equipment Types',
-      resource: 'productTypes',
-    },
-    route: {
-      path: 'product-types',
-      children: PRODUCT_TYPES_ROUTES,
+      path: 'asset-roster',
+      children: [
+        {
+          path: 'maintenance-windows',
+          children: MAINTENANCE_WINDOWS_ROUTES,
+        },
+        {
+          path: 'rooms',
+          children: ROOMS_ROUTES,
+        },
+        {
+          path: 'facilities',
+          children: FACILITIES_ROUTES,
+        },
+        {
+          path: 'product-types',
+          children: PRODUCT_TYPES_ROUTES,
+        },
+      ],
     },
     childOf: 'settings',
   });
