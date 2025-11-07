@@ -2,24 +2,16 @@
   <div id="main-menu-options-container">
     @for (item of menuItems(); track $index) {
       @if (item['showInMainMenu']) {
-        @if (item['resource']) {
-          <p-button
-            [routerLink]="item.routerLink"
-            [label]="item.label"
-            [icon]="item.icon"
-            iconPos="bottom"
-            variant="outlined"
-            *bifiAppHasPermission="`${item['resource']}:read`"
-          />
-        } @else {
-          <p-button
-            [routerLink]="item.routerLink"
-            [label]="item.label"
-            [icon]="item.icon"
-            iconPos="bottom"
-            variant="outlined"
-          />
-        }
+        <a
+          [routerLink]="item.routerLink"
+          class="bg-primary-100 rounded-md p-7 flex flex-col gap-2 items-center font-bold hover:bg-primary-200 text-xl w-[200px]"
+          *bifiAppHasPermission="`${item['resource']}:read`"
+        >
+          <span [bifiAppIcon]="'lg'" [class]="item.icon"></span>
+          <span class="w-full overflow-ellipsis text-nowrap overflow-hidden text-center">
+            {{ item.label }}
+          </span>
+        </a>
       }
     }
   </div>
