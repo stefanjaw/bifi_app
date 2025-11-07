@@ -4,7 +4,7 @@
       @if (item['showInMainMenu']) {
         <a
           [routerLink]="item.routerLink"
-          class="bg-primary-100 rounded-md p-7 flex flex-col gap-2 items-center font-bold hover:bg-primary-200 text-xl w-[200px]"
+          class="bg-primary-100 rounded-md p-7 flex flex-col gap-2 items-center font-bold hover:bg-primary-200 text-xl w-[200px] shadow-xl"
           *bifiAppHasPermission="`${item['resource']}:read`"
         >
           <span [bifiAppIcon]="'lg'" [class]="item.icon"></span>
