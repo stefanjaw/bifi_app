@@ -38,52 +38,6 @@
   </p-toolbar>
 }
 
-<p-drawer [(visible)]="isOpened" header="Apps">
-  <div class="flex flex-col gap-2 w-full">
-    @for (menuItem of menuItems(); track $index) {
-      @if (menuItem.items) {
-        <p-panelmenu
-          [model]="[
-            {
-              label: menuItem.label,
-              icon: menuItem.icon,
-              items: menuItem.items,
-            },
-          ]"
-        >
-          <ng-template #item let-item>
-            <a
-              *bifiAppHasPermission="`${item['resource']}:read`"
-              pRipple
-              class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2"
-              [routerLink]="item.routerLink || undefined"
-              (click)="!item.items ? sidenavManager.closeSidenav() : null"
-            >
-              <span [class]="item.icon"></span>
-              <span class="ml-2">{{ item.label }}</span>
-
-              @if (item.items) {
-                <span class="pi pi-angle-down ml-auto mt-1"></span>
-              }
-            </a>
-          </ng-template>
-        </p-panelmenu>
-      } @else {
-        <a
-          *bifiAppHasPermission="`${menuItem['resource']}:read`"
-          pRipple
-          class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md px-4 py-2 ms-1"
-          [routerLink]="menuItem.routerLink"
-          (click)="sidenavManager.closeSidenav()"
-        >
-          <span [class]="menuItem.icon"></span>
-          <span class="ml-2">{{ menuItem.label }}</span>
-        </a>
-      }
-    }
-  </div>
-</p-drawer>
-
 <div
   class="w-full overflow-y-auto"
   [ngClass]="{
@@ -91,7 +45,84 @@
     'h-[100vh]': !loggedUser,
   }"
 >
-  <router-outlet></router-outlet>
+  <div class="flex flex-row h-full">
+    <!-- this is the sidenav -->
+    <p-scrollpanel
+      class="h-full shadow-xl p-4 transition-all! duration-100! flex flex-col justify-center items-center"
+    >
+      @if (sidenavManager.opened()) {
+        <div class="flex flex-col gap-2">
+          @for (menuItem of menuItems(); track $index) {
+            @if (menuItem.items) {
+              <p-panelmenu
+                [model]="[
+                  {
+                    label: menuItem.label,
+                    icon: menuItem.icon,
+                    items: menuItem.items,
+                  },
+                ]"
+              >
+                <ng-template #item let-item>
+                  <a
+                    *bifiAppHasPermission="`${item['resource']}:read`"
+                    pRipple
+                    class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md"
+                    [routerLink]="item.routerLink || undefined"
+                    [ngClass]="{
+                      'bg-primary-100! border-b-2 border-b-primary-400':
+                        isItemActive(item) || hasActiveChild(item),
+                    }"
+                  >
+                    <span [class]="item.icon"></span>
+                    <span class="ml-2">{{ item.label }}</span>
+
+                    @if (item.items) {
+                      <span class="pi pi-angle-down ml-auto mt-1"></span>
+                    }
+                  </a>
+                </ng-template>
+              </p-panelmenu>
+            } @else {
+              <a
+                *bifiAppHasPermission="`${menuItem['resource']}:read`"
+                pRipple
+                class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md ms-1"
+                [routerLink]="menuItem.routerLink"
+                [ngClass]="{
+                  'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(menuItem),
+                }"
+              >
+                <span [class]="menuItem.icon"></span>
+                <span class="ml-2">{{ menuItem.label }}</span>
+              </a>
+            }
+          }
+        </div>
+      } @else {
+        <div class="flex flex-col gap-2">
+          @for (menuItem of menuItems(); track $index) {
+            <a
+              *bifiAppHasPermission="`${menuItem['resource']}:read`"
+              pRipple
+              class="flex items-center justify-center p-menu-item-link hover:bg-gray-100 rounded-md ms-1 p-3!"
+              [routerLink]="menuItem.routerLink"
+              [ngClass]="{
+                'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(menuItem),
+              }"
+            >
+              <span [class]="menuItem.icon"></span>
+            </a>
+          }
+        </div>
+      }
+    </p-scrollpanel>
+
+    <!-- this is the contents of the app -->
+    <div class="h-full flex-1 overflow-auto"><router-outlet></router-outlet></div>
+  </div>
+
+  <!-- notification -->
   <p-toast></p-toast>
   <ngx-sonner-toaster position="bottom-right"></ngx-sonner-toaster>
 </div>
