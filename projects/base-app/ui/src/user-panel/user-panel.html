@@ -8,8 +8,8 @@
     (click)="userMenu.toggle($event)"
   >
     <p-avatar
-      [image]="user()?.picture"
-      [icon]="!user()?.picture ? 'pi pi-user' : undefined"
+      [image]="pictureUrl()"
+      [icon]="!pictureUrl() ? 'pi pi-user' : undefined"
       [style]="{ width: '32px', height: '32px' }"
       [shape]="'circle'"
     ></p-avatar>

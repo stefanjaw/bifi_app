@@ -8,6 +8,7 @@ export interface user {
   username: string;
   email: string;
   picture: string;
+  uploadedPictureId?: string;
   roles: role[];
   contactId?: contact;
   active: boolean;

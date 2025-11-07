@@ -4,6 +4,8 @@ import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { firstValueFrom } from 'rxjs';
 import { file } from '../interfaces/file';
 
+type imageSize = 'icon' | 'full' | 'preview' | undefined;
+
 type ResolveFileProps =
   | {
       id: string;
@@ -34,15 +36,17 @@ export class FileResolver {
    * @param props The ResolveFileProps object with either 'id' or 'url' properties.
    * @returns The URL to the file.
    */
-  private resolveUrl(props: ResolveFileProps): string {
+  private resolveUrl(props: ResolveFileProps, imageSize: imageSize = undefined): string {
+    const sizeParam = imageSize ? `?imageSize=${imageSize}` : '';
+
     if ('id' in props) {
-      return `${this.libraryConfig.apiURL}/files/${props.id}`;
+      return `${this.libraryConfig.apiURL}/files/${props.id}${sizeParam}`;
     } else if ('url' in props) {
-      return props.url;
+      return props.url + sizeParam;
     } else if ('file' in props) {
-      return URL.createObjectURL(props.file);
+      return URL.createObjectURL(props.file) + sizeParam;
     } else {
-      return this.resolveUrl({ id: props.metadata.fileId });
+      return this.resolveUrl({ id: props.metadata.fileId }, imageSize);
     }
   }
 
@@ -54,12 +58,16 @@ export class FileResolver {
    * @param url The URL to convert to a File object.
    * @returns A Promise that resolves to a File object, or null if there is an error.
    */
-  async resolveFile(props: ResolveFileProps): Promise<File | null> {
+  async resolveFile(
+    props: ResolveFileProps,
+    imageSize: imageSize = undefined
+  ): Promise<File | null> {
     if ('file' in props) {
       return props.file;
     }
 
-    const url = this.resolveUrl(props);
+    const url = this.resolveUrl(props, imageSize);
+
     try {
       const blob = await firstValueFrom(this.httpClient.get(url, { responseType: 'blob' }));
       const fileName = 'metadata' in props ? props.metadata.name : url.split('/').pop() || 'image';
@@ -80,10 +88,10 @@ export class FileResolver {
    * @param urls The array of URLs to convert to File objects.
    * @returns A Promise that resolves to an array of File objects.
    */
-  async resolveFiles(props: ResolveFileProps[]): Promise<File[]> {
+  async resolveFiles(props: ResolveFileProps[], imageSize: imageSize = undefined): Promise<File[]> {
     const files = [];
     for (const prop of props) {
-      const file = await this.resolveFile(prop);
+      const file = await this.resolveFile(prop, imageSize);
       if (file) {
         files.push(file);
       }
@@ -99,8 +107,12 @@ export class FileResolver {
    * @param url The URL of the file to download.
    * @returns A Promise that resolves when the file is downloaded and opened in a new browser tab.
    */
-  async downloadFileInBrowser(props: ResolveFileProps, mode: 'download' | 'open' = 'open') {
-    const file = await this.resolveFile(props);
+  async downloadFileInBrowser(
+    props: ResolveFileProps,
+    mode: 'download' | 'open' = 'open',
+    imageSize: imageSize = undefined
+  ) {
+    const file = await this.resolveFile(props, imageSize);
 
     if (file && mode === 'open') {
       const blobUrl = URL.createObjectURL(file);
