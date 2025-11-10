@@ -9,6 +9,7 @@ export interface ProfileFormModel {
   lastName?: string;
   phoneNumber?: string;
   website?: string;
+  uploadedPictureId?: string;
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ export class ProfileForm extends BaseForm<ProfileFormModel> {
       phoneNumber: [''],
       contactEmail: [''],
       website: [''],
+      uploadedPictureId: [''],
     });
   }
 }

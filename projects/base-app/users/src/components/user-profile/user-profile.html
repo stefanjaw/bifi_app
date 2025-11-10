@@ -20,6 +20,24 @@
             </div> -->
 
         <section class="w-full grid gap-3 sm:grid-cols-2">
+          <div class="mb-6">
+            <img [src]="pictureUrl()" alt="User Photo" class="w-32 h-32 rounded-full" />
+          </div>
+
+          <input
+            type="file"
+            accept="image/*"
+            class="hidden"
+            #fileInput
+            (change)="handleFileChange($event)"
+          />
+          <p-button
+            label="Upload photo"
+            severity="secondary"
+            (onClick)="fileInput.click()"
+            icon="pi-upload"
+          ></p-button>
+
           <bifi-app-form-field>
             <bifi-app-form-label>Username</bifi-app-form-label>
             <input pInputText formControlName="username" type="text" placeholder="Username" />

@@ -17,6 +17,7 @@ import { injectAuthService } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { FileResolver } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-user-profile',
@@ -29,9 +30,11 @@ export class UserProfile {
   private readonly formService = inject(ProfileForm);
   private readonly destroy$ = inject(DestroyRef);
   private readonly location = inject(Location);
+  private fileResolver = inject(FileResolver);
 
   private auth = injectAuthService();
 
+  selectedFile: File | null = null;
   id = computed(() => this.auth.user()?._id || '');
 
   userResource = this.crudUsers.get({
@@ -48,8 +51,10 @@ export class UserProfile {
   error = this.userResource.error;
   isSubmitLoading = signal<boolean>(false);
 
+  pictureUrl = signal<string | undefined>(undefined);
+
   constructor() {
-    effect(() => {
+    effect(async () => {
       const user = this.user();
 
       if (user) {
@@ -62,6 +67,20 @@ export class UserProfile {
           contactEmail: user.contactId?.email,
           website: user.contactId?.website,
         });
+
+        if (user?.uploadedPictureId) {
+          const resolvedFile = await this.fileResolver.resolveFile(
+            {
+              id: user.uploadedPictureId,
+            },
+            'preview'
+          );
+
+          if (resolvedFile) this.pictureUrl.set(URL.createObjectURL(resolvedFile));
+          else this.pictureUrl.set(user?.picture);
+        } else {
+          this.pictureUrl.set(user?.picture);
+        }
       } else {
         this.formService.reset();
       }
@@ -84,6 +103,8 @@ export class UserProfile {
 
   handleSubmit(values: FormValueState<ProfileFormModel>) {
     const { value } = values;
+
+    
     const data = {
       contactInformation: {
         _id: this.auth.user()?.contactId?._id || '',
@@ -94,6 +115,7 @@ export class UserProfile {
         website: value.website,
         type: this.type(),
       },
+
     };
 
     this.isSubmitLoading.set(true);
@@ -112,6 +134,18 @@ export class UserProfile {
           this.isSubmitLoading.set(false);
         },
       });
+  }
+
+  async handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    // Generar preview instantáneo
+    this.pictureUrl.set(URL.createObjectURL(file));
+
+
+
   }
 
   goBack() {
