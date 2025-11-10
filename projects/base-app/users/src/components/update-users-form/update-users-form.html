@@ -16,7 +16,7 @@
     @if (!loading()) {
       <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
         <div class="mb-6">
-          <img [src]="user()?.picture" alt="User Photo" class="w-32 h-32 rounded-full" />
+          <img [src]="pictureUrl()" alt="User Photo" class="w-32 h-32 rounded-full" />
         </div>
 
         <section class="w-full grid gap-3 sm:grid-cols-2">

@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { CrudUsers } from '../../services/crud-users';
-import { provideResourceManager, TableLayout } from '@avalantec/base-app/resource';
+import { FileResolver, provideResourceManager, TableLayout } from '@avalantec/base-app/resource';
 import { UpdateUserForm, UpdateUserFormModel } from '../../services/update-user-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -47,6 +47,7 @@ export class UpdateUsersForm {
   private readonly destroy$ = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private fileResolver = inject(FileResolver);
 
   id = input.required<string>();
   roleCols = roleColumns;
@@ -71,8 +72,10 @@ export class UpdateUsersForm {
   rolesData = signal<role[]>([]);
   isSubmitLoading = signal<boolean>(false);
 
+  pictureUrl = signal<string | undefined>(undefined);
+
   constructor() {
-    effect(() => {
+    effect(async () => {
       const user = this.user();
 
       if (user) {
@@ -88,6 +91,20 @@ export class UpdateUsersForm {
       } else {
         this.formService.reset();
         this.rolesData.set([]);
+      }
+
+      if (user?.uploadedPictureId) {
+        const resolvedFile = await this.fileResolver.resolveFile(
+          {
+            id: user.uploadedPictureId,
+          },
+          'preview'
+        );
+
+        if (resolvedFile) this.pictureUrl.set(URL.createObjectURL(resolvedFile));
+        else this.pictureUrl.set(user?.picture);
+      } else {
+        this.pictureUrl.set(user?.picture);
       }
     });
   }
