@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ProfileFormModel {
   username: string;
@@ -9,7 +9,7 @@ export interface ProfileFormModel {
   lastName?: string;
   phoneNumber?: string;
   website?: string;
-  uploadedPictureId?: string;
+  uploadedPictureId?: FormUploaderFile[];
 }
 
 @Injectable({
@@ -26,7 +26,13 @@ export class ProfileForm extends BaseForm<ProfileFormModel> {
       phoneNumber: [''],
       contactEmail: [''],
       website: [''],
-      uploadedPictureId: [''],
+      uploadedPictureId: {
+        template: {
+          file: [null!],
+          id: [''],
+        },
+        formArrayElements: [],
+      },
     });
   }
 }

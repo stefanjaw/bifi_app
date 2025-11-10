@@ -15,16 +15,32 @@
 
     @if (!loading()) {
       <bifi-app-form-section title="Profile Information" id="general-info" [ordinal]="1">
-        <!-- <div class="mb-6">
-            <img [src]="user()?.picture" alt="User Photo" class="w-32 h-32 rounded-full" />
-            </div> -->
+        <div class="mb-6">
+          <img [src]="pictureUrl()" alt="User Photo" class="w-32 h-32 rounded-full" />
+        </div>
 
-        <section class="w-full grid gap-3 sm:grid-cols-2">
-          <div class="mb-6">
+        <bifi-app-form-uploader formArrayName="uploadedPictureId" class="w-full">
+          <p-fileupload
+            showUploadButton="false"
+            showCancelButton="false"
+            name="images"
+            [multiple]="false"
+            accept="image/*"
+            maxFileSize="100000000"
+            mode="basic"
+          >
+            <ng-template #empty>
+              <div>Drag and drop files to here to upload.</div>
+            </ng-template>
+          </p-fileupload>
+        </bifi-app-form-uploader>
+
+        <section class="w-full grid gap-3 sm:grid-cols-2 mt-4">
+          <!-- <div class="mb-6">
             <img [src]="pictureUrl()" alt="User Photo" class="w-32 h-32 rounded-full" />
-          </div>
+          </div> -->
 
-          <input
+          <!-- <input
             type="file"
             accept="image/*"
             class="hidden"
@@ -36,7 +52,7 @@
             severity="secondary"
             (onClick)="fileInput.click()"
             icon="pi-upload"
-          ></p-button>
+          ></p-button> -->
 
           <bifi-app-form-field>
             <bifi-app-form-label>Username</bifi-app-form-label>

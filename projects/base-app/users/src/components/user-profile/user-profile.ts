@@ -14,14 +14,22 @@ import { InputText } from 'primeng/inputtext';
 import { CrudUsers } from '../../services/crud-users';
 import { ProfileForm, ProfileFormModel } from '../../services/profile-form';
 import { injectAuthService } from '@avalantec/base-app/auth';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { FileResolver } from '@avalantec/base-app/resource';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
   selector: 'bifi-app-user-profile',
-  imports: [FormModule, ReactiveFormsModule, InputText, ButtonModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    ButtonModule,
+    ProgressBarModule,
+    FileUploadModule,
+  ],
   templateUrl: './user-profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,7 +42,6 @@ export class UserProfile {
 
   private auth = injectAuthService();
 
-  selectedFile: File | null = null;
   id = computed(() => this.auth.user()?._id || '');
 
   userResource = this.crudUsers.get({
@@ -51,11 +58,21 @@ export class UserProfile {
   error = this.userResource.error;
   isSubmitLoading = signal<boolean>(false);
 
+  // for picture
   pictureUrl = signal<string | undefined>(undefined);
+  uploadedPictureIdSignal = toSignal(this.form.controls.uploadedPictureId.valueChanges);
 
   constructor() {
     effect(async () => {
       const user = this.user();
+
+      const parsedPicture = user?.uploadedPictureId
+        ? await this.fileResolver.resolveFile({
+            id: user.uploadedPictureId,
+          })
+        : null;
+
+      this.pictureUrl.set(parsedPicture ? URL.createObjectURL(parsedPicture) : user?.picture);
 
       if (user) {
         this.formService.patchValue({
@@ -66,21 +83,17 @@ export class UserProfile {
           phoneNumber: user.contactId?.phoneNumber,
           contactEmail: user.contactId?.email,
           website: user.contactId?.website,
+          ...((parsedPicture && {
+            uploadedPictureId: [
+              {
+                id: user.uploadedPictureId,
+                file: parsedPicture,
+              },
+            ],
+          }) || {
+            uploadedPictureId: [],
+          }),
         });
-
-        if (user?.uploadedPictureId) {
-          const resolvedFile = await this.fileResolver.resolveFile(
-            {
-              id: user.uploadedPictureId,
-            },
-            'preview'
-          );
-
-          if (resolvedFile) this.pictureUrl.set(URL.createObjectURL(resolvedFile));
-          else this.pictureUrl.set(user?.picture);
-        } else {
-          this.pictureUrl.set(user?.picture);
-        }
       } else {
         this.formService.reset();
       }
@@ -99,12 +112,21 @@ export class UserProfile {
         this.form.controls.website.disable({ emitEvent: false });
       }
     });
+
+    effect(() => {
+      const uploadedPictureId = this.uploadedPictureIdSignal();
+
+      this.pictureUrl.set(
+        uploadedPictureId && uploadedPictureId.length > 0 && uploadedPictureId[0].file
+          ? URL.createObjectURL(uploadedPictureId[0].file)
+          : this.user()?.picture
+      );
+    });
   }
 
   handleSubmit(values: FormValueState<ProfileFormModel>) {
     const { value } = values;
 
-    
     const data = {
       contactInformation: {
         _id: this.auth.user()?.contactId?._id || '',
@@ -115,37 +137,23 @@ export class UserProfile {
         website: value.website,
         type: this.type(),
       },
-
+      uploadedPictureId: value.uploadedPictureId || undefined,
     };
 
     this.isSubmitLoading.set(true);
 
     this.crudUsers
-      .put({ _id: this.auth.user()?._id || '', data: data })
+      .put({ _id: this.auth.user()?._id || '', fileFields: ['uploadedPictureId'], data: data })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.isSubmitLoading.set(false);
-
-          this.form.markAsPristine(); //set form as pristine after successful submission
-          this.form.markAsUntouched();
+          window.location.reload();
         },
         error: () => {
           this.isSubmitLoading.set(false);
         },
       });
-  }
-
-  async handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    // Generar preview instantáneo
-    this.pictureUrl.set(URL.createObjectURL(file));
-
-
-
   }
 
   goBack() {
