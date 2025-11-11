@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { injectAuthService } from '../../libraries/providers/auth-service-provider';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -22,7 +14,7 @@ import { ToastManager } from '@avalantec/base-app/core';
   templateUrl: './password-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PasswordPage implements OnInit{
+export class PasswordPage implements OnInit {
   private auth = injectAuthService();
   private formService = inject(ResetPasswordForm);
   private router = inject(Router);
