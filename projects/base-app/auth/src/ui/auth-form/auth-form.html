@@ -73,12 +73,26 @@
                     : 'Create Account'
               }}
             </p-button>
+
+            <div class="text-center">
+              <p class="text-sm text-gray-600">
+                Forgot password?
+                <button
+                  [routerLink]="['/auth/resetpassword']"
+                  type="button"
+                  class="font-medium text-blue-600 hover:text-blue-500 ml-1"
+                  [disabled]="isLoading()"
+                >
+                  Request
+                </button>
+              </p>
+            </div>
           </section>
         </bifi-app-form-section>
       </form>
 
       <!-- Social Login Section -->
-      <div class="mt-6">
+      <div class="mt-4">
         <div class="relative">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>

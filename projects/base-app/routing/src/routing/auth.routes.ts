@@ -19,4 +19,10 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('@avalantec/base-app/auth').then(m => m.AuthPage),
     data: { isLogin: false },
   },
+
+  {
+    path: 'resetpassword',
+    canActivate: [noAuthGuard],
+    loadComponent: () => import('@avalantec/base-app/auth').then(m => m.PasswordPage),
+  },
 ];

@@ -10,6 +10,7 @@ import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { authFormState } from '../../interfaces/auth-form-state';
 import { FormModule } from '@avalantec/base-app/form';
 import { Text } from '@avalantec/base-app/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-auth-form',
@@ -22,6 +23,7 @@ import { Text } from '@avalantec/base-app/core';
     DividerModule,
     FormModule,
     Text,
+    RouterLink
   ],
   providers: [AuthFormService],
   templateUrl: './auth-form.html',
