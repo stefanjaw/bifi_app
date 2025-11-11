@@ -58,7 +58,7 @@ function initializeMenu() {
           icon: PrimeIcons.LIST,
           routerLink: ['/settings/asset-roster/product-types'],
           label: 'Equipment Types',
-          resource: 'productTypes',
+          resource: 'product-types',
         },
       ],
     },
