@@ -11,18 +11,18 @@ import { policyAction, resource } from '@avalantec/base-app/interfaces';
 export class HasPermission<TResourceData = unknown> extends BaseStructuralConditional {
   private auth = injectAuthService();
 
-  permission = input.required<permission>({ alias: 'bifiAppHasPermission' });
+  permission = input.required<permission | undefined>({ alias: 'bifiAppHasPermission' });
   resourceData = input<TResourceData>();
   context = input<object>();
 
-  resource = computed<resource>(() => {
-    const split = this.permission().split(':');
-    return split[0];
+  resource = computed<resource | undefined>(() => {
+    const split = this.permission()?.split(':');
+    return split?.[0];
   });
 
-  action = computed<policyAction>(() => {
-    const split = this.permission().split(':');
-    return split[1] as policyAction;
+  action = computed<policyAction | undefined>(() => {
+    const split = this.permission()?.split(':');
+    return split?.[1] as policyAction;
   });
 
   hasPermission = this.auth.createPermissionSignal(

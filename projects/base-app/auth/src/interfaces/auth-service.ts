@@ -33,19 +33,23 @@ export abstract class IAuthService<
   private readonly rbacEnable = inject(LIBRARY_CONFIG).rbacEnable;
 
   createPermissionSignal<TModel = unknown>(
-    resource: maybeSignal<resource>,
-    action: maybeSignal<policyAction>,
+    resource: maybeSignal<resource | undefined>,
+    action: maybeSignal<policyAction | undefined>,
     resourceData?: maybeSignal<TModel>,
     context?: maybeSignal<object>
   ): Signal<boolean> {
     return computed(() => {
       const user = this.user();
+
       if (!user) return false;
 
       const resourceValue = mayBeSignalValue(resource);
       const actionValue = mayBeSignalValue(action);
       const resourceDataValue = mayBeSignalValue(resourceData);
       const contextValue = mayBeSignalValue(context);
+
+      // If no resource or action is provided, grant permission by default
+      if (!resourceValue || !actionValue) return true;
 
       return this.hasPermission(user, resourceValue, actionValue, resourceDataValue, contextValue);
     });

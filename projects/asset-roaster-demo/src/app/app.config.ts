@@ -26,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     {
       provide: LIBRARY_CONFIG,
-      useValue: { apiURL: 'http://localhost:8080/api', rbacEnable: false },
+      useValue: { apiURL: 'http://localhost:8080/api', rbacEnable: true },
     },
     providePrimeNG({
       theme: {

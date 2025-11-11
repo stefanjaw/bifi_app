@@ -54,65 +54,22 @@
         <div class="flex flex-col gap-2">
           @for (menuItem of menuItems(); track $index) {
             @if (menuItem.items) {
-              <p-panelmenu
-                [model]="[
-                  {
-                    label: menuItem.label,
-                    icon: menuItem.icon,
-                    items: menuItem.items,
-                  },
-                ]"
-              >
-                <ng-template #item let-item>
-                  <a
-                    *bifiAppHasPermission="`${item['resource']}:read`"
-                    pRipple
-                    class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md"
-                    [routerLink]="item.routerLink || undefined"
-                    [ngClass]="{
-                      'bg-primary-100! border-b-2 border-b-primary-400':
-                        isItemActive(item) || hasActiveChild(item),
-                    }"
-                  >
-                    <span [class]="item.icon"></span>
-                    <span class="ml-2">{{ item.label }}</span>
-
-                    @if (item.items) {
-                      <span class="pi pi-angle-down ml-auto mt-1"></span>
-                    }
-                  </a>
-                </ng-template>
-              </p-panelmenu>
+              <ng-container
+                *ngTemplateOutlet="openedMenuItemWithChildren; context: { mainItem: menuItem }"
+              ></ng-container>
             } @else {
-              <a
-                *bifiAppHasPermission="`${menuItem['resource']}:read`"
-                pRipple
-                class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md ms-1"
-                [routerLink]="menuItem.routerLink"
-                [ngClass]="{
-                  'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(menuItem),
-                }"
-              >
-                <span [class]="menuItem.icon"></span>
-                <span class="ml-2">{{ menuItem.label }}</span>
-              </a>
+              <ng-container
+                *ngTemplateOutlet="openedMenuItem; context: { item: menuItem }"
+              ></ng-container>
             }
           }
         </div>
       } @else {
         <div class="flex flex-col gap-2">
           @for (menuItem of menuItems(); track $index) {
-            <a
-              *bifiAppHasPermission="`${menuItem['resource']}:read`"
-              pRipple
-              class="flex items-center justify-center p-menu-item-link hover:bg-gray-100 rounded-md ms-1 p-3!"
-              [routerLink]="menuItem.routerLink"
-              [ngClass]="{
-                'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(menuItem),
-              }"
-            >
-              <span [class]="menuItem.icon"></span>
-            </a>
+            <ng-container
+              *ngTemplateOutlet="closedMenuItem; context: { item: menuItem }"
+            ></ng-container>
           }
         </div>
       }
@@ -126,3 +83,66 @@
   <p-toast></p-toast>
   <ngx-sonner-toaster position="bottom-right"></ngx-sonner-toaster>
 </div>
+
+<!-- Templates for menu items -->
+<ng-template #closedMenuItem let-item="item">
+  <a
+    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+    pRipple
+    class="flex items-center justify-center p-menu-item-link hover:bg-gray-100 rounded-md ms-1 p-3!"
+    [routerLink]="item.routerLink"
+    [ngClass]="{
+      'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
+    }"
+  >
+    <span [class]="item.icon"></span>
+  </a>
+</ng-template>
+
+<ng-template #openedMenuItem let-item="item">
+  <a
+    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+    pRipple
+    class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md ms-1"
+    [routerLink]="item.routerLink"
+    [ngClass]="{
+      'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
+    }"
+  >
+    <span [class]="item.icon"></span>
+    <span class="ml-2">{{ item.label }}</span>
+  </a>
+</ng-template>
+
+<ng-template #openedMenuItemWithChildren let-mainItem="mainItem">
+  <p-panelmenu
+    *bifiAppHasPermission="mainItem['resource'] ? `${mainItem['resource']}:read` : undefined"
+    [model]="[
+      {
+        label: mainItem.label,
+        icon: mainItem.icon,
+        items: mainItem.items,
+      },
+    ]"
+  >
+    <ng-template #item let-item>
+      <a
+        *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+        pRipple
+        class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md"
+        [routerLink]="item.routerLink || undefined"
+        [ngClass]="{
+          'bg-primary-100! border-b-2 border-b-primary-400':
+            isItemActive(item) || hasActiveChild(item),
+        }"
+      >
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label }}</span>
+
+        @if (item.items) {
+          <span class="pi pi-angle-down ml-auto mt-1"></span>
+        }
+      </a>
+    </ng-template>
+  </p-panelmenu>
+</ng-template>

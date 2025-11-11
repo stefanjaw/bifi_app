@@ -35,7 +35,6 @@ function initializeMenu() {
     newItem: {
       icon: PrimeIcons.COG,
       label: 'Asset Roster',
-      resource: 'asset-roster',
       items: [
         {
           icon: PrimeIcons.CLOCK,
