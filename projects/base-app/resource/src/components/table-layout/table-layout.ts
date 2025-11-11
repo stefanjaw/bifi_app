@@ -22,6 +22,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { Icon } from '@avalantec/base-app/core';
 import { tableRows } from '../../interfaces/table-row';
 import { pagination } from '../../interfaces/pagination';
+import { policyAction, resource } from '@avalantec/base-app/interfaces';
+import { injectAuthService } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -41,6 +43,7 @@ export class TableLayout<T extends Record<string, any>> {
   // Data managament
   private paginationManager = inject(PaginationManager);
   private sortManager = inject<SortManager<T>>(SortManager);
+  private auth = injectAuthService();
 
   // Inputs
   data = input<ResourceRef<tableRows<T>> | tableRows<T>>();
@@ -50,6 +53,26 @@ export class TableLayout<T extends Record<string, any>> {
 
   // Table options
   onClickRow = input<(row: T) => void>();
+
+  // permission for row click
+  clickRowPermission = input<`${string}:${policyAction}` | undefined>(undefined);
+
+  clickRowResource = computed<resource | undefined>(() => {
+    const split = this.clickRowPermission()?.split(':');
+    return split?.[0];
+  });
+
+  clickRowAction = computed<policyAction | undefined>(() => {
+    const split = this.clickRowPermission()?.split(':');
+    return split?.[1] as policyAction;
+  });
+
+  hasClickRowPermission = this.auth.createPermissionSignal(
+    this.clickRowResource,
+    this.clickRowAction,
+    {},
+    {}
+  );
 
   // State
   resourceState = computed(() => {

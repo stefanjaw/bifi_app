@@ -21,7 +21,12 @@
   [searchFilters]="contactFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="contactColumns" [data]="contacts" [onClickRow]="goToEditContact">
+<bifi-app-table-layout
+  [columns]="contactColumns"
+  [data]="contacts"
+  [onClickRow]="goToEditContact"
+  clickRowPermission="contacts:update"
+>
   <ng-template #actions let-element>
     <p-button
       *bifiAppHasPermission="'contacts:delete'"

@@ -42,8 +42,8 @@
     <!-- body -->
     <ng-template #body let-element>
       <tr
-        (click)="onClickRow() ? onClickRow()?.(element) : null"
-        [ngClass]="{ 'cursor-pointer hover:bg-gray-200!': onClickRow() }"
+        (click)="onClickRow() && hasClickRowPermission() ? onClickRow()?.(element) : null"
+        [ngClass]="{ 'cursor-pointer hover:bg-gray-200!': onClickRow() && hasClickRowPermission() }"
       >
         @for (column of columns(); track $index) {
           <td>
