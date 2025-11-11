@@ -28,6 +28,7 @@ export abstract class IAuthService<
   abstract logout(): Promise<boolean>;
 
   abstract clearError(): void;
+  abstract sendResetPasswordEmail(email: string): Promise<void>;
 
   private readonly rbacEnable = inject(LIBRARY_CONFIG).rbacEnable;
 

@@ -178,6 +178,10 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     this.error.set(null);
   }
 
+  async sendResetPasswordEmail(email: string): Promise<void> {
+    return await this.authClient.sendPasswordResetEmail(email);
+  }
+
   /**
    * Authenticates a user based on the specified method and parameters.
    *
