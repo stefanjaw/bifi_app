@@ -43,17 +43,57 @@
           styleClass="mb-4"
         ></p-button>
 
-        <bifi-app-table-layout [columns]="policyCols" [data]="policyData()">
-          <ng-template #actions let-row>
-            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
-            <p-button
-              severity="danger"
-              label="Remove"
-              icon="pi pi-trash"
-              (click)="handlePolicyRemove(row._id)"
-            ></p-button>
-          </ng-template>
-        </bifi-app-table-layout>
+        <table formArrayName="policies" class="w-full mb-4 mt-4 table p-4! shadow-xl rounded-2xl">
+          <thead>
+            <tr class="font-bold">
+              <th class="text-start ps-2">Policy</th>
+              <th>Read</th>
+              <th>Create</th>
+              <th>Update</th>
+              <th>Delete</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (control of form.controls.policies.controls; track control; let i = $index) {
+              <tr [formGroupName]="i">
+                <td class="ps-2">
+                  <span class="w-auto overflow-hidden overflow-ellipsis">
+                    {{ policyData()[i].name }}
+                  </span>
+                </td>
+                <td>
+                  <div class="flex flex-row justify-center items-center m-4">
+                    <p-checkbox formControlName="actions" value="read"></p-checkbox>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex flex-row justify-center items-center m-4">
+                    <p-checkbox formControlName="actions" value="create"></p-checkbox>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex flex-row justify-center items-center m-4">
+                    <p-checkbox formControlName="actions" value="update"></p-checkbox>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex flex-row justify-center items-center m-4">
+                    <p-checkbox formControlName="actions" value="delete"></p-checkbox>
+                  </div>
+                </td>
+                <td>
+                  <p-button
+                    severity="danger"
+                    variant="text"
+                    icon="pi pi-trash"
+                    (click)="handlePolicyRemove(policyData()[i]._id)"
+                  ></p-button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
 
         <bifi-app-form-error formArrayName="policies"></bifi-app-form-error>
       </bifi-app-form-section>

@@ -4,7 +4,10 @@ import { ArrayValidators, BaseForm } from '@avalantec/base-app/form';
 
 export interface roleFormModel {
   name: string;
-  policies: string[];
+  policies: {
+    policyId: string;
+    actions: unknown;
+  }[];
   active: boolean;
 }
 
@@ -16,7 +19,10 @@ export class RoleForm extends BaseForm<roleFormModel> {
     return this.fb.group<roleFormModel>({
       name: ['', [Validators.required]],
       policies: {
-        template: [''],
+        template: {
+          policyId: ['', [Validators.required]],
+          actions: [[]],
+        },
         validators: [ArrayValidators.minLength(1)],
         formArrayElements: [],
       },

@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { provideResourceManager, TableLayout } from '@avalantec/base-app/resource';
+import { provideResourceManager } from '@avalantec/base-app/resource';
 import { CrudRoles } from '../../services/crud-roles';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -21,6 +21,7 @@ import { SelectPolicyDialog } from './select-policy-dialog/select-policy-dialog'
 import { ProgressBarModule } from 'primeng/progressbar';
 import { policyColumns } from '@avalantec/base-app/policies';
 import { policy } from '@avalantec/base-app/interfaces';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'bifi-app-roles-form',
@@ -29,8 +30,8 @@ import { policy } from '@avalantec/base-app/interfaces';
     ReactiveFormsModule,
     FormModule,
     InputTextModule,
+    CheckboxModule,
     ButtonModule,
-    TableLayout,
     ProgressBarModule,
     SelectPolicyDialog,
   ],
@@ -72,11 +73,14 @@ export class RolesForm {
       if (role) {
         this.formService.patchValue({
           name: role.name,
-          policies: role.policies.map(p => p._id),
+          policies: role.policies.map(p => ({
+            policyId: p.policyId._id,
+            actions: p.actions,
+          })),
           active: role.active,
         });
         this.formService.resetDirtyState();
-        this.policyData.set(role.policies);
+        this.policyData.set(role.policies.map(p => p.policyId));
       } else {
         this.formService.reset();
         this.formService.form.controls.policies.clear();
@@ -107,13 +111,19 @@ export class RolesForm {
 
   handlePolicySelect(policies: policy<any, any>[]) {
     this.policyData.update(current => [...current, ...policies]);
-    policies.forEach(p => this.form.controls.policies.pushItem(p._id));
+
+    policies.forEach(p =>
+      this.form.controls.policies.pushItem({
+        policyId: p._id,
+        actions: [],
+      })
+    );
   }
 
   handlePolicyRemove(id: string) {
     this.policyData.update(current => current.filter(p => p._id !== id));
+    const index = this.form.controls.policies.value.findIndex(value => value.policyId === id);
 
-    const index = this.form.controls.policies.value.indexOf(id);
     if (index > -1) {
       this.form.controls.policies.removeAt(index);
     }

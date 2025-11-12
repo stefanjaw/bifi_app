@@ -7,10 +7,6 @@ export const policyFilters: filter<policy<string, string>>[] = [
     type: 'string',
   },
   {
-    field: 'action',
-    type: 'string',
-  },
-  {
     field: 'name',
     type: 'string',
   },

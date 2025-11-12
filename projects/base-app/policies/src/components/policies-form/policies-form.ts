@@ -20,7 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
 import { provideResourceManager } from '@avalantec/base-app/resource';
-import { condition, conditionOperator, policyAction } from '@avalantec/base-app/interfaces';
+import { condition, conditionOperator } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
@@ -53,13 +53,6 @@ export class PoliciesForm implements OnInit {
   error = this.policyResource.error;
 
   // Options
-  actionOptions: { label: string; value: policyAction }[] = [
-    { label: 'Create', value: 'create' },
-    { label: 'Read', value: 'read' },
-    { label: 'Update', value: 'update' },
-    { label: 'Delete', value: 'delete' },
-  ];
-
   conditionOperatorOptions: { label: string; value: conditionOperator }[] = [
     { label: 'Equal', value: '==' },
     { label: 'Not Equal', value: '!=' },
@@ -80,7 +73,6 @@ export class PoliciesForm implements OnInit {
         this.formService.patchValue({
           name: policy.name,
           resource: policy.resource,
-          action: policy.action,
           conditions: [
             ...policy.conditions.map(c => ({
               key: c.key as string,

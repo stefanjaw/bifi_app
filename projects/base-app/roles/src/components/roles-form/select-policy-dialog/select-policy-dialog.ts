@@ -24,7 +24,7 @@ export class SelectPolicyDialog extends BaseDialog {
 
   policies = computed(() => {
     const policies = this.policyResource.value();
-    return policies.filter(p => !this.form.value().policies?.some(pId => pId === p._id));
+    return policies.filter(p => !this.form.value().policies?.some(pId => pId?.policyId === p._id));
   });
 
   policy = new FormControl<string[] | null>(null);

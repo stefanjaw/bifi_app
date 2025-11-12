@@ -1,8 +1,8 @@
-import { policy } from './policy';
+import { policy, policyAction } from './policy';
 
 export interface role {
   _id: string;
   name: string;
-  policies: policy<any, any>[];
+  policies: { policyId: policy<any, any>; actions: policyAction[] }[];
   active: boolean;
 }

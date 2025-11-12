@@ -68,14 +68,16 @@ export abstract class IAuthService<
     const userPolicies = user.roles.flatMap(role => role.policies);
 
     // Find the policy that matches the resource and action
-    const policies = userPolicies.filter(p => p.resource === resource && p.action === action);
+    const policies = userPolicies.filter(
+      p => p.policyId.resource === resource && p.actions.includes(action)
+    );
 
     if (!policies.length) {
       return false; // No policy found for the resource and action
     }
 
     return policies.some(policy => {
-      if (policy.conditions.length === 0) {
+      if (policy.policyId.conditions.length === 0) {
         return true; // No conditions, permission granted
       }
 
@@ -85,7 +87,7 @@ export abstract class IAuthService<
       }
 
       // Check if all conditions are met
-      return policy.conditions.every(condition => {
+      return policy.policyId.conditions.every(condition => {
         return this.evaluateCondition(condition, user, resourceData, context);
       });
     });

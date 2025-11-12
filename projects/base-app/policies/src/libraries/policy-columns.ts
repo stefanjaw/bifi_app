@@ -15,12 +15,6 @@ export const policyColumns: tableColumn<policy<any, any>>[] = [
     sortable: true,
   },
   {
-    field: 'action',
-    title: 'Action',
-    type: 'text',
-    sortable: true,
-  },
-  {
     field: 'conditions',
     title: 'Total Conditions',
     type: 'text',
