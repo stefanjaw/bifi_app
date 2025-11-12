@@ -143,7 +143,12 @@ export class UserProfile {
     this.isSubmitLoading.set(true);
 
     this.crudUsers
-      .put({ _id: this.auth.user()?._id || '', fileFields: ['uploadedPictureId'], data: data })
+      .put({
+        _id: this.auth.user()?._id || '',
+        fileFields: ['uploadedPictureId'],
+        data: data,
+        specificEndpoint: 'profile',
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
