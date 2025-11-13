@@ -22,8 +22,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { Icon } from '@avalantec/base-app/core';
 import { tableRows } from '../../interfaces/table-row';
 import { pagination } from '../../interfaces/pagination';
-import { policyAction, resource } from '@avalantec/base-app/interfaces';
-import { injectAuthService } from '@avalantec/base-app/auth';
+import { injectAuthService, permission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -54,25 +53,30 @@ export class TableLayout<T extends Record<string, any>> {
   // Table options
   onClickRow = input<(row: T) => void>();
 
-  // permission for row click
-  clickRowPermission = input<`${string}:${policyAction}` | undefined>(undefined);
+  //#region Permission for row click
+  // * The permission input
+  clickRowPermission = input<permission | undefined>(undefined);
 
-  clickRowResource = computed<resource | undefined>(() => {
-    const split = this.clickRowPermission()?.split(':');
-    return split?.[0];
-  });
-
-  clickRowAction = computed<policyAction | undefined>(() => {
-    const split = this.clickRowPermission()?.split(':');
-    return split?.[1] as policyAction;
-  });
-
-  hasClickRowPermission = this.auth.createPermissionSignal(
-    this.clickRowResource,
-    this.clickRowAction,
-    {},
-    {}
+  // * Resource for that permission
+  clickRowPermissionResource = computed(() =>
+    this.auth.getPermissionResource(this.clickRowPermission())
   );
+
+  // * Action for that permission
+  clickRowPermissionAction = computed(() =>
+    this.auth.getPermissionAction(this.clickRowPermission())
+  );
+
+  // * Type for that permission
+  clickRowPermissionType = computed(() => this.auth.getPermissionType(this.clickRowPermission()));
+
+  // * Signal to give permission
+  hasClickRowPermission = this.auth.createPermissionSignal({
+    resource: this.clickRowPermissionResource,
+    action: this.clickRowPermissionAction,
+    type: this.clickRowPermissionType,
+  });
+  //#endregion
 
   // State
   resourceState = computed(() => {

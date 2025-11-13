@@ -1,3 +1,6 @@
-import { policyAction, resource } from '@avalantec/base-app/interfaces';
+import { policyAction, policyType, resource } from '@avalantec/base-app/interfaces';
 
-export type permission = `${resource}:${policyAction}`;
+export type permission =
+  | `${resource}:${policyAction}`
+  | `${resource}:${policyType}`
+  | `${resource}:${policyAction}:${policyType}`;
