@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'productTypes:create'"
+    *bifiAppHasPermission="'product-types/create:view'"
   ></p-button>
 </div>
 
@@ -22,10 +22,10 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'product-types:update'"
+      *bifiAppHasPermission="'product-types/update:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'product-types:delete'"
+      *bifiAppHasPermission="'product-types:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteProductType(row._id)"

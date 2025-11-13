@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'facilities:create'"
+    *bifiAppHasPermission="'facilities/create:view'"
   ></p-button>
 </div>
 
@@ -22,10 +22,10 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'facilities:update'"
+      *bifiAppHasPermission="'facilities/update:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'users:delete'"
+      *bifiAppHasPermission="'users:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteFacility(row._id)"

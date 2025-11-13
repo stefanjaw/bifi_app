@@ -12,7 +12,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'contacts:create'"
+    *bifiAppHasPermission="'contacts/create:view'"
   ></p-button>
 </div>
 
@@ -25,11 +25,11 @@
   [columns]="contactColumns"
   [data]="contacts"
   [onClickRow]="goToEditContact"
-  clickRowPermission="contacts:update"
+  clickRowPermission="contacts/update:view"
 >
   <ng-template #actions let-element>
     <p-button
-      *bifiAppHasPermission="'contacts:delete'"
+      *bifiAppHasPermission="'contacts:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteContact(element._id); $event.stopPropagation()"

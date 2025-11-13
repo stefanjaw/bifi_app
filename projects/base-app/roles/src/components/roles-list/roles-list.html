@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'roles:create'"
+    *bifiAppHasPermission="'roles/create:view'"
   ></p-button>
 </div>
 
@@ -19,10 +19,10 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'roles:update'"
+      *bifiAppHasPermission="'roles/update:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'roles:delete'"
+      *bifiAppHasPermission="'roles:delete:model'"
       severity="danger"
       label="Delete"
       (click)="deleteRole(row._id)"

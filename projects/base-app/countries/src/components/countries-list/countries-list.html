@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'countries:create'"
+    *bifiAppHasPermission="'countries/create:view'"
   ></p-button>
   <p-button
     label="Populate Countries"
@@ -30,10 +30,10 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'countries:update'"
+      *bifiAppHasPermission="'countries/update:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'countries:delete'"
+      *bifiAppHasPermission="'countries:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteCountry(row._id)"

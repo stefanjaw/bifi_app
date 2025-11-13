@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'maintenance-windows:create'"
+    *bifiAppHasPermission="'maintenance-windows/create:view'"
   ></p-button>
 </div>
 
@@ -22,10 +22,10 @@
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'maintenance-windows:update'"
+      *bifiAppHasPermission="'maintenance-windows/update:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'maintenance-windows:delete'"
+      *bifiAppHasPermission="'maintenance-windows:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteMaintenanceWindow(row._id)"

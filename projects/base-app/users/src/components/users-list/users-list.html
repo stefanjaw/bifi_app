@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
-    *bifiAppHasPermission="'users:create'"
+    *bifiAppHasPermission="'users/create:view'"
   ></p-button>
   <p-button
     [label]="showInactiveStatus() ? 'Show Active' : 'Show Inactive'"
@@ -29,10 +29,10 @@
         label="Edit"
         icon="pi pi-pencil"
         [routerLink]="['../edit/', row._id]"
-        *bifiAppHasPermission="'users:update'"
+        *bifiAppHasPermission="'users/update:view'"
       ></p-button>
       <p-button
-        *bifiAppHasPermission="'users:delete'"
+        *bifiAppHasPermission="'users:delete:model'"
         severity="danger"
         label="Inactivate"
         (onClick)="deleteUser(row._id)"
@@ -44,7 +44,7 @@
       ></p-button>
     } @else {
       <p-button
-        *bifiAppHasPermission="'users:update'"
+        *bifiAppHasPermission="'users/update:model'"
         severity="secondary"
         label="Reactivate"
         (onClick)="reactiveUser(row._id)"
