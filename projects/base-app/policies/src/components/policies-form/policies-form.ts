@@ -21,11 +21,20 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { PolicyForm, PolicyFormModel } from '../../services/policy-form';
 import { provideResourceManager } from '@avalantec/base-app/resource';
 import { condition, conditionOperator } from '@avalantec/base-app/interfaces';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 @Component({
   selector: 'bifi-app-policy-form-dialog',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [FormModule, ReactiveFormsModule, SelectModule, InputText, Button, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    SelectModule,
+    InputText,
+    Button,
+    ProgressBarModule,
+    RadioButtonModule,
+  ],
   templateUrl: './policies-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -73,6 +82,7 @@ export class PoliciesForm implements OnInit {
         this.formService.patchValue({
           name: policy.name,
           resource: policy.resource,
+          type: policy.type,
           conditions: [
             ...policy.conditions.map(c => ({
               key: c.key as string,

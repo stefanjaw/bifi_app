@@ -31,6 +31,27 @@
             <input pInputText formControlName="resource" type="text" placeholder="e.g products" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Type</bifi-app-form-label>
+            <div class="flex flex-wrap gap-4 mt-2">
+              <div class="flex items-center">
+                <p-radiobutton formControlName="type" value="model" inputId="type-model" />
+                <label for="type-model" class="ml-2">Model</label>
+              </div>
+
+              <div class="flex items-center">
+                <p-radiobutton formControlName="type" value="view" inputId="type-view" />
+                <label for="type-view" class="ml-2">View</label>
+              </div>
+
+              <div class="flex items-center">
+                <p-radiobutton formControlName="type" value="menu" inputId="type-menu" />
+                <label for="type-menu" class="ml-2">Menu</label>
+              </div>
+            </div>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 

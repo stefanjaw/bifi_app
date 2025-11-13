@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
-import { condition, conditionOperator, resource } from '@avalantec/base-app/interfaces';
+import { condition, conditionOperator, policyType, resource } from '@avalantec/base-app/interfaces';
 
 export interface PolicyFormModel {
   name: string;
   resource: resource;
+  type: policyType;
   conditions: { key: string; operator: conditionOperator; value: string }[];
 }
 
@@ -17,6 +18,7 @@ export class PolicyForm extends BaseForm<PolicyFormModel> {
     return this.fb.group<PolicyFormModel>({
       name: ['', [Validators.required]],
       resource: ['', [Validators.required]],
+      type: ['model', [Validators.required]],
       conditions: {
         template: {
           key: ['', [Validators.required]],
