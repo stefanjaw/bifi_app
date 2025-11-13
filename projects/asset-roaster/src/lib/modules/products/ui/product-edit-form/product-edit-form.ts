@@ -1,3 +1,4 @@
+import { HasPermission } from '@avalantec/base-app/auth';
 import { Component, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
@@ -37,6 +38,7 @@ import { contact } from '@avalantec/base-app/interfaces';
     ActivityHistorySection,
     ProgressBarModule,
     FormModule,
+    HasPermission
   ],
   templateUrl: './product-edit-form.html',
 })
