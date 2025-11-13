@@ -12,20 +12,20 @@ export const POLICY_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/policies-list/policies-list').then(m => m.PoliciesList),
-    data: { permission: 'policies:read' },
+    data: { resource: 'policies/list' },
   },
   {
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/policies-form/policies-form').then(m => m.PoliciesForm),
-    data: { permission: 'policies:create' },
+    data: { resource: 'policies/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/policies-form/policies-form').then(m => m.PoliciesForm),
-    data: { permission: 'policies:update' },
+    data: { resource: 'policies/update' },
   },
 ];

@@ -11,20 +11,20 @@ export const USER_ROUTES: Routes = [
     path: 'list',
     canActivate: [permissionGuard],
     loadComponent: () => import('../components/users-list/users-list').then(m => m.UsersList),
-    data: { permission: 'users:read' },
+    data: { resource: 'users/list' },
   },
   {
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/create-users-form/create-users-form').then(m => m.CreateUsersForm),
-    data: { permission: 'users:create' },
+    data: { resource: 'users/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/update-users-form/update-users-form').then(m => m.UpdateUsersForm),
-    data: { permission: 'users:update' },
+    data: { resource: 'users/update' },
   },
 ];

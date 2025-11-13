@@ -11,18 +11,18 @@ export const ROLE_ROUTES: Routes = [
     path: 'list',
     canActivate: [permissionGuard],
     loadComponent: () => import('../components/roles-list/roles-list').then(m => m.RolesList),
-    data: { permission: 'roles:read' },
+    data: { resource: 'roles/list' },
   },
   {
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () => import('../components/roles-form/roles-form').then(m => m.RolesForm),
-    data: { permission: 'roles:create' },
+    data: { resource: 'roles/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () => import('../components/roles-form/roles-form').then(m => m.RolesForm),
-    data: { permission: 'roles:update' },
+    data: { resource: 'roles/update' },
   },
 ];

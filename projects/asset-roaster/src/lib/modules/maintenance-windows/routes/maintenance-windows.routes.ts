@@ -14,7 +14,7 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
       import('../features/maintenance-windows-list/maintenance-windows-list').then(
         m => m.MaintenanceWindowsList
       ),
-    data: { permission: 'maintenance-windows:read' },
+    data: { resource: 'maintenance-windows/list' },
   },
   {
     path: 'create',
@@ -23,7 +23,7 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm
       ),
-    data: { permission: 'maintenance-windows:create' },
+    data: { resource: 'maintenance-windows/create' },
   },
   {
     path: 'edit/:id',
@@ -32,6 +32,6 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm
       ),
-    data: { permission: 'maintenance-windows:update' },
+    data: { resource: 'maintenance-windows/update' },
   },
 ];

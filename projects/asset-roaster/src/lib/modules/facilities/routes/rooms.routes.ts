@@ -11,18 +11,18 @@ export const ROOMS_ROUTES: Routes = [
     path: 'list',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/rooms-list/rooms-list').then(m => m.RoomsList),
-    data: { permission: 'rooms:read' },
+    data: { resource: 'rooms/list' },
   },
   {
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/rooms-form/rooms-form').then(m => m.RoomsForm),
-    data: { permission: 'rooms:create' },
+    data: { resource: 'rooms/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/rooms-form/rooms-form').then(m => m.RoomsForm),
-    data: { permission: 'rooms:update' },
+    data: { resource: 'rooms/update' },
   },
 ];

@@ -12,13 +12,13 @@ export const PRODUCT_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/products-list/products-list').then(m => m.ProductsList),
-    data: { permission: 'products:read' },
+    data: { resource: 'products/list' },
   },
   {
     path: 'maintenance/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/product-maintenance/product-maintenance').then(m => m.ProductMaintenance),
-    data: { permission: 'products:update' },
+    data: { resource: 'products/update' },
   },
 ];

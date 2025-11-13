@@ -12,20 +12,20 @@ export const CONTACT_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/contacts-list/contacts-list').then(m => m.ContactsList),
-    data: { permission: 'contacts:read' },
+    data: { resource: 'contacts/list' },
   },
   {
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/contacts-form/contacts-form').then(m => m.ContactsForm),
-    data: { permission: 'contacts:create' },
+    data: { resource: 'contacts/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/contacts-form/contacts-form').then(m => m.ContactsForm),
-    data: { permission: 'contacts:update' },
+    data: { resource: 'contacts/update' },
   },
 ];
