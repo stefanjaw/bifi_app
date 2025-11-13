@@ -22,6 +22,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { policyColumns } from '@avalantec/base-app/policies';
 import { policy } from '@avalantec/base-app/interfaces';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'bifi-app-roles-form',
@@ -32,6 +33,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     InputTextModule,
     CheckboxModule,
     ButtonModule,
+    TabsModule,
     ProgressBarModule,
     SelectPolicyDialog,
   ],
@@ -127,6 +129,10 @@ export class RolesForm {
     if (index > -1) {
       this.form.controls.policies.removeAt(index);
     }
+  }
+
+  getPolicy(id: string) {
+    return this.policyData().find(p => p._id === id);
   }
 
   goBack() {
