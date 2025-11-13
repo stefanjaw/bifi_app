@@ -87,7 +87,7 @@
 <!-- Templates for menu items -->
 <ng-template #closedMenuItem let-item="item">
   <a
-    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:menu` : undefined"
     pRipple
     class="flex items-center justify-center p-menu-item-link hover:bg-gray-100 rounded-md ms-1 p-3!"
     [routerLink]="item.routerLink"
@@ -101,7 +101,7 @@
 
 <ng-template #openedMenuItem let-item="item">
   <a
-    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+    *bifiAppHasPermission="item['resource'] ? `${item['resource']}:menu` : undefined"
     pRipple
     class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md ms-1"
     [routerLink]="item.routerLink"
@@ -116,7 +116,7 @@
 
 <ng-template #openedMenuItemWithChildren let-mainItem="mainItem">
   <p-panelmenu
-    *bifiAppHasPermission="mainItem['resource'] ? `${mainItem['resource']}:read` : undefined"
+    *bifiAppHasPermission="mainItem['resource'] ? `${mainItem['resource']}:menu` : undefined"
     [model]="[
       {
         label: mainItem.label,
@@ -127,7 +127,7 @@
   >
     <ng-template #item let-item>
       <a
-        *bifiAppHasPermission="item['resource'] ? `${item['resource']}:read` : undefined"
+        *bifiAppHasPermission="item['resource'] ? `${item['resource']}:menu` : undefined"
         pRipple
         class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md"
         [routerLink]="item.routerLink || undefined"
