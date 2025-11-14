@@ -1,5 +1,5 @@
 {
-  "name": "crm",
+  "name": "@avalantec/crm",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/cdk": "^20.1.0",
