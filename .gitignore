@@ -52,3 +52,4 @@ package-lock.json
 #Ignore graphs
 asset-roaster-graph.svg
 base-app-graph.svg
+calendar-graph.svg

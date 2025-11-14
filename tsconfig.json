@@ -9,8 +9,8 @@
       "@avalantec/asset-roaster": ["projects/asset-roaster/src/lib"],
       "@avalantec/asset-roaster/*": ["projects/asset-roaster/src/lib/*"],
 
-      // "@avalantec/base-app": ["projects/base-app/src/lib"],
-      // "@avalantec/base-app/*": ["projects/base-app/src/lib/*"]
+      "@avalantec/calendar": ["./projects/calendar/src/lib"],
+      "@avalantec/calendar/*": ["./projects/calendar/src/lib/*"],
 
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
@@ -45,7 +45,8 @@
     "projects/base-app/settings/src/services",
     "projects/base-app/settings/index.ts",
     "projects/base-app/settings/src/modules",
-    "projects/base-app/settings/src/components"
-, "projects/base-app/interfaces/user.ts"  ],
+    "projects/base-app/settings/src/components",
+    "projects/base-app/interfaces/user.ts"
+  ],
   "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

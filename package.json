@@ -9,11 +9,13 @@
     "test": "ng test",
     "build:base-app": "cd ./projects/base-app && ng build && cd ../../dist/base-app && npm pack",
     "build:asset-roaster": "cd ./projects/asset-roaster && ng build && cd ../../dist/asset-roaster && npm pack",
-    "build:all": "npm run build:base-app && npm run build:asset-roaster",
+    "build:calendar": "cd ./projects/calendar && ng build && cd ../../dist/calendar && npm pack",
+    "build:all": "npm run build:base-app && npm run build:asset-roaster && npm run build:calendar",
     "lint": "ng lint",
     "generate:base-app-graph": "npx depcruise --config .dependency-cruiser.js projects/base-app --output-type dot | dot -Tsvg -o base-app-graph.svg",
     "generate:asset-roaster-graph": "npx depcruise --config .dependency-cruiser.js projects/asset-roaster --output-type dot | dot -Tsvg -o asset-roaster-graph.svg",
-    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roaster-graph"
+    "generate:calendar-graph": "npx depcruise --config .dependency-cruiser.js projects/calendar --output-type dot | dot -Tsvg -o calendar-graph.svg",
+    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roaster-graph && npm run generate:calendar-graph"
   },
   "private": true,
   "dependencies": {

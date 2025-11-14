@@ -1,0 +1,16 @@
+export type CalendarView = 'day' | 'week' | 'month' | 'year' | 'list';
+
+export interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  events: CalendarEvent[];
+}
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  color: 'blue' | 'indigo' | 'green' | 'purple' | 'pink';
+}

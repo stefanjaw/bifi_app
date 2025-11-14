@@ -6,14 +6,14 @@
     "declarationMap": false,
     "baseUrl": "./",
     "paths": {
+      "@avalantec/base-app": ["dist/base-app/src", "./projects/base-app/src"],
+      "@avalantec/base-app/*": ["dist/base-app/*", "./projects/base-app/*"],
+
       "@avalantec/asset-roaster": ["dist/asset-roaster/*", "dist/asset-roaster"],
       "@avalantec/asset-roaster/*": ["projects/asset-roaster/*", "projects/asset-roaster"],
 
-      "@avalantec/base-app": ["dist/base-app/src", "./projects/base-app/src"],
-      "@avalantec/base-app/*": ["dist/base-app/*", "./projects/base-app/*"]
-
-      // "@avalantec/base-app": ["./projects/base-app/src"],
-      // "@avalantec/base-app/*": ["./projects/base-app/*"]
+      "@avalantec/calendar": ["dist/calendar/*", "dist/calendar"],
+      "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"]
     }
   },
   "angularCompilerOptions": {
