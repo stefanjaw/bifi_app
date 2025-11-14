@@ -18,6 +18,7 @@ import { CrudUsers } from '@avalantec/base-app/users';
 import { provideAssetRoster } from '@avalantec/asset-roaster';
 import { withLibraryInterceptors } from '@avalantec/base-app/routing';
 import { provideCalendar } from '@avalantec/calendar';
+import { provideCRM } from '@avalantec/crm';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAssetRoster(),
     provideCalendar(),
+    provideCRM(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

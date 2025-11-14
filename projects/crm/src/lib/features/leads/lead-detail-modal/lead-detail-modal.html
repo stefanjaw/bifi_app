@@ -1,0 +1,101 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity"
+  (click)="onClose()"
+>
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+  <div
+    class="bg-white rounded-lg shadow-xl w-full max-w-lg m-4 transform transition-transform scale-100"
+    (click)="$event.stopPropagation()"
+  >
+    <form [formGroup]="leadForm" (ngSubmit)="onSave()">
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">{{ lead().name }}</h2>
+          <p class="text-gray-500">{{ lead().company }}</p>
+        </div>
+        <button type="button" (click)="onClose()" class="text-gray-400 hover:text-gray-600">
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6">
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="stage" class="block text-sm font-medium text-gray-700 mb-1">Stage</label>
+            <select
+              id="stage"
+              formControlName="stage"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              @for (stage of stages(); track stage) {
+                <option [value]="stage">{{ stage }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">
+              Assigned Contact
+            </label>
+            <select
+              id="contact"
+              formControlName="contactId"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option [ngValue]="null">Unassigned</option>
+              @for (contact of contacts(); track contact.id) {
+                <option [value]="contact.id">{{ contact.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+        <button
+          type="button"
+          (click)="onClose()"
+          class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="leadForm.invalid"
+          class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
+        >
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

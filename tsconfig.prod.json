@@ -13,7 +13,10 @@
       "@avalantec/asset-roaster/*": ["projects/asset-roaster/*", "projects/asset-roaster"],
 
       "@avalantec/calendar": ["dist/calendar/*", "dist/calendar"],
-      "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"]
+      "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"],
+
+      "@avalantec/crm": ["dist/crm/*", "dist/crm"],
+      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"]
     }
   },
   "angularCompilerOptions": {

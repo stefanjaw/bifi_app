@@ -173,6 +173,36 @@
           }
         }
       }
+    },
+    "crm": {
+      "projectType": "library",
+      "root": "projects/crm",
+      "sourceRoot": "projects/crm/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/crm/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/crm/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/crm/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   }
 }
