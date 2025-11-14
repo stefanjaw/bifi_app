@@ -11,7 +11,7 @@
     "build:asset-roaster": "cd ./projects/asset-roaster && ng build && cd ../../dist/asset-roaster && npm pack",
     "build:calendar": "cd ./projects/calendar && ng build && cd ../../dist/calendar && npm pack",
     "build:crm": "cd ./projects/crm && ng build && cd ../../dist/crm && npm pack",
-    "build:all": "npm run build:base-app && npm run build:asset-roaster && npm run build:calendar && build:crm",
+    "build:all": "npm run build:base-app && npm run build:asset-roaster && npm run build:calendar && npm run build:crm",
     "lint": "ng lint",
     "generate:base-app-graph": "npx depcruise --config .dependency-cruiser.js projects/base-app --output-type dot | dot -Tsvg -o base-app-graph.svg",
     "generate:asset-roaster-graph": "npx depcruise --config .dependency-cruiser.js projects/asset-roaster --output-type dot | dot -Tsvg -o asset-roaster-graph.svg",
