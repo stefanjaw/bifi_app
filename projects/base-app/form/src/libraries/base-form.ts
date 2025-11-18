@@ -10,6 +10,7 @@ import { ControlsOf } from '../interfaces/typed-form-builder';
 import { getFormGroupDirtyValue, markAsDirty } from './dirty-utils';
 import { TypedFormBuilder } from '../services/typed-form-builder';
 import { Subject } from 'rxjs';
+import { TypedFormArrayExtension } from './extensions/extended-form-array';
 
 /**
  * Abstract class representing a base form structure with reactive value handling.
@@ -91,6 +92,16 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
    */
   reset() {
     this.form.reset();
+
+    // check if array controls are left without clearing them up
+    Object.keys(this.form.controls).forEach(controlKey => {
+      const control = this.form.controls[controlKey];
+
+      if (control instanceof TypedFormArrayExtension) {
+        control.clear();
+      }
+    });
+
     this.resetDirtyState();
   }
 

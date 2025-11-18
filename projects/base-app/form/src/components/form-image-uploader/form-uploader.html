@@ -14,4 +14,15 @@
       </ng-template>
     </p-fileupload>
   </ng-content>
+
+  @if (formValue().length > 0) {
+    <div class="mt-1"></div>
+    <p-button
+      variant="text"
+      icon="pi pi-trash"
+      severity="danger"
+      label="Clear"
+      (onClick)="onPrimeFileClear()"
+    ></p-button>
+  }
 </div>

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   contentChild,
   DestroyRef,
@@ -20,15 +21,17 @@ import { FileRemoveEvent, FileSelectEvent, FileUpload } from 'primeng/fileupload
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { ControlsOf } from '../../interfaces/typed-form-builder';
 import { FormUploaderFile } from '../../interfaces/form-uploader-image';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-form-uploader',
-  imports: [FileUpload],
+  imports: [FileUpload, ButtonModule],
   templateUrl: './form-uploader.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormUploader implements OnInit {
   private fb = inject(NonNullableFormBuilder);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = inject(DestroyRef);
   private formArrayNameDirective = inject(ControlContainer, {
     self: true,
@@ -65,6 +68,7 @@ export class FormUploader implements OnInit {
   constructor() {
     effect(onCleanup => {
       const uploader = this.uploader();
+
       if (!uploader) {
         return;
       }
@@ -73,9 +77,21 @@ export class FormUploader implements OnInit {
 
       console.log('[Form uploader] Effect on PrimeNG FileUpload');
 
-      subscriptions.push(uploader.onSelect.subscribe(event => this.onPrimeFileSelect(event)));
-      subscriptions.push(uploader.onClear.subscribe(() => this.onPrimeFileClear()));
-      subscriptions.push(uploader.onRemove.subscribe(event => this.onPrimeFileRemove(event)));
+      subscriptions.push(
+        uploader.onSelect
+          .pipe(takeUntilDestroyed(this.destroy$))
+          .subscribe(event => this.onPrimeFileSelect(event))
+      );
+      subscriptions.push(
+        uploader.onClear
+          .pipe(takeUntilDestroyed(this.destroy$))
+          .subscribe(() => this.onPrimeFileClear())
+      );
+      subscriptions.push(
+        uploader.onRemove
+          .pipe(takeUntilDestroyed(this.destroy$))
+          .subscribe(event => this.onPrimeFileRemove(event))
+      );
 
       onCleanup(() => {
         subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -87,6 +103,7 @@ export class FormUploader implements OnInit {
     if (!(this.formArrayNameDirective instanceof FormArrayName)) {
       throw new Error('Form uploader must be used inside a form array');
     }
+
     this.syncPrimeNGFiles();
 
     this.onTouchedFn = () => {
@@ -117,6 +134,21 @@ export class FormUploader implements OnInit {
         value: this.formArray.value,
       });
     };
+
+    this.formArray.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe(externalValue => {
+        const newValue = externalValue as FormUploaderFile[];
+
+        // 1. Actualiza el estado interno del componente
+        this.formValue.set(newValue);
+
+        // 2. Sincroniza el componente visual de PrimeNG
+        this.syncPrimeNGFiles();
+      });
 
     // Update the disabled state
     this.formArray.statusChanges
@@ -161,8 +193,10 @@ export class FormUploader implements OnInit {
     if (value && value.length) {
       uploader.files = value.map(file => file.file);
     } else {
-      uploader.files = [];
+      uploader.clear();
     }
+
+    this.cdr.markForCheck();
   }
 
   /**
@@ -172,7 +206,7 @@ export class FormUploader implements OnInit {
    *
    * @param event - The PrimeNG FileSelectEvent containing the selected files.
    */
-  private onPrimeFileSelect(event: FileSelectEvent) {
+  protected onPrimeFileSelect(event: FileSelectEvent) {
     console.log('[Form uploader] onPrimeFileSelect', event);
     // The files to be uploaded (all files)
     const fileArray = event.currentFiles;
@@ -204,7 +238,7 @@ export class FormUploader implements OnInit {
    * all files, and notifies Angular of the change.
    */
 
-  private onPrimeFileClear() {
+  protected onPrimeFileClear() {
     console.log('[Form uploader] onPrimeFileClear');
     // Clear the value
     this.formValue.set([]);
@@ -222,7 +256,7 @@ export class FormUploader implements OnInit {
    *
    * @param event - The PrimeNG FileRemoveEvent containing the file to be removed.
    */
-  private onPrimeFileRemove(event: FileRemoveEvent) {
+  protected onPrimeFileRemove(event: FileRemoveEvent) {
     console.log('[Form uploader] onPrimeFileRemove', event);
     // The file to be removed
     const file = event.file;
