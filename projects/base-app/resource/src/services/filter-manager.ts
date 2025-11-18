@@ -114,9 +114,11 @@ export class FilterManager {
         break;
       case 'like':
         operator = '$regex';
+        value = this.normalizeForFlexibleSearch(value?.toString() || '');
         break;
       case 'not like':
         operator = '$notRegex';
+        value = this.normalizeForFlexibleSearch(value?.toString() || '');
         break;
       case 'empty':
         operator = '$size';
@@ -198,5 +200,15 @@ export class FilterManager {
     filter: filter<Record<string, any>> | filterGroup<any>
   ): filter is filterGroup<Record<string, any>> {
     return 'filters' in filter;
+  }
+
+  private escapeRegex(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  private normalizeForFlexibleSearch(value: string): string {
+    value = value.trim().replace(/\s+/g, ' ');
+    const parts = value.split(' ').map(v => this.escapeRegex(v));
+    return parts.join('\\s+');
   }
 }
