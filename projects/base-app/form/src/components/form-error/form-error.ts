@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, model, signal } from '@angular/core';
 import { ControlContainer, NgControl, ValidationErrors } from '@angular/forms';
 import { FormErrorComponentValidationErrorsValue } from './form-error.model';
-import { distinctUntilChanged, map } from 'rxjs';
+import { distinctUntilChanged, map, of } from 'rxjs';
 import { FormFieldContext } from '../../services/form-field-context';
 import { FormTranslation } from '../../services/form-translation';
 
@@ -29,27 +29,32 @@ export class FormError {
   constructor() {
     effect(onCleanup => {
       // Get the abstract control
-      const absControl = this.controlContainer || this.ngControl || this.context?.abstractControl();
+      const absControl =
+        this.ngControl?.control ??
+        this.context?.abstractControl() ??
+        this.controlContainer?.control ??
+        null;
 
       // Get the custom error messages
       const customMessageTranslations = this.customErrorTranslations();
 
       // If there is no abstract control or no control, return
-      if (!absControl || !absControl.control) {
-        return;
-      }
+      if (!absControl) return;
 
       // Refresh error state when reloading effect dependencies
-      this.refreshErrorState(absControl.control.errors, customMessageTranslations);
+      this.refreshErrorState(absControl.errors, customMessageTranslations);
 
-      const control = absControl.control;
+      const control = absControl;
 
       /**
        * Subscribe to the statusChanges of the control and refresh the error state when the status changes & the errors object changes
        */
-      const subscription = control.statusChanges
+      const subscription = (!control.statusChanges ? of(null) : control.statusChanges)
         .pipe(
-          map(() => control.errors),
+          map(() => {
+            console.log(control);
+            return control.errors;
+          }),
           distinctUntilChanged()
         )
         .subscribe(controlErrors => {
@@ -57,7 +62,7 @@ export class FormError {
         });
 
       // When the effect destroys, unsubscribe
-      onCleanup(() => subscription.unsubscribe());
+      onCleanup(() => subscription?.unsubscribe());
     });
   }
 
