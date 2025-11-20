@@ -100,12 +100,20 @@
             }
           </div>
 
-          @if (canStartPM()) {
+          @if (canStartOrSkipPM()) {
             <p-button
               (onClick)="handleInitPM()"
               size="small"
               label="Initiate PM"
               severity="success"
+              type="button"
+              class="me-2"
+            ></p-button>
+            <p-button
+              (onClick)="handleOpenSkipPMDialog()"
+              size="small"
+              label="Skip PM"
+              severity="secondary"
               type="button"
             ></p-button>
           }

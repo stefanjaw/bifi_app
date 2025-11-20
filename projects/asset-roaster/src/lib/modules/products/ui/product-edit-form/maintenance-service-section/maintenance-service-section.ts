@@ -53,7 +53,7 @@ export class MaintenanceServiceSection {
   });
 
   // to check if PM can be started
-  canStartPM = computed(() => {
+  canStartOrSkipPM = computed(() => {
     const product = this.product();
 
     // Some checkings
@@ -63,10 +63,16 @@ export class MaintenanceServiceSection {
       product.productComission.outcome === 'fail' ||
       product.status === 'decomissioned' ||
       this.serviceStarted() ||
-      this.pmStarted()
+      this.pmStarted() ||
+      !product.maintenanceWindowIds ||
+      product.maintenanceWindowIds.length === 0
     )
       return false;
 
+    return true;
+  });
+
+  isPMInWindowsRange = computed(() => {
     const today = dayjs();
     const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
     const maxMaintenanceDate = dayjs(this.product()?.maxMaintenanceDate);
@@ -111,19 +117,21 @@ export class MaintenanceServiceSection {
 
   pmScheduleStatus = computed(() => {
     const product = this.product();
-    const canStartPM = this.canStartPM();
+    const canStartPM = this.canStartOrSkipPM();
     const pmStarted = this.pmStarted();
     const serviceStarted = this.serviceStarted();
+    const inRange = this.isPMInWindowsRange();
 
     let status: preventiveMaintenanceStatus = 'not-comissioned';
 
-    if (!product || !product.productComission) return status;
+    if (!product || (!product.productComission && product.status !== 'decomissioned'))
+      return status;
 
     if (product.status === 'decomissioned') status = 'decomissioned';
     else if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
       status = 'not-scheduled';
     else if (serviceStarted && !pmStarted) status = 'under-service';
-    else if (canStartPM) status = 'available';
+    else if (canStartPM && inRange) status = 'available';
     else if (pmStarted) status = 'in-progress';
     else status = 'finished';
 
@@ -140,6 +148,10 @@ export class MaintenanceServiceSection {
         this.formService.form.get('maintenanceDate')?.enable();
       }
     });
+  }
+
+  handleOpenSkipPMDialog() {
+    this.productMaintenanceContext.handleOpenSkipPMDialog();
   }
 
   handleInitPM() {

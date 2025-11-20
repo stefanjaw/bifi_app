@@ -30,6 +30,7 @@ import {
   ProductFinishMaintenanceFormDialog,
   productMaintenance,
   ProductMaintenanceFormDialog,
+  ProductSkipMaintenanceFormDialog,
 } from '../../../product-maintenances';
 import {
   activityHistory,
@@ -40,6 +41,10 @@ import {
 } from '@avalantec/base-app/resource';
 import { ProductAddDocumentFormDialog } from '../product-document-dialog/product-document-dialog';
 import { addDocumentFormModel } from '../../services/add-document-form';
+import isBetween from 'dayjs/plugin/isBetween';
+import dayjs from 'dayjs';
+
+dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-product-maintenance',
@@ -50,6 +55,7 @@ import { addDocumentFormModel } from '../../services/add-document-form';
     ProductMaintenanceFormDialog,
     ProductFinishMaintenanceFormDialog,
     ProductAddDocumentFormDialog,
+    ProductSkipMaintenanceFormDialog,
   ],
   templateUrl: './product-maintenance.html',
 })
@@ -144,9 +150,10 @@ export class ProductMaintenance {
     ProductDecomissioningFormDialog
   );
   serviceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
-  finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishServiceDialog');
-  finishPMDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishPMDialog');
-  documentDialog = viewChild<ProductAddDocumentFormDialog>('documentDialog');
+  finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishService');
+  finishPMDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishPM');
+  documentDialog = viewChild<ProductAddDocumentFormDialog>(ProductAddDocumentFormDialog);
+  skipPMDialog = viewChild<ProductSkipMaintenanceFormDialog>(ProductSkipMaintenanceFormDialog);
 
   /**
    * This effect is used to set the form values to the initial state from the `product` signal.
@@ -288,6 +295,10 @@ export class ProductMaintenance {
     this.finishPMDialog()?.openDialog();
   }
 
+  handleOpenSkipPMDialog() {
+    this.skipPMDialog()?.openDialog();
+  }
+
   /**
    * Opens the document upload dialog.
    *
@@ -331,6 +342,13 @@ export class ProductMaintenance {
    * shows a success toast message.
    */
   handleInitiatePM() {
+    // check range of windows to set PM as manual
+    const today = dayjs();
+    const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
+    const maxMaintenanceDate = dayjs(this.product()?.maxMaintenanceDate);
+
+    const isPMOutOfRange = !today.isBetween(minMaintenanceDate, maxMaintenanceDate);
+
     this.productMaintenancesService
       .post({
         data: {
@@ -338,6 +356,7 @@ export class ProductMaintenance {
           name: 'PM',
           dateStart: new Date().toISOString(),
           type: 'preventive-maintenance',
+          manual: isPMOutOfRange ? 'true' : 'false',
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -439,7 +458,6 @@ export class ProductMaintenance {
    * handling document additions, finishing or initiating preventive maintenance, and navigating
    * back to the dashboard.
    */
-
   private handleEvents() {
     this.productMaintenanceContext.handleEvents$
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -475,6 +493,9 @@ export class ProductMaintenance {
           case 'init-pm':
             this.handleInitiatePM();
             break;
+          case 'open-skip-pm':
+            this.handleOpenSkipPMDialog();
+            break;
           case 'back-to-dashboard':
             this.handleBackToDashboard();
             break;
@@ -483,6 +504,7 @@ export class ProductMaintenance {
           case 'service':
           case 'finish-service':
           case 'finish-pm':
+          case 'skip-pm':
             this.handleReloadProduct();
             break;
           case 'activity-history-add-file':

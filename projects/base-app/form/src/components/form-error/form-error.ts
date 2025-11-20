@@ -52,7 +52,7 @@ export class FormError {
       const subscription = (!control.statusChanges ? of(null) : control.statusChanges)
         .pipe(
           map(() => {
-            console.log(control);
+            // console.log(control);
             return control.errors;
           }),
           distinctUntilChanged()

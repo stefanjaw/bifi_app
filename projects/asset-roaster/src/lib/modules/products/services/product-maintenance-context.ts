@@ -18,6 +18,8 @@ export type productMaintenanceContextEvent =
   | 'open-finish-pm-dialog'
   | 'finish-pm'
   | 'init-pm'
+  | 'open-skip-pm'
+  | 'skip-pm'
   | 'back-to-dashboard'
   | 'activity-history-add-file';
 
@@ -91,6 +93,14 @@ export class ProductMaintenanceContext {
 
   handleInitPM() {
     this._handleEvents.next('init-pm');
+  }
+
+  handleOpenSkipPMDialog() {
+    this._handleEvents.next('open-skip-pm');
+  }
+
+  handleSkipPM() {
+    this._handleEvents.next('skip-pm');
   }
 
   handleBackToDashboard() {

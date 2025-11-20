@@ -23,16 +23,18 @@
 <bifi-app-product-finish-maintenance-form-dialog
   [product]="product()"
   maintenanceType="service"
-  #finishServiceDialog
+  #finishService
 ></bifi-app-product-finish-maintenance-form-dialog>
 <bifi-app-product-finish-maintenance-form-dialog
   [product]="product()"
   maintenanceType="preventive-maintenance"
-  #finishPMDialog
+  #finishPM
 ></bifi-app-product-finish-maintenance-form-dialog>
+<bifi-app-product-skip-maintenance-form-dialog
+  [product]="product()"
+></bifi-app-product-skip-maintenance-form-dialog>
 
 <!-- Document upload -->
 <bifi-app-product-document-dialog
-  #documentDialog
   (submitted)="handleDocumentAdded($event)"
 ></bifi-app-product-document-dialog>
