@@ -8,6 +8,7 @@ import { productComissionning } from '../../../../product-comissioning';
 import { productMaintenance } from '../../../../product-maintenances';
 import { Button } from 'primeng/button';
 import { ProductActiviyHistoryAddFileDialog } from '../../../features/product-maintenance-add-file-dialog/product-activity-history-add-file-dialog';
+import { product } from '../../../interfaces/product';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
@@ -25,7 +26,8 @@ export class ActivityHistorySection {
   private fileResolver = inject(FileResolver);
 
   selectedHistoryDocument = signal<productComissionning | productMaintenance | null>(null);
-  activityHistory = input.required<activityHistory<productComissionning | productMaintenance>[]>();
+  activityHistory =
+    input.required<activityHistory<productComissionning | productMaintenance | product>[]>();
 
   async downloadFile(attachment: file) {
     this.fileResolver.downloadFileInBrowser({ metadata: attachment });
@@ -42,5 +44,9 @@ export class ActivityHistorySection {
       default:
         return 'info';
     }
+  }
+
+  isNotValidForAttachmentAdding(modelId: Record<string, any>): modelId is product {
+    return modelId['productModel'];
   }
 }

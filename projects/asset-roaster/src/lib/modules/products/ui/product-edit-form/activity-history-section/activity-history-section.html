@@ -50,7 +50,9 @@
                 variant="text"
                 (onClick)="downloadFile(attachment)"
               ></p-button>
-            } @else if (history.title !== 'Decomissioned') {
+            } @else if (
+              history.title !== 'Decomissioned' && !isNotValidForAttachmentAdding(history.modelId)
+            ) {
               <p-button
                 label="Add Attachment"
                 severity="primary"
