@@ -16,11 +16,11 @@ export class CommissioningLifecycleSection {
   product = input.required<product | undefined>();
   isEditMode = input.required<boolean>();
 
-  handleOpenComissionDialog() {
-    this.productMaintenanceContext.handleOpenComissionDialog();
+  handleOpencommissionDialog() {
+    this.productMaintenanceContext.handleOpenCommissionDialog();
   }
 
-  handleOpenDecomissionDialog() {
-    this.productMaintenanceContext.handleOpenDecomissionDialog();
+  handleOpenDecommissionDialog() {
+    this.productMaintenanceContext.handleOpenDecommissionDialog();
   }
 }

@@ -1,7 +1,7 @@
 import { file } from '@avalantec/base-app/resource';
 import { product } from '../../products';
 
-export interface productComissionning {
+export interface productCommissionning {
   _id: string;
   outcome: 'fail' | 'pass';
   details?: string;

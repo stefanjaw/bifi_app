@@ -86,7 +86,7 @@ export class ProductAddDocumentFormDialog extends BaseDialog {
   }
 
   /**
-   * Handles the submission of the form and creates a new comissioning record in the backend.
+   * Handles the submission of the form and creates a new commissioning record in the backend.
    *
    * @param data the form data
    */

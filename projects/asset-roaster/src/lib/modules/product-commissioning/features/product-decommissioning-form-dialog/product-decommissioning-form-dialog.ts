@@ -12,23 +12,23 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
 import { product, ProductMaintenanceContext } from '../../../products';
-import { CrudProductComissioning } from '../../services/crud-product-comissioning';
+import { CrudProductCommissioning } from '../../services/crud-product-commissioning';
 import {
-  UpdateDecomissioningForm,
-  UpdateDecomissioningFormModel,
-} from '../../services/update-decomissioning-form';
+  UpdateDecommissioningForm,
+  UpdateDecommissioningFormModel,
+} from '../../services/update-decommissioning-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'bifi-app-product-decomissioning-form-dialog',
+  selector: 'bifi-app-product-decommissioning-form-dialog',
   imports: [DialogModule, ReactiveFormsModule, Text, Textarea, FormModule],
-  templateUrl: './product-decomissioning-form-dialog.html',
+  templateUrl: './product-decommissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductDecomissioningFormDialog extends BaseDialog {
+export class ProductDecommissioningFormDialog extends BaseDialog {
   // services
-  private formService = inject(UpdateDecomissioningForm);
-  private productComissioningService = inject(CrudProductComissioning);
+  private formService = inject(UpdateDecommissioningForm);
+  private productCommissioningService = inject(CrudProductCommissioning);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
   private toastManager = inject(ToastManager);
   form = this.formService.form;
@@ -52,27 +52,27 @@ export class ProductDecomissioningFormDialog extends BaseDialog {
   }
 
   /**
-   * Handles the submission of the form and decomissions the product.
+   * Handles the submission of the form and decommissions the product.
    * @param data the form data
    */
-  handleSubmit(data: FormValueState<UpdateDecomissioningFormModel>) {
+  handleSubmit(data: FormValueState<UpdateDecommissioningFormModel>) {
     this.submitLoading.set(true);
 
-    this.productComissioningService
+    this.productCommissioningService
       .put({
-        _id: this.product()?.productComission?._id || '',
+        _id: this.product()?.productCommission?._id || '',
         data: {
           details: data.rawValue.details || '',
         },
-        specificEndpoint: 'decomission',
+        specificEndpoint: 'decommission',
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
           this.submitLoading.set(false);
           this.formService.reset();
-          this.productMaintenanceContext.handleDecomission();
-          this.toastManager.showSuccess('Decomissioned successfully');
+          this.productMaintenanceContext.handleDecommission();
+          this.toastManager.showSuccess('Decommissioned successfully');
           this.closeDialog();
         },
         error: () => {

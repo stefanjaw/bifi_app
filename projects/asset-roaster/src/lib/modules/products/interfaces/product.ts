@@ -2,7 +2,7 @@ import { maintenanceWindow } from '../../maintenance-windows';
 import { room } from '../../facilities';
 import { productType } from '../../product-types';
 import { productMaintenance } from '../../product-maintenances';
-import { productComissionning } from '../../product-comissioning';
+import { productCommissionning } from '../../product-commissioning';
 import { contact } from '@avalantec/base-app/interfaces';
 import { file } from '@avalantec/base-app/resource';
 
@@ -24,11 +24,11 @@ export interface product {
   locationId: room;
   warrantyDate: Date;
   remarks?: string;
-  status: 'active' | 'awaiting-comissioning' | 'under-service' | 'decomissioned' | 'in-pm';
+  status: 'active' | 'awaiting-commissioning' | 'under-service' | 'decommissioned' | 'in-pm';
   minMaintenanceDate: string;
   maintenanceDate: string;
   maxMaintenanceDate: string;
-  productComission: productComissionning;
+  productCommission: productCommissionning;
   productMaintenances: productMaintenance[];
   attachments?: file[];
   active: boolean;

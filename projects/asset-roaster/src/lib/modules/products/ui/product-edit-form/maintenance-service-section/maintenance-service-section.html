@@ -10,7 +10,7 @@
         <h3 class="text-lg font-medium text-gray-900 mb-4">Preventive Maintenance</h3>
         <div class="space-y-4">
           <div>
-            @if (isEditMode() && product()?.productComission?.outcome === 'pass') {
+            @if (isEditMode() && product()?.productCommission?.outcome === 'pass') {
               <bifi-app-form-field class="mb-4">
                 <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
                 <p-select
@@ -70,9 +70,9 @@
 
             <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
 
-            @if (status === 'decomissioned') {
+            @if (status === 'decommissioned') {
               <div class="text-sm text-red-500">This equipment is decommissioned.</div>
-            } @else if (status === 'not-comissioned') {
+            } @else if (status === 'not-commissioned') {
               <div class="text-sm text-orange-500">
                 This equipment is awaiting commissioning. PM schedule cannot be determined yet.
               </div>

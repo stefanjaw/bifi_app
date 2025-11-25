@@ -63,9 +63,9 @@ export const productColumns: tableColumn<product>[] = [
               text: 'Active',
               variant: 'success',
             };
-          case 'awaiting-comissioning':
+          case 'awaiting-commissioning':
             return {
-              text: 'Awaiting comissioning',
+              text: 'Awaiting commissioning',
               variant: 'warning',
             };
           case 'under-service':
@@ -73,9 +73,9 @@ export const productColumns: tableColumn<product>[] = [
               text: 'Under service',
               variant: 'warning',
             };
-          case 'decomissioned':
+          case 'decommissioned':
             return {
-              text: 'Decomissioned',
+              text: 'Decommissioned',
               variant: 'error',
             };
           case 'in-pm':

@@ -20,7 +20,7 @@ import { ProductMaintenanceContext } from '../../services/product-maintenance-co
 import { activityHistory } from '@avalantec/base-app/resource';
 import { FormModule } from '@avalantec/base-app/form';
 import { productMaintenance } from '../../../product-maintenances/interfaces/product-maintenance';
-import { productComissionning } from '../../../product-comissioning/interfaces/product-comissioning';
+import { productCommissionning } from '../../../product-commissioning/interfaces/product-commissioning';
 import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
@@ -47,7 +47,7 @@ export class ProductEditForm {
 
   product = input.required<product | undefined>();
   activityHistories =
-    input.required<activityHistory<productComissionning | productMaintenance>[]>();
+    input.required<activityHistory<productCommissionning | productMaintenance>[]>();
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
   isEditMode = input.required<boolean>();

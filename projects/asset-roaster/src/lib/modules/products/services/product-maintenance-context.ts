@@ -6,8 +6,8 @@ export type productMaintenanceContextEvent =
   | 'save'
   | 'saved'
   | 'cancel'
-  | 'open-comission-dialog'
-  | 'comission'
+  | 'open-commission-dialog'
+  | 'commission'
   | 'open-decommission-dialog'
   | 'decommission'
   | 'open-service-dialog'
@@ -47,19 +47,19 @@ export class ProductMaintenanceContext {
     this._handleEvents.next('cancel');
   }
 
-  handleOpenComissionDialog() {
-    this._handleEvents.next('open-comission-dialog');
+  handleOpenCommissionDialog() {
+    this._handleEvents.next('open-commission-dialog');
   }
 
-  handleComission() {
-    this._handleEvents.next('comission');
+  handleCommission() {
+    this._handleEvents.next('commission');
   }
 
-  handleOpenDecomissionDialog() {
+  handleOpenDecommissionDialog() {
     this._handleEvents.next('open-decommission-dialog');
   }
 
-  handleDecomission() {
+  handleDecommission() {
     this._handleEvents.next('decommission');
   }
 

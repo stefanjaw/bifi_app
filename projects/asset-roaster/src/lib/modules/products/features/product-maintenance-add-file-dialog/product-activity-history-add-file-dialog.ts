@@ -13,7 +13,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { CrudProductMaintenances, productMaintenance } from '../../../product-maintenances';
-import { CrudProductComissioning, productComissionning } from '../../../product-comissioning';
+import { CrudProductCommissioning, productCommissionning } from '../../../product-commissioning';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import {
   ProductActivityHistoryAddFileForm,
@@ -33,12 +33,12 @@ export class ProductActiviyHistoryAddFileDialog extends BaseDialog {
   // services
   private formService = inject(ProductActivityHistoryAddFileForm);
   private crudProductMaintenace = inject(CrudProductMaintenances);
-  private crudProductComissioning = inject(CrudProductComissioning);
+  private crudProductCommissioning = inject(CrudProductCommissioning);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
   form = this.formService.form;
 
   // inputs
-  activityHistoryDocument = input.required<productComissionning | productMaintenance | null>();
+  activityHistoryDocument = input.required<productCommissionning | productMaintenance | null>();
 
   header = computed(() => {
     const model = this.activityHistoryDocument();
@@ -48,7 +48,7 @@ export class ProductActiviyHistoryAddFileDialog extends BaseDialog {
     if ('name' in model) {
       return `Add File to Maintenance: ${model.name}`;
     } else {
-      return `Add File to Comissioning from equipment: ${model.productId.productModel}`;
+      return `Add File to commissioning from equipment: ${model.productId.productModel}`;
     }
   });
 
@@ -84,7 +84,7 @@ export class ProductActiviyHistoryAddFileDialog extends BaseDialog {
               attachments: file,
             },
           })
-        : (this.crudProductComissioning.put({
+        : (this.crudProductCommissioning.put({
             _id: model._id,
             data: {
               attachments: file,

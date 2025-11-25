@@ -1,6 +1,6 @@
 export type preventiveMaintenanceStatus =
-  | 'decomissioned'
-  | 'not-comissioned'
+  | 'decommissioned'
+  | 'not-commissioned'
   | 'not-scheduled'
   | 'under-service'
   | 'available'

@@ -7,7 +7,7 @@
         <ng-template #content>
           <div class="flex justify-between items-center">
             <bifi-app-badge [variant]="getBadgeVariant(history)">
-              {{ history.title | titlecase }}
+              {{ history.title }}
             </bifi-app-badge>
             <div>
               <p class="text-sm text-gray-600">
@@ -39,7 +39,7 @@
             @if (
               history.modelId.attachments &&
               history.modelId.attachments.length > 0 &&
-              history.title !== 'Decomissioned'
+              history.title !== 'Decommissioned'
             ) {
               @let attachment = history.modelId.attachments[0];
 
@@ -51,7 +51,7 @@
                 (onClick)="downloadFile(attachment)"
               ></p-button>
             } @else if (
-              history.title !== 'Decomissioned' && !isNotValidForAttachmentAdding(history.modelId)
+              history.title !== 'Decommissioned' && !isNotValidForAttachmentAdding(history.modelId)
             ) {
               <p-button
                 label="Add Attachment"

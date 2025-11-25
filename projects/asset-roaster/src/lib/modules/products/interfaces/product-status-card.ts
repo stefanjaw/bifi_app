@@ -1,8 +1,8 @@
 export type statusVariant =
   | 'active'
-  | 'awaiting-comissioning'
+  | 'awaiting-commissioning'
   | 'under-service'
-  | 'decomissioned'
+  | 'decommissioned'
   | 'due'
   | 'overdue'
   | 'in-pm'

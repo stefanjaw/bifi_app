@@ -23,16 +23,16 @@ export class ProductStatusSelect {
       variant: 'active',
     },
     {
-      label: 'Awaiting Comissioning',
-      variant: 'awaiting-comissioning',
+      label: 'Awaiting commissioning',
+      variant: 'awaiting-commissioning',
     },
     {
       label: 'Under Service',
       variant: 'under-service',
     },
     {
-      label: 'Decomissioned',
-      variant: 'decomissioned',
+      label: 'Decommissioned',
+      variant: 'decommissioned',
     },
     {
       label: 'Due',

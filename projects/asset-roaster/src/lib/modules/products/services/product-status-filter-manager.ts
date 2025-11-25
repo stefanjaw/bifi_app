@@ -38,8 +38,8 @@ export class ProductStatusFilterManager {
 
     if (
       variant === 'under-service' ||
-      variant === 'decomissioned' ||
-      variant === 'awaiting-comissioning' ||
+      variant === 'decommissioned' ||
+      variant === 'awaiting-commissioning' ||
       variant === 'active' ||
       variant === 'in-pm'
     )

@@ -59,9 +59,9 @@ export class MaintenanceServiceSection {
     // Some checkings
     if (
       !product ||
-      !product.productComission ||
-      product.productComission.outcome === 'fail' ||
-      product.status === 'decomissioned' ||
+      !product.productCommission ||
+      product.productCommission.outcome === 'fail' ||
+      product.status === 'decommissioned' ||
       this.serviceStarted() ||
       this.pmStarted() ||
       !product.maintenanceWindowIds ||
@@ -86,9 +86,9 @@ export class MaintenanceServiceSection {
 
     if (
       !product ||
-      !product.productComission ||
-      product.productComission.outcome === 'fail' ||
-      product.status === 'decomissioned'
+      !product.productCommission ||
+      product.productCommission.outcome === 'fail' ||
+      product.status === 'decommissioned'
     )
       return false;
 
@@ -122,12 +122,12 @@ export class MaintenanceServiceSection {
     const serviceStarted = this.serviceStarted();
     const inRange = this.isPMInWindowsRange();
 
-    let status: preventiveMaintenanceStatus = 'not-comissioned';
+    let status: preventiveMaintenanceStatus = 'not-commissioned';
 
-    if (!product || (!product.productComission && product.status !== 'decomissioned'))
+    if (!product || (!product.productCommission && product.status !== 'decommissioned'))
       return status;
 
-    if (product.status === 'decomissioned') status = 'decomissioned';
+    if (product.status === 'decommissioned') status = 'decommissioned';
     else if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
       status = 'not-scheduled';
     else if (serviceStarted && !pmStarted) status = 'under-service';

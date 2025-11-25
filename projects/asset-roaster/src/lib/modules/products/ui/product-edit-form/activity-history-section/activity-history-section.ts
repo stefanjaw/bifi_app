@@ -4,7 +4,7 @@ import { Badge, BadgeVariant } from '@avalantec/base-app/ui';
 import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
-import { productComissionning } from '../../../../product-comissioning';
+import { productCommissionning } from '../../../../product-commissioning';
 import { productMaintenance } from '../../../../product-maintenances';
 import { Button } from 'primeng/button';
 import { ProductActiviyHistoryAddFileDialog } from '../../../features/product-maintenance-add-file-dialog/product-activity-history-add-file-dialog';
@@ -25,9 +25,9 @@ import { product } from '../../../interfaces/product';
 export class ActivityHistorySection {
   private fileResolver = inject(FileResolver);
 
-  selectedHistoryDocument = signal<productComissionning | productMaintenance | null>(null);
+  selectedHistoryDocument = signal<productCommissionning | productMaintenance | null>(null);
   activityHistory =
-    input.required<activityHistory<productComissionning | productMaintenance | product>[]>();
+    input.required<activityHistory<productCommissionning | productMaintenance | product>[]>();
 
   async downloadFile(attachment: file) {
     this.fileResolver.downloadFileInBrowser({ metadata: attachment });
@@ -35,11 +35,11 @@ export class ActivityHistorySection {
 
   getBadgeVariant(activity: activityHistory<any>): BadgeVariant {
     switch (activity.title?.toLowerCase()) {
-      case 'comissioned':
+      case 'commissioned':
         return 'success';
-      case 'comission failed':
+      case 'commission failed':
         return 'warning';
-      case 'decomissioned':
+      case 'decommissioned':
         return 'error';
       default:
         return 'info';

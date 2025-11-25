@@ -20,10 +20,10 @@ import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { ToastManager } from '@avalantec/base-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  ProductComissioningFormDialog,
-  productComissionning,
-  ProductDecomissioningFormDialog,
-} from '../../../product-comissioning';
+  ProductCommissioningFormDialog,
+  productCommissionning,
+  ProductDecommissioningFormDialog,
+} from '../../../product-commissioning';
 import { ProductMaintenanceContext } from '../../services/product-maintenance-context';
 import {
   CrudProductMaintenances,
@@ -50,8 +50,8 @@ dayjs.extend(isBetween);
   selector: 'bifi-app-product-maintenance',
   imports: [
     ProductEditForm,
-    ProductComissioningFormDialog,
-    ProductDecomissioningFormDialog,
+    ProductCommissioningFormDialog,
+    ProductDecommissioningFormDialog,
     ProductMaintenanceFormDialog,
     ProductFinishMaintenanceFormDialog,
     ProductAddDocumentFormDialog,
@@ -116,7 +116,7 @@ export class ProductMaintenance {
   ]);
 
   activityHistories = this.activityHistoriesService.get<
-    activityHistory<productComissionning | productMaintenance>
+    activityHistory<productCommissionning | productMaintenance>
   >({
     searchParams: this.activityHistoryQuery,
     sort: this.activityHistoryOrder,
@@ -143,11 +143,11 @@ export class ProductMaintenance {
   isEditMode = signal(false);
 
   // children
-  comissioningInitFormDialog = viewChild<ProductComissioningFormDialog>(
-    ProductComissioningFormDialog
+  commissioningInitFormDialog = viewChild<ProductCommissioningFormDialog>(
+    ProductCommissioningFormDialog
   );
-  decomissioningFormDialog = viewChild<ProductDecomissioningFormDialog>(
-    ProductDecomissioningFormDialog
+  decommissioningFormDialog = viewChild<ProductDecommissioningFormDialog>(
+    ProductDecommissioningFormDialog
   );
   serviceFormDialog = viewChild<ProductMaintenanceFormDialog>(ProductMaintenanceFormDialog);
   finishServiceDialog = viewChild<ProductFinishMaintenanceFormDialog>('finishService');
@@ -245,24 +245,24 @@ export class ProductMaintenance {
   }
 
   /**
-   * Opens the comissioning initialization dialog.
+   * Opens the commissioning initialization dialog.
    *
-   * This dialog is used to add a new comissioning record for the current product.
+   * This dialog is used to add a new commissioning record for the current product.
    * It is only accessible from the product maintenance page.
    */
-  handleOpenComissionDialog() {
-    this.comissioningInitFormDialog()?.openDialog();
+  handleOpencommissionDialog() {
+    this.commissioningInitFormDialog()?.openDialog();
   }
 
   /**
-   * Opens the decomissioning dialog.
+   * Opens the decommissioning dialog.
    *
-   * This dialog is used to set the product status to 'decomissioned' and add a new
-   * comissioning record with the outcome 'decomissioned'.
+   * This dialog is used to set the product status to 'decommissioned' and add a new
+   * commissioning record with the outcome 'decommissioned'.
    * It is only accessible from the product maintenance page.
    */
-  handleOpenDecomissionDialog() {
-    this.decomissioningFormDialog()?.openDialog();
+  handleOpenDecommissionDialog() {
+    this.decommissioningFormDialog()?.openDialog();
   }
 
   /**
@@ -472,11 +472,11 @@ export class ProductMaintenance {
           case 'cancel':
             this.handleCancel();
             break;
-          case 'open-comission-dialog':
-            this.handleOpenComissionDialog();
+          case 'open-commission-dialog':
+            this.handleOpencommissionDialog();
             break;
           case 'open-decommission-dialog':
-            this.handleOpenDecomissionDialog();
+            this.handleOpenDecommissionDialog();
             break;
           case 'open-service-dialog':
             this.handleOpenServiceDialog();
@@ -499,7 +499,7 @@ export class ProductMaintenance {
           case 'back-to-dashboard':
             this.handleBackToDashboard();
             break;
-          case 'comission':
+          case 'commission':
           case 'decommission':
           case 'service':
           case 'finish-service':

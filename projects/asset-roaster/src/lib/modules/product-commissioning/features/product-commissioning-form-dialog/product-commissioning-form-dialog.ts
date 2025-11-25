@@ -8,22 +8,22 @@ import {
   signal,
 } from '@angular/core';
 import {
-  CreateComissioningForm,
-  CreateComissioningFormModel,
-} from '../../services/create-comissioning-form';
+  CreateCommissioningForm,
+  CreateCommissioningFormModel,
+} from '../../services/create-commissioning-form';
 import { DialogModule } from 'primeng/dialog';
 import { product } from '../../../products/interfaces/product';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
-import { CrudProductComissioning } from '../../services/crud-product-comissioning';
+import { CrudProductCommissioning } from '../../services/crud-product-commissioning';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FileUploadModule } from 'primeng/fileupload';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 
 @Component({
-  selector: 'bifi-app-product-comissioning-form-dialog',
+  selector: 'bifi-app-product-commissioning-form-dialog',
   imports: [
     DialogModule,
     ReactiveFormsModule,
@@ -33,13 +33,13 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
     FileUploadModule,
     FormModule,
   ],
-  templateUrl: './product-comissioning-form-dialog.html',
+  templateUrl: './product-commissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductComissioningFormDialog extends BaseDialog {
+export class ProductCommissioningFormDialog extends BaseDialog {
   // services
-  protected formService = inject(CreateComissioningForm);
-  private productComissioningService = inject(CrudProductComissioning);
+  protected formService = inject(CreateCommissioningForm);
+  private productCommissioningService = inject(CrudProductCommissioning);
   private toastManager = inject(ToastManager);
   private productMaintenanceContext = inject(ProductMaintenanceContext);
   form = this.formService.form;
@@ -63,16 +63,16 @@ export class ProductComissioningFormDialog extends BaseDialog {
   }
 
   /**
-   * Handles the submission of the form and creates a new comissioning record in the backend.
+   * Handles the submission of the form and creates a new commissioning record in the backend.
    *
    * @param data the form data
    */
-  handleSubmit(data: FormValueState<CreateComissioningFormModel>) {
+  handleSubmit(data: FormValueState<CreateCommissioningFormModel>) {
     this.submitLoading.set(true);
 
     const { rawValue } = data;
 
-    this.productComissioningService
+    this.productCommissioningService
       .post({
         data: {
           productId: this.product()?._id,
@@ -87,8 +87,8 @@ export class ProductComissioningFormDialog extends BaseDialog {
           this.submitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          this.productMaintenanceContext.handleComission();
-          this.toastManager.showSuccess('Comissioning created successfully');
+          this.productMaintenanceContext.handleCommission();
+          this.toastManager.showSuccess('commissioning created successfully');
         },
         error: () => {
           this.submitLoading.set(false);
