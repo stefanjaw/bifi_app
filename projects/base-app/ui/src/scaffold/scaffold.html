@@ -94,6 +94,7 @@
     [ngClass]="{
       'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
     }"
+    [pTooltip]="item.label"
   >
     <span [class]="item.icon"></span>
   </a>

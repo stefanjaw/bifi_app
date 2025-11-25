@@ -15,6 +15,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MenuItem } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'bifi-app-scaffold',
@@ -32,6 +33,7 @@ import { MenuItem } from 'primeng/api';
     RippleModule,
     HasPermission,
     RouterLink,
+    TooltipModule,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',
