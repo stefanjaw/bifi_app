@@ -36,20 +36,20 @@
         }
       }
     },
-    "asset-roaster": {
+    "asset-roster": {
       "projectType": "library",
-      "root": "projects/asset-roaster",
-      "sourceRoot": "projects/asset-roaster/src",
+      "root": "projects/asset-roster",
+      "sourceRoot": "projects/asset-roster/src",
       "prefix": "bifi-app",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/asset-roaster/tsconfig.lib.prod.json"
+              "tsConfig": "projects/asset-roster/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/asset-roaster/tsconfig.lib.json"
+              "tsConfig": "projects/asset-roster/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -57,31 +57,31 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/asset-roaster/tsconfig.spec.json"
+            "tsConfig": "projects/asset-roster/tsconfig.spec.json"
           }
         }
       }
     },
-    "asset-roaster-demo": {
+    "asset-roster-demo": {
       "projectType": "application",
       "schematics": {},
-      "root": "projects/asset-roaster-demo",
-      "sourceRoot": "projects/asset-roaster-demo/src",
+      "root": "projects/asset-roster-demo",
+      "sourceRoot": "projects/asset-roster-demo/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "projects/asset-roaster-demo/src/main.ts",
+            "browser": "projects/asset-roster-demo/src/main.ts",
             "polyfills": ["zone.js"],
-            "tsConfig": "projects/asset-roaster-demo/tsconfig.app.json",
+            "tsConfig": "projects/asset-roster-demo/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/asset-roaster-demo/public"
+                "input": "projects/asset-roster-demo/public"
               }
             ],
-            "styles": ["projects/asset-roaster-demo/src/styles.css"]
+            "styles": ["projects/asset-roster-demo/src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -105,8 +105,8 @@
               "sourceMap": true,
               "fileReplacements": [
                 {
-                  "replace": "projects/asset-roaster-demo/src/environments/environment.ts",
-                  "with": "projects/asset-roaster-demo/src/environments/environment.development.ts"
+                  "replace": "projects/asset-roster-demo/src/environments/environment.ts",
+                  "with": "projects/asset-roster-demo/src/environments/environment.development.ts"
                 }
               ]
             }
@@ -117,10 +117,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "asset-roaster-demo:build:production"
+              "buildTarget": "asset-roster-demo:build:production"
             },
             "development": {
-              "buildTarget": "asset-roaster-demo:build:development"
+              "buildTarget": "asset-roster-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -132,14 +132,14 @@
           "builder": "@angular/build:karma",
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "projects/asset-roaster-demo/tsconfig.spec.json",
+            "tsConfig": "projects/asset-roster-demo/tsconfig.spec.json",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/asset-roaster-demo/public"
+                "input": "projects/asset-roster-demo/public"
               }
             ],
-            "styles": ["projects/asset-roaster-demo/src/styles.css"]
+            "styles": ["projects/asset-roster-demo/src/styles.css"]
           }
         }
       }

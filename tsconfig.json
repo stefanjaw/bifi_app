@@ -6,8 +6,8 @@
     "baseUrl": "./",
     "paths": {
       // Works on localhost
-      "@avalantec/asset-roaster": ["projects/asset-roaster/src/lib"],
-      "@avalantec/asset-roaster/*": ["projects/asset-roaster/src/lib/*"],
+      "@avalantec/asset-roster": ["projects/asset-roster/src/lib"],
+      "@avalantec/asset-roster/*": ["projects/asset-roster/src/lib/*"],
 
       "@avalantec/calendar": ["./projects/calendar/src/lib"],
       "@avalantec/calendar/*": ["./projects/calendar/src/lib/*"],

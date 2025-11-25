@@ -9,8 +9,8 @@
       "@avalantec/base-app": ["dist/base-app/src", "./projects/base-app/src"],
       "@avalantec/base-app/*": ["dist/base-app/*", "./projects/base-app/*"],
 
-      "@avalantec/asset-roaster": ["dist/asset-roaster/*", "dist/asset-roaster"],
-      "@avalantec/asset-roaster/*": ["projects/asset-roaster/*", "projects/asset-roaster"],
+      "@avalantec/asset-roster": ["dist/asset-roster/*", "dist/asset-roster"],
+      "@avalantec/asset-roster/*": ["projects/asset-roster/*", "projects/asset-roster"],
 
       "@avalantec/calendar": ["dist/calendar/*", "dist/calendar"],
       "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"],

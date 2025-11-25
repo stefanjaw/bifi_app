@@ -5,9 +5,9 @@
 @plugin "tailwindcss-primeui";
 @import 'primeicons/primeicons.css';
 
-/* TailwindCSS: Style asset roaster library */
-/* @source "../../../dist/asset-roaster/"; */
-@source "../../../projects/asset-roaster/";
+/* TailwindCSS: Style asset roster library */
+/* @source "../../../dist/asset-roster/"; */
+@source "../../../projects/asset-roster/";
 
 /* TailwindCSS: Style base app library */
 /* @source "../../../dist/base-app/"; */

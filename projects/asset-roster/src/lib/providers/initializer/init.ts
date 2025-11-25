@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roaster.routes';
+import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roster.routes';
 import { PrimeIcons } from 'primeng/api';
 import { MainMenuManager } from '@avalantec/base-app/routing';
 import {
