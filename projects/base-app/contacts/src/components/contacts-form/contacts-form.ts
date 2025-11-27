@@ -69,7 +69,7 @@ export class ContactsForm {
   countryOptions = this.countriesResource.value;
 
   parentOptions = computed(() =>
-    this.contactsResource.value().filter(c => c._id !== this.contact()?._id)
+    this.contactsResource.value().filter(c => c._id !== this.contact()?._id && c.type === 'company')
   );
 
   childOptions = computed(() => {
@@ -156,6 +156,11 @@ export class ContactsForm {
     if (!rawValue.streetAddress) delete rawValue.streetAddress;
     if (!rawValue.streetAddress2) delete rawValue.streetAddress2;
     if (!rawValue.website) delete rawValue.website;
+
+    // if is individual and childIds had something, then erease array
+    if (rawValue.type === 'individual' && rawValue.childIds && rawValue.childIds.length > 0) {
+      rawValue.childIds = [];
+    }
 
     const action = this.isUpdate()
       ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })

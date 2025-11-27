@@ -37,8 +37,10 @@ export class ContactForm extends BaseForm<ContactFormModel> {
       if (type === 'company') {
         this.form.controls.lastName.setValue('', { emitEvent: false });
         this.form.controls.lastName.disable({ emitEvent: false });
+        this.form.controls.childIds.enable({ emitEvent: false });
       } else {
         this.form.controls.lastName.enable({ emitEvent: false });
+        this.form.controls.childIds.disable({ emitEvent: false });
       }
     });
   }
