@@ -13,6 +13,7 @@ export * from './src/libraries/debounce-signal';
 export * from './src/libraries/library-config-token';
 export * from './src/libraries/maybe-signal-await';
 export * from './src/libraries/object-utils';
+export * from './src/pipes/split-caps-pipe';
 export * from './src/services/debug-manager';
 export * from './src/services/sidenav-manager';
 export * from './src/services/toast-manager';
