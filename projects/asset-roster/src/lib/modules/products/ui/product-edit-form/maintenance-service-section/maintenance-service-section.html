@@ -108,6 +108,7 @@
               severity="success"
               type="button"
               class="me-2"
+              [disabled]="!isPMInWindowsRange()"
             ></p-button>
             <p-button
               (onClick)="handleOpenSkipPMDialog()"
@@ -115,6 +116,7 @@
               label="Skip PM"
               severity="secondary"
               type="button"
+              [disabled]="!isPMInWindowsRange()"
             ></p-button>
           }
 
