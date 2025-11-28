@@ -50,7 +50,9 @@
             @let value = getValue(element, column.field);
 
             @if (column.parseField) {
-              <span>{{ column.parseField(value) }}</span>
+              <span>
+                {{ column.parseField(value) }}
+              </span>
             } @else if (column.component) {
               @let component =
                 typeof column.component === 'function'

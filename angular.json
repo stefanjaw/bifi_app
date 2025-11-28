@@ -166,10 +166,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/calendar/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
@@ -196,10 +193,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/crm/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }

@@ -1,0 +1,58 @@
+<!-- <ngx-monaco-editor [options]="editorOptions"></ngx-monaco-editor> -->
+
+<bifi-app-form-layout
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Policy"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Model</bifi-app-form-label>
+            <input pInputText formControlName="model" type="text" placeholder="e.g Product" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Template Editor" id="template-editor" [ordinal]="2">
+        @if (isUpdate()) {
+          <div class="mb-4">
+            <p-button
+              label="Try Report"
+              [icon]="isReportDownloadLoading() ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+              (onClick)="downloadReport()"
+              [disabled]="isReportDownloadLoading()"
+            ></p-button>
+          </div>
+        }
+
+        <bifi-app-form-field>
+          <bifi-app-reporting-template-editor
+            formControlName="template"
+          ></bifi-app-reporting-template-editor>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

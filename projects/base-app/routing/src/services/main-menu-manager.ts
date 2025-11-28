@@ -51,6 +51,12 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Countries',
             resource: 'countries/menu',
           },
+          {
+            icon: 'pi pi-file-pdf',
+            routerLink: ['/settings/reporting'],
+            label: 'Reporting',
+            resource: 'reporting/menu',
+          },
         ],
       },
       {
