@@ -8,7 +8,7 @@ import { oneDark } from '@codemirror/theme-one-dark';
 @Component({
   selector: 'bifi-app-reporting-template-editor',
   standalone: true,
-  template: `<div class="w-full max-h-[450px] rounded overflow-auto editor-container"></div>`,
+  template: `<div class="max-h-[450px] w-full rounded overflow-auto editor-container"></div>`,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

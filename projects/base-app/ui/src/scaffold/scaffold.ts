@@ -1,4 +1,13 @@
-import { Component, DestroyRef, effect, inject, input, model, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { EventType, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { MenubarModule } from 'primeng/menubar';
@@ -60,6 +69,9 @@ export class Scaffold {
 
   // current route
   currentRoute = signal(this.router.url);
+
+  // check if logged
+  isLogged = computed(() => !!this.user());
 
   constructor() {
     effect(() => {

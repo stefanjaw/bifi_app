@@ -1,0 +1,153 @@
+<div class="min-h-screen flex flex-col font-sans bg-gray-50 text-gray-800">
+  <!-- Navbar -->
+  <nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <!-- Logo / App Name -->
+      <div class="text-2xl font-bold text-indigo-600">Asset Roster</div>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a routerLink="/" class="hover:text-indigo-600 transition">Home</a>
+        <a routerLink="/features" class="hover:text-indigo-600 transition">Features</a>
+        <a routerLink="/contact" class="hover:text-indigo-600 transition">Contact</a>
+
+        <!-- Sign In in Navbar -->
+        <button
+          routerLink="/auth/signin"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+        >
+          Sign In
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-12">
+      <!-- Text -->
+      <div class="flex-1 space-y-6">
+        <h1 class="text-5xl font-bold leading-tight">Smart Asset Roster Management</h1>
+
+        <p class="text-lg text-gray-600">
+          Efficiently track, schedule, maintain, and manage all assets across your organization with
+          a powerful all-in-one platform built for operational excellence.
+        </p>
+
+        <div class="flex gap-4 mt-6">
+          <button
+            routerLink="/auth/signin"
+            class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+          >
+            Get Started
+          </button>
+
+          <button
+            class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+          >
+            Request a Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Placeholder Card -->
+      <div class="flex-1">
+        <div
+          class="w-full max-w-md mx-auto p-10 bg-indigo-50 border border-indigo-200 rounded-2xl shadow-inner text-center"
+        >
+          <h2 class="text-2xl font-semibold text-indigo-700 mb-3">All-In-One Dashboard</h2>
+          <p class="text-gray-700">
+            Manage your asset inventory, rosters, availability, and maintenance tasks with
+            streamlined workflows designed for clarity and control.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-12">Platform Features</h2>
+
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3">Asset Tracking</h3>
+          <p class="text-gray-600">
+            Track every asset including availability, status updates, assignment logs, and complete
+            historical activity.
+          </p>
+        </div>
+
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3">Roster Scheduling</h3>
+          <p class="text-gray-600">
+            Automatically generate and optimize shift rosters for assets and staff, reducing
+            conflicts and maximizing productivity.
+          </p>
+        </div>
+
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3">Maintenance Management</h3>
+          <p class="text-gray-600">
+            Prevent failures with timely inspections, service logs, reminders, and preventive
+            maintenance workflows.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sign In Section -->
+  <section class="py-20 bg-white border-t border-gray-200">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold mb-4">Access Your Account</h2>
+
+      <p class="text-gray-600 mb-8">
+        Already use our platform? Sign in to manage your assets, rosters, and maintenance schedules.
+      </p>
+
+      <button
+        routerLink="/auth/signin"
+        class="px-8 py-4 bg-indigo-600 text-white text-lg rounded-lg shadow hover:bg-indigo-700 transition"
+      >
+        Sign In
+      </button>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-20 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10 text-center">
+      <div>
+        <p class="text-4xl font-bold text-indigo-600">99.9%</p>
+        <p class="text-gray-600 mt-2">Average Platform Uptime</p>
+      </div>
+
+      <div>
+        <p class="text-4xl font-bold text-indigo-600">3,500+</p>
+        <p class="text-gray-600 mt-2">Assets Managed</p>
+      </div>
+
+      <div>
+        <p class="text-4xl font-bold text-indigo-600">120+</p>
+        <p class="text-gray-600 mt-2">Companies Powered</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-12 mt-auto">
+    <div
+      class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6"
+    >
+      <p class="text-sm">© {{ currentYear() }} Asset Roster Solutions — All rights reserved.</p>
+
+      <nav class="flex gap-6 text-sm">
+        <a routerLink="/policies/privacy" class="hover:text-white">Privacy Policy</a>
+        <a routerLink="/policies/terms" class="hover:text-white">Terms of Service</a>
+        <a routerLink="/contact" class="hover:text-white">Contact</a>
+      </nav>
+    </div>
+  </footer>
+</div>
