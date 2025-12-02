@@ -114,7 +114,10 @@ export class ReportingsForm implements OnInit {
 
   async downloadReport() {
     this.isReportDownloadLoading.set(true);
-    await this.crudReportings.downloadReport(this.reporting()?._id || '');
+    await this.crudReportings.downloadReport({
+      reportId: this.reporting()?._id || '',
+      getInactive: false,
+    });
     this.isReportDownloadLoading.set(false);
   }
 

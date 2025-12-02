@@ -1,3 +1,5 @@
+export * from './src/components/reporting-download-dialog/reporting-download-dialog';
+export * from './src/components/reporting-template-editor/reporting-template-editor';
 export * from './src/components/reportings-form/reportings-form';
 export * from './src/components/reportings-list/reportings-list';
 export * from './src/libraries/reporting-columns';

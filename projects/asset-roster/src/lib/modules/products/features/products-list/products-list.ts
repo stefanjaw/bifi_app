@@ -20,6 +20,7 @@ import { ProductMaintenanceContext } from '../../services/product-maintenance-co
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { ReportingDownloadDialog } from '@avalantec/base-app/reporting';
 
 @Component({
   selector: 'bifi-app-products-list',
@@ -35,6 +36,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
     ProductStatusSelect,
     ProductFormDialog,
     HasPermission,
+    ReportingDownloadDialog,
   ],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +51,7 @@ export class ProductsList {
   productFilters = productFilters;
 
   products = this.resourceManager.data;
+  filtersForReporting = this.resourceManager.searchParams;
 
   //#region Counting of products by status
   private productStatusFilterManager = inject(ProductStatusFilterManager);

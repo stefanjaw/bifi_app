@@ -13,6 +13,7 @@
     <bifi-app-form-field>
       <bifi-app-form-label>Document Desciptor</bifi-app-form-label>
       <p-select
+        appendTo="body"
         (onChange)="handleDescriptorChange($event.value)"
         [options]="descriptorOptions"
       ></p-select>

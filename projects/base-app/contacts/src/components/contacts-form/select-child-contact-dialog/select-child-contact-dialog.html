@@ -5,8 +5,9 @@
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md"
 >
   <bifi-app-form-field class="mb-8 min-h-40">
-    <bifi-app-form-label>Policy</bifi-app-form-label>
+    <bifi-app-form-label>Children</bifi-app-form-label>
     <p-multiSelect
+      appendTo="body"
       [formControl]="childContact"
       [options]="childContactOptions()"
       optionLabel="name"

@@ -2,6 +2,13 @@
   <h1 class="text-2xl font-bold">Equipment Dashboard</h1>
   <div class="flex gap-2">
     <p-button
+      label="Reporting"
+      severity="success"
+      icon="pi pi-file-pdf"
+      (onClick)="downloadReportDialog.openDialog()"
+      *bifiAppHasPermission="'reporting/reporting/generate-report:read:model'"
+    ></p-button>
+    <p-button
       label="Import CSV"
       severity="success"
       icon="pi pi-upload"
@@ -81,3 +88,7 @@
 </bifi-app-table-layout>
 
 <bifi-app-product-form-dialog #createDialog></bifi-app-product-form-dialog>
+<bifi-app-reporting-download-dialog
+  #downloadReportDialog
+  model="Product"
+></bifi-app-reporting-download-dialog>

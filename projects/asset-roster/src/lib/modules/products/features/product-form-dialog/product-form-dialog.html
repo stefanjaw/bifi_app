@@ -16,6 +16,7 @@
       <bifi-app-form-field>
         <bifi-app-form-label>Type of equipment</bifi-app-form-label>
         <p-select
+          appendTo="body"
           formControlName="productTypeIds"
           [options]="productTypeOptions()"
           optionLabel="name"
@@ -53,6 +54,7 @@
       <bifi-app-form-field>
         <bifi-app-form-label>Make</bifi-app-form-label>
         <p-select
+          appendTo="body"
           formControlName="makeIds"
           [options]="contactOptions()"
           optionLabel="name"

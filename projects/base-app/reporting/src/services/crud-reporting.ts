@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ToastManager } from '@avalantec/base-app/core';
 import { reporting } from '@avalantec/base-app/interfaces';
-import { ApiRequestManager } from '@avalantec/base-app/resource';
+import { ApiRequestManager, orderByQuery } from '@avalantec/base-app/resource';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -15,10 +15,35 @@ export class CrudReporting extends ApiRequestManager<reporting> {
     this.endpoint = 'reporting';
   }
 
-  async downloadReport(id: string) {
+  async downloadReport({
+    modelName,
+    reportId,
+    searchParams,
+    sort,
+    getInactive,
+  }: {
+    modelName?: string;
+    reportId?: string;
+    searchParams?: Record<string, any>;
+    sort?: orderByQuery<reporting>;
+    getInactive?: boolean | null;
+  }) {
     try {
+      const query = new URLSearchParams({
+        ...((searchParams || !getInactive) && {
+          searchParams: JSON.stringify({
+            ...searchParams,
+            ...(typeof getInactive === 'boolean' && !getInactive && { active: true }),
+            ...(typeof getInactive === 'boolean' && getInactive && { active: false }),
+          }),
+        }),
+        ...(sort && { orderBy: JSON.stringify(sort) }),
+        ...(modelName && { modelName }),
+        ...(reportId && { reportId }),
+      });
+
       const blob = await firstValueFrom(
-        this._httpClient.get(`${this.formatFullURL()}/generate-report?reportId=${id}`, {
+        this._httpClient.get(`${this.formatFullURL()}/generate-report?${query.toString()}`, {
           responseType: 'blob',
         })
       );
