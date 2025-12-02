@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ReportingTemplateEditor } from '../reporting-template-editor/reporting-template-editor';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-reportings-form',
@@ -29,6 +30,7 @@ import { ReportingTemplateEditor } from '../reporting-template-editor/reporting-
     ProgressBarModule,
     ButtonModule,
     ReportingTemplateEditor,
+    HasPermission,
   ],
   templateUrl: './reportings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
