@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
 export interface ReportingFormModel {
+  title: string;
   model: string;
   template: string;
 }
@@ -29,6 +30,7 @@ export class ReportingForm extends BaseForm<ReportingFormModel> {
 
   override createForm() {
     return this.fb.group<ReportingFormModel>({
+      title: ['', [Validators.required]],
       model: ['', [Validators.required]],
       template: [this.defaultTemplate, [Validators.required]],
     });
@@ -36,7 +38,7 @@ export class ReportingForm extends BaseForm<ReportingFormModel> {
 
   override reset(): void {
     super.reset();
-    
+
     this.form.patchValue({
       template: this.defaultTemplate,
     });

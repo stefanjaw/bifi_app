@@ -23,6 +23,12 @@
       <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
+            <bifi-app-form-label>Title</bifi-app-form-label>
+            <input pInputText formControlName="title" type="text" placeholder="e.g Table Report" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Model</bifi-app-form-label>
             <input pInputText formControlName="model" type="text" placeholder="e.g Product" />
             <bifi-app-form-error></bifi-app-form-error>

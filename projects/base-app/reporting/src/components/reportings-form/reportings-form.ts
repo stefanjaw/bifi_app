@@ -66,6 +66,7 @@ export class ReportingsForm implements OnInit {
 
       if (reporting) {
         this.formService.patchValue({
+          title: reporting.title,
           model: reporting.model,
           template: reporting.template,
         });
@@ -93,10 +94,17 @@ export class ReportingsForm implements OnInit {
         this.isSubmitLoading.set(false);
         this.formService.reset();
 
-        this.formService.patchValue({
-          model: newReport?.model,
-          template: newReport?.template,
-        });
+        if (!this.isUpdate()) {
+          this.router.navigate(['../edit', newReport?._id || ''], {
+            relativeTo: this.route,
+          });
+        } else {
+          this.formService.patchValue({
+            title: newReport?.title,
+            model: newReport?.model,
+            template: newReport?.template,
+          });
+        }
       },
       error: () => {
         this.isSubmitLoading.set(false);

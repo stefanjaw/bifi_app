@@ -3,6 +3,12 @@ import { tableColumn } from '@avalantec/base-app/resource';
 
 export const reportingColumns: tableColumn<reporting>[] = [
   {
+    field: 'title',
+    title: 'Template',
+    type: 'text',
+    sortable: true,
+  },
+  {
     field: 'model',
     title: 'Model',
     type: 'text',
