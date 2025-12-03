@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Reporting Template"
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Template"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,36 +21,53 @@
       <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Title</bifi-app-form-label>
-            <input pInputText formControlName="title" type="text" placeholder="e.g Table Report" />
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              placeholder="e.g Landing page view"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Model</bifi-app-form-label>
-            <input pInputText formControlName="model" type="text" placeholder="e.g Product" />
+            <bifi-app-form-label>Directory</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="directory"
+              type="text"
+              placeholder="e.g ./website/.."
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Filename</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="filename"
+              type="text"
+              placeholder="e.g landing-page.html"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>MIME Type</bifi-app-form-label>
+            <p-select formControlName="mimeType" [options]="mimeTypeOptions"></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
       <bifi-app-form-section title="Template Editor" id="template-editor" [ordinal]="2">
-        @if (isUpdate()) {
-          <div class="mb-4">
-            <p-button
-              label="Try Report"
-              [icon]="isReportDownloadLoading() ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
-              (onClick)="downloadReport()"
-              [disabled]="isReportDownloadLoading()"
-              *bifiAppHasPermission="'reporting/generate-report:read:model'"
-            ></p-button>
-          </div>
-        }
-
         <bifi-app-form-field>
           <bifi-app-form-code-editor
-            formControlName="template"
-            language="text/html"
+            [diffMode]="true"
+            [leftFormControl]="form.controls.codeOriginal"
+            [rightFormControl]="form.controls.codeCustom"
+            [language]="mimeType()"
           ></bifi-app-form-code-editor>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>

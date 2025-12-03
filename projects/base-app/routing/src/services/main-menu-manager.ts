@@ -57,6 +57,12 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Reporting',
             resource: 'reporting/menu',
           },
+          {
+            icon: '',
+            routerLink: ['/settings/templates'],
+            label: 'Templates',
+            resource: 'templates/menu',
+          },
         ],
       },
       {

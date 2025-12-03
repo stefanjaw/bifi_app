@@ -4,4 +4,5 @@ export * from './src/country';
 export * from './src/policy';
 export * from './src/reporting';
 export * from './src/role';
+export * from './src/template';
 export * from './src/user';

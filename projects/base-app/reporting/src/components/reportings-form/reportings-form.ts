@@ -18,7 +18,6 @@ import { ReportingForm, ReportingFormModel } from '../../services/reporting-form
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
-import { ReportingTemplateEditor } from '../reporting-template-editor/reporting-template-editor';
 import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
@@ -29,18 +28,12 @@ import { HasPermission } from '@avalantec/base-app/auth';
     InputTextModule,
     ProgressBarModule,
     ButtonModule,
-    ReportingTemplateEditor,
     HasPermission,
   ],
   templateUrl: './reportings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportingsForm implements OnInit {
-  editorOptions = {
-    theme: 'vs-dark',
-    language: 'html',
-  };
-
   private crudReportings = inject(CrudReporting);
   private formService = inject(ReportingForm);
   private destroy$ = inject(DestroyRef);

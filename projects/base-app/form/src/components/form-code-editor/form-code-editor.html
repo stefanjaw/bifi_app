@@ -1,0 +1,10 @@
+<div class="h-[550px] w-full rounded overflow-auto overflow-x-auto">
+  @if (!diffMode()) {
+    <div class="editor-container w-full h-full"></div>
+  } @else {
+    <div class="merge-container flex gap-4 w-full h-full">
+      <div class="left-editor flex-1"></div>
+      <div class="right-editor flex-1"></div>
+    </div>
+  }
+</div>

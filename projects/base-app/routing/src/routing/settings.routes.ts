@@ -31,6 +31,10 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/reporting').then(m => m.REPORTING_ROUTES),
   },
   {
+    path: 'templates',
+    loadChildren: () => import('@avalantec/base-app/templates').then(m => m.TEMPLATE_ROUTES),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },

@@ -1,0 +1,12 @@
+.editor-container .cm-editor {
+  width: 100%;
+  height: 100%;
+}
+
+.editor-container .cm-scroller {
+  overflow: auto;
+}
+
+.editor-container .cm-content {
+  white-space: pre;
+}

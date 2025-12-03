@@ -1,4 +1,5 @@
 export * from './src/components/form-actions/form-actions';
+export * from './src/components/form-code-editor/form-code-editor';
 export * from './src/components/form-error/form-error.model';
 export * from './src/components/form-error/form-error';
 export * from './src/components/form-field/form-field';
@@ -15,6 +16,7 @@ export * from './src/directives/form-actions-handler';
 export * from './src/directives/form-control-extension';
 export * from './src/directives/translated-errors';
 export * from './src/form-module/form-module';
+export * from './src/interfaces/form-code-editor-languages';
 export * from './src/interfaces/form-errors';
 export * from './src/interfaces/form-file';
 export * from './src/interfaces/form-helpers';
