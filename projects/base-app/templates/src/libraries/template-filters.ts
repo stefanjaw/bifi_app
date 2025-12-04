@@ -7,14 +7,6 @@ export const templateFilters: filter<template>[] = [
     type: 'string',
   },
   {
-    field: 'codeOriginal',
-    type: 'string',
-  },
-  {
-    field: 'codeCustom',
-    type: 'string',
-  },
-  {
     field: 'directory',
     type: 'string',
   },

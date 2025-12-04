@@ -1,5 +1,6 @@
 import { reporting } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
+import { Badge } from '@avalantec/base-app/ui';
 
 export const reportingColumns: tableColumn<reporting>[] = [
   {
@@ -18,9 +19,14 @@ export const reportingColumns: tableColumn<reporting>[] = [
     field: 'template',
     title: 'Template',
     type: 'text',
-    sortable: true,
-    parseField(value: string) {
-      return value.substring(0, 200) + '…';
+    component: (value: reporting) => {
+      return {
+        component: Badge,
+        inputs: {
+          text: value.template ? 'Code provided' : 'Code not provided',
+          variant: value.template ? 'success' : 'warning',
+        },
+      };
     },
   },
 ];

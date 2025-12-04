@@ -58,7 +58,7 @@ export class MainMenuManager extends BaseMenuManager {
             resource: 'reporting/menu',
           },
           {
-            icon: '',
+            icon: 'pi pi-file-pdf',
             routerLink: ['/settings/templates'],
             label: 'Templates',
             resource: 'templates/menu',

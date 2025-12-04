@@ -10,8 +10,4 @@ export const reportingFilters: filter<reporting>[] = [
     field: 'model',
     type: 'string',
   },
-  {
-    field: 'template',
-    type: 'string',
-  },
 ];

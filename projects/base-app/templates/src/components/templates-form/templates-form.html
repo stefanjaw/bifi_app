@@ -63,6 +63,10 @@
 
       <bifi-app-form-section title="Template Editor" id="template-editor" [ordinal]="2">
         <bifi-app-form-field>
+          <p class="flex flex-row items-center justify-between">
+            <span>Orignal Code</span>
+            <span>Custom Code</span>
+          </p>
           <bifi-app-form-code-editor
             [diffMode]="true"
             [leftFormControl]="form.controls.codeOriginal"
