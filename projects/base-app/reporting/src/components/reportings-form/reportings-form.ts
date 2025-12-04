@@ -19,6 +19,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { BackendListModels } from '@avalantec/base-app/resource';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'bifi-app-reportings-form',
@@ -28,6 +30,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
     InputTextModule,
     ProgressBarModule,
     ButtonModule,
+    SelectModule,
     HasPermission,
   ],
   templateUrl: './reportings-form.html',
@@ -39,17 +42,25 @@ export class ReportingsForm implements OnInit {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private backendModels = inject(BackendListModels);
 
   id = input.required<string>();
+
   reportingResource = this.crudReportings.get({
     id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
   });
 
+  modelsListResource = this.backendModels.getModelsList();
+
+  // data
   reporting = this.reportingResource.value;
+  modelsList = this.modelsListResource.value;
 
   form = this.formService.form;
-  loading = this.reportingResource.isLoading;
+  loading = computed(
+    () => this.reportingResource.isLoading() || this.modelsListResource.isLoading()
+  );
   isSubmitLoading = signal(false);
   isReportDownloadLoading = signal(false);
   isUpdate = computed(() => !!this.reporting());
