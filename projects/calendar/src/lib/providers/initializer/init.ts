@@ -16,6 +16,7 @@ function initializeMenu() {
       routerLink: ['/calendar'],
       label: 'Calendar',
       showInMainMenu: true,
+      resource: 'calendar/menu',
     },
     routes: CALENDAR_ROUTES,
   });

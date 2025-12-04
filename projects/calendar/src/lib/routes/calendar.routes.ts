@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const CALENDAR_ROUTES: Routes = [
   {
@@ -9,8 +9,9 @@ export const CALENDAR_ROUTES: Routes = [
   },
   {
     path: 'view',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/calendar-screen/calendar-screen').then(m => m.CalendarScreen),
+    data: { resource: 'calendar/list' },
   },
 ];

@@ -16,6 +16,7 @@ function initializeMenu() {
       routerLink: ['/crm'],
       label: 'CRM',
       showInMainMenu: true,
+      resource: 'leads/menu',
     },
     routes: CRM_ROUTES,
   });
