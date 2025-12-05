@@ -96,6 +96,6 @@ async function writeOrUpdateFile(filePath: string, content: string) {
     const dirPath = path.join(PROJECT_ROOT, template.directory, template.filename);
     console.log('🚀 ~ dirPath:', dirPath);
 
-    await writeOrUpdateFile(dirPath, template.codeCustom ?? template.codeOriginal ?? '');
+    await writeOrUpdateFile(dirPath, template.codeCustom || template.codeOriginal || '');
   }
 })();
