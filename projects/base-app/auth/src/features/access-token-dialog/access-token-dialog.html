@@ -1,0 +1,18 @@
+<p-dialog
+  header="Copy Access Token"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-md"
+>
+  <div class="flex flex-col gap-4">
+    <textarea pTextarea disabled class="field-sizing-content">{{ token() }}</textarea>
+
+    <p-button
+      icon="pi pi-copy"
+      variant="text"
+      label="Copy to clipboard"
+      [cdkCopyToClipboard]="token() || ''"
+      (cdkCopyToClipboardCopied)="showTokenCopiedToast()"
+    ></p-button>
+  </div>
+</p-dialog>

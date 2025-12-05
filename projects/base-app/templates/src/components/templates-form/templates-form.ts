@@ -19,6 +19,7 @@ import { CrudTemplates } from '../../services/crud-templates';
 import { TemplateForm, TemplateFormModel } from '../../services/template-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { AccessTokenDialog } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-templates-form',
@@ -29,6 +30,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
     ProgressBarModule,
     ButtonModule,
     SelectModule,
+    AccessTokenDialog,
   ],
   templateUrl: './templates-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

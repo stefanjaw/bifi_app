@@ -17,7 +17,8 @@
     "generate:asset-roster-graph": "npx depcruise --config .dependency-cruiser.js projects/asset-roster --output-type dot | dot -Tsvg -o asset-roster-graph.svg",
     "generate:calendar-graph": "npx depcruise --config .dependency-cruiser.js projects/calendar --output-type dot | dot -Tsvg -o calendar-graph.svg",
     "generate:crm-graph": "npx depcruise --config .dependency-cruiser.js projects/crm --output-type dot | dot -Tsvg -o crm-graph.svg",
-    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roster-graph && npm run generate:calendar-graph && npm run generate:crm-graph"
+    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roster-graph && npm run generate:calendar-graph && npm run generate:crm-graph",
+    "prebuilt": "ts-node ./tools/prebuilt/prebuilt.ts"
   },
   "private": true,
   "dependencies": {
@@ -44,9 +45,9 @@
     "dayjs": "^1.11.13",
     "ngx-sonner": "^3.1.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
     "primeicons": "^7.0.0",
     "primeng": "^20.0.0",
-    "prettier": "^3.6.2",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.11",
     "tailwindcss-primeui": "^0.6.1",
@@ -74,7 +75,9 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "madge": "^8.0.0",
     "ng-packagr": "^20.0.0",
+    "node-fetch": "^3.3.2",
     "prettier-eslint": "^16.4.2",
+    "ts-node": "^10.9.2",
     "typescript": "~5.8.2",
     "typescript-eslint": "8.34.1"
   }

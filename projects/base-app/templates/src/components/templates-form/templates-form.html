@@ -19,7 +19,13 @@
 
     @if (!loading()) {
       <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <p-button
+          icon="pi pi-code"
+          (click)="accessTokenDialog.openDialog()"
+          label="Get Access Token"
+        ></p-button>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <bifi-app-form-field>
             <bifi-app-form-label>Name</bifi-app-form-label>
             <input
@@ -83,3 +89,5 @@
     }
   </form>
 </bifi-app-form-layout>
+
+<bifi-app-access-token-dialog #accessTokenDialog></bifi-app-access-token-dialog>
