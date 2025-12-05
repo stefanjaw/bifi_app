@@ -18,7 +18,7 @@ export const templateColumns: tableColumn<template>[] = [
         component: Badge,
         inputs: {
           text: value.codeOriginal ? 'Code provided' : 'Code not provided',
-          variant: value.codeOriginal ? 'success' : 'error',
+          variant: value.codeOriginal ? 'success' : 'warning',
         },
       };
     },
