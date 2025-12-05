@@ -11,7 +11,6 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
-import { Badge } from '@avalantec/base-app/ui';
 import { CrudProducts } from '../../services/crud-products';
 import { ProductStatusCardComponent } from '../../ui/product-status-card/product-status-card';
 import { ProductStatusSelect } from '../../ui/product-status-select/product-status-select';
@@ -21,6 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductStatusFilterManager } from '../../services/product-status-filter-manager';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { ReportingDownloadDialog } from '@avalantec/base-app/reporting';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'bifi-app-products-list',
@@ -32,7 +32,7 @@ import { ReportingDownloadDialog } from '@avalantec/base-app/reporting';
     ButtonModule,
     SearchBar,
     TableLayout,
-    Badge,
+    TagModule,
     ProductStatusSelect,
     ProductFormDialog,
     HasPermission,

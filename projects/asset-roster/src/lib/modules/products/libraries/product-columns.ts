@@ -2,7 +2,7 @@ import { product } from '../interfaces/product';
 import { productType } from '../../product-types';
 import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
 import { contact } from '@avalantec/base-app/interfaces';
-import { Badge, BadgeVariant } from '@avalantec/base-app/ui';
+import { Tag } from 'primeng/tag';
 
 export const productColumns: tableColumn<product>[] = [
   {
@@ -56,7 +56,7 @@ export const productColumns: tableColumn<product>[] = [
     field: 'status',
     sortable: true,
     component: (value: product) => {
-      const inputs: { text: string; variant: BadgeVariant } = (() => {
+      const inputs: { text: string; variant: Tag['severity'] } = (() => {
         switch (value.status) {
           case 'active':
             return {
@@ -66,17 +66,17 @@ export const productColumns: tableColumn<product>[] = [
           case 'awaiting-commissioning':
             return {
               text: 'Awaiting commissioning',
-              variant: 'warning',
+              variant: 'warn',
             };
           case 'under-service':
             return {
               text: 'Under service',
-              variant: 'warning',
+              variant: 'warn',
             };
           case 'decommissioned':
             return {
               text: 'Decommissioned',
-              variant: 'error',
+              variant: 'danger',
             };
           case 'in-pm':
             return {
@@ -86,17 +86,17 @@ export const productColumns: tableColumn<product>[] = [
           default: {
             return {
               text: 'Unknown',
-              variant: 'warning',
+              variant: 'warn',
             };
           }
         }
       })();
 
-      const component: DynamicComponent<Badge> = {
-        component: Badge,
+      const component: DynamicComponent<any> = {
+        component: Tag,
         inputs: {
-          text: inputs.text,
-          variant: inputs.variant,
+          value: inputs.text,
+          severity: inputs.variant,
         },
         outputs: {},
       };

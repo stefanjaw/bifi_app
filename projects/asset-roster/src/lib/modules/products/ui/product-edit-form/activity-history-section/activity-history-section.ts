@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
-import { Badge, BadgeVariant } from '@avalantec/base-app/ui';
 import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
@@ -9,12 +8,13 @@ import { productMaintenance } from '../../../../product-maintenances';
 import { Button } from 'primeng/button';
 import { ProductActiviyHistoryAddFileDialog } from '../../../features/product-maintenance-add-file-dialog/product-activity-history-add-file-dialog';
 import { product } from '../../../interfaces/product';
+import { Tag, TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
   imports: [
     CardModule,
-    Badge,
+    TagModule,
     CommonModule,
     FormModule,
     Button,
@@ -33,14 +33,14 @@ export class ActivityHistorySection {
     this.fileResolver.downloadFileInBrowser({ metadata: attachment });
   }
 
-  getBadgeVariant(activity: activityHistory<any>): BadgeVariant {
+  getBadgeVariant(activity: activityHistory<any>): Tag['severity'] {
     switch (activity.title?.toLowerCase()) {
       case 'commissioned':
         return 'success';
       case 'commission failed':
-        return 'warning';
+        return 'warn';
       case 'decommissioned':
-        return 'error';
+        return 'danger';
       default:
         return 'info';
     }

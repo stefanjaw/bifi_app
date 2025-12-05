@@ -1,6 +1,7 @@
 import { InputSignal, OutputEmitterRef, Type } from '@angular/core';
 
 export type ComponentInputs<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [K in keyof T as T[K] extends InputSignal<infer R> ? K : never]?: T[K] extends InputSignal<
     infer R
   >
@@ -9,6 +10,7 @@ export type ComponentInputs<T> = {
 };
 
 export type ComponentOutputs<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [K in keyof T as T[K] extends OutputEmitterRef<infer R>
     ? K
     : never]?: T[K] extends OutputEmitterRef<infer R> ? OutputEmitterRef<R>['emit'] : never;

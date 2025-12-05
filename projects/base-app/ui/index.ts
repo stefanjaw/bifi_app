@@ -1,3 +1,2 @@
-export * from './src/badge/badge.model';
-export * from './src/badge/badge';
 export * from './src/scaffold/scaffold';
+export * from './src/user-panel/user-panel';

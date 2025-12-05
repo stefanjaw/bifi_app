@@ -1,6 +1,6 @@
 import { reporting } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
-import { Badge } from '@avalantec/base-app/ui';
+import { Tag } from 'primeng/tag';
 
 export const reportingColumns: tableColumn<reporting>[] = [
   {
@@ -21,10 +21,10 @@ export const reportingColumns: tableColumn<reporting>[] = [
     type: 'text',
     component: (value: reporting) => {
       return {
-        component: Badge,
+        component: Tag,
         inputs: {
-          text: value.template ? 'Code provided' : 'Code not provided',
-          variant: value.template ? 'success' : 'warning',
+          value: value.template ? 'Code provided' : 'Code not provided',
+          severity: value.template ? 'success' : 'warn',
         },
       };
     },

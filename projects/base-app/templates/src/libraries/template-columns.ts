@@ -1,6 +1,6 @@
 import { template } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
-import { Badge } from '@avalantec/base-app/ui';
+import { Tag } from 'primeng/tag';
 
 export const templateColumns: tableColumn<template>[] = [
   {
@@ -15,10 +15,10 @@ export const templateColumns: tableColumn<template>[] = [
     type: 'text',
     component: (value: template) => {
       return {
-        component: Badge,
+        component: Tag,
         inputs: {
-          text: value.codeOriginal ? 'Code provided' : 'Code not provided',
-          variant: value.codeOriginal ? 'success' : 'warning',
+          value: value.codeOriginal ? 'Code provided' : 'Code not provided',
+          severity: value.codeOriginal ? 'success' : 'warn',
         },
       };
     },
@@ -29,10 +29,10 @@ export const templateColumns: tableColumn<template>[] = [
     type: 'text',
     component: (value: template) => {
       return {
-        component: Badge,
+        component: Tag,
         inputs: {
-          text: value.codeCustom ? 'Code provided' : 'Code not provided',
-          variant: value.codeCustom ? 'success' : 'warning',
+          value: value.codeCustom ? 'Code provided' : 'Code not provided',
+          severity: value.codeCustom ? 'success' : 'warn',
         },
       };
     },

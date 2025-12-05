@@ -77,13 +77,20 @@
 <!-- table -->
 <bifi-app-table-layout [columns]="productColumns" [data]="products">
   <ng-template #actions let-element>
-    <bifi-app-badge
+    <!-- <bifi-app-badge
       routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
       class="cursor-pointer"
       variant="warning"
       text="View details"
       *bifiAppHasPermission="'products/update:view'"
-    ></bifi-app-badge>
+    ></bifi-app-badge> -->
+    <p-tag
+      routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+      class="cursor-pointer"
+      severity="warn"
+      [value]="'View details'"
+      *bifiAppHasPermission="'products/update:view'"
+    ></p-tag>
   </ng-template>
 </bifi-app-table-layout>
 
