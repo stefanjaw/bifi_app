@@ -1,3 +1,6 @@
+# before choosing, remove existing graphs
+rm -f *.svg
+
 LIBS=$(whiptail --title "Build Options" \
   --checklist "Choose the libs to graph:" 20 60 10 \
   "base-app"      "Base App library"      ON \
