@@ -4,21 +4,11 @@
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "build:base-app": "cd ./projects/base-app && ng build && cd ../../dist/base-app && npm pack",
-    "build:asset-roster": "cd ./projects/asset-roster && ng build && cd ../../dist/asset-roster && npm pack",
-    "build:calendar": "cd ./projects/calendar && ng build && cd ../../dist/calendar && npm pack",
-    "build:crm": "cd ./projects/crm && ng build && cd ../../dist/crm && npm pack",
-    "build:all": "npm run build:base-app && npm run build:asset-roster && npm run build:calendar && npm run build:crm",
     "lint": "ng lint",
-    "generate:base-app-graph": "npx depcruise --config .dependency-cruiser.js projects/base-app --output-type dot | dot -Tsvg -o base-app-graph.svg",
-    "generate:asset-roster-graph": "npx depcruise --config .dependency-cruiser.js projects/asset-roster --output-type dot | dot -Tsvg -o asset-roster-graph.svg",
-    "generate:calendar-graph": "npx depcruise --config .dependency-cruiser.js projects/calendar --output-type dot | dot -Tsvg -o calendar-graph.svg",
-    "generate:crm-graph": "npx depcruise --config .dependency-cruiser.js projects/crm --output-type dot | dot -Tsvg -o crm-graph.svg",
-    "generate:all-graphs": "npm run generate:base-app-graph && npm run generate:asset-roster-graph && npm run generate:calendar-graph && npm run generate:crm-graph",
-    "prebuilt": "ts-node ./tools/prebuilt/prebuilt.ts"
+    "watch": "ng build --watch --configuration development",
+    "graphs": "sh ./tools/graphs/graphs.sh",
+    "prebuild": "ts-node ./tools/prebuild/prebuild.ts",
+    "build": "sh ./tools/build/build.sh"
   },
   "private": true,
   "dependencies": {
