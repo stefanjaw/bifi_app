@@ -7,8 +7,8 @@
     "lint": "ng lint",
     "watch": "ng build --watch --configuration development",
     "graphs": "sh ./tools/graphs/graphs.sh",
-    "prebuild": "ts-node ./tools/prebuild/prebuild.ts",
-    "build": "sh ./tools/build/build.sh"
+    "pre:build": "ts-node ./tools/prebuild/prebuild.ts",
+    "post:build": "sh ./tools/build/build.sh"
   },
   "private": true,
   "dependencies": {
