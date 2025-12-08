@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
 import { CALENDAR_ROUTES } from '../../routes/calendar.routes';
-import { MainMenuManager } from '@avalantec/base-app/routing';
+import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 
 export function initializeCalendar() {
   initializeMenu();
@@ -9,15 +9,20 @@ export function initializeCalendar() {
 
 function initializeMenu() {
   const mainMenuManager = inject(MainMenuManager);
+  const mainRoutingManager = inject(MainRoutingManager);
 
   mainMenuManager.addItem({
-    newItem: {
+    item: {
       icon: PrimeIcons.CALENDAR,
       routerLink: ['/calendar'],
       label: 'Calendar',
       showInMainMenu: true,
       resource: 'calendar/menu',
     },
-    routes: CALENDAR_ROUTES,
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: CALENDAR_ROUTES,
+    basePath: 'calendar',
   });
 }

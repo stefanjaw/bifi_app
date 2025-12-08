@@ -19,6 +19,7 @@ import { withLibraryInterceptors } from '@avalantec/base-app/routing';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideCRM } from '@avalantec/crm';
 import { Noir } from './primeng.preset';
+import { provideWebsite } from '@avalantec/website';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -48,6 +49,7 @@ export const appConfig: ApplicationConfig = {
     provideAssetRoster(),
     provideCalendar(),
     provideCRM(),
+    provideWebsite(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

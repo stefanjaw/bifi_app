@@ -16,7 +16,10 @@
       "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"],
 
       "@avalantec/crm": ["dist/crm/*", "dist/crm"],
-      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"]
+      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
+
+      "@avalantec/website": ["dist/website/*", "dist/website"],
+      "@avalantec/website/*": ["projects/website/*", "projects/website"]
     }
   },
   "angularCompilerOptions": {
