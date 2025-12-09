@@ -10,6 +10,10 @@ SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
 echo "Parent directory: $PARENT_DIR"
 echo "Submodule directory: $SUBMODULE_DIR"
 
+# ---------- INSTALL SUBMODULE DEPENDENCIES ----------
+echo "Installing submodule dependencies... on $SUBMODULE_DIR"
+npm install --prefix "$SUBMODULE_DIR" || { echo "Failed to install submodule dependencies"; exit 1; }
+
 # ---------- RUN BUILD SCRIPT TO GET SELECTED LIBRARIES ----------
 
 LIBS=$(sh "$SUBMODULE_DIR/tools/build/build.sh" "$@")
