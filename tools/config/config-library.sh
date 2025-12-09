@@ -11,6 +11,7 @@ echo "Parent directory: $PARENT_DIR"
 echo "Submodule directory: $SUBMODULE_DIR"
 
 # ---------- INSTALL SUBMODULE DEPENDENCIES ----------
+
 echo "Installing submodule dependencies... on $SUBMODULE_DIR"
 npm install --prefix "$SUBMODULE_DIR" || { echo "Failed to install submodule dependencies"; exit 1; }
 
