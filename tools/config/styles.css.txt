@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+/* PrimeNG tailwind plugin */
+@plugin "tailwindcss-primeui";
+@import "primeicons/primeicons.css";
+
+/* TailwindCSS: Style asset roaster library */
+/* @source "../../../dist/asset-roaster/"; */
+/* @source "@avalantec/asset-roaster"; */
+
+/* TailwindCSS: Style base app library */
+/* @source "../../../dist/base-app/"; */
+/* @source "@avalantec/base-app"; */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+:root {
+  --toolbar-color: #1a1f3b;
+}
