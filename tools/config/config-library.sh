@@ -61,8 +61,15 @@ npm install --prefix "$PARENT_DIR" $LIB_PATHS || { echo "❌ Failed to install l
 # ---------- UPDATE CONFIG FILES ----------
 
 # Configure environment variables for templates
+ENVIRONMENT_DIR="$PARENT_DIR/src/environments"
+ENVIRONMENT_PATH="$ENVIRONMENT_DIR/environment.ts"
+
+# Set the environment file path, if not created, create it
+mkdir -p "$ENVIRONMENT_DIR"
+[ ! -f "$ENVIRONMENT_PATH" ] && touch "$ENVIRONMENT_PATH"
+
 echo "📝 Insert the credentials in ./src/environments/environment.ts"
-sudo nano "$PARENT_DIR/src/environments/environment.ts"
+sudo nano "$ENVIRONMENT_PATH"
 
 # Ask for title
 read -r -p "📝 Enter the application title: " APP_TITLE
