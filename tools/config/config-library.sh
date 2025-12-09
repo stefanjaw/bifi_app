@@ -50,12 +50,15 @@ for LIB in $LIBS; do
 done
 
 echo "📦 Library package paths: $LIB_PATHS"
-# Install the libraries in the parent project
-echo "📦 Installing libraries in parent project... on $PARENT_DIR"
 
 # Install everything and then install the libraries in the parent project
+echo "🧹 Cleaning parent project package-lock.json... on $PARENT_DIR"
 rm "$PARENT_DIR/package-lock.json"
+
+echo "📦 Installing parent project dependencies... on $PARENT_DIR"
 npm install --prefix "$PARENT_DIR" || { echo "❌ Failed to install parent project dependencies"; exit 1; }
+
+echo "📦 Installing libraries in parent project... on $PARENT_DIR"
 npm install --prefix "$PARENT_DIR" $LIB_PATHS || { echo "❌ Failed to install libraries in parent project"; exit 1; }
 
 # ---------- UPDATE CONFIG FILES ----------
@@ -158,6 +161,36 @@ generate_file "$SUBMODULE_DIR/tools/config/app.config.ts.txt" "$CONFIG_PATH"
 
 echo "✅ Providers ADDED: $PROVIDERS"
 echo "✅ Provider IMPORTS: $PROVIDER_IMPORTS"
+
+# ---------- CONFIGURING MAXIMUM BUDGET ON ANGULAR.JSON ----------
+
+ANGULAR_JSON_PATH="$PARENT_DIR/angular.json"
+
+if [ -f "$ANGULAR_JSON_PATH" ]; then
+    echo "📝 Insert the maximum budget in ./angular.json"
+fi
+
+sudo nano "$ANGULAR_JSON_PATH"
+
+# ---------- CONFIGURING PREBUILD IF --prebuild flag is used ----------
+
+# Check for --prebuild flag
+PREBUILD=false
+
+for ARG in "$@"; do
+    if [ "$ARG" = "--prebuild" ]; then
+        PREBUILD=true
+        break
+    fi
+done
+
+# If PREBUILD is true, TRIGGER PREBUILD ACTIONS
+if [ "$PREBUILD" = true ]; then
+    echo "📦 --prebuild flag detected, triggering prebuild actions."
+    npm run pre:build --prefix "$SUBMODULE_DIR" || { echo "❌ Failed to run prebuild actions"; exit 1; }
+else
+    echo "📦 No --prebuild flag detected, skipping prebuild actions."
+fi
 
 # ---------- BUILDING PARENT PROJECT ----------
 echo "📦 Building parent project..."
