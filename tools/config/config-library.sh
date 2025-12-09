@@ -7,18 +7,18 @@
 PARENT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../../" && pwd)"
 SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
 
-echo "\n 📁 Parent directory: $PARENT_DIR"
-echo "\n 📁 Submodule directory: $SUBMODULE_DIR"
+echo "📁 Parent directory: $PARENT_DIR"
+echo "📁 Submodule directory: $SUBMODULE_DIR"
 
 # ---------- INSTALL SUBMODULE DEPENDENCIES ----------
 
-echo "\n 📦 Installing submodule dependencies... on $SUBMODULE_DIR"
-npm install --prefix "$SUBMODULE_DIR" || { echo "\n ❌ Failed to install submodule dependencies"; exit 1; }
+echo "📦 Installing submodule dependencies... on $SUBMODULE_DIR"
+npm install --prefix "$SUBMODULE_DIR" || { echo "❌ Failed to install submodule dependencies"; exit 1; }
 
 # ---------- RUN BUILD SCRIPT TO GET SELECTED LIBRARIES ----------
 
 LIBS=$(sh "$SUBMODULE_DIR/tools/build/build.sh" "$@")
-echo "\n ✅ Selected libraries to config: $LIBS"
+echo "✅ Selected libraries to config: $LIBS"
 
 # Check if user cancelled the build process
 if [ "$LIBS" = "Cancelled by user." ]; then
@@ -42,30 +42,30 @@ for LIB in $LIBS; do
         if [ -n "$TGZ_FILE" ]; then
             LIB_PATHS="$LIB_PATHS $TGZ_FILE"
         else
-            echo "\n ⚠️ Warning: No .tgz file found in $DIST_DIR for library $LIB"
+            echo "⚠️ Warning: No .tgz file found in $DIST_DIR for library $LIB"
         fi
     else
-        echo "\n ⚠️ Warning: Distribution directory $DIST_DIR does not exist for library $LIB"
+        echo "⚠️ Warning: Distribution directory $DIST_DIR does not exist for library $LIB"
     fi
 done
 
-echo "\n 📦 Library package paths: $LIB_PATHS"
+echo "📦 Library package paths: $LIB_PATHS"
 # Install the libraries in the parent project
-echo "\n 📦 Installing libraries in parent project... on $PARENT_DIR"
+echo "📦 Installing libraries in parent project... on $PARENT_DIR"
 
 # Install everything and then install the libraries in the parent project
 rm "$PARENT_DIR/package-lock.json"
-npm install --prefix "$PARENT_DIR" || { echo "\n ❌ Failed to install parent project dependencies"; exit 1; }
-npm install --prefix "$PARENT_DIR" $LIB_PATHS || { echo "\n ❌ Failed to install libraries in parent project"; exit 1; }
+npm install --prefix "$PARENT_DIR" || { echo "❌ Failed to install parent project dependencies"; exit 1; }
+npm install --prefix "$PARENT_DIR" $LIB_PATHS || { echo "❌ Failed to install libraries in parent project"; exit 1; }
 
 # ---------- UPDATE CONFIG FILES ----------
 
 # Configure environment variables for templates
-echo "\n 📝 Insert the credentials in ./src/environments/environment.ts"
-vi "$PARENT_DIR/src/environments/environment.ts"
+echo "📝 Insert the credentials in ./src/environments/environment.ts"
+sudo vi "$PARENT_DIR/src/environments/environment.ts"
 
 # Ask for title
-read -r -p "\n 📝 Enter the application title: " APP_TITLE
+read -r -p "📝 Enter the application title: " APP_TITLE
 
 export APP_TITLE
 
@@ -75,13 +75,13 @@ generate_file() {
     local output="$2"
 
     if [ ! -f "$template" ]; then
-        echo "\n ❌ Template not found: $template"
+        echo "❌ Template not found: $template"
         return 1
     fi
 
     envsubst < "$template" > "$output"
 
-    echo "\n ✅ Generated: $output"
+    echo "✅ Generated: $output"
 }
 
 # Set the routes file path, if not created, create it
@@ -126,14 +126,14 @@ for LIB in $LIBS; do
         PROVIDER_NAME=$(grep -E 'export (const|function) provide' "$PROVIDER_FILE" | head -n 1 | awk '{print $3}' | tr -d ':=')
 
         if [ -n "$PROVIDER_NAME" ]; then
-            PROVIDERS="$PROVIDERS$SEP\n$PROVIDER_NAME"
-            PROVIDER_IMPORTS="$PROVIDER_IMPORTS\nimport { $PROVIDER_NAME } from '@avalantec/$LIB';"
+            PROVIDERS="$PROVIDERS$SEP$PROVIDER_NAME"
+            PROVIDER_IMPORTS="$PROVIDER_IMPORTS import { $PROVIDER_NAME } from '@avalantec/$LIB';"
             SEP=", "
         else
-            echo "\n ⚠️ Warning: No provider found in $PROVIDER_FILE"
+            echo "⚠️ Warning: No provider found in $PROVIDER_FILE"
         fi
     else
-        echo "\n ⚠️ Warning: Provider file does not exist: $PROVIDER_FILE"
+        echo "⚠️ Warning: Provider file does not exist: $PROVIDER_FILE"
     fi
 done
 
@@ -145,9 +145,9 @@ CONFIG_PATH="$CONFIG_DIR/app.config.ts"
 [ ! -f "$CONFIG_PATH" ] && touch "$CONFIG_PATH"
 generate_file "$SUBMODULE_DIR/tools/config/app.config.ts.txt" "$CONFIG_PATH"
 
-echo "\n ✅ Providers ADDED: $PROVIDERS"
-echo "\n ✅ Provider IMPORTS: $PROVIDER_IMPORTS"
+echo "✅ Providers ADDED: $PROVIDERS"
+echo "✅ Provider IMPORTS: $PROVIDER_IMPORTS"
 
 # ---------- BUILDING PARENT PROJECT ----------
-echo "\nBuilding parent project..."
+echo "📦 Building parent project..."
 npm run build --prefix "$PARENT_DIR" || { echo "Failed to build parent project"; exit 1; }
