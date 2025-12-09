@@ -113,6 +113,11 @@ STYLES_PATH="$PARENT_DIR/src/styles.css"
 [ ! -f "$STYLES_PATH" ] && touch "$STYLES_PATH"
 generate_file "$SUBMODULE_DIR/tools/config/styles.css.txt" "$STYLES_PATH"
 
+# Generate .postcssrc.json
+POSTCSS_PATH="$PARENT_DIR/.postcssrc.json"
+[ ! -f "$POSTCSS_PATH" ] && touch "$POSTCSS_PATH"
+generate_file "$SUBMODULE_DIR/tools/config/.postcssrc.json.txt" "$POSTCSS_PATH"
+
 # Generate app.html and app.ts
 HTML_PATH="$CONFIG_DIR/app.html"
 TS_PATH="$CONFIG_DIR/app.ts"
