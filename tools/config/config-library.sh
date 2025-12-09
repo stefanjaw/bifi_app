@@ -10,6 +10,13 @@ SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
 echo "📁 Parent directory: $PARENT_DIR"
 echo "📁 Submodule directory: $SUBMODULE_DIR"
 
+# ---------- PULL LASTEST BRANCH AND CHANGES ----------
+
+echo "🔄 Pulling latest changes in submodule... on $SUBMODULE_DIR"
+# git submodule update --progress --init --recursive
+# git -C "$SUBMODULE_DIR" checkout angularv20
+# git -C "$SUBMODULE_DIR" pull
+
 # ---------- INSTALL SUBMODULE DEPENDENCIES ----------
 
 echo "📦 Installing submodule dependencies... on $SUBMODULE_DIR"
