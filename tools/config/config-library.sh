@@ -126,8 +126,12 @@ for LIB in $LIBS; do
         PROVIDER_NAME=$(grep -E 'export (const|function) provide' "$PROVIDER_FILE" | head -n 1 | awk '{print $3}' | tr -d ':=')
 
         if [ -n "$PROVIDER_NAME" ]; then
-            PROVIDERS="$PROVIDERS$SEP$PROVIDER_NAME"
-            PROVIDER_IMPORTS="$PROVIDER_IMPORTS import { $PROVIDER_NAME } from '@avalantec/$LIB';"
+            echo "✅ Provider found: $PROVIDER_NAME"
+            CLEAN_NAME=$(echo "$PROVIDER_NAME" | sed 's/()//g')
+
+            # Add the provider name to the lists
+            PROVIDERS="$PROVIDERS$SEP$CLEAN_NAME()"
+            PROVIDER_IMPORTS="$PROVIDER_IMPORTS import { $CLEAN_NAME } from '@avalantec/$LIB';"
             SEP=", "
         else
             echo "⚠️ Warning: No provider found in $PROVIDER_FILE"
