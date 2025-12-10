@@ -41,10 +41,10 @@ import {
 } from '@avalantec/base-app/resource';
 import { ProductAddDocumentFormDialog } from '../product-document-dialog/product-document-dialog';
 import { addDocumentFormModel } from '../../services/add-document-form';
-import isBetween from 'dayjs/plugin/isBetween';
-import dayjs from 'dayjs';
+// import isBetween from 'dayjs/plugin/isBetween';
+// import dayjs from 'dayjs';
 
-dayjs.extend(isBetween);
+// dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-product-maintenance',
@@ -343,11 +343,11 @@ export class ProductMaintenance {
    */
   handleInitiatePM() {
     // check range of windows to set PM as manual
-    const today = dayjs();
-    const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
-    const maxMaintenanceDate = dayjs(this.product()?.maxMaintenanceDate);
+    // const today = dayjs();
+    // const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
+    // const maxMaintenanceDate = dayjs(this.product()?.maxMaintenanceDate);
 
-    const isPMOutOfRange = !today.isBetween(minMaintenanceDate, maxMaintenanceDate);
+    // const isPMOutOfRange = !today.isBetween(minMaintenanceDate, maxMaintenanceDate);
 
     this.productMaintenancesService
       .post({
@@ -356,7 +356,7 @@ export class ProductMaintenance {
           name: 'PM',
           dateStart: new Date().toISOString(),
           type: 'preventive-maintenance',
-          manual: isPMOutOfRange ? 'true' : 'false',
+          // manual: isPMOutOfRange ? 'true' : 'false',
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
