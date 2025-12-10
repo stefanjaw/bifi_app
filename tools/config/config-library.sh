@@ -13,9 +13,9 @@ echo "📁 Submodule directory: $SUBMODULE_DIR"
 # ---------- PULL LASTEST BRANCH AND CHANGES ----------
 
 echo "🔄 Pulling latest changes in submodule... on $SUBMODULE_DIR"
-git submodule update --progress --init --recursive
-git -C "$SUBMODULE_DIR" checkout angularv20
-git -C "$SUBMODULE_DIR" pull
+# git submodule update --progress --init --recursive
+# git -C "$SUBMODULE_DIR" checkout angularv20
+# git -C "$SUBMODULE_DIR" pull
 
 # ---------- INSTALL SUBMODULE DEPENDENCIES ----------
 
