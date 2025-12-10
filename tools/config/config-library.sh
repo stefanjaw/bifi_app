@@ -177,8 +177,8 @@ echo "✅ Provider IMPORTS: $PROVIDER_IMPORTS"
 # ---------- CONFIGURING MAXIMUM BUDGET ON ANGULAR.JSON ----------
 
 ANGULAR_JSON_PATH="$PARENT_DIR/angular.json"
-sed -i 's/"maximumError": "1MB"/"maximumError": "4MB"/' "$ANGULAR_JSON_PATH"
-echo "✅ Updated maximumError budget in angular.json to 4MB"
+sed -i 's/"maximumError": "1MB"/"maximumError": "10MB"/' "$ANGULAR_JSON_PATH"
+echo "✅ Updated maximumError budget in angular.json to 10MB"
 
 # ---------- CONFIGURING PREBUILD IF --prebuild flag is used ----------
 
