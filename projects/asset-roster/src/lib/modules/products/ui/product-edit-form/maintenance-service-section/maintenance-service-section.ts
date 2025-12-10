@@ -6,7 +6,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { product } from '../../../interfaces/product';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
-import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -14,8 +13,6 @@ import { maintenanceWindow } from '../../../../maintenance-windows';
 import { ProductMaintenanceContext } from '../../../services/product-maintenance-context';
 import { preventiveMaintenanceStatus } from './maintenance-status.model';
 import { FormModule } from '@avalantec/base-app/form';
-
-dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-maintenance-service-section',
@@ -55,6 +52,8 @@ export class MaintenanceServiceSection {
   // to check if PM can be started
   canStartOrSkipPM = computed(() => {
     const product = this.product();
+    const today = dayjs();
+    const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
 
     // Some checkings
     if (
@@ -65,19 +64,12 @@ export class MaintenanceServiceSection {
       this.serviceStarted() ||
       this.pmStarted() ||
       !product.maintenanceWindowIds ||
-      product.maintenanceWindowIds.length === 0
+      product.maintenanceWindowIds.length === 0 ||
+      today.isBefore(minMaintenanceDate)
     )
       return false;
 
     return true;
-  });
-
-  isPMInWindowsRange = computed(() => {
-    const today = dayjs();
-    const minMaintenanceDate = dayjs(this.product()?.minMaintenanceDate);
-    const maxMaintenanceDate = dayjs(this.product()?.maxMaintenanceDate);
-
-    return today.isBetween(minMaintenanceDate, maxMaintenanceDate);
   });
 
   // to check if service can be started
@@ -120,7 +112,6 @@ export class MaintenanceServiceSection {
     const canStartPM = this.canStartOrSkipPM();
     const pmStarted = this.pmStarted();
     const serviceStarted = this.serviceStarted();
-    const inRange = this.isPMInWindowsRange();
 
     let status: preventiveMaintenanceStatus = 'not-commissioned';
 
@@ -131,7 +122,7 @@ export class MaintenanceServiceSection {
     else if (!product.maintenanceWindowIds || product.maintenanceWindowIds.length === 0)
       status = 'not-scheduled';
     else if (serviceStarted && !pmStarted) status = 'under-service';
-    else if (canStartPM && inRange) status = 'available';
+    else if (canStartPM) status = 'available';
     else if (pmStarted) status = 'in-progress';
     else status = 'finished';
 

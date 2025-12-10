@@ -100,25 +100,23 @@
             }
           </div>
 
-          @if (canStartOrSkipPM()) {
-            <p-button
-              (onClick)="handleInitPM()"
-              size="small"
-              label="Initiate PM"
-              severity="success"
-              type="button"
-              class="me-2"
-              [disabled]="!isPMInWindowsRange()"
-            ></p-button>
-            <p-button
-              (onClick)="handleOpenSkipPMDialog()"
-              size="small"
-              label="Skip PM"
-              severity="secondary"
-              type="button"
-              [disabled]="!isPMInWindowsRange()"
-            ></p-button>
-          }
+          <p-button
+            (onClick)="handleInitPM()"
+            size="small"
+            label="Initiate PM"
+            severity="success"
+            type="button"
+            class="me-2"
+            [disabled]="!canStartOrSkipPM()"
+          ></p-button>
+          <p-button
+            (onClick)="handleOpenSkipPMDialog()"
+            size="small"
+            label="Skip PM"
+            severity="secondary"
+            type="button"
+            [disabled]="!canStartOrSkipPM()"
+          ></p-button>
 
           @if (pmStarted()) {
             <p-button
