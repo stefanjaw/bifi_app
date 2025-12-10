@@ -145,6 +145,7 @@ export class ProductFormDialog extends BaseDialog {
               name: rawValue.createdMake.oemName!,
               lastName: rawValue.createdMake.oemName!,
               type: 'company',
+              website: 'www.example.com',
             },
           }),
           ...(!this.isCreatingNewProductType() && {
