@@ -1,0 +1,40 @@
+<bifi-app-asset-roster-edit-form
+  [assetRoster]="assetRoster()"
+  [activityHistories]="activityHistories.value()"
+  [assetTypes]="assetTypes.value()"
+  [contacts]="contacts.value()"
+  [rooms]="rooms.value()"
+  [maintenanceWindows]="maintenanceWindows.value()"
+  [isLoading]="loading()"
+  [isSubmitLoading]="submitLoading()"
+  [isEditMode]="isEditMode()"
+/>
+
+<!-- dialogs -->
+<bifi-app-asset-commissioning-form-dialog
+  [assetRoster]="assetRoster()"
+></bifi-app-asset-commissioning-form-dialog>
+<bifi-app-asset-decommissioning-form-dialog
+  [assetRoster]="assetRoster()"
+></bifi-app-asset-decommissioning-form-dialog>
+<bifi-app-asset-maintenance-form-dialog
+  [assetRoster]="assetRoster()"
+></bifi-app-asset-maintenance-form-dialog>
+<bifi-app-asset-finish-maintenance-form-dialog
+  [assetRoster]="assetRoster()"
+  maintenanceType="service"
+  #finishService
+></bifi-app-asset-finish-maintenance-form-dialog>
+<bifi-app-asset-finish-maintenance-form-dialog
+  [assetRoster]="assetRoster()"
+  maintenanceType="preventive-maintenance"
+  #finishPM
+></bifi-app-asset-finish-maintenance-form-dialog>
+<bifi-app-asset-skip-maintenance-form-dialog
+  [assetRoster]="assetRoster()"
+></bifi-app-asset-skip-maintenance-form-dialog>
+
+<!-- Document upload -->
+<bifi-app-asset-roster-document-dialog
+  (submitted)="handleDocumentAdded($event)"
+></bifi-app-asset-roster-document-dialog>

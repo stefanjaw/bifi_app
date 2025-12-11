@@ -1,0 +1,77 @@
+<bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="5">
+  @if (activityHistory.length > 0) {
+    <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
+  } @else {
+    @for (history of activityHistory(); track $index) {
+      <p-card class="shadow-2xl mb-3">
+        <ng-template #content>
+          <div class="flex justify-between items-center">
+            <!-- <bifi-app-badge [variant]="getBadgeVariant(history)">
+              {{ history.title }}
+            </bifi-app-badge> -->
+            <p-tag [severity]="getBadgeVariant(history)" [value]="history.title"></p-tag>
+            <div>
+              <p class="text-sm text-gray-600">
+                Logged:
+                {{ history.performDate | date: 'MM/dd/yyyy h:mm a' }}
+              </p>
+
+              <p class="text-sm text-gray-600">
+                Logged By: {{ history.userId?.username || 'No User' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <p class="text-sm text-gray-600">
+              Performed:
+              {{ history.performDate | date: 'MM/dd/yyyy' }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+              Details:
+              {{ history.details }}
+            </p>
+          </div>
+        </ng-template>
+        <!-- footer -->
+        <ng-template #footer>
+          <div class="flex justify-start gap-3">
+            @if (
+              history.modelId.attachments &&
+              history.modelId.attachments.length > 0 &&
+              history.title !== 'Decommissioned'
+            ) {
+              @let attachment = history.modelId.attachments[0];
+
+              <p-button
+                [label]="'View: ' + attachment.name"
+                severity="primary"
+                icon="pi pi-file"
+                variant="text"
+                (onClick)="downloadFile(attachment)"
+              ></p-button>
+            } @else if (
+              history.title !== 'Decommissioned' && !isNotValidForAttachmentAdding(history.modelId)
+            ) {
+              <p-button
+                label="Add Attachment"
+                severity="primary"
+                icon="pi pi-plus"
+                variant="text"
+                (onClick)="selectedHistoryDocument.set(history.modelId); addFileDialog.openDialog()"
+              ></p-button>
+            } @else {
+              <div class="text-sm text-gray-500 italic">No attachment available.</div>
+            }
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  }
+
+  <bifi-app-asset-roster-activity-history-add-file-dialog
+    #addFileDialog
+    [activityHistoryDocument]="selectedHistoryDocument()"
+  ></bifi-app-asset-roster-activity-history-add-file-dialog>
+</bifi-app-form-section>

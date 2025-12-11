@@ -1,0 +1,69 @@
+<p-dialog
+  [header]="assetRoster()?.assetCommission ? 'Re-attempt Commission' : 'Commission'"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <p [bifiAppText]="'small'">
+      Peform inspection for: {{ assetRoster()?.productModel + ' - ' + assetRoster()?.serialNumber }}
+    </p>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Inspection Outcome</bifi-app-form-label>
+      <div class="flex flex-wrap gap-4">
+        <div class="flex items-center">
+          <p-radiobutton value="pass" formControlName="outcome" inputId="pass" />
+          <label for="pass" [bifiAppText]="'small'" class="ml-2 text-green-600">Pass</label>
+        </div>
+
+        <div class="flex items-center">
+          <p-radiobutton value="fail" formControlName="outcome" inputId="fail" />
+          <label for="fail" [bifiAppText]="'small'" class="ml-2 text-red-600">Fail</label>
+        </div>
+      </div>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Details</bifi-app-form-label>
+      <textarea
+        pInputTextarea
+        formControlName="details"
+        type="text"
+        placeholder="Enter details"
+      ></textarea>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <!-- <bifi-app-form-field>
+      <bifi-app-form-label>Upload Inspection Report (PDF Optional)</bifi-app-form-label>
+      <input type="file" formControlName="attachments" pInputText />
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field> -->
+
+    <bifi-app-form-uploader formArrayName="attachments">
+      <p-fileUpload
+        showUploadButton="false"
+        showCancelButton="false"
+        name="files"
+        [multiple]="false"
+        accept="application/*"
+        maxFileSize="100000000"
+        mode="basic"
+      ></p-fileUpload>
+    </bifi-app-form-uploader>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      cancelLabel="Cancel"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

@@ -1,0 +1,41 @@
+@if (assetRoster()?.status === 'awaiting-commissioning') {
+  <p-message severity="warn" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-question-circle" bifiAppIcon="lg"></i>
+      <div>
+        <div class="font-medium">Asset: Awaiting Commissioning</div>
+        <div class="text-sm mt-1">
+          This asset requires initial inspection and commissioning before use.
+        </div>
+      </div>
+    </div>
+  </p-message>
+} @else if (assetRoster()?.status === 'active' || assetRoster()?.status === 'in-pm') {
+  <p-message severity="success" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-check-circle" bifiAppIcon="lg"></i>
+      <div>
+        <div class="font-medium">Asset: Active</div>
+      </div>
+    </div>
+  </p-message>
+} @else if (assetRoster()?.status === 'under-service') {
+  <p-message severity="warn" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-question-circle" bifiAppIcon="lg"></i>
+      <div>
+        <div class="font-medium">Asset: Under Service</div>
+        <div class="text-sm mt-1">This asset is currently under service.</div>
+      </div>
+    </div>
+  </p-message>
+} @else if (assetRoster()?.status === 'decommissioned') {
+  <p-message severity="error" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-ban" bifiAppIcon="lg"></i>
+      <div>
+        <div class="font-medium">Asset: Decommissioned</div>
+      </div>
+    </div>
+  </p-message>
+}

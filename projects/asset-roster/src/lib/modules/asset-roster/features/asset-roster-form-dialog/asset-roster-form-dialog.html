@@ -1,0 +1,106 @@
+<p-dialog
+  header="Add New Medical Asset"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  @if (isLoading()) {
+    <p>Loading...</p>
+  } @else {
+    <form
+      [formGroup]="form"
+      class="flex flex-col gap-6"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit($event)"
+    >
+      <bifi-app-form-field>
+        <bifi-app-form-label>Type of Asset</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="assetTypeIds"
+          [options]="assetTypeOptions()"
+          optionLabel="name"
+          optionValue="_id"
+          [filter]="true"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      @if (isCreatingNewAssetType()) {
+        <bifi-app-form-field formGroupName="createdType">
+          <bifi-app-form-label>New Asset Type Name</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="name"
+            type="text"
+            placeholder="e.g Laser Therapy Unity"
+          />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field formGroupName="createdType">
+          <bifi-app-form-label>New Asset Type Description</bifi-app-form-label>
+          <textarea
+            pInputTextarea
+            formControlName="description"
+            rows="3"
+            type="text"
+            placeholder="e.g For therapeutic laser treatments"
+          ></textarea>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      }
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Make</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="makeIds"
+          [options]="contactOptions()"
+          optionLabel="name"
+          optionValue="_id"
+          [filter]="true"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      @if (isCreatingNewMake()) {
+        <bifi-app-form-field formGroupName="createdMake">
+          <bifi-app-form-label>Other OEM Name</bifi-app-form-label>
+          <input pInputText formControlName="oemName" type="text" placeholder="Enter OEM name" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      }
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Model</bifi-app-form-label>
+        <input
+          pInputText
+          formControlName="productModel"
+          type="text"
+          placeholder="e.g, Optima XR220amx"
+        />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Serial Number</bifi-app-form-label>
+        <input pInputText formControlName="serialNumber" type="text" placeholder="e.g, SN00X" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+        <p-datepicker formControlName="acquiredDate" [showIcon]="true"></p-datepicker>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="closeDialog()"
+        cancelLabel="Cancel"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  }
+</p-dialog>

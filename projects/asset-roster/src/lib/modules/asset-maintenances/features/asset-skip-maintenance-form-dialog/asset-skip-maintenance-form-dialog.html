@@ -1,0 +1,36 @@
+<p-dialog
+  header="Skip PM"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <p [bifiAppText]="'small'" class="font-bold!">
+      Comfirm skip of PM for {{ assetRoster()?.maintenanceDate | date }}
+    </p>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>Notes</bifi-app-form-label>
+      <textarea
+        pInputTextarea
+        formControlName="notes"
+        type="text"
+        placeholder="Eg. No issues"
+      ></textarea>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      saveLabel="Confirm Skip"
+      cancelLabel="Cancel"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

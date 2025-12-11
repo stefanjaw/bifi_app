@@ -10,6 +10,6 @@ export const ASSET_ROASTER_ROUTES: Routes = [
   {
     path: 'equipment',
     canActivate: [authGuard],
-    loadChildren: () => import('../modules/index').then(m => m.PRODUCT_ROUTES),
+    loadChildren: () => import('../modules/index').then(m => m.ASSET_ROSTER_ROUTES),
   },
 ];

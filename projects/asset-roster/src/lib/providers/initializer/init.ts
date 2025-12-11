@@ -4,7 +4,7 @@ import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing
 import {
   FACILITIES_ROUTES,
   MAINTENANCE_WINDOWS_ROUTES,
-  PRODUCT_TYPES_ROUTES,
+  ASSET_TYPES_ROUTES,
   ROOMS_ROUTES,
 } from '../../modules';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roster.routes';
@@ -56,9 +56,9 @@ function initializeMenu() {
           },
           {
             icon: PrimeIcons.LIST,
-            routerLink: ['/settings/asset-roster/product-types'],
-            label: 'Equipment Types',
-            resource: 'product-types/menu',
+            routerLink: ['/settings/asset-roster/asset-types'],
+            label: 'Asset Types',
+            resource: 'asset-types/menu',
           },
         ],
       },
@@ -90,8 +90,8 @@ function initializeMenu() {
           children: FACILITIES_ROUTES,
         },
         {
-          path: 'product-types',
-          children: PRODUCT_TYPES_ROUTES,
+          path: 'asset-types',
+          children: ASSET_TYPES_ROUTES,
         },
       ],
     },

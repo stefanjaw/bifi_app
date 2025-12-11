@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormModule } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
@@ -17,15 +25,17 @@ export class ReportingDownloadDialog extends BaseDialog {
   private crudReportings = inject(CrudReporting);
 
   // inputs
-  model = input<string>('');
+  model = input.required<string>();
 
   // models
   selectedReporting = model('');
 
   // data
   reportingTemplatesResource = this.crudReportings.get({
-    searchParams: { model: 'Product' },
-    triggerRequest: this.dialogState,
+    searchParams: computed(() => ({
+      model: this.model(),
+    })),
+    triggerRequest: computed(() => this.dialogState() && this.model() !== ''),
   });
 
   reportingTemplates = this.reportingTemplatesResource.value;

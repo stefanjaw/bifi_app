@@ -1,0 +1,94 @@
+<section class="flex justify-between items-center gap-2 mb-4">
+  <h1 class="text-2xl font-bold">Asset Dashboard</h1>
+  <div class="flex gap-2">
+    <p-button
+      label="Reporting"
+      severity="success"
+      icon="pi pi-file-pdf"
+      (onClick)="downloadReportDialog.openDialog()"
+      *bifiAppHasPermission="'reporting/generate-report:read:model'"
+    ></p-button>
+    <p-button
+      label="Import CSV"
+      severity="success"
+      icon="pi pi-upload"
+      (onClick)="fileInput.click()"
+      *bifiAppHasPermission="'asset-rosters/import:create:model'"
+    ></p-button>
+    <p-button
+      label="Export CSV"
+      icon="pi pi-download"
+      (onClick)="exportCSV()"
+      *bifiAppHasPermission="'asset-rosters/export:read:model'"
+    ></p-button>
+    <p-button
+      label="Add New Asset"
+      severity="secondary"
+      icon="pi pi-plus"
+      (onClick)="createDialog.openDialog()"
+      *bifiAppHasPermission="'asset-rosters:create:model'"
+    ></p-button>
+
+    <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
+  </div>
+</section>
+
+<section class="flex flex-col lg:flex-row gap-4 mb-4">
+  <bifi-app-asset-roster-status-card
+    [units]="assetRostersUnderServiceCount.value() || 0"
+    variant="under-service"
+    class="w-full"
+  ></bifi-app-asset-roster-status-card>
+
+  <bifi-app-asset-roster-status-card
+    [units]="assetRostersOverdueCount.value() || 0"
+    variant="overdue"
+    class="w-full"
+  ></bifi-app-asset-roster-status-card>
+
+  <bifi-app-asset-roster-status-card
+    [units]="assetRostersDueCount.value() || 0"
+    variant="due"
+    class="w-full"
+  ></bifi-app-asset-roster-status-card>
+
+  <bifi-app-asset-roster-status-card
+    [units]="assetRostersInPMCount.value() || 0"
+    variant="in-pm"
+    class="w-full"
+  ></bifi-app-asset-roster-status-card>
+
+  <bifi-app-asset-roster-status-card
+    [units]="assetRostersPMNotSetCount.value() || 0"
+    variant="pm-not-set"
+    class="w-full"
+  ></bifi-app-asset-roster-status-card>
+</section>
+
+<section class="flex flex-col md:flex-row gap-2 mb-4">
+  <bifi-app-search-bar
+    [searchFilters]="assetRosterFilters"
+    label="Search by Model, S/N, condition, type, make, vendor and location"
+    class="md:w-7/10"
+  ></bifi-app-search-bar>
+  <bifi-app-asset-roster-status-select class="md:w-3/10"></bifi-app-asset-roster-status-select>
+</section>
+
+<!-- table -->
+<bifi-app-table-layout [columns]="assetRosterColumns" [data]="assetRosters">
+  <ng-template #actions let-element>
+    <p-tag
+      routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+      class="cursor-pointer"
+      severity="warn"
+      [value]="'View details'"
+      *bifiAppHasPermission="'asset-rosters/update:view'"
+    ></p-tag>
+  </ng-template>
+</bifi-app-table-layout>
+
+<bifi-app-asset-roster-form-dialog #createDialog></bifi-app-asset-roster-form-dialog>
+<bifi-app-reporting-download-dialog
+  #downloadReportDialog
+  [model]="'AssetRoster'"
+></bifi-app-reporting-download-dialog>
