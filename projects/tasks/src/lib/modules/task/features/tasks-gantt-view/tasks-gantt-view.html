@@ -76,16 +76,11 @@
               class="flex-shrink-0 text-center"
               [style.width.px]="pixelsPerDay()"
               [ngClass]="{
-                'bg-yellow-100': isToday(date),
                 'border-l border-gray-200': formatDateHeader(date),
               }"
             >
               <span class="text-xs font-medium text-gray-500">
                 {{ formatDateHeader(date) | titlecase }}
-
-                @if (isToday(date)) {
-                  <span class="text-red-600">*</span>
-                }
               </span>
             </div>
           }
@@ -110,6 +105,19 @@
             [style.top.px]="i * rowHeight()"
             [style.height.px]="rowHeight()"
           ></div>
+        }
+        <!-- Today marker -->
+        @if (todayOffset() > 0) {
+          <div
+            class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-30"
+            [style.left.px]="todayOffset()"
+          >
+            <div
+              class="absolute top-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-1 rounded-sm whitespace-nowrap"
+            >
+              TODAY
+            </div>
+          </div>
         }
       </div>
 

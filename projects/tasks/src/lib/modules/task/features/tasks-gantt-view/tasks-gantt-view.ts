@@ -107,7 +107,7 @@ export class TasksGanttView implements OnDestroy {
     const { start, end } = this.timelineRange();
     const units: dayjs.Dayjs[] = [];
 
-    let current = dayjs(start).startOf('month');
+    let current = dayjs(start);
 
     while (current.isSameOrBefore(end, 'day')) {
       units.push(current);
@@ -166,6 +166,13 @@ export class TasksGanttView implements OnDestroy {
     }
 
     return paths;
+  });
+
+  todayOffset = computed(() => {
+    const today = dayjs().startOf('day');
+    const start = dayjs(this.timelineRange().start);
+    const daysFromStart = today.diff(start, 'day');
+    return daysFromStart * this.pixelsPerDay() + this.pixelsPerDay() / 2;
   });
 
   //#endregion
@@ -238,16 +245,6 @@ export class TasksGanttView implements OnDestroy {
       default:
         return '';
     }
-  }
-
-  /**
-   * Checks if a given date is today.
-   * @param date - The date to check.
-   * @returns True if the date is today, false otherwise.
-   */
-  isToday(date: dayjs.Dayjs): boolean {
-    const today = dayjs().startOf('day');
-    return date.isSame(today, 'day');
   }
 
   /**
