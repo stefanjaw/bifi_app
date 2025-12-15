@@ -226,22 +226,22 @@ export class TasksGanttView implements OnDestroy {
     return (end.diff(start, 'day') + 1) * this.pixelsPerDay();
   }
 
-  formatDateHeader(date: dayjs.Dayjs): string {
+  formatDateHeader(date: dayjs.Dayjs, index: number): string {
     switch (this.viewMode()) {
       case 'Day':
         return date.date() === 1 ? date.format('MMM D') : date.format('D');
       case 'Week': {
         const start = date;
-        const end = date.add(6, 'day');
+        const end = date.endOf('week');
 
-        if (!start.isSame(start.startOf('week'), 'day')) return '';
+        if (!start.isSame(start.startOf('week'), 'day') && index !== 0) return '';
 
         return start.month() === end.month()
           ? `${start.format('MMM D')} - ${end.format('D')}`
           : `${start.format('MMM D')} - ${end.format('MMM D')}`;
       }
       case 'Month':
-        return date.date() === 1 ? date.format('MMM') : '';
+        return date.date() === 1 || index === 0 ? date.format('MMM') : '';
       default:
         return '';
     }

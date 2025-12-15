@@ -71,16 +71,16 @@
       <!-- Timeline Header -->
       <div class="sticky top-0 z-20 bg-gray-50">
         <div class="flex h-12 border-b border-gray-200">
-          @for (date of gridUnits(); track date) {
+          @for (date of gridUnits(); track date; let i = $index) {
             <div
               class="flex-shrink-0 text-center"
               [style.width.px]="pixelsPerDay()"
               [ngClass]="{
-                'border-l border-gray-200': formatDateHeader(date),
+                'border-l border-gray-200': formatDateHeader(date, i),
               }"
             >
               <span class="text-xs font-medium text-gray-500">
-                {{ formatDateHeader(date) | titlecase }}
+                {{ formatDateHeader(date, i) | titlecase }}
               </span>
             </div>
           }
@@ -95,7 +95,7 @@
             class="absolute top-0 bottom-0"
             [style.left.px]="i * pixelsPerDay()"
             [style.width.px]="pixelsPerDay()"
-            [ngClass]="{ 'border-l border-gray-200': formatDateHeader(date) }"
+            [ngClass]="{ 'border-l border-gray-200': formatDateHeader(date, i) }"
           ></div>
         }
         <!-- Horizontal row lines -->
