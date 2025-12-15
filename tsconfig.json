@@ -18,6 +18,9 @@
       "@avalantec/website": ["./projects/website/src/lib"],
       "@avalantec/website/*": ["./projects/website/src/lib/*"],
 
+      "@avalantec/tasks": ["./projects/tasks/src/lib"],
+      "@avalantec/tasks/*": ["./projects/tasks/src/lib/*"],
+
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },

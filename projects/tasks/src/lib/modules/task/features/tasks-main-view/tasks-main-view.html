@@ -1,0 +1,87 @@
+<header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800">Project Timeline</h1>
+  </div>
+  <div class="flex items-center space-x-4">
+    <!-- <button
+      (click)="openCreateTaskModal()"
+      class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+    >
+      + Create Task
+    </button> -->
+    <p-button label="Add Task" severity="secondary" icon="pi pi-plus"></p-button>
+
+    <div class="flex items-center space-x-2">
+      <span class="text-sm font-medium text-gray-600">View:</span>
+      <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+        <button
+          (click)="viewMode.set('Day')"
+          [class]="viewMode() === 'Day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          Day
+        </button>
+        <button
+          (click)="viewMode.set('Week')"
+          [class]="viewMode() === 'Week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          Week
+        </button>
+        <button
+          (click)="viewMode.set('Month')"
+          [class]="viewMode() === 'Month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          Month
+        </button>
+        <button
+          (click)="viewMode.set('List')"
+          [class]="viewMode() === 'List' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          List
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+@if (isLoading()) {
+  <div class="flex-grow flex items-center justify-center">
+    <div class="text-center">
+      <i class="pi pi-spinner pi-spin"></i>
+      <p class="mt-2 text-gray-600">Loading Project Data...</p>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="flex-grow flex items-center justify-center">
+    <div
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative"
+      role="alert"
+    >
+      <strong class="font-bold">Error:</strong>
+      <span class="block sm:inline">{{ error() }}</span>
+    </div>
+  </div>
+} @else {
+  @if (viewMode() !== 'List') {
+    <!-- Gantt View -->
+    <bifi-app-tasks-gantt-view
+      [flat]="flat()"
+      [map]="map()"
+      [tree]="tree()"
+      [visible]="visible()"
+      [viewMode]="viewMode()"
+      [dependencies]="dependencies()"
+      (toggleExpand)="toggleExpand($event)"
+    ></bifi-app-tasks-gantt-view>
+  } @else {
+    <!-- List View -->
+    <bifi-app-tasks-list-view
+      [tasks]="visible()"
+      (toggleExpand)="toggleExpand($event)"
+    ></bifi-app-tasks-list-view>
+  }
+}

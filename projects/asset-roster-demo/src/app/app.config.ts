@@ -20,6 +20,7 @@ import { provideCalendar } from '@avalantec/calendar';
 import { provideCRM } from '@avalantec/crm';
 import { Noir } from './primeng.preset';
 import { provideWebsite } from '@avalantec/website';
+import { provideTasks } from '@avalantec/tasks';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -50,6 +51,7 @@ export const appConfig: ApplicationConfig = {
     provideCalendar(),
     provideCRM(),
     provideWebsite(),
+    provideTasks(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',
