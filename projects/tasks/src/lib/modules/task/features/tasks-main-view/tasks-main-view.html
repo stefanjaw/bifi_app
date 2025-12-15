@@ -76,6 +76,7 @@
       [viewMode]="viewMode()"
       [dependencies]="dependencies()"
       (toggleExpand)="toggleExpand($event)"
+      (taskCreatedOrUpdated)="taskCreatedOrUpdated()"
     ></bifi-app-tasks-gantt-view>
   } @else {
     <!-- List View -->

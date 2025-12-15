@@ -73,10 +73,20 @@
         <div class="flex h-12 border-b border-gray-200">
           @for (date of gridUnits(); track date) {
             <div
-              class="flex-shrink-0 text-center border-r border-gray-200"
-              [style.width.px]="pixelsPerUnit()"
+              class="flex-shrink-0 text-center"
+              [style.width.px]="pixelsPerDay()"
+              [ngClass]="{
+                'bg-yellow-100': isToday(date),
+                'border-l border-gray-200': formatDateHeader(date),
+              }"
             >
-              <span class="text-xs font-medium text-gray-500">{{ formatDateHeader(date) }}</span>
+              <span class="text-xs font-medium text-gray-500">
+                {{ formatDateHeader(date) | titlecase }}
+
+                @if (isToday(date)) {
+                  <span class="text-red-600">*</span>
+                }
+              </span>
             </div>
           }
         </div>
@@ -87,9 +97,10 @@
         <!-- Grid lines -->
         @for (date of gridUnits(); track date; let i = $index) {
           <div
-            class="absolute top-0 bottom-0 border-r border-gray-200"
-            [style.left.px]="i * pixelsPerUnit()"
-            [style.width.px]="pixelsPerUnit()"
+            class="absolute top-0 bottom-0"
+            [style.left.px]="i * pixelsPerDay()"
+            [style.width.px]="pixelsPerDay()"
+            [ngClass]="{ 'border-l border-gray-200': formatDateHeader(date) }"
           ></div>
         }
         <!-- Horizontal row lines -->
@@ -100,49 +111,20 @@
             [style.height.px]="rowHeight()"
           ></div>
         }
-        <!-- Today marker -->
-        @if (todayOffset() > 0) {
-          <div
-            class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-30"
-            [style.left.px]="todayOffset() + pixelsPerUnit() / 2"
-          >
-            <div
-              class="absolute top-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-1 rounded-sm whitespace-nowrap"
-            >
-              TODAY
-            </div>
-          </div>
-        }
       </div>
 
       <!-- Task Bars -->
       <div class="relative" [style.height.px]="visible().length * rowHeight()">
         @for (task of visible(); track task.id; let i = $index) {
-          <!-- (mousedown)="onTaskMouseDown($event, task)"
-            (click)="selectTask(task.id)" -->
-          <div
-            class="absolute group h-8 rounded-md flex items-center cursor-pointer"
-            [style.top.px]="i * rowHeight() + 6"
-            [style.left.px]="getTaskOffset(task)"
-            [style.width.px]="getTaskWidth(task)"
-            [class]="task.children.length > 0 ? 'bg-indigo-700' : 'bg-indigo-500'"
-          >
-            <div
-              class="absolute top-0 left-0 h-full rounded-l-md bg-indigo-400"
-              [style.width.%]="task.progress"
-            ></div>
-            <span class="relative text-white text-xs font-semibold px-2 truncate">
-              {{ task.name }}
-            </span>
-
-            <!-- Resize Handle -->
-            <!-- (mousedown)="onResizeHandleMouseDown($event, task)" -->
-            <div
-              class="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <div class="w-1 h-4 bg-white/50 rounded-full mx-auto my-2"></div>
-            </div>
-          </div>
+          <bifi-app-task-gantt-bar
+            [task]="task"
+            [index]="i"
+            [height]="rowHeight()"
+            [taskOffSet]="getTaskOffset(task)"
+            [taskOffWidth]="getTaskWidth(task)"
+            [pixelsPerDay]="pixelsPerDay()"
+            (dateChange)="updateTaskDates(task.id, $event.start, $event.end)"
+          ></bifi-app-task-gantt-bar>
         }
       </div>
 

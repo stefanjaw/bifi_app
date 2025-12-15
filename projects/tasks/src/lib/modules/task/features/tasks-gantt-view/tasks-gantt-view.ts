@@ -2,8 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
+  inject,
   input,
   OnDestroy,
   output,
@@ -13,17 +15,23 @@ import {
 import { ganttDependency, ganttTask } from '../../interfaces/task-gantt';
 import minMax from 'dayjs/plugin/minMax';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
 import { viewMode } from '../../interfaces/task-view';
 import { task } from '../../interfaces/task';
 import { ButtonModule } from 'primeng/button';
+import { CommonModule } from '@angular/common';
+import { TaskGanttCard } from '../task-gantt-bar/task-gantt-bar';
+import { CrudTasks } from '../../services/crud-tasks';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 dayjs.extend(minMax);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-tasks-gantt-view',
-  imports: [ButtonModule],
+  imports: [ButtonModule, CommonModule, TaskGanttCard],
   templateUrl: './tasks-gantt-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,10 +50,15 @@ export class TasksGanttView implements OnDestroy {
 
   // Outputs
   toggleExpand = output<string>();
+  taskCreatedOrUpdated = output<void>();
 
   // Signals
   rowHeight = signal(40);
   ganttContainerWidth = signal(0);
+
+  // services
+  crudTasks = inject(CrudTasks);
+  private destroy$ = inject(DestroyRef);
 
   //#region Computed
 
@@ -53,26 +66,20 @@ export class TasksGanttView implements OnDestroy {
   timelineRange = computed(() => {
     const tasks = this.flat();
 
-    // Case: no tasks
-    if (tasks.length === 0) {
+    if (!tasks.length) {
       const today = dayjs();
-
-      return {
-        start: today.startOf('day').subtract(3, 'day').toDate(),
-        end: today.endOf('day').add(7, 'day').toDate(),
-      };
+      return { start: today.startOf('day').toDate(), end: today.endOf('day').toDate() };
     }
 
-    // Get start and end dates
-    const startDates = tasks.map(t => dayjs(t.plannedStartDate, 'YYYY-MM-DD'));
-    const endDates = tasks.map(t => dayjs(t.plannedEndDate, 'YYYY-MM-DD'));
+    const startDates = tasks.map(t => dayjs(t.plannedStartDate));
+    const endDates = tasks.map(t => dayjs(t.plannedEndDate));
 
-    // Get min and max
     const minDate = dayjs.min(startDates)!;
     const maxDate = dayjs.max(endDates)!;
 
+    // Para semana/mes, limitar exactamente a las fechas
     return {
-      start: minDate.startOf('day').subtract(3, 'day').toDate(),
+      start: minDate.startOf('day').subtract(7, 'day').toDate(),
       end: maxDate.endOf('day').add(7, 'day').toDate(),
     };
   });
@@ -90,48 +97,21 @@ export class TasksGanttView implements OnDestroy {
     return containerWidth / totalDays;
   });
 
-  pixelsPerUnit = computed(() => {
-    const width = this.ganttContainerWidth();
-    const units = this.gridUnits().length;
-
-    if (!width || !units) return 80;
-    return width / units;
-  });
-
   // The width of the timeline
   timelineWidth = computed(() => {
-    return this.gridUnits().length * this.pixelsPerUnit();
+    return this.gridUnits().length * this.pixelsPerDay();
   });
 
   // The dates of the grid
   gridUnits = computed(() => {
     const { start, end } = this.timelineRange();
-    const view = this.viewMode();
     const units: dayjs.Dayjs[] = [];
 
-    let current = dayjs(start);
+    let current = dayjs(start).startOf('month');
 
-    if (view === 'Day') {
-      while (current.isSameOrBefore(end, 'day')) {
-        units.push(current);
-        current = current.add(1, 'day');
-      }
-    }
-
-    if (view === 'Week') {
-      current = current.startOf('week');
-      while (current.isSameOrBefore(end, 'day')) {
-        units.push(current);
-        current = current.add(1, 'week');
-      }
-    }
-
-    if (view === 'Month') {
-      current = current.startOf('month');
-      while (current.isSameOrBefore(end, 'day')) {
-        units.push(current);
-        current = current.add(1, 'month');
-      }
+    while (current.isSameOrBefore(end, 'day')) {
+      units.push(current);
+      current = current.add(1, 'day');
     }
 
     return units;
@@ -188,18 +168,13 @@ export class TasksGanttView implements OnDestroy {
     return paths;
   });
 
-  // The horizontal offset of today
-  todayOffset = computed(() => {
-    const today = dayjs().startOf('day');
-    const start = dayjs(this.timelineRange().start);
-
-    const daysFromStart = today.diff(start, 'day');
-
-    return daysFromStart * this.pixelsPerDay();
-  });
-
   //#endregion
 
+  /**
+   * Constructor for the TasksGanttViewComponent.
+   * Sets up a ResizeObserver to detect changes to the width of the gantt container element.
+   * When the width changes, the component's width is updated.
+   */
   constructor() {
     effect(() => {
       const ganttContainer = this.ganttContainer();
@@ -222,9 +197,8 @@ export class TasksGanttView implements OnDestroy {
   //#region Methods
 
   /**
-   * Calculates the horizontal offset of a task from the start of the timeline range.
-   * The offset is calculated in pixels, and is based on the difference in days between
-   * the task's start date and the start of the timeline range.
+   * Calculates the offset of a task in pixels, relative to the start of the timeline range.
+   * The offset is calculated by multiplying the difference in days between the task's start date and the start of the timeline range by the number of pixels per day.
    * @param task - The task to calculate the offset for.
    * @returns The offset of the task in pixels.
    */
@@ -234,48 +208,70 @@ export class TasksGanttView implements OnDestroy {
   }
 
   /**
-   * Calculates the width of a task in pixels.
-   * The width is calculated as the difference in days between the task's start and end dates,
-   * plus one day to include the end date, multiplied by the number of pixels per day in the timeline.
+   * Calculates the width of a task in pixels, based on the difference in days between its start and end dates.
+   * The width is calculated by multiplying the difference in days by the number of pixels per day.
    * @param task - The task to calculate the width for.
    * @returns The width of the task in pixels.
    */
-  getTaskWidth(task: ganttTask): number {
+  getTaskWidth(task: ganttTask) {
     const start = dayjs(task.start);
     const end = dayjs(task.end);
     return (end.diff(start, 'day') + 1) * this.pixelsPerDay();
   }
 
-  /**
-   * Formats a date header based on the current view mode.
-   * When the view mode is 'Day', the header will display the month and day of the month if the date is the first day of the month, otherwise it will only display the day of the month.
-   * When the view mode is 'Week', the header will display the range of days in the week, in the format 'MMM D - MMM D'.
-   * When the view mode is 'Month', the header will display the month name if the date is the first day of the month, otherwise it will be blank.
-   * @param date - The date to format the header for.
-   * @returns The formatted date header string.
-   */
   formatDateHeader(date: dayjs.Dayjs): string {
     switch (this.viewMode()) {
       case 'Day':
         return date.date() === 1 ? date.format('MMM D') : date.format('D');
-
       case 'Week': {
         const start = date;
         const end = date.add(6, 'day');
 
-        if (start.month() === end.month()) {
-          return `${start.format('MMM D')} - ${end.format('D')}`;
-        }
+        if (!start.isSame(start.startOf('week'), 'day')) return '';
 
-        return `${start.format('MMM D')} - ${end.format('MMM D')}`;
+        return start.month() === end.month()
+          ? `${start.format('MMM D')} - ${end.format('D')}`
+          : `${start.format('MMM D')} - ${end.format('MMM D')}`;
       }
-
       case 'Month':
         return date.date() === 1 ? date.format('MMM') : '';
-
       default:
         return '';
     }
+  }
+
+  /**
+   * Checks if a given date is today.
+   * @param date - The date to check.
+   * @returns True if the date is today, false otherwise.
+   */
+  isToday(date: dayjs.Dayjs): boolean {
+    const today = dayjs().startOf('day');
+    return date.isSame(today, 'day');
+  }
+
+  /**
+   * Updates the planned start and end dates of a task with the given ID.
+   * The task will be updated in the database and the taskCreatedOrUpdated event will be emitted.
+   * @param taskId - The ID of the task to update.
+   * @param start - The new planned start date of the task.
+   * @param end - The new planned end date of the task.
+   */
+  updateTaskDates(taskId: string, start: dayjs.Dayjs, end: dayjs.Dayjs) {
+    this.crudTasks
+      .put({
+        _id: taskId,
+        data: {
+          plannedStartDate: start.toISOString(),
+          plannedEndDate: end.toISOString(),
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: task => {
+          if (task) this.taskCreatedOrUpdated.emit();
+        },
+      });
   }
 
   //#endregion
