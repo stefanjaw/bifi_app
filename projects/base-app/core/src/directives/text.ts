@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/directive-selector */
 import { computed, Directive, effect, input } from '@angular/core';
 
-export type TextVariant = 'title-1' | 'title-2' | 'title-3' | 'paragraph' | 'small';
+export type TextVariant = 'title-1' | 'title-2' | 'title-3' | 'paragraph' | 'small' | 'medium';
 
 @Directive({
   selector: '[bifiAppText]',
@@ -26,6 +26,8 @@ export class Text {
         return 'font-size: 1rem; font-weight: 400';
       case 'small':
         return 'font-size: 0.75rem; font-weight: 400';
+      case 'medium':
+        return 'font-size: 1rem; font-weight: 500';
       default:
         return 'font-size: 1rem; font-weight: 400';
     }

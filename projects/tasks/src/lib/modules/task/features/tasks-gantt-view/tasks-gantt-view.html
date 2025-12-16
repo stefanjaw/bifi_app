@@ -25,7 +25,7 @@
                 class="transition-transform me-1"
                 [class.rotate-90]="task.isExpanded"
                 size="small"
-                (onClick)="toggleExpand.emit(task.id); $event.stopPropagation()"
+                (onClick)="taskMaintenanceContext.toggleExpand(task.id); $event.stopPropagation()"
               ></p-button>
             } @else {
               <span class="w-5 mr-1"></span>
@@ -35,15 +35,15 @@
           <div
             class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <!-- (click)="openAddSubtaskModal(task); $event.stopPropagation()" -->
-            <!-- (click)="openEditTaskModal(task); $event.stopPropagation()" -->
-            <!-- (click)="deleteTask(task); $event.stopPropagation()" -->
             <p-button
               title="Add Subtask"
               size="small"
               severity="secondary"
               icon="pi pi-plus"
               variant="text"
+              (onClick)="
+                taskMaintenanceContext.openCreateSubTaskDialog(task.id); $event.stopPropagation()
+              "
             ></p-button>
             <p-button
               title="Edit Task"
@@ -51,6 +51,9 @@
               severity="secondary"
               icon="pi pi-pencil"
               variant="text"
+              (onClick)="
+                taskMaintenanceContext.openUpdateTaskDialog(task.id); $event.stopPropagation()
+              "
             ></p-button>
             <p-button
               title="Delete Task"

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { viewMode } from '../../interfaces/task-view';
 import { CrudTasks } from '../../services/crud-tasks';
@@ -7,16 +15,28 @@ import { TasksGanttView } from '../tasks-gantt-view/tasks-gantt-view';
 import { task } from '../../interfaces/task';
 import { ganttDependency, ganttTask } from '../../interfaces/task-gantt';
 import dayjs from 'dayjs';
+import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
+import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 
 @Component({
   selector: 'bifi-app-tasks-main-view',
-  imports: [ButtonModule, TasksListView, TasksGanttView],
+  imports: [
+    ButtonModule,
+    TasksListView,
+    TasksGanttView,
+    CreateTasksFormDialog,
+    UpdateTasksFormDialog,
+  ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksMainView {
   private crudTasks = inject(CrudTasks);
+  private tasksMaintenanceContext = inject(TasksMaintenanceContext);
+  private destroy$ = inject(DestroyRef);
 
   // data
   private tasksResource = this.crudTasks.get({});
@@ -33,17 +53,19 @@ export class TasksMainView {
   map = signal<Map<string, ganttTask>>(new Map());
   dependencies = signal<ganttDependency[]>([]);
 
+  // dialogs
+  createTasksFormDialog = viewChild<CreateTasksFormDialog>('createTasksFormDialog');
+  updateTasksFormDialog = viewChild<UpdateTasksFormDialog>('updateTasksFormDialog');
+
   /**
-   * The constructor for the TasksMainView component.
-   * It sets up two effects that listen for changes to the tasksResource.
-   * The first effect listens for changes to the tasksResource and builds a tree of tasks.
-   * The second effect listens for changes to the tree and sets the visible tasks signal.
+   * Constructor for the TasksMainView component.
+   *
+   * Sets up the component's state by listening for changes to the tasksResource,
+   * the tree, and the taskCreatedOrUpdated, toggleExpand, openCreateSubTaskDialog,
+   * and openUpdateTaskDialog events.
    */
   constructor() {
-    /**
-     * Effect that listens for changes to the tasksResource
-     * and builds a tree of tasks.
-     */
+    // Listen for changes to the tasksResource
     effect(() => {
       const flat = this.flat();
       if (!flat || flat.length === 0) return;
@@ -52,13 +74,31 @@ export class TasksMainView {
       this.dependencies.set(this.buildDependencies(flat));
     });
 
-    /**
-     * Effect that listens for changes to the tree and sets the visible tasks signal.
-     */
+    // Listen for changes to the tree
     effect(() => {
       const tree = this.tree();
       this.visible.set(this.flattenVisible(tree));
     });
+
+    // Listen for changes to the taskCreatedOrUpdated event
+    this.tasksMaintenanceContext.taskCreatedOrUpdated$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => this.tasksResource.reload());
+
+    // Listen for changes to the toggleExpand event
+    this.tasksMaintenanceContext.toggleExpand$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(id => this.toggleExpand(id));
+
+    // Listen for changes to the openCreateSubTaskDialog event
+    this.tasksMaintenanceContext.openCreateSubTaskDialog$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => this.createTasksFormDialog()?.openDialog());
+
+    // Listen for changes to the openUpdateTaskDialog event
+    this.tasksMaintenanceContext.openUpdateTaskDialog$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => this.updateTasksFormDialog()?.openDialog());
   }
 
   /**
@@ -194,12 +234,5 @@ export class TasksMainView {
 
     // Recalcular visibles:
     this.visible.set(this.flattenVisible(tree));
-  }
-
-  /**
-   * Reloads the tasks resource after a task has been created or updated.
-   */
-  taskCreatedOrUpdated() {
-    this.tasksResource.reload();
   }
 }

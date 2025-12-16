@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ganttTask } from '../../interfaces/task-gantt';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 
 @Component({
   selector: 'bifi-app-tasks-list-view',
@@ -11,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 })
 export class TasksListView {
   tasks = input<ganttTask[]>([]);
-  toggleExpand = output<string>();
-  taskCreatedOrUpdated = output<void>();
+
+  // services
+  protected tasksMaintenanceContext = inject(TasksMaintenanceContext);
 }

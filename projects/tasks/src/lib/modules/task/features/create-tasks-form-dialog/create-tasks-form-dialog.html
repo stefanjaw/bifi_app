@@ -1,0 +1,74 @@
+<p-dialog
+  header="Create New Task"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+>
+  @if (isLoading()) {
+    <p>Loading...</p>
+  } @else {
+    <form
+      [formGroup]="form"
+      class="flex flex-col gap-6"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit($event)"
+    >
+      <bifi-app-form-field>
+        <bifi-app-form-label>Task Name</bifi-app-form-label>
+        <input pInputText formControlName="name" type="text" placeholder="e.g, Laser Therapy" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Start Date</bifi-app-form-label>
+          <p-datepicker
+            appendTo="body"
+            formControlName="plannedStartDate"
+            [showIcon]="true"
+          ></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>End Date</bifi-app-form-label>
+          <p-datepicker
+            appendTo="body"
+            formControlName="plannedEndDate"
+            [showIcon]="true"
+          ></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          Progress
+          <span>({{ taskProgress() }}%)</span>
+        </bifi-app-form-label>
+        <p-slider formControlName="progress" [step]="1" [min]="0" [max]="100"></p-slider>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Parent Task</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="parentId"
+          [options]="tasks.value()"
+          optionLabel="name"
+          optionValue="_id"
+          [filter]="true"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="closeDialog()"
+        cancelLabel="Cancel"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  }
+</p-dialog>

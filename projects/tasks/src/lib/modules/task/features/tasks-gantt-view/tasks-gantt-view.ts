@@ -8,7 +8,6 @@ import {
   inject,
   input,
   OnDestroy,
-  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -24,6 +23,7 @@ import { CommonModule } from '@angular/common';
 import { TaskGanttCard } from '../task-gantt-bar/task-gantt-bar';
 import { CrudTasks } from '../../services/crud-tasks';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 
 dayjs.extend(minMax);
 dayjs.extend(isSameOrBefore);
@@ -48,10 +48,6 @@ export class TasksGanttView implements OnDestroy {
   ganttContainer = viewChild<ElementRef<HTMLDivElement>>('ganttContainer');
   resizeObserver?: ResizeObserver;
 
-  // Outputs
-  toggleExpand = output<string>();
-  taskCreatedOrUpdated = output<void>();
-
   // Signals
   rowHeight = signal(40);
   ganttContainerWidth = signal(0);
@@ -59,6 +55,7 @@ export class TasksGanttView implements OnDestroy {
   // services
   crudTasks = inject(CrudTasks);
   private destroy$ = inject(DestroyRef);
+  protected taskMaintenanceContext = inject(TasksMaintenanceContext);
 
   //#region Computed
 
@@ -226,10 +223,19 @@ export class TasksGanttView implements OnDestroy {
     return (end.diff(start, 'day') + 1) * this.pixelsPerDay();
   }
 
+  /**
+   * Returns a formatted string representing the given date, depending on the current view mode.
+   * If the view mode is 'Day', the string will be in the format 'MMM D' if the date is the first of the month, and 'D' otherwise.
+   * If the view mode is 'Week', the string will be in the format 'MMM D' - 'D' if the date is the start of the week and the end of the week is in the same month, and 'MMM D' - 'MMM D' otherwise.
+   * If the view mode is 'Month', the string will be in the format 'MMM' if the date is the first of the month, and an empty string otherwise.
+   * @param date - The date to format.
+   * @param index - The index of the date in the array of dates.
+   * @returns A formatted string representing the given date.
+   */
   formatDateHeader(date: dayjs.Dayjs, index: number): string {
     switch (this.viewMode()) {
       case 'Day':
-        return date.date() === 1 ? date.format('MMM D') : date.format('D');
+        return date.date() === 1 || index === 0 ? date.format('MMM D') : date.format('D');
       case 'Week': {
         const start = date;
         const end = date.endOf('week');
@@ -266,7 +272,7 @@ export class TasksGanttView implements OnDestroy {
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: task => {
-          if (task) this.taskCreatedOrUpdated.emit();
+          if (task) this.taskMaintenanceContext.taskCreatedOrUpdated();
         },
       });
   }

@@ -1,0 +1,177 @@
+<p-dialog
+  header="Edit Task"
+  [(visible)]="dialogState"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  position="right"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-full! m-0!"
+>
+  @if (isLoading()) {
+    <p>Loading...</p>
+  } @else {
+    <form
+      [formGroup]="form"
+      class="flex flex-col gap-6 h-full p-4"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit($event)"
+    >
+      <bifi-app-form-field>
+        <bifi-app-form-label>Task Name</bifi-app-form-label>
+        <input pInputText formControlName="name" type="text" placeholder="e.g, Laser Therapy" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Description</bifi-app-form-label>
+        <textarea pInputTextarea formControlName="description"></textarea>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Start Date</bifi-app-form-label>
+        <p-datepicker
+          appendTo="body"
+          formControlName="plannedStartDate"
+          [showIcon]="true"
+        ></p-datepicker>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>End Date</bifi-app-form-label>
+        <p-datepicker
+          appendTo="body"
+          formControlName="plannedEndDate"
+          [showIcon]="true"
+        ></p-datepicker>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Duration (hrs)</bifi-app-form-label>
+        <input pInputText type="number" formControlName="plannedDuration" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          Progress
+          <span>({{ taskProgress() }}%)</span>
+        </bifi-app-form-label>
+        <p-slider formControlName="progress" [step]="1" [min]="0" [max]="100"></p-slider>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Stage</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="stage"
+            [options]="taskStages()"
+            optionLabel="name"
+            optionValue="_id"
+            [filter]="true"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Priority</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="priority"
+            [options]="priorityOptions"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Parent Task</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="parentId"
+            [options]="parentTasks()"
+            optionLabel="name"
+            optionValue="_id"
+            [filter]="true"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Project</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="projectId"
+            [options]="taskProjects()"
+            optionLabel="name"
+            optionValue="_id"
+            [filter]="true"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Assigned</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="assigned"
+          [options]="users()"
+          optionLabel="username"
+          optionValue="_id"
+          [filter]="true"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <div formArrayName="dependencyIds" class="flex flex-col gap-4">
+        <p class="font-medium text-sm">Dependencies</p>
+
+        @for (control of form.controls.dependencyIds.controls; track $index; let i = $index) {
+          <div class="flex flex-row gap-2 justify-between items-center w-full">
+            <bifi-app-form-field>
+              <p-select
+                appendTo="body"
+                [formControlName]="i"
+                [options]="tasks()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <p-button
+              (onClick)="formService.removeDependency(i)"
+              type="button"
+              severity="danger"
+              icon="pi pi-times"
+              variant="text"
+            ></p-button>
+          </div>
+        }
+
+        <p-button
+          (onClick)="formService.addDependency()"
+          type="button"
+          variant="text"
+          severity="primary"
+          icon="pi pi-plus"
+        ></p-button>
+      </div>
+
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="closeDialog()"
+        cancelLabel="Cancel"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  }
+</p-dialog>

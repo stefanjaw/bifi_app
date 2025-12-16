@@ -3,13 +3,12 @@
     <h1 class="text-2xl font-bold text-gray-800">Project Timeline</h1>
   </div>
   <div class="flex items-center space-x-4">
-    <!-- <button
-      (click)="openCreateTaskModal()"
-      class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-    >
-      + Create Task
-    </button> -->
-    <p-button label="Add Task" severity="secondary" icon="pi pi-plus"></p-button>
+    <p-button
+      label="Add Task"
+      severity="secondary"
+      icon="pi pi-plus"
+      (onClick)="createTasksFormDialog.openDialog()"
+    ></p-button>
 
     <div class="flex items-center space-x-2">
       <span class="text-sm font-medium text-gray-600">View:</span>
@@ -75,14 +74,12 @@
       [visible]="visible()"
       [viewMode]="viewMode()"
       [dependencies]="dependencies()"
-      (toggleExpand)="toggleExpand($event)"
-      (taskCreatedOrUpdated)="taskCreatedOrUpdated()"
     ></bifi-app-tasks-gantt-view>
   } @else {
     <!-- List View -->
-    <bifi-app-tasks-list-view
-      [tasks]="visible()"
-      (toggleExpand)="toggleExpand($event)"
-    ></bifi-app-tasks-list-view>
+    <bifi-app-tasks-list-view [tasks]="visible()"></bifi-app-tasks-list-view>
   }
 }
+
+<bifi-app-create-tasks-form-dialog #createTasksFormDialog></bifi-app-create-tasks-form-dialog>
+<bifi-app-update-tasks-form-dialog #updateTasksFormDialog></bifi-app-update-tasks-form-dialog>

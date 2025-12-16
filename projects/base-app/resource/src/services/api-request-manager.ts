@@ -361,8 +361,6 @@ export class ApiRequestManager<T> {
   ): FormData {
     const formData = new FormData();
 
-    console.log('parsing data', data);
-
     for (const [key, value] of Object.entries(data)) {
       if (isFormUploaderFileArray(value))
         value.forEach(file => formData.append(`${key}`, file.file));
@@ -377,10 +375,10 @@ export class ApiRequestManager<T> {
       else formData.append(key, value);
     }
 
-    console.log('result:');
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // console.log('result:');
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     return formData;
   }

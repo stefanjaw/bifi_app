@@ -25,7 +25,7 @@
               class="transition-transform me-1"
               [class.rotate-90]="task.isExpanded"
               size="small"
-              (onClick)="toggleExpand.emit(task.id); $event.stopPropagation()"
+              (onClick)="tasksMaintenanceContext.toggleExpand(task.id); $event.stopPropagation()"
             ></p-button>
           } @else {
             <span class="w-5 mr-1"></span>
@@ -50,6 +50,9 @@
             severity="secondary"
             icon="pi pi-plus"
             variant="text"
+            (onClick)="
+              tasksMaintenanceContext.openCreateSubTaskDialog(task.id); $event.stopPropagation()
+            "
           ></p-button>
           <p-button
             title="Edit Task"
@@ -57,6 +60,9 @@
             severity="secondary"
             icon="pi pi-pencil"
             variant="text"
+            (onClick)="
+              tasksMaintenanceContext.openUpdateTaskDialog(task.id); $event.stopPropagation()
+            "
           ></p-button>
           <p-button
             title="Delete Task"
