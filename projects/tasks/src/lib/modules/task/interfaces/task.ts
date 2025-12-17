@@ -1,7 +1,7 @@
 import { user } from '@avalantec/base-app/interfaces';
-import { taskProject } from '../../task-projects/interfaces/task-projects';
 import { taskStage } from '../../task-stages/interfaces/task-stage';
 import { file } from '@avalantec/base-app/resource';
+import { project } from '@avalantec/projects';
 
 export interface task {
   _id: string;
@@ -12,7 +12,7 @@ export interface task {
   plannedDuration?: number;
   progress: number;
   stage?: taskStage;
-  projectId?: taskProject;
+  projectId?: project;
   dependencyIds?: task[];
   parentId?: task;
   priority: 'low' | 'medium' | 'high' | 'urgent';

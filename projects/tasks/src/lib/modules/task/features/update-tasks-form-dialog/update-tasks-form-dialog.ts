@@ -14,7 +14,6 @@ import { UpdateTaskForm, UpdateTaskFormModel } from '../../services/update-task-
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FileResolver, FilterManager } from '@avalantec/base-app/resource';
-import { CrudTaskProjects } from '../../../task-projects';
 import { CrudTaskStages } from '../../../task-stages';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -27,6 +26,7 @@ import { SliderModule } from 'primeng/slider';
 import dayjs from 'dayjs';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { ButtonModule } from 'primeng/button';
+import { CrudProjects } from '@avalantec/projects';
 
 @Component({
   selector: 'bifi-app-update-tasks-form-dialog',
@@ -47,7 +47,7 @@ import { ButtonModule } from 'primeng/button';
 export class UpdateTasksFormDialog extends BaseDialog {
   protected formService = inject(UpdateTaskForm);
   private crudTasks = inject(CrudTasks);
-  private crudTaskProjects = inject(CrudTaskProjects);
+  private crudProjects = inject(CrudProjects);
   private crudTaskStages = inject(CrudTaskStages);
   private crudUsers = inject(CrudUsers);
   private destroy$ = inject(DestroyRef);
@@ -83,7 +83,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
     triggerRequest: this.dialogState,
   });
 
-  taskProjectsResource = this.crudTaskProjects.get({
+  taskProjectsResource = this.crudProjects.get({
     triggerRequest: this.dialogState,
   });
 

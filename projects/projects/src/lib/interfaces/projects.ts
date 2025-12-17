@@ -1,6 +1,6 @@
 import { user } from '@avalantec/base-app/interfaces';
 
-export interface taskProject {
+export interface project {
   _id: string;
   name: string;
   description: string;
