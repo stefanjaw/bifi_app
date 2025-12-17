@@ -61,11 +61,11 @@ export class CreateTasksFormDialog extends BaseDialog {
   }
 
   async handleSubmit(data: FormValueState<CreateTaskFormModel>) {
-    const { dirtyValue } = data;
+    const { rawValue } = data;
 
     // Set default values
-    const plannedStartDate = dayjs(dirtyValue.plannedStartDate);
-    const plannedEndDate = dayjs(dirtyValue.plannedEndDate);
+    const plannedStartDate = dayjs(rawValue.plannedStartDate);
+    const plannedEndDate = dayjs(rawValue.plannedEndDate);
 
     if (
       plannedEndDate.isBefore(plannedStartDate) ||
@@ -75,12 +75,15 @@ export class CreateTasksFormDialog extends BaseDialog {
       return;
     }
 
+    if (!rawValue.parentId) delete rawValue.parentId;
+    if (!rawValue.progress) delete rawValue.progress;
+
     this.isSubmitLoading.set(true);
 
     this.crudTasks
       .post({
         data: {
-          ...dirtyValue,
+          ...rawValue,
           plannedStartDate: plannedStartDate.toISOString(),
           plannedEndDate: plannedEndDate.toISOString(),
         },
