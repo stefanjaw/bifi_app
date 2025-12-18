@@ -100,6 +100,11 @@ export class TasksMainView {
     this.tasksMaintenanceContext.openUpdateTaskDialog$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => this.updateTasksFormDialog()?.openDialog());
+
+    // Listen for changes to the deleteTask event
+    this.tasksMaintenanceContext.deleteTask$
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(id => this.deleteTask(id));
   }
 
   /**
@@ -237,5 +242,24 @@ export class TasksMainView {
 
     // Recalcular visibles:
     this.visible.set(this.flattenVisible(tree));
+  }
+
+  /**
+   * Deletes the task with the given ID.
+   *
+   * @param id The ID of the task to delete.
+   *
+   * This function will delete the task from the database and reload the tasks resource
+   * if the deletion is successful.
+   */
+  deleteTask(id: string) {
+    this.crudTasks
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.tasksResource.reload();
+        },
+      });
   }
 }

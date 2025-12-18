@@ -18,7 +18,6 @@ export class TaskGanttCard {
   pixelsPerDay = input.required<number>();
 
   // outputs
-  taskClicked = output<ganttTask>();
   dateChange = output<{ start: dayjs.Dayjs; end: dayjs.Dayjs }>();
 
   // drag internal state

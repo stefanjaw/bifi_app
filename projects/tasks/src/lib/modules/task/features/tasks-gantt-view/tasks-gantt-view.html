@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex-grow flex overflow-hidden pt-4" #ganttContainer>
   <!-- Task List Sidebar -->
   <div class="w-1/4 flex-shrink-0 overflow-y-auto pr-2">
@@ -8,9 +10,9 @@
     </div>
     <div class="relative">
       @for (task of visible(); track task.id; let i = $index) {
-        <!-- (click)="selectTask(task.id)" -->
         <div
           class="group flex items-center justify-between border-b border-r border-gray-200 h-10 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50"
+          (click)="taskMaintenanceContext.openUpdateTaskDialog(task.id)"
           [style.height.px]="rowHeight()"
         >
           <div
@@ -61,6 +63,7 @@
               severity="danger"
               icon="pi pi-trash"
               variant="text"
+              (onClick)="taskMaintenanceContext.deleteTask(task.id); $event.stopPropagation()"
             ></p-button>
           </div>
         </div>

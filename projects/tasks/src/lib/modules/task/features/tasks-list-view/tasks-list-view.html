@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex-grow overflow-y-auto pt-4 pr-4">
   <div
     class="sticky top-0 bg-gray-50 z-10 grid grid-cols-12 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
@@ -11,10 +13,11 @@
   <div class="border-x border-b border-gray-200">
     @for (task of tasks(); track task.id) {
       <div
-        class="grid grid-cols-12 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50"
+        class="grid grid-cols-12 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
+        (click)="tasksMaintenanceContext.openUpdateTaskDialog(task.id)"
       >
         <div
-          class="col-span-5 truncate flex items-center px-2 cursor-pointer"
+          class="col-span-5 truncate flex items-center px-2"
           [style.padding-left.rem]="task.level * 1.5 + 0.5"
         >
           @if (task.children.length > 0) {
@@ -32,13 +35,13 @@
           }
           <span class="truncate">{{ task.name }}</span>
         </div>
-        <div class="col-span-2 px-2 cursor-pointer">
+        <div class="col-span-2 px-2">
           {{ task.start | date: 'MMM d yyyy, hh:mm a' }}
         </div>
-        <div class="col-span-2 px-2 cursor-pointer">
+        <div class="col-span-2 px-2">
           {{ task.end | date: 'MMM d yyyy, hh:mm a' }}
         </div>
-        <div class="col-span-2 px-2 flex justify-center cursor-pointer">
+        <div class="col-span-2 px-2 flex justify-center">
           <div class="w-4/5 bg-gray-200 rounded-full h-2.5">
             <div class="bg-indigo-600 h-2.5 rounded-full" [style.width.%]="task.progress"></div>
           </div>
@@ -70,6 +73,7 @@
             severity="danger"
             icon="pi pi-trash"
             variant="text"
+            (onClick)="tasksMaintenanceContext.deleteTask(task.id); $event.stopPropagation()"
           ></p-button>
         </div>
       </div>
