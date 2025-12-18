@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
@@ -108,6 +109,8 @@ export class TasksMainView {
    * @returns A tree of tasks
    */
   private buildTree(flat: task[]): ganttTask[] {
+    const tree = untracked(this.tree);
+
     const mapped = flat.map<ganttTask>(t => ({
       id: t._id,
       name: t.name,
@@ -117,7 +120,7 @@ export class TasksMainView {
       parentId: t.parentId?._id || null,
       level: 0,
       children: [],
-      isExpanded: false,
+      isExpanded: this.findNode(tree, t._id)?.isExpanded || false,
     }));
 
     this.map.set(this.buildMap(mapped));
