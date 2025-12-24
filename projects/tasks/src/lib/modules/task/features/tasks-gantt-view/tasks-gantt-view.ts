@@ -24,6 +24,7 @@ import { TaskGanttCard } from '../task-gantt-bar/task-gantt-bar';
 import { CrudTasks } from '../../services/crud-tasks';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
+import { TooltipModule } from 'primeng/tooltip';
 
 dayjs.extend(minMax);
 dayjs.extend(isSameOrBefore);
@@ -31,7 +32,7 @@ dayjs.extend(isBetween);
 
 @Component({
   selector: 'bifi-app-tasks-gantt-view',
-  imports: [ButtonModule, CommonModule, TaskGanttCard],
+  imports: [ButtonModule, CommonModule, TaskGanttCard, TooltipModule],
   templateUrl: './tasks-gantt-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

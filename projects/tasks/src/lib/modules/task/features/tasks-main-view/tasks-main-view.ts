@@ -108,40 +108,41 @@ export class TasksMainView {
   }
 
   /**
-   * Build a tree of tasks from a flat list of tasks
+   * Build a hierarchical tree structure from a flat list of tasks.
    *
-   * @param flat A flat list of tasks
-   * @returns A tree of tasks
+   * @param flat - a flat list of tasks
+   * @returns a hierarchical tree structure of tasks
    */
   private buildTree(flat: task[]): ganttTask[] {
-    const tree = untracked(this.tree);
+    const previousTasks = untracked(this.tree);
 
-    const mapped = flat.map<ganttTask>(t => ({
+    const nodes = flat.map<ganttTask>(t => ({
       id: t._id,
       name: t.name,
       start: t.plannedStartDate || dayjs().toISOString(),
       end: t.plannedEndDate || dayjs().add(1, 'day').toISOString(),
       progress: t.progress,
       parentId: t.parentId?._id || null,
-      level: 0,
+      level: 0, // temporal
       children: [],
-      isExpanded: this.findNode(tree, t._id)?.isExpanded || false,
+      isExpanded: this.findNode(previousTasks, t._id)?.isExpanded || false,
     }));
 
-    this.map.set(this.buildMap(mapped));
+    const map = new Map(nodes.map(n => [n.id, n]));
+    this.map.set(map);
+
     const roots: ganttTask[] = [];
 
-    for (const t of mapped) {
-      if (t.parentId) {
-        const parent = this.map().get(t.parentId);
-        if (parent) {
-          t.level = parent.level + 1;
-          parent.children.push(t);
-        }
+    for (const n of nodes) {
+      if (n.parentId) {
+        const parent = map.get(n.parentId);
+        parent?.children.push(n);
       } else {
-        roots.push(t);
+        roots.push(n);
       }
     }
+
+    this.assignLevels(roots);
 
     return roots;
   }
@@ -173,16 +174,6 @@ export class TasksMainView {
     }
 
     return deps;
-  }
-
-  /**
-   * Builds a map of tasks from a flat list of tasks.
-   * The map has task IDs as keys and the corresponding tasks as values.
-   * @param flat A flat list of tasks
-   * @returns A map of tasks
-   */
-  private buildMap(flat: ganttTask[]) {
-    return new Map(flat.map(t => [t.id, t]));
   }
 
   /**
@@ -226,6 +217,22 @@ export class TasksMainView {
       stack.push(...n.children);
     }
     return null;
+  }
+
+  /**
+   * Assigns a level to each task in the tree.
+   * The level indicates the depth of the task in the tree.
+   * A level of 0 indicates the task is a root task.
+   * @param nodes The tasks to assign levels to.
+   * @param level The level to assign to each task.
+   */
+  private assignLevels(nodes: ganttTask[], level = 0) {
+    for (const n of nodes) {
+      n.level = level;
+      if (n.children.length) {
+        this.assignLevels(n.children, level + 1);
+      }
+    }
   }
 
   /**

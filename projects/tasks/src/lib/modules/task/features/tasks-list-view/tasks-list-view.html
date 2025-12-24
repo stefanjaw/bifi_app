@@ -18,7 +18,8 @@
       >
         <div
           class="col-span-5 truncate flex items-center px-2"
-          [style.padding-left.rem]="task.level * 1.5 + 0.5"
+          [style.padding-left.px]="task.level * 24 + 8"
+          [pTooltip]="task.name"
         >
           @if (task.children.length > 0) {
             <p-button

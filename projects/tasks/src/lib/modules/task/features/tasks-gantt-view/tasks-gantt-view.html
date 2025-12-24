@@ -14,10 +14,11 @@
           class="group flex items-center justify-between border-b border-r border-gray-200 h-10 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50"
           (click)="taskMaintenanceContext.openUpdateTaskDialog(task.id)"
           [style.height.px]="rowHeight()"
+          [pTooltip]="task.name"
         >
           <div
-            class="flex-grow flex items-center truncate"
-            [style.padding-left.rem]="task.level * 1.5"
+            class="flex-grow flex justify-start items-center truncate"
+            [style.padding-left.px]="task.level * 24 + 8"
           >
             @if (task.children.length > 0) {
               <p-button
@@ -29,8 +30,6 @@
                 size="small"
                 (onClick)="taskMaintenanceContext.toggleExpand(task.id); $event.stopPropagation()"
               ></p-button>
-            } @else {
-              <span class="w-5 mr-1"></span>
             }
             <span class="truncate">{{ task.name }}</span>
           </div>
