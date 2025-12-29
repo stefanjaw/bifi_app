@@ -21,7 +21,7 @@
 
     <tr>
       <td [colSpan]="shippingColumns.length + 1">
-        <div class="w-full flex flex-row justify-around items-center">
+        <div class="w-full flex flex-row justify-between items-center">
           <p class="flex flex-row gap-1 items-center">
             <p-button
               variant="text"
@@ -32,7 +32,10 @@
             <span>{{ element.name }}</span>
           </p>
           <p>{{ element.createdAt | date }}</p>
-          <p-tag>{{ element.status }}</p-tag>
+          <p-tag 
+          [severity]="getStatusColor(element.status)">
+            {{ element.status }}
+          </p-tag>
         </div>
         @if (opened) {
           content

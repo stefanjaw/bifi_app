@@ -76,7 +76,21 @@ export class ShippingsList {
     });
   }
 
-  
+  getStatusColor(status: string) {
+    switch (status) {
+      case 'PDF_PROCESSED':
+        return 'success';
+
+      case 'ERROR':
+        return 'warn';
+
+      case 'UPLOADING':
+        return 'info';
+
+      default:
+        return 'success';
+    }
+  }
   deleteShipping(id: string) {
     this.crudShippings
       .delete({ _id: id })
