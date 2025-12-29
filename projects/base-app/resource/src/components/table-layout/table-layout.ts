@@ -79,6 +79,15 @@ export class TableLayout<T extends Record<string, any>> {
   //#endregion
 
   // State
+  // References
+  actions = contentChild('actions', {
+    read: TemplateRef,
+  });
+
+  row = contentChild('row', {
+    read: TemplateRef,
+  });
+
   resourceState = computed(() => {
     const data = this.data();
     let isLoading = false;
@@ -124,11 +133,6 @@ export class TableLayout<T extends Record<string, any>> {
       isDataPaginated,
       value,
     };
-  });
-
-  // References
-  actions = contentChild('actions', {
-    read: TemplateRef,
   });
 
   isPaginatedFN = isPaginated;

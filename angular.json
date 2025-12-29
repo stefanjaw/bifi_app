@@ -287,6 +287,36 @@
           }
         }
       }
+    },
+    "aduanix": {
+      "projectType": "library",
+      "root": "projects/aduanix",
+      "sourceRoot": "projects/aduanix/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/aduanix/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/aduanix/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/aduanix/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

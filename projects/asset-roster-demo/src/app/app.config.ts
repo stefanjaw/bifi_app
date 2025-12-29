@@ -21,6 +21,7 @@ import { provideCRM } from '@avalantec/crm';
 import { Noir } from './primeng.preset';
 import { provideWebsite } from '@avalantec/website';
 import { provideTasks } from '@avalantec/tasks';
+import { provideAduanix } from '@avalantec/aduanix';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     {
       provide: LIBRARY_CONFIG,
-      useValue: { apiURL: 'http://localhost:8080/api', rbacEnable: true },
+      useValue: { apiURL: 'http://localhost:8080/api', rbacEnable: false },
     },
     providePrimeNG({
       theme: {
@@ -52,6 +53,7 @@ export const appConfig: ApplicationConfig = {
     provideCRM(),
     provideWebsite(),
     provideTasks(),
+    provideAduanix(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

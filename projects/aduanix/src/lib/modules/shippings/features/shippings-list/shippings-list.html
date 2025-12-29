@@ -1,0 +1,43 @@
+<h1 class="text-2xl font-bold mb-4">Shippings</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Shippment"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'shipping/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name, related contact, country and address"
+  [searchFilters]="shippingFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="shippingColumns" [data]="shippings">
+  <ng-template #row let-element>
+    @let opened = accordionMap()[element._id];
+
+    <tr>
+      <td [colSpan]="shippingColumns.length + 1">
+        <div class="w-full flex flex-row justify-around items-center">
+          <p class="flex flex-row gap-1 items-center">
+            <p-button
+              variant="text"
+              size="small"
+              [icon]="opened ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"
+              (onClick)="toggleAccordion(element._id)"
+            ></p-button>
+            <span>{{ element.name }}</span>
+          </p>
+          <p>{{ element.createdAt | date }}</p>
+          <p-tag>{{ element.status }}</p-tag>
+        </div>
+        @if (opened) {
+          content
+        }
+      </td>
+    </tr>
+  </ng-template>
+</bifi-app-table-layout>

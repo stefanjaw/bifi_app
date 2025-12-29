@@ -25,7 +25,10 @@
       "@avalantec/tasks/*": ["projects/tasks/*", "projects/tasks"],
 
       "@avalantec/projects": ["dist/projects/*", "dist/projects"],
-      "@avalantec/projects/*": ["projects/projects/*", "projects/projects"]
+      "@avalantec/projects/*": ["projects/projects/*", "projects/projects"],
+
+      "@avalantec/aduanix": ["dist/aduanix/*", "dist/aduanix"],
+      "@avalantec/aduanix/*": ["projects/aduanix/*", "projects/aduanix"]
     }
   },
   "angularCompilerOptions": {

@@ -24,6 +24,9 @@
       "@avalantec/projects": ["./projects/projects/src/lib"],
       "@avalantec/projects/*": ["./projects/projects/src/lib/*"],
 
+      "@avalantec/aduanix": ["./projects/aduanix/src/lib"],
+      "@avalantec/aduanix/*": ["./projects/aduanix/src/lib/*"],
+
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },
