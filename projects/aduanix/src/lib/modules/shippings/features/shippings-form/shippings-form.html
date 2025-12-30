@@ -1,0 +1,179 @@
+<bifi-app-form-layout
+  title="Edit Shipping"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+        <section class="w-full grid gap-3 sm:grid-cols-2">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="Name" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Origin</bifi-app-form-label>
+            <p-select
+              formControlName="origin"
+              [options]="countries()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Destination</bifi-app-form-label>
+            <p-select
+              formControlName="destination"
+              [options]="countries()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </section>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        title="Invoices"
+        id="invoice-details"
+        [ordinal]="2"
+        formArrayName="invoices"
+      >
+        @for (invoiceControl of form.controls.invoices.controls; track $index; let i = $index) {
+          <p-card class="w-full" [formGroupName]="i" [header]="'Invoice #' + (i + 1)">
+            @let extractedDataControl = invoiceControl.controls.extractedData;
+
+            <section [formGroup]="extractedDataControl" class="w-full flex flex-col gap-2">
+              <div class="grid gap-3 sm:grid-cols-4" formGroupName="header">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Invoice Number</bifi-app-form-label>
+                  <input
+                    pInputText
+                    formControlName="invoiceNumber"
+                    type="text"
+                    placeholder="Invoice Number"
+                  />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Currency</bifi-app-form-label>
+                  <input
+                    pInputText
+                    formControlName="currency"
+                    type="text"
+                    placeholder="Invoice Currency"
+                  />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Invoice Total</bifi-app-form-label>
+                  <input
+                    pInputText
+                    formControlName="total"
+                    type="number"
+                    placeholder="Invoice Total"
+                  />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Address</bifi-app-form-label>
+                  <input pInputText formControlName="address" type="text" placeholder="Address" />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Origin Country</bifi-app-form-label>
+                  <p-select
+                    formControlName="countryId"
+                    [options]="countries()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [filter]="true"
+                  ></p-select>
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Company</bifi-app-form-label>
+                  <p-select
+                    formControlName="companyId"
+                    [options]="companies()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [filter]="true"
+                  ></p-select>
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Company Email</bifi-app-form-label>
+                  <input
+                    pInputText
+                    formControlName="email"
+                    type="text"
+                    placeholder="company@email.com"
+                  />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
+              </div>
+              <div class="w-full" formArrayName="lines">
+                <p-table [value]="extractedDataControl.controls.lines.controls">
+                  <ng-template #header>
+                    <tr>
+                      <th>Line Number</th>
+                      <th>Currency</th>
+                      <th>Unit Price</th>
+                      <th>Quantity</th>
+                      <th>HS Code</th>
+                      <th>Customs Chapter</th>
+                      <th>Customs Heading</th>
+                      <th>Customs Subheading</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template #body let-line>
+                    <tr>
+                      <td>{{ line.controls.lineNumber.value }}</td>
+                      <td>{{ line.controls.currency.value }}</td>
+                      <td>{{ line.controls.price.value }}</td>
+                      <td>{{ line.controls.quantity.value }}</td>
+                      <td>{{ line.controls.hsCode.value }}</td>
+                      <td>{{ line.controls.customsChapter.value }}</td>
+                      <td>{{ line.controls.customsHeading.value }}</td>
+                      <td>{{ line.controls.customsSubheading.value }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </section>
+          </p-card>
+        }
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>Something went wrong... {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

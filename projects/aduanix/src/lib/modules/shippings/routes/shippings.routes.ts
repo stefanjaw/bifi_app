@@ -14,13 +14,11 @@ export const SHIPPINGS_ROUTES: Routes = [
       import('../features/shippings-list/shippings-list').then(m => m.ShippingsList),
     data: { resource: 'shippings/list' },
   },
-  //   {
-  //     path: 'maintenance/:id',
-  //     canActivate: [permissionGuard],
-  //     loadComponent: () =>
-  //       import('../features/asset-roster-maintenance/asset-roster-maintenance').then(
-  //         m => m.AssetRosterMaintenance
-  //       ),
-  //     data: { resource: 'asset-rosters/update' },
-  //   },
+  {
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/shippings-form/shippings-form').then(m => m.ShippingsForm),
+    data: { resource: 'shippings/form' },
+  },
 ];

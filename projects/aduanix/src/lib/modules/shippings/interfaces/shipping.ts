@@ -52,7 +52,7 @@ export interface invoicePDF {
         tax?: number;
       };
     }[];
-  }[];
+  };
 }
 
 export interface invoice {
