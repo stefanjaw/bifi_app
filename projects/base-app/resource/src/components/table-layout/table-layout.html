@@ -1,136 +1,157 @@
-@if ((resourceState().hasValue && resourceState().value.length > 0) || resourceState().isLoading) {
-  @let pagination = resourceState().pagination;
-  @let isPaginated = !!pagination;
+@let pagination = resourceState().pagination;
+@let isPaginated = !!pagination;
 
-  <p-table
-    sortMode="multiple"
-    (onLazyLoad)="lazyLoad($event)"
-    [lazy]="true"
-    [value]="resourceState().value"
-    [first]="pagination?.page ? ((pagination?.page || 0) - 1) * (pagination?.limit || 0) : 0"
-    classList="w-full"
-    [paginator]="isPaginated"
-    [totalRecords]="pagination?.totalDocs || 0"
-    [rows]="pagination?.limit || 0"
-    [rowsPerPageOptions]="[5, 10, 25, 50]"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} ({totalPages} pages)"
-    [pageLinks]="5"
-  >
-    <!-- headers -->
-    <ng-template #header>
-      <tr>
-        @for (column of columns(); track $index) {
-          @if (column.sortable) {
-            <th [pSortableColumn]="column.field">
-              <div class="flex items-center gap-2 whitespace-nowrap">
-                {{ column.title }}
-                <p-sortIcon [field]="column.field"></p-sortIcon>
-              </div>
-            </th>
+<p-table
+  sortMode="multiple"
+  (onLazyLoad)="lazyLoad($event)"
+  [lazy]="true"
+  [value]="resourceState().value"
+  [first]="pagination?.page ? ((pagination?.page || 0) - 1) * (pagination?.limit || 0) : 0"
+  classList="w-full"
+  [paginator]="isPaginated"
+  [totalRecords]="pagination?.totalDocs || 0"
+  [rows]="pagination?.limit || 0"
+  [rowsPerPageOptions]="[5, 10, 25, 50]"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} ({totalPages} pages)"
+  [pageLinks]="5"
+  [expandedRowKeys]="expandContent() ? expandedRows : undefined"
+  [groupRowsBy]="expandContent() ? '_id' : undefined"
+  [loading]="resourceState().isLoading"
+>
+  <!-- headers -->
+  <ng-template #header>
+    <tr>
+      @if (expandContent()) {
+        <th></th>
+      }
+
+      @for (column of columns(); track $index) {
+        @if (column.sortable) {
+          <th [pSortableColumn]="column.field">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              {{ column.title }}
+              <p-sortIcon [field]="column.field"></p-sortIcon>
+            </div>
+          </th>
+        } @else {
+          <th class="whitespace-nowrap">{{ column.title }}</th>
+        }
+      }
+
+      @if (actions()) {
+        <th></th>
+      }
+    </tr>
+  </ng-template>
+
+  <!-- body -->
+  <ng-template #body let-element let-expanded="expanded">
+    <tr
+      (click)="onClickRow() && hasClickRowPermission() ? onClickRow()?.(element) : null"
+      [ngClass]="{
+        'cursor-pointer hover:bg-gray-200!': onClickRow() && hasClickRowPermission(),
+      }"
+    >
+      @if (expandContent()) {
+        <td>
+          <p-button
+            type="button"
+            pRipple
+            [pRowToggler]="element"
+            [text]="true"
+            severity="secondary"
+            [rounded]="true"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          />
+        </td>
+      }
+
+      @for (column of columns(); track $index) {
+        <td>
+          @let value = getValue(element, column.field);
+
+          @if (column.parseField) {
+            <span>
+              {{ column.parseField(value) }}
+            </span>
+          } @else if (column.component) {
+            @let component =
+              typeof column.component === 'function' ? column.component(element) : column.component;
+
+            <ng-container *bifiAppDynamicComponent="component"></ng-container>
+          } @else if (column.template) {
+            <ng-container
+              *ngTemplateOutlet="column.template; context: { $implicit: element }"
+            ></ng-container>
+          } @else if (column.type === 'image') {
+            <span>
+              <img
+                [src]="value"
+                alt="image"
+                style="
+                  width: 75px;
+                  height: 75px;
+                  object-fit: cover;
+                  border-radius: 50%;
+                  margin-top: 15px;
+                  margin-bottom: 15px;
+                "
+              />
+            </span>
           } @else {
-            <th class="whitespace-nowrap">{{ column.title }}</th>
+            <span>
+              @if (column.type === 'date') {
+                {{ value ? (value | date) : 'Not set' }}
+              } @else if (column.type === 'currency') {
+                {{ value ? (value | currency: column.currencySymbol || '$') : 'Not set' }}
+              } @else {
+                {{ value || 'Not set' }}
+              }
+            </span>
           }
-        }
+        </td>
+      }
 
-        @if (actions()) {
-          <th></th>
-        }
+      @if (actions()) {
+        <td>
+          <div class="flex gap-2 items-center justify-center">
+            <ng-template
+              [ngTemplateOutlet]="actions()"
+              [ngTemplateOutletContext]="{ $implicit: element }"
+            ></ng-template>
+          </div>
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <!-- expanded row -->
+  @if (expandContent()) {
+    <ng-template #expandedrow let-element>
+      <tr>
+        <td [colSpan]="columns().length + (actions() ? 1 : 0) + 1">
+          <ng-template
+            [ngTemplateOutlet]="expandContent()"
+            [ngTemplateOutletContext]="{ $implicit: element }"
+          ></ng-template>
+        </td>
       </tr>
     </ng-template>
-
-    <!-- body -->
-    <ng-template #body let-element>
-      @if (!row()) {
-        <tr
-          (click)="onClickRow() && hasClickRowPermission() ? onClickRow()?.(element) : null"
-          [ngClass]="{
-            'cursor-pointer hover:bg-gray-200!': onClickRow() && hasClickRowPermission(),
-          }"
-        >
-          @for (column of columns(); track $index) {
-            <td>
-              @let value = getValue(element, column.field);
-
-              @if (column.parseField) {
-                <span>
-                  {{ column.parseField(value) }}
-                </span>
-              } @else if (column.component) {
-                @let component =
-                  typeof column.component === 'function'
-                    ? column.component(element)
-                    : column.component;
-
-                <ng-container *bifiAppDynamicComponent="component"></ng-container>
-              } @else if (column.template) {
-                <ng-container
-                  *ngTemplateOutlet="column.template; context: { $implicit: element }"
-                ></ng-container>
-              } @else if (column.type === 'image') {
-                <span>
-                  <img
-                    [src]="value"
-                    alt="image"
-                    style="
-                      width: 75px;
-                      height: 75px;
-                      object-fit: cover;
-                      border-radius: 50%;
-                      margin-top: 15px;
-                      margin-bottom: 15px;
-                    "
-                  />
-                </span>
-              } @else {
-                <span>
-                  @if (column.type === 'date') {
-                    {{ value ? (value | date) : 'Not set' }}
-                  } @else if (column.type === 'currency') {
-                    {{ value ? (value | currency: column.currencySymbol || '$') : 'Not set' }}
-                  } @else {
-                    {{ value || 'Not set' }}
-                  }
-                </span>
-              }
-            </td>
-          }
-
-          @if (actions()) {
-            <td>
-              <div class="flex gap-2 items-center justify-center">
-                <ng-template
-                  [ngTemplateOutlet]="actions()"
-                  [ngTemplateOutletContext]="{ $implicit: element }"
-                ></ng-template>
-              </div>
-            </td>
-          }
-        </tr>
-      } @else {
-        <ng-template
-          [ngTemplateOutlet]="row()"
-          [ngTemplateOutletContext]="{ $implicit: element }"
-        ></ng-template>
-      }
-    </ng-template>
-  </p-table>
-  @if (resourceState().isLoading) {
-    <div class="flex flex-col justify-center items-center h-full w-full p-5">
-      <p>Loading...</p>
-      <p-progressbar mode="indeterminate" [style]="{ height: '6px' }" />
-    </div>
   }
-} @else if (resourceState().error) {
-  <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
-    <i class="pi pi-exclamation-triangle mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
-    <p class="mb-2 font-light text-2xl">Error</p>
-    <p class="mb-0 font-light">Something went wrong processing your request</p>
-  </div>
-} @else {
-  <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
-    <i class="pi pi-search mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
-    <p class="mb-2 font-light text-2xl">No Results Found</p>
-    <p class="mb-0 font-light">No results match your current search term or filter selection</p>
-  </div>
-}
+
+  <!-- empty message -->
+  <ng-template #emptymessage>
+    <tr>
+      <td [colSpan]="columns().length + (actions() ? 1 : 0) + (expandContent() ? 1 : 0)">
+        <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
+          <i class="pi pi-search mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
+          <p class="mb-2 font-light text-2xl">No Results Found</p>
+          <p class="mb-0 font-light">
+            No results match your current search term or filter selection
+          </p>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

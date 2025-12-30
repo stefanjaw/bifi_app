@@ -6,14 +6,12 @@ export const shippingFilters: filter<shipping>[] = [
     field: 'name',
     type: 'string',
   },
-
   {
     field: 'createdBy.username',
     type: 'string',
   },
-
   {
-    field: 'status',    
+    field: 'status',
     type: 'string',
-  }
+  },
 ];

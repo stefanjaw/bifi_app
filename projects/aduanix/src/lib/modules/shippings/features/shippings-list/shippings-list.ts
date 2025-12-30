@@ -1,12 +1,6 @@
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import {
+  FileResolver,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -16,13 +10,15 @@ import { CrudShippings } from '../../services/crud-shippings';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink } from '@angular/router';
-import { shipping } from '../../interfaces/shipping';
+import { invoice, shipping } from '../../interfaces/shipping';
 // import { shippingColumns } from '../../libraries/shipping-columns';
 import { shippingFilters } from '../../libraries/shipping-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TableModule } from 'primeng/table';
 import { shippingColumns } from '../../libraries/shipping-columns';
 import { CommonModule } from '@angular/common';
+import { AccordionModule } from 'primeng/accordion';
+import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
 
 @Component({
@@ -39,6 +35,8 @@ import { Tag } from 'primeng/tag';
     TableModule,
     TableLayout,
     CommonModule,
+    AccordionModule,
+    ShippingFileFormDialog,
     Tag,
   ],
   templateUrl: './shippings-list.html',
@@ -48,49 +46,13 @@ export class ShippingsList {
   private resourceManager = inject<ResourceManager<shipping>>(ResourceManager);
   private crudShippings = inject(CrudShippings);
   private destroy$ = inject(DestroyRef);
+  protected fileResolver = inject(FileResolver);
 
   shippingColumns = shippingColumns;
   shippingFilters = shippingFilters;
 
   shippings = this.resourceManager.data;
 
-  accordionMap = signal<Record<string, boolean>>({});
-
-  constructor() {
-    effect(() => {
-      const shippings = this.shippings.value();
-      const map: Record<string, boolean> = {};
-
-      if (shippings?.docs) {
-        shippings.docs.forEach(s => (map[s._id] = false));
-      }
-
-      this.accordionMap.set(map);
-    });
-  }
-
-  toggleAccordion(_id: string) {
-    this.accordionMap.update(v => {
-      v[_id] = !v[_id];
-      return v;
-    });
-  }
-
-  getStatusColor(status: string) {
-    switch (status) {
-      case 'PDF_PROCESSED':
-        return 'success';
-
-      case 'ERROR':
-        return 'warn';
-
-      case 'UPLOADING':
-        return 'info';
-
-      default:
-        return 'success';
-    }
-  }
   deleteShipping(id: string) {
     this.crudShippings
       .delete({ _id: id })
@@ -100,5 +62,42 @@ export class ShippingsList {
           if (res) this.shippings.reload();
         },
       });
+  }
+
+  /**
+   * Returns the tag config for the given invoice status.
+   * @param {string} status - The status of the invoice.
+   * @returns {Object} - The tag config.
+   * @example
+   * const status = 'PROCESSING_PDF';
+   * const tagConfig = this.getInvoiceStatusTagConfig(status);
+   * console.log(tagConfig); // { severity: 'warning', value: 'Processing PDF' }
+   */
+  getInvoiceStatusTagConfig(status: invoice['status']): {
+    value: string;
+    severity: Tag['severity'];
+  } {
+    switch (status) {
+      case 'PROCESSING_PDF':
+        return {
+          severity: 'warn',
+          value: 'Processing PDF',
+        };
+      case 'ERROR_JSON':
+        return {
+          severity: 'danger',
+          value: 'Error JSON',
+        };
+      case 'DATA_PROCESSED':
+        return {
+          severity: 'success',
+          value: 'Data Processed',
+        };
+      case 'COMPLETE':
+        return {
+          severity: 'success',
+          value: 'Complete',
+        };
+    }
   }
 }

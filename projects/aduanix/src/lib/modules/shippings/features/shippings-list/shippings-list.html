@@ -5,8 +5,8 @@
     label="Add New Shippment"
     severity="secondary"
     icon="pi pi-plus"
-    [routerLink]="['../create']"
-    *bifiAppHasPermission="'shipping/create:view'"
+    *bifiAppHasPermission="'shipping:create:view'"
+    (onClick)="shippingFileFormDialog.openDialog()"
   ></p-button>
 </div>
 
@@ -16,31 +16,84 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout [columns]="shippingColumns" [data]="shippings">
-  <ng-template #row let-element>
-    @let opened = accordionMap()[element._id];
+  <ng-template #actions let-row>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      variant="text"
+      [routerLink]="['../edit/', row._id]"
+      *bifiAppHasPermission="'shipping:update:view'"
+    ></p-button>
+    <p-button
+      *bifiAppHasPermission="'shipping:delete:model'"
+      severity="danger"
+      label="Delete"
+      variant="text"
+      (onClick)="deleteShipping(row._id)"
+      icon="pi pi-trash"
+    ></p-button>
+  </ng-template>
 
-    <tr>
-      <td [colSpan]="shippingColumns.length + 1">
-        <div class="w-full flex flex-row justify-between items-center">
-          <p class="flex flex-row gap-1 items-center">
-            <p-button
-              variant="text"
-              size="small"
-              [icon]="opened ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"
-              (onClick)="toggleAccordion(element._id)"
-            ></p-button>
-            <span>{{ element.name }}</span>
-          </p>
-          <p>{{ element.createdAt | date }}</p>
-          <p-tag 
-          [severity]="getStatusColor(element.status)">
-            {{ element.status }}
-          </p-tag>
-        </div>
-        @if (opened) {
-          content
-        }
-      </td>
-    </tr>
+  <ng-template #expandContent let-element>
+    <p-accordion class="w-full!">
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <span>
+            <i class="pi pi-receipt"></i>
+            Invoices
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>
+          @for (invoice of element?.invoices; track $index) {
+            <div
+              class="flex flex-row justify-between items-center border-b-2 border-primary-100 pb-2"
+            >
+              @let tagConfig = getInvoiceStatusTagConfig(invoice?.status);
+
+              <p>{{ invoice?.pdf?.file?.name || 'No name provided' }}</p>
+
+              <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag>
+
+              @if (invoice?.pdf?.file?.fileId) {
+                <p-button
+                  severity="secondary"
+                  icon="pi pi-download"
+                  [variant]="'text'"
+                  (onClick)="
+                    fileResolver.downloadFileInBrowser({ id: invoice?.pdf?.file.fileId }, 'open')
+                  "
+                ></p-button>
+              }
+            </div>
+          }
+        </p-accordion-content>
+      </p-accordion-panel>
+
+      <p-accordion-panel value="1">
+        <p-accordion-header>
+          <span>
+            <i class="pi pi-box"></i>
+            BOLs
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>Hello</p-accordion-content>
+      </p-accordion-panel>
+
+      <p-accordion-panel value="2">
+        <p-accordion-header>
+          <span>
+            <i class="pi pi-file"></i>
+            BCDs
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>Hello</p-accordion-content>
+      </p-accordion-panel>
+    </p-accordion>
   </ng-template>
 </bifi-app-table-layout>
+
+<bifi-app-shipping-file-form-dialog
+  #shippingFileFormDialog
+  (shippingCreated)="shippings.reload()"
+></bifi-app-shipping-file-form-dialog>

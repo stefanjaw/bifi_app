@@ -15,7 +15,7 @@ function initializeMenu() {
   mainMenuManager.addItems([
     {
       item: {
-        icon: PrimeIcons.OBJECTS_COLUMN,
+        icon: PrimeIcons.LIST_CHECK,
         routerLink: ['/tasks'],
         label: 'Tasks',
         resource: 'tasks/menu',

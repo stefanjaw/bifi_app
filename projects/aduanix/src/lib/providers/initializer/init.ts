@@ -15,7 +15,7 @@ function initializeMenu() {
   mainMenuManager.addItems([
     {
       item: {
-        icon: PrimeIcons.OBJECTS_COLUMN,
+        icon: PrimeIcons.TRUCK,
         routerLink: ['/aduanix'],
         label: 'Aduanix',
         resource: 'aduanix/menu',

@@ -16,13 +16,13 @@ import { SortManager } from '../../services/sort-manager';
 import { tableColumn } from '../../interfaces/table-column';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SortMeta } from 'primeng/api';
-import { ProgressBar } from 'primeng/progressbar';
 import { orderByQuery } from '../../interfaces/order-by';
 import { PaginatorModule } from 'primeng/paginator';
 import { Icon } from '@avalantec/base-app/core';
 import { tableRows } from '../../interfaces/table-row';
 import { pagination } from '../../interfaces/pagination';
 import { injectAuthService, permission } from '@avalantec/base-app/auth';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -31,8 +31,8 @@ import { injectAuthService, permission } from '@avalantec/base-app/auth';
     DynamicComponentDirective,
     TableModule,
     PaginatorModule,
-    ProgressBar,
     Icon,
+    ButtonModule,
   ],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30 w-full' },
@@ -79,14 +79,16 @@ export class TableLayout<T extends Record<string, any>> {
   //#endregion
 
   // State
-  // References
   actions = contentChild('actions', {
     read: TemplateRef,
   });
 
-  row = contentChild('row', {
+  expandContent = contentChild('expandContent', {
     read: TemplateRef,
   });
+
+  // Table state for expanded rows
+  expandedRows: any = {};
 
   resourceState = computed(() => {
     const data = this.data();
@@ -160,7 +162,6 @@ export class TableLayout<T extends Record<string, any>> {
 
   private changePage(page: number, limit: number) {
     this.paginationManager.setPaginationOptions(page, limit);
-    console.log('change page', page, limit);
   }
 
   private sort(multiSortMeta: SortMeta[]) {
