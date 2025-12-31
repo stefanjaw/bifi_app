@@ -1,7 +1,7 @@
 # =========================
 # 1️⃣ BUILD STAGE
 # =========================
-FROM node:22-alpine AS build
+FROM node:22 AS build
 
 # create app directory
 WORKDIR /app
