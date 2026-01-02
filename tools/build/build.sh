@@ -1,21 +1,37 @@
+#!/bin/sh
+
 AVAILABLE_LIBS=$(ls -1 ./projects | grep -v "base-app" | grep -v "asset-roster-demo")
 LIBS=""
 
 # ---------- PARSE --libs ----------
-if [ "$1" = "--libs" ]; then
-  shift
+ARGS="$@"
 
-  # If they say all → all libs
-  if [ "$1" = "all" ]; then
-    LIBS="$AVAILABLE_LIBS"
-  else
-    # Read until there are no more arguments
-    while [ -n "$1" ]; do
+set -- $ARGS
+while [ $# -gt 0 ]; do
+  if [ "$1" = "--libs" ]; then
+    shift
+
+    # If they say all → all libs
+    if [ "$1" = "all" ]; then
+      LIBS="$AVAILABLE_LIBS"
+      shift
+      break
+    fi
+
+    # Read libs until another flag or end
+    while [ $# -gt 0 ] && [ "${1#--}" = "$1" ]; do
       LIBS="$LIBS $1"
       shift
     done
+
+    break
   fi
-fi
+
+  shift
+done
+
+# Normalize spaces
+LIBS=$(echo "$LIBS" | xargs)
 
 # ---------- INTERACTIVE MODE (only if LIBS is empty) ----------
 if [ -z "$LIBS" ]; then

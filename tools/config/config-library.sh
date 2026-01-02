@@ -24,7 +24,7 @@ npm install --prefix "$SUBMODULE_DIR" || { echo "❌ Failed to install submodule
 
 # ---------- RUN BUILD SCRIPT TO GET SELECTED LIBRARIES ----------
 
-LIBS=$(sh "$SUBMODULE_DIR/tools/build/build.sh" "$@")
+LIBS="$(sh "$SUBMODULE_DIR/tools/build/build.sh" "$@")"
 echo "✅ Selected libraries to config: $LIBS"
 
 # Check if user cancelled the build process
@@ -81,8 +81,20 @@ mkdir -p "$ENVIRONMENT_DIR"
 echo "📝 Insert the credentials in ./src/environments/environment.ts"
 sudo nano "$ENVIRONMENT_PATH"
 
-# Ask for title
-read -r -p "📝 Enter the application title: " APP_TITLE
+# Ask for title, if provided as argument, use it
+APP_TITLE=""
+
+for ARG in "$@"; do
+  case "$ARG" in
+    --title=*)
+      APP_TITLE="${ARG#*=}"
+      ;;
+  esac
+done
+
+if [ -z "$APP_TITLE" ]; then
+  read -r -p "📝 Enter the application title: " APP_TITLE
+fi
 
 export APP_TITLE
 

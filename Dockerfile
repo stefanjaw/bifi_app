@@ -3,6 +3,9 @@
 # =========================
 FROM node:22 AS build
 
+# install dependencies
+RUN apt-get install bash
+
 # create app directory
 WORKDIR /app
 
