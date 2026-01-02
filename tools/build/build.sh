@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# this will be used to build the libraries
+SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
+
+# ---------- GET AVAILABLE LIBS ----------
 AVAILABLE_LIBS=$(ls -1 ./projects | grep -v "base-app" | grep -v "asset-roster-demo")
 LIBS=""
 
@@ -57,7 +61,7 @@ fi
 {
   # ---------- ALWAYS BUILD base-app ----------
   echo "Building base-app..."
-  cd ./projects/base-app || exit 1
+  cd "$SUBMODULE_DIR/projects/base-app" || exit 1
   ng build || { echo "Build failed for base-app"; exit 1; }
 
   cd ../../dist/base-app || exit 1
@@ -68,7 +72,7 @@ fi
   for LIB in $LIBS; do
     echo "Building $LIB..."
 
-    cd ./projects/$LIB || exit 1
+    cd "$SUBMODULE_DIR/projects/$LIB" || exit 1
     ng build || { echo "Build failed for $LIB"; exit 1; }
 
     cd ../../dist/$LIB || exit 1
