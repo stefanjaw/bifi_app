@@ -21,6 +21,7 @@ import { CrudCountries } from '@avalantec/base-app/countries';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
+import { InvoiceLinesFormDialog } from '../invoice-lines-form-dialog/invoice-lines-form-dialog';
 
 @Component({
   selector: 'bifi-app-shippings-form',
@@ -33,6 +34,7 @@ import { TableModule } from 'primeng/table';
     SelectModule,
     CardModule,
     TableModule,
+    InvoiceLinesFormDialog,
   ],
   templateUrl: './shippings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +72,7 @@ export class ShippingsForm {
       this.countriesResource.isLoading() ||
       this.companiesResource.isLoading()
   );
+  
   error = this.shippingsResource.error;
   isSubmitLoading = signal<boolean>(false);
 
