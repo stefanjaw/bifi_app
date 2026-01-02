@@ -21,7 +21,7 @@ RUN git submodule update --progress --init --recursive
 RUN git -C ./bifi_app checkout angularv20
 
 # Run config.library.sh
-RUN sh ./bifi_app/tools/config/config-library.sh
+RUN sh ./bifi_app/tools/config/config-library.sh --libs all --title=APP
 
 # =========================
 # 2️⃣ NGINX STAGE
