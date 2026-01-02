@@ -6,7 +6,7 @@ FROM node:22 AS build
 # install dependencies
 RUN apt-get update && apt-get install -y \
     bash \
-    envsubst \
+    gettext-base \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
