@@ -4,7 +4,11 @@
 FROM node:22 AS build
 
 # install dependencies
-RUN apt-get install bash
+RUN apt-get update && apt-get install -y \
+    bash \
+    envsubst \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # create app directory
 WORKDIR /app
