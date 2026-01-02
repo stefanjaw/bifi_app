@@ -154,7 +154,7 @@ SEP=""
 
 # Iterate over selected libraries to extract provider names
 for LIB in $LIBS; do
-    PROVIDER_FILE="./projects/$LIB/src/lib/providers/provider.ts"
+    PROVIDER_FILE="$SUBMODULE_DIR/projects/$LIB/src/lib/providers/provider.ts"
 
     if [ -f "$PROVIDER_FILE" ]; then
         PROVIDER_NAME=$(grep -E 'export (const|function) provide' "$PROVIDER_FILE" | head -n 1 | awk '{print $3}' | tr -d ':=')
