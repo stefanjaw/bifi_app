@@ -62,7 +62,7 @@ fi
   # ---------- ALWAYS BUILD base-app ----------
   echo "Building base-app..."
   cd "$SUBMODULE_DIR/projects/base-app" || exit 1
-  ng build || { echo "Build failed for base-app"; exit 1; }
+  npx ng build || { echo "Build failed for base-app"; exit 1; }
 
   cd ../../dist/base-app || exit 1
   npm pack || { echo "NPM pack failed for base-app"; exit 1; }
@@ -73,7 +73,7 @@ fi
     echo "Building $LIB..."
 
     cd "$SUBMODULE_DIR/projects/$LIB" || exit 1
-    ng build || { echo "Build failed for $LIB"; exit 1; }
+    npx ng build || { echo "Build failed for $LIB"; exit 1; }
 
     cd ../../dist/$LIB || exit 1
     npm pack || { echo "NPM pack failed for $LIB"; exit 1; }
