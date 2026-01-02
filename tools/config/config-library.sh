@@ -9,6 +9,8 @@ SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
 
 echo "📁 Parent directory: $PARENT_DIR"
 echo "📁 Submodule directory: $SUBMODULE_DIR"
+echo "LS contents of parent directory: $(ls "$PARENT_DIR")"
+echo "LS contents of submodule directory: $(ls "$SUBMODULE_DIR")"
 
 # ---------- PULL LASTEST BRANCH AND CHANGES ----------
 
