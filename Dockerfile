@@ -43,7 +43,7 @@ RUN APP_DIST=$(node -e "const a=require('./angular.json'); \
 
 
 # copy dist
-COPY --from=build /app/final-dist /usr/share/nginx/html
+COPY --from=build /app/final-dist/browser /usr/share/nginx/html
 
 # expose port
 EXPOSE 8080
