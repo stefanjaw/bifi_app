@@ -4,7 +4,7 @@
 SUBMODULE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/../../" && pwd)"
 
 # ---------- GET AVAILABLE LIBS ----------
-AVAILABLE_LIBS=$(ls -1 ./projects | grep -v "base-app" | grep -v "asset-roster-demo")
+AVAILABLE_LIBS=$(ls -1 "$SUBMODULE_DIR/projects" | grep -v "base-app" | grep -v "asset-roster-demo")
 LIBS=""
 
 # ---------- PARSE --libs ----------
