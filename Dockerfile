@@ -34,8 +34,16 @@ RUN rm /etc/nginx/conf.d/default.conf
 # copy nginx
 COPY ./bifi_app/nginx.conf /etc/nginx/conf.d/default.conf
 
+# Get dist subfolder
+RUN APP_DIST=$(node -e "const a=require('./angular.json'); \
+  const p=Object.values(a.projects)[0]; \
+  console.log(p.architect.build.options.outputPath)") \
+ && echo "📦 Angular dist: $APP_DIST" \
+ && cp -r "$APP_DIST" /app/final-dist
+
+
 # copy dist
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/final-dist /usr/share/nginx/html
 
 # expose port
 EXPOSE 8080
