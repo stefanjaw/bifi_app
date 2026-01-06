@@ -65,6 +65,7 @@ export class ShippingsForm {
   countries = this.countriesResource.value;
   companies = this.companiesResource.value;
 
+
   // State
   loading = computed(
     () =>
@@ -124,6 +125,11 @@ export class ShippingsForm {
       }
     });
   }
+
+  removeLine(invoiceIndex: number, lineIndex: number) {
+  this.formService.removeLineFromShipping(invoiceIndex, lineIndex);
+}
+  
 
   /*************  ✨ Windsurf Command ⭐  *************/
   /**
