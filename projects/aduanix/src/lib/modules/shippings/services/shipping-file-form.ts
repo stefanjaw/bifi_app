@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ShippingFileFormModel {
-  file: FormUploaderFile[];
+  files: FormUploaderFile[];
 }
 
 @Injectable({
@@ -12,7 +12,7 @@ export interface ShippingFileFormModel {
 export class ShippingFileForm extends BaseForm<ShippingFileFormModel> {
   override createForm() {
     return this.fb.group<ShippingFileFormModel>({
-      file: {
+      files: {
         template: {
           id: [''],
           file: [null!],

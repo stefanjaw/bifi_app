@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { BaseDialog, Text } from '@avalantec/base-app/core';
 import { ShippingFileForm, ShippingFileFormModel } from '../../services/shipping-file-form';
 import { CrudShippings } from '../../services/crud-shippings';
@@ -37,7 +44,7 @@ export class ShippingFileFormDialog extends BaseDialog {
     this.crudShippings
       .post({
         data: {
-          ...(rawValue.file && rawValue.file.length > 0 && { file: rawValue.file[0] }),
+          ...(rawValue.files && rawValue.files.length > 0 && { files: rawValue.files }),
         },
         specificEndpoint: 'from-file',
       })

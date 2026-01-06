@@ -14,13 +14,13 @@
   >
     <p [bifiAppText]="'paragraph'">Choose supplier invoice & submit to create your shipment</p>
 
-    <bifi-app-form-uploader formArrayName="file">
+    <bifi-app-form-uploader formArrayName="files">
       <p-fileUpload
         #fu
         showUploadButton="false"
         showCancelButton="false"
         name="files"
-        [multiple]="false"
+        [multiple]="true"
         accept="application/pdf"
         maxFileSize="100000000"
         mode="advanced"
@@ -37,12 +37,14 @@
           </div>
         </ng-template>
 
-        <ng-template #content let-file>
-          @if (file && file.length > 0) {
-            <div class="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
-              <i class="pi pi-check-circle text-green-500 text-xl"></i>
-              <span class="text-sm text-green-700">{{ file[0].name }} uploaded</span>
-            </div>
+        <ng-template #content let-files>
+          @if (files && files.length > 0) {
+            @for (file of files; track $index) {
+              <div class="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
+                <i class="pi pi-check-circle text-green-500 text-xl"></i>
+                <span class="text-sm text-green-700">{{ file.name }} uploaded</span>
+              </div>
+            }
           }
         </ng-template>
       </p-fileUpload>
