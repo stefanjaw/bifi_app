@@ -1,11 +1,11 @@
 <p-dialog header="New invoice line" [(visible)]="dialogState" [modal]="true">
   <form
-    [formGroup]="form"
+    [formGroup]="form()"
     class="flex flex-col gap-6"
     bifiAppFormActionsHandler
     (appSubmit)="handleSubmit()"
   >
-    @if (!loading() && form) {
+    @if (!loading() && form()) {
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <bifi-app-form-field>
           <bifi-app-form-label>Line Number</bifi-app-form-label>
@@ -48,12 +48,24 @@
           <input pInputText formControlName="price" type="text" placeholder="" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Total (In currency)</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="subtotal"
+            type="text"
+            placeholder=""
+            [readonly]="true"
+          />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
       </section>
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
         cancelLabel="Cancel"
-        [formChanged]="form.dirty"
+        [formChanged]="form().dirty"
       ></bifi-app-form-actions>
     }
   </form>

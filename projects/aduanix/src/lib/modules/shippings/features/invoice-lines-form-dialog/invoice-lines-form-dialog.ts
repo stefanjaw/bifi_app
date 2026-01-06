@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   inject,
   computed,
   signal,
+  effect,
 } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { BaseDialog } from '@avalantec/base-app/core';
@@ -15,6 +15,8 @@ import { FormModule } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'bifi-app-invoice-lines-form-dialog',
@@ -35,7 +37,20 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   private crudCountries = inject(CrudCountries);
 
   shippingIndex!: number;
-  form = this.formService.createInvoiceLineForm();
+
+  form = signal(this.formService.createInvoiceLineForm());
+
+  price = toSignal(
+    this.form().controls.price.valueChanges.pipe(startWith(this.form().controls.price.value)),
+    { initialValue: 0 }
+  );
+
+  quantity = toSignal(
+    this.form().controls.quantity.valueChanges.pipe(startWith(this.form().controls.quantity.value)),
+    { initialValue: 0 }
+  );
+
+  subtotal = computed(() => Number(this.price()) * Number(this.quantity()));
 
   // Resources
   countriesResource = this.crudCountries.get({
@@ -47,9 +62,15 @@ export class InvoiceLinesFormDialog extends BaseDialog {
 
   // State
   loading = computed(() => this.countriesResource.isLoading());
-  destroy$ = inject(DestroyRef);
   isSubmitLoading = signal(false);
 
+  constructor() {
+    super();
+
+    effect(() => {
+      this.form().controls.subtotal.setValue(this.subtotal());
+    });
+  }
   /**
    * Opens the dialog with the given data.
    * @param {Partial<{ invoiceIndex: number }>} data - The data to open the dialog with.
@@ -58,7 +79,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    */
   override openDialog(data?: { invoiceIndex: number }) {
     this.shippingIndex = data!.invoiceIndex;
-    this.form = this.formService.createInvoiceLineForm();
+    this.form.set(this.formService.createInvoiceLineForm());
 
     super.openDialog();
   }
@@ -69,7 +90,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    * This function will add the line to the shipping form and close the dialog.
    */
   handleSubmit() {
-    this.formService.addLineToShipping(this.shippingIndex, this.form);
+    this.formService.addLineToShipping(this.shippingIndex, this.form());
     this.closeDialog();
   }
 }
