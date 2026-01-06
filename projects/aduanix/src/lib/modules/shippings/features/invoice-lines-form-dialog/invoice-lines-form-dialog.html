@@ -19,12 +19,6 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
-          <textarea pInputTextarea formControlName="description" rows="3" type="text"></textarea>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
           <bifi-app-form-label>Origin Country</bifi-app-form-label>
           <p-select
             appendTo="body"
@@ -44,8 +38,14 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
+          <bifi-app-form-label>Currency</bifi-app-form-label>
+          <input pInputText formControlName="currency" type="text" placeholder="" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
           <bifi-app-form-label>Price (In currency)</bifi-app-form-label>
-          <input pInputText formControlName="price" type="text" placeholder="" />
+          <input pInputText formControlName="price" type="number" placeholder="" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
@@ -61,6 +61,23 @@
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </section>
+
+      <bifi-app-form-field class="col-span-full">
+        <bifi-app-form-label>Description</bifi-app-form-label>
+        <textarea pInputTextarea formControlName="description" rows="3" type="text"></textarea>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-full">
+        <bifi-app-form-label>Customs Classification</bifi-app-form-label>
+        <textarea
+          pInputTextarea
+          formControlName="customsClassification"
+          rows="3"
+          type="text"
+        ></textarea>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
