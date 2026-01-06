@@ -107,4 +107,23 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
       },
     });
   }
+
+  createInvoiceLineDialogForm() {
+  return this.fb.group({
+    lineNumber: ['', Validators.required],
+    description: ['', Validators.required],
+    countryId: ['', Validators.required],
+    currency: ['', Validators.required],
+    quantity: [0, Validators.required],
+    price: [0, Validators.required],
+    subtotal: [0, Validators.required],
+  });
+}
+
+  addLineToShipping(shippingIndex: number, data: any) {
+    const lines =
+      this.form.controls.invoices.at(shippingIndex).controls.extractedData.controls.lines;
+
+    lines.push(data);  
+  }
 }

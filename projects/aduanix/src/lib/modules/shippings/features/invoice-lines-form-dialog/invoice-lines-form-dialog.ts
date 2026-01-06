@@ -21,23 +21,34 @@ import { ReactiveFormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoiceLinesFormDialog extends BaseDialog {
+  // Services
   protected formService = inject(ShippingForm);
   private crudCountries = inject(CrudCountries);
 
-  form = this.formService.form;
+  shippingIndex!: number;
+  form = this.formService.createInvoiceLineDialogForm();
 
-  countriesResource = this.crudCountries.get({});
+  // Resources
+  countriesResource = this.crudCountries.get({
+    triggerRequest: this.dialogState,
+  });
 
+  // Data
   countries = this.countriesResource.value;
 
   // State
   loading = computed(() => this.countriesResource.isLoading());
-
-  submitLoading = signal<boolean>(false);
   destroy$ = inject(DestroyRef);
+  isSubmitLoading = signal(false);
 
-
-  override openDialog(): void {
+  override openDialog(data?: { shippingIndex: number }) {
+    this.shippingIndex = data!.shippingIndex;
+    //this.form.reset();
     super.openDialog();
+  }
+
+  handleSubmit() {
+    this.formService.addLineToShipping(this.shippingIndex, this.form.getRawValue());
+    this.closeDialog();
   }
 }

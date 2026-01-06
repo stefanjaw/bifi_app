@@ -1,9 +1,4 @@
-<p-dialog
-  header="New invoice line"
-  [(visible)]="dialogState"
-  [modal]="true"
-  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
->
+<p-dialog header="New invoice line" [(visible)]="dialogState" [modal]="true">
   <form [formGroup]="form" class="flex flex-col gap-6" bifiAppFormActionsHandler>
     @if (!loading()) {
       <section class="w-full grid gap-3 sm:grid-cols-2">
@@ -35,7 +30,21 @@
           ></p-select>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Quantity</bifi-app-form-label>
+          <input pInputText formControlName="quantity" type="number" placeholder="Quantity" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Price (In currency)</bifi-app-form-label>
+          <input pInputText formControlName="price" type="text" placeholder="" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
       </section>
+
+ 
     }
   </form>
 </p-dialog>
