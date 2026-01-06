@@ -58,16 +58,6 @@
         [ordinal]="2"
         formArrayName="invoices"
       >
-        <div class="flex gap-2 mb-4">
-          <p-button
-            label="Add Invoice"
-            severity="secondary"
-            icon="pi pi-plus"
-            type="button"
-            (onClick)="invoiceLinesFormDialog.openDialog()"
-          ></p-button>
-        </div>
-        
         @for (invoiceControl of form.controls.invoices.controls; track $index; let i = $index) {
           <p-card class="w-full" [formGroupName]="i" [header]="'Invoice #' + (i + 1)">
             @let extractedDataControl = invoiceControl.controls.extractedData;
@@ -147,6 +137,16 @@
                   />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
+              </div>
+
+              <div class="flex gap-2 mb-4">
+                <p-button
+                  label="Add Line"
+                  severity="secondary"
+                  icon="pi pi-plus"
+                  type="button"
+                  (onClick)="invoiceLinesFormDialog.openDialog({ shippingIndex: i })"
+                ></p-button>
               </div>
               <div class="w-full" formArrayName="lines">
                 <p-table [value]="extractedDataControl.controls.lines.controls">
