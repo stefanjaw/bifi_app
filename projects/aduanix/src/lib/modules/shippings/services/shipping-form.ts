@@ -1,6 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, GroupReturn } from '@avalantec/base-app/form';
+
+export interface ShippingInvoiceLineFormModel {
+  lineNumber: string;
+  countryId: string;
+  currency: string;
+  description: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+  customsClassification: string;
+  hsCode?: string;
+  customsChapter?: string;
+  customsHeading?: string;
+  customsSubheading?: string;
+  chapterDescription?: string;
+  headingDescription?: string;
+  subheadingDescription?: string;
+  tariff: {
+    code?: string;
+    chapter: string;
+    heading: string;
+    subheading: string;
+    userDescription?: string;
+    description?: string;
+    rateOfDuty?: number;
+  };
+}
 
 export interface ShippingFormModel {
   name: string;
@@ -19,32 +46,7 @@ export interface ShippingFormModel {
         total: number;
         currency: string;
       };
-      lines: {
-        lineNumber: string;
-        countryId: string;
-        currency: string;
-        description: string;
-        quantity: number;
-        price: number;
-        subtotal: number;
-        customsClassification: string;
-        hsCode?: string;
-        customsChapter?: string;
-        customsHeading?: string;
-        customsSubheading?: string;
-        chapterDescription?: string;
-        headingDescription?: string;
-        subheadingDescription?: string;
-        tariff: {
-          code?: string;
-          chapter: string;
-          heading: string;
-          subheading: string;
-          userDescription?: string;
-          description?: string;
-          rateOfDuty?: number;
-        };
-      }[];
+      lines: ShippingInvoiceLineFormModel[];
     };
   }[];
 }
@@ -108,22 +110,72 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
     });
   }
 
-  createInvoiceLineDialogForm() {
-  return this.fb.group({
-    lineNumber: ['', Validators.required],
-    description: ['', Validators.required],
-    countryId: ['', Validators.required],
-    currency: ['', Validators.required],
-    quantity: [0, Validators.required],
-    price: [0, Validators.required],
-    subtotal: [0, Validators.required],
-  });
-}
+  /**
+   * Creates a form group for an invoice line.
+   *
+   * The form group contains the following fields:
+   * - lineNumber: The line number of the invoice line.
+   * - countryId: The country ID of the invoice line.
+   * - currency: The currency of the invoice line.
+   * - description: The description of the invoice line.
+   * - quantity: The quantity of the invoice line.
+   * - price: The price of the invoice line.
+   * - subtotal: The subtotal of the invoice line.
+   * - customsClassification: The customs classification of the invoice line.
+   * - hsCode: The HS code of the invoice line.
+   * - customsChapter: The customs chapter of the invoice line.
+   * - customsHeading: The customs heading of the invoice line.
+   * - customsSubheading: The customs subheading of the invoice line.
+   * - chapterDescription: The chapter description of the invoice line.
+   * - headingDescription: The heading description of the invoice line.
+   * - subheadingDescription: The subheading description of the invoice line.
+   * - tariff: The tariff details of the invoice line.
+   *   - code: The tariff code of the invoice line.
+   *   - chapter: The tariff chapter of the invoice line.
+   *   - heading: The tariff heading of the invoice line.
+   *   - subheading: The tariff subheading of the invoice line.
+   *   - userDescription: The user description of the tariff.
+   *   - description: The description of the tariff.
+   *   - rateOfDuty: The rate of duty of the tariff.
+   *
+   * @returns A form group for an invoice line.
+   */
+  createInvoiceLineForm() {
+    return this.fb.group<ShippingInvoiceLineFormModel>({
+      lineNumber: ['', Validators.required],
+      countryId: ['', Validators.required],
+      currency: ['', Validators.required],
+      description: ['', Validators.required],
+      quantity: [0, Validators.required],
+      price: [0, Validators.required],
+      subtotal: [0, Validators.required],
+      customsClassification: ['', Validators.required],
+      hsCode: [''],
+      customsChapter: [''],
+      customsHeading: [''],
+      customsSubheading: [''],
+      chapterDescription: [''],
+      headingDescription: [''],
+      subheadingDescription: [''],
+      tariff: {
+        code: [''],
+        chapter: [''],
+        heading: [''],
+        subheading: [''],
+        userDescription: [''],
+        description: [''],
+        rateOfDuty: [0],
+      },
+    });
+  }
 
-  addLineToShipping(shippingIndex: number, data: any) {
+  /**
+   * Add a new line to the shipping form at the specified invoice index
+   * @param invoiceIndex the index of the invoice to add the line to
+   */
+  addLineToShipping(invoiceIndex: number, form: GroupReturn<ShippingInvoiceLineFormModel>) {
     const lines =
-      this.form.controls.invoices.at(shippingIndex).controls.extractedData.controls.lines;
-
-    lines.push(data);  
+      this.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;
+    lines.push(form);
   }
 }

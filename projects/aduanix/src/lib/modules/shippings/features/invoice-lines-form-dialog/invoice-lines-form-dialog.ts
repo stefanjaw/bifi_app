@@ -13,10 +13,19 @@ import { CrudCountries } from '@avalantec/base-app/countries';
 import { SelectModule } from 'primeng/select';
 import { FormModule } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'bifi-app-invoice-lines-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FormModule, SelectModule],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    FormModule,
+    SelectModule,
+    InputTextModule,
+    TextareaModule,
+  ],
   templateUrl: './invoice-lines-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,7 +35,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   private crudCountries = inject(CrudCountries);
 
   shippingIndex!: number;
-  form = this.formService.createInvoiceLineDialogForm();
+  form = this.formService.createInvoiceLineForm();
 
   // Resources
   countriesResource = this.crudCountries.get({
@@ -41,14 +50,26 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   destroy$ = inject(DestroyRef);
   isSubmitLoading = signal(false);
 
-  override openDialog(data?: { shippingIndex: number }) {
-    this.shippingIndex = data!.shippingIndex;
-    //this.form.reset();
+  /**
+   * Opens the dialog with the given data.
+   * @param {Partial<{ invoiceIndex: number }>} data - The data to open the dialog with.
+   * @remarks
+   * If the data is not provided, the dialog will open with the default values.
+   */
+  override openDialog(data?: { invoiceIndex: number }) {
+    this.shippingIndex = data!.invoiceIndex;
+    this.form = this.formService.createInvoiceLineForm();
+
     super.openDialog();
   }
 
+  /**
+   * Submits the form with the given values and closes the dialog.
+   * @remarks
+   * This function will add the line to the shipping form and close the dialog.
+   */
   handleSubmit() {
-    this.formService.addLineToShipping(this.shippingIndex, this.form.getRawValue());
+    this.formService.addLineToShipping(this.shippingIndex, this.form);
     this.closeDialog();
   }
 }

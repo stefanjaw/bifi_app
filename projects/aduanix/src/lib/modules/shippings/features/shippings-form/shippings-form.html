@@ -139,20 +139,23 @@
                 </bifi-app-form-field>
               </div>
 
-              <div class="flex gap-2 mb-4">
+              <div class="flex gap-2 mb-4 mt-4">
                 <p-button
                   label="Add Line"
                   severity="secondary"
                   icon="pi pi-plus"
                   type="button"
-                  (onClick)="invoiceLinesFormDialog.openDialog({ shippingIndex: i })"
+                  (onClick)="invoiceLinesFormDialog.openDialog({ invoiceIndex: i })"
                 ></p-button>
               </div>
+
               <div class="w-full" formArrayName="lines">
                 <p-table [value]="extractedDataControl.controls.lines.controls">
                   <ng-template #header>
                     <tr>
                       <th>Line Number</th>
+                      <th>Description</th>
+                      <th>Customs Classification</th>
                       <th>Currency</th>
                       <th>Unit Price</th>
                       <th>Quantity</th>
@@ -164,7 +167,10 @@
                   </ng-template>
                   <ng-template #body let-line>
                     <tr>
+                      
                       <td>{{ line.controls.lineNumber.value }}</td>
+                      <td>{{ line.controls.description.value }}</td>
+                      <td>{{ line.controls.customsClassification.value }}</td>
                       <td>{{ line.controls.currency.value }}</td>
                       <td>{{ line.controls.price.value }}</td>
                       <td>{{ line.controls.quantity.value }}</td>
