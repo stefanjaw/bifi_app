@@ -10,4 +10,12 @@ export class CrudShippings extends ApiRequestManager<shipping> {
     super();
     super.endpoint = 'shippings';
   }
+
+  generateHSCodesForShipping(id: string) {
+    return this.put({
+      _id: id,
+      data: {},
+      specificEndpoint: `hs-code/generate/${id}`,
+    });
+  }
 }

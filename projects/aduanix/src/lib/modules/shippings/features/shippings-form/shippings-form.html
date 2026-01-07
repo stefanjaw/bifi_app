@@ -147,6 +147,13 @@
                   type="button"
                   (onClick)="invoiceLinesFormDialog.openDialog({ invoiceIndex: i })"
                 ></p-button>
+                 <p-button
+                  label="Update HS Codes"
+                  severity="info"
+                  icon="pi pi-refresh"
+                  type="button"
+                  (onClick)="generateHSCodes()"
+                ></p-button>
               </div>
 
               <div class="w-full" formArrayName="lines">
@@ -163,11 +170,11 @@
                       <th>Customs Chapter</th>
                       <th>Customs Heading</th>
                       <th>Customs Subheading</th>
+                      <th>Actions</th>
                     </tr>
                   </ng-template>
-                  <ng-template #body let-line>
+                  <ng-template #body let-line let-rowIndex="rowIndex">
                     <tr>
-                      
                       <td>{{ line.controls.lineNumber.value }}</td>
                       <td>{{ line.controls.description.value }}</td>
                       <td>{{ line.controls.customsClassification.value }}</td>
@@ -178,6 +185,29 @@
                       <td>{{ line.controls.customsChapter.value }}</td>
                       <td>{{ line.controls.customsHeading.value }}</td>
                       <td>{{ line.controls.customsSubheading.value }}</td>
+                      <td>
+                        <div class="flex gap-2">
+                          <p-button
+                            severity="primary"
+                            icon="pi pi-pencil"
+                            variant="text"
+                            type="button"
+                            (onClick)="
+                              invoiceLinesFormDialog.openDialog({
+                                invoiceIndex: i,
+                                lineIndex: rowIndex,
+                              })
+                            "
+                          ></p-button>
+                          <p-button
+                            severity="danger"
+                            icon="pi pi-trash"
+                            variant="text"
+                            type="button"
+                            (click)="removeLine(i, rowIndex)"
+                          ></p-button>
+                        </div>
+                      </td>
                     </tr>
                   </ng-template>
                 </p-table>

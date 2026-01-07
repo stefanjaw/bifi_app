@@ -173,9 +173,26 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
    * Add a new line to the shipping form at the specified invoice index
    * @param invoiceIndex the index of the invoice to add the line to
    */
-  addLineToShipping(invoiceIndex: number, form: GroupReturn<ShippingInvoiceLineFormModel>) {
+  addLineToShipping(
+    invoiceIndex: number,
+    lineIndex: number,
+    form: GroupReturn<ShippingInvoiceLineFormModel>
+  ) {
     const lines =
       this.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;
+
+    if (lineIndex > -1) {
+      lines.setControl(lineIndex, form);
+      return;
+    }
+
     lines.push(form);
+  }
+
+
+  removeLineFromShipping(invoiceIndex: number, lineIndex: number) {
+    const lines =
+      this.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;
+    lines.removeAt(lineIndex);
   }
 }

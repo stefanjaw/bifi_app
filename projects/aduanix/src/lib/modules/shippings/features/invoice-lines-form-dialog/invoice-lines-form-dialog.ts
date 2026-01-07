@@ -16,7 +16,7 @@ import { FormModule } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-invoice-lines-form-dialog',
@@ -34,16 +34,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class InvoiceLinesFormDialog extends BaseDialog {
   // Services
   protected formService = inject(ShippingForm);
-  private destroy$ = inject(DestroyRef);
   private crudCountries = inject(CrudCountries);
+  private destroy$ = inject(DestroyRef);
 
   shippingIndex!: number;
+  lineIndex!: number;
 
   form = signal(this.formService.createInvoiceLineForm());
+
   price = signal<number>(0);
   quantity = signal<number>(0);
   subtotal = computed(() => this.price() * this.quantity());
-
   // Resources
   countriesResource = this.crudCountries.get({
     triggerRequest: this.dialogState,
@@ -56,14 +57,13 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   loading = computed(() => this.countriesResource.isLoading());
   isSubmitLoading = signal(false);
 
-  /**
-   * Constructor for the InvoiceLinesFormDialog component.
-   * Sets up the form value change listeners to update the price and quantity signals.
-   */
   constructor() {
     super();
 
     effect(() => {
+      this.form().controls.subtotal.setValue(this.subtotal(), {
+        emitEvent: false,
+      });
       const form = this.form();
 
       if (!form) return;
@@ -92,11 +92,30 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    * @remarks
    * If the data is not provided, the dialog will open with the default values.
    */
-  override openDialog(data?: { invoiceIndex: number }) {
+  override openDialog(data?: { invoiceIndex: number; lineIndex?: number }) {
     this.shippingIndex = data!.invoiceIndex;
-    this.form.set(this.formService.createInvoiceLineForm());
-    this.price.set(0);
-    this.quantity.set(0);
+    this.lineIndex = data?.lineIndex ?? -1;
+
+    const form = this.formService.createInvoiceLineForm();
+
+    if (this.lineIndex > -1) {
+      const line = this.formService.form.controls.invoices
+        .at(this.shippingIndex)
+        .controls.extractedData.controls.lines.at(this.lineIndex);
+
+      if (line) {
+        form.patchValue(line.value);
+
+        this.price.set(line.controls.price.value ?? 0);
+        this.quantity.set(line.controls.quantity.value ?? 0);
+      }
+    } else {
+      // CREATE MODE
+      this.price.set(0);
+      this.quantity.set(0);
+    }
+
+    this.form.set(form);
 
     super.openDialog();
   }
@@ -107,7 +126,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    * This function will add the line to the shipping form and close the dialog.
    */
   handleSubmit() {
-    this.formService.addLineToShipping(this.shippingIndex, this.form());
+    this.formService.addLineToShipping(this.shippingIndex, this.lineIndex, this.form());
     this.closeDialog();
   }
 }
