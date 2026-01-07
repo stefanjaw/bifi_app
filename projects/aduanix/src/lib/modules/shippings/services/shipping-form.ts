@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { BaseForm, GroupReturn } from '@avalantec/base-app/form';
 
 export interface ShippingInvoiceLineFormModel {
+  checked?: boolean;
   lineNumber: string;
   countryId: string;
   currency: string;
@@ -76,6 +77,7 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
             },
             lines: {
               template: {
+                checked: [false],
                 lineNumber: ['', Validators.required],
                 countryId: ['', Validators.required],
                 currency: ['', Validators.required],
@@ -142,6 +144,7 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
    */
   createInvoiceLineForm() {
     return this.fb.group<ShippingInvoiceLineFormModel>({
+      checked: [false],
       lineNumber: ['', Validators.required],
       countryId: ['', Validators.required],
       currency: ['', Validators.required],
@@ -188,7 +191,6 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
 
     lines.push(form);
   }
-
 
   removeLineFromShipping(invoiceIndex: number, lineIndex: number) {
     const lines =
