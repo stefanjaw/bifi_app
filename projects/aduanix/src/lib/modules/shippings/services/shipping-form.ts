@@ -189,6 +189,7 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
     lines.push(form);
   }
 
+
   removeLineFromShipping(invoiceIndex: number, lineIndex: number) {
     const lines =
       this.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;

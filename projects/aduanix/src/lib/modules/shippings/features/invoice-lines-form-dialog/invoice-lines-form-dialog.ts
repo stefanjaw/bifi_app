@@ -5,6 +5,7 @@ import {
   computed,
   signal,
   effect,
+  DestroyRef,
 } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { BaseDialog } from '@avalantec/base-app/core';
@@ -15,8 +16,7 @@ import { FormModule } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { startWith } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-invoice-lines-form-dialog',
@@ -35,14 +35,15 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   // Services
   protected formService = inject(ShippingForm);
   private crudCountries = inject(CrudCountries);
+  private destroy$ = inject(DestroyRef);
 
   shippingIndex!: number;
   lineIndex!: number;
 
   form = signal(this.formService.createInvoiceLineForm());
 
-  price = signal(0);
-  quantity = signal(0);
+  price = signal<number>(0);
+  quantity = signal<number>(0);
   subtotal = computed(() => this.price() * this.quantity());
   // Resources
   countriesResource = this.crudCountries.get({
@@ -63,8 +64,28 @@ export class InvoiceLinesFormDialog extends BaseDialog {
       this.form().controls.subtotal.setValue(this.subtotal(), {
         emitEvent: false,
       });
+      const form = this.form();
+
+      if (!form) return;
+
+      form.controls.price.valueChanges
+        .pipe(takeUntilDestroyed(this.destroy$))
+        .subscribe(value => this.price.set(value));
+      form.controls.quantity.valueChanges
+        .pipe(takeUntilDestroyed(this.destroy$))
+        .subscribe(value => this.quantity.set(value));
+    });
+
+    effect(() => {
+      const form = this.form();
+      const subtotal = this.subtotal();
+
+      if (!form) return;
+
+      form.controls.subtotal.setValue(subtotal, { emitEvent: false });
     });
   }
+
   /**
    * Opens the dialog with the given data.
    * @param {Partial<{ invoiceIndex: number }>} data - The data to open the dialog with.

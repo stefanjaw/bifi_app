@@ -15,6 +15,7 @@ import { InputText } from 'primeng/inputtext';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ShippingForm, ShippingFormModel } from '../../services/shipping-form';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectModule } from 'primeng/select';
 import { CrudShippings } from '../../services/crud-shippings';
 import { CrudCountries } from '@avalantec/base-app/countries';
@@ -22,6 +23,7 @@ import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { InvoiceLinesFormDialog } from '../invoice-lines-form-dialog/invoice-lines-form-dialog';
+import { InvoiceLinesHSCode } from '../../services/Invoice-lines-hs-code';
 
 @Component({
   selector: 'bifi-app-shippings-form',
@@ -43,11 +45,14 @@ export class ShippingsForm {
   private crudShippings = inject(CrudShippings);
   private crudCountries = inject(CrudCountries);
   private crudCompanies = inject(CrudCompanies);
+  private hsCodeService = inject(InvoiceLinesHSCode);
   private formService = inject(ShippingForm);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
   form = this.formService.form;
+  isUpdate = computed(() => !!this.shipping());
 
   // Comming in route as param
   id = input.required<string>();
@@ -65,7 +70,6 @@ export class ShippingsForm {
   countries = this.countriesResource.value;
   companies = this.companiesResource.value;
 
-
   // State
   loading = computed(
     () =>
@@ -73,7 +77,7 @@ export class ShippingsForm {
       this.countriesResource.isLoading() ||
       this.companiesResource.isLoading()
   );
-  
+
   error = this.shippingsResource.error;
   isSubmitLoading = signal<boolean>(false);
 
@@ -127,9 +131,13 @@ export class ShippingsForm {
   }
 
   removeLine(invoiceIndex: number, lineIndex: number) {
-  this.formService.removeLineFromShipping(invoiceIndex, lineIndex);
-}
-  
+    this.formService.removeLineFromShipping(invoiceIndex, lineIndex);
+  }
+
+  generateHSCodes() {
+    const id = this.id();
+    this.hsCodeService.generateHSCodes(id).subscribe();
+  }
 
   /*************  ✨ Windsurf Command ⭐  *************/
   /**
@@ -138,18 +146,22 @@ export class ShippingsForm {
    */
   /*******  a074237c-17c9-4bdd-8e0f-3298075a977e  *******/
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleSubmit(values: FormValueState<ShippingFormModel>) {
-    this.isSubmitLoading.set(true);
-    // const action = this.isUpdate()
-    //   ? this.crudShippings.update({
-    //       id: this.id(),
-    //       data: values.data,
-    //       triggerRequest: true,
-    //     })
-    //   : this.crudShippings.create({
-    //       daa: values.data,
-    //      triggerRequest: true,
-    //     });
+  async handleSubmit(data: FormValueState<ShippingFormModel>) {
+    const { rawValue } = data;
+
+    const action = this.isUpdate()
+      ? this.crudShippings.put({ _id: this.shipping()?._id || '', data: rawValue })
+      : this.crudShippings.post({ data: rawValue });
+
+    action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
+      error: () => {
+        this.isSubmitLoading.set(false);
+      },
+    });
   }
 
   /**

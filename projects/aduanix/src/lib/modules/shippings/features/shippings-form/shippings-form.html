@@ -147,6 +147,13 @@
                   type="button"
                   (onClick)="invoiceLinesFormDialog.openDialog({ invoiceIndex: i })"
                 ></p-button>
+                 <p-button
+                  label="Update HS Codes"
+                  severity="info"
+                  icon="pi pi-refresh"
+                  type="button"
+                  (onClick)="generateHSCodes()"
+                ></p-button>
               </div>
 
               <div class="w-full" formArrayName="lines">
