@@ -210,7 +210,7 @@ done
 # If PREBUILD is true, TRIGGER PREBUILD ACTIONS
 if [ "$PREBUILD" = true ]; then
     echo "📦 --prebuild flag detected, triggering prebuild actions."
-    npx ts-node "$SUBMODULE_DIR/tools/prebuild/prebuild.ts --apiURL=$PREBUILD_ARG" || { echo "❌ Failed to run prebuild actions"; exit 1; }
+    npx ts-node "$SUBMODULE_DIR/tools/prebuild/prebuild.ts -- --apiURL=$PREBUILD_ARG" || { echo "❌ Failed to run prebuild actions"; exit 1; }
 else
     echo "📦 No --prebuild flag detected, skipping prebuild actions."
 fi
