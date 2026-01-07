@@ -196,18 +196,21 @@ echo "✅ Updated maximumError budget in angular.json to 10MB"
 
 # Check for --prebuild flag
 PREBUILD=false
+PREBUILD_ARG=""
 
 for ARG in "$@"; do
-    if [ "$ARG" = "--prebuild" ]; then
-        PREBUILD=true
-        break
-    fi
+   case "$ARG" in
+    --prebuild=*)
+      PREBUILD_ARG="${ARG#*=}"
+      PREBUILD=true
+      ;;
+  esac
 done
 
 # If PREBUILD is true, TRIGGER PREBUILD ACTIONS
 if [ "$PREBUILD" = true ]; then
     echo "📦 --prebuild flag detected, triggering prebuild actions."
-    npm run pre:build --prefix "$SUBMODULE_DIR" || { echo "❌ Failed to run prebuild actions"; exit 1; }
+    npx ts-node "$SUBMODULE_DIR/tools/prebuild/prebuild.ts --apiURL=$PREBUILD_ARG" || { echo "❌ Failed to run prebuild actions"; exit 1; }
 else
     echo "📦 No --prebuild flag detected, skipping prebuild actions."
 fi

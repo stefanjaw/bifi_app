@@ -21,7 +21,7 @@ RUN git submodule update --progress --init --recursive
 RUN git -C ./bifi_app checkout angularv20
 
 # Run config.library.sh
-RUN sh ./bifi_app/tools/config/config-library.sh --libs all --title=APP
+RUN sh ./bifi_app/tools/config/config-library.sh --libs all --title=APP --prebuild=http://localhost:8080/api
 
 # =========================
 # 2️⃣ NGINX STAGE
@@ -32,7 +32,7 @@ FROM nginx:stable AS deploy
 RUN rm /etc/nginx/conf.d/default.conf
 
 # copy nginx
-COPY ./bifi_app/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/bifi_app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # copy dist
 COPY --from=build /app/dist/*/browser /usr/share/nginx/html

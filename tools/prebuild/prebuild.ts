@@ -1,6 +1,5 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
-import readLine from 'readline';
 import path from 'path';
 
 interface Template {
@@ -13,38 +12,20 @@ interface Template {
   active?: boolean;
 }
 
-async function promptValue(question: string, defaultValue?: string): Promise<string> {
-  const rl = readLine.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const prompt = defaultValue ? `${question} (default: ${defaultValue}): ` : `${question}: `;
-
-  return new Promise(resolve => {
-    rl.question(prompt, answer => {
-      rl.close();
-      resolve(answer.trim() || defaultValue || '');
-    });
-  });
-}
-
 async function fetchTemplates(): Promise<Template[]> {
   try {
     // PROMPT THE USER FOR THE BACKEND URL AND FORMAT IT CORRECTLY
-    let backendURL = await promptValue('Enter the backend URL:', 'http://localhost:8080/api');
+    const apiArg = process.argv.find(a => a.startsWith('--apiURL'));
 
-    if (backendURL.endsWith('/')) backendURL = backendURL.slice(0, -1);
-    if (!backendURL.endsWith('/api')) backendURL += '/api';
+    const apiURL = apiArg?.includes('=')
+      ? apiArg.split('=')[1]
+      : process.argv[process.argv.indexOf('--apiURL') + 1];
 
-    console.log(`Using backend URL: ${backendURL}`);
+    if (!apiURL) {
+      throw new Error('apiURL flag is required');
+    }
 
-    // PROMPT THE USER FOR THE AUTHENTICATION TOKEN AND FORMAT IT CORRECTLY
-    let token = await promptValue('Enter your TOKEN');
-
-    if (!token.startsWith('Bearer ')) token = `Bearer ${token}`;
-
-    console.log('Using provided TOKEN for authentication.');
+    console.log(`Using backend URL: ${apiURL}`);
 
     // SET UP QUERY PARAMETERS TO FILTER ACTIVE TEMPLATES
     const params = new URLSearchParams({
@@ -52,11 +33,8 @@ async function fetchTemplates(): Promise<Template[]> {
     });
 
     // FETCH TEMPLATES FROM THE BACKEND
-    const response = await fetch(`${backendURL}/templates?${params.toString()}`, {
+    const response = await fetch(`${apiURL}/templates?${params.toString()}`, {
       method: 'GET',
-      headers: {
-        Authorization: token,
-      },
     });
 
     // CHECK FOR ERRORS IN THE RESPONSE
