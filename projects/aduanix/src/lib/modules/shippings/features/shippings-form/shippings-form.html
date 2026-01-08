@@ -137,6 +137,12 @@
                   />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
+
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Phone</bifi-app-form-label>
+                  <input pInputText formControlName="phone" type="text" />
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
               </div>
 
               <div class="flex gap-2 mb-4 mt-4">
@@ -157,10 +163,15 @@
               </div>
 
               <div class="w-full" formArrayName="lines">
-                <p-table [value]="extractedDataControl.controls.lines.controls">
+                <p-table [value]="extractedDataControl.controls.lines.controls" class="w-inherit!">
                   <ng-template #header>
                     <tr>
-                      <th></th>
+                      <th>
+                        <p-checkbox
+                          (onChange)="selectAllLines(i, $event.checked)"
+                          binary="true"
+                        ></p-checkbox>
+                      </th>
                       <th>Line Number</th>
                       <th>Description</th>
                       <th>Customs Classification</th>
