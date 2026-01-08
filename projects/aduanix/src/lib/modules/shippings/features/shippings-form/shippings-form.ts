@@ -51,12 +51,10 @@ export class ShippingsForm {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  form = this.formService.form;
-  isUpdate = computed(() => !!this.shipping());
-
   // Comming in route as param
   id = input.required<string>();
 
+  // Resources
   shippingsResource = this.crudShippings.get({
     id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
@@ -64,6 +62,8 @@ export class ShippingsForm {
 
   countriesResource = this.crudCountries.get({});
   companiesResource = this.crudCompanies.get({});
+
+  form = this.formService.form;
 
   // Data
   shipping = this.shippingsResource.value;
@@ -78,6 +78,7 @@ export class ShippingsForm {
       this.companiesResource.isLoading()
   );
 
+  isUpdate = computed(() => !!this.shipping());
   error = this.shippingsResource.error;
   isSubmitLoading = signal<boolean>(false);
 
@@ -224,20 +225,72 @@ export class ShippingsForm {
    *
    * @param {FormValueState<ShippingFormModel>} data - The form value state
    */
-  async handleSubmit(data: FormValueState<ShippingFormModel>) {
-    const { rawValue } = data;
+  handleSubmit(values: FormValueState<ShippingFormModel>) {
+    this.isSubmitLoading.set(true);
 
-    rawValue.invoices.forEach(invoice =>
-      invoice.extractedData.lines.forEach(line => delete line.checked)
-    );
+    let data: any = structuredClone(values.dirtyValue);
+
+    if (this.isUpdate()) {
+      if (data.invoices) {
+        data.invoices = data.invoices.map((invoice: any) => ({
+          status: 'DATA_PROCESSED',
+          pdf: {
+            extractedData: {
+              header: {
+                invoiceNumber: invoice.extractedData.header.invoiceNumber,
+                date: invoice.extractedData.header.date,
+                countryId: invoice.extractedData.header.countryId,
+                companyId: invoice.extractedData.header.companyId,
+                address: invoice.extractedData.header.address,
+                email: invoice.extractedData.header.email,
+                total: invoice.extractedData.header.total,
+                currency: invoice.extractedData.header.currency,
+              },
+              lines: invoice.extractedData.lines.map((line: any) => {
+                const cleanLine: any = {
+                  lineNumber: line.lineNumber,
+                  countryId: line.countryId,
+                  currency: line.currency,
+                  description: line.description,
+                  quantity: line.quantity,
+                  price: line.price,
+                  subtotal: line.subtotal,
+                  customsClassification: line.customsClassification,
+                  hsCode: line.hsCode,
+                  customsChapter: line.customsChapter,
+                  customsHeading: line.customsHeading,
+                  customsSubheading: line.customsSubheading,
+                  chapterDescription: line.chapterDescription,
+                  headingDescription: line.headingDescription,
+                  subheadingDescription: line.subheadingDescription,
+                };
+
+                if (line.tariff?.chapter && line.tariff?.heading && line.tariff?.subheading) {
+                  cleanLine.tariff = {
+                    chapter: line.tariff.chapter,
+                    heading: line.tariff.heading,
+                    subheading: line.tariff.subheading,
+                    description: line.tariff.description,
+                    rateOfDuty: line.tariff.rateOfDuty,
+                  };
+                }
+
+                return cleanLine;
+              }),
+            },
+          },
+        }));
+      }
+    }
 
     const action = this.isUpdate()
-      ? this.crudShippings.put({ _id: this.shipping()?._id || '', data: rawValue })
-      : this.crudShippings.post({ data: rawValue });
+      ? this.crudShippings.put({ _id: this.id(), data })
+      : this.crudShippings.post({ data });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.isSubmitLoading.set(false);
+        this.formService.reset();
         this.goBack();
       },
       error: () => {
