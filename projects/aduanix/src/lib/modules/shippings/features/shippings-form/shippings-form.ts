@@ -24,6 +24,7 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { InvoiceLinesFormDialog } from '../invoice-lines-form-dialog/invoice-lines-form-dialog';
 import { CheckboxModule } from 'primeng/checkbox';
+import { invoice } from '../../interfaces/shipping';
 
 @Component({
   selector: 'bifi-app-shippings-form',
@@ -176,20 +177,23 @@ export class ShippingsForm {
             if (!formLine || line.lineNumber !== formLine.getRawValue().lineNumber) return;
 
             formLine.patchValue({
-              hsCode: line.hsCode,
-              customsChapter: line.customsChapter,
-              customsHeading: line.customsHeading,
-              customsSubheading: line.customsSubheading,
-              chapterDescription: line.chapterDescription,
-              headingDescription: line.headingDescription,
-              subheadingDescription: line.subheadingDescription,
+              hsCode: line.hsCode || formLine.getRawValue().hsCode,
+              customsChapter: line.customsChapter || formLine.getRawValue().customsChapter,
+              customsHeading: line.customsHeading || formLine.getRawValue().customsHeading,
+              customsSubheading: line.customsSubheading || formLine.getRawValue().customsSubheading,
+              chapterDescription:
+                line.chapterDescription || formLine.getRawValue().chapterDescription,
+              headingDescription:
+                line.headingDescription || formLine.getRawValue().headingDescription,
+              subheadingDescription:
+                line.subheadingDescription || formLine.getRawValue().subheadingDescription,
               tariff: {
-                code: line.tariff?.code,
-                chapter: line.tariff?.chapter,
-                heading: line.tariff?.heading,
-                subheading: line.tariff?.subheading,
-                description: line.tariff?.description,
-                rateOfDuty: line.tariff?.rateOfDuty,
+                code: line.tariff?.code || formLine.getRawValue().tariff?.code,
+                chapter: line.tariff?.chapter || formLine.getRawValue().tariff?.chapter,
+                heading: line.tariff?.heading || formLine.getRawValue().tariff?.heading,
+                subheading: line.tariff?.subheading || formLine.getRawValue().tariff?.subheading,
+                description: line.tariff?.description || formLine.getRawValue().tariff?.description,
+                rateOfDuty: line.tariff?.rateOfDuty || formLine.getRawValue().tariff?.rateOfDuty,
               },
             });
 
@@ -209,6 +213,19 @@ export class ShippingsForm {
   }
 
   /**
+   * Selects or deselects all lines of the specified invoice.
+   * @param invoiceIndex - The index of the invoice to select or deselect lines from
+   * @param checked - Whether to select or deselect the lines
+   */
+  selectAllLines(invoiceIndex: number, checked: boolean) {
+    this.form.controls.invoices
+      .at(invoiceIndex)
+      .controls.extractedData.controls.lines.controls.forEach(line =>
+        line.controls.checked.setValue(checked)
+      );
+  }
+
+  /**
    * Removes a line from the shipping form at the specified invoice index.
    * @param invoiceIndex the index of the invoice to remove the line from
    * @param lineIndex the index of the line to remove
@@ -225,67 +242,33 @@ export class ShippingsForm {
    *
    * @param {FormValueState<ShippingFormModel>} data - The form value state
    */
-  handleSubmit(values: FormValueState<ShippingFormModel>) {
-    this.isSubmitLoading.set(true);
+  async handleSubmit(data: FormValueState<ShippingFormModel>) {
+    const { rawValue } = data;
 
-    let data: any = structuredClone(values.dirtyValue);
+    const payload = structuredClone(rawValue);
 
-    if (this.isUpdate()) {
-      if (data.invoices) {
-        data.invoices = data.invoices.map((invoice: any) => ({
-          status: 'DATA_PROCESSED',
-          pdf: {
-            extractedData: {
-              header: {
-                invoiceNumber: invoice.extractedData.header.invoiceNumber,
-                date: invoice.extractedData.header.date,
-                countryId: invoice.extractedData.header.countryId,
-                companyId: invoice.extractedData.header.companyId,
-                address: invoice.extractedData.header.address,
-                email: invoice.extractedData.header.email,
-                total: invoice.extractedData.header.total,
-                currency: invoice.extractedData.header.currency,
-              },
-              lines: invoice.extractedData.lines.map((line: any) => {
-                const cleanLine: any = {
-                  lineNumber: line.lineNumber,
-                  countryId: line.countryId,
-                  currency: line.currency,
-                  description: line.description,
-                  quantity: line.quantity,
-                  price: line.price,
-                  subtotal: line.subtotal,
-                  customsClassification: line.customsClassification,
-                  hsCode: line.hsCode,
-                  customsChapter: line.customsChapter,
-                  customsHeading: line.customsHeading,
-                  customsSubheading: line.customsSubheading,
-                  chapterDescription: line.chapterDescription,
-                  headingDescription: line.headingDescription,
-                  subheadingDescription: line.subheadingDescription,
-                };
-
-                if (line.tariff?.chapter && line.tariff?.heading && line.tariff?.subheading) {
-                  cleanLine.tariff = {
-                    chapter: line.tariff.chapter,
-                    heading: line.tariff.heading,
-                    subheading: line.tariff.subheading,
-                    description: line.tariff.description,
-                    rateOfDuty: line.tariff.rateOfDuty,
-                  };
-                }
-
-                return cleanLine;
-              }),
-            },
+    const invoices = payload.invoices.map<invoice>((invoice, i) => ({
+      status: 'DATA_PROCESSED',
+      pdf: {
+        extractedData: {
+          header: {
+            ...(invoice.extractedData.header as any),
           },
-        }));
-      }
-    }
+          lines: invoice.extractedData.lines.map(line => {
+            const lineCopy = structuredClone(line) as any;
+            delete lineCopy.checked;
+            return lineCopy;
+          }),
+        },
+        file: this.shipping()?.invoices[i]?.pdf.file || undefined,
+      },
+    }));
+
+    payload.invoices = invoices as any;
 
     const action = this.isUpdate()
-      ? this.crudShippings.put({ _id: this.id(), data })
-      : this.crudShippings.post({ data });
+      ? this.crudShippings.put({ _id: this.shipping()?._id || '', data: payload })
+      : this.crudShippings.post({ data: payload });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {

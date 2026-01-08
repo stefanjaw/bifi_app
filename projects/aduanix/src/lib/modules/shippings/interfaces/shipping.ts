@@ -10,8 +10,8 @@ export interface invoiceComment {
 }
 
 export interface invoicePDF {
-  _id: string;
-  file: file;
+  // _id: string;
+  file: file | undefined;
   extractedData: {
     header: {
       invoiceNumber: string;
