@@ -1,2 +1,2 @@
-//export * from './bcd';
+export * from './bcds';
 export * from './shippings';
