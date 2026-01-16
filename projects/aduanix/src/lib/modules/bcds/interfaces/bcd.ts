@@ -1,4 +1,5 @@
 import { company, contact } from '@avalantec/base-app/interfaces';
+import { AdditionalInformationTypeEnum, TaxIdTypeEnum, TaxTypeEnum, TransportMethodTypeEnum, ValuationMethodTypeEnum } from './bcd-types';
 
 export interface bcdSupplier {
   contactId: contact;
@@ -9,7 +10,7 @@ export interface bcdImporter {
 }
 
 export interface bcdTransport {
-  type: 'AIRLINE' | 'VESSEL';
+  type: TransportMethodTypeEnum;
   aircraftOrVessel: string;
   flightOrVoyage: string;
   port: string;
@@ -31,15 +32,15 @@ export interface bcdDeclarant {
 }
 
 export interface bcdTaxEntry {
-  type: 'CUD' | 'WHA' | 'WSF';
-  taxId: 'F' | 'E';
+  type: TaxTypeEnum;
+  taxId: TaxIdTypeEnum;
   valueForTax: number;
   ratePercentage: number;
   amount: number;
 }
 
 export interface bcdAdditionalInformation {
-  type: 'TXT' | 'INV' | 'SUP';
+  type: AdditionalInformationTypeEnum;
   value: string;
 }
 
@@ -80,7 +81,7 @@ export interface bcd {
   warehouseId?: string;
   charges: bcdCharge[];
   containersIds: string[];
-  valuationMethod: '01' | '02';
+  valuationMethod: ValuationMethodTypeEnum;
   packagesCount: number;
   additionalInformation: bcdAdditionalInformation[];
   ogd: bcdOgd;
