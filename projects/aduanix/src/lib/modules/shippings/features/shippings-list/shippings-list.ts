@@ -20,6 +20,8 @@ import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
+import { CrudBCD } from '@avalantec/aduanix/modules/bcds/services/crud-bcd';
+import { bcd } from '@avalantec/aduanix/modules/bcds/interfaces/bcd';
 
 @Component({
   selector: 'bifi-app-shippings-list',
@@ -44,7 +46,9 @@ import { Tag } from 'primeng/tag';
 })
 export class ShippingsList {
   private resourceManager = inject<ResourceManager<shipping>>(ResourceManager);
+  private resourceManagerBCD = inject<ResourceManager<bcd>>(ResourceManager);
   private crudShippings = inject(CrudShippings);
+  private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
   protected fileResolver = inject(FileResolver);
 
@@ -52,7 +56,11 @@ export class ShippingsList {
   shippingFilters = shippingFilters;
 
   shippings = this.resourceManager.data;
+  bcd = this.resourceManagerBCD.data;
 
+  buttonBCDnavigationform(idShipping: string) {
+
+  }
   deleteShipping(id: string) {
     this.crudShippings
       .delete({ _id: id })

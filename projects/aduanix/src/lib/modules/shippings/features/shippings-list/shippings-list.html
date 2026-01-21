@@ -33,6 +33,15 @@
       (onClick)="deleteShipping(row._id)"
       icon="pi pi-trash"
     ></p-button>
+
+    <p-button
+      severity="secondary"
+      label="Add BCD"
+      icon="pi pi-plus"
+      variant="text"
+      [routerLink]="['../bcd']"
+      *bifiAppHasPermission="'bcd:create:view'"
+    ></p-button>
   </ng-template>
 
   <ng-template #expandContent let-element>

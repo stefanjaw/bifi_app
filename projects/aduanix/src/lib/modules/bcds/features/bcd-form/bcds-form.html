@@ -1,1 +1,73 @@
-<p>bcd-form works!</p>
+<bifi-app-form-layout title="BCD Form" titlePosition="left" class="block px-4 bg-gray-50 py-4">
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    <bifi-app-form-section title="Contact Section" id="general-contact-info" [ordinal]="1">
+      <section class="w-full grid gap-3 sm:grid-cols-2">
+        <div formGroupName="supplier">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Supplier</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contactOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        <div formGroupName="importer">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Importer</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contactOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </section>
+    </bifi-app-form-section>
+
+    <bifi-app-form-section title="Transport " id="general-transport-info" [ordinal]="1">
+      <section class="w-full grid gap-3 sm:grid-cols-2">
+        <div formGroupName="transport">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Type</bifi-app-form-label>
+            @for (transport of transportTypeOptions; track transport.value) {
+              <div class="flex align-items-center gap-2">
+                <p-radioButton
+                  name="transportType"
+                  formControlName="type"
+                  [value]="transport.value"
+                ></p-radioButton>
+                <label for="{{ transport.value }}">
+                  {{ transport.label }}
+                </label>
+              </div>
+            }
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+
+          
+        </div>
+      </section>
+    </bifi-app-form-section>
+  </form>
+</bifi-app-form-layout>

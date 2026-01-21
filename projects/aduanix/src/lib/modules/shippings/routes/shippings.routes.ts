@@ -21,12 +21,11 @@ export const SHIPPINGS_ROUTES: Routes = [
       import('../features/shippings-form/shippings-form').then(m => m.ShippingsForm),
     data: { resource: 'shippings/form' },
   },
-
   {
-    path: 'bcd/:id',
+    path: 'bcd',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../../bcds/features/bcd-form/bcds-form').then(m => m.BcdsForm),
-    data: { resource: 'bcd/form' },
-  }
+    data: { resource: 'bcds/form' },
+  },
 ];
