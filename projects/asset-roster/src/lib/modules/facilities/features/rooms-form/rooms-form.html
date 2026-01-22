@@ -46,7 +46,29 @@
               [options]="facilities()"
               optionLabel="name"
               optionValue="_id"
-            ></p-select>
+            >
+              <ng-template #footer>
+                <div class="flex flex-row gap-3 items-center p-4">
+                  <input
+                    class="flex-1"
+                    pInputText
+                    type="text"
+                    placeholder="name"
+                    [(ngModel)]="facilityNameModel"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+
+                  <p-button
+                    type="button"
+                    size="small"
+                    variant="text"
+                    icon="pi pi-plus"
+                    (click)="handleFacilityCreation()"
+                    [disabled]="facilityNameModel() && facilityNameModel().trim() === ''"
+                  ></p-button>
+                </div>
+              </ng-template>
+            </p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </section>

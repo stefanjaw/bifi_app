@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   input,
+  model,
   signal,
 } from '@angular/core';
 import { RoomForm, RoomFormModel } from '../../services/room-form';
@@ -14,7 +15,7 @@ import { CrudFacilities } from '../../services/crud-facilities';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -25,6 +26,7 @@ import { SelectModule } from 'primeng/select';
   imports: [
     ReactiveFormsModule,
     FormModule,
+    FormsModule,
     InputText,
     ButtonModule,
     ProgressBarModule,
@@ -60,6 +62,7 @@ export class RoomsForm {
   isUpdate = computed(() => !!this.room());
   loading = computed(() => this.roomResource.isLoading() || this.facilitiesResource.isLoading());
   error = this.roomResource.error;
+  facilityNameModel = model('');
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
@@ -97,6 +100,18 @@ export class RoomsForm {
         this.isSubmitLoading.set(false);
       },
     });
+  }
+
+  handleFacilityCreation() {
+    this.crudFacilities
+      .post({ data: { name: this.facilityNameModel() } })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.facilitiesResource.reload();
+          this.facilityNameModel.set('');
+        },
+      });
   }
 
   goBack() {

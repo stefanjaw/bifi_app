@@ -6,13 +6,6 @@ export const contactColumns: tableColumn<contact>[] = [
     field: 'name',
     title: 'Contact Name',
     type: 'text',
-    sortable: true,
-  },
-  {
-    field: 'lastName',
-    title: 'Last Name',
-    type: 'text',
-    sortable: true,
   },
   {
     field: 'phoneNumber',
