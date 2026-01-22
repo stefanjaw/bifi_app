@@ -14,7 +14,7 @@ export class FacilityForm extends BaseForm<FacilityFormModel> {
   override createForm() {
     return this.fb.group<FacilityFormModel>({
       name: ['', [Validators.required]],
-      contactId: ['', [Validators.required]],
+      contactId: [''],
     });
   }
 }
