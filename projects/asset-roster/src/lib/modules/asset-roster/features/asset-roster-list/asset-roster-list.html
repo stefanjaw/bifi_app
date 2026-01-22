@@ -7,6 +7,12 @@
       icon="pi pi-file-pdf"
       (onClick)="downloadReportDialog.openDialog()"
       *bifiAppHasPermission="'reporting/generate-report:read:model'"
+      [disabled]="downloadReportDialog.reportingTemplates().length === 0"
+      [pTooltip]="
+        downloadReportDialog.reportingTemplates().length === 0
+          ? 'Configure the Report Template under Settings/Reporting'
+          : undefined
+      "
     ></p-button>
     <p-button
       label="Import CSV"

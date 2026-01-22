@@ -21,6 +21,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { ReportingDownloadDialog } from '@avalantec/base-app/reporting';
 import { TagModule } from 'primeng/tag';
 import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/asset-roster-status-select';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
@@ -37,6 +38,7 @@ import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/ass
     AssetRosterFormDialog,
     HasPermission,
     ReportingDownloadDialog,
+    TooltipModule,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

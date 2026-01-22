@@ -35,7 +35,7 @@ export class ReportingDownloadDialog extends BaseDialog {
     searchParams: computed(() => ({
       model: this.model(),
     })),
-    triggerRequest: computed(() => this.dialogState() && this.model() !== ''),
+    triggerRequest: computed(() => this.dialogState() || this.model() !== ''),
   });
 
   reportingTemplates = this.reportingTemplatesResource.value;
