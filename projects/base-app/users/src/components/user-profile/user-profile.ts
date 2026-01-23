@@ -124,7 +124,7 @@ export class UserProfile {
 
     const data = {
       contactInformation: {
-        _id: this.user()?.contactId?._id || '',
+        _id: this.user()?.contactId?._id || undefined,
         name: value.name,
         lastName: value.lastName,
         phoneNumber: value.phoneNumber,
