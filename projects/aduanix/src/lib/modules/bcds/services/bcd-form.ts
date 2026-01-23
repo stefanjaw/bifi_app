@@ -26,7 +26,7 @@ export interface bcdModel {
   };
   manifest: string;
   masterBOLAWB: string;
-  houseBOLAWB: string;
+  houseBOLAWB: string[];
   directShipmentCountry: string;
   originalShipmentCountry: string;
   warehouseId?: string;
@@ -113,7 +113,10 @@ export class BcdForm extends BaseForm<bcdModel> {
       },
       manifest: ['', []],
       masterBOLAWB: ['', Validators.required],
-      houseBOLAWB: ['', Validators.required],
+      houseBOLAWB: {
+        template: [''],
+        formArrayElements: [],
+      },
       directShipmentCountry: ['', Validators.required],
       originalShipmentCountry: ['', Validators.required],
       warehouseId: ['', []],
