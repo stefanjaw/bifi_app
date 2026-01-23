@@ -75,7 +75,7 @@ export interface bcd {
   transport: bcdTransport;
   manifest: string;
   masterBOLAWB: string;
-  houseBOLAWB: string;
+  houseBOLAWB: string[];
   directShipmentCountry: string;
   originalShipmentCountry: string;
   warehouseId?: string;

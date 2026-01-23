@@ -45,29 +45,73 @@
     </bifi-app-form-section>
 
     <bifi-app-form-section title="Transport " id="general-transport-info" [ordinal]="1">
-      <section class="w-full grid gap-3 sm:grid-cols-2">
-        <div formGroupName="transport">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
-            @for (transport of transportTypeOptions; track transport.value) {
-              <div class="flex align-items-center gap-2">
-                <p-radioButton
-                  name="transportType"
-                  formControlName="type"
-                  [value]="transport.value"
-                ></p-radioButton>
-                <label for="{{ transport.value }}">
-                  {{ transport.label }}
-                </label>
-              </div>
-            }
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+      <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
+        <!-- TYPE -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Type</bifi-app-form-label>
+          @for (transport of transportTypeOptions; track transport.value) {
+            <div class="flex align-items-center gap-2">
+              <p-radioButton
+                name="transportType"
+                formControlName="type"
+                [value]="transport.value"
+              ></p-radioButton>
+              <label>{{ transport.label }}</label>
+            </div>
+          }
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
+        <!-- AIRCRAFT / VESSEL -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Aircraft or Vessel</bifi-app-form-label>
+          <input type="text" formControlName="aircraftOrVessel" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          
-        </div>
-      </section>
+        <!-- FLIGHT / VOYAGE NUMBER -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Flight</bifi-app-form-label>
+          <input type="text" formControlName="flightOrVoyage" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <!-- PORT OF ENTRY -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Port</bifi-app-form-label>
+          <input type="text" formControlName="port" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <!-- ARRIVAL DATE -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Arrival Date</bifi-app-form-label>
+          <p-datepicker formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+    </bifi-app-form-section>
+
+    <bifi-app-form-section title="Manifest " id="manifest-info" [ordinal]="1">
+      <div class="w-full grid gap-3 sm:grid-cols-2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Manifest #</bifi-app-form-label>
+          <input type="text" formControlName="manifest" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Bill of Lading</bifi-app-form-label>
+          <input type="text" formControlName="masterBOLAWB" placeholder="Master BOL" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>House of Landing</bifi-app-form-label>
+          <input type="text" formControlName="houseBOLAWB" placeholder="House BOL" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
     </bifi-app-form-section>
   </form>
 </bifi-app-form-layout>

@@ -23,6 +23,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { CrudShippings } from '@avalantec/aduanix/modules/shippings';
 import { TransportMethodTypeEnum } from '../../interfaces/bcd-types';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -35,6 +36,7 @@ import { TransportMethodTypeEnum } from '../../interfaces/bcd-types';
     ProgressBarModule,
     RadioButtonModule,
     TableLayout,
+    DatePickerModule
   ],
   templateUrl: './bcds-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
