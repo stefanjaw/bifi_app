@@ -12,4 +12,5 @@ export interface user {
   roles: role[];
   contactId?: contact;
   active: boolean;
+  confirmed: boolean;
 }

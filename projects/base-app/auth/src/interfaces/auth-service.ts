@@ -55,7 +55,7 @@ export abstract class IAuthService<
     return computed(() => {
       const user = this.user();
 
-      if (!user) return false;
+      if (!user || !user.confirmed) return false;
 
       const resourceValue = mayBeSignalValue(resource);
       const actionValue = mayBeSignalValue(action);

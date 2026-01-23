@@ -1,4 +1,10 @@
-<bifi-app-form-layout title="Profile" titlePosition="center" class="block px-4 bg-gray-50 py-4">
+@let isConfirmed = user().confirmed;
+
+<bifi-app-form-layout
+  [title]="isConfirmed ? 'Profile' : 'Finish registration'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
   <form
     ngProjectAs="div"
     [formGroup]="form"
@@ -11,6 +17,7 @@
       (cancelClicked)="goBack()"
       class="mb-4"
       [formChanged]="form.dirty"
+      [showCancel]="isConfirmed"
     ></bifi-app-form-actions>
 
     @if (!loading()) {
