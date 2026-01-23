@@ -42,12 +42,7 @@ export class UserProfile {
 
   private auth = injectAuthService();
 
-  id = computed(() => this.auth.user()?._id || '');
-
-  userResource = this.crudUsers.get({
-    id: this.id,
-    triggerRequest: computed(() => this.id() !== ''),
-  });
+  userResource = this.crudUsers.getProfile();
 
   // data
   user = this.userResource.value;
@@ -138,6 +133,7 @@ export class UserProfile {
         type: this.type(),
       },
       uploadedPictureId: value.uploadedPictureId || undefined,
+      confirmed: true,
     };
 
     this.isSubmitLoading.set(true);

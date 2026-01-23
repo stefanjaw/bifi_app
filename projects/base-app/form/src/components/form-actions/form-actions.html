@@ -1,15 +1,17 @@
 <section
   class="col-span-full flex {{ position() === 'end' ? 'justify-end' : 'justify-start' }} gap-2"
 >
-  <p-button
-    type="button"
-    [disabled]="isSubmitting()"
-    (click)="cancelClicked.emit()"
-    variant="outlined"
-    [label]="cancelLabel()"
-    icon="pi pi-arrow-left"
-  ></p-button>
-  @if (formChanged()) {
+  @if (showCancel()) {
+    <p-button
+      type="button"
+      [disabled]="isSubmitting()"
+      (click)="cancelClicked.emit()"
+      variant="outlined"
+      [label]="cancelLabel()"
+      icon="pi pi-arrow-left"
+    ></p-button>
+  }
+  @if (formChanged() && showSave()) {
     <p-button
       type="submit"
       (onClick)="submitClicked.emit()"

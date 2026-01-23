@@ -1,14 +1,17 @@
 @let loggedUser = user();
+@let userConfirmed = loggedUser?.confirmed ?? false;
 
 @if (loggedUser) {
   <p-toolbar class="w-full h-[75px]">
     <ng-template #start>
-      <p-button
-        icon="pi pi-bars"
-        (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
-        variant="text"
-        severity="contrast"
-      ></p-button>
+      @if (userConfirmed) {
+        <p-button
+          icon="pi pi-bars"
+          (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
+          variant="text"
+          severity="contrast"
+        ></p-button>
+      }
 
       <p-button
         [label]="title()"
@@ -47,7 +50,7 @@
 >
   <div class="flex flex-row h-full">
     <!-- this is the sidenav -->
-    @if (isLogged()) {
+    @if (isLogged() && userConfirmed) {
       <p-scrollpanel
         class="h-full shadow-xl p-4 transition-all! duration-100! flex flex-col justify-center items-center"
       >

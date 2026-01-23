@@ -14,7 +14,7 @@ export const BASE_APP_ROUTES: Routes = [
   },
   {
     path: 'settings',
-    canActivate: [authGuard],
+    // !!! canActivate: [authGuard], not set here, it's set in the module
     children: SETTINGS_ROUTES,
   },
   {
