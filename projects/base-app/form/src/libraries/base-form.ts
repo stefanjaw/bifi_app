@@ -22,7 +22,7 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
   /**
    * TypedFormBuilder instance for creating form groups with typed controls.
    */
-  protected fb = inject(TypedFormBuilder);
+  fb = inject(TypedFormBuilder);
 
   /**
    * Signal indicating whether the form has been submitted.

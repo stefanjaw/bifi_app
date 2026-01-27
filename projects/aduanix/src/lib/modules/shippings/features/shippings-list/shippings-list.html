@@ -39,7 +39,7 @@
       label="Add BCD"
       icon="pi pi-plus"
       variant="text"
-      [routerLink]="['../bcd']"
+      [routerLink]="['../bcd/create', row._id]"
       *bifiAppHasPermission="'bcd:create:view'"
     ></p-button>
   </ng-template>

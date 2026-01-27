@@ -22,6 +22,7 @@ import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-fi
 import { Tag } from 'primeng/tag';
 import { CrudBCD } from '@avalantec/aduanix/modules/bcds/services/crud-bcd';
 import { bcd } from '@avalantec/aduanix/modules/bcds/interfaces/bcd';
+// import { BCDFormManager } from '@avalantec/aduanix/modules/bcds/services/bcd-form-manager';
 
 @Component({
   selector: 'bifi-app-shippings-list',
@@ -46,21 +47,17 @@ import { bcd } from '@avalantec/aduanix/modules/bcds/interfaces/bcd';
 })
 export class ShippingsList {
   private resourceManager = inject<ResourceManager<shipping>>(ResourceManager);
-  private resourceManagerBCD = inject<ResourceManager<bcd>>(ResourceManager);
   private crudShippings = inject(CrudShippings);
-  private crudBCD = inject(CrudBCD);
+  // private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
+  // private bcdFormManager = inject(BCDFormManager);
   protected fileResolver = inject(FileResolver);
 
   shippingColumns = shippingColumns;
   shippingFilters = shippingFilters;
 
   shippings = this.resourceManager.data;
-  bcd = this.resourceManagerBCD.data;
 
-  buttonBCDnavigationform(idShipping: string) {
-
-  }
   deleteShipping(id: string) {
     this.crudShippings
       .delete({ _id: id })

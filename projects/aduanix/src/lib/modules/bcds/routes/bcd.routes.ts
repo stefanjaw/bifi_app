@@ -2,11 +2,18 @@ import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const BCD_ROUTES: Routes = [
-
-    {
-        //edit
-        path: 'edit/:id',
-        canActivate: [permissionGuard],
-        data: { resource: 'bcds/form' },
-    },
+  {
+    //create
+    path: 'create/:shippingId',
+    canActivate: [permissionGuard],
+    loadComponent: () => import('../features/bcd-form/bcds-form').then(m => m.BcdsForm),
+    data: { resource: 'bcds/form' },
+  },
+  {
+    //edit
+    path: 'edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () => import('../features/bcd-form/bcds-form').then(m => m.BcdsForm),
+    data: { resource: 'bcds/form' },
+  },
 ];

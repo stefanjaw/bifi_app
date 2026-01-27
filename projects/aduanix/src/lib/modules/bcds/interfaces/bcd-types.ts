@@ -1,54 +1,25 @@
-export enum BCDTypeEnum {
-  IMPORT = "I",
-  EXPORT = "E",
-  D = "D",
-  A = "A",
-}
+export type BCDType = 'I' | 'E' | 'D' | 'A';
 
-export enum AdditionalInformationTypeEnum {
-  TEXT = "TXT",
-  INVOICE = "INV",
-  SUPPLIER = "SUP",
-}
+export type AdditionalInformationType = 'TXT' | 'INV' | 'SUP';
 
-export enum ValuationMethodTypeEnum {
-  TRANSACTIONAL_VALUE = "01",
-  OTHER = "02",
-}
+export type ValuationMethodType = '01' | '02';
 
-export enum TransportMethodTypeEnum {
-  AIRLINE = "AIRLINE",
-  VESSEL = "VESSEL",
-}
+export type TransportMethodType = 'AIRLINE' | 'VESSEL';
 
-export enum TaxTypeEnum {
-  CUSTOMS = "CUD",
-  WHARFAGE = "WHA",
-  WAREHOUSE = "WSF",
-}
+export type TaxType = 'CUD' | 'WHA' | 'WSF';
 
-export enum TaxIdTypeEnum {
-  FULL_RATE = "F",
-  EXCHANGE_RATE = "E",
-}
+export type TaxIdType = 'F' | 'E';
 
-export enum ChargeCodeTypeEnum {
-  CASH_DISCOUNT = "212",
-  FREIGHT_ADDITIONAL = "641",
-  FRIEGHT_STAT = "640",
-}
+export type ChargeCodeType = '212' | '641' | '640';
 
-export enum EBCDTypeEnum {
-  CSV = "CSV", // * CSV file sent
-  SQR = "SQR", // * Sent incorrectly
-  REL = "REL", // * Sent correctly
-  TXT = "TXT", // * Electronic receipt
-}
+export type EBCDType =
+  | 'SENT_CSV'
+  | 'FILE_ERROR_CSV'
+  | 'FORMAT_ERROR_PDF'
+  | 'FORMAT_ERROR_TXT'
+  | 'RELEASE_CSV'
+  | 'RELEASE_PDF'
+  | 'RELEASE_TXT'
+  | 'RECEIPT_TXT';
 
-export enum BCDStatusTypeEnum {
-  DRAFT = "DRAFT",
-  PENDING_RESPONSE = "PENDING_RESPONSE",
-  FAILED = "FAILED",
-  PENDING_QUERY = "PENDING_QUERY",
-  SUBMITTED = "SUBMITTED",
-}
+export type BCDStatusType = 'DRAFT' | 'PENDING_RESPONSE' | 'FAILED' | 'PENDING_QUERY' | 'SUBMITTED';

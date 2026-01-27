@@ -1,202 +1,126 @@
-import { company, contact } from '@avalantec/base-app/interfaces';
-import {
-  AdditionalInformationTypeEnum,
-  TaxIdTypeEnum,
-  TaxTypeEnum,
-  TransportMethodTypeEnum,
-  ValuationMethodTypeEnum,
-} from '../interfaces/bcd-types';
 import { Injectable } from '@angular/core';
 import { BaseForm } from '@avalantec/base-app/form';
 import { Validators } from '@angular/forms';
-
-export interface bcdModel {
-  supplier: {
-    contactId: string;
-  };
-  importer: {
-    contactId: string;
-  };
-  transport: {
-    type: string;
-    aircraftOrVessel: string;
-    flightOrVoyage: string;
-    port: string;
-    arrivalDate: string;
-  };
-  manifest: string;
-  masterBOLAWB: string;
-  houseBOLAWB: string[];
-  directShipmentCountry: string;
-  originalShipmentCountry: string;
-  warehouseId?: string;
-  charges: {
-    code: string;
-    percentage?: number;
-    amount: number;
-  }[];
-  containersIds: string[];
-  valuationMethod: string;
-  packagesCount: number;
-  additionalInformation: {
-    type: string;
-    value: string;
-  }[];
-
-  ogd: {
-    paymentCode: string;
-    costCode: string;
-    objectCode: string;
-    subsidiaryCode: string;
-    explanation: string;
-  };
-  paymentAccounts: string[];
-  declarant: {
-    name: string;
-    companyId: string;
-    date: string;
-    capacity: string;
-    traderReference: string;
-  };
-  records:
-    | {
-        number: number;
-        cpc: string;
-        origin: string;
-        tariff: string;
-        description: string;
-        quantity: number;
-        quantityTwo: number;
-        supplementaryCode: string;
-        currency: string;
-        linesSubtotal: number;
-        exchangeRate: number;
-        charges: {
-          code: string;
-          percentage?: number;
-          amount: number;
-        }[];
-        tax: {
-          type: string;
-          taxId: string;
-          valueForTax: number;
-          ratePercentage: number;
-          amount: number;
-        }[];
-        additionalInformation: {
-          type: string;
-          value: string;
-        }[];
-      }[]
-    | null;
-}
+import { bcdFormModel } from '../interfaces/bcd-form';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BcdForm extends BaseForm<bcdModel> {
+export class BcdForm extends BaseForm<bcdFormModel> {
   // Implementation of the BcdForm service would go here
   override createForm() {
-    return this.fb.group<bcdModel>({
+    return this.fb.group<bcdFormModel>({
+      shippingId: ['', [Validators.required]],
+      type: ['I', [Validators.required]],
       supplier: {
-        contactId: ['', Validators.required],
+        contactId: ['', [Validators.required]],
       },
       importer: {
-        contactId: ['', Validators.required],
+        contactId: ['', [Validators.required]],
       },
       transport: {
-        type: ['', Validators.required],
-        aircraftOrVessel: ['', Validators.required],
-        flightOrVoyage: ['', Validators.required],
-        port: ['', Validators.required],
-        arrivalDate: ['', Validators.required],
+        type: ['VESSEL', Validators.required],
+        aircraftOrVessel: ['', [Validators.required, Validators.maxLength(3)]],
+        flightOrVoyage: ['', [Validators.required, Validators.maxLength(255)]],
+        port: ['', [Validators.required, Validators.maxLength(3)]],
+        arrivalDate: [new Date(), [Validators.required]],
       },
-      manifest: ['', []],
-      masterBOLAWB: ['', Validators.required],
+      manifest: ['', [Validators.required, Validators.maxLength(255)]],
+      masterBOLAWB: ['', [Validators.required, Validators.maxLength(255)]],
       houseBOLAWB: {
         template: [''],
         formArrayElements: [],
+        validators: [Validators.minLength(1)],
       },
-      directShipmentCountry: ['', Validators.required],
-      originalShipmentCountry: ['', Validators.required],
-      warehouseId: ['', []],
+      directShipmentCountry: ['', [Validators.required]],
+      originalShipmentCountry: ['', [Validators.required]],
+      warehouseId: ['', [Validators.minLength(4), Validators.maxLength(4)]],
       charges: {
         template: {
-          code: ['', Validators.required],
-          percentage: [0],
-          amount: [0, Validators.required],
+          code: ['212', [Validators.required]],
+          percentage: [0, [Validators.min(0), Validators.max(100)]],
+          amount: [0, [Validators.required, Validators.min(0)]],
         },
+        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
       containersIds: {
         template: [''],
+        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
-      valuationMethod: ['', []],
-      packagesCount: [0, []],
+      valuationMethod: [
+        '01',
+        [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
+      ],
+      packagesCount: [0, [Validators.required, Validators.min(0)]],
       additionalInformation: {
         template: {
-          type: ['', Validators.required],
-          value: ['', Validators.required],
+          type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+          value: ['', [Validators.required, Validators.maxLength(70)]],
         },
+        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
       ogd: {
-        paymentCode: [''],
-        costCode: [''],
-        objectCode: [''],
-        subsidiaryCode: [''],
+        paymentCode: ['', [Validators.maxLength(255)]],
+        costCode: ['', [Validators.required]],
+        objectCode: ['', [Validators.required]],
+        subsidiaryCode: ['', [Validators.required]],
         explanation: [''],
       },
       paymentAccounts: {
         template: [''],
+        validators: [Validators.minLength(1)],
         formArrayElements: [],
       },
       declarant: {
-        name: ['', Validators.required],
-        companyId: ['', Validators.required],
-        date: ['', Validators.required],
-        capacity: ['', Validators.required],
-        traderReference: ['', Validators.required],
+        name: ['', [Validators.required, Validators.maxLength(255)]],
+        companyId: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(255)]],
+        date: [new Date(), [Validators.required]],
+        capacity: ['', [Validators.required]],
+        traderReference: ['', [Validators.required]],
       },
-
       records: {
         template: {
           // Add fields for records here
-          number: [0, Validators.required],
-          cpc: ['', Validators.required],
-          origin: ['', Validators.required],
-          tariff: ['', Validators.required],
-          description: ['', Validators.required],
-          quantity: [0, Validators.required],
-          quantityTwo: [0, Validators.required],
-          supplementaryCode: ['', Validators.required],
-          currency: ['', Validators.required],
-          linesSubtotal: [0, Validators.required],
-          exchangeRate: [0, Validators.required],
+          number: [0, [Validators.required, Validators.min(0)]],
+          cpc: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+          origin: ['', [Validators.required]],
+          tariff: ['', [Validators.required]],
+          description: ['', [Validators.required, Validators.maxLength(200)]],
+          quantity: [0, [Validators.required, Validators.min(0)]],
+          quantityTwo: [0, [Validators.min(0)]],
+          supplementaryCode: ['', [Validators.required, Validators.maxLength(10)]],
+          currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
+          linesSubtotal: [0, [Validators.required, Validators.min(0)]],
+          exchangeRate: [0, [Validators.required, Validators.min(0)]],
           charges: {
             template: {
-              code: ['', Validators.required],
-              percentage: [0],
-              amount: [0, Validators.required],
+              code: ['212', [Validators.required]],
+              percentage: [0, [Validators.min(0), Validators.max(100)]],
+              amount: [0, [Validators.required, Validators.min(0)]],
             },
+            validators: [Validators.required, Validators.minLength(1)],
             formArrayElements: [],
           },
           tax: {
             template: {
-              type: ['', Validators.required],
-              taxId: ['', Validators.required],
-              valueForTax: [0, Validators.required],
-              ratePercentage: [0, Validators.required],
-              amount: [0, Validators.required],
+              type: ['CUD', [Validators.required]],
+              taxId: ['F', [Validators.required]],
+              valueForTax: [0, [Validators.required, Validators.min(0)]],
+              ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+              amount: [0, [Validators.required, Validators.min(0)]],
             },
+            validators: [Validators.minLength(1)],
             formArrayElements: [],
           },
           additionalInformation: {
             template: {
-              type: ['', Validators.required],
-              value: ['', Validators.required],
+              type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+              value: ['', [Validators.required, Validators.maxLength(70)]],
             },
+            validators: [Validators.minLength(1)],
             formArrayElements: [],
           },
         },

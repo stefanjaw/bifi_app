@@ -99,9 +99,9 @@ export class ShippingsForm {
       if (shipping) {
         this.formService.patchValue({
           name: shipping.name,
-          origin: shipping.origin._id,
-          destination: shipping.destination._id,
-          invoices: shipping.invoices.map(invoice => ({
+          origin: shipping.origin?._id,
+          destination: shipping.destination?._id,
+          invoices: shipping.invoices?.map(invoice => ({
             extractedData: {
               header: {
                 invoiceNumber: invoice.pdf.extractedData?.header?.invoiceNumber,

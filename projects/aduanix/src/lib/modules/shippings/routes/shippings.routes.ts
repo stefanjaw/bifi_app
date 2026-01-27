@@ -24,8 +24,6 @@ export const SHIPPINGS_ROUTES: Routes = [
   {
     path: 'bcd',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../../bcds/features/bcd-form/bcds-form').then(m => m.BcdsForm),
-    data: { resource: 'bcds/form' },
+    loadChildren: () => import('../../bcds').then(m => m.BCD_ROUTES),
   },
 ];
