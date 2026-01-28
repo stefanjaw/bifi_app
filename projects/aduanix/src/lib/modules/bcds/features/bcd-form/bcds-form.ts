@@ -26,9 +26,12 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { BCDFormManager } from '../../services/bcd-form-manager';
 import { bcdFormModel } from '../../interfaces/bcd-form';
 import { TableModule } from 'primeng/table';
-import { transportMethodTypeOptions } from '../../libs/bcd-options';
+import { additionalInformationTypeOptions, chargeCodeTypeOptions, transportMethodTypeOptions } from '../../libs/bcd-options';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TextareaModule } from 'primeng/textarea';
+import { Tabs, TabsModule } from 'primeng/tabs';
+import { BcdChargesFormDialog } from '../bcd-charges-form-dialog/bcd-charges-form-dialog';
+import { BcdAdditionalInformationFormDialog } from '../bcd-additional-information-form-dialog/bcd-additional-information-form-dialog';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -43,13 +46,17 @@ import { TextareaModule } from 'primeng/textarea';
     TableModule,
     DatePickerModule,
     TextareaModule,
+    TabsModule,
+    Tabs,
+    BcdChargesFormDialog,
+    BcdAdditionalInformationFormDialog,
   ],
   templateUrl: './bcds-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BcdsForm {
   private formService = inject(BcdForm);
-  private formManager = inject(BCDFormManager);
+  protected formManager = inject(BCDFormManager);
   private crudShippings = inject(CrudShippings);
   private crudBCD = inject(CrudBCD);
   private crudCountries = inject(CrudCountries);
@@ -79,6 +86,8 @@ export class BcdsForm {
   contactOptions = this.contactsResource.value;
   countryOptions = this.countriesResource.value;
   transportMethodTypeOptions = transportMethodTypeOptions;
+  chargeCodeTypeOptions = chargeCodeTypeOptions;
+  additionalInformationTypeOptions = additionalInformationTypeOptions;
 
   //state
   form = this.formService.form;
@@ -192,32 +201,6 @@ export class BcdsForm {
     });
 
     this.formService.form.markAllAsTouched();
-  }
-
-  //addContainer from bcdForm-manager
-  addContainer(value: string = '') {
-    this.formManager.addContainer(value);
-  }
-
-  removeContainer(index: number) {
-    this.formManager.removeContainer(index);
-  }
-
-  //addHouseBOLAWB from bcdForm-manager
-  addHouseBOLAWB(value: string = '') {
-    this.formManager.addHouseBOLAWB(value);
-  }
-
-  removeHouseBOLAWB(index: number) {
-    this.formManager.removeHouseBOLAWB(index);
-  }
-
-  addPaymentAccount() {
-    this.formManager.addPaymentAccount();
-  }
-
-  removePaymentAccount(index: number) {
-    this.formManager.removePaymentAccount(index);
   }
 
   async handleSubmit(data: FormValueState<bcdFormModel>) {

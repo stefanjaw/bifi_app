@@ -1,253 +1,512 @@
-<bifi-app-form-layout [title]="isUpdate() ? 'Update BCD' : `Create BCD for ${shipping.name}`" titlePosition="left"
-  class="block px-4 bg-gray-50 py-4">
-  <form ngProjectAs="div" [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit($event)"
-    class="min-h-screen flex flex-col gap-6">
-    <bifi-app-form-actions [isSubmitting]="isSubmitLoading()" class="mb-4"
-      [formChanged]="form.dirty"></bifi-app-form-actions>
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Update BCD' : `Create BCD for ${shipping.name}`"
+  titlePosition="left"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
 
-    <!-- CONTACT -->
-    <bifi-app-form-section title="Contact Section" id="general-contact-info" [ordinal]="1">
-      <section class="w-full grid gap-3 sm:grid-cols-2">
-        <div formGroupName="supplier">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Supplier</bifi-app-form-label>
-            <p-select formControlName="contactId" [options]="contactOptions()" optionLabel="name" optionValue="_id"
-              [filter]="true"></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-        </div>
-
-        <div formGroupName="importer">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Importer</bifi-app-form-label>
-            <p-select formControlName="contactId" [options]="contactOptions()" optionLabel="name" optionValue="_id"
-              [filter]="true"></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-        </div>
-      </section>
-    </bifi-app-form-section>
-
-    <!-- TRANSPORT -->
-    <bifi-app-form-section title="Transport" id="general-transport-info" [ordinal]="2">
-      <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
-        <!-- TRANSPORT TYPE -->
-        <div class="flex flex-row gap-2 col-span-full mb-4">
-          @for (type of transportMethodTypeOptions; track $index) {
-          <div class="flex align-items-center">
-            <p-radioButton inputId="type" [value]="type.value" formControlName="type"></p-radioButton>
-            <label for="vessel" class="ml-2">{{ type.label }}</label>
-          </div>
-          }
-        </div>
-
-        <bifi-app-form-field>
-          <bifi-app-form-field>
-            {{ currentTransportMethodType() === 'VESSEL' ? 'Vessel' : 'Aircraft' }}
-          </bifi-app-form-field>
-          <input type="text" formControlName="aircraftOrVessel" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>
-            {{ currentTransportMethodType() === 'VESSEL' ? 'Voyage' : 'Flight' }}
-          </bifi-app-form-label>
-          <input type="text" formControlName="flightOrVoyage" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Port</bifi-app-form-label>
-          <input type="text" formControlName="port" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Arrival Date</bifi-app-form-label>
-          <p-datepicker formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-      </div>
-    </bifi-app-form-section>
-
-    <!-- MANIFEST -->
-    <bifi-app-form-section title="Manifest" id="manifest-info" [ordinal]="3">
-      <div class="w-full grid gap-3 sm:grid-cols-2">
-        <!-- Manifest number -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Manifest #</bifi-app-form-label>
-          <input type="text" formControlName="manifest" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- Warehouse ID -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Warehouse ID</bifi-app-form-label>
-          <input type="text" formControlName="warehouseId" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- DIRECT SHIPMENT COUNTRY -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Direct Shipment Country</bifi-app-form-label>
-          <p-select appendTo="body" formControlName="directShipmentCountry" [options]="countryOptions()"
-            optionLabel="name" optionValue="_id" [filter]="true"></p-select>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- ORIGINAL SHIPMENT COUNTRY -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Original Shipment Country</bifi-app-form-label>
-          <p-select appendTo="body" formControlName="originalShipmentCountry" [options]="countryOptions()"
-            optionLabel="name" optionValue="_id" [filter]="true"></p-select>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- HOUSE -->
-        <div formArrayName="houseBOLAWB">
-          <bifi-app-form-field class="h-full flex flex-col">
-            <div class="flex items-center gap-2">
-              <bifi-app-form-label>House of Landing</bifi-app-form-label>
-
-              <p-button type="button" icon="pi pi-plus" label="Add House" text class="text-sm"
-                (click)="addHouseBOLAWB('')"></p-button>
-            </div>
-            <div class="flex-1 flex flex-col gap-2">
-              @for (control of form.controls.houseBOLAWB.controls; track $index) {
-              <div class="flex items-center gap-2">
-                <input pInputText [formControl]="control" class="w-40 text-sm" />
-                <p-button type="button" icon="pi pi-trash" severity="danger"
-                  (click)="removeHouseBOLAWB($index)"></p-button>
+    <p-tabs value="0">
+      <p-tablist>
+        <p-tab value="0">
+          <span class="p-tabheader-title">General</span>
+        </p-tab>
+        <p-tab value="1">
+          <span class="p-tabheader-title">Records</span>
+        </p-tab>
+        <p-tab value="2">
+          <span class="p-tabheader-title">Summary</span>
+        </p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <!-- GENERAL TAB-->
+        <p-tabpanel value="0">
+          <!-- CONTACT -->
+          <bifi-app-form-section title="Contact Section" id="general-contact-info" [ordinal]="1">
+            <section class="w-full grid gap-3 sm:grid-cols-2">
+              <div formGroupName="supplier">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Supplier</bifi-app-form-label>
+                  <p-select
+                    formControlName="contactId"
+                    [options]="contactOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [filter]="true"
+                  ></p-select>
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
               </div>
-              }
-            </div>
-          </bifi-app-form-field>
-        </div>
 
-        <!-- CONTAINER -->
-        <div formArrayName="containersIds">
-          <bifi-app-form-field class="h-full flex flex-col">
-            <div class="flex items-center gap-2">
-              <bifi-app-form-label>Container ID</bifi-app-form-label>
-              <p-button type="button" icon="pi pi-plus" label="Add Container" text class="text-sm"
-                (click)="addContainer('')"></p-button>
-            </div>
-            <div class="flex-1 flex flex-col gap-2">
-              @for (control of form.controls.containersIds.controls; track $index) {
-              <div class="flex items-center gap-2">
-                <input pInputText [formControl]="control" class="w-40 text-sm" />
-                <p-button type="button" icon="pi pi-trash" severity="danger"
-                  (click)="removeContainer($index)"></p-button>
+              <div formGroupName="importer">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Importer</bifi-app-form-label>
+                  <p-select
+                    formControlName="contactId"
+                    [options]="contactOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [filter]="true"
+                  ></p-select>
+                  <bifi-app-form-error></bifi-app-form-error>
+                </bifi-app-form-field>
               </div>
-              }
+            </section>
+          </bifi-app-form-section>
+
+          <!-- TRANSPORT -->
+          <bifi-app-form-section title="Transport" id="general-transport-info" [ordinal]="2">
+            <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
+              <!-- TRANSPORT TYPE -->
+              <div class="flex flex-row gap-2 col-span-full mb-4">
+                @for (type of transportMethodTypeOptions; track $index) {
+                  <div class="flex align-items-center">
+                    <p-radioButton
+                      inputId="type"
+                      [value]="type.value"
+                      formControlName="type"
+                    ></p-radioButton>
+                    <label for="vessel" class="ml-2">{{ type.label }}</label>
+                  </div>
+                }
+              </div>
+
+              <bifi-app-form-field>
+                <bifi-app-form-field>
+                  {{ currentTransportMethodType() === 'VESSEL' ? 'Vessel' : 'Aircraft' }}
+                </bifi-app-form-field>
+                <input type="text" formControlName="aircraftOrVessel" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>
+                  {{ currentTransportMethodType() === 'VESSEL' ? 'Voyage' : 'Flight' }}
+                </bifi-app-form-label>
+                <input type="text" formControlName="flightOrVoyage" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Port</bifi-app-form-label>
+                <input type="text" formControlName="port" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Arrival Date</bifi-app-form-label>
+                <p-datepicker formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
             </div>
-          </bifi-app-form-field>
-        </div>
-      </div>
-    </bifi-app-form-section>
+          </bifi-app-form-section>
 
-    <bifi-app-form-section title="Charges" id="general-charge-info" [ordinal]="2">
-      <div class="w-full" formArrayName="charges">
-        <p-table [value]="form.controls.charges.getRawValue()" class="w-inherit!">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Code</th>
-              <th>Percentage</th>
-              <th>Amount</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
+          <!-- MANIFEST -->
+          <bifi-app-form-section title="Manifest" id="manifest-info" [ordinal]="3">
+            <div class="w-full grid gap-3 sm:grid-cols-2">
+              <!-- Manifest number -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Manifest #</bifi-app-form-label>
+                <input type="text" formControlName="manifest" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
 
-          <ng-template pTemplate="body" let-chargeControl let-i="rowIndex">
-            <tr [formGroupName]="i">
-              <td>
-                <bifi-app-form-field>
-                  <input pInputText formControlName="code" type="text" placeholder="Code" />
-                  <bifi-app-form-error></bifi-app-form-error>
+              <!-- Warehouse ID -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Warehouse ID</bifi-app-form-label>
+                <input type="text" formControlName="warehouseId" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- DIRECT SHIPMENT COUNTRY -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Direct Shipment Country</bifi-app-form-label>
+                <p-select
+                  appendTo="body"
+                  formControlName="directShipmentCountry"
+                  [options]="countryOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [filter]="true"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- ORIGINAL SHIPMENT COUNTRY -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Original Shipment Country</bifi-app-form-label>
+                <p-select
+                  appendTo="body"
+                  formControlName="originalShipmentCountry"
+                  [options]="countryOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [filter]="true"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- HOUSE -->
+              <div formArrayName="houseBOLAWB">
+                <bifi-app-form-field class="h-full flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <bifi-app-form-label>House of Landing</bifi-app-form-label>
+
+                    <p-button
+                      type="button"
+                      icon="pi pi-plus"
+                      label="Add House"
+                      text
+                      class="text-sm"
+                      (click)="formManager.addHouseBOLAWB('')"
+                    ></p-button>
+                  </div>
+                  <div class="flex-1 flex flex-col gap-2">
+                    @for (control of form.controls.houseBOLAWB.controls; track $index) {
+                      <div class="flex items-center gap-2">
+                        <input pInputText [formControl]="control" class="w-40 text-sm" />
+                        <p-button
+                          type="button"
+                          icon="pi pi-trash"
+                          severity="danger"
+                          (click)="formManager.removeHouseBOLAWB($index)"
+                        ></p-button>
+                      </div>
+                    }
+                  </div>
                 </bifi-app-form-field>
-              </td>
-              <td>
-                <bifi-app-form-field>
-                  <input pInputText formControlName="percentage" type="number" placeholder="Percentage" />
-                  <bifi-app-form-error></bifi-app-form-error>
+              </div>
+
+              <!-- CONTAINER -->
+              <div formArrayName="containersIds">
+                <bifi-app-form-field class="h-full flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <bifi-app-form-label>Container ID</bifi-app-form-label>
+                    <p-button
+                      type="button"
+                      icon="pi pi-plus"
+                      label="Add Container"
+                      text
+                      class="text-sm"
+                      (click)="formManager.addContainer('')"
+                    ></p-button>
+                  </div>
+
+                  <div class="flex-1 flex flex-col gap-2">
+                    @for (control of form.controls.containersIds.controls; track $index) {
+                      <div class="flex items-center gap-2">
+                        <input pInputText [formControl]="control" class="w-40 text-sm" />
+                        <p-button
+                          type="button"
+                          icon="pi pi-trash"
+                          severity="danger"
+                          (click)="formManager.removeContainer($index)"
+                        ></p-button>
+                      </div>
+                    }
+                  </div>
                 </bifi-app-form-field>
-              </td>
-              <td>
-                <bifi-app-form-field>
-                  <input pInputText formControlName="amount" type="number" placeholder="Amount" />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
-              </td>
-              <td>
-                <!-- <p-button type="button" icon="pi pi-trash" severity="danger"
-                          (click)="removeCharge(i)"></p-button> -->
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </bifi-app-form-section>
-
-    <bifi-app-form-section title="OGD" id="ogd-info" [ordinal]="3">
-      <div formGroupName="ogd" class="w-full grid gap-3 sm:grid-cols-2">
-        <!-- OGD Number -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Payment Code</bifi-app-form-label>
-          <input type="text" formControlName="paymentCode" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- Cost Code -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Cost Code</bifi-app-form-label>
-          <input type="text" formControlName="costCode" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- OGD Object Code -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>OGD Object Code</bifi-app-form-label>
-          <input type="text" formControlName="objectCode" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- OGD subsidiary Code -->
-        <bifi-app-form-field>
-          <bifi-app-form-label>Subsidiary Code</bifi-app-form-label>
-          <input formControlName="subsidiaryCode" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <!-- OGD Explanation textArea-->
-        <bifi-app-form-field class="col-span-full">
-          <bifi-app-form-label>Explanation</bifi-app-form-label>
-          <textarea pInputTextarea formControlName="explanation" rows="4" cols="30"
-            placeholder="Explanation"></textarea>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-      </div>
-
-      <!-- Payment Account Array field similar to containers -->
-      <div formArrayName="paymentAccounts">
-        <bifi-app-form-field class="h-full flex flex-col">
-          <div class="flex items-center gap-2">
-            <bifi-app-form-label>Payment Account</bifi-app-form-label>
-            <p-button type="button" icon="pi pi-plus" label="Add Payment Account" text class="text-sm"
-              (click)="addPaymentAccount()"></p-button>
-          </div>
-          <div class="flex-1 flex flex-col gap-2">
-            @for (control of form.controls.paymentAccounts.controls; track $index) {
-            <div class="flex items-center gap-2">
-              <input pInputText [formControl]="control" class="w-40 text-sm" />
-              <p-button type="button" icon="pi pi-trash" severity="danger"
-                (click)="removePaymentAccount($index)"></p-button>
+              </div>
             </div>
-            }
-          </div>
-        </bifi-app-form-field>
-      </div>
-    </bifi-app-form-section>
-    <!-- <bifi-app-form-section></bifi-app-form-section> -->
+          </bifi-app-form-section>
+
+          <!-- ADDITIONAL INFORMATION -->
+          <bifi-app-form-section
+            title="Additional Information"
+            id="general-additional-information-info"
+            [ordinal]="4"
+          >
+            <div class="w-full" formArrayName="additionalInformation">
+              <p-button
+                class="mb-4"
+                label="Add Information"
+                variant="text"
+                icon="pi pi-plus"
+                (onClick)="additionalInformationDialog.openDialog()"
+              ></p-button>
+              <p-table [value]="form.controls.additionalInformation.controls" class="w-inherit!">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-chargeControl let-i="rowIndex">
+                  <tr [formGroupName]="i">
+                    <td>
+                      <bifi-app-form-field>
+                        <bifi-app-form-field>
+                          <p-select
+                            appendTo="body"
+                            formControlName="type"
+                            [options]="additionalInformationTypeOptions"
+                            optionLabel="label"
+                            optionValue="value"
+                          ></p-select>
+                          <bifi-app-form-error></bifi-app-form-error>
+                        </bifi-app-form-field>
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </td>
+                    <td>
+                      <bifi-app-form-field>
+                        <input
+                          pInputText
+                          formControlName="value"
+                          type="text"
+                          placeholder="Value"
+                        />
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </td>
+                    <td>
+                      <p-button
+                        type="button"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        (click)="formManager.removeAdditionalInformation(i)"
+                      ></p-button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </bifi-app-form-section>
+
+          <!-- CHARGES -->
+          <bifi-app-form-section title="Charges" id="general-charge-info" [ordinal]="5">
+            <div class="w-full" formArrayName="charges">
+              <p-button
+                class="mb-4"
+                label="Add charge"
+                variant="text"
+                icon="pi pi-plus"
+                (onClick)="chargesDialog.openDialog()"
+              ></p-button>
+              <p-table [value]="form.controls.charges.controls" class="w-inherit!">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Code</th>
+                    <th>Percentage</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-chargeControl let-i="rowIndex">
+                  <tr [formGroupName]="i">
+                    <td>
+                      <bifi-app-form-field>
+                        <bifi-app-form-field>
+                          <p-select
+                            appendTo="body"
+                            formControlName="code"
+                            [options]="chargeCodeTypeOptions"
+                            optionLabel="label"
+                            optionValue="value"
+                          ></p-select>
+                          <bifi-app-form-error></bifi-app-form-error>
+                        </bifi-app-form-field>
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </td>
+                    <td>
+                      <bifi-app-form-field>
+                        <input
+                          pInputText
+                          formControlName="percentage"
+                          type="number"
+                          placeholder="Percentage"
+                        />
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </td>
+                    <td>
+                      <bifi-app-form-field>
+                        <input
+                          pInputText
+                          formControlName="amount"
+                          type="number"
+                          placeholder="Amount"
+                        />
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </td>
+                    <td>
+                      <p-button
+                        type="button"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        (click)="formManager.removeCharge(i)"
+                      ></p-button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </bifi-app-form-section>
+
+          <!-- OGD -->
+          <bifi-app-form-section title="OGD" id="ogd-info" [ordinal]="6">
+            <div formGroupName="ogd" class="w-full grid gap-3 sm:grid-cols-2">
+              <!-- OGD Number -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Payment Code</bifi-app-form-label>
+                <input type="text" formControlName="paymentCode" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- Cost Code -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Cost Code</bifi-app-form-label>
+                <input type="text" formControlName="costCode" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- OGD Object Code -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>OGD Object Code</bifi-app-form-label>
+                <input type="text" formControlName="objectCode" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- OGD subsidiary Code -->
+              <bifi-app-form-field>
+                <bifi-app-form-label>Subsidiary Code</bifi-app-form-label>
+                <input formControlName="subsidiaryCode" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <!-- OGD Explanation textArea-->
+              <bifi-app-form-field class="col-span-full">
+                <bifi-app-form-label>Explanation</bifi-app-form-label>
+                <textarea
+                  pInputTextarea
+                  formControlName="explanation"
+                  rows="4"
+                  cols="30"
+                  placeholder="Explanation"
+                ></textarea>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+
+            <!-- Payment Account Array field similar to containers -->
+            <div formArrayName="paymentAccounts">
+              <bifi-app-form-field class="h-full flex flex-col">
+                <div class="flex items-center gap-2">
+                  <bifi-app-form-label>Payment Account</bifi-app-form-label>
+                  <p-button
+                    type="button"
+                    icon="pi pi-plus"
+                    label="Add Payment Account"
+                    text
+                    class="text-sm"
+                    (click)="formManager.addPaymentAccount()"
+                  ></p-button>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                  @for (control of form.controls.paymentAccounts.controls; track $index) {
+                    <div class="flex items-center gap-2">
+                      <input pInputText [formControl]="control" class="w-40 text-sm" />
+                      <p-button
+                        type="button"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        (click)="formManager.removePaymentAccount($index)"
+                      ></p-button>
+                    </div>
+                  }
+                </div>
+              </bifi-app-form-field>
+            </div>
+          </bifi-app-form-section>
+
+          <!-- Declarant Section -->
+          <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="7">
+            <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2">
+              <bifi-app-form-field>
+                <bifi-app-form-label>Declarant name</bifi-app-form-label>
+                <input type="text" formControlName="name" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Company Id</bifi-app-form-label>
+                <input type="text" formControlName="companyId" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Capacity</bifi-app-form-label>
+                <input type="text" formControlName="capacity" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Date</bifi-app-form-label>
+                <p-datepicker formControlName="date" [showIcon]="true"></p-datepicker>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Trader Reference</bifi-app-form-label>
+                <input type="text" formControlName="traderReference" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          </bifi-app-form-section>
+        </p-tabpanel>
+
+        <!-- RECORDS TAB -->
+        <p-tabpanel value="1">
+          <bifi-app-form-section title="Records" id="records-info" [ordinal]="1">
+            <div formGroupName="records" class="w-full grid gap-3 sm:grid-cols-2">
+              <bifi-app-form-field>
+                <bifi-app-form-label>Number</bifi-app-form-label>
+                <input type="number" formControlName="number" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>CPC</bifi-app-form-label>
+                <input type="text" formControlName="cpc" pInputText />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Origin Country</bifi-app-form-label>
+                <p-select
+                  appendTo="body"
+                  formControlName="origin"
+                  [options]="countryOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [filter]="true"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              
+            </div>
+          </bifi-app-form-section>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
   </form>
 </bifi-app-form-layout>
+
+<bifi-app-bcd-charges-form-dialog #chargesDialog></bifi-app-bcd-charges-form-dialog>
+<bifi-app-bcd-additional-information-form-dialog #additionalInformationDialog></bifi-app-bcd-additional-information-form-dialog>

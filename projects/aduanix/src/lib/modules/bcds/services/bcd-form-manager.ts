@@ -48,7 +48,7 @@ export class BCDFormManager {
   }
 
   addCharge(form: GroupReturn<bcdFormChargeModel>, recordIndex: number | undefined = undefined) {
-    const chargesArray = recordIndex
+    const chargesArray = recordIndex !== undefined
       ? this.form.form.controls.records.at(recordIndex).controls.charges
       : this.form.form.controls.charges;
     chargesArray.push(form);

@@ -55,7 +55,6 @@ export class InvoiceLinesFormDialog extends BaseDialog {
 
   // State
   loading = computed(() => this.countriesResource.isLoading());
-  isSubmitLoading = signal(false);
 
   constructor() {
     super();

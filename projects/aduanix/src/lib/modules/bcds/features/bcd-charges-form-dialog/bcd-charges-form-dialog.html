@@ -1,0 +1,40 @@
+<p-dialog header="New Charge" [(visible)]="dialogState" [modal]="true">
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-4"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit()"
+  >
+    <section class="w-full grid gap-3 sm:grid-cols-2">
+      <bifi-app-form-field>
+        <bifi-app-form-label>Code</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="code"
+          [options]="chargeCodeTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Percentage</bifi-app-form-label>
+        <input pInputText formControlName="percentage" type="number" placeholder="Quantity" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Amount</bifi-app-form-label>
+        <input pInputText formControlName="amount" type="number" placeholder="Amount" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+    </section>
+
+    <bifi-app-form-actions
+      (cancelClicked)="closeDialog()"
+      cancelLabel="Cancel"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>
