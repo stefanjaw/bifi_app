@@ -10,46 +10,31 @@ import {
 } from '@angular/core';
 import { CrudBCD } from '../../services/crud-bcd';
 import { BcdForm } from '../../services/bcd-form';
-import { CrudCountries } from '@avalantec/base-app/countries';
-import { CrudContacts } from '@avalantec/base-app/contacts';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
-import { RadioButtonModule } from 'primeng/radiobutton';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
 import { CrudShippings } from '@avalantec/aduanix/modules/shippings';
-import { TransportMethodType } from '../../interfaces/bcd-types';
-import { DatePickerModule } from 'primeng/datepicker';
 import { BCDFormManager } from '../../services/bcd-form-manager';
 import { bcdFormModel } from '../../interfaces/bcd-form';
-import { TableModule } from 'primeng/table';
-import { additionalInformationTypeOptions, chargeCodeTypeOptions, transportMethodTypeOptions } from '../../libs/bcd-options';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { TextareaModule } from 'primeng/textarea';
 import { Tabs, TabsModule } from 'primeng/tabs';
-import { BcdChargesFormDialog } from '../bcd-charges-form-dialog/bcd-charges-form-dialog';
-import { BcdAdditionalInformationFormDialog } from '../bcd-additional-information-form-dialog/bcd-additional-information-form-dialog';
+import { BcdsGeneralForm } from './bcds-general-form/bcds-general-form';
+import { BcdsRecordsForm } from './bcds-records-form/bcds-records-form';
+import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
 
 @Component({
   selector: 'bifi-app-bcds-form',
   imports: [
     FormModule,
     ReactiveFormsModule,
-    SelectModule,
-    InputText,
     ButtonModule,
     ProgressBarModule,
-    RadioButtonModule,
-    TableModule,
-    DatePickerModule,
-    TextareaModule,
     TabsModule,
     Tabs,
-    BcdChargesFormDialog,
-    BcdAdditionalInformationFormDialog,
+    BcdsGeneralForm,
+    BcdsRecordsForm,
+    BcdsSummaryForm,
   ],
   templateUrl: './bcds-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,8 +44,6 @@ export class BcdsForm {
   protected formManager = inject(BCDFormManager);
   private crudShippings = inject(CrudShippings);
   private crudBCD = inject(CrudBCD);
-  private crudCountries = inject(CrudCountries);
-  private crudContacts = inject(CrudContacts);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -68,6 +51,7 @@ export class BcdsForm {
   id = input.required<string>();
   shippingId = input.required<string>();
 
+  // resources
   bcdResource = this.crudBCD.get({
     id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
@@ -77,35 +61,13 @@ export class BcdsForm {
     triggerRequest: computed(() => this.shippingId() !== undefined),
   });
 
-  contactsResource = this.crudContacts.get({});
-  countriesResource = this.crudCountries.get({});
-
   //data
   bcd = this.bcdResource.value;
   shipping = this.shippingResource.value;
-  contactOptions = this.contactsResource.value;
-  countryOptions = this.countriesResource.value;
-  transportMethodTypeOptions = transportMethodTypeOptions;
-  chargeCodeTypeOptions = chargeCodeTypeOptions;
-  additionalInformationTypeOptions = additionalInformationTypeOptions;
 
   //state
   form = this.formService.form;
-  currentTransportMethodType = toSignal(
-    this.formService.form.controls.transport.controls.type.valueChanges,
-    {
-      initialValue: this.formService.form.controls.transport.controls.type.value,
-    }
-  );
-
-  isLoading = computed(
-    () =>
-      this.contactsResource.isLoading() ||
-      this.countriesResource.isLoading() ||
-      this.bcdResource.isLoading() ||
-      this.shippingResource.isLoading()
-  );
-
+  isLoading = computed(() => this.bcdResource.isLoading() || this.shippingResource.isLoading());
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.bcd());
   error = this.bcdResource.error;
@@ -204,6 +166,16 @@ export class BcdsForm {
   }
 
   async handleSubmit(data: FormValueState<bcdFormModel>) {
+    console.log('🚀 ~ BcdsForm ~ handleSubmit ~ data:', data);
     this.isSubmitLoading.set(true);
+  }
+
+  /**
+   * Navigate back to the list of BCDs.
+   *
+   * This function navigates back to the list of BCDs when the back button is clicked.
+   */
+  goBack() {
+    this.router.navigate(['../../list'], { relativeTo: this.route });
   }
 }

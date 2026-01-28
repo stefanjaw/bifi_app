@@ -1,0 +1,99 @@
+@if (!loading()) {
+  <section [formGroup]="form">
+    <bifi-app-form-section title="Records" id="records-info" [ordinal]="1">
+      <div formArrayName="records" class="w-full grid gap-3 sm:grid-cols-3">
+        <p-button
+          label="Add Record"
+          icon="pi pi-plus"
+          variant="text"
+          (onClick)="formManager.addRecord()"
+        ></p-button>
+        @for (control of form.controls.records.controls; track $index) {
+          <div [formGroupName]="$index" class="grid gap-3 sm:grid-cols-3 mb-6 border-b pb-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Number</bifi-app-form-label>
+              <input type="number" formControlName="number" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>CPC</bifi-app-form-label>
+              <input type="text" formControlName="cpc" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Origin Country</bifi-app-form-label>
+              <p-select
+                appendTo="body"
+                formControlName="origin"
+                [options]="countryOptions()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Tariff</bifi-app-form-label>
+              <input type="text" formControlName="tariff" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Description</bifi-app-form-label>
+              <textarea pInputTextarea formControlName="description" rows="4" cols="30"></textarea>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Quantity</bifi-app-form-label>
+              <input type="number" formControlName="quantity" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Quantity Two</bifi-app-form-label>
+              <input type="number" formControlName="quantityTwo" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Supplementary Code</bifi-app-form-label>
+              <input type="text" formControlName="supplementaryCode" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Currency</bifi-app-form-label>
+              <input type="text" formControlName="currency" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Lines Subtotal</bifi-app-form-label>
+              <input type="text" formControlName="linesSubtotal" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>Exchange Rate</bifi-app-form-label>
+              <input type="number" formControlName="exchangeRate" pInputText />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <!--Charges-->
+          </div>
+        }
+      </div>
+    </bifi-app-form-section>
+  </section>
+} @else {
+  <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+}
+
+<bifi-app-bcd-charges-form-dialog #chargesDialog></bifi-app-bcd-charges-form-dialog>
+<bifi-app-bcd-additional-information-form-dialog
+  #additionalInformationDialog
+></bifi-app-bcd-additional-information-form-dialog>
