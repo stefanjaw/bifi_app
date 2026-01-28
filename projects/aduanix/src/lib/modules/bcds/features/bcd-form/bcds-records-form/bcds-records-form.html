@@ -1,13 +1,15 @@
 @if (!loading()) {
   <section [formGroup]="form">
     <bifi-app-form-section title="Records" id="records-info" [ordinal]="1">
-      <div formArrayName="records" class="w-full grid gap-3 sm:grid-cols-3">
-        <p-button
-          label="Add Record"
-          icon="pi pi-plus"
-          variant="text"
-          (onClick)="formManager.addRecord()"
-        ></p-button>
+      <p-button
+        label="Add Record"
+        icon="pi pi-plus"
+        variant="text"
+        (onClick)="formManager.addRecord()"
+        class="mb-4"
+      ></p-button>
+
+      <div formArrayName="records" class="w-full flex flex-col gap-4">
         @for (control of form.controls.records.controls; track $index) {
           <div [formGroupName]="$index" class="grid gap-3 sm:grid-cols-3 mb-6 border-b pb-4">
             <bifi-app-form-field>
