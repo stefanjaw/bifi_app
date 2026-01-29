@@ -37,7 +37,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   private crudCountries = inject(CrudCountries);
   private destroy$ = inject(DestroyRef);
 
-  shippingIndex!: number;
+  invoiceIndex!: number;
   lineIndex!: number;
 
   form = signal(this.formService.createInvoiceLineForm());
@@ -91,28 +91,12 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    * @remarks
    * If the data is not provided, the dialog will open with the default values.
    */
-  override openDialog(data?: { invoiceIndex: number; lineIndex?: number }) {
-    this.shippingIndex = data!.invoiceIndex;
-    this.lineIndex = data?.lineIndex ?? -1;
+  override openDialog(invoiceIndex = -1) {
+    this.invoiceIndex = invoiceIndex;
 
     const form = this.formService.createInvoiceLineForm();
-
-    if (this.lineIndex > -1) {
-      const line = this.formService.form.controls.invoices
-        .at(this.shippingIndex)
-        .controls.extractedData.controls.lines.at(this.lineIndex);
-
-      if (line) {
-        form.patchValue(line.value);
-
-        this.price.set(line.controls.price.value ?? 0);
-        this.quantity.set(line.controls.quantity.value ?? 0);
-      }
-    } else {
-      // CREATE MODE
-      this.price.set(0);
-      this.quantity.set(0);
-    }
+    this.price.set(0);
+    this.quantity.set(0);
 
     this.form.set(form);
 
@@ -125,7 +109,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
    * This function will add the line to the shipping form and close the dialog.
    */
   handleSubmit() {
-    this.formService.addLineToShipping(this.shippingIndex, this.lineIndex, this.form());
+    this.formService.addLineToShipping(this.invoiceIndex, this.lineIndex, this.form());
     this.closeDialog();
   }
 }

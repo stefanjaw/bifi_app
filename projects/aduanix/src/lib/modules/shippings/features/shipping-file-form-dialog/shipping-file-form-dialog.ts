@@ -54,7 +54,7 @@ export class ShippingFileFormDialog extends BaseDialog {
           this.submitLoading.set(false);
           this.formService.reset();
           this.closeDialog();
-          // this.shippingCreated.emit();
+          this.shippingCreated.emit();
         },
         error: () => {
           this.submitLoading.set(false);

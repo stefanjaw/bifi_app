@@ -3,7 +3,6 @@ import { Validators } from '@angular/forms';
 import { BaseForm, GroupReturn } from '@avalantec/base-app/form';
 
 export interface ShippingInvoiceLineFormModel {
-  checked?: boolean;
   lineNumber: string;
   countryId: string;
   currency: string;
@@ -27,6 +26,8 @@ export interface ShippingInvoiceLineFormModel {
     userDescription?: string;
     description?: string;
     rateOfDuty?: number;
+    unitOfMeasurement?: string;
+    tax?: number;
   };
 }
 
@@ -77,7 +78,6 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
             },
             lines: {
               template: {
-                checked: [false],
                 lineNumber: ['', Validators.required],
                 countryId: ['', Validators.required],
                 currency: ['', Validators.required],
@@ -101,6 +101,8 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
                   userDescription: [''],
                   description: [''],
                   rateOfDuty: [0],
+                  unitOfMeasurement: [''],
+                  tax: [0],
                 },
               },
               formArrayElements: [],
@@ -144,7 +146,6 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
    */
   createInvoiceLineForm() {
     return this.fb.group<ShippingInvoiceLineFormModel>({
-      checked: [false],
       lineNumber: ['', Validators.required],
       countryId: ['', Validators.required],
       currency: ['', Validators.required],
@@ -168,6 +169,8 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
         userDescription: [''],
         description: [''],
         rateOfDuty: [0],
+        unitOfMeasurement: [''],
+        tax: [0],
       },
     });
   }
@@ -192,6 +195,11 @@ export class ShippingForm extends BaseForm<ShippingFormModel> {
     lines.push(form);
   }
 
+  /**
+   * Removes a line from the shipping form at the specified invoice and line index.
+   * @param invoiceIndex the index of the invoice to remove the line from
+   * @param lineIndex the index of the line to remove
+   */
   removeLineFromShipping(invoiceIndex: number, lineIndex: number) {
     const lines =
       this.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;

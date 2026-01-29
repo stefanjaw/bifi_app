@@ -58,180 +58,330 @@
         [ordinal]="2"
         formArrayName="invoices"
       >
-        @for (invoiceControl of form.controls.invoices.controls; track $index; let i = $index) {
-          <p-card class="w-full" [formGroupName]="i" [header]="'Invoice #' + (i + 1)">
-            @let extractedDataControl = invoiceControl.controls.extractedData;
+        <p-select
+          [(ngModel)]="invoiceViewMode"
+          [ngModelOptions]="{ standalone: true }"
+          [options]="invoiceViewModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          class="mb-4"
+        ></p-select>
 
-            <section [formGroup]="extractedDataControl" class="w-full flex flex-col gap-2">
-              <div class="grid gap-3 sm:grid-cols-4" formGroupName="header">
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Invoice Number</bifi-app-form-label>
-                  <input
-                    pInputText
-                    formControlName="invoiceNumber"
-                    type="text"
-                    placeholder="Invoice Number"
-                  />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+        <section class="flex flex-col gap-4">
+          @for (invoiceControl of form.controls.invoices.controls; track $index; let i = $index) {
+            <bifi-app-form-section
+              [title]="'Invoice #' + (i + 1)"
+              [id]="'invoice-details-' + (i + 1)"
+              [formGroupName]="i"
+            >
+              @let extractedDataControl = invoiceControl.controls.extractedData;
+              @let viewMode = invoiceViewMode();
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Currency</bifi-app-form-label>
-                  <input
-                    pInputText
-                    formControlName="currency"
-                    type="text"
-                    placeholder="Invoice Currency"
-                  />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+              <section [formGroup]="extractedDataControl" class="w-full">
+                <div class="grid gap-3 sm:grid-cols-4" formGroupName="header">
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Invoice Number</bifi-app-form-label>
+                    <input
+                      pInputText
+                      formControlName="invoiceNumber"
+                      type="text"
+                      placeholder="Invoice Number"
+                    />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Invoice Total</bifi-app-form-label>
-                  <input
-                    pInputText
-                    formControlName="total"
-                    type="number"
-                    placeholder="Invoice Total"
-                  />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Currency</bifi-app-form-label>
+                    <input
+                      pInputText
+                      formControlName="currency"
+                      type="text"
+                      placeholder="Invoice Currency"
+                    />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Address</bifi-app-form-label>
-                  <input pInputText formControlName="address" type="text" placeholder="Address" />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Invoice Total</bifi-app-form-label>
+                    <input
+                      pInputText
+                      formControlName="total"
+                      type="number"
+                      placeholder="Invoice Total"
+                    />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Origin Country</bifi-app-form-label>
-                  <p-select
-                    formControlName="countryId"
-                    [options]="countries()"
-                    optionLabel="name"
-                    optionValue="_id"
-                    [filter]="true"
-                  ></p-select>
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Address</bifi-app-form-label>
+                    <input pInputText formControlName="address" type="text" placeholder="Address" />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Company</bifi-app-form-label>
-                  <p-select
-                    formControlName="companyId"
-                    [options]="companies()"
-                    optionLabel="name"
-                    optionValue="_id"
-                    [filter]="true"
-                  ></p-select>
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Origin Country</bifi-app-form-label>
+                    <p-select
+                      formControlName="countryId"
+                      [options]="countries()"
+                      optionLabel="name"
+                      optionValue="_id"
+                      [filter]="true"
+                    ></p-select>
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Company Email</bifi-app-form-label>
-                  <input
-                    pInputText
-                    formControlName="email"
-                    type="text"
-                    placeholder="company@email.com"
-                  />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Company</bifi-app-form-label>
+                    <p-select
+                      formControlName="companyId"
+                      [options]="companies()"
+                      optionLabel="name"
+                      optionValue="_id"
+                      [filter]="true"
+                    ></p-select>
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-                <bifi-app-form-field>
-                  <bifi-app-form-label>Phone</bifi-app-form-label>
-                  <input pInputText formControlName="phone" type="text" />
-                  <bifi-app-form-error></bifi-app-form-error>
-                </bifi-app-form-field>
-              </div>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Company Email</bifi-app-form-label>
+                    <input
+                      pInputText
+                      formControlName="email"
+                      type="text"
+                      placeholder="company@email.com"
+                    />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
 
-              <div class="flex gap-2 mb-4 mt-4">
-                <p-button
-                  label="Add Line"
-                  severity="secondary"
-                  icon="pi pi-plus"
-                  type="button"
-                  (onClick)="invoiceLinesFormDialog.openDialog({ invoiceIndex: i })"
-                ></p-button>
-                <p-button
-                  label="Update HS Codes"
-                  severity="info"
-                  icon="pi pi-refresh"
-                  type="button"
-                  (onClick)="generateHSCodes(i)"
-                ></p-button>
-              </div>
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>Phone</bifi-app-form-label>
+                    <input pInputText formControlName="phone" type="text" />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+                </div>
 
-              <div class="w-full" formArrayName="lines">
-                <p-table [value]="extractedDataControl.controls.lines.controls" class="w-inherit!">
-                  <ng-template #header>
-                    <tr>
-                      <th>
-                        <p-checkbox
-                          (onChange)="selectAllLines(i, $event.checked)"
-                          binary="true"
-                        ></p-checkbox>
-                      </th>
-                      <th>Line Number</th>
-                      <th>Description</th>
-                      <th>Customs Classification</th>
-                      <th>Currency</th>
-                      <th>Unit Price</th>
-                      <th>Quantity</th>
-                      <th>Subtotal</th>
-                      <th>HS Code</th>
-                      <th>Customs Chapter</th>
-                      <th>Customs Heading</th>
-                      <th>Customs Subheading</th>
-                      <th>Actions</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template #body let-line let-rowIndex="rowIndex">
-                    <tr [formGroupName]="rowIndex">
-                      <td>
-                        <p-checkbox formControlName="checked" binary="true"></p-checkbox>
-                      </td>
-                      <td>{{ line.controls.lineNumber.value }}</td>
-                      <td>{{ line.controls.description.value }}</td>
-                      <td>{{ line.controls.customsClassification.value }}</td>
-                      <td>{{ line.controls.currency.value }}</td>
-                      <td>{{ line.controls.price.value }}</td>
-                      <td>{{ line.controls.quantity.value }}</td>
-                      <td>{{ line.controls.subtotal.value }}</td>
-                      <td>{{ line.controls.hsCode.value }}</td>
-                      <td>{{ line.controls.customsChapter.value }}</td>
-                      <td>{{ line.controls.customsHeading.value }}</td>
-                      <td>{{ line.controls.customsSubheading.value }}</td>
-                      <td>
-                        <div class="flex gap-2">
-                          <p-button
-                            severity="primary"
-                            icon="pi pi-pencil"
-                            variant="text"
-                            type="button"
-                            (onClick)="
-                              invoiceLinesFormDialog.openDialog({
-                                invoiceIndex: i,
-                                lineIndex: rowIndex,
-                              })
-                            "
-                          ></p-button>
-                          <p-button
-                            severity="danger"
-                            icon="pi pi-trash"
-                            variant="text"
-                            type="button"
-                            (click)="removeLine(i, rowIndex)"
-                          ></p-button>
-                        </div>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </div>
-            </section>
-          </p-card>
-        }
+                <div class="flex gap-2 mb-4 mt-4">
+                  <p-button
+                    label="Add Line"
+                    severity="secondary"
+                    icon="pi pi-plus"
+                    type="button"
+                    variant="text"
+                    (onClick)="invoiceLinesFormDialog.openDialog(i)"
+                  ></p-button>
+                  @if (viewMode === 'hsCode') {
+                    <p-button
+                      label="Update HS Codes"
+                      severity="info"
+                      icon="pi pi-refresh"
+                      type="button"
+                      variant="text"
+                      (onClick)="generateHSCodes(i)"
+                    ></p-button>
+                  } @else {
+                    <p-button
+                      label="Update Tariff"
+                      severity="info"
+                      icon="pi pi-refresh"
+                      type="button"
+                      variant="text"
+                      (onClick)="generateTariff(i)"
+                    ></p-button>
+                  }
+                </div>
+
+                <div class="w-full" formArrayName="lines">
+                  <p-table
+                    [value]="extractedDataControl.controls.lines.controls"
+                    scrollable="true"
+                    scrollDirection="horizontal"
+                  >
+                    <ng-template #header>
+                      <tr>
+                        <th>
+                          <p-checkbox
+                            [value]="getInvoiceSelectionValue(i)"
+                            (onChange)="selectAllLines(i, $event.checked)"
+                            binary="true"
+                          ></p-checkbox>
+                        </th>
+                        <th>Line Number</th>
+                        <th>Description</th>
+                        <th>Customs Classification</th>
+                        @if (viewMode === 'hsCode') {
+                          <th>Currency</th>
+                          <th>Unit Price</th>
+                          <th>Quantity</th>
+                          <th>Subtotal</th>
+                          <th>HS Code</th>
+                          <th>Customs Chapter</th>
+                          <th>Customs Heading</th>
+                          <th>Customs Subheading</th>
+                        } @else {
+                          <th>Code</th>
+                          <th>Chapter</th>
+                          <th>Heading</th>
+                          <th>Subheading</th>
+                          <th>User Description</th>
+                          <th>Description</th>
+                          <th>Rate of Duty</th>
+                          <th>Unit of Measurement</th>
+                          <th>Tax</th>
+                        }
+                        <th>Actions</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template #body let-line let-j="rowIndex">
+                      <tr [formGroupName]="j">
+                        <td>
+                          <p-checkbox
+                            [(ngModel)]="selected()[i][j]"
+                            [ngModelOptions]="{ standalone: true }"
+                            binary="true"
+                          ></p-checkbox>
+                        </td>
+                        <td>
+                          <bifi-app-form-field>
+                            <input pInputText formControlName="lineNumber" type="text" />
+                            <bifi-app-form-error></bifi-app-form-error>
+                          </bifi-app-form-field>
+                        </td>
+                        <td>
+                          <bifi-app-form-field>
+                            <input pInputText formControlName="description" type="text" />
+                            <bifi-app-form-error></bifi-app-form-error>
+                          </bifi-app-form-field>
+                        </td>
+                        <td>
+                          <bifi-app-form-field>
+                            <input pInputText formControlName="customsClassification" type="text" />
+                            <bifi-app-form-error></bifi-app-form-error>
+                          </bifi-app-form-field>
+                        </td>
+                        @if (viewMode === 'hsCode') {
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="currency" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="price" type="number" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="quantity" type="nuber" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="subtotal" type="number" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="hsCode" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="customsChapter" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="customsHeading" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td>
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="customsSubheading" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                        } @else {
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="code" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="chapter" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="heading" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="subheading" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="userDescription" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="description" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="rateOfDuty" type="number" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="unitOfMeasurement" type="text" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                          <td formGroupName="tariff">
+                            <bifi-app-form-field>
+                              <input pInputText formControlName="tax" type="number" />
+                              <bifi-app-form-error></bifi-app-form-error>
+                            </bifi-app-form-field>
+                          </td>
+                        }
+                        <td>
+                          <div class="flex gap-2">
+                            <p-button
+                              severity="danger"
+                              icon="pi pi-trash"
+                              variant="text"
+                              type="button"
+                              (click)="removeLine(i, j)"
+                            ></p-button>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </section>
+            </bifi-app-form-section>
+          }
+        </section>
       </bifi-app-form-section>
     } @else if (error()) {
       <p>Something went wrong... {{ error() }}</p>

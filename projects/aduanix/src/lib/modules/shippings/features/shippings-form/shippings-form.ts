@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -30,6 +30,7 @@ import { invoice } from '../../interfaces/shipping';
   selector: 'bifi-app-shippings-form',
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     FormModule,
     InputText,
     ButtonModule,
@@ -71,6 +72,13 @@ export class ShippingsForm {
   countries = this.countriesResource.value;
   companies = this.companiesResource.value;
 
+  // view
+  invoiceViewMode = signal<'hsCode' | 'tariff'>('hsCode');
+  invoiceViewModeOptions = [
+    { label: 'HS Code', value: 'hsCode' },
+    { label: 'Tariff', value: 'tariff' },
+  ];
+
   // State
   loading = computed(
     () =>
@@ -82,6 +90,7 @@ export class ShippingsForm {
   isUpdate = computed(() => !!this.shipping());
   error = this.shippingsResource.error;
   isSubmitLoading = signal<boolean>(false);
+  selected = signal<Record<number, boolean[]>>({});
 
   /**
    * Constructor
@@ -95,46 +104,60 @@ export class ShippingsForm {
       const shipping = this.shipping();
 
       this.formService.resetDirtyState();
+      this.selected.set({});
 
       if (shipping) {
         this.formService.patchValue({
           name: shipping.name,
           origin: shipping.origin?._id,
           destination: shipping.destination?._id,
-          invoices: shipping.invoices?.map(invoice => ({
-            extractedData: {
-              header: {
-                invoiceNumber: invoice.pdf.extractedData?.header?.invoiceNumber,
-                date: invoice.pdf.extractedData?.header?.date,
-                countryId: invoice.pdf.extractedData?.header?.countryId?._id,
-                companyId: invoice.pdf.extractedData?.header?.companyId?._id,
-                address: invoice.pdf.extractedData?.header?.address,
-                phone: invoice.pdf.extractedData?.header?.phone,
-                email: invoice.pdf.extractedData?.header?.email,
-                total: invoice.pdf.extractedData?.header?.total,
-                currency: invoice.pdf.extractedData?.header?.currency,
+          invoices: shipping.invoices?.map((inv, i) => {
+            const invoiceSelected: boolean[] = [];
+
+            const invoice = {
+              extractedData: {
+                header: {
+                  invoiceNumber: inv.pdf.extractedData?.header?.invoiceNumber,
+                  date: inv.pdf.extractedData?.header?.date,
+                  countryId: inv.pdf.extractedData?.header?.countryId?._id,
+                  companyId: inv.pdf.extractedData?.header?.companyId?._id,
+                  address: inv.pdf.extractedData?.header?.address,
+                  phone: inv.pdf.extractedData?.header?.phone,
+                  email: inv.pdf.extractedData?.header?.email,
+                  total: inv.pdf.extractedData?.header?.total,
+                  currency: inv.pdf.extractedData?.header?.currency,
+                },
+                lines: inv.pdf.extractedData?.lines?.map(line => {
+                  invoiceSelected.push(false);
+
+                  return {
+                    lineNumber: line.lineNumber,
+                    countryId: line.countryId?._id,
+                    currency: line.currency,
+                    description: line.description,
+                    quantity: line.quantity,
+                    price: line.price,
+                    subtotal: line.subtotal,
+                    customsClassification: line.customsClassification,
+                    hsCode: line.hsCode,
+                    customsChapter: line.customsChapter,
+                    customsHeading: line.customsHeading,
+                    customsSubheading: line.customsSubheading,
+                    chapterDescription: line.chapterDescription,
+                    headingDescription: line.headingDescription,
+                    subheadingDescription: line.subheadingDescription,
+                    tariff: line.tariff,
+                  };
+                }),
               },
-              lines: invoice.pdf.extractedData?.lines?.map(line => ({
-                checked: false,
-                lineNumber: line.lineNumber,
-                countryId: line.countryId?._id,
-                currency: line.currency,
-                description: line.description,
-                quantity: line.quantity,
-                price: line.price,
-                subtotal: line.subtotal,
-                customsClassification: line.customsClassification,
-                hsCode: line.hsCode,
-                customsChapter: line.customsChapter,
-                customsHeading: line.customsHeading,
-                customsSubheading: line.customsSubheading,
-                chapterDescription: line.chapterDescription,
-                headingDescription: line.headingDescription,
-                subheadingDescription: line.subheadingDescription,
-                tariff: line.tariff,
-              })),
-            },
-          })),
+            };
+
+            const selectedLines = this.selected();
+            selectedLines[i] = invoiceSelected;
+            this.selected.set(selectedLines);
+
+            return invoice;
+          }),
         });
       }
     });
@@ -148,7 +171,7 @@ export class ShippingsForm {
     // We get the selected lines from the form
     const selectedLines = this.form.controls.invoices
       .at(index)
-      .controls.extractedData.controls.lines.controls.filter(line => line.controls.checked.value);
+      .controls.extractedData.controls.lines.controls.filter((_, j) => this.selected()[index][j]);
 
     // If there are no selected lines, we return
     if (selectedLines.length === 0) {
@@ -160,7 +183,6 @@ export class ShippingsForm {
       .generateHSCodesForShipping(
         selectedLines.map(line => {
           const rawValue = line.getRawValue();
-          delete rawValue.checked;
           delete (rawValue as any).tariff;
 
           return rawValue as any;
@@ -194,35 +216,108 @@ export class ShippingsForm {
                 subheading: line.tariff?.subheading || formLine.getRawValue().tariff?.subheading,
                 description: line.tariff?.description || formLine.getRawValue().tariff?.description,
                 rateOfDuty: line.tariff?.rateOfDuty || formLine.getRawValue().tariff?.rateOfDuty,
+                userDescription:
+                  line.tariff?.userDescription || formLine.getRawValue().tariff?.userDescription,
+                unitOfMeasurement:
+                  line.tariff?.unitOfMeasurement ||
+                  formLine.getRawValue().tariff?.unitOfMeasurement,
+                tax: line.tariff?.tax || formLine.getRawValue().tariff?.tax,
               },
-            });
-
-            selectedLines.forEach(line => {
-              line.controls.checked.setValue(false);
             });
           });
         },
       });
-
-    // Here we would call a service to get the HS codes for the selected lines
-    // For demonstration purposes, we'll just log the selected lines
-    console.log('Generating HS Codes for lines:', selectedLines);
-
-    // After getting the HS codes, we would patch the form with the new data
-    // For now, we'll just uncheck the lines to simulate that they have been processed
   }
 
   /**
-   * Selects or deselects all lines of the specified invoice.
-   * @param invoiceIndex - The index of the invoice to select or deselect lines from
-   * @param checked - Whether to select or deselect the lines
+   * Generates tariff for the selected lines of the specified invoice.
+   * @param index - The index of the invoice to generate tariff for
+   */
+  generateTariff(index: number) {
+    const selectedLines = this.form.controls.invoices
+      .at(index)
+      .controls.extractedData.controls.lines.controls.filter((_, j) => this.selected()[index][j]);
+
+    if (selectedLines.length === 0) {
+      return;
+    }
+
+    /**
+     * Calls the crud shippings service to generate tariff for the selected lines
+     * @param lines - The lines to generate tariff for
+     */
+    this.crudShippings
+      .generateTariffForShipping(
+        selectedLines.map(line => {
+          const rawValue = line.getRawValue();
+          return rawValue as any;
+        })
+      )
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: lines => {
+          if (!lines) return;
+
+          /**
+           * Patches the form with the generated tariff data
+           * @param line - The line to patch
+           * @param lineIndex - The index of the line to patch
+           */
+          lines.forEach((line, lineIndex) => {
+            const formLine = selectedLines[lineIndex];
+
+            if (!formLine || line.lineNumber !== formLine.getRawValue().lineNumber) return;
+
+            formLine.patchValue({
+              hsCode: line.hsCode || formLine.getRawValue().hsCode,
+              customsChapter: line.customsChapter || formLine.getRawValue().customsChapter,
+              customsHeading: line.customsHeading || formLine.getRawValue().customsHeading,
+              customsSubheading: line.customsSubheading || formLine.getRawValue().customsSubheading,
+              chapterDescription:
+                line.chapterDescription || formLine.getRawValue().chapterDescription,
+              headingDescription:
+                line.headingDescription || formLine.getRawValue().headingDescription,
+              subheadingDescription:
+                line.subheadingDescription || formLine.getRawValue().subheadingDescription,
+              tariff: {
+                code: line.tariff?.code || formLine.getRawValue().tariff?.code,
+                chapter: line.tariff?.chapter || formLine.getRawValue().tariff?.chapter,
+                heading: line.tariff?.heading || formLine.getRawValue().tariff?.heading,
+                subheading: line.tariff?.subheading || formLine.getRawValue().tariff?.subheading,
+                description: line.tariff?.description || formLine.getRawValue().tariff?.description,
+                rateOfDuty: line.tariff?.rateOfDuty || formLine.getRawValue().tariff?.rateOfDuty,
+                userDescription:
+                  line.tariff?.userDescription || formLine.getRawValue().tariff?.userDescription,
+                unitOfMeasurement:
+                  line.tariff?.unitOfMeasurement ||
+                  formLine.getRawValue().tariff?.unitOfMeasurement,
+                tax: line.tariff?.tax || formLine.getRawValue().tariff?.tax,
+              },
+            });
+          });
+        },
+      });
+  }
+
+  /**
+   * Sets all lines in the specified invoice to the specified checked state.
+   * @param invoiceIndex the index of the invoice to set all lines for
+   * @param checked the checked state to set all lines to
    */
   selectAllLines(invoiceIndex: number, checked: boolean) {
-    this.form.controls.invoices
-      .at(invoiceIndex)
-      .controls.extractedData.controls.lines.controls.forEach(line =>
-        line.controls.checked.setValue(checked)
-      );
+    this.selected.update(selected => {
+      selected[invoiceIndex] = selected[invoiceIndex].map(() => checked);
+      return selected;
+    });
+  }
+
+  /**
+   * Returns true if all lines in the specified invoice are selected, false otherwise.
+   * @param invoiceIndex the index of the invoice to check
+   * @returns true if all lines are selected, false otherwise
+   */
+  getInvoiceSelectionValue(invoiceIndex: number) {
+    return this.selected()[invoiceIndex].every(Boolean);
   }
 
   /**

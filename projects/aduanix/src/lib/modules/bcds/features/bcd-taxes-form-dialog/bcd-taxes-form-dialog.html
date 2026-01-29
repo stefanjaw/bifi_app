@@ -1,0 +1,58 @@
+<p-dialog header="New Tax Entry" [(visible)]="dialogState" [modal]="true">
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-4"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit()"
+  >
+    <section class="w-full grid gap-3 sm:grid-cols-2">
+      <bifi-app-form-field>
+        <bifi-app-form-label>Code</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="type"
+          [options]="taxTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Tax Id</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="taxId"
+          [options]="taxIdTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Value For Tax</bifi-app-form-label>
+        <input pInputText type="number" formControlName="valueForTax" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Rate Percentage</bifi-app-form-label>
+        <input pInputText type="number" formControlName="ratePercentage" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Amount</bifi-app-form-label>
+        <input pInputText type="number" formControlName="amount" />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+    </section>
+
+    <bifi-app-form-actions
+      (cancelClicked)="closeDialog()"
+      cancelLabel="Cancel"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

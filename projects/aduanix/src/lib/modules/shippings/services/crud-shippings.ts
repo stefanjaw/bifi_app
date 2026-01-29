@@ -29,4 +29,22 @@ export class CrudShippings extends ApiRequestManager<shipping> {
       specificEndpoint: `hs-code/generate`,
     }) as any;
   }
+
+  /**
+   * Generates tariff for shipping lines using the GEN-AI service.
+   *
+   * This function takes an array of shipping lines as input and returns an observable
+   * that resolves to an array of the same lines with their tariff generated.
+   *
+   * @param lines - The shipping lines to generate tariff for.
+   * @returns An observable that resolves to an array of the same lines with their tariff generated.
+   */
+  generateTariffForShipping(
+    lines: invoicePDF['extractedData']['lines']
+  ): Observable<invoicePDF['extractedData']['lines'] | undefined> {
+    return this.post({
+      data: { lines },
+      specificEndpoint: `tariff/generate`,
+    }) as any;
+  }
 }

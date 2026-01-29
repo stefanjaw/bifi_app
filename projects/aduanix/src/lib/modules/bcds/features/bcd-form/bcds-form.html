@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Update BCD' : `Create BCD for ${shipping.name}`"
+  [title]="isUpdate() ? 'Update BCD' : `Create BCD for ${shipping()?.name}`"
   titlePosition="left"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -38,7 +38,7 @@
 
           <!-- RECORDS TAB -->
           <p-tabpanel value="1">
-            <bifi-app-bcds-records-form></bifi-app-bcds-records-form>
+            <bifi-app-bcds-records-form [shipping]="shipping()"></bifi-app-bcds-records-form>
           </p-tabpanel>
 
           <!-- SUMMARY TAB -->

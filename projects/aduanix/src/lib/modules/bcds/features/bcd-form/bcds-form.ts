@@ -176,6 +176,6 @@ export class BcdsForm {
    * This function navigates back to the list of BCDs when the back button is clicked.
    */
   goBack() {
-    this.router.navigate(['../../list'], { relativeTo: this.route });
+    this.router.navigate(['../../../list'], { relativeTo: this.route });
   }
 }

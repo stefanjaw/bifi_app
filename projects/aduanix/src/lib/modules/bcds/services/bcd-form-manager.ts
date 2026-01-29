@@ -7,6 +7,7 @@ import {
   bcdFormAdditionalInformationModel,
   bcdFormChargeModel,
   bcdFormRecordModel,
+  bcdFormTaxEntryModel,
 } from '../interfaces/bcd-form';
 
 @Injectable({
@@ -75,6 +76,16 @@ export class BCDFormManager {
     return this.form.fb.group<bcdFormChargeModel>({
       code: ['212', [Validators.required]],
       percentage: [0, [Validators.min(0), Validators.max(100)]],
+      amount: [0, [Validators.required, Validators.min(0)]],
+    });
+  }
+
+  createTaxEntryForm() {
+    return this.form.fb.group<bcdFormTaxEntryModel>({
+      type: ['CUD', [Validators.required]],
+      taxId: ['F', [Validators.required]],
+      valueForTax: [0, [Validators.required, Validators.min(0)]],
+      ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
       amount: [0, [Validators.required, Validators.min(0)]],
     });
   }
@@ -194,6 +205,16 @@ export class BCDFormManager {
 
   //#region Records
 
+  //Tax
+  addTax(recordIndex: number, value: GroupReturn<bcdFormTaxEntryModel>) {
+    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
+    taxArray.push(value);
+  }
+
+  removeTax(index: number, recordIndex: number) {
+    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
+    taxArray.removeAt(index);
+  }
   /**
    * Create a form group for a single record with all the required fields
    * @returns A form group with all the required fields for a record

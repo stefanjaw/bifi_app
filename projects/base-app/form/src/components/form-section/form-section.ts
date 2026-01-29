@@ -24,6 +24,7 @@ export class FormSection implements AfterViewInit, OnDestroy {
   title = input.required<string>();
   id = input.required<string>();
   ordinal = input<number>();
+  class = input<string>();
 
   ngAfterViewInit(): void {
     this.sectionsService.registerSection({
