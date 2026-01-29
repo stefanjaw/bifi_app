@@ -15,6 +15,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { chargeCodeTypeOptions, taxIdTypeOptions, taxTypeOptions } from '../../../libs/bcd-options';
 import { TableModule } from 'primeng/table';
 import { BcdTaxesFormDialog } from '../../bcd-taxes-form-dialog/bcd-taxes-form-dialog';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'bifi-app-bcds-records-form',
@@ -27,6 +28,7 @@ import { BcdTaxesFormDialog } from '../../bcd-taxes-form-dialog/bcd-taxes-form-d
     TextareaModule,
     ProgressBarModule,
     TableModule,
+    AccordionModule,
     BcdChargesFormDialog,
     BcdAdditionalInformationFormDialog,
     BcdTaxesFormDialog

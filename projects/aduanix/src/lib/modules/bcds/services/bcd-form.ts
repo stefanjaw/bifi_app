@@ -30,7 +30,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       houseBOLAWB: {
         template: [''],
         formArrayElements: [],
-        validators: [Validators.minLength(1)],
       },
       directShipmentCountry: ['', [Validators.required]],
       originalShipmentCountry: ['', [Validators.required]],
@@ -41,12 +40,10 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           percentage: [0, [Validators.min(0), Validators.max(100)]],
           amount: [0, [Validators.required, Validators.min(0)]],
         },
-        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
-      containersIds: {
+      containerIds: {
         template: [''],
-        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
       valuationMethod: [
@@ -59,7 +56,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           type: ['TXT', [Validators.required, Validators.maxLength(3)]],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
-        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
       ogd: {
@@ -71,7 +67,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       },
       paymentAccounts: {
         template: [''],
-        validators: [Validators.minLength(1)],
         formArrayElements: [],
       },
       declarant: {
@@ -101,7 +96,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
               percentage: [0, [Validators.min(0), Validators.max(100)]],
               amount: [0, [Validators.required, Validators.min(0)]],
             },
-            validators: [Validators.required, Validators.minLength(1)],
             formArrayElements: [],
           },
           tax: {
@@ -112,7 +106,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
               ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
               amount: [0, [Validators.required, Validators.min(0)]],
             },
-            validators: [Validators.minLength(1)],
             formArrayElements: [],
           },
           additionalInformation: {
@@ -120,7 +113,6 @@ export class BcdForm extends BaseForm<bcdFormModel> {
               type: ['TXT', [Validators.required, Validators.maxLength(3)]],
               value: ['', [Validators.required, Validators.maxLength(70)]],
             },
-            validators: [Validators.minLength(1)],
             formArrayElements: [],
           },
         },

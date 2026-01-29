@@ -106,7 +106,7 @@ export class ApiRequestManager<T> {
     fileFields = [],
     specificEndpoint = '',
   }: {
-    _id: string;
+    _id?: string;
     data: Record<string, any>;
     fileFields?: string[];
     specificEndpoint?: string;

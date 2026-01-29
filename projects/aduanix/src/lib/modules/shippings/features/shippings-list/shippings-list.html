@@ -8,6 +8,14 @@
     *bifiAppHasPermission="'shipping:create:view'"
     (onClick)="shippingFileFormDialog.openDialog()"
   ></p-button>
+
+  <p-button
+    label="Update from FTP"
+    severity="secondary"
+    icon="pi pi-refresh"
+    *bifiAppHasPermission="'bcds/update-ftp:create:model'"
+    (onClick)="updateFromFTP()"
+  ></p-button>
 </div>
 
 <bifi-app-search-bar
@@ -103,7 +111,28 @@
             BCDs
           </span>
         </p-accordion-header>
-        <p-accordion-content>Hello</p-accordion-content>
+        <p-accordion-content>
+          @for (bcd of element?.bcds; track $index) {
+            <div
+              class="flex flex-row justify-between items-center border-b-2 border-primary-100 pb-2"
+            >
+              <!-- @let tagConfig = getInvoiceStatusTagConfig(invoice?.status); -->
+
+              <p>{{ bcd.name || 'No name provided' }}</p>
+
+              <!-- <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag> -->
+
+              @if (bcd) {
+                <p-button
+                  severity="secondary"
+                  icon="pi pi-link"
+                  [variant]="'text'"
+                  [routerLink]="['../bcd/edit/', bcd._id]"
+                ></p-button>
+              }
+            </div>
+          }
+        </p-accordion-content>
       </p-accordion-panel>
     </p-accordion>
   </ng-template>

@@ -9,14 +9,36 @@
       [formGroup]="form"
       bifiAppFormActionsHandler
       (appSubmit)="handleSubmit($event)"
-      class="min-h-screen flex flex-col gap-6"
+      class="min-h-screen flex flex-col gap-4"
     >
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         class="mb-4"
         [formChanged]="form.dirty"
         (cancelClicked)="goBack()"
+        [showSave]="!isUploaded()"
       ></bifi-app-form-actions>
+
+      @if (isUpdate() && !isUploaded()) {
+        <p [bifiAppText]="'small'" class="text-orange-400">
+          Once BCD is upload, it cannot be modified
+        </p>
+        <p-button
+          [label]="isFtpSubmitLoading() ? 'Uploading...' : 'Upload FTP'"
+          icon="pi pi-upload"
+          (click)="uploadFtp()"
+          [disabled]="isFtpSubmitLoading()"
+          [type]="'button'"
+        ></p-button>
+      } @else if (isUpdate() && isUploaded()) {
+        <p [bifiAppText]="'small'" class="text-green-400">BCD already uploaded</p>
+        <p-button
+          label="Download FTP"
+          icon="pi pi-download"
+          [type]="'button'"
+          (onClick)="downloadFtp()"
+        ></p-button>
+      }
 
       <p-tabs value="0">
         <p-tablist>
@@ -26,9 +48,9 @@
           <p-tab value="1">
             <span class="p-tabheader-title">Records</span>
           </p-tab>
-          <p-tab value="2">
+          <!-- <p-tab value="2">
             <span class="p-tabheader-title">Summary</span>
-          </p-tab>
+          </p-tab> -->
         </p-tablist>
         <p-tabpanels>
           <!-- GENERAL TAB-->

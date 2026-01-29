@@ -6,6 +6,7 @@ import { FormControl, Validators } from '@angular/forms';
 import {
   bcdFormAdditionalInformationModel,
   bcdFormChargeModel,
+  bcdFormModel,
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
 } from '../interfaces/bcd-form';
@@ -48,7 +49,7 @@ export class BCDFormManager {
    * @param {string} [value=''] The initial value of the new control.
    */
   addContainer(value: string = '') {
-    const containersArray = this.form.form.controls.containersIds;
+    const containersArray = this.form.form.controls.containerIds;
     containersArray.push(new FormControl<string>(value, { nonNullable: true }));
   }
 
@@ -57,7 +58,7 @@ export class BCDFormManager {
    * @param {number} index The index of the control to remove.
    */
   removeContainer(index: number) {
-    const containersArray = this.form.form.controls.containersIds;
+    const containersArray = this.form.form.controls.containerIds;
     containersArray.removeAt(index);
   }
   //#endregion
@@ -238,7 +239,6 @@ export class BCDFormManager {
           percentage: [0, [Validators.min(0), Validators.max(100)]],
           amount: [0, [Validators.required, Validators.min(0)]],
         },
-        validators: [Validators.required, Validators.minLength(1)],
         formArrayElements: [],
       },
       tax: {
@@ -249,7 +249,6 @@ export class BCDFormManager {
           ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
           amount: [0, [Validators.required, Validators.min(0)]],
         },
-        validators: [Validators.minLength(1)],
         formArrayElements: [],
       },
       additionalInformation: {
@@ -257,7 +256,6 @@ export class BCDFormManager {
           type: ['TXT', [Validators.required, Validators.maxLength(3)]],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
-        validators: [Validators.minLength(1)],
         formArrayElements: [],
       },
     });
@@ -285,4 +283,40 @@ export class BCDFormManager {
     recordsArray.removeAt(index);
   }
   //#endregion
+
+  // Calculations in charges and taxes can be added here in the future
+  calculateTotals(form: bcdFormModel) {
+    const data: bcdFormModel = structuredClone(form);
+
+    // Header charges
+    data.charges = data.charges.map(item => ({
+      ...item,
+      percentage: item.percentage == null || item.percentage === 0 ? undefined : item.percentage,
+    }));
+
+    // Records
+    data.records = data.records.map(record => ({
+      ...record,
+
+      // Charges
+      charges: record.charges.map(c => ({
+        ...c,
+        percentage:
+          c.percentage == null || c.percentage === 0
+            ? undefined
+            : Number((c.percentage / 100).toFixed(4)),
+      })),
+
+      // Taxes
+      tax: (record.tax ?? []).map(t => ({
+        ...t,
+        amount:
+          t.ratePercentage == null || t.ratePercentage === 0 || t.valueForTax == null
+            ? 0
+            : Number(((t.ratePercentage / 100) * t.valueForTax).toFixed(2)),
+      })),
+    }));
+
+    return data;
+  }
 }

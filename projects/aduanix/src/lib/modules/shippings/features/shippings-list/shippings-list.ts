@@ -20,8 +20,7 @@ import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
-import { CrudBCD } from '@avalantec/aduanix/modules/bcds/services/crud-bcd';
-import { bcd } from '@avalantec/aduanix/modules/bcds/interfaces/bcd';
+import { CrudBCD } from '../../../bcds';
 // import { BCDFormManager } from '@avalantec/aduanix/modules/bcds/services/bcd-form-manager';
 
 @Component({
@@ -48,7 +47,7 @@ import { bcd } from '@avalantec/aduanix/modules/bcds/interfaces/bcd';
 export class ShippingsList {
   private resourceManager = inject<ResourceManager<shipping>>(ResourceManager);
   private crudShippings = inject(CrudShippings);
-  // private crudBCD = inject(CrudBCD);
+  private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
   // private bcdFormManager = inject(BCDFormManager);
   protected fileResolver = inject(FileResolver);
@@ -58,9 +57,29 @@ export class ShippingsList {
 
   shippings = this.resourceManager.data;
 
+  /**
+   * Deletes a shipping document with the given id.
+   * If the deletion is successful, the shippings list will be reloaded.
+   * @param {string} id - The id of the shipping document to be deleted.
+   */
   deleteShipping(id: string) {
     this.crudShippings
       .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.shippings.reload();
+        },
+      });
+  }
+
+  /**
+   * Updates the BCDs from the FTP server.
+   * This function will trigger the reload of the shipments list if the update is successful.
+   */
+  updateFromFTP() {
+    this.crudBCD
+      .updateBCDsFromFTP()
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: res => {

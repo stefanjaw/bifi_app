@@ -60,7 +60,6 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
 
       this.appSubmit.emit(data);
     } else {
-      console.log(this.form);
       this.toastManager.showError('The form contains errors.');
 
       // Helper function to mark invalid form controls as dirty (display errors)

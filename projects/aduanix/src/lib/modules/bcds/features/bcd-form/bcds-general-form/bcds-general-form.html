@@ -37,15 +37,15 @@
     <bifi-app-form-section title="Transport" id="general-transport-info" [ordinal]="2">
       <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
         <!-- TRANSPORT TYPE -->
-        <div class="flex flex-row gap-2 col-span-full mb-4">
+        <div class="flex flex-row gap-2 col-span-full">
           @for (type of transportMethodTypeOptions; track $index) {
             <div class="flex align-items-center">
               <p-radioButton
-                inputId="type"
+                [inputId]="type.value"
                 [value]="type.value"
                 formControlName="type"
               ></p-radioButton>
-              <label for="vessel" class="ml-2">{{ type.label }}</label>
+              <label [for]="type.value" class="ml-2">{{ type.label }}</label>
             </div>
           }
         </div>
@@ -125,65 +125,100 @@
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
-        <!-- HOUSE -->
-        <div formArrayName="houseBOLAWB">
-          <bifi-app-form-field class="h-full flex flex-col">
-            <div class="flex items-center gap-2">
-              <bifi-app-form-label>House of Landing</bifi-app-form-label>
+        <!-- BILL OF LADING  -->
+        <bifi-app-form-field>
+          <bifi-app-form-label>Bill of Lading</bifi-app-form-label>
+          <input type="text" formControlName="masterBOLAWB" pInputText placeholder="AWB #" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-              <p-button
-                type="button"
-                icon="pi pi-plus"
-                label="Add House"
-                text
-                class="text-sm"
-                (click)="formManager.addHouseBOLAWB('')"
-              ></p-button>
-            </div>
-            <div class="flex-1 flex flex-col gap-2">
-              @for (control of form.controls.houseBOLAWB.controls; track $index) {
-                <div class="flex items-center gap-2">
-                  <input pInputText [formControl]="control" class="w-40 text-sm" />
-                  <p-button
-                    type="button"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    (click)="formManager.removeHouseBOLAWB($index)"
-                  ></p-button>
-                </div>
-              }
-            </div>
-          </bifi-app-form-field>
+        <div class="col-span-full grid gap-3 sm:grid-cols-2">
+          <!-- HOUSE -->
+          <div formArrayName="houseBOLAWB">
+            <bifi-app-form-field class="h-full flex flex-col">
+              <div class="flex items-center gap-2">
+                <bifi-app-form-label>House of Landing</bifi-app-form-label>
+
+                <p-button
+                  type="button"
+                  icon="pi pi-plus"
+                  label="Add House"
+                  text
+                  class="text-sm"
+                  (click)="formManager.addHouseBOLAWB('')"
+                ></p-button>
+              </div>
+              <div class="flex-1 flex flex-col gap-2">
+                @for (control of form.controls.houseBOLAWB.controls; track $index) {
+                  <div class="flex items-center gap-2">
+                    <input pInputText [formControl]="control" class="w-40 text-sm" />
+                    <p-button
+                      type="button"
+                      icon="pi pi-trash"
+                      severity="danger"
+                      (click)="formManager.removeHouseBOLAWB($index)"
+                    ></p-button>
+                  </div>
+                }
+              </div>
+            </bifi-app-form-field>
+          </div>
+
+          <!-- CONTAINER -->
+          <div formArrayName="containerIds">
+            <bifi-app-form-field class="h-full flex flex-col">
+              <div class="flex items-center gap-2">
+                <bifi-app-form-label>Container ID</bifi-app-form-label>
+                <p-button
+                  type="button"
+                  icon="pi pi-plus"
+                  label="Add Container"
+                  text
+                  class="text-sm"
+                  (click)="formManager.addContainer('')"
+                ></p-button>
+              </div>
+
+              <div class="flex-1 flex flex-col gap-2">
+                @for (control of form.controls.containerIds.controls; track $index) {
+                  <div class="flex items-center gap-2">
+                    <input pInputText [formControl]="control" class="w-40 text-sm" />
+                    <p-button
+                      type="button"
+                      icon="pi pi-trash"
+                      severity="danger"
+                      (click)="formManager.removeContainer($index)"
+                    ></p-button>
+                  </div>
+                }
+              </div>
+            </bifi-app-form-field>
+          </div>
         </div>
 
-        <!-- CONTAINER -->
-        <div formArrayName="containersIds">
-          <bifi-app-form-field class="h-full flex flex-col">
-            <div class="flex items-center gap-2">
-              <bifi-app-form-label>Container ID</bifi-app-form-label>
-              <p-button
-                type="button"
-                icon="pi pi-plus"
-                label="Add Container"
-                text
-                class="text-sm"
-                (click)="formManager.addContainer('')"
-              ></p-button>
-            </div>
+        <div class="col-span-full grid gap-3 sm:grid-cols-2">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Valuation Method</bifi-app-form-label>
+            <p-select
+              appendTo="body"
+              formControlName="valuationMethod"
+              [options]="valuationMethodTypeOptions"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
 
-            <div class="flex-1 flex flex-col gap-2">
-              @for (control of form.controls.containersIds.controls; track $index) {
-                <div class="flex items-center gap-2">
-                  <input pInputText [formControl]="control" class="w-40 text-sm" />
-                  <p-button
-                    type="button"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    (click)="formManager.removeContainer($index)"
-                  ></p-button>
-                </div>
-              }
-            </div>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Number of Packages</bifi-app-form-label>
+            <input
+              pInputText
+              type="number"
+              formControlName="packagesCount"
+              placeholder="# Packages"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </div>

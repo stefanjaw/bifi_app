@@ -89,7 +89,7 @@ export interface bcdFormModel {
   originalShipmentCountry: string;
   warehouseId?: string;
   charges: bcdFormChargeModel[]; // Array of objects
-  containersIds: string[];
+  containerIds: string[];
   valuationMethod: ValuationMethodType;
   packagesCount: number;
   additionalInformation: bcdFormAdditionalInformationModel[]; // Array of objects

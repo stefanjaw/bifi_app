@@ -1,4 +1,4 @@
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { FormValue } from '../interfaces/form-helpers';
 
 interface MarkAsDirtyOptions {
@@ -22,36 +22,34 @@ interface MarkAsDirtyOptions {
 export function markAsDirty(params: MarkAsDirtyOptions) {
   const { group, target = 'all', dirtyValue = true, emitEvent = true } = params;
 
-  /**
-   * Helper function to mark all form controls as dirty or pristine depending on the dirtyValue
-   */
-  const toggleFunction = (control: AbstractControl) =>
-    dirtyValue
-      ? control.markAsDirty({
-          onlySelf: true,
-          emitEvent,
-        })
-      : control.markAsPristine({
-          onlySelf: true,
-          emitEvent,
-        });
-
-  // Toggle the dirty state of the form group
-  toggleFunction(group);
-
-  for (const control of Object.keys(group.controls)) {
-    const child = group.get(control)!;
-
-    // Skip if the target is 'invalid' and the control is valid
-    if (target === 'invalid' && child.valid) continue;
-
-    if (child instanceof FormGroup) {
-      // Recursively mark all controls in nested form groups as dirty
-      markAsDirty({ group: child, target, dirtyValue, emitEvent });
+  const toggle = (control: AbstractControl) => {
+    if (dirtyValue) {
+      control.markAsDirty({ onlySelf: true, emitEvent });
+      control.markAsTouched({ onlySelf: true, emitEvent });
     } else {
-      toggleFunction(child);
+      control.markAsPristine({ onlySelf: true, emitEvent });
+      control.markAsUntouched({ onlySelf: true, emitEvent });
     }
-  }
+  };
+
+  const walk = (control: AbstractControl) => {
+    // Skip valid controls if target === 'invalid'
+    if (target === 'invalid' && control.valid) {
+      return;
+    }
+
+    toggle(control);
+
+    if (control instanceof FormGroup) {
+      Object.values(control.controls).forEach(walk);
+    }
+
+    if (control instanceof FormArray) {
+      control.controls.forEach(walk);
+    }
+  };
+
+  walk(group);
 }
 
 /**

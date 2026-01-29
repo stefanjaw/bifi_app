@@ -90,6 +90,8 @@ export class ShippingsForm {
   isUpdate = computed(() => !!this.shipping());
   error = this.shippingsResource.error;
   isSubmitLoading = signal<boolean>(false);
+
+  // selections
   selected = signal<Record<number, boolean[]>>({});
 
   /**
@@ -226,7 +228,8 @@ export class ShippingsForm {
             });
           });
         },
-      });
+      })
+      .add(() => this.selectAllLines(index, false));
   }
 
   /**
@@ -296,7 +299,8 @@ export class ShippingsForm {
             });
           });
         },
-      });
+      })
+      .add(() => this.selectAllLines(index, false));
   }
 
   /**

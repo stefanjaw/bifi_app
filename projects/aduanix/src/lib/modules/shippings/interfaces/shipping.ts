@@ -1,5 +1,6 @@
 import { company, country, user } from '@avalantec/base-app/interfaces';
 import { file } from '@avalantec/base-app/resource';
+import { bcd } from '../../bcds';
 
 export interface invoiceComment {
   description: string;
@@ -72,7 +73,7 @@ export interface shipping {
   status: 'UPLOADING' | 'ERROR' | 'PDF_PROCESSED' | 'BCD_SENT';
   stage: 'HS_CODES' | 'TARIFF_CODES' | 'GROUPING' | 'SUMMARY' | 'COMPLETE';
   invoices: invoice[];
-  bcds: string[];
+  bcds: bcd[];
   active: boolean;
   createdAt: string;
   updatedAt?: string;

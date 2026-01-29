@@ -15,13 +15,16 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
-import { CrudShippings } from '@avalantec/aduanix/modules/shippings';
+import { CrudShippings, invoicePDF } from '@avalantec/aduanix/modules/shippings';
 import { BCDFormManager } from '../../services/bcd-form-manager';
 import { bcdFormModel } from '../../interfaces/bcd-form';
 import { Tabs, TabsModule } from 'primeng/tabs';
 import { BcdsGeneralForm } from './bcds-general-form/bcds-general-form';
 import { BcdsRecordsForm } from './bcds-records-form/bcds-records-form';
 import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Text, ToastManager } from '@avalantec/base-app/core';
+import { FileResolver } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -35,6 +38,7 @@ import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
     BcdsGeneralForm,
     BcdsRecordsForm,
     BcdsSummaryForm,
+    Text,
   ],
   templateUrl: './bcds-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,6 +51,8 @@ export class BcdsForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toastManager = inject(ToastManager);
+  private fileResolver = inject(FileResolver);
 
   id = input.required<string>();
   shippingId = input.required<string>();
@@ -69,9 +75,17 @@ export class BcdsForm {
   form = this.formService.form;
   isLoading = computed(() => this.bcdResource.isLoading() || this.shippingResource.isLoading());
   isSubmitLoading = signal(false);
+  isFtpSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.bcd());
+  isUploaded = computed(() => this.bcd()?.status !== 'DRAFT');
   error = this.bcdResource.error;
 
+  /**
+   * Constructor
+   *
+   * If the bcd exists, it will patch the form with the bcd data.
+   * If the shipping exists, it will patch the form with the shipping data.
+   */
   constructor() {
     effect(() => {
       const bcd = this.bcd();
@@ -95,22 +109,24 @@ export class BcdsForm {
           },
           manifest: bcd.manifest,
           masterBOLAWB: bcd.masterBOLAWB,
-          houseBOLAWB: bcd.houseBOLAWB,
+          houseBOLAWB: bcd.houseBOLAWB || [],
           directShipmentCountry: bcd.directShipmentCountry?._id,
           originalShipmentCountry: bcd.originalShipmentCountry?._id,
           warehouseId: bcd.warehouseId,
-          charges: bcd.charges?.map(c => ({
-            code: c.code,
-            percentage: c.percentage || 0,
-            amount: c.amount,
-          })),
-          containersIds: bcd.containersIds,
+          charges:
+            bcd.charges?.map(c => ({
+              code: c.code,
+              percentage: c.percentage || 0,
+              amount: c.amount,
+            })) || [],
+          containerIds: bcd.containerIds,
           valuationMethod: bcd.valuationMethod,
           packagesCount: bcd.packagesCount,
-          additionalInformation: bcd.additionalInformation?.map(a => ({
-            type: a.type,
-            value: a.value,
-          })),
+          additionalInformation:
+            bcd.additionalInformation?.map(a => ({
+              type: a.type,
+              value: a.value,
+            })) || [],
           ogd: {
             paymentCode: bcd.ogd?.paymentCode,
             costCode: bcd.ogd?.costCode,
@@ -139,22 +155,25 @@ export class BcdsForm {
               currency: r.currency,
               linesSubtotal: r.linesSubtotal,
               exchangeRate: r.exchangeRate,
-              charges: r.charges?.map(c => ({
-                code: c.code,
-                percentage: c.percentage || 0,
-                amount: c.amount,
-              })),
-              tax: r.tax?.map(t => ({
-                type: t.type,
-                taxId: t.taxId,
-                valueForTax: t.valueForTax,
-                ratePercentage: t.ratePercentage,
-                amount: t.amount,
-              })),
-              additionalInformation: r.additionalInformation?.map(a => ({
-                type: a.type,
-                value: a.value,
-              })),
+              charges:
+                r.charges?.map(c => ({
+                  code: c.code,
+                  percentage: c.percentage || 0,
+                  amount: c.amount,
+                })) || [],
+              tax:
+                r.tax?.map(t => ({
+                  type: t.type,
+                  taxId: t.taxId,
+                  valueForTax: t.valueForTax,
+                  ratePercentage: t.ratePercentage,
+                  amount: t.amount,
+                })) || [],
+              additionalInformation:
+                r.additionalInformation?.map(a => ({
+                  type: a.type,
+                  value: a.value,
+                })) || [],
             })) || [],
         });
       } else {
@@ -162,12 +181,158 @@ export class BcdsForm {
       }
     });
 
-    this.formService.form.markAllAsTouched();
+    effect(() => {
+      const shipping = this.shipping();
+
+      if (shipping) {
+        const allLines = shipping.invoices.flatMap(inv => inv.pdf.extractedData.lines);
+        const merchandiseLines = allLines.filter(line => this.isMerchandiseLine(line));
+        // const feeLines = allLines.filter(line => !this.isMerchandiseLine(line));
+        const groupByTariff = this.groupByTariff(merchandiseLines);
+
+        this.formService.patchValue({
+          shippingId: shipping._id,
+          directShipmentCountry: shipping.origin?._id,
+          originalShipmentCountry: shipping.destination?._id,
+          type: 'A',
+          records: Object.entries(groupByTariff).map(([tariff, lines], i) => {
+            const quantity = lines.reduce((acc, line) => acc + line.quantity, 0);
+            const subtotal = lines.reduce((acc, line) => acc + line.subtotal, 0);
+
+            return {
+              number: i + 1,
+              cpc: '4000',
+              origin: lines[0]?.countryId?._id,
+              tariff: tariff,
+              description: lines[0]?.description,
+              quantity: quantity,
+              supplementaryCode: '0000',
+              currency: lines[0]?.currency ?? 'USD',
+              linesSubtotal: subtotal,
+              exchangeRate: 1,
+              charges: [],
+              tax: [],
+            };
+          }),
+        });
+      }
+    });
   }
 
-  async handleSubmit(data: FormValueState<bcdFormModel>) {
-    console.log('🚀 ~ BcdsForm ~ handleSubmit ~ data:', data);
+  /**
+   * Submits the BCD form.
+   *
+   * If the BCD is being updated, it will call the BCD service put method.
+   * If the BCD is being created, it will call the BCD service post method.
+   *
+   * @param {FormValueState<bcdFormModel>} values - The form value state
+   */
+  async handleSubmit(values: FormValueState<bcdFormModel>) {
+    const payload = values.rawValue;
+
+    if (!payload.charges || payload.charges.length === 0) {
+      this.toastManager.showError('Charges are required');
+      return;
+    }
+
+    if (payload.records?.some(r => !r?.charges || r?.charges?.length === 0)) {
+      this.toastManager.showError('Charges are required for each record');
+      return;
+    }
+
+    if (!payload.containerIds || payload.containerIds.length === 0) {
+      this.toastManager.showError('Container IDs are required');
+      return;
+    }
+
+    if (!payload.records || payload.records.length === 0) {
+      this.toastManager.showError('Records are required');
+      return;
+    }
+
     this.isSubmitLoading.set(true);
+
+    const action = this.isUpdate()
+      ? this.crudBCD.put({ _id: this.id(), data: payload })
+      : this.crudBCD.post({ data: payload });
+
+    action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.formService.reset();
+        this.goBack();
+      },
+      error: () => {
+        this.isSubmitLoading.set(false);
+      },
+    });
+  }
+
+  /**
+   * Uploads the current BCD data to FTP
+   * @returns {void}
+   * @memberof BcdsFormComponent
+   */
+  uploadFtp() {
+    this.isFtpSubmitLoading.set(true);
+
+    this.crudBCD
+      .uploadBCDDataToFTP(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isFtpSubmitLoading.set(false);
+          this.formService.reset();
+          this.goBack();
+        },
+        error: () => {
+          this.isFtpSubmitLoading.set(false);
+        },
+      });
+  }
+
+  /**
+   * Downloads the SENT_CSV file from FTP
+   * @returns {void}
+   * @memberof BcdsFormComponent
+   */
+  downloadFtp() {
+    const fileId = this.bcd()?.ebcds.find(ebcd => ebcd.type === 'SENT_CSV')?.file.fileId;
+
+    if (!fileId) return;
+
+    this.fileResolver.downloadFileInBrowser({ id: fileId });
+  }
+
+  // --------- UTILS ----------
+
+  /**
+   * Checks if a line is a merchandise line.
+   *
+   * A line is considered a merchandise line if it has a valid HS Code and a valid Tariff Code.
+   *
+   * @param line - The line to be checked.
+   * @returns True if the line is a merchandise line, false otherwise.
+   */
+  isMerchandiseLine(line: invoicePDF['extractedData']['lines'][number]) {
+    return Boolean(line.hsCode && line.tariff?.code);
+  }
+
+  /**
+   * Groups the given lines by their tariff code.
+   *
+   * If a line does not have a tariff code, it will not be included in the result.
+   *
+   * @param lines - The lines to group by tariff code.
+   * @returns An object where the keys are the tariff codes and the values are arrays of lines that have the corresponding tariff code.
+   */
+  groupByTariff(lines: invoicePDF['extractedData']['lines']) {
+    return lines.reduce<Record<string, invoicePDF['extractedData']['lines']>>((acc, line) => {
+      const tariff = line.tariff!.code!;
+      acc[tariff] ??= [];
+      acc[tariff].push(line);
+      return acc;
+    }, {});
   }
 
   /**

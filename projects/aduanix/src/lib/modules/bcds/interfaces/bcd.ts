@@ -100,7 +100,7 @@ export interface bcd {
   originalShipmentCountry: country;
   warehouseId?: string;
   charges: bcdCharge[];
-  containersIds: string[];
+  containerIds: string[];
   valuationMethod: ValuationMethodType;
   packagesCount: number;
   additionalInformation: bcdAdditionalInformation[];

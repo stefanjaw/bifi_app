@@ -10,6 +10,7 @@ import {
   additionalInformationTypeOptions,
   chargeCodeTypeOptions,
   transportMethodTypeOptions,
+  valuationMethodTypeOptions,
 } from '../../../libs/bcd-options';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -59,6 +60,7 @@ export class BcdsGeneralForm {
   transportMethodTypeOptions = transportMethodTypeOptions;
   chargeCodeTypeOptions = chargeCodeTypeOptions;
   additionalInformationTypeOptions = additionalInformationTypeOptions;
+  valuationMethodTypeOptions = valuationMethodTypeOptions;
 
   // State
   currentTransportMethodType = toSignal(
