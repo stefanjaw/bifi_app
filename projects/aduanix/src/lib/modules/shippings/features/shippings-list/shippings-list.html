@@ -10,7 +10,8 @@
   ></p-button>
 
   <p-button
-    label="Update from FTP"
+    [label]="isUploadFTPLoading() ? 'Updating...' : 'Update from FTP'"
+    [disabled]="isUploadFTPLoading()"
     severity="secondary"
     icon="pi pi-refresh"
     *bifiAppHasPermission="'bcds/update-ftp:create:model'"

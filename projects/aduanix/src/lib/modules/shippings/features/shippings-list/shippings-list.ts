@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import {
   FileResolver,
   provideResourceManager,
@@ -56,6 +56,7 @@ export class ShippingsList {
   shippingFilters = shippingFilters;
 
   shippings = this.resourceManager.data;
+  isUploadFTPLoading = signal(false);
 
   /**
    * Deletes a shipping document with the given id.
@@ -78,12 +79,18 @@ export class ShippingsList {
    * This function will trigger the reload of the shipments list if the update is successful.
    */
   updateFromFTP() {
+    this.isUploadFTPLoading.set(true);
+
     this.crudBCD
       .updateBCDsFromFTP()
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: res => {
           if (res) this.shippings.reload();
+          this.isUploadFTPLoading.set(false);
+        },
+        error: () => {
+          this.isUploadFTPLoading.set(false);
         },
       });
   }
