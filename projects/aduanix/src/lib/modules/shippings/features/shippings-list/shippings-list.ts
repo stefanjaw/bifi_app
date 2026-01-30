@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
-import { CrudBCD } from '../../../bcds';
+import { bcd, CrudBCD, ebcdSchema } from '../../../bcds';
 // import { BCDFormManager } from '@avalantec/aduanix/modules/bcds/services/bcd-form-manager';
 
 @Component({
@@ -123,5 +123,108 @@ export class ShippingsList {
           value: 'Complete',
         };
     }
+  }
+
+  /**
+   * Returns the tag config for the given BCD status.
+   * @param {string} status - The status of the BCD.
+   * @returns {Object} - The tag config.
+   * @example
+   * const status = 'DRAFT';
+   * const tagConfig = this.getBCDStatusTagConfig(status);
+   * console.log(tagConfig); // { severity: 'info', value: 'Draft' }
+   */
+  getBCDStatusConfig(status: bcd['status']): { value: string; severity: Tag['severity'] } {
+    switch (status) {
+      case 'DRAFT':
+        return {
+          value: 'Draft',
+          severity: 'info',
+        };
+      case 'FAILED':
+        return {
+          value: 'Failed',
+          severity: 'danger',
+        };
+      case 'PENDING_QUERY':
+        return {
+          value: 'Pending Query',
+          severity: 'warn',
+        };
+      case 'PENDING_RESPONSE':
+        return {
+          value: 'Pending Response',
+          severity: 'warn',
+        };
+      case 'SUBMITTED':
+        return {
+          value: 'Submitted',
+          severity: 'success',
+        };
+    }
+  }
+
+  /**
+   * Returns the tag config for the given EBCD type.
+   * @param {string} type - The type of the EBCD.
+   * @returns {Object} - The tag config.
+   * @example
+   * const type = 'FILE_ERROR_CSV';
+   * const tagConfig = this.getBCDFileType(type);
+   * console.log(tagConfig); // { value: 'File Error CSV', severity: 'danger' }
+   */
+  getBCDFileTypeConfig(type: ebcdSchema['type']): { value: string; severity: Tag['severity'] } {
+    switch (type) {
+      case 'FILE_ERROR_CSV':
+        return {
+          value: 'File Error CSV',
+          severity: 'danger',
+        };
+      case 'FORMAT_ERROR_PDF':
+        return {
+          value: 'Format Error PDF',
+          severity: 'danger',
+        };
+      case 'FORMAT_ERROR_TXT':
+        return {
+          value: 'Format Error TXT',
+          severity: 'danger',
+        };
+      case 'RECEIPT_TXT':
+        return {
+          value: 'Receipt TXT',
+          severity: 'success',
+        };
+      case 'RELEASE_CSV':
+        return {
+          value: 'Release CSV',
+          severity: 'success',
+        };
+      case 'RELEASE_PDF':
+        return {
+          value: 'Release PDF',
+          severity: 'success',
+        };
+      case 'RELEASE_TXT':
+        return {
+          value: 'Release TXT',
+          severity: 'success',
+        };
+      case 'SENT_CSV':
+        return {
+          value: 'Sent CSV',
+          severity: 'success',
+        };
+    }
+  }
+
+  /**
+   * Returns the name of the first SENT_CSV EBCD document in the given BCD.
+   * If no SENT_CSV EBCD document is found, 'No name provided' is returned.
+   * @param {BCD} bcd - The BCD document to get the name from.
+   * @returns {string} - The name of the first SENT_CSV EBCD document in the given BCD.
+   */
+  getBCDName(bcd: bcd) {
+    return bcd.ebcds.find(ebcd => ebcd.type === 'SENT_CSV')?.file.name || 'Not uploaded';
   }
 }

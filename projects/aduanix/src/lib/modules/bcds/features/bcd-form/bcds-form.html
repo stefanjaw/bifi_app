@@ -16,12 +16,12 @@
         class="mb-4"
         [formChanged]="form.dirty"
         (cancelClicked)="goBack()"
-        [showSave]="!isUploaded()"
+        [showSave]="!isUploaded() || !isUpdate()"
       ></bifi-app-form-actions>
 
       @if (isUpdate() && !isUploaded()) {
         <p [bifiAppText]="'small'" class="text-orange-400">
-          Once BCD is upload, it cannot be modified
+          Once BCD is uploaded, it cannot be modified
         </p>
         <p-button
           [label]="isFtpSubmitLoading() ? 'Uploading...' : 'Upload FTP'"

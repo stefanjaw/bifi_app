@@ -53,88 +53,126 @@
   </ng-template>
 
   <ng-template #expandContent let-element>
-    <p-accordion class="w-full!">
-      <p-accordion-panel value="0">
-        <p-accordion-header>
-          <span>
-            <i class="pi pi-receipt"></i>
-            Invoices
-          </span>
-        </p-accordion-header>
-        <p-accordion-content>
-          @for (invoice of element?.invoices; track $index) {
-            <div
-              class="flex flex-row justify-between items-center border-b-2 border-primary-100 pb-2"
-            >
-              @let tagConfig = getInvoiceStatusTagConfig(invoice?.status);
+    <div class="p-4">
+      <p-accordion class="w-full!">
+        <p-accordion-panel value="0">
+          <p-accordion-header>
+            <span>
+              <i class="pi pi-receipt"></i>
+              Invoices
+            </span>
+          </p-accordion-header>
+          <p-accordion-content>
+            <div class="flex flex-col gap-4">
+              @for (invoice of element?.invoices; track invoice._id) {
+                @let tagConfig = getInvoiceStatusTagConfig(invoice?.status);
 
-              <p>{{ invoice?.pdf?.file?.name || 'No name provided' }}</p>
-
-              <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag>
-
-              @if (invoice?.pdf?.file?.fileId) {
-                <p-button
-                  severity="secondary"
-                  icon="pi pi-download"
-                  [variant]="'text'"
-                  (onClick)="
-                    fileResolver.downloadFileInBrowser({ id: invoice?.pdf?.file.fileId }, 'open')
-                  "
-                ></p-button>
+                <div class="flex flex-row items-center justify-between ps-6 pe-4">
+                  <span>{{ invoice?.pdf?.file?.name || 'No name provided' }}</span>
+                  <div class="flex items-center justify-end flex-1 pe-5">
+                    <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag>
+                    @if (invoice?.pdf?.file?.fileId) {
+                      <p-button
+                        severity="secondary"
+                        icon="pi pi-download"
+                        [variant]="'text'"
+                        (onClick)="
+                          fileResolver.downloadFileInBrowser(
+                            { id: invoice?.pdf?.file.fileId },
+                            'open'
+                          )
+                        "
+                      ></p-button>
+                    }
+                  </div>
+                </div>
               }
             </div>
-          }
-        </p-accordion-content>
-      </p-accordion-panel>
+          </p-accordion-content>
+        </p-accordion-panel>
 
-      <p-accordion-panel value="1">
-        <p-accordion-header>
-          <span>
-            <i class="pi pi-box"></i>
-            BOLs
-          </span>
-        </p-accordion-header>
-        <p-accordion-content>
-          <p-button
-            label="Upload BOL"
-            severity="secondary"
-            icon="pi pi-upload"
-            [variant]="'text'"
-          ></p-button>
-        </p-accordion-content>
-      </p-accordion-panel>
+        <p-accordion-panel value="1">
+          <p-accordion-header>
+            <span>
+              <i class="pi pi-box"></i>
+              BOLs
+            </span>
+          </p-accordion-header>
+          <p-accordion-content>
+            <p-button
+              label="Upload BOL"
+              severity="secondary"
+              icon="pi pi-upload"
+              [variant]="'text'"
+            ></p-button>
+          </p-accordion-content>
+        </p-accordion-panel>
 
-      <p-accordion-panel value="2">
-        <p-accordion-header>
-          <span>
-            <i class="pi pi-file"></i>
-            BCDs
-          </span>
-        </p-accordion-header>
-        <p-accordion-content>
-          @for (bcd of element?.bcds; track $index) {
-            <div
-              class="flex flex-row justify-between items-center border-b-2 border-primary-100 pb-2"
-            >
-              <!-- @let tagConfig = getInvoiceStatusTagConfig(invoice?.status); -->
+        <p-accordion-panel value="2">
+          <p-accordion-header>
+            <span>
+              <i class="pi pi-file"></i>
+              BCDs
+            </span>
+          </p-accordion-header>
+          <p-accordion-content>
+            <p-accordion>
+              @for (bcd of element?.bcds; track $index) {
+                @let bcdConfig = getBCDStatusConfig(bcd?.status);
 
-              <p>{{ bcd.name || 'No name provided' }}</p>
+                <p-accordion-panel [value]="$index">
+                  <p-accordion-header>
+                    <div class="flex flex-row gap-2 items-center">
+                      <p-button
+                        severity="secondary"
+                        icon="pi pi-external-link"
+                        [variant]="'text'"
+                        [routerLink]="['../bcd/edit/', bcd._id]"
+                      ></p-button>
+                      <span>
+                        {{ getBCDName(bcd) }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-end flex-1 pe-5">
+                      <p-tag [value]="bcdConfig.value" [severity]="bcdConfig.severity"></p-tag>
+                    </div>
+                  </p-accordion-header>
+                  <p-accordion-content>
+                    <!-- BCD Details Here -->
+                    <div class="flex flex-col gap-4">
+                      @for (ebcds of bcd.ebcds; track $index) {
+                        @let ebcdsConfig = getBCDFileTypeConfig(ebcds.type);
 
-              <!-- <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag> -->
-
-              @if (bcd) {
-                <p-button
-                  severity="secondary"
-                  icon="pi pi-link"
-                  [variant]="'text'"
-                  [routerLink]="['../bcd/edit/', bcd._id]"
-                ></p-button>
+                        <div class="flex flex-row items-center justify-between ps-6 pe-4">
+                          <span>{{ ebcds?.file?.name }}</span>
+                          <div class="flex items-center justify-end flex-1 pe-5">
+                            <p-tag
+                              [value]="ebcdsConfig.value"
+                              [severity]="ebcdsConfig.severity"
+                            ></p-tag>
+                            <p-button
+                              severity="secondary"
+                              icon="pi pi-download"
+                              variant="text"
+                              (onClick)="
+                                fileResolver.downloadFileInBrowser(
+                                  { id: ebcds.file.fileId },
+                                  'open'
+                                )
+                              "
+                            ></p-button>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </p-accordion-content>
+                </p-accordion-panel>
               }
-            </div>
-          }
-        </p-accordion-content>
-      </p-accordion-panel>
-    </p-accordion>
+            </p-accordion>
+          </p-accordion-content>
+        </p-accordion-panel>
+      </p-accordion>
+    </div>
   </ng-template>
 </bifi-app-table-layout>
 
