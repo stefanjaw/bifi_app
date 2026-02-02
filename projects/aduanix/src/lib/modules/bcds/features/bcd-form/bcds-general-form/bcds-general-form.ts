@@ -9,11 +9,8 @@ import { TableModule } from 'primeng/table';
 import {
   additionalInformationTypeOptions,
   chargeCodeTypeOptions,
-  transportMethodTypeOptions,
   valuationMethodTypeOptions,
 } from '../../../libs/bcd-options';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
@@ -31,7 +28,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
     SelectModule,
     ButtonModule,
     TableModule,
-    RadioButtonModule,
     DatePickerModule,
     InputTextModule,
     TextareaModule,
@@ -57,18 +53,9 @@ export class BcdsGeneralForm {
   // options
   contactOptions = this.contactsResource.value;
   countryOptions = this.countriesResource.value;
-  transportMethodTypeOptions = transportMethodTypeOptions;
   chargeCodeTypeOptions = chargeCodeTypeOptions;
   additionalInformationTypeOptions = additionalInformationTypeOptions;
   valuationMethodTypeOptions = valuationMethodTypeOptions;
-
-  // State
-  currentTransportMethodType = toSignal(
-    this.formService.form.controls.transport.controls.type.valueChanges,
-    {
-      initialValue: this.formService.form.controls.transport.controls.type.value,
-    }
-  );
 
   loading = computed(() => this.contactsResource.isLoading() || this.countriesResource.isLoading());
 }

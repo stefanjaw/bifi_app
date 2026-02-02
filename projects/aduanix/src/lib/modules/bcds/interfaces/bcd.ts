@@ -7,7 +7,6 @@ import {
   EBCDType,
   TaxIdType,
   TaxType,
-  TransportMethodType,
   ValuationMethodType,
 } from './bcd-types';
 import { file } from '@avalantec/base-app/resource';
@@ -22,7 +21,6 @@ export interface bcdImporter {
 }
 
 export interface bcdTransport {
-  type: TransportMethodType;
   aircraftOrVessel: string;
   flightOrVoyage: string;
   port: string;
@@ -68,6 +66,8 @@ export interface bcdRecord {
   currency: string;
   linesSubtotal: number;
   exchangeRate: number;
+  bdaValue: number;
+  totalDue: number;
   charges: bcdCharge[];
   tax?: bcdTaxEntry[];
   additionalInformation?: bcdAdditionalInformation[];
@@ -103,6 +103,8 @@ export interface bcd {
   containerIds: string[];
   valuationMethod: ValuationMethodType;
   packagesCount: number;
+  invoiceAmount: number;
+  payableAmount: number;
   additionalInformation: bcdAdditionalInformation[];
   ogd: bcdOgd;
   paymentAccounts?: string[];

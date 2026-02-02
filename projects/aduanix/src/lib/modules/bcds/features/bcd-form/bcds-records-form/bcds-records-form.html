@@ -13,7 +13,7 @@
         <p-accordion [value]="0">
           @for (control of form.controls.records.controls; track $index) {
             <p-accordion-panel [value]="$index">
-              <p-accordion-header>Record #{{ $index + 1 }}</p-accordion-header>
+              <p-accordion-header>15. Record NO. {{ $index + 1 }}</p-accordion-header>
               <p-accordion-content>
                 <div [formGroupName]="$index" class="grid gap-3 sm:grid-cols-3 mb-6 pb-4">
                   <div class="flex justify-end items-center col-span-full">
@@ -32,13 +32,13 @@
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>CPC</bifi-app-form-label>
+                    <bifi-app-form-label>16. CPC</bifi-app-form-label>
                     <input type="text" formControlName="cpc" pInputText />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Origin Country</bifi-app-form-label>
+                    <bifi-app-form-label>17. Origin Country</bifi-app-form-label>
                     <p-select
                       appendTo="body"
                       formControlName="origin"
@@ -51,50 +51,15 @@
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Tariff</bifi-app-form-label>
+                    <bifi-app-form-label>18. Tariff NO.</bifi-app-form-label>
                     <input type="text" formControlName="tariff" pInputText />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Quantity</bifi-app-form-label>
-                    <input type="number" formControlName="quantity" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
-
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Quantity Two</bifi-app-form-label>
-                    <input type="number" formControlName="quantityTwo" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
-
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Supplementary Code</bifi-app-form-label>
-                    <input type="text" formControlName="supplementaryCode" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
-
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Currency</bifi-app-form-label>
-                    <input type="text" formControlName="currency" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
-
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Lines Subtotal</bifi-app-form-label>
-                    <input type="text" formControlName="linesSubtotal" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
-
-                  <bifi-app-form-field>
-                    <bifi-app-form-label>Exchange Rate</bifi-app-form-label>
-                    <input type="number" formControlName="exchangeRate" pInputText />
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
 
                   <div class="col-span-full w-full">
                     <bifi-app-form-field>
-                      <bifi-app-form-label>Description</bifi-app-form-label>
+                      <bifi-app-form-label>19. Description</bifi-app-form-label>
                       <textarea
                         pInputTextarea
                         formControlName="description"
@@ -105,9 +70,46 @@
                     </bifi-app-form-field>
                   </div>
 
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>20. Quantity</bifi-app-form-label>
+                    <input type="number" formControlName="quantity" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>21. Quantity Two</bifi-app-form-label>
+                    <input type="number" formControlName="quantityTwo" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>22. Supplementary Code</bifi-app-form-label>
+                    <input type="text" formControlName="supplementaryCode" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>23. Currency</bifi-app-form-label>
+                    <input type="text" formControlName="currency" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
+                  <!-- <bifi-app-form-field>
+                    <bifi-app-form-label>Lines Subtotal</bifi-app-form-label>
+                    <input type="text" formControlName="linesSubtotal" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field> -->
+
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>24. Exchange Rate</bifi-app-form-label>
+                    <input type="number" formControlName="exchangeRate" pInputText />
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+
                   <!-- CHARGES -->
                   <div class="col-span-full w-full">
-                    <bifi-app-form-section title="Charges" id="general-charge-info" [ordinal]="5">
+                    <bifi-app-form-section title="26. Charges/Deductions" id="general-charge-info" [ordinal]="5">
                       <div class="w-full" formArrayName="charges">
                         <p-button
                           class="mb-4"
@@ -186,7 +188,7 @@
                   <!--Taxes-->
                   <div class="col-span-full w-full">
                     <bifi-app-form-section
-                      title="Tax Section"
+                      title="27. Tax Section"
                       id="general-charge-info"
                       [ordinal]="5"
                     >
@@ -276,10 +278,11 @@
                     </bifi-app-form-section>
                   </div>
 
-                  <!-- ADDITIONAL INFORMATION -->
+
+                                    <!-- ADDITIONAL INFORMATION -->
                   <div class="col-span-full w-full">
                     <bifi-app-form-section
-                      title="Additional Information"
+                      title="28. Additional Information"
                       id="additional-information-info"
                       [ordinal]="5"
                     >
@@ -336,6 +339,7 @@
                       </div>
                     </bifi-app-form-section>
                   </div>
+
                 </div>
               </p-accordion-content>
             </p-accordion-panel>

@@ -4,7 +4,6 @@ import {
   ChargeCodeType,
   TaxIdType,
   TaxType,
-  TransportMethodType,
   ValuationMethodType,
 } from './bcd-types';
 
@@ -17,7 +16,6 @@ export interface bcdFormImporterModel {
 }
 
 export interface bcdFormTransportModel {
-  type: TransportMethodType;
   aircraftOrVessel: string;
   flightOrVoyage: string;
   port: string;
@@ -63,6 +61,8 @@ export interface bcdFormRecordModel {
   currency: string;
   linesSubtotal: number;
   exchangeRate: number;
+  bdaValue: number;
+  totalDue: number;
   charges: bcdFormChargeModel[]; // Array of objects
   tax?: bcdFormTaxEntryModel[]; // Array of objects
   additionalInformation?: bcdFormAdditionalInformationModel[]; // Array of objects
@@ -92,6 +92,9 @@ export interface bcdFormModel {
   containerIds: string[];
   valuationMethod: ValuationMethodType;
   packagesCount: number;
+  recordsCount: number;
+  invoiceAmount: number;
+  payableAmount: number;
   additionalInformation: bcdFormAdditionalInformationModel[]; // Array of objects
   ogd: bcdFormOGDModel;
   paymentAccounts: string[]; // Array of strings

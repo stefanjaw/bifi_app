@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { GroupReturn } from '@avalantec/base-app/form';
 import { BcdForm } from './bcd-form';
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   bcdFormAdditionalInformationModel,
@@ -10,12 +10,41 @@ import {
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
 } from '../interfaces/bcd-form';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BCDFormManager {
   private form = inject(BcdForm);
+  private destroy$ = inject(DestroyRef);
+
+  /**
+   * Attaches listeners to the form controls.
+   * When the records array changes, it recalculates the global totals
+   * and updates the form controls accordingly.
+   */
+  constructor() {
+    this.form.form.controls.records.valueChanges
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => {
+        const recordForms = this.form.form.controls.records;
+
+        // records count
+        this.form.form.controls.recordsCount.setValue(recordForms.length);
+
+        // attach listeners and recalc
+        recordForms.controls.forEach(record => {
+          this.attachRecordListeners(record as any);
+          this.calculateRecordBDAValue(record as any);
+          this.calculateRecordTotalDue(record as any);
+        });
+
+        // global totals
+        this.calculateInvoiceAmount(this.form.form);
+        this.calculatePayableAmount(this.form.form);
+      });
+  }
 
   //#region House BOLAWB
 
@@ -77,16 +106,6 @@ export class BCDFormManager {
     return this.form.fb.group<bcdFormChargeModel>({
       code: ['212', [Validators.required]],
       percentage: [0, [Validators.min(0), Validators.max(100)]],
-      amount: [0, [Validators.required, Validators.min(0)]],
-    });
-  }
-
-  createTaxEntryForm() {
-    return this.form.fb.group<bcdFormTaxEntryModel>({
-      type: ['CUD', [Validators.required]],
-      taxId: ['F', [Validators.required]],
-      valueForTax: [0, [Validators.required, Validators.min(0)]],
-      ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
       amount: [0, [Validators.required, Validators.min(0)]],
     });
   }
@@ -206,16 +225,6 @@ export class BCDFormManager {
 
   //#region Records
 
-  //Tax
-  addTax(recordIndex: number, value: GroupReturn<bcdFormTaxEntryModel>) {
-    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
-    taxArray.push(value);
-  }
-
-  removeTax(index: number, recordIndex: number) {
-    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
-    taxArray.removeAt(index);
-  }
   /**
    * Create a form group for a single record with all the required fields
    * @returns A form group with all the required fields for a record
@@ -233,6 +242,8 @@ export class BCDFormManager {
       currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       linesSubtotal: [0, [Validators.required, Validators.min(0)]],
       exchangeRate: [0, [Validators.required, Validators.min(0)]],
+      bdaValue: [0, [Validators.required, Validators.min(0)]],
+      totalDue: [0, [Validators.required, Validators.min(0)]],
       charges: {
         template: {
           code: ['212', [Validators.required]],
@@ -284,39 +295,111 @@ export class BCDFormManager {
   }
   //#endregion
 
-  // Calculations in charges and taxes can be added here in the future
-  calculateTotals(form: bcdFormModel) {
-    const data: bcdFormModel = structuredClone(form);
+  //#region Taxes
 
-    // Header charges
-    data.charges = data.charges.map(item => ({
-      ...item,
-      percentage: item.percentage == null || item.percentage === 0 ? undefined : item.percentage,
-    }));
-
-    // Records
-    data.records = data.records.map(record => ({
-      ...record,
-
-      // Charges
-      charges: record.charges.map(c => ({
-        ...c,
-        percentage:
-          c.percentage == null || c.percentage === 0
-            ? undefined
-            : Number((c.percentage / 100).toFixed(4)),
-      })),
-
-      // Taxes
-      tax: (record.tax ?? []).map(t => ({
-        ...t,
-        amount:
-          t.ratePercentage == null || t.ratePercentage === 0 || t.valueForTax == null
-            ? 0
-            : Number(((t.ratePercentage / 100) * t.valueForTax).toFixed(2)),
-      })),
-    }));
-
-    return data;
+  /**
+   * Creates a form group for a single tax entry with the required fields
+   * @returns A form group with all the required fields for a tax entry
+   */
+  createTaxEntryForm() {
+    return this.form.fb.group<bcdFormTaxEntryModel>({
+      type: ['CUD', [Validators.required]],
+      taxId: ['F', [Validators.required]],
+      valueForTax: [0, [Validators.required, Validators.min(0)]],
+      ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      amount: [0, [Validators.required, Validators.min(0)]],
+    });
   }
+
+  /**
+   * Adds a tax entry to the array of tax entries in the record at the given index.
+   * @param recordIndex The index of the record to which to add the tax entry.
+   * @param value The tax entry to add.
+   */
+  addTax(recordIndex: number, value: GroupReturn<bcdFormTaxEntryModel>) {
+    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
+    taxArray.push(value);
+  }
+
+  /**
+   * Removes a tax entry from the array of tax entries in the record at the given index.
+   * This method removes the tax entry at the given index from the array of tax entries.
+   * @param index The index of the tax entry to remove.
+   * @param recordIndex The index of the record from which to remove the tax entry.
+   */
+  removeTax(index: number, recordIndex: number) {
+    const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
+    taxArray.removeAt(index);
+  }
+
+  //#endregion
+
+  //#region Calculations
+
+  /**
+   * Attaches listeners to a record form that will trigger the calculation of its BDA value and total due when its values change.
+   * This method is called when a record form is created and is used to keep the BDA value and total due fields up to date.
+   * It sets a flag on the record form to prevent the listeners from being attached multiple times.
+   */
+  private attachRecordListeners(record: GroupReturn<bcdFormRecordModel>) {
+    if ((record as any).__listenersAttached) return;
+
+    (record as any).__listenersAttached = true;
+
+    record.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(() => {
+      this.calculateRecordBDAValue(record);
+      this.calculateRecordTotalDue(record);
+    });
+  }
+
+  /**
+   * Calculates the BDA value for a record by multiplying the lines subtotal by the exchange rate.
+   * The calculated BDA value is then set on the record form.
+   * @param form The form of the record for which to calculate the BDA value.
+   */
+  calculateRecordBDAValue(form: GroupReturn<bcdFormRecordModel>) {
+    const bdaValue =
+      form.controls.linesSubtotal.getRawValue() * form.controls.exchangeRate.getRawValue();
+
+    form.controls.bdaValue.setValue(bdaValue, { emitEvent: false });
+  }
+
+  /**
+   * Calculates the total due for a record by summing up the amounts of all its taxes.
+   * The total due is then set on the record form.
+   * @param form The form of the record for which to calculate the total due.
+   */
+  calculateRecordTotalDue(form: GroupReturn<bcdFormRecordModel>) {
+    const totalDue = form.controls.tax.getRawValue().reduce((acc, tax) => acc + tax.amount, 0);
+
+    form.controls.totalDue.setValue(totalDue, { emitEvent: false });
+  }
+
+  /**
+   * Calculates the invoice amount for the form by summing up the BDA values of all its records.
+   * The calculated invoice amount is then set on the form.
+   * @param form The form for which to calculate the invoice amount.
+   */
+  calculateInvoiceAmount(form: GroupReturn<bcdFormModel>) {
+    const invoiceAmount = form.controls.records
+      .getRawValue()
+      .reduce((acc, record) => acc + record.bdaValue, 0);
+
+    form.controls.invoiceAmount.setValue(invoiceAmount);
+  }
+
+  /**
+   * Calculates the payable amount for the form by summing up the total due of all its records.
+   * The calculated payable amount is then set on the form.
+   * @param form The form for which to calculate the payable amount.
+   */
+  calculatePayableAmount(form: GroupReturn<bcdFormModel>) {
+    const payableAmount = form.controls.records
+      .getRawValue()
+      .reduce((acc, record) => acc + record.totalDue, 0);
+
+    form.controls.payableAmount.setValue(payableAmount);
+  }
+
+  //#endregion
 }

@@ -101,7 +101,6 @@ export class BcdsForm {
             contactId: bcd.importer.contactId?._id,
           },
           transport: {
-            type: bcd.transport?.type,
             aircraftOrVessel: bcd.transport?.aircraftOrVessel,
             flightOrVoyage: bcd.transport?.flightOrVoyage,
             port: bcd.transport?.port,

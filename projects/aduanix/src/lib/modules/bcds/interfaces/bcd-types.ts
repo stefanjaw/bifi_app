@@ -4,8 +4,6 @@ export type AdditionalInformationType = 'TXT' | 'INV' | 'SUP';
 
 export type ValuationMethodType = '01' | '02';
 
-export type TransportMethodType = 'AIRLINE' | 'VESSEL';
-
 export type TaxType = 'CUD' | 'WHA' | 'WSF';
 
 export type TaxIdType = 'F' | 'E';

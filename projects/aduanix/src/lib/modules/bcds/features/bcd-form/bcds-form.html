@@ -48,9 +48,9 @@
           <p-tab value="1">
             <span class="p-tabheader-title">Records</span>
           </p-tab>
-          <!-- <p-tab value="2">
+          <p-tab value="2">
             <span class="p-tabheader-title">Summary</span>
-          </p-tab> -->
+          </p-tab>
         </p-tablist>
         <p-tabpanels>
           <!-- GENERAL TAB-->
@@ -65,7 +65,8 @@
 
           <!-- SUMMARY TAB -->
           <p-tabpanel value="2">
-            <bifi-app-bcds-summary-form></bifi-app-bcds-summary-form>
+            <bifi-app-bcds-general-form></bifi-app-bcds-general-form>
+            <bifi-app-bcds-records-form [shipping]="shipping()"></bifi-app-bcds-records-form>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>

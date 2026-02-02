@@ -2,7 +2,6 @@ import {
   AdditionalInformationType,
   BCDType,
   ValuationMethodType,
-  TransportMethodType,
   TaxIdType,
   TaxType,
   ChargeCodeType,
@@ -27,11 +26,6 @@ export const additionalInformationTypeOptions: {
 export const valuationMethodTypeOptions: { value: ValuationMethodType; label: string }[] = [
   { value: '01', label: 'Transactional Value' },
   { value: '02', label: 'Other' },
-];
-
-export const transportMethodTypeOptions: { value: TransportMethodType; label: string }[] = [
-  { value: 'AIRLINE', label: 'Airline' },
-  { value: 'VESSEL', label: 'Vessel' },
 ];
 
 export const taxIdTypeOptions: { value: TaxIdType; label: string }[] = [
