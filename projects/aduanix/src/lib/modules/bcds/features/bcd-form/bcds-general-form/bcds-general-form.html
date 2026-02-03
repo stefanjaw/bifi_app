@@ -1,6 +1,6 @@
 @if (!loading()) {
   <section [formGroup]="form" class="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
-    <div class="border-e-[0.1px] border-b-[0.1px] border-gray-200">
+    <div class="border-[0.1px] border-gray-200">
       <!-- 1. SUPPLIER -->
       <bifi-app-form-section title="1. SUPPLIER" id="supplier-info" [ordinal]="1">
         <section class="w-full grid gap-3 sm:grid-cols-2">
@@ -197,7 +197,7 @@
       </bifi-app-form-section>
     </div>
 
-    <div class="border-b-[0.1px] border-s-[0.1px] border-gray-200">
+    <div class="border-[0.1px] border-gray-200">
       <!-- 7. ADDITIONAL INFORMATION -->
       <bifi-app-form-section
         title="7. ADDITIONAL INFORMATION"
@@ -347,7 +347,7 @@
             <ng-template pTemplate="header">
               <tr>
                 <th>Code</th>
-                <th>Percentage</th>
+                <th>%</th>
                 <th>Amount</th>
                 <th>Actions</th>
               </tr>

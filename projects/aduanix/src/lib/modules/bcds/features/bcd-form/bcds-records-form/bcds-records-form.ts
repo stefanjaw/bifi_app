@@ -31,7 +31,7 @@ import { AccordionModule } from 'primeng/accordion';
     AccordionModule,
     BcdChargesFormDialog,
     BcdAdditionalInformationFormDialog,
-    BcdTaxesFormDialog
+    BcdTaxesFormDialog,
   ],
   templateUrl: './bcds-records-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,10 +54,9 @@ export class BcdsRecordsForm {
   //charges table
   chargeCodeTypeOptions = chargeCodeTypeOptions;
 
-
   // Tax Options
   taxTypeOptions = taxTypeOptions;
-  taxIdTypeOptions = taxIdTypeOptions 
+  taxIdTypeOptions = taxIdTypeOptions;
 
   // state
   form = this.formService.form;
