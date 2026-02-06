@@ -25,6 +25,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Text, ToastManager } from '@avalantec/base-app/core';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { bcdFormModel } from '../../services/bcd-form.types';
+import { CrudBCDAdditionalInformationType } from '../../services/crud-bcd-additional-information-type';
+import { CrudBCDType } from '../../services/crud-bcd-type';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -48,6 +50,8 @@ export class BcdsForm {
   protected formManager = inject(BCDFormManager);
   private crudShippings = inject(CrudShippings);
   private crudBCD = inject(CrudBCD);
+  private crudBCDAdditionalInformationTypes = inject(CrudBCDAdditionalInformationType);
+  private crudBCDTypes = inject(CrudBCDType);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -66,14 +70,24 @@ export class BcdsForm {
     id: this.shippingId,
     triggerRequest: computed(() => this.shippingId() !== undefined),
   });
+  bcdAdditionalInformationTypeResource = this.crudBCDAdditionalInformationTypes.get({});
+  bcdTypeResource = this.crudBCDTypes.get({});
 
   //data
   bcd = this.bcdResource.value;
   shipping = this.shippingResource.value;
+  bcdAdditionalInformationTypes = this.bcdAdditionalInformationTypeResource.value;
+  bcdTypes = this.bcdTypeResource.value;
 
   //state
   form = this.formService.form;
-  isLoading = computed(() => this.bcdResource.isLoading() || this.shippingResource.isLoading());
+  isLoading = computed(
+    () =>
+      this.bcdResource.isLoading() ||
+      this.shippingResource.isLoading() ||
+      this.bcdAdditionalInformationTypeResource.isLoading() ||
+      this.bcdTypeResource.isLoading()
+  );
   isSubmitLoading = signal(false);
   isFtpSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.bcd());
@@ -123,7 +137,7 @@ export class BcdsForm {
           packagesCount: bcd.packagesCount,
           additionalInformation:
             bcd.additionalInformation?.map(a => ({
-              type: a.type,
+              type: a.type._id,
               value: a.value,
             })) || [],
           ogd: {
@@ -170,7 +184,7 @@ export class BcdsForm {
                 })) || [],
               additionalInformation:
                 r.additionalInformation?.map(a => ({
-                  type: a.type,
+                  type: a.type._id,
                   value: a.value,
                 })) || [],
             })) || [],

@@ -319,7 +319,13 @@
                             <tr [formGroupName]="i">
                               <td>
                                 <bifi-app-form-field>
-                                  <input pInputText formControlName="type" />
+                                  <p-select
+                                    appendTo="body"
+                                    formControlName="type"
+                                    [options]="bcdAdditionalInformationTypeOptions()"
+                                    optionLabel="name"
+                                    optionValue="_id"
+                                  ></p-select>
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>
                               </td>

@@ -9,7 +9,7 @@ import {
   bcdFormModel,
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
-} from '../interfaces/bcd-form';
+} from './bcd-form.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -163,7 +163,7 @@ export class BCDFormManager {
    */
   createAdditionalInformationForm() {
     return this.form.fb.group<bcdFormAdditionalInformationModel>({
-      type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+      type: ['', [Validators.required]],
       value: ['', [Validators.required, Validators.maxLength(70)]],
     });
   }
@@ -271,7 +271,7 @@ export class BCDFormManager {
       },
       additionalInformation: {
         template: {
-          type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+          type: ['', [Validators.required]],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
         formArrayElements: [],
@@ -372,21 +372,18 @@ export class BCDFormManager {
    * @param form The form containing the code, percentage and amount values.
    */
   private calculateCharge(form: GroupReturn<bcdFormChargeModel>) {
-    const { code, percentage, amount } = form.getRawValue();
-    const rule = chargeRules[code];
-
-    if (percentage != null && !rule.allowPercentage) {
-      // porcentaje no permitido → ignorar
-      return amount ?? 0;
-    }
-
-    if (percentage != null) {
-      const calculated = +(amount * (percentage / 100)).toFixed(2);
-      form.controls.amount.setValue(calculated, { emitEvent: false });
-      return calculated;
-    }
-
-    return amount ?? 0;
+    // const { code, percentage, amount } = form.getRawValue();
+    // const rule = chargeRules[code];
+    // if (percentage != null && !rule.allowPercentage) {
+    //   // porcentaje no permitido → ignorar
+    //   return amount ?? 0;
+    // }
+    // if (percentage != null) {
+    //   const calculated = +(amount * (percentage / 100)).toFixed(2);
+    //   form.controls.amount.setValue(calculated, { emitEvent: false });
+    //   return calculated;
+    // }
+    // return amount ?? 0;
   }
 
   /**
@@ -397,18 +394,15 @@ export class BCDFormManager {
    * @returns The calculated amount of the tax entry.
    */
   private calculateTax(form: GroupReturn<bcdFormTaxEntryModel>) {
-    const { type, valueForTax, ratePercentage } = form.getRawValue();
-    const rule = taxRules[type];
-
-    if (!rule || !rule.appliesByDefault) {
-      form.controls.amount.setValue(0, { emitEvent: false });
-      return 0;
-    }
-
-    const amount = +(valueForTax * (ratePercentage / 100)).toFixed(2);
-    form.controls.amount.setValue(amount, { emitEvent: false });
-
-    return amount;
+    // const { type, valueForTax, ratePercentage } = form.getRawValue();
+    // const rule = taxRules[type];
+    // if (!rule || !rule.appliesByDefault) {
+    //   form.controls.amount.setValue(0, { emitEvent: false });
+    //   return 0;
+    // }
+    // const amount = +(valueForTax * (ratePercentage / 100)).toFixed(2);
+    // form.controls.amount.setValue(amount, { emitEvent: false });
+    // return amount;
   }
 
   /**
@@ -418,23 +412,18 @@ export class BCDFormManager {
    * @returns The calculated BDA value of the record.
    */
   private calculateRecordBDAValue(form: GroupReturn<bcdFormRecordModel>) {
-    const goodsValue = form.controls.linesSubtotal.getRawValue();
-    const exchangeRate = form.controls.exchangeRate.getRawValue();
-
-    const goodsValueBDA = goodsValue * exchangeRate;
-
-    const dutiableCharges = form.controls.charges.controls.reduce((acc, chargeForm) => {
-      const amount = this.calculateCharge(chargeForm);
-      const rule = chargeRules[chargeForm.controls.code.value];
-
-      if (!rule.defaultDutiable || amount <= 0) return acc;
-      return acc + amount;
-    }, 0);
-
-    const bdaValue = +(goodsValueBDA + dutiableCharges).toFixed(2);
-
-    form.controls.bdaValue.setValue(bdaValue, { emitEvent: false });
-    return bdaValue;
+    // const goodsValue = form.controls.linesSubtotal.getRawValue();
+    // const exchangeRate = form.controls.exchangeRate.getRawValue();
+    // const goodsValueBDA = goodsValue * exchangeRate;
+    // const dutiableCharges = form.controls.charges.controls.reduce((acc, chargeForm) => {
+    //   const amount = this.calculateCharge(chargeForm);
+    //   const rule = chargeRules[chargeForm.controls.code.value];
+    //   if (!rule.defaultDutiable || amount <= 0) return acc;
+    //   return acc + amount;
+    // }, 0);
+    // const bdaValue = +(goodsValueBDA + dutiableCharges).toFixed(2);
+    // form.controls.bdaValue.setValue(bdaValue, { emitEvent: false });
+    // return bdaValue;
   }
 
   /**
@@ -444,10 +433,9 @@ export class BCDFormManager {
    * @returns The calculated total due of the record.
    */
   calculateRecordTotalDue(form: GroupReturn<bcdFormRecordModel>) {
-    const total = form.controls.tax?.getRawValue().reduce((acc, tax) => acc + tax.amount, 0) ?? 0;
-
-    form.controls.totalDue.setValue(+total.toFixed(2), { emitEvent: false });
-    return total;
+    // const total = form.controls.tax?.getRawValue().reduce((acc, tax) => acc + tax.amount, 0) ?? 0;
+    // form.controls.totalDue.setValue(+total.toFixed(2), { emitEvent: false });
+    // return total;
   }
 
   /**
@@ -457,16 +445,14 @@ export class BCDFormManager {
    * @returns The calculated invoice amount.
    */
   calculateInvoiceAmount(form: GroupReturn<bcdFormModel>) {
-    const invoiceAmount = form.controls.records.controls.reduce(
-      (acc, recordForm) => acc + (recordForm.controls.bdaValue.value ?? 0),
-      0
-    );
-
-    form.controls.invoiceAmount.setValue(+invoiceAmount.toFixed(2), {
-      emitEvent: false,
-    });
-
-    return invoiceAmount;
+    // const invoiceAmount = form.controls.records.controls.reduce(
+    //   (acc, recordForm) => acc + (recordForm.controls.bdaValue.value ?? 0),
+    //   0
+    // );
+    // form.controls.invoiceAmount.setValue(+invoiceAmount.toFixed(2), {
+    //   emitEvent: false,
+    // });
+    // return invoiceAmount;
   }
 
   /**
@@ -476,23 +462,19 @@ export class BCDFormManager {
    * @returns The calculated payable amount of the form.
    */
   calculatePayableAmount(form: GroupReturn<bcdFormModel>) {
-    const recordsTotal = form.controls.records.controls.reduce(
-      (acc, recordForm) => acc + (recordForm.controls.totalDue.value ?? 0),
-      0
-    );
-
-    const headerChargesTotal = form.controls.charges.controls.reduce(
-      (acc, chargeForm) => acc + this.calculateCharge(chargeForm),
-      0
-    );
-
-    const payableAmount = recordsTotal + headerChargesTotal;
-
-    form.controls.payableAmount.setValue(+payableAmount.toFixed(2), {
-      emitEvent: false,
-    });
-
-    return payableAmount;
+    // const recordsTotal = form.controls.records.controls.reduce(
+    //   (acc, recordForm) => acc + (recordForm.controls.totalDue.value ?? 0),
+    //   0
+    // );
+    // const headerChargesTotal = form.controls.charges.controls.reduce(
+    //   (acc, chargeForm) => acc + this.calculateCharge(chargeForm),
+    //   0
+    // );
+    // const payableAmount = recordsTotal + headerChargesTotal;
+    // form.controls.payableAmount.setValue(+payableAmount.toFixed(2), {
+    //   emitEvent: false,
+    // });
+    // return payableAmount;
   }
 
   //#endregion

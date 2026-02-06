@@ -1,34 +1,38 @@
 <p-dialog header="New Additional Information" [(visible)]="dialogState" [modal]="true">
-  <form
-    [formGroup]="form"
-    class="flex flex-col gap-4"
-    bifiAppFormActionsHandler
-    (appSubmit)="handleSubmit()"
-  >
-    <section class="w-full grid gap-3 sm:grid-cols-2">
-      <bifi-app-form-field>
-        <bifi-app-form-label>Type</bifi-app-form-label>
-        <p-select
-          appendTo="body"
-          formControlName="type"
-          [options]="additionalInformationTypeOptions"
-          optionLabel="label"
-          optionValue="value"
-        ></p-select>
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
+  @if (!loading()) {
+    <form
+      [formGroup]="form"
+      class="flex flex-col gap-4"
+      bifiAppFormActionsHandler
+      (appSubmit)="handleSubmit()"
+    >
+      <section class="w-full grid gap-3 sm:grid-cols-2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Type</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="type"
+            [options]="additionalInformationTypeOptions()"
+            optionLabel="name"
+            optionValue="_id"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-      <bifi-app-form-field>
-        <bifi-app-form-label>Value</bifi-app-form-label>
-        <input pInputText formControlName="value" type="text" placeholder="Value" />
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
-    </section>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Value</bifi-app-form-label>
+          <input pInputText formControlName="value" type="text" placeholder="Value" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </section>
 
-    <bifi-app-form-actions
-      (cancelClicked)="closeDialog()"
-      cancelLabel="Cancel"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
-  </form>
+      <bifi-app-form-actions
+        (cancelClicked)="closeDialog()"
+        cancelLabel="Cancel"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  } @else {
+    <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+  }
 </p-dialog>

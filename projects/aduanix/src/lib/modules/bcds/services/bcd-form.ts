@@ -56,7 +56,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       payableAmount: [0, [Validators.required, Validators.min(0)]],
       additionalInformation: {
         template: {
-          type: ['', [Validators.required, Validators.maxLength(3)]],
+          type: ['', [Validators.required]],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
         formArrayElements: [],
@@ -115,7 +115,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           },
           additionalInformation: {
             template: {
-              type: ['', [Validators.required, Validators.maxLength(3)]],
+              type: ['', [Validators.required]],
               value: ['', [Validators.required, Validators.maxLength(70)]],
             },
             formArrayElements: [],

@@ -6,24 +6,37 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { BCDFormManager } from '../../services/bcd-form-manager';
-import { additionalInformationTypeOptions } from '../../libs/bcd-options';
+import { CrudBCDAdditionalInformationType } from '../../services/crud-bcd-additional-information-type';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'bifi-app-bcd-additional-information-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FormModule, InputTextModule, SelectModule],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    FormModule,
+    InputTextModule,
+    SelectModule,
+    ProgressBarModule,
+  ],
   templateUrl: './bcd-additional-information-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BcdAdditionalInformationFormDialog extends BaseDialog {
   // Services
   private bcdFormManager = inject(BCDFormManager);
+  private crudBCDAdditionalInformationTypes = inject(CrudBCDAdditionalInformationType);
 
   // index
   recordIndex: number | undefined = undefined;
 
+  // resources
+  bcdAdditionalInformationTypeOptionsResource = this.crudBCDAdditionalInformationTypes.get({});
+
   // form
   form = this.bcdFormManager.createAdditionalInformationForm();
-  additionalInformationTypeOptions = additionalInformationTypeOptions;
+  additionalInformationTypeOptions = this.bcdAdditionalInformationTypeOptionsResource.value;
+  loading = this.bcdAdditionalInformationTypeOptionsResource.isLoading;
 
   // methods
   override openDialog(recordIndex: number | undefined = undefined) {

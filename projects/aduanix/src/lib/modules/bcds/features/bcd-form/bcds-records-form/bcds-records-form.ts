@@ -16,6 +16,7 @@ import { chargeCodeTypeOptions, taxIdTypeOptions, taxTypeOptions } from '../../.
 import { TableModule } from 'primeng/table';
 import { BcdTaxesFormDialog } from '../../bcd-taxes-form-dialog/bcd-taxes-form-dialog';
 import { AccordionModule } from 'primeng/accordion';
+import { bcdAdditionalInformationType } from '../../../interfaces/bcd-additional-information-type';
 
 @Component({
   selector: 'bifi-app-bcds-records-form',
@@ -53,6 +54,7 @@ export class BcdsRecordsForm {
 
   //charges table
   chargeCodeTypeOptions = chargeCodeTypeOptions;
+  bcdAdditionalInformationTypeOptions = input.required<bcdAdditionalInformationType[]>();
 
   // Tax Options
   taxTypeOptions = taxTypeOptions;
