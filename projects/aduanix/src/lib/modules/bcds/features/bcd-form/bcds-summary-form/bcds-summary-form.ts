@@ -8,7 +8,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
 import { DatePickerModule } from 'primeng/datepicker';
-import { BcdForm, BCDFormManager } from 'projects/aduanix/src/public-api';
+import { BcdForm } from '../../../services/bcd-form';
+import { BCDFormManager } from '../../../services/bcd-form-manager';
 
 @Component({
   selector: 'bifi-app-bcds-summary-form',

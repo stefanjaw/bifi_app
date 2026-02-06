@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseForm } from '@avalantec/base-app/form';
 import { Validators } from '@angular/forms';
-import { bcdFormModel } from './bcd-form.types';
+import { bcdFormModel } from '../interfaces/bcd-form.types';
 
 @Injectable({
   providedIn: 'root',

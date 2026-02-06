@@ -229,9 +229,9 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="type"
-                                    [options]="taxTypeOptions"
-                                    optionLabel="label"
-                                    optionValue="value"
+                                    [options]="taxTypeOptions()"
+                                    optionLabel="name"
+                                    optionValue="_id"
                                   ></p-select>
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>
@@ -241,9 +241,9 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="taxId"
-                                    [options]="taxIdTypeOptions"
-                                    optionLabel="label"
-                                    optionValue="value"
+                                    [options]="taxIdTypeOptions()"
+                                    optionLabel="name"
+                                    optionValue="_id"
                                   ></p-select>
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>

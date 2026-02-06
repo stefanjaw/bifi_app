@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { FormModule } from '@avalantec/base-app/form';
@@ -6,25 +6,45 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { BCDFormManager } from '../../services/bcd-form-manager';
-import { taxIdTypeOptions, taxTypeOptions } from '../../libs/bcd-options';
+import { CrudBCDTaxId } from '../../services/crud-bcd-tax-id';
+import { CrudBCDTaxType } from '../../services/crud-bcd-tax-type';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'bifi-app-bcd-taxes-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FormModule, InputTextModule, SelectModule],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    FormModule,
+    InputTextModule,
+    SelectModule,
+    ProgressBarModule,
+  ],
   templateUrl: './bcd-taxes-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BcdTaxesFormDialog extends BaseDialog {
   //Services
   private bcdFormManager = inject(BCDFormManager);
+  private crudBCDTaxId = inject(CrudBCDTaxId);
+  private crudBCDTaxType = inject(CrudBCDTaxType);
 
   //index
   recordIndex!: number;
 
+  // Resources
+  taxIdResource = this.crudBCDTaxId.get({
+    triggerRequest: this.dialogState,
+  });
+  taxTypeResource = this.crudBCDTaxType.get({
+    triggerRequest: this.dialogState,
+  });
+
   //Form
   form = this.bcdFormManager.createTaxEntryForm();
-  taxTypeOptions = taxTypeOptions;
-  taxIdTypeOptions = taxIdTypeOptions;
+  taxTypeOptions = this.taxTypeResource.value;
+  taxIdTypeOptions = this.taxIdResource.value;
+  loading = computed(() => this.taxIdResource.isLoading() || this.taxTypeResource.isLoading());
 
   //Dialog Methods
   override openDialog(recordIndex?: number) {

@@ -1,9 +1,7 @@
 import {
   ChargeCodeType,
-  TaxIdType,
-  TaxType,
   ValuationMethodType,
-} from '../interfaces/bcd-types';
+} from '../interfaces/bcd-enums';
 
 export interface bcdFormSupplierModel {
   contactId: string;
@@ -36,8 +34,8 @@ export interface bcdFormDeclarantModel {
 }
 
 export interface bcdFormTaxEntryModel {
-  type: TaxType;
-  taxId: TaxIdType;
+  type: string;
+  taxId: string;
   valueForTax: number;
   ratePercentage: number;
   amount: number;

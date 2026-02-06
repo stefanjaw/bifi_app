@@ -1,4 +1,53 @@
 <section [formGroup]="form" class="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
+  <div class="col-span-full">
+    <!-- Declarant Section -->
+    <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="7">
+      <bifi-app-form-field>
+        <bifi-app-form-label>BCD Type</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="type"
+          [options]="bcdTypeOptions()"
+          optionLabel="name"
+          optionValue="_id"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Declarant</bifi-app-form-label>
+          <input type="text" formControlName="name" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Company Id</bifi-app-form-label>
+          <input type="text" formControlName="companyId" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Capacity</bifi-app-form-label>
+          <input type="text" formControlName="capacity" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Date</bifi-app-form-label>
+          <p-datepicker formControlName="date" [showIcon]="true"></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Trader Reference</bifi-app-form-label>
+          <input type="text" formControlName="traderReference" pInputText />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+    </bifi-app-form-section>
+  </div>
+
   <div class="border-[0.1px] border-gray-200">
     <!-- 1. SUPPLIER -->
     <bifi-app-form-section title="1. SUPPLIER" id="supplier-info" [ordinal]="1">
@@ -461,55 +510,6 @@
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
     </div>
-  </div>
-
-  <div class="col-span-full">
-    <!-- Declarant Section -->
-    <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="7">
-      <bifi-app-form-field>
-        <bifi-app-form-label>BCD Type</bifi-app-form-label>
-        <p-select
-          appendTo="body"
-          formControlName="type"
-          [options]="bcdTypeOptions()"
-          optionLabel="name"
-          optionValue="_id"
-        ></p-select>
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
-
-      <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
-        <bifi-app-form-field>
-          <bifi-app-form-label>Declarant</bifi-app-form-label>
-          <input type="text" formControlName="name" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Company Id</bifi-app-form-label>
-          <input type="text" formControlName="companyId" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Capacity</bifi-app-form-label>
-          <input type="text" formControlName="capacity" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Date</bifi-app-form-label>
-          <p-datepicker formControlName="date" [showIcon]="true"></p-datepicker>
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field>
-          <bifi-app-form-label>Trader Reference</bifi-app-form-label>
-          <input type="text" formControlName="traderReference" pInputText />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-      </div>
-    </bifi-app-form-section>
   </div>
 </section>
 

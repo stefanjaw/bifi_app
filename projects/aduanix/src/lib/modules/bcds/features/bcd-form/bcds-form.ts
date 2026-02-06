@@ -9,7 +9,6 @@ import {
   signal,
 } from '@angular/core';
 import { CrudBCD } from '../../services/crud-bcd';
-import { BcdForm } from '../../services/bcd-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -24,9 +23,10 @@ import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Text, ToastManager } from '@avalantec/base-app/core';
 import { FileResolver } from '@avalantec/base-app/resource';
-import { bcdFormModel } from '../../services/bcd-form.types';
 import { CrudBCDAdditionalInformationType } from '../../services/crud-bcd-additional-information-type';
 import { CrudBCDType } from '../../services/crud-bcd-type';
+import { BcdForm } from '../../services/bcd-form';
+import { bcdFormModel } from '../../interfaces/bcd-form.types';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -176,8 +176,8 @@ export class BcdsForm {
                 })) || [],
               tax:
                 r.tax?.map(t => ({
-                  type: t.type,
-                  taxId: t.taxId,
+                  type: t.type?._id,
+                  taxId: t.taxId?._id,
                   valueForTax: t.valueForTax,
                   ratePercentage: t.ratePercentage,
                   amount: t.amount,

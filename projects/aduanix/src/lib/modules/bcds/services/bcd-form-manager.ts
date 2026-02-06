@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { GroupReturn } from '@avalantec/base-app/form';
-import { BcdForm } from './bcd-form';
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
@@ -9,8 +8,9 @@ import {
   bcdFormModel,
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
-} from './bcd-form.types';
+} from '../interfaces/bcd-form.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BcdForm } from './bcd-form';
 
 @Injectable({
   providedIn: 'root',

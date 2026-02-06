@@ -1,9 +1,5 @@
 export type ValuationMethodType = '01' | '02';
 
-export type TaxType = 'CUD' | 'WHA' | 'WSF' | 'DEP';
-
-export type TaxIdType = 'F' | 'H' | 'D' | 'E' | 'S' | 'C';
-
 export type ChargeCodeType = '212' | '641' | '640';
 
 export type EBCDType =

@@ -67,9 +67,11 @@ export class BcdsGeneralForm {
   // options
   contactOptions = this.contactsResource.value;
   countryOptions = this.countriesResource.value;
+  bcdTransportOptions = this.bcdTransportOptionsResource.value;
+
+  // we input them because theyre used in main, so no need to fetch them again
   bcdTypeOptions = input.required<bcdType[]>();
   bcdAdditionalInformationTypeOptions = input.required<bcdAdditionalInformationType[]>();
-  bcdTransportOptions = this.bcdTransportOptionsResource.value;
 
   chargeCodeTypeOptions = chargeCodeTypeOptions;
   valuationMethodTypeOptions = valuationMethodTypeOptions;
