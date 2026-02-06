@@ -31,7 +31,9 @@ export class BcdAdditionalInformationFormDialog extends BaseDialog {
   recordIndex: number | undefined = undefined;
 
   // resources
-  bcdAdditionalInformationTypeOptionsResource = this.crudBCDAdditionalInformationTypes.get({});
+  bcdAdditionalInformationTypeOptionsResource = this.crudBCDAdditionalInformationTypes.get({
+    triggerRequest: this.dialogState,
+  });
 
   // form
   form = this.bcdFormManager.createAdditionalInformationForm();
