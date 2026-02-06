@@ -42,9 +42,35 @@
       <!-- 3. TRANSPORT -->
       <bifi-app-form-section title="3. TRANSPORT DETAILS" id="transport-details-info" [ordinal]="3">
         <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
+          <div class="col-span-full flex flex-wrap gap-4">
+            <div class="flex items-center">
+              <p-radioButton
+                value="aircraft"
+                inputId="transport-type-aircraft"
+                formControlName="type"
+              />
+              <label for="transport-type-aircraft" class="ml-2">Aircraft</label>
+            </div>
+
+            <div class="flex items-center">
+              <p-radioButton
+                value="vessel"
+                inputId="transport-type-vessel"
+                formControlName="type"
+              />
+              <label for="transport-type-vessel" class="ml-2">Vessel</label>
+            </div>
+          </div>
+
           <bifi-app-form-field>
             <bifi-app-form-field>a. Vessel / Aircraft.</bifi-app-form-field>
-            <input type="text" formControlName="aircraftOrVessel" pInputText />
+            <p-select
+              formControlName="aircraftOrVessel"
+              [options]="aircraftOrVesselTypeOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+            ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

@@ -17,7 +17,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { CrudShippings, invoicePDF } from '@avalantec/aduanix/modules/shippings';
 import { BCDFormManager } from '../../services/bcd-form-manager';
-import { bcdFormModel } from '../../interfaces/bcd-form';
 import { Tabs, TabsModule } from 'primeng/tabs';
 import { BcdsGeneralForm } from './bcds-general-form/bcds-general-form';
 import { BcdsRecordsForm } from './bcds-records-form/bcds-records-form';
@@ -25,6 +24,7 @@ import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Text, ToastManager } from '@avalantec/base-app/core';
 import { FileResolver } from '@avalantec/base-app/resource';
+import { bcdFormModel } from '../../services/bcd-form.types';
 
 @Component({
   selector: 'bifi-app-bcds-form',
@@ -93,7 +93,7 @@ export class BcdsForm {
       if (bcd) {
         this.formService.patchValue({
           shippingId: bcd.shippingId?._id,
-          type: bcd.type,
+          type: bcd.type._id,
           supplier: {
             contactId: bcd.supplier.contactId?._id,
           },
@@ -101,7 +101,7 @@ export class BcdsForm {
             contactId: bcd.importer.contactId?._id,
           },
           transport: {
-            aircraftOrVessel: bcd.transport?.aircraftOrVessel,
+            aircraftOrVessel: bcd.transport?.aircraftOrVessel?._id,
             flightOrVoyage: bcd.transport?.flightOrVoyage,
             port: bcd.transport?.port,
             arrivalDate: new Date(bcd.transport.arrivalDate),
@@ -228,6 +228,7 @@ export class BcdsForm {
    */
   async handleSubmit(values: FormValueState<bcdFormModel>) {
     const payload = values.rawValue;
+    delete (payload as any).transport.type;
 
     if (!payload.charges || payload.charges.length === 0) {
       this.toastManager.showError('Charges are required');

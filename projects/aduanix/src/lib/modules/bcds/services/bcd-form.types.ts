@@ -1,11 +1,9 @@
 import {
-  AdditionalInformationType,
-  BCDType,
   ChargeCodeType,
   TaxIdType,
   TaxType,
   ValuationMethodType,
-} from './bcd-types';
+} from '../interfaces/bcd-types';
 
 export interface bcdFormSupplierModel {
   contactId: string;
@@ -16,6 +14,7 @@ export interface bcdFormImporterModel {
 }
 
 export interface bcdFormTransportModel {
+  type: "aircraft" | "vessel";
   aircraftOrVessel: string;
   flightOrVoyage: string;
   port: string;
@@ -45,7 +44,7 @@ export interface bcdFormTaxEntryModel {
 }
 
 export interface bcdFormAdditionalInformationModel {
-  type: AdditionalInformationType;
+  type: string;
   value: string;
 }
 
@@ -78,7 +77,7 @@ export interface bcdFormOGDModel {
 
 export interface bcdFormModel {
   shippingId: string;
-  type: BCDType;
+  type: string;
   supplier: bcdFormSupplierModel;
   importer: bcdFormImporterModel;
   transport: bcdFormTransportModel;

@@ -1,42 +1,29 @@
 import {
-  AdditionalInformationType,
-  BCDType,
   ValuationMethodType,
   TaxIdType,
   TaxType,
   ChargeCodeType,
 } from '../interfaces/bcd-types';
 
-export const bcdTypeOptions: { value: BCDType; label: string }[] = [
-  { value: 'I', label: 'Import' },
-  { value: 'E', label: 'Export' },
-  { value: 'D', label: 'D' },
-  { value: 'A', label: 'A' },
-];
-
-export const additionalInformationTypeOptions: {
-  value: AdditionalInformationType;
-  label: string;
-}[] = [
-  { value: 'INV', label: 'Invoice' },
-  { value: 'TXT', label: 'Text' },
-  { value: 'SUP', label: 'Supplier' },
-];
-
 export const valuationMethodTypeOptions: { value: ValuationMethodType; label: string }[] = [
   { value: '01', label: 'Transactional Value' },
-  { value: '02', label: 'Other' },
+  { value: '02', label: 'Identical / Similar goods' },
 ];
 
 export const taxIdTypeOptions: { value: TaxIdType; label: string }[] = [
   { value: 'F', label: 'Full Rate' },
-  { value: 'E', label: 'Exchange Rate' },
+  { value: 'H', label: 'Higher Rate' },
+  { value: 'D', label: 'Deposit Rate' },
+  { value: 'E', label: 'Exempt Rate' },
+  { value: 'S', label: 'Suspended Rate' },
+  { value: 'C', label: 'Concessional Rate' },
 ];
 
 export const taxTypeOptions: { value: TaxType; label: string }[] = [
   { value: 'CUD', label: 'Customs' },
   { value: 'WHA', label: 'Wharfage' },
   { value: 'WSF', label: 'Warehouse' },
+  { value: 'DEP', label: 'Deposit' },
 ];
 
 export const chargeCodeTypeOptions: { value: ChargeCodeType; label: string }[] = [

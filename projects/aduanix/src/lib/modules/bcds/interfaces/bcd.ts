@@ -1,8 +1,6 @@
 import { contact, country } from '@avalantec/base-app/interfaces';
 import {
-  AdditionalInformationType,
   BCDStatusType,
-  BCDType,
   ChargeCodeType,
   EBCDType,
   TaxIdType,
@@ -11,6 +9,9 @@ import {
 } from './bcd-types';
 import { file } from '@avalantec/base-app/resource';
 import { shipping } from '../../shippings';
+import { bcdType } from './bcd-type';
+import { bcdTransportOption } from './bcd-transport-option';
+import { bcdAdditionalInformationType } from './bcd-additional-information-type';
 
 export interface bcdSupplier {
   contactId: contact;
@@ -21,7 +22,7 @@ export interface bcdImporter {
 }
 
 export interface bcdTransport {
-  aircraftOrVessel: string;
+  aircraftOrVessel: bcdTransportOption;
   flightOrVoyage: string;
   port: string;
   arrivalDate: string;
@@ -50,7 +51,7 @@ export interface bcdTaxEntry {
 }
 
 export interface bcdAdditionalInformation {
-  type: AdditionalInformationType;
+  type: bcdAdditionalInformationType;
   value: string;
 }
 
@@ -89,7 +90,7 @@ export interface ebcdSchema {
 export interface bcd {
   shippingId: shipping;
   status: BCDStatusType;
-  type: BCDType;
+  type: bcdType;
   supplier: bcdSupplier;
   importer: bcdImporter;
   transport: bcdTransport;

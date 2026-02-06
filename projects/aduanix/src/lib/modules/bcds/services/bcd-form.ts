@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseForm } from '@avalantec/base-app/form';
 import { Validators } from '@angular/forms';
-import { bcdFormModel } from '../interfaces/bcd-form';
+import { bcdFormModel } from './bcd-form.types';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
   override createForm() {
     return this.fb.group<bcdFormModel>({
       shippingId: ['', [Validators.required]],
-      type: ['I', [Validators.required]],
+      type: ['', [Validators.required]],
       supplier: {
         contactId: ['', [Validators.required]],
       },
@@ -19,6 +19,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         contactId: ['', [Validators.required]],
       },
       transport: {
+        type: ['aircraft', [Validators.required]],
         aircraftOrVessel: ['', [Validators.required, Validators.maxLength(3)]],
         flightOrVoyage: ['', [Validators.required, Validators.maxLength(255)]],
         port: ['', [Validators.required, Validators.maxLength(3)]],
@@ -55,7 +56,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       payableAmount: [0, [Validators.required, Validators.min(0)]],
       additionalInformation: {
         template: {
-          type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+          type: ['', [Validators.required, Validators.maxLength(3)]],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
         formArrayElements: [],
@@ -114,7 +115,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           },
           additionalInformation: {
             template: {
-              type: ['TXT', [Validators.required, Validators.maxLength(3)]],
+              type: ['', [Validators.required, Validators.maxLength(3)]],
               value: ['', [Validators.required, Validators.maxLength(70)]],
             },
             formArrayElements: [],

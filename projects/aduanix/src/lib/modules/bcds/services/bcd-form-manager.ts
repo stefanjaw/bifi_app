@@ -36,11 +36,18 @@ export class BCDFormManager {
         // attach listeners and recalc
         recordForms.controls.forEach(record => {
           this.attachRecordListeners(record as any);
+
+          // taxes and charges
+          record.controls.charges.controls.forEach(charge => this.calculateCharge(charge));
+          record.controls.tax.controls.forEach(tax => this.calculateTax(tax));
+
+          // recalculate
           this.calculateRecordBDAValue(record as any);
           this.calculateRecordTotalDue(record as any);
         });
 
         // global totals
+        this.form.form.controls.charges.controls.forEach(charge => this.calculateCharge(charge));
         this.calculateInvoiceAmount(this.form.form);
         this.calculatePayableAmount(this.form.form);
       });
@@ -347,58 +354,145 @@ export class BCDFormManager {
     (record as any).__listenersAttached = true;
 
     record.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(() => {
+      // taxes and charges
+      record.controls.charges.controls.forEach(charge => this.calculateCharge(charge));
+      record.controls.tax.controls.forEach(tax => this.calculateTax(tax));
+
+      // bda
       this.calculateRecordBDAValue(record);
       this.calculateRecordTotalDue(record);
     });
   }
 
   /**
-   * Calculates the BDA value for a record by multiplying the lines subtotal by the exchange rate.
-   * The calculated BDA value is then set on the record form.
-   * @param form The form of the record for which to calculate the BDA value.
+   * Calculates the charge amount from the given form values.
+   * If the percentage value is not null and the charge code does not allow percentage, it ignores the percentage value.
+   * If the percentage value is not null, it calculates the charge amount by multiplying the amount by the percentage divided by 100, and sets the calculated value to the amount control.
+   * Returns the calculated charge amount, or the amount value if no percentage is provided.
+   * @param form The form containing the code, percentage and amount values.
    */
-  calculateRecordBDAValue(form: GroupReturn<bcdFormRecordModel>) {
-    const bdaValue =
-      form.controls.linesSubtotal.getRawValue() * form.controls.exchangeRate.getRawValue();
+  private calculateCharge(form: GroupReturn<bcdFormChargeModel>) {
+    const { code, percentage, amount } = form.getRawValue();
+    const rule = chargeRules[code];
+
+    if (percentage != null && !rule.allowPercentage) {
+      // porcentaje no permitido → ignorar
+      return amount ?? 0;
+    }
+
+    if (percentage != null) {
+      const calculated = +(amount * (percentage / 100)).toFixed(2);
+      form.controls.amount.setValue(calculated, { emitEvent: false });
+      return calculated;
+    }
+
+    return amount ?? 0;
+  }
+
+  /**
+   * Calculates the amount of a tax entry based on the given form values and the rules associated with the tax type.
+   * If the tax type does not apply by default, the amount is set to 0.
+   * Otherwise, the amount is calculated by multiplying the value for tax by the rate percentage and dividing by 100.
+   * The calculated amount is then set on the tax entry form and returned.
+   * @returns The calculated amount of the tax entry.
+   */
+  private calculateTax(form: GroupReturn<bcdFormTaxEntryModel>) {
+    const { type, valueForTax, ratePercentage } = form.getRawValue();
+    const rule = taxRules[type];
+
+    if (!rule || !rule.appliesByDefault) {
+      form.controls.amount.setValue(0, { emitEvent: false });
+      return 0;
+    }
+
+    const amount = +(valueForTax * (ratePercentage / 100)).toFixed(2);
+    form.controls.amount.setValue(amount, { emitEvent: false });
+
+    return amount;
+  }
+
+  /**
+   * Calculates the BDA value of a record by multiplying the goods value by the exchange rate
+   * and adding the dutiable charges. The calculated BDA value is then set on the record form.
+   * @param form The form group containing the record data.
+   * @returns The calculated BDA value of the record.
+   */
+  private calculateRecordBDAValue(form: GroupReturn<bcdFormRecordModel>) {
+    const goodsValue = form.controls.linesSubtotal.getRawValue();
+    const exchangeRate = form.controls.exchangeRate.getRawValue();
+
+    const goodsValueBDA = goodsValue * exchangeRate;
+
+    const dutiableCharges = form.controls.charges.controls.reduce((acc, chargeForm) => {
+      const amount = this.calculateCharge(chargeForm);
+      const rule = chargeRules[chargeForm.controls.code.value];
+
+      if (!rule.defaultDutiable || amount <= 0) return acc;
+      return acc + amount;
+    }, 0);
+
+    const bdaValue = +(goodsValueBDA + dutiableCharges).toFixed(2);
 
     form.controls.bdaValue.setValue(bdaValue, { emitEvent: false });
+    return bdaValue;
   }
 
   /**
-   * Calculates the total due for a record by summing up the amounts of all its taxes.
-   * The total due is then set on the record form.
-   * @param form The form of the record for which to calculate the total due.
+   * Calculates the total due of a record by summing up the amounts of all its tax entries.
+   * The calculated total due is then set on the record form.
+   * @param form The form group containing the record data.
+   * @returns The calculated total due of the record.
    */
   calculateRecordTotalDue(form: GroupReturn<bcdFormRecordModel>) {
-    const totalDue = form.controls.tax.getRawValue().reduce((acc, tax) => acc + tax.amount, 0);
+    const total = form.controls.tax?.getRawValue().reduce((acc, tax) => acc + tax.amount, 0) ?? 0;
 
-    form.controls.totalDue.setValue(totalDue, { emitEvent: false });
+    form.controls.totalDue.setValue(+total.toFixed(2), { emitEvent: false });
+    return total;
   }
 
   /**
-   * Calculates the invoice amount for the form by summing up the BDA values of all its records.
+   * Calculates the invoice amount for the form by summing up the total due of all its records.
    * The calculated invoice amount is then set on the form.
-   * @param form The form for which to calculate the invoice amount.
+   * @param form The form group containing the form data.
+   * @returns The calculated invoice amount.
    */
   calculateInvoiceAmount(form: GroupReturn<bcdFormModel>) {
-    const invoiceAmount = form.controls.records
-      .getRawValue()
-      .reduce((acc, record) => acc + record.bdaValue, 0);
+    const invoiceAmount = form.controls.records.controls.reduce(
+      (acc, recordForm) => acc + (recordForm.controls.bdaValue.value ?? 0),
+      0
+    );
 
-    form.controls.invoiceAmount.setValue(invoiceAmount);
+    form.controls.invoiceAmount.setValue(+invoiceAmount.toFixed(2), {
+      emitEvent: false,
+    });
+
+    return invoiceAmount;
   }
 
   /**
-   * Calculates the payable amount for the form by summing up the total due of all its records.
+   * Calculates the payable amount for the form by summing up the total due of all its records and the amounts of all its charges.
    * The calculated payable amount is then set on the form.
    * @param form The form for which to calculate the payable amount.
+   * @returns The calculated payable amount of the form.
    */
   calculatePayableAmount(form: GroupReturn<bcdFormModel>) {
-    const payableAmount = form.controls.records
-      .getRawValue()
-      .reduce((acc, record) => acc + record.totalDue, 0);
+    const recordsTotal = form.controls.records.controls.reduce(
+      (acc, recordForm) => acc + (recordForm.controls.totalDue.value ?? 0),
+      0
+    );
 
-    form.controls.payableAmount.setValue(payableAmount);
+    const headerChargesTotal = form.controls.charges.controls.reduce(
+      (acc, chargeForm) => acc + this.calculateCharge(chargeForm),
+      0
+    );
+
+    const payableAmount = recordsTotal + headerChargesTotal;
+
+    form.controls.payableAmount.setValue(+payableAmount.toFixed(2), {
+      emitEvent: false,
+    });
+
+    return payableAmount;
   }
 
   //#endregion

@@ -1,12 +1,8 @@
-export type BCDType = 'I' | 'E' | 'D' | 'A';
-
-export type AdditionalInformationType = 'TXT' | 'INV' | 'SUP';
-
 export type ValuationMethodType = '01' | '02';
 
-export type TaxType = 'CUD' | 'WHA' | 'WSF';
+export type TaxType = 'CUD' | 'WHA' | 'WSF' | 'DEP';
 
-export type TaxIdType = 'F' | 'E';
+export type TaxIdType = 'F' | 'H' | 'D' | 'E' | 'S' | 'C';
 
 export type ChargeCodeType = '212' | '641' | '640';
 
