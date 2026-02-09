@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BcdForm } from '../../../services/bcd-form';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -20,15 +12,10 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { BcdAdditionalInformationFormDialog } from '../../bcd-additional-information-form-dialog/bcd-additional-information-form-dialog';
 import { BcdChargesFormDialog } from '../../bcd-charges-form-dialog/bcd-charges-form-dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { CrudBCDTransportOption } from '../../../services/crud-bcd-transport-option';
-import { bcdType } from '../../../interfaces/bcd-type';
-import { bcdAdditionalInformationType } from '../../../interfaces/bcd-additional-information-type';
-
+import { BcdAdditionalInformationFormDialog } from '../../../../bcd-additional-information-types';
 @Component({
   selector: 'bifi-app-bcds-general-form',
   imports: [
@@ -53,41 +40,20 @@ export class BcdsGeneralForm {
   protected formManager = inject(BCDFormManager);
   private crudCountries = inject(CrudCountries);
   private crudContacts = inject(CrudContacts);
-  private crudBCDTransportOptions = inject(CrudBCDTransportOption);
 
   form = this.formService.form;
 
   // resources
   contactsResource = this.crudContacts.get({});
   countriesResource = this.crudCountries.get({});
-  bcdTransportOptionsResource = this.crudBCDTransportOptions.get({
-    searchParams: computed(() => ({ type: this.currentTransportType() })),
-  });
 
   // options
   contactOptions = this.contactsResource.value;
   countryOptions = this.countriesResource.value;
-  bcdTransportOptions = this.bcdTransportOptionsResource.value;
-
-  // we input them because theyre used in main, so no need to fetch them again
-  bcdTypeOptions = input.required<bcdType[]>();
-  bcdAdditionalInformationTypeOptions = input.required<bcdAdditionalInformationType[]>();
+  bcdTypeOptions = this.formManager.bcdTypeOptions;
+  bcdTransportOptions = this.formManager.bcdTransportOptions;
+  bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
 
   chargeCodeTypeOptions = chargeCodeTypeOptions;
   valuationMethodTypeOptions = valuationMethodTypeOptions;
-
-  // Transport Type Options
-  currentTransportType = toSignal(this.form.controls.transport.controls.type.valueChanges, {
-    initialValue: this.form.controls.transport.controls.type.value,
-  });
-
-  constructor() {
-    effect(() => {
-      this.currentTransportType();
-
-      untracked(() => {
-        this.form.controls.transport.controls.aircraftOrVessel.reset('', { emitEvent: false });
-      });
-    });
-  }
 }

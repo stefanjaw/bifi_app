@@ -5,10 +5,10 @@ import { FormModule } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { BCDFormManager } from '../../services/bcd-form-manager';
 import { CrudBCDTaxId } from '../../services/crud-bcd-tax-id';
 import { CrudBCDTaxType } from '../../services/crud-bcd-tax-type';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { BCDFormManager } from '../../../bcds/services/bcd-form-manager';
 
 @Component({
   selector: 'bifi-app-bcd-taxes-form-dialog',

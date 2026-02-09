@@ -2,11 +2,11 @@ import { contact, country } from '@avalantec/base-app/interfaces';
 import { BCDStatusType, ChargeCodeType, EBCDType, ValuationMethodType } from './bcd-enums';
 import { file } from '@avalantec/base-app/resource';
 import { shipping } from '../../shippings';
-import { bcdType } from './bcd-type';
-import { bcdTransportOption } from './bcd-transport-option';
-import { bcdAdditionalInformationType } from './bcd-additional-information-type';
-import { bcdTaxType } from './bcd-tax-type';
-import { bcdTaxId } from './bcd-tax-id';
+import { bcdTransportOption } from '../../bcd-transport-options';
+import { bcdTaxId, bcdTaxType } from '../../bcd-taxes';
+import { bcdAdditionalInformationType } from '../../bcd-additional-information-types';
+import { bcdType } from '../../bcd-types';
+import { bcdCpc } from '../../bcd-cpcs';
 
 export interface bcdSupplier {
   contactId: contact;
@@ -52,7 +52,7 @@ export interface bcdAdditionalInformation {
 
 export interface bcdRecord {
   number: number;
-  cpc: string;
+  cpc: bcdCpc;
   origin: country;
   tariff: string;
   description: string;

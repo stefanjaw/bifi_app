@@ -34,7 +34,21 @@
                   <div class="border-[0.1px] border-gray-200 w-full flex flex-col gap-4 p-7">
                     <bifi-app-form-field>
                       <bifi-app-form-label>16. CPC</bifi-app-form-label>
-                      <input type="text" formControlName="cpc" pInputText />
+                      <p-select
+                        appendTo="body"
+                        formControlName="cpc"
+                        [options]="bcdCpcOptions()"
+                        optionLabel="code"
+                        optionValue="_id"
+                        [filter]="true"
+                      >
+                        <ng-template pTemplate="selectedItem" let-item>
+                          {{ item.code + ' - ' + item.description }}
+                        </ng-template>
+                        <ng-template pTemplate="item" let-item>
+                          {{ item.code + ' - ' + item.description.substring(0, 50) + '...' }}
+                        </ng-template>
+                      </p-select>
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 
@@ -229,7 +243,7 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="type"
-                                    [options]="taxTypeOptions()"
+                                    [options]="bcdTaxTypeOptions()"
                                     optionLabel="name"
                                     optionValue="_id"
                                   ></p-select>
@@ -241,7 +255,7 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="taxId"
-                                    [options]="taxIdTypeOptions()"
+                                    [options]="bcdTaxIdOptions()"
                                     optionLabel="name"
                                     optionValue="_id"
                                   ></p-select>
