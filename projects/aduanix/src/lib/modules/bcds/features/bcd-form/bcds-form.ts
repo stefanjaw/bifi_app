@@ -160,7 +160,7 @@ export class BcdsForm {
       transport: {
         aircraftOrVessel: bcd.transport?.aircraftOrVessel?._id,
         flightOrVoyage: bcd.transport?.flightOrVoyage,
-        port: bcd.transport?.port,
+        port: bcd.transport?.port?._id,
         arrivalDate: new Date(bcd.transport.arrivalDate),
       },
       manifest: bcd.manifest,
@@ -171,7 +171,7 @@ export class BcdsForm {
       warehouseId: bcd.warehouseId,
       charges:
         bcd.charges?.map(c => ({
-          code: c.code,
+          code: c.code?._id,
           percentage: c.percentage || 0,
           amount: c.amount,
         })) || [],
@@ -213,7 +213,7 @@ export class BcdsForm {
           exchangeRate: r.exchangeRate,
           charges:
             r.charges?.map(c => ({
-              code: c.code,
+              code: c.code?._id,
               percentage: c.percentage || 0,
               amount: c.amount,
             })) || [],

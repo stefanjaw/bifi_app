@@ -6,13 +6,13 @@ import { FormModule } from '@avalantec/base-app/form';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { chargeCodeTypeOptions, valuationMethodTypeOptions } from '../../../libs/bcd-options';
+import { valuationMethodTypeOptions } from '../../../libs/bcd-options';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { BcdChargesFormDialog } from '../../bcd-charges-form-dialog/bcd-charges-form-dialog';
+import { BcdChargesFormDialog } from '../../../../bcd-charge-codes';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { BcdAdditionalInformationFormDialog } from '../../../../bcd-additional-information-types';
@@ -53,7 +53,7 @@ export class BcdsGeneralForm {
   bcdTypeOptions = this.formManager.bcdTypeOptions;
   bcdTransportOptions = this.formManager.bcdTransportOptions;
   bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
-
-  chargeCodeTypeOptions = chargeCodeTypeOptions;
+  bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
+  bcdPortOptions = this.formManager.bcdPortOptions;
   valuationMethodTypeOptions = valuationMethodTypeOptions;
 }

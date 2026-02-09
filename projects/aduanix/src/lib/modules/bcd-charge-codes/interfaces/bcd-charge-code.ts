@@ -1,8 +1,8 @@
-export interface bcdPort {
+export interface bcdChargeCode {
   _id: string;
   code: string;
   name: string;
   description?: string;
-  wharfageRate: number;
+  type: 'S' | 'D' | 'I' | 'E' | 'A';
   active?: boolean;
 }

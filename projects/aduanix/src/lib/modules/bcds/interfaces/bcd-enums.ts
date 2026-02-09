@@ -1,7 +1,5 @@
 export type ValuationMethodType = '01' | '02';
 
-export type ChargeCodeType = '212' | '641' | '640';
-
 export type EBCDType =
   | 'SENT_CSV'
   | 'FILE_ERROR_CSV'

@@ -16,6 +16,8 @@ import { CrudBCDTransportOption } from '../../bcd-transport-options';
 import { CrudBCDType } from '../../bcd-types';
 import { CrudBCDCpc } from '../../bcd-cpcs';
 import { FilterManager } from '@avalantec/base-app/resource';
+import { CrudBCDChargeCode } from '../../bcd-charge-codes';
+import { CrudBCDPort } from '../../bcd-ports';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +32,8 @@ export class BCDFormManager {
   private crudTransportOption = inject(CrudBCDTransportOption);
   private crudBCDType = inject(CrudBCDType);
   private crudBCDCpc = inject(CrudBCDCpc);
+  private crudBCDChargeCode = inject(CrudBCDChargeCode);
+  private crudBCDPort = inject(CrudBCDPort);
 
   // states
   currentBCDType = toSignal(this.form.form.controls.type.valueChanges, {
@@ -44,6 +48,8 @@ export class BCDFormManager {
   private bcdTaxIdResource = this.crudTaxId.get({});
   private bcdTaxTypeResource = this.crudTaxType.get({});
   private bcdTypeResource = this.crudBCDType.get({});
+  private bcdChargeCodeResource = this.crudBCDChargeCode.get({});
+  private bcdPortResource = this.crudBCDPort.get({});
   private bcdTransportOptionResource = this.crudTransportOption.get({
     searchParams: computed(() => ({ type: this.currentTransportType() })),
   });
@@ -65,6 +71,8 @@ export class BCDFormManager {
   bcdTaxTypeOptions = this.bcdTaxTypeResource.value;
   bcdTypeOptions = this.bcdTypeResource.value;
   bcdCpcOptions = this.bcdCpcResource.value;
+  bcdChargeCodeOptions = this.bcdChargeCodeResource.value;
+  bcdPortOptions = this.bcdPortResource.value;
   bcdTransportOptions = this.bcdTransportOptionResource.value;
 
   /**

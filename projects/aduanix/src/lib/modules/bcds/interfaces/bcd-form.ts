@@ -1,4 +1,4 @@
-import { ChargeCodeType, ValuationMethodType } from './bcd-enums';
+import { ValuationMethodType } from './bcd-enums';
 
 export interface bcdFormSupplierModel {
   contactId: string;
@@ -17,7 +17,7 @@ export interface bcdFormTransportModel {
 }
 
 export interface bcdFormChargeModel {
-  code: ChargeCodeType;
+  code: string;
   percentage?: number;
   amount: number;
 }

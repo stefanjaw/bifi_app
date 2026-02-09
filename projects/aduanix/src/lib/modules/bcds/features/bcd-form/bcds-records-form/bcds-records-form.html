@@ -167,9 +167,9 @@
                                     <p-select
                                       appendTo="body"
                                       formControlName="code"
-                                      [options]="chargeCodeTypeOptions"
-                                      optionLabel="label"
-                                      optionValue="value"
+                                      [options]="bcdChargeCodeOptions()"
+                                      optionLabel="name"
+                                      optionValue="_id"
                                     ></p-select>
                                     <bifi-app-form-error></bifi-app-form-error>
                                   </bifi-app-form-field>
