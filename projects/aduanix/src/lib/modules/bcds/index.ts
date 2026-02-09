@@ -1,4 +1,3 @@
-export * from './features/bcd-charges-form-dialog/bcd-charges-form-dialog';
 export * from './features/bcd-form/bcds-form';
 export * from './features/bcd-form/bcds-general-form/bcds-general-form';
 export * from './features/bcd-form/bcds-records-form/bcds-records-form';

@@ -22,7 +22,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         type: ['aircraft', [Validators.required]],
         aircraftOrVessel: ['', [Validators.required]],
         flightOrVoyage: ['', [Validators.required, Validators.maxLength(255)]],
-        port: ['', [Validators.required, Validators.maxLength(3)]],
+        port: ['', [Validators.required]],
         arrivalDate: [new Date(), [Validators.required]],
       },
       manifest: ['', [Validators.required, Validators.maxLength(255)]],

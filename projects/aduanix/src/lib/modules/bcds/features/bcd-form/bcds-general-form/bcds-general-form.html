@@ -126,7 +126,13 @@
 
         <bifi-app-form-field>
           <bifi-app-form-label>c. Port of Arrival</bifi-app-form-label>
-          <input type="text" formControlName="port" pInputText />
+          <p-select
+            appendTo="body"
+            formControlName="port"
+            [options]="bcdPortOptions()"
+            optionLabel="name"
+            optionValue="_id"
+          ></p-select>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
@@ -431,9 +437,9 @@
                     <p-select
                       appendTo="body"
                       formControlName="code"
-                      [options]="chargeCodeTypeOptions"
-                      optionLabel="label"
-                      optionValue="value"
+                      [options]="bcdChargeCodeOptions()"
+                      optionLabel="name"
+                      optionValue="_id"
                     ></p-select>
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>

@@ -4,11 +4,10 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { BcdChargesFormDialog } from '../../bcd-charges-form-dialog/bcd-charges-form-dialog';
+import { BcdChargesFormDialog } from '../../../../bcd-charge-codes';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { chargeCodeTypeOptions } from '../../../libs/bcd-options';
 import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
 import { BcdForm } from '../../../services/bcd-form';
@@ -46,7 +45,7 @@ export class BcdsRecordsForm {
 
   // options
   countryOptions = this.countriesResource.value;
-  chargeCodeTypeOptions = chargeCodeTypeOptions;
+  bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
   bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
   bcdTaxTypeOptions = this.formManager.bcdTaxTypeOptions;
   bcdTaxIdOptions = this.formManager.bcdTaxIdOptions;
