@@ -1,7 +1,6 @@
 import { shipping } from './../../../../shippings/interfaces/shipping';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormModule } from 'dist/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -19,6 +18,7 @@ import { bcdAdditionalInformationType } from '../../../interfaces/bcd-additional
 import { BcdForm } from '../../../services/bcd-form';
 import { CrudBCDTaxId } from '../../../services/crud-bcd-tax-id';
 import { CrudBCDTaxType } from '../../../services/crud-bcd-tax-type';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-bcds-records-form',

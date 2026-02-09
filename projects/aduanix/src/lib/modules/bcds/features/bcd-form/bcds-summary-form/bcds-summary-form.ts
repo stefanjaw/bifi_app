@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormModule } from 'dist/base-app/form';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -15,7 +14,7 @@ import { BCDFormManager } from '../../../services/bcd-form-manager';
   selector: 'bifi-app-bcds-summary-form',
   imports: [
     ReactiveFormsModule,
-    FormModule,
+    FormsModule,
     SelectModule,
     ButtonModule,
     TableModule,
