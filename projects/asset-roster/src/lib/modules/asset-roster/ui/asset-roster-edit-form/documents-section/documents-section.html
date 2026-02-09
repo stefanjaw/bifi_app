@@ -28,5 +28,20 @@
         </div>
       }
     </div>
+              <div class="md:col-span-2">
+            <bifi-app-form-field previewVariant="italic">
+              <bifi-app-form-label>AI Assistant</bifi-app-form-label>
+       <textarea
+  pInputTextarea
+  rows="4"
+  placeholder="Ask any questions about the document..."
+  class="w-full"
+  [value]="question()"
+  (ngModelChange)="question.set($any($event))"
+></textarea>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+          <p-button label="Ask Gemini" severity="info" icon="pi pi-send" (click)="submitAskGenai()"></p-button>
   </section>
 </bifi-app-form-section>

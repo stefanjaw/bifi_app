@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, input, signal } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BaseMenuManager } from '../libraries/base-menu-manager';
 
@@ -6,6 +6,7 @@ import { BaseMenuManager } from '../libraries/base-menu-manager';
   providedIn: 'root',
 })
 export class MainMenuManager extends BaseMenuManager {
+  title = signal<string>('Welcome to Asset Roster');
   constructor() {
     const menuItems = signal<MenuItem[]>([
       {

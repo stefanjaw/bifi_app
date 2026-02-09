@@ -47,42 +47,67 @@
     </div>
   </div>
 
-  <!-- Form Content -->
-  <div class="max-w-7xl mx-auto px-6 py-8">
-    @if (!isLoading()) {
-      <bifi-app-form-layout title="">
-        <div class="flex flex-col gap-8">
-          <!-- the general information of the assetRoster -->
-          <bifi-app-general-information-section
-            [assetRoster]="assetRoster()"
-            [assetTypes]="assetTypes()"
-            [contacts]="contacts()"
-            [rooms]="rooms()"
-            [isEditMode]="isEditMode()"
-          />
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">
+        <span class="p-tabheader-title">Info & Maintenance</span>
+      </p-tab>
+      <p-tab value="1">
+        <span class="p-tabheader-title">Lifecycle & TCO</span>
+      </p-tab>
+    </p-tablist>
 
-          <!-- the documents of the assetRoster -->
-          <bifi-app-documents-section [assetRoster]="assetRoster()" [isEditMode]="isEditMode()" />
+    <p-tabpanels>
+      <!-- Form Content -->
+      <div class="max-w-7xl mx-auto px-6 py-8">
+        @if (!isLoading()) {
+          <bifi-app-form-layout title="">
+            <div class="flex flex-col gap-8">
+              <p-tabpanel value="0">
+                <!-- the general information of the assetRoster -->
+                <bifi-app-general-information-section
+                  [assetRoster]="assetRoster()"
+                  [assetTypes]="assetTypes()"
+                  [contacts]="contacts()"
+                  [rooms]="rooms()"
+                  [isEditMode]="isEditMode()"
+                />
 
-          <!-- the maintenance service of the assetRoster -->
-          <bifi-app-maintenance-service-section
-            [assetRoster]="assetRoster()"
-            [maintenanceWindows]="maintenanceWindows()"
-            [isEditMode]="isEditMode()"
-          />
+                <!-- the documents of the assetRoster -->
+                <bifi-app-documents-section
+                  [assetRoster]="assetRoster()"
+                  [isEditMode]="isEditMode()"
+                />
 
-          <!-- the commissioning and lifecycle of the assetRoster -->
-          <bifi-app-commissioning-lifecycle-section
-            [assetRoster]="assetRoster()"
-            [isEditMode]="isEditMode()"
-          />
+                <!-- the maintenance service of the assetRoster -->
+                <bifi-app-maintenance-service-section
+                  [assetRoster]="assetRoster()"
+                  [maintenanceWindows]="maintenanceWindows()"
+                  [isEditMode]="isEditMode()"
+                />
 
-          <!-- the activity history of the assetRoster -->
-          <bifi-app-activity-history-section [activityHistory]="activityHistories()" />
-        </div>
-      </bifi-app-form-layout>
-    } @else {
-      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
-    }
-  </div>
+                <!-- the commissioning and lifecycle of the assetRoster -->
+                <bifi-app-commissioning-lifecycle-section
+                  [assetRoster]="assetRoster()"
+                  [isEditMode]="isEditMode()"
+                />
+                <!-- the activity history of the assetRoster -->
+                <bifi-app-activity-history-section [activityHistory]="activityHistories()" />
+              </p-tabpanel>
+
+              <p-tabpanel value="1">
+                <bifi-app-asset-roster-financial-information
+                  [assetRoster]="assetRoster()"
+                  [assetTypes]="assetTypes()"
+                  [isEditMode]="isEditMode()"
+                />
+              </p-tabpanel>
+            </div>
+          </bifi-app-form-layout>
+        } @else {
+          <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+        }
+      </div>
+    </p-tabpanels>
+  </p-tabs>
 </form>

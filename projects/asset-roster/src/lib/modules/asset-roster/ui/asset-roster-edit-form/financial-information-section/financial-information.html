@@ -1,0 +1,70 @@
+<section class="flex flex-col gap-6">
+  <bifi-app-form-section
+    [formGroup]="formService.form"
+    title="Financial Information & Lifecycle"
+    id="general-info"
+    [ordinal]="1"
+  >
+    <div class="flex items-center justify-between">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Date Acquired -->
+        <div>
+          <bifi-app-form-field previewVariant="text" previewValueType="date">
+            <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+            <p-date-picker
+              formControlName="acquiredDate"
+              [showIcon]="true"
+              inputId="acquiredDate"
+              class="w-full"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        <!-- Price paid-->
+        <div>
+          <bifi-app-form-field previewVariant="italic" previewValueType="currency">
+            <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="acquiredPrice"
+              type="number"
+              placeholder="e.g., USD 5000.00 or Contact Vendor"
+              class="w-full"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        <!-- Current Value -->
+        <div>
+          <bifi-app-form-field previewVariant="italic" previewValueType="currency">
+            <bifi-app-form-label>Current Value (est.) (Optional)</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="currentPrice"
+              type="number"
+              placeholder="e.g., USD 3500.00"
+              class="w-full"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        <!-- Warranty Expiration Date -->
+        <div>
+          <bifi-app-form-field previewVariant="italic" previewValueType="date">
+            <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+            <p-date-picker
+              formControlName="warrantyDate"
+              [showIcon]="true"
+              inputId="warrantyDate"
+              class="w-full"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </div>
+    </div>
+  </bifi-app-form-section>
+</section>

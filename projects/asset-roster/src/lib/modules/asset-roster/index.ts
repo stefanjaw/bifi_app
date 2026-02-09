@@ -1,5 +1,6 @@
 export * from './features/asset-roster-document-dialog/asset-roster-document-dialog';
 export * from './features/asset-roster-form-dialog/asset-roster-form-dialog';
+export * from './features/asset-roster-image-dialog/asset-roster-image-dialog';
 export * from './features/asset-roster-maintenance/asset-roster-maintenance';
 export * from './features/asset-roster-maintenance-add-file-dialog/asset-roster-activity-history-add-file-dialog';
 export * from './features/asset-roster-list/asset-roster-list';
@@ -18,6 +19,7 @@ export * from './services/update-asset-roster-form';
 export * from './ui/asset-roster-edit-form/activity-history-section/activity-history-section';
 export * from './ui/asset-roster-edit-form/commissioning-lifecycle-section/commissioning-lifecycle-section';
 export * from './ui/asset-roster-edit-form/documents-section/documents-section';
+export * from './ui/asset-roster-edit-form/financial-information-section/financial-information';
 export * from './ui/asset-roster-edit-form/general-information-section/general-information-section';
 export * from './ui/asset-roster-edit-form/maintenance-service-section/maintenance-service-section';
 export * from './ui/asset-roster-edit-form/maintenance-service-section/maintenance-status.model';

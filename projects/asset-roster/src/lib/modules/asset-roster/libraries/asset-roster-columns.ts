@@ -42,6 +42,15 @@ export const assetRosterColumns = (
           'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg',
         shape: 'square',
         size: 'large',
+        styleClass: `
+        relative
+        origin-left
+        will-change-transform
+        hover:scale-[5]
+        hover:z-50
+        transition-transform
+        duration-300
+      `,
       },
       outputs: {},
     }),

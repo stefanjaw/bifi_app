@@ -15,10 +15,12 @@ export class MainMenu {
   private menuManager = inject(MainMenuManager);
   private router = inject(Router);
   menuItems;
+  mainMenuTitle; 
 
   constructor() {
     // * SET ITEMS WHEN STARTING APP AND EACH TIME THESE ARE BEING UPDATED
     this.menuItems = this.menuManager.menuItems;
+    this.mainMenuTitle = this.menuManager.title
   }
 
   goToOption(route: string) {

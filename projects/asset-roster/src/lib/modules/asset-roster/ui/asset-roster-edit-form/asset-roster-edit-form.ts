@@ -22,6 +22,8 @@ import { FormModule } from '@avalantec/base-app/form';
 import { assetMaintenance } from '../../../asset-maintenances/interfaces/asset-maintenance';
 import { assetCommissionning } from '../../../asset-commissioning/interfaces/asset-commissioning';
 import { contact } from '@avalantec/base-app/interfaces';
+import { Tabs, TabsModule } from 'primeng/tabs';
+import { FinancialInformation } from './financial-information-section/financial-information';
 
 @Component({
   selector: 'bifi-app-asset-roster-edit-form',
@@ -36,7 +38,10 @@ import { contact } from '@avalantec/base-app/interfaces';
     MaintenanceServiceSection,
     CommissioningLifecycleSection,
     ActivityHistorySection,
+    FinancialInformation,
     ProgressBarModule,
+    Tabs,
+    TabsModule,
     FormModule,
     HasPermission,
   ],

@@ -11,6 +11,7 @@ interface UpdateAssetRosterFormModel {
   vendorIds: string;
   condition: string | null;
   locationId: string;
+  facilityId: string;
   acquiredPrice: number | null;
   currentPrice: number | null;
   warrantyDate: Date | null;
@@ -36,6 +37,7 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       vendorIds: [''],
       condition: [null],
       locationId: [''],
+      facilityId: [''],
       acquiredPrice: [null, Validators.min(1)],
       currentPrice: [null, Validators.min(1)],
       warrantyDate: [null],

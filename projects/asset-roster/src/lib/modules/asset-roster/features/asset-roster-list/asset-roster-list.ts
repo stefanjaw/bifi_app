@@ -6,11 +6,12 @@ import {
   effect,
   inject,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { assetRosterColumns } from '../../libraries/asset-roster-columns';
 import { assetRoster } from '../../interfaces/asset-roster';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FileResolver,
   FilterManager,
@@ -34,6 +35,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
+import { AssetRosterImageDialog } from '../asset-roster-image-dialog/asset-roster-image-dialog';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
@@ -54,6 +56,7 @@ import { AvatarModule } from 'primeng/avatar';
     TooltipModule,
     SelectButtonModule,
     AvatarModule,
+    AssetRosterImageDialog,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,6 +67,9 @@ export class AssetRosterList {
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   private crudAssetRoster = inject(CrudAssetRoster);
   private fileResolver = inject(FileResolver);
+  // Router
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   assetRosterColumns!: tableColumn<assetRoster>[];
   assetRosterFilters = assetRosterFilters;
@@ -127,6 +133,7 @@ export class AssetRosterList {
 
   //Picture
   assetPictures = signal<Record<string, string>>({});
+  @ViewChild('imageDialog') imageDialog!: AssetRosterImageDialog;
 
   //#endregion
 
@@ -219,4 +226,7 @@ export class AssetRosterList {
     }
     return this.assetPictures()[asset._id];
   }
+  goToEditAssetRoster = (element: assetRoster) => {
+    this.router.navigate(['../maintenance/', element._id], { relativeTo: this.route });
+  };
 }
