@@ -120,7 +120,6 @@ export class BcdsForm {
       shippingId: shipping._id,
       directShipmentCountry: shipping.origin?._id,
       originalShipmentCountry: shipping.destination?._id,
-      type: 'A',
       records: Object.entries(groupByTariff).map(([tariff, lines], i) => {
         const quantity = lines.reduce((acc, line) => acc + line.quantity, 0);
         const subtotal = lines.reduce((acc, line) => acc + line.subtotal, 0);
