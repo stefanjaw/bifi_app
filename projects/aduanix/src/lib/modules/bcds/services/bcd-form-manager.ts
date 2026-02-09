@@ -18,7 +18,6 @@ import { CrudBCDCpc } from '../../bcd-cpcs';
 import { FilterManager } from '@avalantec/base-app/resource';
 import { CrudBCDChargeCode } from '../../bcd-charge-codes';
 import { CrudBCDPort } from '../../bcd-ports';
-import { calculateBCD } from '../libs/bcd-calculations';
 
 @Injectable({
   providedIn: 'root',
@@ -77,10 +76,17 @@ export class BCDFormManager {
 
   // filtered resources
   private bcdTransportOptionResource = this.crudTransportOption.get({
-    searchParams: this.bcdTRansportOptionFilter,
+    searchParams: computed(() => ({ type: this.currentTransportType() })),
   });
   private bcdCpcResource = this.crudBCDCpc.get({
-    searchParams: this.bcdCpcFilter,
+    searchParams: computed(() =>
+      this.filterManager.getFilterObjectUtil([
+        {
+          operator: 'and',
+          filters: [{ field: 'bcdTypes', operator: 'in', value: this.currentBCDType() || '' }],
+        },
+      ])
+    ),
     triggerRequest: computed(() => !!this.currentBCDType()),
   });
 
@@ -103,14 +109,18 @@ export class BCDFormManager {
    * function to update the records count control.
    */
   constructor() {
-    // update records count
+    // reset dependent fields when transport type changes
     effect(() => {
-      this.bcdValueChaged();
+      this.currentTransportType();
+      untracked(() => this.form.form.controls.transport.controls.aircraftOrVessel.setValue(''));
+    });
 
-      // update records count control
-      untracked(() => {
-        calculateBCD(this.form.form);
-      });
+    // reset dependent fields when bcd type changes
+    effect(() => {
+      this.currentBCDType();
+      untracked(() =>
+        this.form.form.controls.records.controls.forEach(r => r.patchValue({ cpc: '' }))
+      );
     });
   }
 
