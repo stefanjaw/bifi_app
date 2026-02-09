@@ -38,16 +38,16 @@
                         appendTo="body"
                         formControlName="cpc"
                         [options]="bcdCpcOptions()"
-                        optionLabel="code"
+                        optionLabel="name"
                         optionValue="_id"
                         [filter]="true"
                       >
                         <ng-template pTemplate="selectedItem" let-item>
                           {{ item.code + ' - ' + item.description }}
                         </ng-template>
-                        <ng-template pTemplate="item" let-item>
+                        <!-- <ng-template pTemplate="item" let-item>
                           {{ item.code + ' - ' + item.description.substring(0, 50) + '...' }}
-                        </ng-template>
+                        </ng-template> -->
                       </p-select>
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
