@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseForm } from '@avalantec/base-app/form';
 import { Validators } from '@angular/forms';
-import { bcdFormModel } from '../interfaces/bcd-form.types';
+import { bcdFormModel } from '../interfaces/bcd-form';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       },
       transport: {
         type: ['aircraft', [Validators.required]],
-        aircraftOrVessel: ['', [Validators.required, Validators.maxLength(3)]],
+        aircraftOrVessel: ['', [Validators.required]],
         flightOrVoyage: ['', [Validators.required, Validators.maxLength(255)]],
         port: ['', [Validators.required, Validators.maxLength(3)]],
         arrivalDate: [new Date(), [Validators.required]],
@@ -83,7 +83,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         template: {
           // Add fields for records here
           number: [0, [Validators.required, Validators.min(0)]],
-          cpc: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+          cpc: ['', [Validators.required]],
           origin: ['', [Validators.required]],
           tariff: ['', [Validators.required]],
           description: ['', [Validators.required, Validators.maxLength(200)]],

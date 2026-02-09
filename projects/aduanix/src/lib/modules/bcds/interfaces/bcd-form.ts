@@ -1,7 +1,4 @@
-import {
-  ChargeCodeType,
-  ValuationMethodType,
-} from '../interfaces/bcd-enums';
+import { ChargeCodeType, ValuationMethodType } from './bcd-enums';
 
 export interface bcdFormSupplierModel {
   contactId: string;
@@ -12,7 +9,7 @@ export interface bcdFormImporterModel {
 }
 
 export interface bcdFormTransportModel {
-  type: "aircraft" | "vessel";
+  type: 'aircraft' | 'vessel';
   aircraftOrVessel: string;
   flightOrVoyage: string;
   port: string;

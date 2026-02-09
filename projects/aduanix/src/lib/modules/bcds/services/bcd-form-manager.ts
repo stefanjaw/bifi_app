@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { GroupReturn } from '@avalantec/base-app/form';
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, untracked } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   bcdFormAdditionalInformationModel,
@@ -8,16 +8,51 @@ import {
   bcdFormModel,
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
-} from '../interfaces/bcd-form.types';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+} from '../interfaces/bcd-form';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { BcdForm } from './bcd-form';
+import { CrudBCDAdditionalInformationType } from '../../bcd-additional-information-types';
+import { CrudBCDTaxId, CrudBCDTaxType } from '../../bcd-taxes';
+import { CrudBCDTransportOption } from '../../bcd-transport-options';
+import { CrudBCDType } from '../../bcd-types';
+import { CrudBCDCpc } from '../../bcd-cpcs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BCDFormManager {
+  // services
   private form = inject(BcdForm);
   private destroy$ = inject(DestroyRef);
+  private crudAdditionalInformationType = inject(CrudBCDAdditionalInformationType);
+  private crudTaxId = inject(CrudBCDTaxId);
+  private crudTaxType = inject(CrudBCDTaxType);
+  private crudTransportOption = inject(CrudBCDTransportOption);
+  private crudBCDType = inject(CrudBCDType);
+  private crudBCDCpc = inject(CrudBCDCpc);
+
+  // states
+  currentTransportType = toSignal(this.form.form.controls.transport.controls.type.valueChanges, {
+    initialValue: this.form.form.controls.transport.controls.type.value,
+  });
+
+  // resources
+  private bcdAdditionalInformationTypeResource = this.crudAdditionalInformationType.get({});
+  private bcdTaxIdResource = this.crudTaxId.get({});
+  private bcdTaxTypeResource = this.crudTaxType.get({});
+  private bcdTypeResource = this.crudBCDType.get({});
+  private bcdCpcResource = this.crudBCDCpc.get({});
+  private bcdTransportOptionResource = this.crudTransportOption.get({
+    searchParams: computed(() => ({ type: this.currentTransportType() })),
+  });
+
+  // options
+  bcdAdditionalInformationTypeOptions = this.bcdAdditionalInformationTypeResource.value;
+  bcdTaxIdOptions = this.bcdTaxIdResource.value;
+  bcdTaxTypeOptions = this.bcdTaxTypeResource.value;
+  bcdTypeOptions = this.bcdTypeResource.value;
+  bcdCpcOptions = this.bcdCpcResource.value;
+  bcdTransportOptions = this.bcdTransportOptionResource.value;
 
   /**
    * Attaches listeners to the form controls.
@@ -25,6 +60,12 @@ export class BCDFormManager {
    * and updates the form controls accordingly.
    */
   constructor() {
+    // listeners
+    effect(() => {
+      this.currentTransportType();
+      untracked(() => this.form.form.controls.transport.controls.aircraftOrVessel.setValue(''));
+    });
+
     this.form.form.controls.records.valueChanges
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => {
@@ -239,7 +280,7 @@ export class BCDFormManager {
   private createRecordForm() {
     return this.form.fb.group<bcdFormRecordModel>({
       number: [0, [Validators.required, Validators.min(0)]],
-      cpc: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+      cpc: ['', [Validators.required]],
       origin: ['', [Validators.required]],
       tariff: ['', [Validators.required]],
       description: ['', [Validators.required, Validators.maxLength(200)]],
