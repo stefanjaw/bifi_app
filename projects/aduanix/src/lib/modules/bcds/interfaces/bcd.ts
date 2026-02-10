@@ -28,7 +28,7 @@ export interface bcdTransport {
 export interface bcdCharge {
   code: bcdChargeCode;
   percentage?: number;
-  amount: number;
+  amount?: number;
 }
 
 export interface bcdDeclarant {
@@ -44,7 +44,7 @@ export interface bcdTaxEntry {
   taxId: bcdTaxId;
   valueForTax: number;
   ratePercentage: number;
-  amount: number;
+  amount?: number;
 }
 
 export interface bcdAdditionalInformation {
