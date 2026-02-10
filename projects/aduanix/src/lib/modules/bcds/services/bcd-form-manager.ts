@@ -43,6 +43,16 @@ export class BCDFormManager {
     initialValue: this.form.form.controls.transport.controls.type.value,
   });
 
+  // filters
+  bcdCpcFilter = computed(() =>
+    this.filterManager.getFilterObjectUtil([
+      {
+        operator: 'and',
+        filters: [{ field: 'bcdTypes', operator: 'in', value: this.currentBCDType() || '' }],
+      },
+    ])
+  );
+
   // resources
   private bcdAdditionalInformationTypeResource = this.crudAdditionalInformationType.get({});
   private bcdTaxIdResource = this.crudTaxId.get({});
@@ -54,14 +64,7 @@ export class BCDFormManager {
     searchParams: computed(() => ({ type: this.currentTransportType() })),
   });
   private bcdCpcResource = this.crudBCDCpc.get({
-    searchParams: computed(() =>
-      this.filterManager.getFilterObjectUtil([
-        {
-          operator: 'and',
-          filters: [{ field: 'bcdTypes', operator: 'in', value: this.currentBCDType() || '' }],
-        },
-      ])
-    ),
+    searchParams: this.bcdCpcFilter,
     triggerRequest: computed(() => !!this.currentBCDType()),
   });
 
@@ -156,7 +159,7 @@ export class BCDFormManager {
     return this.form.fb.group<bcdFormChargeModel>({
       code: ['212', [Validators.required]],
       percentage: [0, [Validators.min(0), Validators.max(100)]],
-      amount: [0, [Validators.required, Validators.min(0)]],
+      amount: [0, [Validators.min(0)]],
     });
   }
 
@@ -292,13 +295,13 @@ export class BCDFormManager {
       currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       linesSubtotal: [0, [Validators.required, Validators.min(0)]],
       exchangeRate: [0, [Validators.required, Validators.min(0)]],
-      bdaValue: [0, [Validators.required, Validators.min(0)]],
-      totalDue: [0, [Validators.required, Validators.min(0)]],
+      bdaValue: [0, [Validators.min(0)]],
+      totalDue: [0, [Validators.min(0)]],
       charges: {
         template: {
           code: ['212', [Validators.required]],
           percentage: [0, [Validators.min(0), Validators.max(100)]],
-          amount: [0, [Validators.required, Validators.min(0)]],
+          amount: [0, [Validators.min(0)]],
         },
         formArrayElements: [],
       },
@@ -308,7 +311,7 @@ export class BCDFormManager {
           taxId: ['F', [Validators.required]],
           valueForTax: [0, [Validators.required, Validators.min(0)]],
           ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-          amount: [0, [Validators.required, Validators.min(0)]],
+          amount: [0, [Validators.min(0)]],
         },
         formArrayElements: [],
       },
@@ -357,7 +360,7 @@ export class BCDFormManager {
       taxId: ['F', [Validators.required]],
       valueForTax: [0, [Validators.required, Validators.min(0)]],
       ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-      amount: [0, [Validators.required, Validators.min(0)]],
+      amount: [0, [Validators.min(0)]],
     });
   }
 

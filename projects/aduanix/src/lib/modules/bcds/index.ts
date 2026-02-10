@@ -8,7 +8,6 @@ export * from './interfaces/bcd-form';
 export * from './interfaces/bcd';
 export * from './libs/bcd-options';
 export * from './routes/bcd.routes';
-export * from './services/bcd-form-calculations';
 export * from './services/bcd-form-manager';
 export * from './services/bcd-form';
 export * from './services/crud-bcd';

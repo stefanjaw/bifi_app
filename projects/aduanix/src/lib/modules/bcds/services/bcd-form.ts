@@ -38,7 +38,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         template: {
           code: ['212', [Validators.required]],
           percentage: [0, [Validators.min(0), Validators.max(100)]],
-          amount: [0, [Validators.required, Validators.min(0)]],
+          amount: [0, [Validators.min(0)]],
         },
         formArrayElements: [],
       },
@@ -51,9 +51,9 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
       ],
       packagesCount: [0, [Validators.required, Validators.min(0)]],
-      recordsCount: [0, [Validators.required, Validators.min(0)]],
-      invoiceAmount: [0, [Validators.required, Validators.min(0)]],
-      payableAmount: [0, [Validators.required, Validators.min(0)]],
+      recordsCount: [0, [Validators.min(0)]],
+      invoiceAmount: [0, [Validators.min(0)]],
+      payableAmount: [0, [Validators.min(0)]],
       additionalInformation: {
         template: {
           type: ['', [Validators.required]],
@@ -93,13 +93,13 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
           linesSubtotal: [0, [Validators.required, Validators.min(0)]],
           exchangeRate: [0, [Validators.required, Validators.min(0)]],
-          bdaValue: [0, [Validators.required, Validators.min(0)]],
-          totalDue: [0, [Validators.required, Validators.min(0)]],
+          bdaValue: [0, [Validators.min(0)]],
+          totalDue: [0, [Validators.min(0)]],
           charges: {
             template: {
               code: ['212', [Validators.required]],
               percentage: [0, [Validators.min(0), Validators.max(100)]],
-              amount: [0, [Validators.required, Validators.min(0)]],
+              amount: [0, [Validators.min(0)]],
             },
             formArrayElements: [],
           },
@@ -109,7 +109,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
               taxId: ['F', [Validators.required]],
               valueForTax: [0, [Validators.required, Validators.min(0)]],
               ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-              amount: [0, [Validators.required, Validators.min(0)]],
+              amount: [0, [Validators.min(0)]],
             },
             formArrayElements: [],
           },
