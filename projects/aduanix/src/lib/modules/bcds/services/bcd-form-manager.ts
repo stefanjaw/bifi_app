@@ -18,6 +18,7 @@ import { CrudBCDCpc } from '../../bcd-cpcs';
 import { FilterManager } from '@avalantec/base-app/resource';
 import { CrudBCDChargeCode } from '../../bcd-charge-codes';
 import { CrudBCDPort } from '../../bcd-ports';
+import { calculateBCD } from '../libs/bcd-calculations';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +77,7 @@ export class BCDFormManager {
 
   // filtered resources
   private bcdTransportOptionResource = this.crudTransportOption.get({
-    searchParams: computed(() => ({ type: this.currentTransportType() })),
+    searchParams: this.bcdTRansportOptionFilter,
   });
   private bcdCpcResource = this.crudBCDCpc.get({
     searchParams: computed(() =>
@@ -121,6 +122,16 @@ export class BCDFormManager {
       untracked(() =>
         this.form.form.controls.records.controls.forEach(r => r.patchValue({ cpc: '' }))
       );
+    });
+
+    // update records count
+    effect(() => {
+      this.bcdValueChaged();
+
+      // update records count control
+      untracked(() => {
+        calculateBCD(this.form.form);
+      });
     });
   }
 
