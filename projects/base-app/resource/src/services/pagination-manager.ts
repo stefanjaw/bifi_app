@@ -42,4 +42,11 @@ export class PaginationManager {
       paginate: true,
     });
   }
+  loadAll() {
+    this._paginationOptions.set({
+      page: 1,
+      limit: 999999,
+      paginate: true,
+    });
+  }
 }
