@@ -1,14 +1,24 @@
 import { assetRosterFilters } from '../../libraries/asset-roster-filters';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { assetRosterColumns } from '../../libraries/asset-roster-columns';
 import { assetRoster } from '../../interfaces/asset-roster';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import {
+  FileResolver,
   FilterManager,
   provideResourceManager,
   ResourceManager,
   SearchBar,
+  tableColumn,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
@@ -22,6 +32,11 @@ import { ReportingDownloadDialog } from '@avalantec/base-app/reporting';
 import { TagModule } from 'primeng/tag';
 import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/asset-roster-status-select';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { FormLabel } from '@avalantec/base-app/form';
+import { CardModule } from 'primeng/card';
+import { Avatar, AvatarModule } from 'primeng/avatar';
+import { from, map, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
@@ -33,12 +48,15 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     SearchBar,
     TableLayout,
+    CardModule,
     TagModule,
     AssetRosterStatusSelect,
     AssetRosterFormDialog,
     HasPermission,
     ReportingDownloadDialog,
     TooltipModule,
+    SelectButtonModule,
+    AvatarModule,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,13 +66,23 @@ export class AssetRosterList {
   private destroy$ = inject(DestroyRef);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   private crudAssetRoster = inject(CrudAssetRoster);
+  private fileResolver = inject(FileResolver);
 
-  assetRosterColumns = assetRosterColumns;
+  assetRosterColumns!: tableColumn<assetRoster>[];
   assetRosterFilters = assetRosterFilters;
 
   assetRosters = this.resourceManager.data;
   filtersForReporting = this.resourceManager.searchParams;
 
+  
+
+  //View
+  isGrid = signal<boolean>(false);
+
+  optionsView = [
+  { label: 'List', value: false, icon: 'pi pi-table' },
+  { label: 'Grid', value: true, icon: 'pi pi-th-large' },
+  ];
   //#region Counting of asset roster by status
   private assetRosterStatusFilterManager = inject(AssetRosterStatusFilterManager);
   private filterManager = inject(FilterManager);
@@ -101,6 +129,10 @@ export class AssetRosterList {
   protected assetRostersPMNotSetCount = this.crudAssetRoster.getCount({
     searchParams: this.assetRostersPMNotSetQuery,
   });
+
+  //Picture
+  assetPictures = signal<Record<string, string>>({});
+
   //#endregion
 
   /**
@@ -108,6 +140,9 @@ export class AssetRosterList {
    * If the form was submitted successfully, reload the list of assetRosterss.
    */
   constructor() {
+      this.assetRosterColumns = assetRosterColumns(this.assetPictures);
+      this.resourceManager.activeAllRecords.set(true);
+
     this.assetRosterMaintenanceContext.handleEvents$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(event => {
@@ -122,6 +157,36 @@ export class AssetRosterList {
           this.assetRostersPMNotSetCount.reload();
         }
       });
+
+     
+
+    effect(() => {
+      const assets = this.assetRosters.value()?.docs;
+      if (!assets) return;
+
+      assets.forEach(async asset => {
+        if (!asset.photo) return;
+
+        if (this.assetPictures()[asset._id]) return;
+
+        try {
+          const blob = await this.fileResolver.resolveFile({
+            id: asset.photo,
+          });
+
+          if (!blob) return;
+
+          const url = URL.createObjectURL(blob);
+
+          this.assetPictures.update(prev => ({
+            ...prev,
+            [asset._id]: url,
+          }));
+        } catch (error) {
+          console.error('Error loading image', error);
+        }
+      });
+    });
   }
 
   /**
@@ -155,4 +220,11 @@ export class AssetRosterList {
         },
       });
   }
+
+getPhoto(asset?: assetRoster): string {
+  if (!asset?._id) {
+    return  'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg';
+  }
+  return this.assetPictures()[asset._id];
+}
 }

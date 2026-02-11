@@ -1,6 +1,17 @@
 <section class="flex justify-between items-center gap-2 mb-4">
   <h1 class="text-2xl font-bold">Asset Dashboard</h1>
   <div class="flex gap-2">
+    <p-selectButton
+      [options]="optionsView"
+      optionValue="value"
+      (onChange)="isGrid.set($event.value)"
+    >
+      <ng-template pTemplate="item" let-item>
+        <i [class]="item.icon"></i>
+        {{ item.label }}
+      </ng-template>
+    </p-selectButton>
+
     <p-button
       label="Reporting"
       severity="success"
@@ -81,17 +92,94 @@
 </section>
 
 <!-- table -->
-<bifi-app-table-layout [columns]="assetRosterColumns" [data]="assetRosters">
-  <ng-template #actions let-element>
-    <p-tag
-      routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
-      class="cursor-pointer"
-      severity="warn"
-      [value]="'View details'"
-      *bifiAppHasPermission="'asset-rosters/update:view'"
-    ></p-tag>
-  </ng-template>
-</bifi-app-table-layout>
+@if (!isGrid()) {
+  <bifi-app-table-layout [columns]="assetRosterColumns" [data]="assetRosters">
+    <ng-template #actions let-element>
+      <p-tag
+        routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+        class="cursor-pointer"
+        severity="warn"
+        [value]="'View details'"
+        *bifiAppHasPermission="'asset-rosters/update:view'"
+      ></p-tag>
+    </ng-template>
+  </bifi-app-table-layout>
+
+  <!-- grid -->
+} @else {
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    @for (element of assetRosters.value()?.docs; track element._id) {
+      <p-card
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+        *bifiAppHasPermission="'asset-rosters/update:view'"
+      >
+        <!-- IMAGE -->
+        <ng-template pTemplate="header">
+          <div class="relative w-full h-48 overflow-hidden rounded-t-xl">
+            <img
+              [src]="
+                assetPictures()[element._id] ||
+                'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg'
+              "
+              class="w-full h-full object-cover"
+            />
+
+            <!-- STATUS -->
+            <p-tag
+              class="absolute top-3 right-3 text-xs capitalize shadow-sm"
+              [value]="element.status.replace('-', ' ')"
+              severity="warn"
+            ></p-tag>
+          </div>
+        </ng-template>
+
+        <!-- CONTENT -->
+        <ng-template pTemplate="content">
+          <span class="text-xs text-gray-500 font-medium">
+            {{ element.assetTypeIds[0]?.name || 'Not set' }}
+          </span>
+
+          <div class="p-3 flex flex-col gap-1">
+            <span class="text-lg font-bold leading-tight">
+              {{ element.productModel }}
+            </span>
+
+            <div class="grid grid-cols-2 gap-y-1 text-xs text-gray-600 mt-2">
+              <span class="font-medium text-gray-400">Serial Number</span>
+              <span class="text-right">{{ element.serialNumber }}</span>
+
+              <span class="font-medium text-gray-400">Location</span>
+              <span class="text-right truncate">
+                {{ element?.locationId?.address ?? 'Not set' }}
+              </span>
+
+
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- FOOTER -->
+        <ng-template pTemplate="footer">
+          <div class="flex justify-between items-center text-xs text-gray-500">
+            <span class="font-medium text-gray-400">NEXT PM OVERDUE</span>
+            <span class="text-right capitalize">
+              {{ element.maintenanceDate }}
+            </span>
+            <!-- <p-button
+              label="View details"
+              icon="pi pi-eye"
+              size="small"
+              severity="secondary"
+              routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+              *bifiAppHasPermission="'asset-rosters/update:view'"
+            ></p-button> -->
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  </div>
+}
 
 <bifi-app-asset-roster-form-dialog #createDialog></bifi-app-asset-roster-form-dialog>
 <bifi-app-reporting-download-dialog

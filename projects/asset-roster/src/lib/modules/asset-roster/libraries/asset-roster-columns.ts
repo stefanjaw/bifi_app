@@ -3,8 +3,52 @@ import { assetType } from '../../asset-types';
 import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tag } from 'primeng/tag';
+import { Avatar } from 'primeng/avatar';
+import { Signal, signal } from '@angular/core';
 
-export const assetRosterColumns: tableColumn<assetRoster>[] = [
+
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Returns an array of table columns for the asset roster module.
+ *
+/**
+ * - Photo: An avatar component displaying the asset's photo.
+ * - Type: The name of the asset type.
+ * - Make: The name of the asset's make.
+ * - Model: The name of the asset's model.
+ * - Serial Number: The serial number of the asset.
+ * - Location: The name of the asset's location.
+ * - Vendor: The name of the asset's vendor.
+ * - Acquired Date: The date the asset was acquired.
+ * - Next PM Due: The date the asset is next due for maintenance.
+ * - Status: The current status of the asset (active, awaiting commissioning, under service, decommissioned, or in PM).
+ *
+ * @param assetPictures A signal containing a record of asset IDs to their corresponding photos.
+ * @returns An array of table columns for the asset roster module.
+ */
+
+export const assetRosterColumns = (
+  assetPictures: Signal<Record<string, string>>
+): tableColumn<assetRoster>[] => [
+  //photo
+{
+    field: 'photo',
+    title: 'PHOTO',
+    type: 'text',
+    component: (row: assetRoster): DynamicComponent<any> => ({
+      component: Avatar,
+      inputs: {
+        image:
+          assetPictures()[row._id] ||
+          'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg',
+        shape: 'square',
+        size: 'large',
+      },
+      outputs: {},
+    }),
+  },
+
+
   {
     field: 'assetTypeIds',
     parseField: (value: assetType[]) => value[0]?.name || 'Not set',
@@ -32,6 +76,8 @@ export const assetRosterColumns: tableColumn<assetRoster>[] = [
   {
     field: 'locationId.name',
     title: 'LOCATION',
+      parseField: (value) => value?.name || 'Not set',
+
     type: 'text',
   },
   {
