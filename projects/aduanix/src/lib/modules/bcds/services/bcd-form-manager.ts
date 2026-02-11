@@ -110,20 +110,6 @@ export class BCDFormManager {
    * function to update the records count control.
    */
   constructor() {
-    // reset dependent fields when transport type changes
-    effect(() => {
-      this.currentTransportType();
-      untracked(() => this.form.form.controls.transport.controls.aircraftOrVessel.setValue(''));
-    });
-
-    // reset dependent fields when bcd type changes
-    effect(() => {
-      this.currentBCDType();
-      untracked(() =>
-        this.form.form.controls.records.controls.forEach(r => r.patchValue({ cpc: '' }))
-      );
-    });
-
     // update records count
     effect(() => {
       this.bcdValueChaged();
