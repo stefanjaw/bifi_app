@@ -18,6 +18,7 @@ import { CrudBCDCpc } from '../../bcd-cpcs';
 import { FilterManager } from '@avalantec/base-app/resource';
 import { CrudBCDChargeCode } from '../../bcd-charge-codes';
 import { CrudBCDPort } from '../../bcd-ports';
+import { calculateBCD } from '../libs/bcd-calculations';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +43,9 @@ export class BCDFormManager {
   currentTransportType = toSignal(this.form.form.controls.transport.controls.type.valueChanges, {
     initialValue: this.form.form.controls.transport.controls.type.value,
   });
+  bcdValueChaged = toSignal(this.form.form.valueChanges, { initialValue: this.form.form.value });
 
-  // filters
+  //#region Filters
   bcdCpcFilter = computed(() =>
     this.filterManager.getFilterObjectUtil([
       {
@@ -53,15 +55,29 @@ export class BCDFormManager {
     ])
   );
 
-  // resources
+  bcdTRansportOptionFilter = computed(() =>
+    this.filterManager.getFilterObjectUtil([
+      {
+        operator: 'and',
+        filters: [
+          { field: 'type', operator: '==', value: this.currentTransportType() || 'aircraft' },
+        ],
+      },
+    ])
+  );
+  //#endregion
+
+  //#region Resources
   private bcdAdditionalInformationTypeResource = this.crudAdditionalInformationType.get({});
   private bcdTaxIdResource = this.crudTaxId.get({});
   private bcdTaxTypeResource = this.crudTaxType.get({});
   private bcdTypeResource = this.crudBCDType.get({});
   private bcdChargeCodeResource = this.crudBCDChargeCode.get({});
   private bcdPortResource = this.crudBCDPort.get({});
+
+  // filtered resources
   private bcdTransportOptionResource = this.crudTransportOption.get({
-    searchParams: computed(() => ({ type: this.currentTransportType() })),
+    searchParams: this.bcdTRansportOptionFilter,
   });
   private bcdCpcResource = this.crudBCDCpc.get({
     searchParams: this.bcdCpcFilter,
@@ -77,6 +93,7 @@ export class BCDFormManager {
   bcdChargeCodeOptions = this.bcdChargeCodeResource.value;
   bcdPortOptions = this.bcdPortResource.value;
   bcdTransportOptions = this.bcdTransportOptionResource.value;
+  //#endregion
 
   /**
    * Attaches listeners to the form controls.
@@ -96,6 +113,16 @@ export class BCDFormManager {
       untracked(() =>
         this.form.form.controls.records.controls.forEach(r => r.patchValue({ cpc: '' }))
       );
+    });
+
+    // update records count
+    effect(() => {
+      this.bcdValueChaged();
+
+      // update records count control
+      untracked(() => {
+        calculateBCD(this.form.form);
+      });
     });
   }
 
