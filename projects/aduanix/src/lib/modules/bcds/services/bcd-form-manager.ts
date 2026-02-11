@@ -96,25 +96,13 @@ export class BCDFormManager {
   //#endregion
 
   /**
-   * Attaches listeners to the form controls.
-   * When the records array changes, it recalculates the global totals
-   * and updates the form controls accordingly.
+   * The constructor for the BCDFormManager class.
+   * It uses the effect hook from Angular to create an effect that
+   * listens to the valueChanges of the form.
+   * When the valueChanges is triggered, it calls the calculateBCD
+   * function to update the records count control.
    */
   constructor() {
-    // reset dependent fields when transport type changes
-    effect(() => {
-      this.currentTransportType();
-      untracked(() => this.form.form.controls.transport.controls.aircraftOrVessel.setValue(''));
-    });
-
-    // reset dependent fields when bcd type changes
-    effect(() => {
-      this.currentBCDType();
-      untracked(() =>
-        this.form.form.controls.records.controls.forEach(r => r.patchValue({ cpc: '' }))
-      );
-    });
-
     // update records count
     effect(() => {
       this.bcdValueChaged();
