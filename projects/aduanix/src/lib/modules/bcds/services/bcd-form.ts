@@ -36,7 +36,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       warehouseId: ['', [Validators.minLength(4), Validators.maxLength(4)]],
       charges: {
         template: {
-          code: ['212', [Validators.required]],
+          code: ['', [Validators.required]],
           percentage: [0, [Validators.min(0), Validators.max(100)]],
           amount: [0, [Validators.min(0)]],
         },
@@ -97,7 +97,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           totalDue: [0, [Validators.min(0)]],
           charges: {
             template: {
-              code: ['212', [Validators.required]],
+              code: ['', [Validators.required]],
               percentage: [0, [Validators.min(0), Validators.max(100)]],
               amount: [0, [Validators.min(0)]],
             },
@@ -105,8 +105,8 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           },
           tax: {
             template: {
-              type: ['CUD', [Validators.required]],
-              taxId: ['F', [Validators.required]],
+              type: ['', [Validators.required]],
+              taxId: ['', [Validators.required]],
               valueForTax: [0, [Validators.required, Validators.min(0)]],
               ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
               amount: [0, [Validators.min(0)]],

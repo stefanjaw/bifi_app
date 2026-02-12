@@ -45,9 +45,6 @@
                         <ng-template pTemplate="selectedItem" let-item>
                           {{ item.code + ' - ' + item.description }}
                         </ng-template>
-                        <!-- <ng-template pTemplate="item" let-item>
-                          {{ item.code + ' - ' + item.description.substring(0, 50) + '...' }}
-                        </ng-template> -->
                       </p-select>
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
@@ -144,7 +141,7 @@
                           label="Add charge"
                           variant="text"
                           icon="pi pi-plus"
-                          (onClick)="chargesDialog.openDialog(i)"
+                          (onClick)="formManager.addCharge(i)"
                         ></p-button>
                         <p-table
                           [value]="form.controls.records.at(i).controls.charges.controls"
@@ -152,10 +149,10 @@
                         >
                           <ng-template pTemplate="header">
                             <tr>
-                              <th>Code</th>
+                              <th>Charges / Deductions</th>
                               <th>%</th>
                               <th>Amount</th>
-                              <th>Actions</th>
+                              <th></th>
                             </tr>
                           </ng-template>
 
@@ -163,38 +160,25 @@
                             <tr [formGroupName]="j">
                               <td>
                                 <bifi-app-form-field>
-                                  <bifi-app-form-field>
-                                    <p-select
-                                      appendTo="body"
-                                      formControlName="code"
-                                      [options]="bcdChargeCodeOptions()"
-                                      optionLabel="name"
-                                      optionValue="_id"
-                                    ></p-select>
-                                    <bifi-app-form-error></bifi-app-form-error>
-                                  </bifi-app-form-field>
+                                  <p-select
+                                    appendTo="body"
+                                    formControlName="code"
+                                    [options]="bcdChargeCodeOptions()"
+                                    optionLabel="name"
+                                    optionValue="_id"
+                                  ></p-select>
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>
                               </td>
                               <td>
                                 <bifi-app-form-field>
-                                  <input
-                                    pInputText
-                                    formControlName="percentage"
-                                    type="number"
-                                    placeholder="Percentage"
-                                  />
+                                  <input pInputText formControlName="percentage" type="number" />
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>
                               </td>
                               <td>
                                 <bifi-app-form-field>
-                                  <input
-                                    pInputText
-                                    formControlName="amount"
-                                    type="number"
-                                    placeholder="Amount"
-                                  />
+                                  <input pInputText formControlName="amount" type="number" />
                                   <bifi-app-form-error></bifi-app-form-error>
                                 </bifi-app-form-field>
                               </td>
@@ -219,7 +203,7 @@
                           label="Add New Tax"
                           variant="text"
                           icon="pi pi-plus"
-                          (onClick)="taxesDialog.openDialog(i)"
+                          (onClick)="formManager.addTax(i)"
                         ></p-button>
                         <p-table
                           [value]="form.controls.records.at(i).controls.tax.controls"
@@ -227,12 +211,12 @@
                         >
                           <ng-template pTemplate="header">
                             <tr>
-                              <th>Type</th>
-                              <th>Id</th>
-                              <th>Value</th>
-                              <th>%</th>
-                              <th>Amount</th>
-                              <th>Actions</th>
+                              <th>Tax Type</th>
+                              <th>Tax ID</th>
+                              <th>Value for Tax</th>
+                              <th>Tax Rate</th>
+                              <th>Tax Amount</th>
+                              <th></th>
                             </tr>
                           </ng-template>
 
@@ -243,7 +227,7 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="type"
-                                    [options]="bcdTaxTypeOptions()"
+                                    [options]="taxTypeOptionsPerRecord()[i].taxTypes"
                                     optionLabel="name"
                                     optionValue="_id"
                                   ></p-select>
@@ -255,7 +239,7 @@
                                   <p-select
                                     appendTo="body"
                                     formControlName="taxId"
-                                    [options]="bcdTaxIdOptions()"
+                                    [options]="taxIdOptionsPerTax()[i][j].taxIds"
                                     optionLabel="name"
                                     optionValue="_id"
                                   ></p-select>
@@ -312,7 +296,7 @@
                           label="Add Additional Information"
                           variant="text"
                           icon="pi pi-plus"
-                          (onClick)="additionalInformationDialog.openDialog($index)"
+                          (onClick)="formManager.addAdditionalInformation(i)"
                         ></p-button>
 
                         <p-table
@@ -325,7 +309,7 @@
                             <tr>
                               <th>Type</th>
                               <th>Description</th>
-                              <th>Actions</th>
+                              <th></th>
                             </tr>
                           </ng-template>
 
@@ -376,9 +360,3 @@
 } @else {
   <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
 }
-
-<bifi-app-bcd-charges-form-dialog #chargesDialog></bifi-app-bcd-charges-form-dialog>
-<bifi-app-bcd-additional-information-form-dialog
-  #additionalInformationDialog
-></bifi-app-bcd-additional-information-form-dialog>
-<bifi-app-bcd-taxes-form-dialog #taxesDialog></bifi-app-bcd-taxes-form-dialog>

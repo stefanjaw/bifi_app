@@ -1,28 +1,34 @@
 <section [formGroup]="form" class="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
   <div class="col-span-full">
-    <!-- Declarant Section -->
-    <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="7">
-      <bifi-app-form-field>
-        <bifi-app-form-label>BCD Type</bifi-app-form-label>
-        <p-select
-          appendTo="body"
-          formControlName="type"
-          [options]="bcdTypeOptions()"
-          optionLabel="name"
-          optionValue="_id"
-        ></p-select>
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
-
-      <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
+    <!-- General Section -->
+    <bifi-app-form-section title="General Section" id="general-info" [ordinal]="1">
+      <div class="w-full grid gap-3 sm:grid-cols-2 mt-4">
         <bifi-app-form-field>
-          <bifi-app-form-label>Declarant</bifi-app-form-label>
-          <input type="text" formControlName="name" pInputText />
+          <bifi-app-form-label>BCD Type</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="type"
+            [options]="bcdTypeOptions()"
+            optionLabel="name"
+            optionValue="_id"
+          ></p-select>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
+        <div class="w-full" formGroupName="declarant">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Declarant</bifi-app-form-label>
+            <input type="text" formControlName="name" pInputText />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </div>
+    </bifi-app-form-section>
 
+    <!-- Declarant Section -->
+    <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="2">
+      <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
         <bifi-app-form-field>
-          <bifi-app-form-label>Company Id</bifi-app-form-label>
+          <bifi-app-form-label>ID Number</bifi-app-form-label>
           <input type="text" formControlName="companyId" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -35,7 +41,7 @@
 
         <bifi-app-form-field>
           <bifi-app-form-label>Date</bifi-app-form-label>
-          <p-datepicker formControlName="date" [showIcon]="true"></p-datepicker>
+          <p-datepicker fluid formControlName="date" [showIcon]="true"></p-datepicker>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
@@ -50,7 +56,7 @@
 
   <div class="border-[0.1px] border-gray-200">
     <!-- 1. SUPPLIER -->
-    <bifi-app-form-section title="1. SUPPLIER" id="supplier-info" [ordinal]="1">
+    <bifi-app-form-section title="1. SUPPLIER" id="supplier-info" [ordinal]="3">
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <div formGroupName="supplier">
           <bifi-app-form-field>
@@ -69,7 +75,7 @@
     </bifi-app-form-section>
 
     <!-- 2. IMPORTER -->
-    <bifi-app-form-section title="2. IMPORTER" id="importer-info" [ordinal]="2">
+    <bifi-app-form-section title="2. IMPORTER" id="importer-info" [ordinal]="4">
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <div formGroupName="importer">
           <bifi-app-form-field>
@@ -88,7 +94,7 @@
     </bifi-app-form-section>
 
     <!-- 3. TRANSPORT -->
-    <bifi-app-form-section title="3. TRANSPORT DETAILS" id="transport-details-info" [ordinal]="3">
+    <bifi-app-form-section title="3. TRANSPORT DETAILS" id="transport-details-info" [ordinal]="5">
       <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
         <div class="col-span-full flex flex-wrap gap-4">
           <div class="flex items-center">
@@ -138,14 +144,14 @@
 
         <bifi-app-form-field>
           <bifi-app-form-label>d. Arrival / Departure Date</bifi-app-form-label>
-          <p-datepicker formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
+          <p-datepicker fluid formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </div>
     </bifi-app-form-section>
 
     <!-- 4. MANIFEST -->
-    <bifi-app-form-section title="4. MANIFEST DETAILS" id="manifest-info" [ordinal]="4">
+    <bifi-app-form-section title="4. MANIFEST DETAILS" id="manifest-info" [ordinal]="6">
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- Manifest number -->
         <bifi-app-form-field>
@@ -225,7 +231,7 @@
     </bifi-app-form-section>
 
     <!-- 5. COUNTRY -->
-    <bifi-app-form-section title="5. COUNTRY" id="country-info" [ordinal]="5">
+    <bifi-app-form-section title="5. COUNTRY" id="country-info" [ordinal]="7">
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- DIRECT SHIPMENT COUNTRY -->
         <bifi-app-form-field>
@@ -261,7 +267,7 @@
     <bifi-app-form-section
       title="6. WAREHOUSE IDENTIFICATION"
       id="warehouse-identification-info"
-      [ordinal]="6"
+      [ordinal]="8"
     >
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- Warehouse ID -->
@@ -279,7 +285,7 @@
     <bifi-app-form-section
       title="7. ADDITIONAL INFORMATION"
       id="general-additional-information-info"
-      [ordinal]="7"
+      [ordinal]="9"
     >
       <div class="w-full" formArrayName="additionalInformation">
         <p-button
@@ -287,14 +293,14 @@
           label="Add Information"
           variant="text"
           icon="pi pi-plus"
-          (onClick)="additionalInformationDialog.openDialog()"
+          (onClick)="formManager.addAdditionalInformation()"
         ></p-button>
         <p-table [value]="form.controls.additionalInformation.controls" class="w-inherit!">
           <ng-template pTemplate="header">
             <tr>
               <th>Type</th>
               <th>Value</th>
-              <th>Actions</th>
+              <th></th>
             </tr>
           </ng-template>
 
@@ -302,16 +308,13 @@
             <tr [formGroupName]="i">
               <td>
                 <bifi-app-form-field>
-                  <bifi-app-form-field>
-                    <p-select
-                      appendTo="body"
-                      formControlName="type"
-                      [options]="bcdAdditionalInformationTypeOptions()"
-                      optionLabel="name"
-                      optionValue="_id"
-                    ></p-select>
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
+                  <p-select
+                    appendTo="body"
+                    formControlName="type"
+                    [options]="bcdAdditionalInformationTypeOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                  ></p-select>
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
               </td>
@@ -336,7 +339,7 @@
     </bifi-app-form-section>
 
     <!-- 8. METHOD OF PAYMENT -->
-    <bifi-app-form-section title="8. METHOD OF PAYMENT" id="method-of-payment-info" [ordinal]="8">
+    <bifi-app-form-section title="8. METHOD OF PAYMENT" id="method-of-payment-info" [ordinal]="10">
       <!-- Payment Account Array field similar to containers -->
       <div formArrayName="paymentAccounts">
         <bifi-app-form-field class="h-full flex flex-col">
@@ -411,22 +414,22 @@
     </bifi-app-form-section>
 
     <!-- 9 CHARGES -->
-    <bifi-app-form-section title="9. CHARGES / DEDUCTIONS" id="general-charge-info" [ordinal]="9">
+    <bifi-app-form-section title="9. CHARGES / DEDUCTIONS" id="general-charge-info" [ordinal]="11">
       <div class="w-full" formArrayName="charges">
         <p-button
           class="mb-4"
           label="Add charge"
           variant="text"
           icon="pi pi-plus"
-          (onClick)="chargesDialog.openDialog()"
+          (onClick)="formManager.addCharge()"
         ></p-button>
         <p-table [value]="form.controls.charges.controls" class="w-inherit!">
           <ng-template pTemplate="header">
             <tr>
-              <th>Code</th>
+              <th>Charges / Deductions</th>
               <th>%</th>
               <th>Amount</th>
-              <th>Actions</th>
+              <th></th>
             </tr>
           </ng-template>
 
@@ -434,33 +437,25 @@
             <tr [formGroupName]="i">
               <td>
                 <bifi-app-form-field>
-                  <bifi-app-form-field>
-                    <p-select
-                      appendTo="body"
-                      formControlName="code"
-                      [options]="bcdChargeCodeOptions()"
-                      optionLabel="name"
-                      optionValue="_id"
-                    ></p-select>
-                    <bifi-app-form-error></bifi-app-form-error>
-                  </bifi-app-form-field>
+                  <p-select
+                    appendTo="body"
+                    formControlName="code"
+                    [options]="bcdChargeCodeOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                  ></p-select>
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
               </td>
               <td>
                 <bifi-app-form-field>
-                  <input
-                    pInputText
-                    formControlName="percentage"
-                    type="number"
-                    placeholder="Percentage"
-                  />
+                  <input pInputText formControlName="percentage" type="number" />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
               </td>
               <td>
                 <bifi-app-form-field>
-                  <input pInputText formControlName="amount" type="number" placeholder="Amount" />
+                  <input pInputText formControlName="amount" type="number" />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
               </td>
@@ -519,8 +514,3 @@
     </div>
   </div>
 </section>
-
-<bifi-app-bcd-charges-form-dialog #chargesDialog></bifi-app-bcd-charges-form-dialog>
-<bifi-app-bcd-additional-information-form-dialog
-  #additionalInformationDialog
-></bifi-app-bcd-additional-information-form-dialog>

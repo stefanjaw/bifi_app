@@ -55,7 +55,7 @@ export class BcdTaxesFormDialog extends BaseDialog {
 
   //Submit Method
   handleSubmit() {
-    this.bcdFormManager.addTax(this.recordIndex, this.form);
+    // this.bcdFormManager.addTax(this.recordIndex, this.form);
     this.closeDialog();
   }
 }

@@ -12,10 +12,8 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { BcdChargesFormDialog } from '../../../../bcd-charge-codes';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { BcdAdditionalInformationFormDialog } from '../../../../bcd-additional-information-types';
 @Component({
   selector: 'bifi-app-bcds-general-form',
   imports: [
@@ -28,8 +26,6 @@ import { BcdAdditionalInformationFormDialog } from '../../../../bcd-additional-i
     InputTextModule,
     TextareaModule,
     ProgressBarModule,
-    BcdChargesFormDialog,
-    BcdAdditionalInformationFormDialog,
     RadioButtonModule,
   ],
   templateUrl: './bcds-general-form.html',

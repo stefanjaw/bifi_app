@@ -48,7 +48,7 @@ export class BcdChargesFormDialog extends BaseDialog {
   }
 
   handleSubmit() {
-    this.bcdFormManager.addCharge(this.form, this.recordIndex);
+    // this.bcdFormManager.addCharge(this.form, this.recordIndex);
     this.closeDialog();
   }
 }

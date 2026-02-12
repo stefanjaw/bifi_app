@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { BcdChargesFormDialog } from '../../../../bcd-charge-codes';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -12,8 +11,8 @@ import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
 import { BcdForm } from '../../../services/bcd-form';
 import { FormModule } from '@avalantec/base-app/form';
-import { BcdAdditionalInformationFormDialog } from '../../../../bcd-additional-information-types';
-import { BcdTaxesFormDialog } from '../../../../bcd-taxes';
+import { bcdTaxId, bcdTaxType } from '../../../../bcd-taxes';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-bcds-records-form',
@@ -27,9 +26,6 @@ import { BcdTaxesFormDialog } from '../../../../bcd-taxes';
     ProgressBarModule,
     TableModule,
     AccordionModule,
-    BcdChargesFormDialog,
-    BcdAdditionalInformationFormDialog,
-    BcdTaxesFormDialog,
   ],
   templateUrl: './bcds-records-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,4 +50,59 @@ export class BcdsRecordsForm {
   // state
   form = this.formService.form;
   loading = this.countriesResource.isLoading;
+
+  // to check records
+  currentRecords = toSignal(this.form.controls.records.valueChanges, {
+    initialValue: this.form.controls.records.value,
+  });
+
+  taxTypeOptionsPerRecord = computed(() => {
+    const currentRecords = this.currentRecords();
+    const options: { taxTypes: bcdTaxType[] }[] = [];
+
+    // iterate and check
+    for (const record of currentRecords) {
+      const cpc = this.bcdCpcOptions().find(cpc => cpc._id === record.cpc);
+
+      if (!cpc) {
+        options.push({ taxTypes: [] });
+        continue;
+      }
+
+      options.push({
+        taxTypes: cpc.tax.map(tax => tax.taxType),
+      });
+    }
+
+    return options;
+  });
+
+  taxIdOptionsPerTax = computed(() => {
+    const currentRecords = this.currentRecords();
+    const options: { taxIds: bcdTaxId[] }[][] = [];
+
+    // iterate and check
+    for (const record of currentRecords) {
+      const currentTaxes = record.tax || [];
+      const cpc = this.bcdCpcOptions().find(cpc => cpc._id === record.cpc);
+      const recordOptions: { taxIds: bcdTaxId[] }[] = [];
+
+      for (const tax of currentTaxes) {
+        const taxType = this.bcdTaxTypeOptions().find(taxType => taxType._id === tax.type);
+
+        if (!taxType || !cpc) {
+          recordOptions.push({ taxIds: [] });
+          continue;
+        }
+
+        recordOptions.push({
+          taxIds: cpc.tax.filter(tax => tax.taxType._id === taxType._id).map(tax => tax.taxId),
+        });
+      }
+
+      options.push(recordOptions);
+    }
+
+    return options;
+  });
 }

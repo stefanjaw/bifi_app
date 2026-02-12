@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { GroupReturn } from '@avalantec/base-app/form';
 import { computed, effect, inject, Injectable, untracked } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
@@ -172,7 +171,7 @@ export class BCDFormManager {
    */
   createChargeForm() {
     return this.form.fb.group<bcdFormChargeModel>({
-      code: ['212', [Validators.required]],
+      code: ['', [Validators.required]],
       percentage: [0, [Validators.min(0), Validators.max(100)]],
       amount: [0, [Validators.min(0)]],
     });
@@ -185,7 +184,8 @@ export class BCDFormManager {
    * @param form The charge form to add.
    * @param recordIndex The index of the record to which to add the charge form. Defaults to undefined.
    */
-  addCharge(form: GroupReturn<bcdFormChargeModel>, recordIndex: number | undefined = undefined) {
+  addCharge(recordIndex: number | undefined = undefined) {
+    const form = this.createChargeForm();
     const chargesArray =
       recordIndex !== undefined
         ? this.form.form.controls.records.at(recordIndex).controls.charges
@@ -237,10 +237,8 @@ export class BCDFormManager {
    * @param form The additional information form to add.
    * @param recordIndex The index of the record to which to add the additional information form. Defaults to undefined.
    */
-  addAdditionalInformation(
-    form: GroupReturn<bcdFormAdditionalInformationModel>,
-    recordIndex: number | undefined = undefined
-  ) {
+  addAdditionalInformation(recordIndex: number | undefined = undefined) {
+    const form = this.createAdditionalInformationForm();
     const additionalInformationArray =
       recordIndex !== undefined
         ? this.form.form.controls.records.at(recordIndex).controls.additionalInformation
@@ -371,8 +369,8 @@ export class BCDFormManager {
    */
   createTaxEntryForm() {
     return this.form.fb.group<bcdFormTaxEntryModel>({
-      type: ['CUD', [Validators.required]],
-      taxId: ['F', [Validators.required]],
+      type: ['', [Validators.required]],
+      taxId: ['', [Validators.required]],
       valueForTax: [0, [Validators.required, Validators.min(0)]],
       ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
       amount: [0, [Validators.min(0)]],
@@ -384,9 +382,10 @@ export class BCDFormManager {
    * @param recordIndex The index of the record to which to add the tax entry.
    * @param value The tax entry to add.
    */
-  addTax(recordIndex: number, value: GroupReturn<bcdFormTaxEntryModel>) {
+  addTax(recordIndex: number) {
+    const form = this.createTaxEntryForm();
     const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
-    taxArray.push(value);
+    taxArray.push(form);
   }
 
   /**

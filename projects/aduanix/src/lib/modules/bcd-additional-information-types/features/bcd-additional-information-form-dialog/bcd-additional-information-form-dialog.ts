@@ -48,7 +48,7 @@ export class BcdAdditionalInformationFormDialog extends BaseDialog {
   }
 
   handleSubmit() {
-    this.bcdFormManager.addAdditionalInformation(this.form, this.recordIndex);
+    // this.bcdFormManager.addAdditionalInformation(this.form, this.recordIndex);
     this.closeDialog();
   }
 }
