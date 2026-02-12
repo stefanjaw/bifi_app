@@ -2,7 +2,6 @@ import { assetRosterFilters } from '../../libraries/asset-roster-filters';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   effect,
   inject,
@@ -33,10 +32,8 @@ import { TagModule } from 'primeng/tag';
 import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/asset-roster-status-select';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { FormLabel } from '@avalantec/base-app/form';
 import { CardModule } from 'primeng/card';
-import { Avatar, AvatarModule } from 'primeng/avatar';
-import { from, map, Observable, of } from 'rxjs';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
@@ -74,14 +71,12 @@ export class AssetRosterList {
   assetRosters = this.resourceManager.data;
   filtersForReporting = this.resourceManager.searchParams;
 
-  
-
   //View
   isGrid = signal<boolean>(false);
 
   optionsView = [
-  { label: 'List', value: false, icon: 'pi pi-table' },
-  { label: 'Grid', value: true, icon: 'pi pi-th-large' },
+    { label: 'List', value: false, icon: 'pi pi-table' },
+    { label: 'Grid', value: true, icon: 'pi pi-th-large' },
   ];
   //#region Counting of asset roster by status
   private assetRosterStatusFilterManager = inject(AssetRosterStatusFilterManager);
@@ -140,8 +135,7 @@ export class AssetRosterList {
    * If the form was submitted successfully, reload the list of assetRosterss.
    */
   constructor() {
-      this.assetRosterColumns = assetRosterColumns(this.assetPictures);
-      this.resourceManager.activeAllRecords.set(true);
+    this.assetRosterColumns = assetRosterColumns(this.assetPictures);
 
     this.assetRosterMaintenanceContext.handleEvents$
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -157,8 +151,6 @@ export class AssetRosterList {
           this.assetRostersPMNotSetCount.reload();
         }
       });
-
-     
 
     effect(() => {
       const assets = this.assetRosters.value()?.docs;
@@ -221,10 +213,10 @@ export class AssetRosterList {
       });
   }
 
-getPhoto(asset?: assetRoster): string {
-  if (!asset?._id) {
-    return  'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg';
+  getPhoto(asset?: assetRoster): string {
+    if (!asset?._id) {
+      return 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg';
+    }
+    return this.assetPictures()[asset._id];
   }
-  return this.assetPictures()[asset._id];
-}
 }

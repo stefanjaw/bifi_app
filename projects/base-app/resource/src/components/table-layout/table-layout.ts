@@ -5,8 +5,10 @@ import {
   contentChild,
   inject,
   input,
+  Renderer2,
   ResourceRef,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
@@ -14,7 +16,7 @@ import { DynamicComponentDirective } from '../../directives/dynamic-component';
 import { PaginationManager } from '../../services/pagination-manager';
 import { SortManager } from '../../services/sort-manager';
 import { tableColumn } from '../../interfaces/table-column';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SortMeta } from 'primeng/api';
 import { orderByQuery } from '../../interfaces/order-by';
 import { PaginatorModule } from 'primeng/paginator';
@@ -43,15 +45,16 @@ export class TableLayout<T extends Record<string, any>> {
   private paginationManager = inject(PaginationManager);
   private sortManager = inject<SortManager<T>>(SortManager);
   private auth = injectAuthService();
+  private renderer2 = inject(Renderer2);
 
   // Inputs
   data = input<ResourceRef<tableRows<T>> | tableRows<T>>();
-
-  // Columns managament
   columns = input<tableColumn<T>[]>([]);
-
-  // Table options
   onClickRow = input<(row: T) => void>();
+  infiniteScroll = input<boolean>(false);
+
+  // ViewChild
+  tableContainer = viewChild(Table);
 
   //#region Permission for row click
   // * The permission input
@@ -139,7 +142,14 @@ export class TableLayout<T extends Record<string, any>> {
 
   isPaginatedFN = isPaginated;
 
-  protected getValue(object: any, path: string) {
+  /**
+   * Recursively gets the value of an object by following the given path.
+   * If the path is invalid, it will return undefined.
+   * @param {any} object - The object to get the value from.
+   * @param {string} path - The path to get the value from.
+   * @returns {any} The value of the object at the given path.
+   */
+  getValue(object: any, path: string) {
     const splittedPath = path.split('.');
 
     for (const key of splittedPath) {
@@ -151,6 +161,31 @@ export class TableLayout<T extends Record<string, any>> {
     return object;
   }
 
+  /**
+   * Triggers the infinite scroll event.
+   * If infinite scroll is enabled, it will trigger the changePage method with the next page and limit.
+   * @returns {void}
+   */
+  onInfiniteScroll() {
+    if (!this.infiniteScroll()) return;
+
+    // options
+    const options = this.paginationManager.paginationOptions();
+    const totalPagination = this.resourceState().pagination?.totalDocs || 0;
+
+    // Check if the limit + pivot is greater than the total pagination
+    if (options.limit + this.paginationManager.PIVOT > totalPagination) return;
+
+    // Trigger the changePage
+    this.changePage(1, options.limit + this.paginationManager.PIVOT);
+  }
+
+  /**
+   * Triggered when the user scrolls to the end of the table or when the rows change.
+   * If multiSortMeta is present, it will trigger the sort method with the given SortMeta array.
+   * If rows or first are present, it will calculate the next page and trigger the changePage method with the next page and limit.
+   * @param event - The TableLazyLoadEvent emitted by the PrimeNG Table component.
+   */
   lazyLoad(event: TableLazyLoadEvent) {
     if (event.multiSortMeta) this.sort(event.multiSortMeta);
     if (event.rows || event.first) {
@@ -160,10 +195,21 @@ export class TableLayout<T extends Record<string, any>> {
     }
   }
 
+  /**
+   * Triggered when the user scrolls to the end of the table or when the rows change.
+   * Changes the pagination options to the given page and limit.
+   * @param page - The page number to change to.
+   * @param limit - The number of items per page.
+   */
   private changePage(page: number, limit: number) {
     this.paginationManager.setPaginationOptions(page, limit);
   }
 
+  /**
+   * Triggered when the user changes the sort order.
+   * Sorts the data according to the given SortMeta array.
+   * @param multiSortMeta - The array of SortMeta objects, each containing a field and order.
+   */
   private sort(multiSortMeta: SortMeta[]) {
     this.sortManager.sortBy(
       multiSortMeta.map(sort => ({
