@@ -5,7 +5,6 @@ import {
   contentChild,
   inject,
   input,
-  Renderer2,
   ResourceRef,
   TemplateRef,
   viewChild,
@@ -45,7 +44,6 @@ export class TableLayout<T extends Record<string, any>> {
   private paginationManager = inject(PaginationManager);
   private sortManager = inject<SortManager<T>>(SortManager);
   private auth = injectAuthService();
-  private renderer2 = inject(Renderer2);
 
   // Inputs
   data = input<ResourceRef<tableRows<T>> | tableRows<T>>();
@@ -159,25 +157,6 @@ export class TableLayout<T extends Record<string, any>> {
     }
 
     return object;
-  }
-
-  /**
-   * Triggers the infinite scroll event.
-   * If infinite scroll is enabled, it will trigger the changePage method with the next page and limit.
-   * @returns {void}
-   */
-  onInfiniteScroll() {
-    if (!this.infiniteScroll()) return;
-
-    // options
-    const options = this.paginationManager.paginationOptions();
-    const totalPagination = this.resourceState().pagination?.totalDocs || 0;
-
-    // Check if the limit + pivot is greater than the total pagination
-    if (options.limit + this.paginationManager.PIVOT > totalPagination) return;
-
-    // Trigger the changePage
-    this.changePage(1, options.limit + this.paginationManager.PIVOT);
   }
 
   /**

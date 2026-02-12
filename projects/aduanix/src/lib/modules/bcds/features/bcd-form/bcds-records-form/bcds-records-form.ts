@@ -41,11 +41,11 @@ export class BcdsRecordsForm {
 
   // options
   countryOptions = this.countriesResource.value;
-  bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
   bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
-  bcdTaxTypeOptions = this.formManager.bcdTaxTypeOptions;
-  bcdTaxIdOptions = this.formManager.bcdTaxIdOptions;
   bcdCpcOptions = this.formManager.bcdCpcOptions;
+  private bcdTaxTypeOptions = this.formManager.bcdTaxTypeOptions;
+  private bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
+  // private bcdTaxIdOptions = this.formManager.bcdTaxIdOptions;
 
   // state
   form = this.formService.form;
@@ -105,4 +105,8 @@ export class BcdsRecordsForm {
 
     return options;
   });
+
+  chargeCodeOptions = computed(() =>
+    this.bcdChargeCodeOptions().filter(c => c.levels.includes('record'))
+  );
 }

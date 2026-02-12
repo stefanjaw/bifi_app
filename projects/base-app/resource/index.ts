@@ -19,6 +19,7 @@ export * from './src/services/api-request-manager';
 export * from './src/services/crud-activity-histories';
 export * from './src/services/file-resolver';
 export * from './src/services/filter-manager';
+export * from './src/services/infinite-scroll-manager';
 export * from './src/services/pagination-manager';
 export * from './src/services/resource-manager';
 export * from './src/services/sort-manager';

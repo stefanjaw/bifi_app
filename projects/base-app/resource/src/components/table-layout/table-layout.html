@@ -1,32 +1,32 @@
-@let pagination = resourceState().pagination;
-@let isPaginated = !!pagination;
+@let state = resourceState();
+@let pagination = state.pagination;
 
 <p-table
   sortMode="multiple"
   (onLazyLoad)="lazyLoad($event)"
   [lazy]="true"
-  [value]="resourceState().value"
-  [first]="pagination?.page ? ((pagination?.page || 0) - 1) * (pagination?.limit || 0) : 0"
-  classList="w-full"
-  [paginator]="isPaginated && !infiniteScroll()"
-  [totalRecords]="pagination?.totalDocs || 0"
-  [rows]="pagination?.limit || 0"
+  [value]="state.value"
+  [loading]="state.isLoading"
+  class="w-full"
+  [paginator]="true"
+  [rows]="pagination?.limit ?? 10"
+  [first]="pagination && pagination?.page ? (pagination.page - 1) * (pagination?.limit ?? 5) : 0"
+  [totalRecords]="pagination?.totalDocs ?? 0"
   [rowsPerPageOptions]="[5, 10, 25, 50]"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} ({totalPages} pages)"
   [pageLinks]="5"
   [expandedRowKeys]="expandContent() ? expandedRows : undefined"
   [groupRowsBy]="expandContent() ? '_id' : undefined"
-  [loading]="resourceState().isLoading"
 >
-  <!-- headers -->
+  <!-- HEADER -->
   <ng-template #header>
     <tr>
       @if (expandContent()) {
         <th></th>
       }
 
-      @for (column of columns(); track $index) {
+      @for (column of columns(); track column.field) {
         @if (column.sortable) {
           <th [pSortableColumn]="column.field">
             <div class="flex items-center gap-2 whitespace-nowrap">
@@ -35,7 +35,9 @@
             </div>
           </th>
         } @else {
-          <th class="whitespace-nowrap">{{ column.title }}</th>
+          <th class="whitespace-nowrap">
+            {{ column.title }}
+          </th>
         }
       }
 
@@ -45,13 +47,12 @@
     </tr>
   </ng-template>
 
-  <!-- body -->
+  <!-- BODY -->
   <ng-template #body let-element let-expanded="expanded">
     <tr
       (click)="onClickRow() && hasClickRowPermission() ? onClickRow()?.(element) : null"
-      [ngClass]="{
-        'cursor-pointer hover:bg-gray-200!': onClickRow() && hasClickRowPermission(),
-      }"
+      [class.cursor-pointer]="onClickRow() && hasClickRowPermission()"
+      [class.hover\:bg-gray-200!]="onClickRow() && hasClickRowPermission()"
     >
       @if (expandContent()) {
         <td>
@@ -67,14 +68,12 @@
         </td>
       }
 
-      @for (column of columns(); track $index) {
+      @for (column of columns(); track column.field) {
         <td>
           @let value = getValue(element, column.field);
 
           @if (column.parseField) {
-            <span>
-              {{ column.parseField(value) }}
-            </span>
+            {{ column.parseField(value) }}
           } @else if (column.component) {
             @let component =
               typeof column.component === 'function' ? column.component(element) : column.component;
@@ -85,30 +84,19 @@
               *ngTemplateOutlet="column.template; context: { $implicit: element }"
             ></ng-container>
           } @else if (column.type === 'image') {
-            <span>
-              <img
-                [src]="value"
-                alt="image"
-                style="
-                  width: 75px;
-                  height: 75px;
-                  object-fit: cover;
-                  border-radius: 50%;
-                  margin-top: 15px;
-                  margin-bottom: 15px;
-                "
-              />
-            </span>
+            <img
+              [src]="value"
+              alt="image"
+              class="w-[75px] h-[75px] object-cover rounded-full my-4"
+            />
           } @else {
-            <span>
-              @if (column.type === 'date') {
-                {{ value ? (value | date) : 'Not set' }}
-              } @else if (column.type === 'currency') {
-                {{ value ? (value | currency: column.currencySymbol || '$') : 'Not set' }}
-              } @else {
-                {{ value || 'Not set' }}
-              }
-            </span>
+            @if (column.type === 'date') {
+              {{ value ? (value | date) : 'Not set' }}
+            } @else if (column.type === 'currency') {
+              {{ value ? (value | currency: column.currencySymbol ?? '$') : 'Not set' }}
+            } @else {
+              {{ value ?? 'Not set' }}
+            }
           }
         </td>
       }
@@ -126,7 +114,7 @@
     </tr>
   </ng-template>
 
-  <!-- expanded row -->
+  <!-- EXPANDED ROW -->
   @if (expandContent()) {
     <ng-template #expandedrow let-element>
       <tr>
@@ -140,7 +128,7 @@
     </ng-template>
   }
 
-  <!-- empty message -->
+  <!-- EMPTY -->
   <ng-template #emptymessage>
     <tr>
       <td [colSpan]="columns().length + (actions() ? 1 : 0) + (expandContent() ? 1 : 0)">

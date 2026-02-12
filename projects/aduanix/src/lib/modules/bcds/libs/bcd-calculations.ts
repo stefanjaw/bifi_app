@@ -5,6 +5,7 @@ import {
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
 } from '../interfaces/bcd-form';
+import { bcdChargeCode } from '../../bcd-charge-codes';
 
 /**
  * Calculates the amount of a tax entry based on the given form values.
@@ -53,7 +54,10 @@ export function calculateCharge(charge: GroupReturn<bcdFormChargeModel>, baseAmo
  * It calculates the base value, charges, BDA value, taxes and total due.
  * @param record - The BCD record object containing the lines subtotal, exchange rate, charges, taxes and total due values.
  */
-export function calculateRecord(record: GroupReturn<bcdFormRecordModel>) {
+export function calculateRecord(
+  record: GroupReturn<bcdFormRecordModel>,
+  customCharges: Record<string, bcdChargeCode>
+) {
   // Calculate base
   const base = Number(
     ((record.value.linesSubtotal || 0) * (record.value.exchangeRate || 0)).toFixed(2)
@@ -65,23 +69,45 @@ export function calculateRecord(record: GroupReturn<bcdFormRecordModel>) {
   );
 
   // total charges
-  const chargeAmount = record.value.charges?.reduce((acc, c) => acc + (c.amount ?? 0), 0);
+  const chargeAmount = Number(
+    record.value.charges
+      ?.filter(c => customCharges[c.code || '']?.impact?.customsValue)
+      .reduce((acc, c) => acc + (c.amount ?? 0), 0)
+      .toFixed(2)
+  );
 
   // BDA value
   record.controls.bdaValue.setValue(base + (chargeAmount ?? 0), { emitEvent: false });
 
   // calculate taxes
-  record.controls.tax?.controls.forEach(t =>
-    t.controls.amount.setValue(calculateTax(t), { emitEvent: false })
-  );
+  record.controls.tax?.controls.forEach(t => {
+    // If value for tax is null, set it to the BDA value
+    t.controls.valueForTax.setValue(
+      t.value.valueForTax ? t.value.valueForTax : (record.value.bdaValue ?? 0),
+      { emitEvent: false }
+    );
+
+    // Recalculate
+    t.controls.amount.setValue(calculateTax(t), { emitEvent: false });
+  });
 
   // total taxes
   const taxAmount = record.value.tax?.reduce((acc, t) => acc + (t.amount ?? 0), 0);
 
+  const chargePayableAmount = Number(
+    record.value.charges
+      ?.filter(c => customCharges[c.code || '']?.impact?.payable)
+      .reduce((acc, c) => acc + (c.amount ?? 0), 0)
+      .toFixed(2)
+  );
+
   // calculate total due
-  record.controls.totalDue.setValue((record.value.bdaValue ?? 0) + (taxAmount ?? 0), {
-    emitEvent: false,
-  });
+  record.controls.totalDue.setValue(
+    Number(((taxAmount ?? 0) + (chargePayableAmount ?? 0)).toFixed(2)),
+    {
+      emitEvent: false,
+    }
+  );
 }
 
 /**
@@ -89,7 +115,10 @@ export function calculateRecord(record: GroupReturn<bcdFormRecordModel>) {
  * It calculates the records count, invoice amount, charges, payable amount.
  * @param bcd - The BCD form object containing the records, charges, invoice amount, payable amount values.
  */
-export function calculateBCD(bcd: GroupReturn<bcdFormModel>) {
+export function calculateBCD(
+  bcd: GroupReturn<bcdFormModel>,
+  customCharges: Record<string, bcdChargeCode>
+) {
   const records = bcd.controls.records?.controls || [];
   const charges = bcd.controls.charges?.controls || [];
 
@@ -97,10 +126,10 @@ export function calculateBCD(bcd: GroupReturn<bcdFormModel>) {
   bcd.controls.recordsCount.setValue(records.length, { emitEvent: false });
 
   // calculate each record
-  records.forEach(r => calculateRecord(r as any));
+  records.forEach(r => calculateRecord(r as any, customCharges));
 
   // calculate invoice amount
-  const invoiceAmount = records.reduce((acc, r) => acc + (r.value.totalDue ?? 0), 0);
+  const invoiceAmount = records.reduce((acc, r) => acc + (r.value.bdaValue ?? 0), 0);
   bcd.controls.invoiceAmount.setValue(invoiceAmount, { emitEvent: false });
 
   // calculate charges
@@ -109,9 +138,20 @@ export function calculateBCD(bcd: GroupReturn<bcdFormModel>) {
   );
 
   // total charges
-  const chargeAmount = charges.reduce((acc, c) => acc + (c.value.amount ?? 0), 0);
-  const recordsDueAmount = records.reduce((acc, r) => acc + (r.value.totalDue ?? 0), 0);
+  const chargeAmount = Number(
+    charges
+      .filter(c => customCharges[c.value.code || '']?.impact?.payable)
+      .reduce((acc, c) => acc + (c.value.amount ?? 0), 0)
+      .toFixed(2)
+  );
+
+  // total due
+  const recordsDueAmount = Number(
+    records.reduce((acc, r) => acc + (r.value.totalDue ?? 0), 0).toFixed(2)
+  );
 
   // calculate payable amount
-  bcd.controls.payableAmount.setValue(chargeAmount + recordsDueAmount, { emitEvent: false });
+  bcd.controls.payableAmount.setValue(Number((chargeAmount + recordsDueAmount).toFixed(2)), {
+    emitEvent: false,
+  });
 }

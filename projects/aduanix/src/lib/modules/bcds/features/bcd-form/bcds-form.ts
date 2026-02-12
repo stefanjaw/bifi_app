@@ -112,6 +112,13 @@ export class BcdsForm {
    * @param {shipping} The shipping object to load the BCD form from.
    */
   loadBCDByShipping(shipping: shipping) {
+    const lastBCD = shipping.bcds.at(-1);
+
+    if (lastBCD) {
+      this.loadBCDByBCD({...lastBCD, shippingId: shipping});
+      return;
+    }
+
     const allLines = shipping.invoices.flatMap(inv => inv.pdf.extractedData.lines);
     const merchandiseLines = allLines.filter(line => this.isMerchandiseLine(line));
     const groupByTariff = this.groupByTariff(merchandiseLines);

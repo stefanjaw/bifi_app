@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { BcdForm } from '../../../services/bcd-form';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -49,7 +49,11 @@ export class BcdsGeneralForm {
   bcdTypeOptions = this.formManager.bcdTypeOptions;
   bcdTransportOptions = this.formManager.bcdTransportOptions;
   bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
-  bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
   bcdPortOptions = this.formManager.bcdPortOptions;
   valuationMethodTypeOptions = valuationMethodTypeOptions;
+  private bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
+
+  chargeCodeOptions = computed(() =>
+    this.bcdChargeCodeOptions().filter(c => c.levels.includes('header'))
+  );
 }

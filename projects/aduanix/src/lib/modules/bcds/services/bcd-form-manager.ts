@@ -15,7 +15,7 @@ import { CrudBCDTransportOption } from '../../bcd-transport-options';
 import { CrudBCDType } from '../../bcd-types';
 import { CrudBCDCpc } from '../../bcd-cpcs';
 import { FilterManager } from '@avalantec/base-app/resource';
-import { CrudBCDChargeCode } from '../../bcd-charge-codes';
+import { bcdChargeCode, CrudBCDChargeCode } from '../../bcd-charge-codes';
 import { CrudBCDPort } from '../../bcd-ports';
 import { calculateBCD } from '../libs/bcd-calculations';
 
@@ -108,7 +108,12 @@ export class BCDFormManager {
 
       // update records count control
       untracked(() => {
-        calculateBCD(this.form.form);
+        const record: Record<string, bcdChargeCode> = this.bcdChargeCodeOptions().reduce(
+          (acc, c) => ({ ...acc, [c.code]: c }),
+          {}
+        );
+
+        calculateBCD(this.form.form, record);
       });
     });
   }
