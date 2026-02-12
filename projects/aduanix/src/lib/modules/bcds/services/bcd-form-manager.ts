@@ -378,9 +378,10 @@ export class BCDFormManager {
   }
 
   /**
-   * Adds a tax entry to the array of tax entries in the record at the given index.
+   * Adds a new tax entry to the array of tax entries in the record at the given index.
+   * This method creates a new form using `createTaxEntryForm` and adds it to the array of tax entries.
+   * The new form is added to the end of the array.
    * @param recordIndex The index of the record to which to add the tax entry.
-   * @param value The tax entry to add.
    */
   addTax(recordIndex: number) {
     const form = this.createTaxEntryForm();
