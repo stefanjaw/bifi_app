@@ -28,8 +28,6 @@ export class ResourceManager<T> {
   private destroy$ = inject(DestroyRef);
   private _getInactive = signal(false);
 
-  private _activeAllRecords = signal(false);
-
   toggleInactiveRecords = () => this._getInactive.update(value => !value);
 
   /**
@@ -39,22 +37,11 @@ export class ResourceManager<T> {
   constructor() {
     effect(() => {
       const filters = this.filterManager.filters();
-      const paginationOptions = this.paginationManager;
 
       if (filters.length > 0) {
         this._searchParams.set(this.filterManager.getFilterObject());
       } else {
         this._searchParams.set({});
-      }
-
-      if (!this._activeAllRecords()) {
-        this.paginationManager.resetPaginationOptions();
-      }
-    });
-
-    effect(() => {
-      if (this._activeAllRecords()) {
-        this.paginationManager.loadAll();
       }
     });
 
@@ -74,9 +61,6 @@ export class ResourceManager<T> {
     getInactive: this._getInactive,
   });
 
-  get activeAllRecords() {
-    return this._activeAllRecords;
-  }
   get searchParams() {
     return this._searchParams;
   }

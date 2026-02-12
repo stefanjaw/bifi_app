@@ -5,7 +5,7 @@ import { Tag } from 'primeng/tag';
 export const shippingColumns: tableColumn<shipping>[] = [
   {
     field: 'name',
-    title: 'Shipping',
+    title: 'Shipment',
     type: 'text',
     sortable: true,
   },

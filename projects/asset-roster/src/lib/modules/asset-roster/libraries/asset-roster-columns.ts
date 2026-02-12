@@ -4,8 +4,7 @@ import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tag } from 'primeng/tag';
 import { Avatar } from 'primeng/avatar';
-import { Signal, signal } from '@angular/core';
-
+import { Signal } from '@angular/core';
 
 /*************  ✨ Windsurf Command ⭐  *************/
 /**
@@ -31,7 +30,7 @@ export const assetRosterColumns = (
   assetPictures: Signal<Record<string, string>>
 ): tableColumn<assetRoster>[] => [
   //photo
-{
+  {
     field: 'photo',
     title: 'PHOTO',
     type: 'text',
@@ -47,7 +46,6 @@ export const assetRosterColumns = (
       outputs: {},
     }),
   },
-
 
   {
     field: 'assetTypeIds',
@@ -76,7 +74,7 @@ export const assetRosterColumns = (
   {
     field: 'locationId.name',
     title: 'LOCATION',
-      parseField: (value) => value?.name || 'Not set',
+    parseField: value => value?.name || 'Not set',
 
     type: 'text',
   },

@@ -93,7 +93,11 @@
 
 <!-- table -->
 @if (!isGrid()) {
-  <bifi-app-table-layout [columns]="assetRosterColumns" [data]="assetRosters">
+  <bifi-app-table-layout
+    [columns]="assetRosterColumns"
+    [data]="assetRosters"
+    [infiniteScroll]="true"
+  >
     <ng-template #actions let-element>
       <p-tag
         routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
@@ -123,6 +127,7 @@
                 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg'
               "
               class="w-full h-full object-cover"
+              alt=""
             />
 
             <!-- STATUS -->
@@ -153,8 +158,6 @@
               <span class="text-right truncate">
                 {{ element?.locationId?.address ?? 'Not set' }}
               </span>
-
-
             </div>
           </div>
         </ng-template>

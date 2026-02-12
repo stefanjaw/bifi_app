@@ -5,9 +5,11 @@ import { paginationOptions } from '../interfaces/pagination-options';
   providedIn: 'root',
 })
 export class PaginationManager {
+  readonly PIVOT = 5;
+
   private _paginationOptions = signal<paginationOptions>({
     page: 1,
-    limit: 5,
+    limit: this.PIVOT,
     paginate: true,
   });
 
@@ -38,14 +40,7 @@ export class PaginationManager {
   resetPaginationOptions() {
     this._paginationOptions.set({
       page: 1,
-      limit: 5,
-      paginate: true,
-    });
-  }
-  loadAll() {
-    this._paginationOptions.set({
-      page: 1,
-      limit: 999999,
+      limit: this.PIVOT,
       paginate: true,
     });
   }
