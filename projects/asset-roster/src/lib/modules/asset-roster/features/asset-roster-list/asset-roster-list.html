@@ -96,9 +96,18 @@
   <bifi-app-table-layout
     [columns]="assetRosterColumns"
     [data]="assetRosters"
-    [onClickRow]="goToEditAssetRoster"
-    clickRowPermission="asset-rosters/update:view"
-  ></bifi-app-table-layout>
+    [infiniteScroll]="true"
+  >
+    <ng-template #actions let-element>
+      <p-tag
+        routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+        class="cursor-pointer"
+        severity="warn"
+        [value]="'View details'"
+        *bifiAppHasPermission="'asset-rosters/update:view'"
+      ></p-tag>
+    </ng-template>
+  </bifi-app-table-layout>
 
   <!-- grid -->
 } @else {
@@ -118,6 +127,7 @@
                 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg'
               "
               class="w-full h-full object-cover"
+              alt=""
             />
 
             <!-- STATUS -->

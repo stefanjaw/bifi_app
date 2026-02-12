@@ -35,7 +35,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
-import { AssetRosterImageDialog } from '../asset-roster-image-dialog/asset-roster-image-dialog';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
@@ -56,7 +55,7 @@ import { AssetRosterImageDialog } from '../asset-roster-image-dialog/asset-roste
     TooltipModule,
     SelectButtonModule,
     AvatarModule,
-    AssetRosterImageDialog,
+   // AssetRosterImageDialog,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,8 +80,8 @@ export class AssetRosterList {
   isGrid = signal<boolean>(false);
 
   optionsView = [
-    { label: 'List', value: false, icon: 'pi pi-table' },
-    { label: 'Grid', value: true, icon: 'pi pi-th-large' },
+  { label: 'List', value: false, icon: 'pi pi-table' },
+  { label: 'Grid', value: true, icon: 'pi pi-th-large' },
   ];
   //#region Counting of asset roster by status
   private assetRosterStatusFilterManager = inject(AssetRosterStatusFilterManager);
@@ -133,7 +132,7 @@ export class AssetRosterList {
 
   //Picture
   assetPictures = signal<Record<string, string>>({});
-  @ViewChild('imageDialog') imageDialog!: AssetRosterImageDialog;
+  //@ViewChild('imageDialog') imageDialog!: AssetRosterImageDialog;
 
   //#endregion
 
@@ -142,7 +141,8 @@ export class AssetRosterList {
    * If the form was submitted successfully, reload the list of assetRosterss.
    */
   constructor() {
-    this.assetRosterColumns = assetRosterColumns(this.assetPictures);
+      this.assetRosterColumns = assetRosterColumns(this.assetPictures);
+    //  this.resourceManager.activeAllRecords.set(true);
 
     this.assetRosterMaintenanceContext.handleEvents$
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -226,7 +226,4 @@ export class AssetRosterList {
     }
     return this.assetPictures()[asset._id];
   }
-  goToEditAssetRoster = (element: assetRoster) => {
-    this.router.navigate(['../maintenance/', element._id], { relativeTo: this.route });
-  };
 }
