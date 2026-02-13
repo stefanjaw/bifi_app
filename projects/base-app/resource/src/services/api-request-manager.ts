@@ -362,23 +362,27 @@ export class ApiRequestManager<T> {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {
-      if (isFormUploaderFileArray(value))
+      if (value === '' || value === undefined) {
+        continue;
+      }
+
+      if (isFormUploaderFileArray(value)) {
         value.forEach(file => formData.append(`${key}`, file.file));
-      else if (isFormUploaderFile(value)) formData.append(key, value.file);
-      else if (value instanceof File) formData.append(key, value, value.name);
-      else if (typeof value === 'object') formData.append(key, JSON.stringify(value));
-      else if (
+      } else if (isFormUploaderFile(value)) {
+        formData.append(key, value.file);
+      } else if (value instanceof File) {
+        formData.append(key, value, value.name);
+      } else if (typeof value === 'object') {
+        formData.append(key, JSON.stringify(value));
+      } else if (
         (fileFields.includes(key) && Array.isArray(value) && value.length === 0) ||
         value === null
-      )
+      ) {
         formData.append(key, null!);
-      else formData.append(key, value);
+      } else {
+        formData.append(key, value);
+      }
     }
-
-    // console.log('result:');
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
 
     return formData;
   }

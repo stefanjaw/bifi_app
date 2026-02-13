@@ -17,7 +17,7 @@ export interface bcdFormTransportModel {
 }
 
 export interface bcdFormChargeModel {
-  code: string;
+  code?: string;
   percentage?: number;
   amount: number;
 }
@@ -39,7 +39,7 @@ export interface bcdFormTaxEntryModel {
 }
 
 export interface bcdFormAdditionalInformationModel {
-  type: string;
+  type?: string;
   value: string;
 }
 
@@ -63,11 +63,11 @@ export interface bcdFormRecordModel {
 }
 
 export interface bcdFormOGDModel {
-  paymentCode?: string;
-  costCode: string;
-  objectCode: string;
-  subsidiaryCode: string;
-  explanation?: string;
+  paymentCode: string;
+  costCode?: string;
+  objectCode?: string;
+  subsidiaryCode?: string;
+  explanation: string;
 }
 
 export interface bcdFormModel {

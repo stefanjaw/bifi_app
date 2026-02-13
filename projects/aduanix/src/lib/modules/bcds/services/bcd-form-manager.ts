@@ -128,7 +128,12 @@ export class BCDFormManager {
    */
   addHouseBOLAWB(value: string = '') {
     const houseBOLAWBArray = this.form.form.controls.houseBOLAWB;
-    houseBOLAWBArray.push(new FormControl<string>(value, { nonNullable: true }));
+    houseBOLAWBArray.push(
+      new FormControl<string>(value, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(20)],
+      })
+    );
   }
 
   /**
@@ -151,7 +156,12 @@ export class BCDFormManager {
    */
   addContainer(value: string = '') {
     const containersArray = this.form.form.controls.containerIds;
-    containersArray.push(new FormControl<string>(value, { nonNullable: true }));
+    containersArray.push(
+      new FormControl<string>(value, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(20)],
+      })
+    );
   }
 
   /**
@@ -176,9 +186,9 @@ export class BCDFormManager {
    */
   createChargeForm() {
     return this.form.fb.group<bcdFormChargeModel>({
-      code: ['', [Validators.required]],
+      code: [''],
       percentage: [0, [Validators.min(0), Validators.max(100)]],
-      amount: [0, [Validators.min(0)]],
+      amount: [0, [Validators.required, Validators.min(0)]],
     });
   }
 
@@ -195,6 +205,8 @@ export class BCDFormManager {
       recordIndex !== undefined
         ? this.form.form.controls.records.at(recordIndex).controls.charges
         : this.form.form.controls.charges;
+
+    if (recordIndex) form.controls.code.setValidators([Validators.required]);
 
     chargesArray.push(form);
   }
@@ -229,7 +241,7 @@ export class BCDFormManager {
    */
   createAdditionalInformationForm() {
     return this.form.fb.group<bcdFormAdditionalInformationModel>({
-      type: ['', [Validators.required]],
+      type: [''],
       value: ['', [Validators.required, Validators.maxLength(70)]],
     });
   }
@@ -280,7 +292,12 @@ export class BCDFormManager {
    */
   addPaymentAccount(value: string = '') {
     const paymentAccountArray = this.form.form.controls.paymentAccounts;
-    paymentAccountArray.push(new FormControl<string>(value, { nonNullable: true }));
+    paymentAccountArray.push(
+      new FormControl<string>(value, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.maxLength(20)],
+      })
+    );
   }
 
   /**
@@ -305,7 +322,7 @@ export class BCDFormManager {
       number: [0, [Validators.required, Validators.min(0)]],
       cpc: ['', [Validators.required]],
       origin: ['', [Validators.required]],
-      tariff: ['', [Validators.required]],
+      tariff: ['', [Validators.required, Validators.maxLength(7)]],
       description: ['', [Validators.required, Validators.maxLength(200)]],
       quantity: [0, [Validators.required, Validators.min(0)]],
       quantityTwo: [0, [Validators.min(0)]],
@@ -313,29 +330,29 @@ export class BCDFormManager {
       currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       linesSubtotal: [0, [Validators.required, Validators.min(0)]],
       exchangeRate: [0, [Validators.required, Validators.min(0)]],
-      bdaValue: [0, [Validators.min(0)]],
-      totalDue: [0, [Validators.min(0)]],
+      bdaValue: [0, [Validators.required, Validators.min(0)]],
+      totalDue: [0, [Validators.required, Validators.min(0)]],
       charges: {
         template: {
-          code: ['212', [Validators.required]],
+          code: ['', [Validators.required]],
           percentage: [0, [Validators.min(0), Validators.max(100)]],
-          amount: [0, [Validators.min(0)]],
+          amount: [0, [Validators.required, Validators.min(0)]],
         },
         formArrayElements: [],
       },
       tax: {
         template: {
-          type: ['CUD', [Validators.required]],
-          taxId: ['F', [Validators.required]],
+          type: ['', [Validators.required]],
+          taxId: ['', [Validators.required]],
           valueForTax: [0, [Validators.required, Validators.min(0)]],
           ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-          amount: [0, [Validators.min(0)]],
+          amount: [0, [Validators.required, Validators.min(0)]],
         },
         formArrayElements: [],
       },
       additionalInformation: {
         template: {
-          type: ['', [Validators.required]],
+          type: [''],
           value: ['', [Validators.required, Validators.maxLength(70)]],
         },
         formArrayElements: [],
@@ -378,7 +395,7 @@ export class BCDFormManager {
       taxId: ['', [Validators.required]],
       valueForTax: [0, [Validators.required, Validators.min(0)]],
       ratePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-      amount: [0, [Validators.min(0)]],
+      amount: [0, [Validators.required, Validators.min(0)]],
     });
   }
 
