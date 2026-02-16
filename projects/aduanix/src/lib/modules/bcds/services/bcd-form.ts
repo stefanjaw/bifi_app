@@ -33,7 +33,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       },
       directShipmentCountry: ['', [Validators.required]],
       originalShipmentCountry: ['', [Validators.required]],
-      warehouseId: ['', [Validators.minLength(4), Validators.maxLength(4)]],
+      warehouseId: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
       charges: {
         template: {
           code: [''],

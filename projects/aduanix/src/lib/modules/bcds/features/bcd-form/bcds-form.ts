@@ -300,11 +300,6 @@ export class BcdsForm {
       return;
     }
 
-    if (payload.records?.some(r => !r?.charges || r?.charges?.length === 0)) {
-      this.toastManager.showError('Charges are required for each record');
-      return;
-    }
-
     if (!payload.containerIds || payload.containerIds.length === 0) {
       this.toastManager.showError('Container IDs are required');
       return;
