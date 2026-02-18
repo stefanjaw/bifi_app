@@ -168,7 +168,7 @@
         </bifi-app-form-field>
 
         <!-- HOUSE OF LANDING -->
-        <div formArrayName="houseBOLAWB">
+        <div formArrayName="houseBOLAWBs">
           <bifi-app-form-field class="h-full flex flex-col">
             <div class="flex items-center gap-2">
               <bifi-app-form-label>b. House Bill of Lading / AWB No.</bifi-app-form-label>
@@ -182,7 +182,7 @@
               ></p-button>
             </div>
             <div class="flex-1 flex flex-col gap-2">
-              @for (control of form.controls.houseBOLAWB.controls; track $index) {
+              @for (control of form.controls.houseBOLAWBs.controls; track $index) {
                 <div class="flex items-center gap-2">
                   <input pInputText [formControl]="control" class="w-40 text-sm" />
                   <p-button

@@ -1,4 +1,4 @@
-export type ValuationMethodType = '001' | '002';
+export type ValuationMethodType = '01' | '02';
 
 export type EBCDType =
   | 'SENT_CSV'

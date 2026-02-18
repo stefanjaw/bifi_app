@@ -115,7 +115,7 @@ export class BcdsForm {
     const lastBCD = shipping.bcds.at(-1);
 
     if (lastBCD) {
-      this.loadBCDByBCD({...lastBCD, shippingId: shipping});
+      this.loadBCDByBCD({ ...lastBCD, shippingId: shipping });
       return;
     }
 
@@ -165,6 +165,7 @@ export class BcdsForm {
         contactId: bcd.importer.contactId?._id,
       },
       transport: {
+        type: bcd.transport?.aircraftOrVessel?.type,
         aircraftOrVessel: bcd.transport?.aircraftOrVessel?._id,
         flightOrVoyage: bcd.transport?.flightOrVoyage,
         port: bcd.transport?.port?._id,
@@ -172,14 +173,14 @@ export class BcdsForm {
       },
       manifest: bcd.manifest,
       masterBOLAWB: bcd.masterBOLAWB,
-      houseBOLAWB: bcd.houseBOLAWB || [],
+      houseBOLAWBs: bcd.houseBOLAWBs || [],
       directShipmentCountry: bcd.directShipmentCountry?._id,
       originalShipmentCountry: bcd.originalShipmentCountry?._id,
       warehouseId: bcd.warehouseId,
       charges:
         bcd.charges?.map(c => ({
           code: c.code?._id,
-          percentage: c.percentage || 0,
+          percentage: c.percentage,
           amount: c.amount,
         })) || [],
       containerIds: bcd.containerIds,
@@ -221,7 +222,7 @@ export class BcdsForm {
           charges:
             r.charges?.map(c => ({
               code: c.code?._id,
-              percentage: c.percentage || 0,
+              percentage: c.percentage,
               amount: c.amount,
             })) || [],
           tax:
@@ -293,6 +294,7 @@ export class BcdsForm {
    */
   async handleSubmit(values: FormValueState<bcdFormModel>) {
     const payload = values.rawValue;
+    console.log('🚀 ~ BcdsForm ~ handleSubmit ~ payload:', payload);
     delete (payload as any).transport.type;
 
     if (!payload.charges || payload.charges.length === 0) {

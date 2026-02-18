@@ -27,13 +27,13 @@ export class BcdForm extends BaseForm<bcdFormModel> {
       },
       manifest: ['', [Validators.required, Validators.maxLength(20)]],
       masterBOLAWB: ['', [Validators.required, Validators.maxLength(20)]],
-      houseBOLAWB: {
+      houseBOLAWBs: {
         template: ['', [Validators.required, Validators.maxLength(20)]],
         formArrayElements: [],
       },
       directShipmentCountry: ['', [Validators.required]],
       originalShipmentCountry: ['', [Validators.required]],
-      warehouseId: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+      warehouseId: ['', [Validators.minLength(4), Validators.maxLength(4)]],
       charges: {
         template: {
           code: [''],
@@ -47,8 +47,8 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         formArrayElements: [],
       },
       valuationMethod: [
-        '001',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
+        '01',
+        [Validators.required, Validators.minLength(2), Validators.maxLength(3)],
       ],
       packagesCount: [0, [Validators.required, Validators.min(0)]],
       recordsCount: [0, [Validators.required, Validators.min(0)]],
@@ -62,11 +62,11 @@ export class BcdForm extends BaseForm<bcdFormModel> {
         formArrayElements: [],
       },
       ogd: {
-        paymentCode: ['', [Validators.required, Validators.maxLength(3)]],
+        paymentCode: ['', [Validators.maxLength(3)]],
         costCode: ['', [Validators.minLength(5), Validators.maxLength(5)]],
         objectCode: ['', [Validators.minLength(4), Validators.maxLength(4)]],
         subsidiaryCode: ['', [Validators.minLength(5), Validators.maxLength(5)]],
-        explanation: ['', [Validators.required, Validators.maxLength(30)]],
+        explanation: ['', [Validators.maxLength(30)]],
       },
       paymentAccounts: {
         template: ['', [Validators.required, Validators.maxLength(20)]],
@@ -85,7 +85,7 @@ export class BcdForm extends BaseForm<bcdFormModel> {
           number: [0, [Validators.required, Validators.min(0)]],
           cpc: ['', [Validators.required]],
           origin: ['', [Validators.required]],
-          tariff: ['', [Validators.required, Validators.maxLength(7)]],
+          tariff: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7)]],
           description: ['', [Validators.required, Validators.maxLength(200)]],
           quantity: [0, [Validators.required, Validators.min(0)]],
           quantityTwo: [0, [Validators.min(0)]],

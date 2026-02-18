@@ -63,11 +63,11 @@ export interface bcdFormRecordModel {
 }
 
 export interface bcdFormOGDModel {
-  paymentCode: string;
+  paymentCode?: string;
   costCode?: string;
   objectCode?: string;
   subsidiaryCode?: string;
-  explanation: string;
+  explanation?: string;
 }
 
 export interface bcdFormModel {
@@ -78,7 +78,7 @@ export interface bcdFormModel {
   transport: bcdFormTransportModel;
   manifest: string;
   masterBOLAWB: string;
-  houseBOLAWB?: string[]; // Array of strings
+  houseBOLAWBs?: string[]; // Array of strings
   directShipmentCountry: string;
   originalShipmentCountry: string;
   warehouseId?: string;

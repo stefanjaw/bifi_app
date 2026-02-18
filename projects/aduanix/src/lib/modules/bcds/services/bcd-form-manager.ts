@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { computed, effect, inject, Injectable, untracked } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, untracked } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   bcdFormAdditionalInformationModel,
@@ -7,7 +7,7 @@ import {
   bcdFormRecordModel,
   bcdFormTaxEntryModel,
 } from '../interfaces/bcd-form';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { BcdForm } from './bcd-form';
 import { CrudBCDAdditionalInformationType } from '../../bcd-additional-information-types';
 import { CrudBCDTaxId, CrudBCDTaxType } from '../../bcd-taxes';
@@ -34,6 +34,7 @@ export class BCDFormManager {
   private crudBCDCpc = inject(CrudBCDCpc);
   private crudBCDChargeCode = inject(CrudBCDChargeCode);
   private crudBCDPort = inject(CrudBCDPort);
+  private destroy$ = inject(DestroyRef);
 
   // states
   currentBCDType = toSignal(this.form.form.controls.type.valueChanges, {
@@ -127,7 +128,8 @@ export class BCDFormManager {
    * @param {string} [value=''] The initial value of the new control.
    */
   addHouseBOLAWB(value: string = '') {
-    const houseBOLAWBArray = this.form.form.controls.houseBOLAWB;
+    const houseBOLAWBArray = this.form.form.controls.houseBOLAWBs;
+
     houseBOLAWBArray.push(
       new FormControl<string>(value, {
         nonNullable: true,
@@ -141,7 +143,7 @@ export class BCDFormManager {
    * @param {number} index The index of the control to remove.
    */
   removeHouseBOLAWB(index: number) {
-    const houseBOLAWBArray = this.form.form.controls.houseBOLAWB;
+    const houseBOLAWBArray = this.form.form.controls.houseBOLAWBs;
     houseBOLAWBArray.removeAt(index);
   }
   //#endregion
@@ -187,7 +189,7 @@ export class BCDFormManager {
   createChargeForm() {
     return this.form.fb.group<bcdFormChargeModel>({
       code: [''],
-      percentage: [0, [Validators.min(0), Validators.max(100)]],
+      percentage: [undefined, [Validators.min(0), Validators.max(100)]],
       amount: [0, [Validators.required, Validators.min(0)]],
     });
   }
@@ -322,7 +324,7 @@ export class BCDFormManager {
       number: [0, [Validators.required, Validators.min(0)]],
       cpc: ['', [Validators.required]],
       origin: ['', [Validators.required]],
-      tariff: ['', [Validators.required, Validators.maxLength(7)]],
+      tariff: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7)]],
       description: ['', [Validators.required, Validators.maxLength(200)]],
       quantity: [0, [Validators.required, Validators.min(0)]],
       quantityTwo: [0, [Validators.min(0)]],
@@ -403,11 +405,24 @@ export class BCDFormManager {
    * Adds a new tax entry to the array of tax entries in the record at the given index.
    * This method creates a new form using `createTaxEntryForm` and adds it to the array of tax entries.
    * The new form is added to the end of the array.
+   * If the tax type is WHA and the port has a wharfage rate, the rate is set to the wharfage rate.
    * @param recordIndex The index of the record to which to add the tax entry.
    */
   addTax(recordIndex: number) {
     const form = this.createTaxEntryForm();
     const taxArray = this.form.form.controls.records.at(recordIndex).controls.tax;
+
+    form.controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(value => {
+      const type = this.bcdTaxTypeOptions().find(t => t._id === value);
+      const port = this.bcdPortOptions().find(
+        p => p._id === this.form.form.controls.transport.value.port
+      );
+
+      if (type && type.impact?.wharfageRate && port && typeof port.wharfageRate === 'number') {
+        form.controls.ratePercentage.setValue(port.wharfageRate * 100);
+      }
+    });
+
     taxArray.push(form);
   }
 

@@ -3,5 +3,8 @@ export interface bcdTaxType {
   code: string;
   name: string;
   description?: string;
+  impact?: {
+    wharfageRate: boolean;
+  };
   active: boolean;
 }

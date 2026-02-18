@@ -362,10 +362,6 @@ export class ApiRequestManager<T> {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {
-      if (value === '' || value === undefined) {
-        continue;
-      }
-
       if (isFormUploaderFileArray(value)) {
         value.forEach(file => formData.append(`${key}`, file.file));
       } else if (isFormUploaderFile(value)) {
