@@ -1,11 +1,6 @@
 <section class="flex flex-col gap-6">
   <bifi-app-status-banner-section [assetRoster]="assetRoster()" class="w-full" />
-  <bifi-app-form-section
-    [formGroup]="formService.form"
-    title="General Information"
-    id="general-info"
-    [ordinal]="1"
-  >
+  <bifi-app-form-section [formGroup]="formService.form" title="General Information" id="general-info" [ordinal]="1">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
@@ -13,13 +8,7 @@
           <!-- Serial Number -->
           <bifi-app-form-field previewVariant="tag">
             <bifi-app-form-label>Serial Number:</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="serialNumber"
-              type="text"
-              class="w-full"
-              placeholder="SN00X"
-            />
+            <input pInputText formControlName="serialNumber" type="text" class="w-full" placeholder="SN00X" />
 
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -34,14 +23,8 @@
                 </ng-template>
               </bifi-app-form-preview>
 
-              <p-select
-                formControlName="assetTypeIds"
-                [options]="assetTypes()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a type"
-              ></p-select>
+              <p-select formControlName="assetTypeIds" [options]="assetTypes()" optionLabel="name" optionValue="_id"
+                [filter]="true" placeholder="Select a type"></p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
@@ -56,14 +39,8 @@
                 </ng-template>
               </bifi-app-form-preview>
 
-              <p-select
-                formControlName="makeIds"
-                [options]="contacts()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a maker"
-              ></p-select>
+              <p-select formControlName="makeIds" [options]="contacts()" optionLabel="name" optionValue="_id"
+                [filter]="true" placeholder="Select a maker"></p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
@@ -72,12 +49,7 @@
           <div>
             <bifi-app-form-field>
               <bifi-app-form-label>Model</bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="productModel"
-                type="text"
-                placeholder="e.g, Optima XR220amx"
-              />
+              <input pInputText formControlName="productModel" type="text" placeholder="e.g, Optima XR220amx" />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
@@ -86,10 +58,7 @@
           <div>
             <bifi-app-form-field previewVariant="italic">
               <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
-              <p-select
-                formControlName="condition"
-                [options]="['excellent', 'good', 'fair', 'poor']"
-              ></p-select>
+              <p-select formControlName="condition" [options]="['excellent', 'good', 'fair', 'poor']"></p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
@@ -104,54 +73,29 @@
                   {{ assetRoster()?.vendorIds?.[0]?.name || fallback }}
                 </ng-template>
               </bifi-app-form-preview>
-              <p-select
-                formControlName="vendorIds"
-                [options]="vendorsOptions()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a vendor"
-              >
+              <p-select formControlName="vendorIds" [options]="vendorsOptions()" optionLabel="name" optionValue="_id"
+                [filter]="true" placeholder="Select a vendor">
                 <ng-template #footer>
-                  <button
-                    type="button"
+                  <button type="button"
                     class=" w-full p-3 cursor-pointer border-top-1 surface-border  hover:bg-surface-100 transition-colors"
-                    (click)="toggleVendorForm()"
-                  >
+                    (click)="toggleVendorForm()">
                     Other vendor +
                   </button>
                   @if (showVendorForm()) {
-                    <div class="flex flex-col gap-3 p-4">
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="text"
-                        placeholder="Name"
-                        [value]="vendorName()"
-                        (input)="vendorName.set($any($event.target).value)"
-                      />
+                  <div class="flex flex-col gap-3 p-4">
+                    <input class="w-full" pInputText type="text" placeholder="Name" [value]="vendorName()"
+                      (input)="vendorName.set($any($event.target).value)" />
 
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="email"
-                        placeholder="Email"
-                        [value]="vendorEmail()"
-                        (input)="vendorEmail.set($any($event.target).value)"
-                      />
+                    <input class="w-full" pInputText type="email" placeholder="Email" [value]="vendorEmail()"
+                      (input)="vendorEmail.set($any($event.target).value)" />
 
-                      <p-button
-                        type="button"
-                        size="small"
-                        variant="text"
-                        icon="pi pi-plus"
-                        (click)="handleVendorCreation()"
-                        [disabled]="!vendorName().trim() || !vendorEmail().trim()"
-                      ></p-button>
-                    </div>
+                    <p-button type="button" size="small" variant="text" icon="pi pi-plus"
+                      (click)="handleVendorCreation()"
+                      [disabled]="!vendorName().trim() || !vendorEmail().trim()"></p-button>
+                  </div>
                   }
-                  
-                  
+
+
                 </ng-template>
               </p-select>
               <bifi-app-form-error></bifi-app-form-error>
@@ -169,71 +113,30 @@
                 </ng-template>
               </bifi-app-form-preview>
 
-              <p-select
-                formControlName="locationId"
-                [options]="roomOptions()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a location"
-              >
-                            <ng-template #footer>
-                  <button
-                    type="button"
+              <p-select formControlName="locationId" [options]="roomOptions()" optionLabel="name" optionValue="_id"
+                [filter]="true" placeholder="Select a location">
+                <ng-template #footer>
+                  <button type="button"
                     class=" w-full p-3 cursor-pointer border-top-1 surface-border  hover:bg-surface-100 transition-colors"
-                    (click)="toggleRoomForm()"
-                  >
+                    (click)="toggleRoomForm()">
                     Other location +
                   </button>
                   @if (showRoomForm()) {
-                    <div class="flex flex-col gap-3 p-4">
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="text"
-                        placeholder="Name"
-                        [value]="roomName()"
-                        (input)="roomName.set($any($event.target).value)"
-                      />
+                  <div class="flex flex-col gap-3 p-4">
+                    <input class="w-full" pInputText type="text" placeholder="Name" [value]="roomName()"
+                      (input)="roomName.set($any($event.target).value)" />
 
-              <p-select
-                formControlName="facilityId"
-                [options]="facilityOptions()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a facility"
-              ></p-select>
+                    <p-select formControlName="facilityId" [options]="facilityOptions()" optionLabel="name"
+                      optionValue="_id" [filter]="true" placeholder="Select a facility"></p-select>
 
-                      <p-button
-                        type="button"
-                        size="small"
-                        variant="text"
-                        icon="pi pi-plus"
-                        (click)="handleRoomCreation()"
-                        [disabled]="!roomName().trim() "
-                      ></p-button>
-                    </div>
+                    <p-button type="button" size="small" variant="text" icon="pi pi-plus" (click)="handleRoomCreation()"
+                      [disabled]="!roomName().trim() "></p-button>
+                  </div>
                   }
-                  
-                  
-                </ng-template>
-            </p-select>
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          </div>
 
-          <!-- Remarks -->
-          <div class="md:col-span-2">
-            <bifi-app-form-field previewVariant="italic">
-              <bifi-app-form-label>Remarks (Optional)</bifi-app-form-label>
-              <textarea
-                pInputTextarea
-                formControlName="remarks"
-                rows="4"
-                placeholder="Enter any additional remarks or notes about the asset..."
-                class="w-full"
-              ></textarea>
+
+                </ng-template>
+              </p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
@@ -242,43 +145,24 @@
 
       <!-- Right Column - Asset Photo -->
       <div class="lg:col-span-1">
-        <p-card
-          header="Asset Photo"
-          class="h-full bg-surface-50! border border-surface-300 rounded-md!"
-        >
+        <p-card header="Asset Photo" class="h-full bg-surface-50! border border-surface-300 rounded-md!">
           <div class="rounded-lg p-8 text-center">
             @if (isEditMode()) {
-              <!-- <p-button
-                label="Choose File"
-                icon="pi pi-upload"
-                severity="info"
-                [outlined]="true"
-                type="button"
-              />
-              <div class="text-xs text-gray-500 mt-2">No file chosen</div>
-              <input type="file" hidden #fileInput /> -->
 
-              <bifi-app-form-uploader formArrayName="photo">
-                <p-fileupload
-                  showUploadButton="false"
-                  showCancelButton="false"
-                  name="images"
-                  [multiple]="false"
-                  accept="image/*"
-                  maxFileSize="100000000"
-                  mode="advanced"
-                >
-                  <ng-template #empty>
-                    <div>Drag and drop files to here to upload.</div>
-                  </ng-template>
-                </p-fileupload>
-              </bifi-app-form-uploader>
+            <bifi-app-form-uploader formArrayName="photo">
+              <p-fileupload showUploadButton="false" showCancelButton="false" name="images" [multiple]="false"
+                accept="image/*" maxFileSize="100000000" mode="advanced">
+                <ng-template #empty>
+                  <div>Drag and drop files to here to upload.</div>
+                </ng-template>
+              </p-fileupload>
+            </bifi-app-form-uploader>
             } @else {
-              @if (uploadedFile(); as file) {
-                <img [src]="file.url" alt="Asset photo" class="mx-auto" />
-              } @else {
-                <div class="text-gray-500 mb-4">No photo</div>
-              }
+            @if (uploadedFile(); as file) {
+            <img [src]="file.url" alt="Asset photo" class="mx-auto" />
+            } @else {
+            <div class="text-gray-500 mb-4">No photo</div>
+            }
             }
           </div>
         </p-card>

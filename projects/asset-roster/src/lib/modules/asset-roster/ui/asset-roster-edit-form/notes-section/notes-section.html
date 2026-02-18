@@ -1,0 +1,40 @@
+<bifi-app-form-section title="Equipment Notes" id="notes" [ordinal]="2">
+
+
+    <form [formGroup]="form" class="flex flex-col gap-4">
+
+        <!-- Input area -->
+        @if(isEditMode()) {
+
+        <div class="flex flex-col gap-2">
+            <bifi-app-form-field>
+                <bifi-app-form-label>Add Note</bifi-app-form-label>
+                <textarea pInputTextarea [(ngModel)]="remarkTextModel" [ngModelOptions]="{standalone:true}" rows="3"
+                    placeholder="Enter a note..." class="w-full"></textarea>
+                <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <div class="flex justify-end">
+                <p-button type="button" icon="pi pi-plus" label="Add Note" severity="secondary"
+                    (click)="formService.addRemark(remarkTextModel());remarkTextModel.set('')"></p-button>
+            </div>
+
+        </div>
+        }
+
+
+        <!-- Notes list inside p-message -->
+        <div formArrayName="remarks">
+            @for (control of notesControl.controls; track $index) {
+            <p-message severity="info" class="w-full mt-2 p-2">
+                <div class="flex justify-between items-start gap-3 w-full">
+                    <span class="text-sm whitespace-pre-line">
+                        {{ control.value }}
+                    </span>
+                </div>
+            </p-message>
+            }
+
+        </div>
+    </form>
+</bifi-app-form-section>

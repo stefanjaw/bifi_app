@@ -93,21 +93,24 @@
 
 <!-- table -->
 @if (!isGrid()) {
+
+  
   <bifi-app-table-layout
     [columns]="assetRosterColumns"
     [data]="assetRosters"
-    [infiniteScroll]="true"
-  >
-    <ng-template #actions let-element>
+    [onClickRow]="goToEditAssetRoster"
+    clickRowPermission="asset-rosters/update:view"
+  ></bifi-app-table-layout>
+
+    <ng-template #actions let-element> 
       <p-tag
         routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
-        class="cursor-pointer"
+        class="cursor-pointer" 
         severity="warn"
         [value]="'View details'"
         *bifiAppHasPermission="'asset-rosters/update:view'"
       ></p-tag>
     </ng-template>
-  </bifi-app-table-layout>
 
   <!-- grid -->
 } @else {

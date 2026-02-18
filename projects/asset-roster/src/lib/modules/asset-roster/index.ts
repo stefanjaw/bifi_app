@@ -24,6 +24,7 @@ export * from './ui/asset-roster-edit-form/general-information-section/general-i
 export * from './ui/asset-roster-edit-form/maintenance-service-section/maintenance-service-section';
 export * from './ui/asset-roster-edit-form/maintenance-service-section/maintenance-status.model';
 export * from './ui/asset-roster-edit-form/asset-roster-edit-form';
+export * from './ui/asset-roster-edit-form/notes-section/notes-section';
 export * from './ui/asset-roster-edit-form/status-banner-section/status-banner-section';
 export * from './ui/asset-roster-status-card/asset-roster-status-card';
 export * from './ui/asset-roster-status-select/asset-roster-status-select';

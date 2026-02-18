@@ -24,6 +24,7 @@ import { assetCommissionning } from '../../../asset-commissioning/interfaces/ass
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tabs, TabsModule } from 'primeng/tabs';
 import { FinancialInformation } from './financial-information-section/financial-information';
+import { NotesSection } from './notes-section/notes-section';
 
 @Component({
   selector: 'bifi-app-asset-roster-edit-form',
@@ -36,6 +37,7 @@ import { FinancialInformation } from './financial-information-section/financial-
     GeneralInformationSection,
     DocumentsSection,
     MaintenanceServiceSection,
+    NotesSection,
     CommissioningLifecycleSection,
     ActivityHistorySection,
     FinancialInformation,
@@ -64,6 +66,16 @@ export class AssetRosterEditForm {
   maintenanceWindows = input<maintenanceWindow[]>([]);
 
   handleSave() {
+    const remarksArray = this.formService.form.controls.remarks;
+
+    for (let i = remarksArray.length - 1; i >= 0; i--) {
+      const value = remarksArray.at(i).value?.trim();
+
+      if (!value) {
+        remarksArray.removeAt(i);
+      }
+    }
+
     this.assetRosterMaintenanceContext.handleSave();
   }
 

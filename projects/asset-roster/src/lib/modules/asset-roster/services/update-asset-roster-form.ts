@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 interface UpdateAssetRosterFormModel {
@@ -15,7 +15,8 @@ interface UpdateAssetRosterFormModel {
   acquiredPrice: number | null;
   currentPrice: number | null;
   warrantyDate: Date | null;
-  remarks: string | null;
+  remarks: string[];
+  aiquestion: string | null;
   photo: FormUploaderFile[];
   attachments: FormUploaderFile[];
   attachmentsMetadata: {
@@ -41,7 +42,11 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       acquiredPrice: [null, Validators.min(1)],
       currentPrice: [null, Validators.min(1)],
       warrantyDate: [null],
-      remarks: [null],
+      remarks: {
+        template: [''],
+        formArrayElements: [],
+      },
+      aiquestion: [''],
       photo: {
         template: {
           id: [''],
@@ -65,5 +70,19 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       maintenanceWindowIds: [null],
       maintenanceDate: [null],
     });
+  }
+
+
+    addRemark(value: string = '') {
+    const remarksArray = this.form.controls.remarks;
+
+    remarksArray.push(
+      new FormControl<string>(value, { nonNullable: true })
+    );
+  }
+
+  removeRemark(index: number) {
+    const remarksArray = this.form.controls.remarks;
+    remarksArray.removeAt(index);
   }
 }

@@ -77,6 +77,7 @@ export class GeneralInformationSection {
   private fileState = this.fileHelper.generateMetadataFromFileControl(this.photoArray);
   uploadedFile = this.fileState.firstFile;
 
+
   get photoArray() {
     return this.form.controls.photo;
   }

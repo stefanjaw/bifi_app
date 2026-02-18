@@ -8,10 +8,19 @@ import { FileResolver } from '@avalantec/base-app/resource';
 import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
 import { TextareaModule } from 'primeng/textarea';
 import { CrudAssetRoster } from 'projects/asset-roster/src/public-api';
+import { MessageModule } from 'primeng/message';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'bifi-app-documents-section',
-  imports: [ButtonModule, CardModule, FormModule, TextareaModule],
+  imports: [
+    ButtonModule,
+    CardModule,
+    FormModule,
+    TextareaModule,
+    MessageModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './documents-section.html',
 })
 export class DocumentsSection {
@@ -23,8 +32,9 @@ export class DocumentsSection {
   isEditMode = input.required<boolean>();
   assetRoster = input.required<assetRoster | undefined>();
   attachmentsControl = this.formService.form.controls.attachments;
+  questionControl = this.formService.form.controls.aiquestion;
+  form = this.formService.form;
 
-  question = signal('');
   aiResponse = signal<any | null>(null);
   isLoading = signal(false);
 
@@ -38,20 +48,23 @@ export class DocumentsSection {
 
   submitAskGenai() {
     const attachments = this.attachmentsControl.getRawValue();
+    console.log('Question', this.formService.form.controls.aiquestion.value?.trim());
     console.log('attachments', attachments);
     if (!attachments?.length) return;
 
     this.isLoading.set(true);
 
-    this.crudAssetRoster.readDocuments(attachments as FormUploaderFile[], this.question()).subscribe({
-      next: response => {
-        this.aiResponse.set(response);
-        this.isLoading.set(false);
-      },
-      error: err => {
-        console.error(err);
-        this.isLoading.set(false);
-      },
-    });
+    this.crudAssetRoster
+      .readDocuments(attachments as FormUploaderFile[], this.form.controls.aiquestion.value?.trim())
+      .subscribe({
+        next: response => {
+          this.aiResponse.set(response);
+          this.isLoading.set(false);
+        },
+        error: err => {
+          console.error(err);
+          this.isLoading.set(false);
+        },
+      });
   }
 }
