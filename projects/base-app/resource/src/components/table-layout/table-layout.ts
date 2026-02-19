@@ -185,11 +185,15 @@ export class TableLayout<T extends Record<string, any>> {
   }
 
   /**
-   * Triggered when the user changes the sort order.
-   * Sorts the data according to the given SortMeta array.
-   * @param multiSortMeta - The array of SortMeta objects, each containing a field and order.
+   * Sorts the data in the table using the given SortMeta array.
+   * Removes any SortMeta objects with the field '_id' from the array before sorting.
+   * @param {SortMeta[]} multiSortMeta - The array of SortMeta objects to sort the data by.
    */
   private sort(multiSortMeta: SortMeta[]) {
+    const invalidIdSortMeta = multiSortMeta.find(sort => sort.field === '_id');
+
+    if (invalidIdSortMeta) multiSortMeta.splice(multiSortMeta.indexOf(invalidIdSortMeta), 1);
+
     this.sortManager.sortBy(
       multiSortMeta.map(sort => ({
         field: sort.field,

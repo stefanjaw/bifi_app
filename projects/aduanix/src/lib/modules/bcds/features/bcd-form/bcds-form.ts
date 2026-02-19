@@ -261,7 +261,7 @@ export class BcdsForm {
         next: () => {
           this.isFtpSubmitLoading.set(false);
           this.formService.reset();
-          this.goBack();
+          this.bcdResource.reload();
         },
         error: () => {
           this.isFtpSubmitLoading.set(false);
@@ -319,10 +319,10 @@ export class BcdsForm {
       : this.crudBCD.post({ data: payload });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => {
+      next: bcd => {
         this.isSubmitLoading.set(false);
         this.formService.reset();
-        this.goBack();
+        this.goToEdit(bcd?._id || '');
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -368,6 +368,14 @@ export class BcdsForm {
    */
   goBack() {
     this.router.navigate(['../../../list'], { relativeTo: this.route });
+  }
+
+  /**
+   * Navigates to the edit page of a BCD with the given id.
+   * @param id - The id of the BCD to edit.
+   */
+  goToEdit(id: string) {
+    this.router.navigate(['../../edit', id], { relativeTo: this.route });
   }
 
   //#endregion

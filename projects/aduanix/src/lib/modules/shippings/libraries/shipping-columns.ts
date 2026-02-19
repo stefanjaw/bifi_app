@@ -1,6 +1,8 @@
 import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
 import { shipping } from '../interfaces/shipping';
 import { Tag } from 'primeng/tag';
+import { getBCDStatusConfig } from '../../bcds';
+import { getShippingStatusConfig } from './shipping-utils';
 
 export const shippingColumns: tableColumn<shipping>[] = [
   {
@@ -21,43 +23,23 @@ export const shippingColumns: tableColumn<shipping>[] = [
     type: 'text',
     sortable: true,
     component: (value: shipping) => {
-      const inputs: { text: string; variant: Tag['severity'] } = (() => {
-        switch (value.status) {
-          case 'PDF_PROCESSED':
-            return {
-              text: 'PDF Processed',
-              variant: 'success',
-            };
-          case 'ERROR':
-            return {
-              text: 'Error',
-              variant: 'danger',
-            };
-          case 'UPLOADING':
-            return {
-              text: 'Uploading',
-              variant: 'info',
-            };
-          case 'BCD_SENT':
-            return {
-              text: 'BCD Sent',
-              variant: 'success',
-            };
-          default: {
-            return {
-              text: 'Unknown',
-              variant: 'warn',
-            };
-          }
-        }
-      })();
+      // if bcds are available, get the last one
+      const bcdStatus =
+        value.bcds && value.bcds.length > 0
+          ? getBCDStatusConfig(value.bcds[value.bcds.length - 1].status)
+          : undefined;
+
+      // get the shipping status
+      const shippingStatus = getShippingStatusConfig(value.status);
+
+      // create the component
+      const input = bcdStatus
+        ? { ...bcdStatus, value: `${bcdStatus.value} (${shippingStatus.value})` }
+        : shippingStatus;
 
       const component: DynamicComponent<any> = {
         component: Tag,
-        inputs: {
-          value: inputs.text,
-          severity: inputs.variant,
-        },
+        inputs: { ...input, value: input.value },
         outputs: {},
       };
 

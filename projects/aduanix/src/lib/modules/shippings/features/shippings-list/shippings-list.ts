@@ -20,7 +20,8 @@ import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
-import { bcd, CrudBCD, ebcdSchema } from '../../../bcds';
+import { bcd, CrudBCD, ebcdSchema, getBCDFileTypeConfig, getBCDStatusConfig } from '../../../bcds';
+import { getInvoiceStatusTagConfig } from '../../libraries/shipping-utils';
 // import { BCDFormManager } from '@avalantec/aduanix/modules/bcds/services/bcd-form-manager';
 
 @Component({
@@ -49,7 +50,6 @@ export class ShippingsList {
   private crudShippings = inject(CrudShippings);
   private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
-  // private bcdFormManager = inject(BCDFormManager);
   protected fileResolver = inject(FileResolver);
 
   shippingColumns = shippingColumns;
@@ -104,32 +104,8 @@ export class ShippingsList {
    * const tagConfig = this.getInvoiceStatusTagConfig(status);
    * console.log(tagConfig); // { severity: 'warning', value: 'Processing PDF' }
    */
-  getInvoiceStatusTagConfig(status: invoice['status']): {
-    value: string;
-    severity: Tag['severity'];
-  } {
-    switch (status) {
-      case 'PROCESSING_PDF':
-        return {
-          severity: 'warn',
-          value: 'Processing PDF',
-        };
-      case 'ERROR_JSON':
-        return {
-          severity: 'danger',
-          value: 'Error JSON',
-        };
-      case 'DATA_PROCESSED':
-        return {
-          severity: 'success',
-          value: 'Data Processed',
-        };
-      case 'COMPLETE':
-        return {
-          severity: 'success',
-          value: 'Complete',
-        };
-    }
+  getInvoiceStatusTagConfig(status: invoice['status']) {
+    return getInvoiceStatusTagConfig(status);
   }
 
   /**
@@ -141,34 +117,8 @@ export class ShippingsList {
    * const tagConfig = this.getBCDStatusTagConfig(status);
    * console.log(tagConfig); // { severity: 'info', value: 'Draft' }
    */
-  getBCDStatusConfig(status: bcd['status']): { value: string; severity: Tag['severity'] } {
-    switch (status) {
-      case 'DRAFT':
-        return {
-          value: 'Draft',
-          severity: 'info',
-        };
-      case 'FAILED':
-        return {
-          value: 'Failed',
-          severity: 'danger',
-        };
-      case 'PENDING_QUERY':
-        return {
-          value: 'Pending Query',
-          severity: 'warn',
-        };
-      case 'PENDING_RESPONSE':
-        return {
-          value: 'Pending Response',
-          severity: 'warn',
-        };
-      case 'SUBMITTED':
-        return {
-          value: 'Submitted',
-          severity: 'success',
-        };
-    }
+  getBCDStatusConfig(status: bcd['status']) {
+    return getBCDStatusConfig(status);
   }
 
   /**
@@ -180,49 +130,8 @@ export class ShippingsList {
    * const tagConfig = this.getBCDFileType(type);
    * console.log(tagConfig); // { value: 'File Error CSV', severity: 'danger' }
    */
-  getBCDFileTypeConfig(type: ebcdSchema['type']): { value: string; severity: Tag['severity'] } {
-    switch (type) {
-      case 'FILE_ERROR_CSV':
-        return {
-          value: 'File Error CSV',
-          severity: 'danger',
-        };
-      case 'FORMAT_ERROR_PDF':
-        return {
-          value: 'Format Error PDF',
-          severity: 'danger',
-        };
-      case 'FORMAT_ERROR_TXT':
-        return {
-          value: 'Format Error TXT',
-          severity: 'danger',
-        };
-      case 'RECEIPT_TXT':
-        return {
-          value: 'Receipt TXT',
-          severity: 'success',
-        };
-      case 'RELEASE_CSV':
-        return {
-          value: 'Release CSV',
-          severity: 'success',
-        };
-      case 'RELEASE_PDF':
-        return {
-          value: 'Release PDF',
-          severity: 'success',
-        };
-      case 'RELEASE_TXT':
-        return {
-          value: 'Release TXT',
-          severity: 'success',
-        };
-      case 'SENT_CSV':
-        return {
-          value: 'Sent CSV',
-          severity: 'success',
-        };
-    }
+  getBCDFileTypeConfig(type: ebcdSchema['type']) {
+    return getBCDFileTypeConfig(type);
   }
 
   /**

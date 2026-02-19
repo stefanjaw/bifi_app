@@ -328,7 +328,7 @@ export class BCDFormManager {
       description: ['', [Validators.required, Validators.maxLength(200)]],
       quantity: [0, [Validators.required, Validators.min(0)]],
       quantityTwo: [0, [Validators.min(0)]],
-      supplementaryCode: ['', [Validators.required, Validators.maxLength(10)]],
+      supplementaryCode: ['', [Validators.maxLength(10)]],
       currency: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       linesSubtotal: [0, [Validators.required, Validators.min(0)]],
       exchangeRate: [0, [Validators.required, Validators.min(0)]],

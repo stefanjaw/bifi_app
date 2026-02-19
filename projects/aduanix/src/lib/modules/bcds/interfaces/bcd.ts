@@ -85,6 +85,7 @@ export interface ebcdSchema {
 }
 
 export interface bcd {
+  _id: string;
   shippingId: shipping;
   status: BCDStatusType;
   type: bcdType;

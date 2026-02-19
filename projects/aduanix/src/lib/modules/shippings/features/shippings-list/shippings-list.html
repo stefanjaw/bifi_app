@@ -20,7 +20,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, related contact, country and address"
+  label="Search invoice name and status"
   [searchFilters]="shippingFilters"
 ></bifi-app-search-bar>
 
@@ -28,7 +28,7 @@
   <ng-template #actions let-row>
     <p-button
       severity="secondary"
-      label="Edit"
+      label="Review & approve"
       icon="pi pi-pencil"
       variant="text"
       [routerLink]="['../edit/', row._id]"
