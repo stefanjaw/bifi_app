@@ -10,7 +10,7 @@ import {
 import { assetRosterColumns } from '../../libraries/asset-roster-columns';
 import { assetRoster } from '../../interfaces/asset-roster';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FileResolver,
   FilterManager,
@@ -64,6 +64,8 @@ export class AssetRosterList {
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   private crudAssetRoster = inject(CrudAssetRoster);
   private fileResolver = inject(FileResolver);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   assetRosterColumns!: tableColumn<assetRoster>[];
   assetRosterFilters = assetRosterFilters;
@@ -213,10 +215,26 @@ export class AssetRosterList {
       });
   }
 
+  /**
+   * Returns the URL of the photo associated with the given assetRoster.
+   * If no assetRoster is provided, returns a default image URL.
+   * @param asset The assetRoster to retrieve the photo URL from.
+   * @returns The URL of the photo associated with the given assetRoster.
+   */
   getPhoto(asset?: assetRoster): string {
     if (!asset?._id) {
       return 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg';
     }
     return this.assetPictures()[asset._id];
   }
+
+  /**
+   * Navigates to the asset roster maintenance page for the given asset.
+   * @param asset The asset to navigate to its maintenance page.
+   */
+  goToEditAssetRoster = (asset: assetRoster) => {
+    this.router.navigate(['../maintenance', asset._id], {
+      relativeTo: this.route,
+    });
+  };
 }

@@ -52,7 +52,7 @@
     <tr
       (click)="onClickRow() && hasClickRowPermission() ? onClickRow()?.(element) : null"
       [class.cursor-pointer]="onClickRow() && hasClickRowPermission()"
-      [class.hover\:bg-gray-200!]="onClickRow() && hasClickRowPermission()"
+      [class.hover:bg-gray-200!]="onClickRow() && hasClickRowPermission()"
     >
       @if (expandContent()) {
         <td>

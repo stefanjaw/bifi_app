@@ -3,30 +3,54 @@
     <div class="flex items-center justify-between">
       <div></div>
       @if (isEditMode()) {
-        <p-button label="Add Document" icon="pi pi-plus" (onClick)="handleAddDocument()" />
+      <p-button label="Add Document" icon="pi pi-plus" (onClick)="handleAddDocument()" />
       }
     </div>
 
     @if (isEditMode()) {
-      <div class="text-sm text-gray-500 italic">Click "Add Document" to upload.</div>
+    <div class="text-sm text-gray-500 italic">Click "Add Document" to upload.</div>
     } @else {
-      <div class="text-sm text-gray-500 italic">No documents uploaded.</div>
+    <div class="text-sm text-gray-500 italic">No documents uploaded.</div>
     }
 
     <div class="flex flex-col gap-2 mt-4">
       @for (documentControl of attachmentsControl.controls; track $index) {
-        @let document = documentControl.getRawValue();
-        <div class="flex items-center justify-between gap-2 rounded border border-gray-200 p-2">
-          <p>{{ document.file.name }}</p>
+      @let document = documentControl.getRawValue();
+      <div class="flex items-center justify-between gap-2 rounded border border-gray-200 p-2">
+        <p>{{ document.file.name }}</p>
 
-          <p-button
-            label="View"
-            severity="secondary"
-            icon="pi pi-file"
-            (onClick)="downloadFile(document)"
-          ></p-button>
-        </div>
+        <p-button label="View" severity="secondary" icon="pi pi-file" (onClick)="downloadFile(document)"></p-button>
+      </div>
       }
     </div>
+
+    @if(isEditMode()) {
+    <div class="md:col-span-2">
+      <form [formGroup]="form">
+        <bifi-app-form-field previewVariant="italic">
+          <bifi-app-form-label>AI Assistant</bifi-app-form-label>
+          <textarea pInputTextarea rows="4" formControlName="aiquestion"
+            placeholder="Ask any questions about the document..." class="w-full"></textarea>
+
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </form>
+    </div>
+    <p-button label="Ask Gemini" severity="info" icon="pi pi-send" (click)="submitAskGenai()"></p-button>
+    @if(aiResponse() !== null) {
+
+    <p-message severity="info" [closable]="false" class="w-full">
+      <div class="flex items-center gap-2">
+        <div>
+          <div class="font-medium">AI Assistant: </div>
+          <div class="font-medium">{{ aiResponse() }}</div>
+        </div>
+      </div>
+
+
+    </p-message>
+    }
+    }
+
   </section>
 </bifi-app-form-section>

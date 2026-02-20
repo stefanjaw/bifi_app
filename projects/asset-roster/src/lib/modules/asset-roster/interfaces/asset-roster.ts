@@ -23,7 +23,7 @@ export interface assetRoster {
   photo: string;
   locationId: room;
   warrantyDate: Date;
-  remarks?: string;
+  remarks?: string[];
   status: 'active' | 'awaiting-commissioning' | 'under-service' | 'decommissioned' | 'in-pm';
   minMaintenanceDate: string;
   maintenanceDate: string;
