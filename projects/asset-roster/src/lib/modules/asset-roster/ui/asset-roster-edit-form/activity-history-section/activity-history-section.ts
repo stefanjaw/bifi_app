@@ -1,14 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
-import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
+import {
+  activityHistory,
+  CrudActivityHistories,
+  file,
+  FileResolver,
+} from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
 import { assetCommissionning } from '../../../../asset-commissioning';
-import { assetMaintenance } from '../../../../asset-maintenances';
+import { assetMaintenance, CrudAssetMaintenances } from '../../../../asset-maintenances';
 import { Button } from 'primeng/button';
 import { AssetRosterActiviyHistoryAddFileDialog } from '../../../features/asset-roster-maintenance-add-file-dialog/asset-roster-activity-history-add-file-dialog';
 import { assetRoster } from '../../../interfaces/asset-roster';
 import { Tag, TagModule } from 'primeng/tag';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
@@ -18,13 +24,14 @@ import { Tag, TagModule } from 'primeng/tag';
     CommonModule,
     FormModule,
     Button,
+    HasPermission,
     AssetRosterActiviyHistoryAddFileDialog,
   ],
   templateUrl: './activity-history-section.html',
 })
 export class ActivityHistorySection {
   private fileResolver = inject(FileResolver);
-
+  private crudActivityHistory = inject(CrudActivityHistories);
   selectedHistoryDocument = signal<assetCommissionning | assetMaintenance | null>(null);
   activityHistory =
     input.required<activityHistory<assetCommissionning | assetMaintenance | assetRoster>[]>();
@@ -48,5 +55,9 @@ export class ActivityHistorySection {
 
   isNotValidForAttachmentAdding(modelId: Record<string, any>): modelId is assetRoster {
     return modelId['productModel'];
+  }
+
+  exportCsv() {
+    this.crudActivityHistory.exportCSV();
   }
 }
