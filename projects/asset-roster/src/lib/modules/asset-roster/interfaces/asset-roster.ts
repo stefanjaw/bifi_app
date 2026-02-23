@@ -3,7 +3,7 @@ import { room } from '../../facilities';
 import { assetType } from '../../asset-types';
 import { assetMaintenance } from '../../asset-maintenances';
 import { assetCommissionning } from '../../asset-commissioning';
-import { contact } from '@avalantec/base-app/interfaces';
+import { contact, user } from '@avalantec/base-app/interfaces';
 import { file } from '@avalantec/base-app/resource';
 
 export type assetRosterAttachmentDescriptor = string;
@@ -23,7 +23,7 @@ export interface assetRoster {
   photo: string;
   locationId: room;
   warrantyDate: Date;
-  remarks?: string[];
+  remarks?: notes[] | null;
   status: 'active' | 'awaiting-commissioning' | 'under-service' | 'decommissioned' | 'in-pm';
   minMaintenanceDate: string;
   maintenanceDate: string;
@@ -32,4 +32,10 @@ export interface assetRoster {
   assetMaintenances: assetMaintenance[];
   attachments?: file[];
   active: boolean;
+}
+
+export interface notes {
+remark: string;
+createdBy: user;
+performDate: Date ;
 }

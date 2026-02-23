@@ -69,7 +69,7 @@ export class AssetRosterEditForm {
     const remarksArray = this.formService.form.controls.remarks;
 
     for (let i = remarksArray.length - 1; i >= 0; i--) {
-      const value = remarksArray.at(i).value?.trim();
+      const value = remarksArray.at(i).value;
 
       if (!value) {
         remarksArray.removeAt(i);

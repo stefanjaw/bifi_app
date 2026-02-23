@@ -326,7 +326,11 @@ export class AssetRosterMaintenance {
       vendorIds: assetRoster.vendorIds?.[0]?._id || '',
       serialNumber: assetRoster.serialNumber,
       assetTypeIds: assetRoster.assetTypeIds?.[0]?._id || '',
-      remarks: assetRoster.remarks,
+    remarks: assetRoster.remarks?.map(note => ({
+  remark: note.remark,
+  createdBy: note.createdBy?._id ?? note.createdBy,
+  performDate: new Date(note.performDate),
+})),
       warrantyDate: assetRoster.warrantyDate ? new Date(assetRoster.warrantyDate) : null,
       ...((parsedImage && {
         photo: [

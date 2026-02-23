@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
+export interface NotesModel{
+  remark: string;
+  createdBy: string;
+  performDate: Date;
+}
 interface UpdateAssetRosterFormModel {
   serialNumber: string;
   assetTypeIds: string;
@@ -15,7 +20,7 @@ interface UpdateAssetRosterFormModel {
   acquiredPrice: number | null;
   currentPrice: number | null;
   warrantyDate: Date | null;
-  remarks: string[];
+  remarks: NotesModel[] | null;
   aiquestion: string | null;
   photo: FormUploaderFile[];
   attachments: FormUploaderFile[];
@@ -43,7 +48,11 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       currentPrice: [null, Validators.min(1)],
       warrantyDate: [null],
       remarks: {
-        template: [''],
+        template: {
+          remark: [''],
+          createdBy: [''],
+          performDate: [new Date()],
+        },
         formArrayElements: [],
       },
       aiquestion: [''],
@@ -72,11 +81,26 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
     });
   }
 
-  addRemark(value = '') {
-    const remarksArray = this.form.controls.remarks;
+createRemark(data: Partial<NotesModel>) {
+  return this.fb.group<NotesModel>({
+    remark: [data.remark ?? ''],
+    createdBy: [data.createdBy ?? ''],
+    performDate: [data.performDate ?? new Date()],
+  });
+}
 
-    remarksArray.push(new FormControl<string>(value, { nonNullable: true }));
-  }
+addRemark(remark: string, userId: string) {
+  if (!remark?.trim()) return;
+
+  const form = this.createRemark({
+    remark,
+    createdBy: userId,
+    performDate: new Date(),
+  });
+
+  const remarksArray = this.form.controls.remarks;
+  remarksArray.push(form);
+}
 
   removeRemark(index: number) {
     const remarksArray = this.form.controls.remarks;
