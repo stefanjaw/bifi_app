@@ -42,6 +42,9 @@ export class DocumentsSection {
     this.assetRosterMaintenanceContext.handleAddDocument();
   }
 
+  handleRemoveDocument(index: number) {
+    this.attachmentsControl.removeAt(index);
+  }
   downloadFile(attachment: FormUploaderFile) {
     this.fileResolver.downloadFileInBrowser({ file: attachment.file });
   }

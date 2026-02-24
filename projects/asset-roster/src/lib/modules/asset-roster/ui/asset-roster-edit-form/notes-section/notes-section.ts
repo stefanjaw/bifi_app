@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, model, output } from '@angular/core';
+import { Component, computed, inject, input, model, output, signal } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -23,6 +24,7 @@ import { assetRoster, UpdateAssetRosterForm } from 'projects/asset-roster/src/pu
     ButtonModule,
     CardModule,
     CommonModule,
+    AccordionModule,
     SelectModule,
     FormModule,
     MessageModule,
@@ -32,6 +34,15 @@ import { assetRoster, UpdateAssetRosterForm } from 'projects/asset-roster/src/pu
 export class NotesSection {
   protected formService = inject(UpdateAssetRosterForm);
   private readonly crudUsers = inject(CrudUsers);
+private remarksVersion = signal(0);
+  readonly sortedNotes = computed(() => {
+    this.remarksVersion(); // Trigger recomputation when remarksVersion changes
+  return [...this.notesControl.controls].sort((a, b) =>
+    new Date(b.value.performDate).getTime() -
+    new Date(a.value.performDate).getTime()
+  );
+});
+showAllNotes = signal(false);
 
   userResource = this.crudUsers.getProfile();
 
@@ -44,6 +55,7 @@ export class NotesSection {
   // states
   form = this.formService.form;
   remarkTextModel = model<string>('');
+  
 
   get notesControl() {
     return this.form.get('remarks') as FormArray;
@@ -59,5 +71,7 @@ export class NotesSection {
     const currentUser = this.userAuthorNote;
     this.formService.addRemark(text, currentUser());
     this.remarkTextModel.set('');
+      this.remarksVersion.update(v => v + 1);
+
   }
 }
