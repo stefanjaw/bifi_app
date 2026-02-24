@@ -1,15 +1,16 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
+  DestroyRef,
   effect,
+  ElementRef,
   inject,
   input,
-  OnDestroy,
   ResourceRef,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
@@ -42,13 +43,14 @@ import { ButtonModule } from 'primeng/button';
   host: { class: 'shadow-xl/30 w-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableLayout<T extends Record<string, any>> implements AfterViewInit, OnDestroy {
+export class TableLayout<T extends Record<string, any>> {
   // -----------------------------
   // DEPENDENCIES
   // -----------------------------
   private paginationManager = inject(PaginationManager);
   private sortManager = inject<SortManager<T>>(SortManager);
   private auth = injectAuthService();
+  private destroy$ = inject(DestroyRef);
 
   // -----------------------------
   // INPUTS
@@ -86,7 +88,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   // -----------------------------
   // INTERNAL STATE
   // -----------------------------
-  private scrollContainer: HTMLElement | null = null;
+  private scrollContainer = viewChild<ElementRef<HTMLDivElement>>('tableLayoutContainer');
   private loadingNextPage = false;
 
   private handleScroll = (event: Event) => this.onContainerScroll(event);
@@ -162,51 +164,40 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
 
   /**
    * Constructor for the TableLayout component.
-   * Initializes the component with its default state.
-   * If the resource state is not loading, it sets the loadingNextPage property to false.
+   * Resets the loadingNextPage flag when the resource is no longer loading.
+   * Listens for scroll events on the container element.
+   * Resets the pagination options when the component is destroyed.
    */
   constructor() {
+    // Reset the loadingNextPage flag when the resource is no longer loading
     effect(() => {
       const state = this.resourceState();
       if (!state.isLoading) {
         this.loadingNextPage = false;
       }
     });
-  }
 
-  // -----------------------------
-  // LIFECYCLE
-  // -----------------------------
+    // Listen for scroll events on the container element
+    effect(() => {
+      const scrollContainer = this.scrollContainer()?.nativeElement;
 
-  /**
-   * Called after the component's view has been initialized.
-   * If the component is configured to use infinite scroll, it will
-   * add a scroll event listener to the scroll container to detect when
-   * the user has scrolled to the bottom of the container.
-   * It will also reset the pagination options.
-   */
-  ngAfterViewInit(): void {
-    if (!this.infiniteScroll()) return;
+      if (scrollContainer) {
+        scrollContainer.addEventListener('scroll', this.handleScroll, {
+          passive: true,
+        });
 
-    this.scrollContainer = document.getElementById('bifi-app-scaffold-outlet');
+        this.paginationManager.resetPaginationOptions();
+      }
+    });
 
-    if (this.scrollContainer) {
-      this.scrollContainer.addEventListener('scroll', this.handleScroll, {
-        passive: true,
-      });
-    }
+    // Reset the pagination options
+    this.destroy$.onDestroy(() => {
+      const scrollContainer = this.scrollContainer()?.nativeElement;
 
-    this.paginationManager.resetPaginationOptions();
-  }
-
-  /**
-   * Removes the scroll event listener when the component is destroyed.
-   * This is important to prevent memory leaks.
-   */
-  ngOnDestroy(): void {
-    if (this.scrollContainer) {
-      this.scrollContainer.removeEventListener('scroll', this.handleScroll);
-    }
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', this.handleScroll);
+      }
+    });
   }
 
   // -----------------------------
@@ -220,7 +211,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
    */
   private onContainerScroll(event: Event) {
     const state = this.resourceState();
-    
+
     if (state.isLoading || this.loadingNextPage) return;
     if (!state.pagination) return;
 
@@ -230,7 +221,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
     const viewportHeight = element.clientHeight;
     const fullHeight = element.scrollHeight;
 
-    const threshold = 200;
+    const threshold = 100;
 
     const atBottom = scrollTop + viewportHeight >= fullHeight - threshold;
 
