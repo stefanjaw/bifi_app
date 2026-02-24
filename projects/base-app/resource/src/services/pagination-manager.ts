@@ -5,7 +5,7 @@ import { paginationOptions } from '../interfaces/pagination-options';
   providedIn: 'root',
 })
 export class PaginationManager {
-  readonly PIVOT = 5;
+  readonly PIVOT = 10;
 
   private _paginationOptions = signal<paginationOptions>({
     page: 1,
