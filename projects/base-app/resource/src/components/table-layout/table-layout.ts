@@ -58,6 +58,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   onClickRow = input<(row: T) => void>();
   infiniteScroll = input<boolean>(false);
 
+  // this is the permission that will be used to determine if the user has permission to click a row
   clickRowPermission = input<permission | undefined>(undefined);
 
   clickRowPermissionResource = computed(() =>
@@ -219,6 +220,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
    */
   private onContainerScroll(event: Event) {
     const state = this.resourceState();
+    
     if (state.isLoading || this.loadingNextPage) return;
     if (!state.pagination) return;
 
