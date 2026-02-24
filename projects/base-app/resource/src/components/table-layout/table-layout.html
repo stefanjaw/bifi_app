@@ -147,3 +147,13 @@
     </ng-template>
   </p-table>
 </div>
+
+@if (infiniteScroll()) {
+  <span
+    [bifiAppText]="'paragraph'"
+    class="text-blue-400 m-4 w-100 flex flex-row justify-start items-center gap-2"
+  >
+  <i class="pi pi-info-circle"></i>
+    Scroll down to load more
+  </span>
+}

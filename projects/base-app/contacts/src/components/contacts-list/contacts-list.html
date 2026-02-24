@@ -22,6 +22,7 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="false"
   [columns]="contactColumns"
   [data]="contacts"
   [onClickRow]="goToEditContact"

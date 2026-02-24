@@ -22,7 +22,7 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SortMeta } from 'primeng/api';
 import { orderByQuery } from '../../interfaces/order-by';
 import { PaginatorModule } from 'primeng/paginator';
-import { Icon } from '@avalantec/base-app/core';
+import { Icon, Text } from '@avalantec/base-app/core';
 import { tableRows } from '../../interfaces/table-row';
 import { pagination } from '../../interfaces/pagination';
 import { injectAuthService, permission } from '@avalantec/base-app/auth';
@@ -37,6 +37,7 @@ import { ButtonModule } from 'primeng/button';
     TableModule,
     PaginatorModule,
     Icon,
+    Text,
     ButtonModule,
   ],
   templateUrl: './table-layout.html',
