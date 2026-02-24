@@ -2,16 +2,11 @@
   @if (activityHistory.length > 0) {
   <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
   } @else {
-    <!--Export Csv-->
-    <div class="flex justify-end mb-4">
-    <p-button
-      severity="success"
-      label="Export CSV"
-      (onClick)="exportCsv()"
-      *bifiAppHasPermission="'activity-history/export:read:model'"
-      icon="pi pi-download"
-    ></p-button>
-      </div>
+  <!--Export Csv-->
+  <div class="flex justify-end mb-4">
+    <p-button severity="success" label="Export CSV" (onClick)="exportCsv()"
+      *bifiAppHasPermission="'activity-history/export:read:model'" icon="pi pi-download"></p-button>
+  </div>
   @for (history of activityHistory(); track history._id) {
   <p-card class="shadow-2xl mb-3">
     <ng-template #content>
