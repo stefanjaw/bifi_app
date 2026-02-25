@@ -1,7 +1,10 @@
 @let state = resourceState();
 @let pagination = state.pagination;
 
-<div #tableLayoutContainer [ngClass]="{ 'h-[600px] overflow-y-scroll': infiniteScroll() }">
+<div
+  [ngClass]="{ 'h-[600px] overflow-y-scroll': infiniteScroll() }"
+  [bifiAppInfiniteScroll]="$any(data())"
+>
   <p-table
     sortMode="multiple"
     (onLazyLoad)="lazyLoad($event)"
@@ -153,7 +156,7 @@
     [bifiAppText]="'paragraph'"
     class="text-blue-400 m-4 w-100 flex flex-row justify-start items-center gap-2"
   >
-  <i class="pi pi-info-circle"></i>
+    <i class="pi pi-info-circle"></i>
     Scroll down to load more
   </span>
 }

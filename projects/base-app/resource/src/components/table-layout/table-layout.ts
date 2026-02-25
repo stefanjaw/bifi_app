@@ -3,14 +3,10 @@ import {
   Component,
   computed,
   contentChild,
-  DestroyRef,
-  effect,
-  ElementRef,
   inject,
   input,
   ResourceRef,
   TemplateRef,
-  viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
@@ -27,6 +23,7 @@ import { tableRows } from '../../interfaces/table-row';
 import { pagination } from '../../interfaces/pagination';
 import { injectAuthService, permission } from '@avalantec/base-app/auth';
 import { ButtonModule } from 'primeng/button';
+import { InfiniteScroll } from '../../directives/infinite-scroll';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -39,6 +36,7 @@ import { ButtonModule } from 'primeng/button';
     Icon,
     Text,
     ButtonModule,
+    InfiniteScroll,
   ],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30 w-full' },
@@ -51,7 +49,6 @@ export class TableLayout<T extends Record<string, any>> {
   private paginationManager = inject(PaginationManager);
   private sortManager = inject<SortManager<T>>(SortManager);
   private auth = injectAuthService();
-  private destroy$ = inject(DestroyRef);
 
   // -----------------------------
   // INPUTS
@@ -83,17 +80,11 @@ export class TableLayout<T extends Record<string, any>> {
   // -----------------------------
   actions = contentChild('actions', { read: TemplateRef });
   expandContent = contentChild('expandContent', { read: TemplateRef });
-
   expandedRows: any = {};
 
   // -----------------------------
   // INTERNAL STATE
   // -----------------------------
-  private scrollContainer = viewChild<ElementRef<HTMLDivElement>>('tableLayoutContainer');
-  private loadingNextPage = false;
-
-  private handleScroll = (event: Event) => this.onContainerScroll(event);
-
   isPaginatedFN = isPaginated;
 
   // -----------------------------
@@ -157,102 +148,6 @@ export class TableLayout<T extends Record<string, any>> {
       value,
     };
   });
-  // ...
-
-  // -----------------------------
-  // CONSTRUCTOR
-  // -----------------------------
-
-  /**
-   * Constructor for the TableLayout component.
-   * Resets the loadingNextPage flag when the resource is no longer loading.
-   * Listens for scroll events on the container element.
-   * Resets the pagination options when the component is destroyed.
-   */
-  constructor() {
-    // Reset the loadingNextPage flag when the resource is no longer loading
-    effect(() => {
-      const state = this.resourceState();
-      if (!state.isLoading) {
-        this.loadingNextPage = false;
-      }
-    });
-
-    // Listen for scroll events on the container element
-    effect(() => {
-      const scrollContainer = this.scrollContainer()?.nativeElement;
-
-      if (scrollContainer) {
-        scrollContainer.addEventListener('scroll', this.handleScroll, {
-          passive: true,
-        });
-
-        this.paginationManager.resetPaginationOptions();
-      }
-    });
-
-    // Reset the pagination options
-    this.destroy$.onDestroy(() => {
-      const scrollContainer = this.scrollContainer()?.nativeElement;
-
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', this.handleScroll);
-      }
-    });
-  }
-
-  // -----------------------------
-  // SCROLL HANDLER
-  // -----------------------------
-
-  /**
-   * Scroll handler for the container.
-   * Checks if the user is at the bottom of the container and loads the next page if so.
-   * @param event The scroll event
-   */
-  private onContainerScroll(event: Event) {
-    const state = this.resourceState();
-
-    if (state.isLoading || this.loadingNextPage) return;
-    if (!state.pagination) return;
-
-    const element = event.target as HTMLElement;
-
-    const scrollTop = element.scrollTop;
-    const viewportHeight = element.clientHeight;
-    const fullHeight = element.scrollHeight;
-
-    const threshold = 100;
-
-    const atBottom = scrollTop + viewportHeight >= fullHeight - threshold;
-
-    if (atBottom) {
-      this.loadNextPage();
-    }
-  }
-
-  /**
-   * Load the next page of data.
-   * If the limit is greater or equal to the total number of documents, do nothing.
-   * Otherwise, increment the page number and the limit by the pivot value.
-   * Set the loadingNextPage flag to true.
-   * Call setPaginationOptions on the pagination manager with the updated page and limit.
-   */
-  private loadNextPage() {
-    const state = this.resourceState();
-    if (!state.pagination) return;
-
-    const { page, totalDocs, limit } = state.pagination;
-
-    // Si ya tenemos todos los documentos, no hacer nada
-    if (limit >= totalDocs) return;
-
-    const pivot = this.paginationManager.PIVOT;
-
-    this.loadingNextPage = true;
-
-    this.paginationManager.setPaginationOptions(page, limit + pivot);
-  }
 
   // -----------------------------
   // TABLE EVENTS
