@@ -113,10 +113,13 @@
 
   <!-- grid -->
 } @else {
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 h-[600px] overflow-y-scroll"
+    [bifiAppInfiniteScroll]="$any(assetRosters)"
+  >
     @for (element of assetRosters.value()?.docs; track element._id) {
       <p-card
-        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        class="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
         routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
         *bifiAppHasPermission="'asset-rosters/update:view'"
       >

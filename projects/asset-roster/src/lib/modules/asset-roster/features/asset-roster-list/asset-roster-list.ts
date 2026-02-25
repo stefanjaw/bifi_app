@@ -14,6 +14,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FileResolver,
   FilterManager,
+  InfiniteScroll,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -54,6 +55,7 @@ import { AvatarModule } from 'primeng/avatar';
     TooltipModule,
     SelectButtonModule,
     AvatarModule,
+    InfiniteScroll,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
