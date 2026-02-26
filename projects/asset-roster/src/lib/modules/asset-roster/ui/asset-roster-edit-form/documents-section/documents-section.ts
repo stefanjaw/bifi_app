@@ -7,7 +7,7 @@ import { FormModule, FormUploaderFile } from '@avalantec/base-app/form';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
 import { TextareaModule } from 'primeng/textarea';
-import { CrudAssetRoster } from 'projects/asset-roster/src/public-api';
+import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { MessageModule } from 'primeng/message';
 import { ReactiveFormsModule } from '@angular/forms';
 

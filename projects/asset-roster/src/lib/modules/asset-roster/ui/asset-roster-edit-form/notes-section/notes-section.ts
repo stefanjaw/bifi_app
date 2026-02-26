@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, model, output, signal } from '@angular/core';
+import { Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule } from '@avalantec/base-app/form';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
@@ -11,7 +11,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { assetRoster, UpdateAssetRosterForm } from 'projects/asset-roster/src/public-api';
+import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
+import { assetRoster } from '../../../interfaces/asset-roster';
 
 @Component({
   selector: 'bifi-app-notes-section',
@@ -34,33 +35,32 @@ import { assetRoster, UpdateAssetRosterForm } from 'projects/asset-roster/src/pu
 export class NotesSection {
   protected formService = inject(UpdateAssetRosterForm);
   private readonly crudUsers = inject(CrudUsers);
-private remarksVersion = signal(0);
+  private remarksVersion = signal(0);
   readonly sortedNotes = computed(() => {
     this.remarksVersion(); // Trigger recomputation when remarksVersion changes
-  return [...this.notesControl.controls].sort((a, b) =>
-    new Date(b.value.performDate).getTime() -
-    new Date(a.value.performDate).getTime()
-  );
-});
-showAllNotes = signal(false);
+    return [...this.notesControl.controls].sort(
+      (a, b) => new Date(b.value.performDate).getTime() - new Date(a.value.performDate).getTime()
+    );
+  });
+  showAllNotes = signal(false);
 
   userResource = this.crudUsers.getProfile();
 
   //data
   user = this.userResource.value;
   userAuthorNote = computed(() => this.user()?._id);
-  
+
   assetRoster = input.required<assetRoster | undefined>();
   isEditMode = input.required<boolean>();
   // states
   form = this.formService.form;
   remarkTextModel = model<string>('');
-  
 
   get notesControl() {
     return this.form.get('remarks') as FormArray;
   }
   getUserName(userId: string) {
+    console.log('🚀 ~ NotesSection ~ getUserName ~ userId:', userId);
     const user = this.userResource.value();
     return user?.contactId?.name;
   }
@@ -71,7 +71,6 @@ showAllNotes = signal(false);
     const currentUser = this.userAuthorNote;
     this.formService.addRemark(text, currentUser());
     this.remarkTextModel.set('');
-      this.remarksVersion.update(v => v + 1);
-
+    this.remarksVersion.update(v => v + 1);
   }
 }
