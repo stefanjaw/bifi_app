@@ -19,7 +19,7 @@ export class InfiniteScroll {
   private el = inject<ElementRef<HTMLElement>>(ElementRef);
 
   // inputs
-  resource = input<ResourceRef<any[] | pagination<any>>>(undefined, {
+  resource = input<ResourceRef<any[] | pagination<any>> | null>(undefined, {
     alias: 'bifiAppInfiniteScroll',
   });
 
@@ -33,11 +33,38 @@ export class InfiniteScroll {
 
   /**
    * Constructor for the InfiniteScroll directive.
-   * Resets the loadingNextPage flag when the resource is no longer loading.
-   * Listens for scroll events on the container element.
-   * Resets the pagination options when the component is destroyed.
+   * Listens for scroll events on the container element and adds a scroll event listener.
+   * If there is no resource, it removes the scroll event listener.
+   * If there is a resource, it adds the scroll event listener and resets the loadingNextPage flag when the resource is no longer loading.
+   * It also resets the pagination options and removes the scroll event listener when the component is destroyed.
    */
   constructor() {
+    // Listen for scroll events on the container element
+    const scrollContainer = this.el.nativeElement;
+
+    // if there is no scrollContainer, return
+    if (!scrollContainer) return;
+
+    effect(() => {
+      const resource = this.resource();
+
+      // if there is no resource, return and remove scroll event listener
+      if (!resource) {
+        scrollContainer.removeEventListener('scroll', this.handleScroll);
+        return;
+      }
+
+      // if there is a resource, add scroll event listener
+      scrollContainer.addEventListener('scroll', this.handleScroll, {
+        passive: true,
+      });
+
+      // Cleanup function to remove the scroll event listener
+      return () => {
+        scrollContainer.removeEventListener('scroll', this.handleScroll);
+      };
+    });
+
     // Reset the loadingNextPage flag when the resource is no longer loading
     effect(() => {
       const isLoading = this.resource()?.isLoading();
@@ -45,17 +72,6 @@ export class InfiniteScroll {
       if (!isLoading) {
         this.loadingNextPage = false;
       }
-    });
-
-    // Listen for scroll events on the container element
-    const scrollContainer = this.el.nativeElement;
-
-    // if there is no scrollContainer, return
-    if (!scrollContainer) return;
-
-    // add scroll event listener
-    scrollContainer.addEventListener('scroll', this.handleScroll, {
-      passive: true,
     });
 
     // Reset the pagination options
