@@ -68,7 +68,6 @@
     "madge": "^8.0.0",
     "ng-packagr": "^20.0.0",
     "node-fetch": "^3.3.2",
-    "prettier-eslint": "^16.3.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.2",
     "typescript-eslint": "8.34.1"
