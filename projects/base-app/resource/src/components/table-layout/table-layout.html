@@ -2,8 +2,8 @@
 @let pagination = state.pagination;
 
 <div
-  [ngClass]="{ 'h-[600px] overflow-y-scroll': infiniteScroll() }"
-  [bifiAppInfiniteScroll]="$any(data())"
+  [ngClass]="{ 'h-150 overflow-y-scroll': infiniteScroll() }"
+  [bifiAppInfiniteScroll]="infiniteScroll() ? $any(data()) : null"
 >
   <p-table
     sortMode="multiple"
@@ -93,7 +93,7 @@
               <img
                 [src]="value"
                 alt="image"
-                class="w-[75px] h-[75px] object-cover rounded-full my-4"
+                class="w-18.75 h-18.75 object-cover rounded-full my-4"
               />
             } @else {
               @if (column.type === 'date') {
