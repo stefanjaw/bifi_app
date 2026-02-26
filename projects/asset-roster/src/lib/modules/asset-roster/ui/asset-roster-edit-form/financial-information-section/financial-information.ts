@@ -9,11 +9,9 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import {
-  assetRoster,
-  assetType,
-  UpdateAssetRosterForm,
-} from 'projects/asset-roster/src/public-api';
+import { assetRoster } from '../../../interfaces/asset-roster';
+import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
+import { assetType } from '../../../../asset-types';
 
 @Component({
   selector: 'bifi-app-asset-roster-financial-information',
