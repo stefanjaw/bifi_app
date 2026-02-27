@@ -115,6 +115,12 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": [
+              "61727dcc-e441-4690-bb21-4333a8c626e2-00-38jwgcs6m0b8o.picard.replit.dev",
+              ".replit.dev"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "asset-roster-demo:build:production"
@@ -220,10 +226,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/website/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
@@ -250,10 +253,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/tasks/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
@@ -280,10 +280,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/projects/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
@@ -310,10 +307,7 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/aduanix/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
