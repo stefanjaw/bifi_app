@@ -12,9 +12,6 @@
       "@avalantec/calendar": ["./projects/calendar/src/lib"],
       "@avalantec/calendar/*": ["./projects/calendar/src/lib/*"],
 
-      "@avalantec/crm": ["./projects/crm/src/lib"],
-      "@avalantec/crm/*": ["./projects/crm/src/lib/*"],
-
       "@avalantec/website": ["./projects/website/src/lib"],
       "@avalantec/website/*": ["./projects/website/src/lib/*"],
 
@@ -26,6 +23,9 @@
 
       "@avalantec/aduanix": ["./projects/aduanix/src/lib"],
       "@avalantec/aduanix/*": ["./projects/aduanix/src/lib/*"],
+
+      "@avalantec/crm": ["./projects/crm/src/lib"],
+      "@avalantec/crm/*": ["./projects/crm/src/lib/*"],
 
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]

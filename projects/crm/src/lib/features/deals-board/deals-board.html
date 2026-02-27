@@ -1,0 +1,71 @@
+<div class="flex flex-col h-full bg-gray-50 overflow-hidden">
+  <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-gray-800">Deals Pipeline</h1>
+    <a routerLink="/crm/list" class="text-sm text-blue-600 hover:underline">← Back to Leads</a>
+  </header>
+
+  @if (stagesLoading()) {
+    <div class="px-4 pt-4">
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    </div>
+  }
+
+  <main class="flex-grow p-4 overflow-x-auto">
+    <div class="flex gap-4 min-w-max h-full pb-4">
+      @for (stage of stages(); track stage._id) {
+        <div
+          class="flex-shrink-0 w-72 bg-gray-100 rounded-xl shadow-inner flex flex-col transition-colors duration-150"
+          [class.bg-blue-50]="draggedOverStage()?._id === stage._id"
+          (dragover)="onDragOver($event, stage)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event, stage)"
+        >
+          <div
+            class="px-4 py-3 border-b-4 border-gray-200 flex justify-between items-center rounded-t-xl"
+            [style.borderBottomColor]="stage.color"
+          >
+            <h2 class="font-semibold text-gray-700">{{ stage.name }}</h2>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-gray-500">
+                {{ getTotalValue(stage) | currency }}
+              </span>
+              <span class="bg-gray-200 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-full">
+                {{ getDealsByStage(stage).length }}
+              </span>
+            </div>
+          </div>
+
+          <div class="p-2 flex flex-col gap-2 flex-grow overflow-y-auto">
+            @for (deal of getDealsByStage(stage); track deal._id) {
+              <div
+                draggable="true"
+                (dragstart)="onDragStart($event, deal)"
+                (dragend)="onDragEnd()"
+                (click)="editDeal(deal)"
+                class="bg-white rounded-lg shadow p-3 cursor-grab hover:shadow-md transition-shadow border-l-4 select-none"
+                [style.borderLeftColor]="stage.color"
+                [class.opacity-50]="draggedDeal()?._id === deal._id"
+              >
+                <h3 class="font-semibold text-gray-800 text-sm truncate">{{ deal.title }}</h3>
+                <p class="text-xs text-gray-500 mt-1">{{ deal.company?.name }}</p>
+                <div class="mt-2 flex justify-between items-center">
+                  <span class="text-sm font-bold text-green-600">
+                    {{ deal.amount | currency: deal.currency }}
+                  </span>
+                  @if (deal.expectedCloseDate) {
+                    <span class="text-xs text-gray-400">
+                      {{ deal.expectedCloseDate | date: 'MMM d' }}
+                    </span>
+                  }
+                </div>
+                <p class="text-xs text-gray-400 mt-1 truncate">{{ deal.contact?.name }}</p>
+              </div>
+            } @empty {
+              <div class="text-center py-6 text-gray-400 text-sm italic">No deals</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+</div>

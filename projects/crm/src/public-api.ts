@@ -1,5 +1,1 @@
-/*
- * Public API Surface of crm
- */
-
-export * from './lib';
+export * from './lib/index';
