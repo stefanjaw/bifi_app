@@ -116,10 +116,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "allowedHosts": [
-              "61727dcc-e441-4690-bb21-4333a8c626e2-00-38jwgcs6m0b8o.picard.replit.dev",
-              ".replit.dev"
-            ]
+            "allowedHosts": ["61727dcc-e441-4690-bb21-4333a8c626e2-00-38jwgcs6m0b8o.picard.replit.dev", ".replit.dev"]
           },
           "configurations": {
             "production": {

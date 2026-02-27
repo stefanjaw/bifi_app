@@ -17,11 +17,11 @@ import { CrudUsers } from '@avalantec/base-app/users';
 import { provideAssetRoster } from '@avalantec/asset-roster';
 import { withLibraryInterceptors } from '@avalantec/base-app/routing';
 import { provideCalendar } from '@avalantec/calendar';
-import { provideCRM } from '@avalantec/crm';
 import { Noir } from './primeng.preset';
 import { provideWebsite } from '@avalantec/website';
 import { provideTasks } from '@avalantec/tasks';
 import { provideAduanix } from '@avalantec/aduanix';
+import { provideCrm } from '@avalantec/crm';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -53,10 +53,10 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAssetRoster(),
     provideCalendar(),
-    provideCRM(),
     provideWebsite(),
     provideTasks(),
     provideAduanix(),
+    provideCrm(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

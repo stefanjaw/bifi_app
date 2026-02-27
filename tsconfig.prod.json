@@ -15,9 +15,6 @@
       "@avalantec/calendar": ["dist/calendar/*", "dist/calendar"],
       "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"],
 
-      "@avalantec/crm": ["dist/crm/*", "dist/crm"],
-      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
-
       "@avalantec/website": ["dist/website/*", "dist/website"],
       "@avalantec/website/*": ["projects/website/*", "projects/website"],
 
@@ -28,7 +25,10 @@
       "@avalantec/projects/*": ["projects/projects/*", "projects/projects"],
 
       "@avalantec/aduanix": ["dist/aduanix/*", "dist/aduanix"],
-      "@avalantec/aduanix/*": ["projects/aduanix/*", "projects/aduanix"]
+      "@avalantec/aduanix/*": ["projects/aduanix/*", "projects/aduanix"],
+
+      "@avalantec/crm": ["dist/crm/*", "dist/crm"],
+      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"]
     }
   },
   "angularCompilerOptions": {
