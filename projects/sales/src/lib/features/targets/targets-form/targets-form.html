@@ -1,0 +1,86 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Update Sales Target' : 'New Sales Target'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Target Details" id="target-details" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name</bifi-app-form-label>
+            <input pInputText formControlName="name" placeholder="e.g. Q1 Revenue Target" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Year</bifi-app-form-label>
+            <p-inputNumber formControlName="year" [useGrouping]="false" placeholder="2025"></p-inputNumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Month</bifi-app-form-label>
+            <p-select
+              formControlName="month"
+              [options]="monthOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select month"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Target Amount</bifi-app-form-label>
+            <p-inputNumber
+              formControlName="targetAmount"
+              mode="currency"
+              currency="USD"
+              [min]="0"
+              placeholder="0.00"
+            ></p-inputNumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Currency</bifi-app-form-label>
+            <input pInputText formControlName="currency" placeholder="USD" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Sales Rep (optional)</bifi-app-form-label>
+            <p-select
+              formControlName="salesperson"
+              [options]="userOptions()"
+              optionLabel="username"
+              optionValue="_id"
+              placeholder="Select a sales rep"
+              [filter]="true"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

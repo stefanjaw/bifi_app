@@ -12,6 +12,8 @@ export interface CrmFormModel {
   contact: string;
   company: string;
   owner: string;
+  salesperson: string;
+  tagsInput: string;
   description: string;
   notes: string;
 }
@@ -31,6 +33,8 @@ export class CrmForm extends BaseForm<CrmFormModel> {
       contact: ['', [Validators.required]],
       company: ['', [Validators.required]],
       owner: [''],
+      salesperson: [''],
+      tagsInput: [''],
       description: [''],
       notes: [''],
     });

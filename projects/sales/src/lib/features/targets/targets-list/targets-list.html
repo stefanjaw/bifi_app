@@ -1,0 +1,28 @@
+<h1 class="text-2xl font-bold mb-4">Sales Targets</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Target"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+  ></p-button>
+</div>
+
+<bifi-app-table-layout [columns]="salesTargetColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      size="small"
+      routerLink="../edit/{{ element._id }}"
+    ></p-button>
+    <p-button
+      severity="danger"
+      icon="pi pi-trash"
+      size="small"
+      (onClick)="deleteEntry(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

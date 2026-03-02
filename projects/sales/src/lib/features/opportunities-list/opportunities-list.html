@@ -1,0 +1,41 @@
+<p-toast></p-toast>
+<h1 class="text-2xl font-bold mb-4">Sales Opportunities</h1>
+
+<bifi-app-search-bar
+  label="Search by title, company, contact or stage"
+  [searchFilters]="crmFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="crmColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="success"
+      label="Won"
+      icon="pi pi-check"
+      size="small"
+      [loading]="markingId() === element._id"
+      (onClick)="markWon(element)"
+    ></p-button>
+    <p-button
+      severity="danger"
+      label="Lost"
+      icon="pi pi-times"
+      size="small"
+      [loading]="markingId() === element._id"
+      (onClick)="markLost(element)"
+    ></p-button>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      size="small"
+      routerLink="/crm/edit/{{ element._id }}"
+    ></p-button>
+    <p-button
+      severity="danger"
+      icon="pi pi-trash"
+      size="small"
+      (onClick)="deleteEntry(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

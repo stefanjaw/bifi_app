@@ -62,6 +62,12 @@
             <input pInputText formControlName="expectedCloseDate" type="date" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
+            <input pInputText formControlName="tagsInput" type="text" placeholder="e.g. enterprise, high-priority, renewal" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
@@ -89,6 +95,34 @@
               optionValue="_id"
               placeholder="Select a company"
               [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Owner</bifi-app-form-label>
+            <p-select
+              formControlName="owner"
+              [options]="userOptions()"
+              optionLabel="username"
+              optionValue="_id"
+              placeholder="Select an owner"
+              [filter]="true"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Salesperson</bifi-app-form-label>
+            <p-select
+              formControlName="salesperson"
+              [options]="userOptions()"
+              optionLabel="username"
+              optionValue="_id"
+              placeholder="Select a salesperson"
+              [filter]="true"
+              [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>

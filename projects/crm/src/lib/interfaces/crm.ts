@@ -15,6 +15,8 @@ export interface crm {
   contact?: contact;
   company?: company;
   owner?: user;
+  salesperson?: user;
+  tags?: string[];
   description?: string;
   notes?: string;
   active?: boolean;
