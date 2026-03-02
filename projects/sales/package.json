@@ -1,0 +1,19 @@
+{
+  "name": "@avalantec/sales",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@tailwindcss/postcss": "^4.1.11",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "dayjs": "^1.11.13",
+    "tailwindcss-primeui": "^0.6.1",
+    "@avalantec/base-app": "^0.0.1",
+    "@avalantec/crm": "^0.0.1"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

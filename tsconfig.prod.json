@@ -28,7 +28,10 @@
       "@avalantec/aduanix/*": ["projects/aduanix/*", "projects/aduanix"],
 
       "@avalantec/crm": ["dist/crm/*", "dist/crm"],
-      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"]
+      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
+
+      "@avalantec/crm": ["dist/sales/*", "dist/sales"],
+      "@avalantec/crm/*": ["projects/sales/*", "projects/sales"]
     }
   },
   "angularCompilerOptions": {

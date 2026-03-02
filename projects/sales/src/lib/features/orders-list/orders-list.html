@@ -1,0 +1,17 @@
+<h1 class="text-2xl font-bold mb-4">Sales Orders</h1>
+
+<bifi-app-search-bar
+  label="Search by deal, company or contact"
+  [searchFilters]="salesOrderFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="salesOrderColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="danger"
+      icon="pi pi-trash"
+      size="small"
+      (onClick)="deleteEntry(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>
