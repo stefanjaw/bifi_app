@@ -60,11 +60,8 @@ export class ApiRequestManager<T> {
   /**
    * Sets the endpoint for this api request manager.
    * @param endpoint The endpoint to set.
-   * @throws {Error} If the endpoint contains a / symbol.
    */
   set endpoint(endpoint: string) {
-    if (endpoint.includes('/')) throw new Error('Endpoint cannot have the / symbol');
-
     this._endpoint = endpoint;
   }
 

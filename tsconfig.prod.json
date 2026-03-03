@@ -32,6 +32,9 @@
 
       "@avalantec/crm": ["dist/sales/*", "dist/sales"],
       "@avalantec/crm/*": ["projects/sales/*", "projects/sales"]
+
+      "@avalantec/crm": ["dist/inventory/*", "dist/inventory"],
+      "@avalantec/crm/*": ["projects/inventory/*", "projects/inventory"]
     }
   },
   "angularCompilerOptions": {

@@ -1,0 +1,33 @@
+<h1 class="text-2xl font-bold mb-4">UoM Categories</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Category"
+    severity="secondary"
+    icon="pi pi-plus"
+    routerLink="/inventory/uom-categories/new"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name"
+  [searchFilters]="uomCategoryFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="uomCategoryColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      size="small"
+      routerLink="/inventory/uom-categories/{{ element._id }}/edit"
+    ></p-button>
+    <p-button
+      severity="danger"
+      icon="pi pi-trash"
+      size="small"
+      (onClick)="delete(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

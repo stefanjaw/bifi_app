@@ -1,0 +1,147 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Purchase Order: ' + (entry()?.poNumber ?? '') : 'New Purchase Order'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (isUpdate() && entry()) {
+      <div class="flex gap-2 flex-wrap">
+        @if (entry()!.status !== 'received' && entry()!.status !== 'cancelled') {
+          <p-button
+            label="Mark as Received"
+            icon="pi pi-check"
+            severity="success"
+            (onClick)="markAsReceived()"
+          ></p-button>
+          @if (entry()!.status !== 'partially_received') {
+            <p-button
+              label="Partial Receipt"
+              icon="pi pi-circle-fill"
+              severity="warn"
+              (onClick)="markAsPartiallyReceived()"
+            ></p-button>
+          }
+        }
+      </div>
+    }
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Supplier *</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contactOptions()"
+              optionLabel="fullName"
+              optionValue="_id"
+              placeholder="Select a supplier"
+              [filter]="true"
+              filterBy="fullName,email,phoneNumber"
+            >
+              <ng-template #footer>
+                <div class="p-2 border-t border-gray-200">
+                  <p-button
+                    label="Show More"
+                    icon="pi pi-search"
+                    [text]="true"
+                    size="small"
+                    styleClass="w-full"
+                    (onClick)="contactDialog.openDialog()"
+                  ></p-button>
+                </div>
+              </ng-template>
+            </p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Status</bifi-app-form-label>
+            <p-select
+              formControlName="status"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a status"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Pipeline Stage</bifi-app-form-label>
+            <p-select
+              formControlName="stageId"
+              [options]="stageOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="None"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Issue Date</bifi-app-form-label>
+            <p-datepicker
+              formControlName="issueDate"
+              dateFormat="mm/dd/yy"
+              placeholder="Select date"
+              [showIcon]="true"
+            ></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Expected Delivery Date</bifi-app-form-label>
+            <p-datepicker
+              formControlName="expectedDeliveryDate"
+              dateFormat="mm/dd/yy"
+              placeholder="Select date"
+              [showIcon]="true"
+            ></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
+        <bifi-app-line-items-table
+          [items]="lineItems()"
+          (itemsChange)="onLineItemsChange($event)"
+        ></bifi-app-line-items-table>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">
+        <div class="grid grid-cols-1 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Notes</bifi-app-form-label>
+            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
+
+<bifi-app-select-contact-dialog
+  #contactDialog
+  (selected)="onContactSelected($event)"
+></bifi-app-select-contact-dialog>

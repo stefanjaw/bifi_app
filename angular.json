@@ -192,36 +192,6 @@
         }
       }
     },
-    "crm": {
-      "projectType": "library",
-      "root": "projects/crm",
-      "sourceRoot": "projects/crm/src",
-      "prefix": "bifi-app",
-      "architect": {
-        "build": {
-          "builder": "@angular/build:ng-packagr",
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/crm/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/crm/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "tsConfig": "projects/crm/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
-          }
-        }
-      }
-    },
     "website": {
       "projectType": "library",
       "root": "projects/website",
@@ -369,6 +339,46 @@
               "zone.js/testing"
             ]
           }
+        }
+      }
+    },
+    "purchases": {
+      "projectType": "library",
+      "root": "projects/purchases",
+      "sourceRoot": "projects/purchases/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/purchases/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/purchases/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    },
+    "inventory": {
+      "projectType": "library",
+      "root": "projects/inventory",
+      "sourceRoot": "projects/inventory/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/inventory/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/inventory/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

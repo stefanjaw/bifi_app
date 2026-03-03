@@ -6,7 +6,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CrudCrm, CrudCrmStages, crmStage, crm } from '@avalantec/crm';
+import { CrudCrm } from '../../services/crud-crm';
+import { CrudCrmStages } from '../../modules/crm-stages/services/crud-crm-stages';
+import { crmStage } from '../../modules/crm-stages/interfaces/crm-stage';
+import { crm } from '../../interfaces/crm';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -97,7 +100,7 @@ export class SalesPipeline {
   markWon(deal: crm) {
     const wonStage = this.wonStage();
     if (!wonStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in CRM settings first.' });
+      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in Deal Stages settings first.' });
       return;
     }
     this.actionLoadingId.set(deal._id);
@@ -143,7 +146,7 @@ export class SalesPipeline {
   markLost(deal: crm) {
     const lostStage = this.lostStage();
     if (!lostStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in CRM settings first.' });
+      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in Deal Stages settings first.' });
       return;
     }
     this.actionLoadingId.set(deal._id);

@@ -1,5 +1,14 @@
 <p-toast></p-toast>
-<h1 class="text-2xl font-bold mb-4">Sales Opportunities</h1>
+<h1 class="text-2xl font-bold mb-4">Opportunities</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Opportunity"
+    severity="secondary"
+    icon="pi pi-plus"
+    routerLink="/sales/opportunities/new"
+  ></p-button>
+</div>
 
 <bifi-app-search-bar
   label="Search by title, company, contact or stage"
@@ -29,7 +38,7 @@
       label="Edit"
       icon="pi pi-pencil"
       size="small"
-      routerLink="/crm/edit/{{ element._id }}"
+      routerLink="/sales/opportunities/edit/{{ element._id }}"
     ></p-button>
     <p-button
       severity="danger"

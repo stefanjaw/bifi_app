@@ -1,0 +1,73 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Product' : 'New Product'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Product Information" id="product-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name *</bifi-app-form-label>
+            <input pInputText formControlName="name" placeholder="Product name" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>SKU *</bifi-app-form-label>
+            <input pInputText formControlName="sku" placeholder="Unique product code" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
+            <p-select
+              formControlName="unitOfMeasureId"
+              [options]="uoms() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a unit of measure"
+              [showClear]="true"
+            ></p-select>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Description</bifi-app-form-label>
+            <textarea pTextarea formControlName="description" rows="3" placeholder="Optional description"></textarea>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Pricing" id="product-pricing" [ordinal]="2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Cost Price</bifi-app-form-label>
+            <p-inputNumber formControlName="costPrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Sale Price</bifi-app-form-label>
+            <p-inputNumber formControlName="salePrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

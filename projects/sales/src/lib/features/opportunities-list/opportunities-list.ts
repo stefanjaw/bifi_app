@@ -12,10 +12,12 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
-import { CrudCrm, crmStage, CrudCrmStages } from '@avalantec/crm';
-import { crm } from '@avalantec/crm';
-import { crmColumns } from '@avalantec/crm';
-import { crmFilters } from '@avalantec/crm';
+import { CrudCrm } from '../../services/crud-crm';
+import { CrudCrmStages } from '../../modules/crm-stages/services/crud-crm-stages';
+import { crmStage } from '../../modules/crm-stages/interfaces/crm-stage';
+import { crm } from '../../interfaces/crm';
+import { crmColumns } from '../../libraries/crm-columns';
+import { crmFilters } from '../../libraries/crm-filters';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
@@ -57,7 +59,7 @@ export class OpportunitiesList {
   markWon(deal: crm) {
     const wonStage = this.wonStage();
     if (!wonStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in CRM settings first.' });
+      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in Deal Stages settings first.' });
       return;
     }
     this.markingId.set(deal._id);
@@ -103,7 +105,7 @@ export class OpportunitiesList {
   markLost(deal: crm) {
     const lostStage = this.lostStage();
     if (!lostStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in CRM settings first.' });
+      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in Deal Stages settings first.' });
       return;
     }
     this.markingId.set(deal._id);

@@ -1,5 +1,5 @@
 import { contact, company, user } from '@avalantec/base-app/interfaces';
-import { crm } from '@avalantec/crm';
+import { crm } from './crm';
 
 export interface salesOrder {
   _id: string;

@@ -1,0 +1,21 @@
+<h1 class="text-2xl font-bold mb-4">Suppliers</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    [label]="showAll() ? 'Show Suppliers Only' : 'Show All Contacts'"
+    [icon]="showAll() ? 'pi pi-filter' : 'pi pi-users'"
+    severity="secondary"
+    (onClick)="toggleShowAll()"
+  ></p-button>
+</div>
+
+<bifi-app-table-layout [columns]="supplierColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="info"
+      label="View"
+      icon="pi pi-eye"
+      routerLink="../suppliers/{{ element._id }}"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

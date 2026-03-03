@@ -1,0 +1,24 @@
+<h1 class="text-2xl font-bold mb-4">Stock Movements</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Movement"
+    severity="secondary"
+    icon="pi pi-plus"
+    routerLink="/inventory/movements/new"
+  ></p-button>
+  <p-button
+    label="Transfer"
+    severity="secondary"
+    icon="pi pi-arrows-h"
+    routerLink="/inventory/transfer"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by type or reference"
+  [searchFilters]="movementFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="movementColumns" [data]="entries">
+</bifi-app-table-layout>
