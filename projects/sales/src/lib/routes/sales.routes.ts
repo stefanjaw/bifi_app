@@ -20,6 +20,18 @@ export const SALES_ROUTES: Routes = [
       import('../features/opportunities-list/opportunities-list').then(c => c.OpportunitiesList),
   },
   {
+    path: 'opportunities/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+  },
+  {
+    path: 'opportunities/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+  },
+  {
     path: 'pipeline',
     canActivate: [authGuard],
     loadComponent: () =>

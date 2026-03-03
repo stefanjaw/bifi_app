@@ -1,0 +1,31 @@
+<p-dialog
+  header="Select Contact"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-lg"
+>
+  <bifi-app-form-field class="mb-8 min-h-40">
+    <bifi-app-form-label>Contact</bifi-app-form-label>
+    <p-select
+      appendTo="body"
+      [formControl]="contact"
+      [options]="contacts()"
+      optionLabel="fullName"
+      optionValue="_id"
+      [filter]="true"
+      filterBy="fullName,email,phoneNumber"
+      placeholder="Search by name, email or phone..."
+    ></p-select>
+    <bifi-app-form-error></bifi-app-form-error>
+  </bifi-app-form-field>
+
+  <bifi-app-form-actions
+    [isSubmitting]="false"
+    [formDisabled]="!contact.value"
+    (submitClicked)="handleSubmit()"
+    (cancelClicked)="closeDialog()"
+    cancelLabel="Cancel"
+    saveLabel="Select"
+    [formChanged]="true"
+  ></bifi-app-form-actions>
+</p-dialog>

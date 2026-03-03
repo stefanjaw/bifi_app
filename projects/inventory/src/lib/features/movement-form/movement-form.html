@@ -1,0 +1,102 @@
+<bifi-app-form-layout
+  title="New Stock Movement"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Movement Details" id="movement-details" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Movement Type *</bifi-app-form-label>
+            <p-select
+              formControlName="type"
+              [options]="movementTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select type"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Product *</bifi-app-form-label>
+            <p-select
+              formControlName="productId"
+              [options]="products() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select product"
+              [filter]="true"
+              filterBy="name,sku"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <p-select
+              formControlName="warehouseId"
+              [options]="warehouses() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select warehouse"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Location *</bifi-app-form-label>
+            <p-select
+              formControlName="locationId"
+              [options]="filteredLocations()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select location (choose warehouse first)"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+            @if (selectedWarehouseId() && filteredLocations().length === 0) {
+              <small class="text-orange-500">
+                No locations found for this warehouse.
+                <a [routerLink]="['/inventory/warehouses', selectedWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+              </small>
+            }
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Quantity *</bifi-app-form-label>
+            <p-inputNumber formControlName="quantity" [min]="1" placeholder="1"></p-inputNumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Reference</bifi-app-form-label>
+            <input pInputText formControlName="reference" placeholder="PO number, order ID, etc." />
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Notes</bifi-app-form-label>
+            <textarea pTextarea formControlName="notes" rows="2" placeholder="Optional notes"></textarea>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

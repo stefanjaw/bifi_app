@@ -1,0 +1,105 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <h3 class="text-lg font-semibold">Order Items</h3>
+    @if (!readonly()) {
+      <p-button
+        label="Add Item"
+        icon="pi pi-plus"
+        severity="secondary"
+        size="small"
+        (onClick)="addItem()"
+      ></p-button>
+    }
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="text-left p-3 border-b">Description</th>
+          <th class="text-left p-3 border-b w-28">Quantity</th>
+          <th class="text-left p-3 border-b w-32">Unit Price</th>
+          <th class="text-left p-3 border-b w-32">Total</th>
+          @if (!readonly()) {
+            <th class="p-3 border-b w-16"></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of internalItems(); track $index) {
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 border-b">
+              @if (!readonly()) {
+                <input
+                  pInputText
+                  [value]="item.description"
+                  (input)="updateItem($index, 'description', $any($event.target).value)"
+                  placeholder="Item description"
+                  class="w-full"
+                />
+              } @else {
+                {{ item.description }}
+              }
+            </td>
+            <td class="p-2 border-b">
+              @if (!readonly()) {
+                <p-inputnumber
+                  [ngModel]="item.quantity"
+                  (ngModelChange)="updateItem($index, 'quantity', $event)"
+                  [min]="0"
+                  [showButtons]="true"
+                  styleClass="w-full"
+                ></p-inputnumber>
+              } @else {
+                {{ item.quantity }}
+              }
+            </td>
+            <td class="p-2 border-b">
+              @if (!readonly()) {
+                <p-inputnumber
+                  [ngModel]="item.unitPrice"
+                  (ngModelChange)="updateItem($index, 'unitPrice', $event)"
+                  [min]="0"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  styleClass="w-full"
+                ></p-inputnumber>
+              } @else {
+                {{ item.unitPrice | currency }}
+              }
+            </td>
+            <td class="p-2 border-b font-semibold">
+              {{ (item.quantity * item.unitPrice) | currency }}
+            </td>
+            @if (!readonly()) {
+              <td class="p-2 border-b">
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  [text]="true"
+                  (onClick)="removeItem($index)"
+                ></p-button>
+              </td>
+            }
+          </tr>
+        }
+        @if (internalItems().length === 0) {
+          <tr>
+            <td [colSpan]="readonly() ? 4 : 5" class="p-4 text-center text-gray-500">
+              No items yet. {{ readonly() ? '' : 'Click "Add Item" to get started.' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+      @if (internalItems().length > 0) {
+        <tfoot>
+          <tr class="bg-gray-50 font-bold">
+            <td [colSpan]="readonly() ? 3 : 4" class="p-3 text-right">Grand Total:</td>
+            <td class="p-3 text-green-600">{{ grandTotal() | currency }}</td>
+          </tr>
+        </tfoot>
+      }
+    </table>
+  </div>
+</div>

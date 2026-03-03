@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { SALES_ROUTES } from '../../routes/sales.routes';
+import { CRM_STAGES_ROUTES } from '../../modules/crm-stages/routes/crm-stages.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 
@@ -49,10 +50,39 @@ export function initializeSales() {
         ],
       },
     },
+    {
+      item: {
+        icon: PrimeIcons.COG,
+        label: 'Sales',
+        resource: 'sales/settings/menu',
+        items: [
+          {
+            icon: PrimeIcons.LIST,
+            routerLink: ['/settings/sales/crm-stages'],
+            label: 'CRM Stages',
+            resource: 'crm-stages/menu',
+          },
+        ],
+      },
+      childOf: 'settings',
+    },
   ]);
 
   mainRoutingManager.addRouting({
     basePath: 'sales',
     newRouting: SALES_ROUTES,
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: {
+      path: 'sales',
+      children: [
+        {
+          path: 'crm-stages',
+          children: CRM_STAGES_ROUTES,
+        },
+      ],
+    },
+    childOf: 'settings',
   });
 }

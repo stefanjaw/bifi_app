@@ -21,8 +21,9 @@ import { Noir } from './primeng.preset';
 import { provideWebsite } from '@avalantec/website';
 import { provideTasks } from '@avalantec/tasks';
 import { provideAduanix } from '@avalantec/aduanix';
-import { provideCrm } from '@avalantec/crm';
 import { provideSales } from '@avalantec/sales';
+import { providePurchases } from '@avalantec/purchases';
+import { provideInventory } from '@avalantec/inventory';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -57,8 +58,9 @@ export const appConfig: ApplicationConfig = {
     provideWebsite(),
     provideTasks(),
     provideAduanix(),
-    provideCrm(),
     provideSales(),
+    providePurchases(),
+    provideInventory(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

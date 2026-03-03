@@ -1,0 +1,59 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Location' : 'New Location'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Location Information" id="location-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <p-select
+              formControlName="warehouseId"
+              [options]="warehouses() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select warehouse"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name *</bifi-app-form-label>
+            <input pInputText formControlName="name" placeholder="e.g. Shelf A1" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Code *</bifi-app-form-label>
+            <input pInputText formControlName="code" placeholder="e.g. A1-01" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Capacity</bifi-app-form-label>
+            <p-inputNumber formControlName="capacity" [min]="0" placeholder="0 = unlimited"></p-inputNumber>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

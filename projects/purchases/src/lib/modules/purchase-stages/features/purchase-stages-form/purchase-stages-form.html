@@ -1,0 +1,52 @@
+<bifi-app-form-layout
+  title="{{ isUpdate() ? 'Update' : 'Create' }} Purchase Stage"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="Stage Information" id="stage-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name *</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="e.g. In Review" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Color</bifi-app-form-label>
+            <input type="color" formControlName="color" class="h-10 w-full rounded border border-gray-300 cursor-pointer p-1" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Order</bifi-app-form-label>
+            <p-inputnumber formControlName="order" [min]="0" placeholder="0" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Description</bifi-app-form-label>
+            <textarea pTextarea formControlName="description" placeholder="Description"></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

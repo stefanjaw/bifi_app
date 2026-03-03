@@ -1,0 +1,36 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit UoM Category' : 'New UoM Category'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Category Information" id="uom-category-info" [ordinal]="1">
+        <div class="grid grid-cols-1 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Name *</bifi-app-form-label>
+            <input pInputText formControlName="name" placeholder="e.g. Weight, Volume, Count" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

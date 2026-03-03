@@ -1,0 +1,103 @@
+@if (isLoading()) {
+  <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+}
+
+@if (!isLoading() && supplier()) {
+  <div class="p-6 ms-4 me-4 flex flex-col gap-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">{{ supplier()!.fullName }}</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <p-card header="Contact Information">
+        <div class="flex flex-col gap-2 text-sm">
+          @if (supplier()!.email) {
+            <div><span class="font-semibold">Email:</span> {{ supplier()!.email }}</div>
+          }
+          @if (supplier()!.phoneNumber) {
+            <div><span class="font-semibold">Phone:</span> {{ supplier()!.phoneNumber }}</div>
+          }
+          @if (supplier()!.type) {
+            <div>
+              <span class="font-semibold">Type:</span>
+              <span class="capitalize ml-1">{{ supplier()!.type }}</span>
+            </div>
+          }
+          <div>
+            <span class="font-semibold">Status:</span>
+            <p-tag
+              [value]="supplier()!.active ? 'Active' : 'Inactive'"
+              [severity]="supplier()!.active ? 'success' : 'danger'"
+              class="ml-2"
+            ></p-tag>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card header="Total Spent">
+        <p class="text-3xl font-bold text-green-600">{{ totalSpent() | currency }}</p>
+        <p class="text-sm text-gray-500 mt-2">On received orders</p>
+      </p-card>
+
+      <p-card header="Outstanding Balance">
+        <p class="text-3xl font-bold text-orange-500">{{ outstandingBalance() | currency }}</p>
+        <p class="text-sm text-gray-500 mt-2">On active orders</p>
+      </p-card>
+    </div>
+
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Purchase Orders</h2>
+        <p-button
+          label="New Order"
+          icon="pi pi-plus"
+          severity="secondary"
+          [routerLink]="['../../orders/new']"
+          [queryParams]="{ contactId: id() }"
+        ></p-button>
+      </div>
+
+      @if (orders() && orders().length > 0) {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="text-left p-3 border-b">Order #</th>
+                <th class="text-left p-3 border-b">Status</th>
+                <th class="text-left p-3 border-b">Total</th>
+                <th class="text-left p-3 border-b">Issue Date</th>
+                <th class="text-left p-3 border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of orders(); track order._id) {
+                <tr class="hover:bg-gray-50">
+                  <td class="p-3 border-b font-mono">{{ order.poNumber }}</td>
+                  <td class="p-3 border-b">
+                    <p-tag
+                      [value]="getStatusLabel(order.status)"
+                      [severity]="getStatusSeverity(order.status)"
+                    ></p-tag>
+                  </td>
+                  <td class="p-3 border-b">{{ order.totalAmount | currency }}</td>
+                  <td class="p-3 border-b">{{ order.issueDate | date:'shortDate' }}</td>
+                  <td class="p-3 border-b">
+                    <p-button
+                      label="View"
+                      icon="pi pi-eye"
+                      severity="info"
+                      size="small"
+                      routerLink="../../orders/{{ order._id }}"
+                    ></p-button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-gray-500 text-center py-8">No purchase orders found for this supplier.</p>
+      }
+    </div>
+  </div>
+}

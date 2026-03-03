@@ -1,0 +1,33 @@
+<h1 class="text-2xl font-bold mb-4">Units of Measure</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Unit of Measure"
+    severity="secondary"
+    icon="pi pi-plus"
+    routerLink="/inventory/uoms/new"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name"
+  [searchFilters]="uomFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="uomColumns" [data]="entries">
+  <ng-template #actions let-element>
+    <p-button
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      size="small"
+      routerLink="/inventory/uoms/{{ element._id }}/edit"
+    ></p-button>
+    <p-button
+      severity="danger"
+      icon="pi pi-trash"
+      size="small"
+      (onClick)="delete(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

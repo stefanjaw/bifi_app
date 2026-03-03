@@ -24,11 +24,14 @@
       "@avalantec/aduanix": ["./projects/aduanix/src/lib"],
       "@avalantec/aduanix/*": ["./projects/aduanix/src/lib/*"],
 
-      "@avalantec/crm": ["./projects/crm/src/lib"],
-      "@avalantec/crm/*": ["./projects/crm/src/lib/*"],
-
       "@avalantec/sales": ["./projects/sales/src/lib"],
       "@avalantec/sales/*": ["./projects/sales/src/lib/*"],
+
+      "@avalantec/purchases": ["./projects/purchases/src/lib"],
+      "@avalantec/purchases/*": ["./projects/purchases/src/lib/*"],
+
+      "@avalantec/inventory": ["./projects/inventory/src/lib"],
+      "@avalantec/inventory/*": ["./projects/inventory/src/lib/*"],
 
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
