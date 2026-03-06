@@ -1,0 +1,30 @@
+<h1 class="text-2xl font-bold mb-4">Payment Terms</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Payment Term"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../payment-terms/create']"
+    *bifiAppHasPermission="'accounting/payment-terms/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-table-layout [columns]="columns" [data]="paymentTerms">
+  <ng-template #actions let-element>
+    <p-button
+      *bifiAppHasPermission="'accounting/payment-terms/update:view'"
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      routerLink="../payment-terms/edit/{{ element._id }}"
+    ></p-button>
+    <p-button
+      *bifiAppHasPermission="'accounting/payment-terms:delete:model'"
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+      (onClick)="delete(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

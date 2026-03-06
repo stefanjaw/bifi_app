@@ -31,10 +31,13 @@
       "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
 
       "@avalantec/crm": ["dist/sales/*", "dist/sales"],
-      "@avalantec/crm/*": ["projects/sales/*", "projects/sales"]
+      "@avalantec/crm/*": ["projects/sales/*", "projects/sales"],
 
       "@avalantec/crm": ["dist/inventory/*", "dist/inventory"],
-      "@avalantec/crm/*": ["projects/inventory/*", "projects/inventory"]
+      "@avalantec/crm/*": ["projects/inventory/*", "projects/inventory"],
+
+      "@avalantec/accounting": ["dist/accounting/*", "dist/accounting"],
+      "@avalantec/accounting/*": ["projects/accounting/*", "projects/accounting"]
     }
   },
   "angularCompilerOptions": {

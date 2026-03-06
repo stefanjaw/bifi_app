@@ -1,0 +1,73 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Exchange Rate' : 'New Exchange Rate'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Exchange Rate Details" id="exchange-rate-details" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>From Currency *</bifi-app-form-label>
+            <p-select
+              formControlName="fromCurrencyId"
+              [options]="currencies() || []"
+              optionLabel="code"
+              optionValue="_id"
+              placeholder="Select currency"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>To Currency *</bifi-app-form-label>
+            <p-select
+              formControlName="toCurrencyId"
+              [options]="currencies() || []"
+              optionLabel="code"
+              optionValue="_id"
+              placeholder="Select currency"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Rate *</bifi-app-form-label>
+            <p-inputNumber formControlName="rate" [minFractionDigits]="2" [maxFractionDigits]="6" [min]="0"></p-inputNumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Effective Date *</bifi-app-form-label>
+            <p-datePicker formControlName="effectiveDate" [showIcon]="true" dateFormat="yy-mm-dd"></p-datePicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Active</bifi-app-form-label>
+            <p-toggleSwitch formControlName="active"></p-toggleSwitch>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

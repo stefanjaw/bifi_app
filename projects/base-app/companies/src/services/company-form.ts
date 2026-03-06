@@ -7,6 +7,7 @@ export interface CompanyFormModel {
   countryId: string;
   address: string;
   contactId: string;
+  defaultCurrencyId: string;
 }
 
 @Injectable({
@@ -19,6 +20,7 @@ export class CompanyForm extends BaseForm<CompanyFormModel> {
       countryId: ['', [Validators.required]],
       address: ['', [Validators.required]],
       contactId: ['', [Validators.required]],
+      defaultCurrencyId: [''],
     });
   }
 }

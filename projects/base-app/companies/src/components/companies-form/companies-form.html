@@ -60,6 +60,19 @@
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Default Currency</bifi-app-form-label>
+            <p-select
+              formControlName="defaultCurrencyId"
+              [options]="currencies()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="Select currency (optional)"
+            ></p-select>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
     } @else if (error()) {

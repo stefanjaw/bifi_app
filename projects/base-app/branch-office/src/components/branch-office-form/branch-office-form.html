@@ -1,0 +1,94 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Branch Office' : 'New Branch Office'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Branch Office Details" id="branch-office-details" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Company *</bifi-app-form-label>
+            <p-select
+              formControlName="companyId"
+              [options]="companies() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select company"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Branch Name *</bifi-app-form-label>
+            <input pInputText formControlName="name" placeholder="e.g. Main Office" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Branch Code *</bifi-app-form-label>
+            <input pInputText formControlName="branchCode" placeholder="e.g. HQ-001" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Address *</bifi-app-form-label>
+            <input pInputText formControlName="address" placeholder="e.g. 123 Main St" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Phone</bifi-app-form-label>
+            <input pInputText formControlName="phone" placeholder="e.g. +1 555 0100" />
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Email</bifi-app-form-label>
+            <input pInputText formControlName="email" placeholder="e.g. branch@company.com" />
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Country</bifi-app-form-label>
+            <p-select
+              formControlName="countryId"
+              [options]="countries() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select country"
+              [filter]="true"
+              [showClear]="true"
+            ></p-select>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Active</bifi-app-form-label>
+            <p-toggleSwitch formControlName="active"></p-toggleSwitch>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Default Branch</bifi-app-form-label>
+            <p-toggleSwitch formControlName="isDefault"></p-toggleSwitch>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

@@ -33,6 +33,9 @@
       "@avalantec/inventory": ["./projects/inventory/src/lib"],
       "@avalantec/inventory/*": ["./projects/inventory/src/lib/*"],
 
+      "@avalantec/accounting": ["./projects/accounting/src/lib"],
+      "@avalantec/accounting/*": ["./projects/accounting/src/lib/*"],
+
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },

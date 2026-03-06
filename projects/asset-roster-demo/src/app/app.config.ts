@@ -24,6 +24,7 @@ import { provideAduanix } from '@avalantec/aduanix';
 import { provideSales } from '@avalantec/sales';
 import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
+import { provideAccounting } from '@avalantec/accounting';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -61,6 +62,7 @@ export const appConfig: ApplicationConfig = {
     provideSales(),
     providePurchases(),
     provideInventory(),
+    provideAccounting(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',
