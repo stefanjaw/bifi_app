@@ -78,8 +78,7 @@ ENVIRONMENT_PATH="$ENVIRONMENT_DIR/environment.ts"
 mkdir -p "$ENVIRONMENT_DIR"
 [ ! -f "$ENVIRONMENT_PATH" ] && touch "$ENVIRONMENT_PATH"
 
-echo "📝 Insert the credentials in ./src/environments/environment.ts"
-sudo nano "$ENVIRONMENT_PATH"
+echo "📝 environment.ts created at $ENVIRONMENT_PATH — insert credentials manually before building"
 
 # Ask for title, if provided as argument, use it
 APP_TITLE=""

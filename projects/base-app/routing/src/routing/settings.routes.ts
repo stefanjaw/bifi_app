@@ -48,11 +48,6 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/currency').then(m => m.CURRENCY_ROUTES),
   },
   {
-    path: 'branch-offices',
-    canActivate: [authGuard],
-    loadChildren: () => import('@avalantec/base-app/branch-office').then(m => m.BRANCH_OFFICE_ROUTES),
-  },
-  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },

@@ -58,12 +58,6 @@ export class MainMenuManager extends BaseMenuManager {
             resource: 'currencies/menu',
           },
           {
-            icon: 'pi pi-building',
-            routerLink: ['/settings/branch-offices'],
-            label: 'Branch Offices',
-            resource: 'branch-offices/menu',
-          },
-          {
             icon: 'pi pi-file-pdf',
             routerLink: ['/settings/reporting'],
             label: 'Reporting',
