@@ -28,4 +28,11 @@ export const COMPANY_ROUTES: Routes = [
       import('../components/companies-form/companies-form').then(m => m.CompaniesForm),
     data: { resource: 'companies/update' },
   },
+  {
+    path: 'detail/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../components/company-detail/company-detail').then(m => m.CompanyDetail),
+    data: { resource: 'companies/list' },
+  },
 ];

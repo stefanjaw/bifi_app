@@ -21,6 +21,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
+import { CrudCurrencies } from '@avalantec/base-app/currency';
 
 @Component({
   selector: 'bifi-app-companies-form',
@@ -40,34 +41,33 @@ export class CompaniesForm implements OnInit {
   private crudCompanies = inject(CrudCompanies);
   private crudContacts = inject(CrudContacts);
   private crudCountries = inject(CrudCountries);
+  private crudCurrencies = inject(CrudCurrencies);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // inputs
   id = input.required<string>();
 
-  // resources
   companyResource = this.crudCompanies.get({
     id: this.id,
     triggerRequest: computed(() => this.id() !== undefined),
   });
-
   contactsResource = this.crudContacts.get({});
   countriesResource = this.crudCountries.get({});
+  currenciesResource = this.crudCurrencies.get({});
 
-  // data
   company = this.companyResource.value;
   contacts = this.contactsResource.value;
   countries = this.countriesResource.value;
+  currencies = this.currenciesResource.value;
 
-  // state
   form = this.formService.form;
   loading = computed(
     () =>
       this.companyResource.isLoading() ||
       this.contactsResource.isLoading() ||
-      this.countriesResource.isLoading()
+      this.countriesResource.isLoading() ||
+      this.currenciesResource.isLoading(),
   );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.company());
@@ -83,6 +83,7 @@ export class CompaniesForm implements OnInit {
           address: company.address,
           countryId: company.countryId?._id,
           contactId: company.contactId?._id,
+          defaultCurrencyId: (company as any).defaultCurrencyId?._id ?? (company as any).defaultCurrencyId ?? '',
         });
       } else {
         this.formService.reset();
@@ -91,7 +92,6 @@ export class CompaniesForm implements OnInit {
   }
 
   ngOnInit() {
-    // Trigger the initial data load
     this.formService.reset();
   }
 

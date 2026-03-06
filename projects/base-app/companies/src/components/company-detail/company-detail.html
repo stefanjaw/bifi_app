@@ -1,0 +1,93 @@
+<bifi-app-form-layout
+  title="Company Detail"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <div ngProjectAs="div" class="min-h-screen flex flex-col gap-6">
+    <div class="flex gap-2 mb-4">
+      <p-button
+        label="Edit"
+        severity="secondary"
+        icon="pi pi-pencil"
+        [routerLink]="['/settings/companies/edit', id()]"
+      ></p-button>
+      <p-button
+        label="Back to List"
+        severity="secondary"
+        icon="pi pi-arrow-left"
+        routerLink="/settings/companies/list"
+      ></p-button>
+    </div>
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+
+    @if (!isLoading() && company()) {
+      <bifi-app-form-section title="Company Information" id="company-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-500">Name</span>
+            <span class="text-base text-gray-900">{{ company()!.name }}</span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-500">Country</span>
+            <span class="text-base text-gray-900">{{ company()!.countryId?.name ?? '—' }}</span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-500">Address</span>
+            <span class="text-base text-gray-900">{{ company()!.address }}</span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-500">Contact</span>
+            <span class="text-base text-gray-900">
+              {{ company()!.contactId?.name }} {{ company()!.contactId?.lastName }}
+            </span>
+          </div>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Branch Offices" id="branch-offices" [ordinal]="2">
+        @if (branches().length === 0) {
+          <p class="text-gray-500 text-sm">No branch offices found for this company.</p>
+        } @else {
+          <p-table [value]="branches()" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Branch Name</th>
+                <th>Code</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Default</th>
+                <th>Active</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-branch>
+              <tr>
+                <td>{{ branch.name }}</td>
+                <td>{{ branch.branchCode }}</td>
+                <td>{{ branch.address }}</td>
+                <td>{{ branch.phone ?? '—' }}</td>
+                <td>
+                  <p-tag
+                    [severity]="branch.isDefault ? 'success' : 'secondary'"
+                    [value]="branch.isDefault ? 'Yes' : 'No'"
+                  ></p-tag>
+                </td>
+                <td>
+                  <p-tag
+                    [severity]="branch.active ? 'success' : 'danger'"
+                    [value]="branch.active ? 'Active' : 'Inactive'"
+                  ></p-tag>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        }
+      </bifi-app-form-section>
+    }
+  </div>
+</bifi-app-form-layout>

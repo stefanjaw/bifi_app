@@ -18,6 +18,12 @@
 <bifi-app-table-layout [columns]="companyColumns" [data]="companies">
   <ng-template #actions let-element>
     <p-button
+      severity="secondary"
+      label="View"
+      icon="pi pi-eye"
+      routerLink="../detail/{{ element._id }}"
+    ></p-button>
+    <p-button
       *bifiAppHasPermission="'companies/update:view'"
       severity="secondary"
       label="Edit"

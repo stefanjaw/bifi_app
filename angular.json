@@ -381,6 +381,26 @@
           "defaultConfiguration": "production"
         }
       }
+    },
+    "accounting": {
+      "projectType": "library",
+      "root": "projects/accounting",
+      "sourceRoot": "projects/accounting/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/accounting/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/accounting/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
     }
   },
   "cli": {
