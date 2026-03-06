@@ -8,24 +8,16 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudCurrencies } from '../../services/crud-currencies';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface CurrencyFormModel {
-  name: string;
-  code: string;
-  symbol: string;
-  decimalPrecision: number;
-  active: boolean;
-  isDefault: boolean;
-}
+import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form.service';
 
 @Component({
   selector: 'bifi-app-currency-form',
@@ -33,12 +25,15 @@ export interface CurrencyFormModel {
   templateUrl: './currency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CurrencyForm extends BaseForm<CurrencyFormModel> {
+export class CurrencyForm {
+  protected formService = inject(CurrencyFormService);
   private crudCurrencies = inject(CrudCurrencies);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   currencyResource = this.crudCurrencies.get({
     id: this.id,
@@ -49,23 +44,11 @@ export class CurrencyForm extends BaseForm<CurrencyFormModel> {
   isLoading = this.currencyResource.isLoading;
   isSubmitLoading = signal(false);
 
-  override createForm() {
-    return this.fb.group<CurrencyFormModel>({
-      name: ['', [Validators.required]],
-      code: ['', [Validators.required]],
-      symbol: ['', [Validators.required]],
-      decimalPrecision: [2],
-      active: [true],
-      isDefault: [false],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.currencyResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           name: entry.name,
           code: entry.code,
           symbol: entry.symbol,
@@ -73,9 +56,9 @@ export class CurrencyForm extends BaseForm<CurrencyFormModel> {
           active: entry.active ?? true,
           isDefault: entry.isDefault ?? false,
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }

@@ -65,6 +65,7 @@ export class PaymentForm {
       ...rawValue,
       partnerId: rawValue.partnerId || undefined,
       exchangeRate: rawValue.exchangeRate || undefined,
+      paymentDate: rawValue.paymentDate instanceof Date ? rawValue.paymentDate.toISOString() : rawValue.paymentDate,
     };
     this.crudPayments.post({ data: payload })
       .pipe(takeUntilDestroyed(this.destroy$))
