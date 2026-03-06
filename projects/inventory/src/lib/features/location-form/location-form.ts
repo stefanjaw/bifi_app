@@ -8,23 +8,17 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudLocations } from '../../services/crud-locations';
 import { CrudWarehouses } from '../../services/crud-warehouses';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface LocationFormModel {
-  name: string;
-  code: string;
-  warehouseId: string;
-  capacity: number;
-}
+import { LocationFormService, LocationFormModel } from '../../services/location-form.service';
 
 @Component({
   selector: 'bifi-app-location-form',
@@ -32,7 +26,8 @@ export interface LocationFormModel {
   templateUrl: './location-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocationForm extends BaseForm<LocationFormModel> {
+export class LocationForm {
+  protected formService = inject(LocationFormService);
   private crudLocations = inject(CrudLocations);
   private crudWarehouses = inject(CrudWarehouses);
   private router = inject(Router);
@@ -40,6 +35,8 @@ export class LocationForm extends BaseForm<LocationFormModel> {
 
   id = input<string>('');
   warehouseIdParam = input<string>('');
+
+  form = this.formService.form;
 
   locationResource = this.crudLocations.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
   warehousesResource = this.crudWarehouses.get({});
@@ -50,29 +47,19 @@ export class LocationForm extends BaseForm<LocationFormModel> {
 
   warehouses = this.warehousesResource.value;
 
-  override createForm() {
-    return this.fb.group<LocationFormModel>({
-      name: ['', [Validators.required]],
-      code: ['', [Validators.required]],
-      warehouseId: ['', [Validators.required]],
-      capacity: [0],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.locationResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           name: entry.name,
           code: entry.code,
           warehouseId: entry.warehouseId?._id ?? '',
           capacity: entry.capacity ?? 0,
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
         if (this.warehouseIdParam()) {
           this.form.patchValue({ warehouseId: this.warehouseIdParam() });
         }

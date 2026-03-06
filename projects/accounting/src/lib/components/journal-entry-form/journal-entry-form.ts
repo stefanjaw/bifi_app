@@ -148,9 +148,13 @@ export class JournalEntryForm {
     }
 
     this.isSubmitLoading.set(true);
+    const payload = {
+      ...rawValue,
+      date: rawValue.date instanceof Date ? rawValue.date.toISOString() : rawValue.date,
+    };
     const action = this.isUpdate()
-      ? this.crudJournalEntries.put({ _id: this.id(), data: rawValue as any })
-      : this.crudJournalEntries.post({ data: rawValue as any });
+      ? this.crudJournalEntries.put({ _id: this.id(), data: payload as any })
+      : this.crudJournalEntries.post({ data: payload as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => { this.isSubmitLoading.set(false); this.goBack(); },

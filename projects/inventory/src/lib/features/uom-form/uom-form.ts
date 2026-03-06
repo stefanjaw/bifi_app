@@ -8,22 +8,17 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudUoms } from '../../services/crud-uoms';
 import { CrudUomCategories } from '../../services/crud-uom-categories';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface UomFormModel {
-  name: string;
-  symbol: string;
-  categoryId: string;
-}
+import { UomFormService, UomFormModel } from '../../services/uom-form.service';
 
 @Component({
   selector: 'bifi-app-uom-form',
@@ -31,13 +26,16 @@ export interface UomFormModel {
   templateUrl: './uom-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UomForm extends BaseForm<UomFormModel> {
+export class UomForm {
+  protected formService = inject(UomFormService);
   private crudUoms = inject(CrudUoms);
   private crudUomCategories = inject(CrudUomCategories);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   uomResource = this.crudUoms.get({
     id: this.id,
@@ -52,27 +50,18 @@ export class UomForm extends BaseForm<UomFormModel> {
 
   categories = this.categoriesResource.value;
 
-  override createForm() {
-    return this.fb.group<UomFormModel>({
-      name: ['', [Validators.required]],
-      symbol: [''],
-      categoryId: ['', [Validators.required]],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.uomResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           name: entry.name,
           symbol: entry.symbol ?? '',
           categoryId: (entry.categoryId as any)?._id ?? entry.categoryId ?? '',
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }

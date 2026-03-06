@@ -8,29 +8,18 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudBranchOffices } from '../../services/crud-branch-offices';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudCountries } from '@avalantec/base-app/countries';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface BranchOfficeFormModel {
-  companyId: string;
-  name: string;
-  branchCode: string;
-  address: string;
-  phone: string;
-  email: string;
-  countryId: string;
-  active: boolean;
-  isDefault: boolean;
-}
+import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form.service';
 
 @Component({
   selector: 'bifi-app-branch-office-form',
@@ -38,7 +27,8 @@ export interface BranchOfficeFormModel {
   templateUrl: './branch-office-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BranchOfficeForm extends BaseForm<BranchOfficeFormModel> {
+export class BranchOfficeForm {
+  protected formService = inject(BranchOfficeFormService);
   private crudBranchOffices = inject(CrudBranchOffices);
   private crudCompanies = inject(CrudCompanies);
   private crudCountries = inject(CrudCountries);
@@ -46,6 +36,8 @@ export class BranchOfficeForm extends BaseForm<BranchOfficeFormModel> {
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   branchOfficeResource = this.crudBranchOffices.get({
     id: this.id,
@@ -66,26 +58,11 @@ export class BranchOfficeForm extends BaseForm<BranchOfficeFormModel> {
   companies = this.companiesResource.value;
   countries = this.countriesResource.value;
 
-  override createForm() {
-    return this.fb.group<BranchOfficeFormModel>({
-      companyId: ['', [Validators.required]],
-      name: ['', [Validators.required]],
-      branchCode: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      phone: [''],
-      email: [''],
-      countryId: [''],
-      active: [true],
-      isDefault: [false],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.branchOfficeResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           companyId: entry.companyId?._id ?? '',
           name: entry.name,
           branchCode: entry.branchCode,
@@ -96,9 +73,9 @@ export class BranchOfficeForm extends BaseForm<BranchOfficeFormModel> {
           active: entry.active ?? true,
           isDefault: entry.isDefault ?? false,
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }

@@ -8,10 +8,10 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudUoms } from '../../services/crud-uoms';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -20,15 +20,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface ProductFormModel {
-  name: string;
-  sku: string;
-  description: string;
-  unitOfMeasureId: string;
-  costPrice: number;
-  salePrice: number;
-}
+import { ProductFormService, ProductFormModel } from '../../services/product-form.service';
 
 @Component({
   selector: 'bifi-app-product-form',
@@ -36,13 +28,16 @@ export interface ProductFormModel {
   templateUrl: './product-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductForm extends BaseForm<ProductFormModel> {
+export class ProductForm {
+  protected formService = inject(ProductFormService);
   private crudProducts = inject(CrudProducts);
   private crudUoms = inject(CrudUoms);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   productResource = this.crudProducts.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
   uomsResource = this.crudUoms.get({});
@@ -53,23 +48,11 @@ export class ProductForm extends BaseForm<ProductFormModel> {
 
   uoms = this.uomsResource.value;
 
-  override createForm() {
-    return this.fb.group<ProductFormModel>({
-      name: ['', [Validators.required]],
-      sku: ['', [Validators.required]],
-      description: [''],
-      unitOfMeasureId: [''],
-      costPrice: [0],
-      salePrice: [0],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.productResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           name: entry.name,
           sku: entry.sku,
           description: entry.description ?? '',
@@ -77,9 +60,9 @@ export class ProductForm extends BaseForm<ProductFormModel> {
           costPrice: entry.costPrice,
           salePrice: entry.salePrice,
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }

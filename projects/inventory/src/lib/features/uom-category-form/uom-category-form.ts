@@ -8,17 +8,14 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudUomCategories } from '../../services/crud-uom-categories';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface UomCategoryFormModel {
-  name: string;
-}
+import { UomCategoryFormService, UomCategoryFormModel } from '../../services/uom-category-form.service';
 
 @Component({
   selector: 'bifi-app-uom-category-form',
@@ -26,12 +23,15 @@ export interface UomCategoryFormModel {
   templateUrl: './uom-category-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UomCategoryForm extends BaseForm<UomCategoryFormModel> {
+export class UomCategoryForm {
+  protected formService = inject(UomCategoryFormService);
   private crudUomCategories = inject(CrudUomCategories);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   categoryResource = this.crudUomCategories.get({
     id: this.id,
@@ -42,21 +42,14 @@ export class UomCategoryForm extends BaseForm<UomCategoryFormModel> {
   isLoading = this.categoryResource.isLoading;
   isSubmitLoading = signal(false);
 
-  override createForm() {
-    return this.fb.group<UomCategoryFormModel>({
-      name: ['', [Validators.required]],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.categoryResource.value();
       if (entry) {
-        this.patchValue({ name: entry.name });
-        this.resetDirtyState();
+        this.formService.patchValue({ name: entry.name });
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }

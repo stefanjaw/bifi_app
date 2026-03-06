@@ -8,19 +8,14 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { BaseForm, FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudWarehouses } from '../../services/crud-warehouses';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export interface WarehouseFormModel {
-  name: string;
-  code: string;
-  address: string;
-}
+import { WarehouseFormService, WarehouseFormModel } from '../../services/warehouse-form.service';
 
 @Component({
   selector: 'bifi-app-warehouse-form',
@@ -28,12 +23,15 @@ export interface WarehouseFormModel {
   templateUrl: './warehouse-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WarehouseForm extends BaseForm<WarehouseFormModel> {
+export class WarehouseForm {
+  protected formService = inject(WarehouseFormService);
   private crudWarehouses = inject(CrudWarehouses);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
+
+  form = this.formService.form;
 
   warehouseResource = this.crudWarehouses.get({
     id: this.id,
@@ -44,27 +42,18 @@ export class WarehouseForm extends BaseForm<WarehouseFormModel> {
   isLoading = this.warehouseResource.isLoading;
   isSubmitLoading = signal(false);
 
-  override createForm() {
-    return this.fb.group<WarehouseFormModel>({
-      name: ['', [Validators.required]],
-      code: ['', [Validators.required]],
-      address: [''],
-    });
-  }
-
   constructor() {
-    super();
     effect(() => {
       const entry = this.warehouseResource.value();
       if (entry) {
-        this.patchValue({
+        this.formService.patchValue({
           name: entry.name,
           code: entry.code,
           address: entry.address ?? '',
         });
-        this.resetDirtyState();
+        this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
-        this.reset();
+        this.formService.reset();
       }
     });
   }
