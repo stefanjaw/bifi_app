@@ -30,11 +30,14 @@
       "@avalantec/crm": ["dist/crm/*", "dist/crm"],
       "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
 
-      "@avalantec/crm": ["dist/sales/*", "dist/sales"],
-      "@avalantec/crm/*": ["projects/sales/*", "projects/sales"],
+      "@avalantec/sales": ["dist/sales/*", "dist/sales"],
+      "@avalantec/sales/*": ["projects/sales/*", "projects/sales"],
 
-      "@avalantec/crm": ["dist/inventory/*", "dist/inventory"],
-      "@avalantec/crm/*": ["projects/inventory/*", "projects/inventory"],
+      "@avalantec/purchases": ["dist/purchases/*", "dist/purchases"],
+      "@avalantec/purchases/*": ["projects/purchases/*", "projects/purchases"],
+
+      "@avalantec/inventory": ["dist/inventory/*", "dist/inventory"],
+      "@avalantec/inventory/*": ["projects/inventory/*", "projects/inventory"],
 
       "@avalantec/accounting": ["dist/accounting/*", "dist/accounting"],
       "@avalantec/accounting/*": ["projects/accounting/*", "projects/accounting"]

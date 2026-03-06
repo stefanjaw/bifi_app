@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ADUANIX_ROUTES } from '@avalantec/aduanix/routes/aduanix.routes';
+import { ADUANIX_ROUTES } from '../../routes/aduanix.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 

@@ -6,7 +6,6 @@ import {
   input,
 } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
-import { CrudBranchOffices } from '@avalantec/base-app/branch-office';
 import { FormModule } from '@avalantec/base-app/form';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -22,7 +21,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
 })
 export class CompanyDetail {
   private crudCompanies = inject(CrudCompanies);
-  private crudBranchOffices = inject(CrudBranchOffices);
 
   id = input<string>('');
 
@@ -30,7 +28,9 @@ export class CompanyDetail {
     id: this.id,
     triggerRequest: computed(() => !!this.id()),
   });
-  branchOfficesResource = this.crudBranchOffices.get({});
+  branchOfficesResource = this.crudCompanies.get({
+    searchParams: computed(() => ({ type: 'branch-office' })),
+  });
 
   company = this.companyResource.value;
   isLoading = computed(
@@ -42,8 +42,8 @@ export class CompanyDetail {
     const all = this.branchOfficesResource.value();
     if (!all || !id) return [];
     return all.filter((b: any) => {
-      const cId = b.companyId;
-      return typeof cId === 'string' ? cId === id : cId?._id === id;
+      const parent = b.parentCompany;
+      return typeof parent === 'string' ? parent === id : parent?._id === id;
     });
   });
 }

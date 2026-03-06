@@ -20,11 +20,46 @@
     @if (!loading()) {
       <bifi-app-form-section title="Company information" id="form-general" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Type</bifi-app-form-label>
+            <p-select
+              formControlName="type"
+              [options]="typeOptions()"
+              optionLabel="label"
+              optionValue="value"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          @if (isBranchOffice()) {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Parent Company</bifi-app-form-label>
+              <p-select
+                formControlName="parentCompany"
+                [options]="companies()"
+                optionLabel="name"
+                optionValue="_id"
+                [filter]="true"
+                placeholder="Select parent company"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
+
           <bifi-app-form-field>
             <bifi-app-form-label>Name</bifi-app-form-label>
             <input pInputText formControlName="name" type="text" placeholder="e.g Company S.A." />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          @if (isBranchOffice()) {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Branch Code</bifi-app-form-label>
+              <input pInputText formControlName="branchCode" type="text" placeholder="e.g BR-001" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
 
           <bifi-app-form-field>
             <bifi-app-form-label>Country</bifi-app-form-label>
@@ -50,7 +85,7 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Related to Contact:</bifi-app-form-label>
+            <bifi-app-form-label>Related to Contact</bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contacts()"
@@ -73,6 +108,14 @@
               placeholder="Select currency (optional)"
             ></p-select>
           </bifi-app-form-field>
+
+          @if (isBranchOffice()) {
+            <bifi-app-form-field>
+              <bifi-app-form-label>Set as Default Branch</bifi-app-form-label>
+              <p-toggle-switch formControlName="isDefault"></p-toggle-switch>
+            </bifi-app-form-field>
+          }
+
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
