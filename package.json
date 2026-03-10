@@ -32,6 +32,7 @@
     "@codemirror/view": "^6.38.8",
     "@primeuix/themes": "^1.2.1",
     "@tailwindcss/postcss": "^4.1.11",
+    "chart.js": "^4.5.1",
     "codemirror": "^6.0.2",
     "dayjs": "^1.11.13",
     "ngx-sonner": "^3.1.0",

@@ -126,7 +126,15 @@
             "allowedHosts": [
               "61727dcc-e441-4690-bb21-4333a8c626e2-00-38jwgcs6m0b8o.picard.replit.dev",
               ".replit.dev"
-            ]
+            ],
+            "headers": {
+              "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+              "Pragma": "no-cache",
+              "Expires": "0",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET, OPTIONS",
+              "Access-Control-Allow-Headers": "*"
+            }
           },
           "configurations": {
             "production": {

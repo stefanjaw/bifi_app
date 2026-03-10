@@ -10,30 +10,46 @@
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Serial Number -->
-          <bifi-app-form-field previewVariant="tag">
-            <bifi-app-form-label>Serial Number:</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="serialNumber"
-              type="text"
-              class="w-full"
-              placeholder="SN00X"
-            />
+          <!-- Serial Number (Serialized only) -->
+          @if (deviceType() === 'serialized' || !deviceType()) {
+            <bifi-app-form-field previewVariant="tag">
+              <bifi-app-form-label>
+                Serial Number
+                <p-tag
+                  [value]="deviceTypeLabel()"
+                  severity="info"
+                  styleClass="ml-2 text-xs"
+                ></p-tag>
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="serialNumber"
+                type="text"
+                class="w-full"
+                placeholder="SN00X"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
 
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-          <!-- Type -->
+          <!-- Type of Equipment -->
           <div>
             <bifi-app-form-field>
-              <bifi-app-form-label>Type</bifi-app-form-label>
-
+              <bifi-app-form-label>
+                Type
+                @if (deviceType() === 'non-serialized' || deviceType() === 'software') {
+                  <p-tag
+                    [value]="deviceTypeLabel()"
+                    severity="info"
+                    styleClass="ml-2 text-xs"
+                  ></p-tag>
+                }
+              </bifi-app-form-label>
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
                   {{ assetRoster()?.assetTypeIds?.[0]?.name || fallback }}
                 </ng-template>
               </bifi-app-form-preview>
-
               <p-select
                 formControlName="assetTypeIds"
                 [options]="assetTypes()"
@@ -45,17 +61,16 @@
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
+
           <!-- Make -->
           <div>
             <bifi-app-form-field>
               <bifi-app-form-label>Make</bifi-app-form-label>
-
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
                   {{ assetRoster()?.makeIds?.[0]?.name || fallback }}
                 </ng-template>
               </bifi-app-form-preview>
-
               <p-select
                 formControlName="makeIds"
                 [options]="contacts()"
@@ -68,15 +83,63 @@
             </bifi-app-form-field>
           </div>
 
-          <!-- Model -->
+          <!-- Model (Serialized only) -->
+          @if (deviceType() === 'serialized' || !deviceType()) {
+            <div>
+              <bifi-app-form-field>
+                <bifi-app-form-label>Model</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="productModel"
+                  type="text"
+                  placeholder="e.g, Optima XR220amx"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
+
+          <!-- Description (Non-Serialized and Software) -->
+          @if (deviceType() === 'non-serialized' || deviceType() === 'software') {
+            <div class="md:col-span-2">
+              <bifi-app-form-field>
+                <bifi-app-form-label>Description</bifi-app-form-label>
+                <textarea
+                  pInputTextarea
+                  formControlName="description"
+                  rows="3"
+                  placeholder="Describe the asset"
+                  class="w-full"
+                ></textarea>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
+
+          <!-- Quantity (Non-Serialized only) -->
+          @if (deviceType() === 'non-serialized') {
+            <div>
+              <bifi-app-form-field>
+                <bifi-app-form-label>Quantity</bifi-app-form-label>
+                <p-inputnumber
+                  formControlName="quantity"
+                  [min]="formService.totalAssignedMin()"
+                  placeholder="e.g, 10"
+                ></p-inputnumber>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
+
+          <!-- Date Acquired -->
           <div>
-            <bifi-app-form-field>
-              <bifi-app-form-label>Model</bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="productModel"
-                type="text"
-                placeholder="e.g, Optima XR220amx"
+            <bifi-app-form-field previewVariant="text" previewValueType="date">
+              <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+              <p-date-picker
+                formControlName="acquiredDate"
+                [showIcon]="true"
+                inputId="acquiredDate"
+                class="w-full"
               />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
@@ -94,11 +157,10 @@
             </bifi-app-form-field>
           </div>
 
-          <!--Vendor-->
+          <!-- Vendor -->
           <div>
             <bifi-app-form-field previewVariant="italic">
               <bifi-app-form-label>Vendor</bifi-app-form-label>
-
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
                   {{ assetRoster()?.vendorIds?.[0]?.name || fallback }}
@@ -130,7 +192,6 @@
                         [value]="vendorName()"
                         (input)="vendorName.set($any($event.target).value)"
                       />
-
                       <input
                         class="w-full"
                         pInputText
@@ -139,7 +200,6 @@
                         [value]="vendorEmail()"
                         (input)="vendorEmail.set($any($event.target).value)"
                       />
-
                       <p-button
                         type="button"
                         size="small"
@@ -156,69 +216,274 @@
             </bifi-app-form-field>
           </div>
 
-          <!-- Location -->
+          <!-- Location (single select — Serialized and Software) -->
+          @if (deviceType() === 'serialized' || deviceType() === 'software' || !deviceType()) {
+            <div>
+              <bifi-app-form-field previewVariant="italic">
+                <bifi-app-form-label>Location</bifi-app-form-label>
+                <bifi-app-form-preview>
+                  <ng-template #preview let-typeId let-fallback>
+                    {{ assetRoster()?.locationId?.name || fallback }}
+                  </ng-template>
+                </bifi-app-form-preview>
+                <p-select
+                  formControlName="locationId"
+                  [options]="roomOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [filter]="true"
+                  placeholder="Select a location"
+                >
+                  <ng-template #footer>
+                    <button
+                      type="button"
+                      class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
+                      (click)="toggleRoomForm()"
+                    >
+                      Other location +
+                    </button>
+                    @if (showRoomForm()) {
+                      <div class="flex flex-col gap-3 p-4">
+                        <input
+                          class="w-full"
+                          pInputText
+                          type="text"
+                          placeholder="Name"
+                          [value]="roomName()"
+                          (input)="roomName.set($any($event.target).value)"
+                        />
+                        <p-select
+                          formControlName="facilityId"
+                          [options]="facilityOptions()"
+                          optionLabel="name"
+                          optionValue="_id"
+                          [filter]="true"
+                          placeholder="Select a facility"
+                        ></p-select>
+                        <p-button
+                          type="button"
+                          size="small"
+                          variant="text"
+                          icon="pi pi-plus"
+                          (click)="handleRoomCreation()"
+                          [disabled]="!roomName().trim()"
+                        ></p-button>
+                      </div>
+                    }
+                  </ng-template>
+                </p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
+
+          <!-- Warranty Expiration Date -->
           <div>
-            <bifi-app-form-field previewVariant="italic">
-              <bifi-app-form-label>Location</bifi-app-form-label>
-
-              <bifi-app-form-preview>
-                <ng-template #preview let-typeId let-fallback>
-                  {{ assetRoster()?.locationId?.name || fallback }}
-                </ng-template>
-              </bifi-app-form-preview>
-
-              <p-select
-                formControlName="locationId"
-                [options]="roomOptions()"
-                optionLabel="name"
-                optionValue="_id"
-                [filter]="true"
-                placeholder="Select a location"
-              >
-                <ng-template #footer>
-                  <button
-                    type="button"
-                    class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
-                    (click)="toggleRoomForm()"
-                  >
-                    Other location +
-                  </button>
-                  @if (showRoomForm()) {
-                    <div class="flex flex-col gap-3 p-4">
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="text"
-                        placeholder="Name"
-                        [value]="roomName()"
-                        (input)="roomName.set($any($event.target).value)"
-                      />
-
-                      <p-select
-                        formControlName="facilityId"
-                        [options]="facilityOptions()"
-                        optionLabel="name"
-                        optionValue="_id"
-                        [filter]="true"
-                        placeholder="Select a facility"
-                      ></p-select>
-
-                      <p-button
-                        type="button"
-                        size="small"
-                        variant="text"
-                        icon="pi pi-plus"
-                        (click)="handleRoomCreation()"
-                        [disabled]="!roomName().trim()"
-                      ></p-button>
-                    </div>
-                  }
-                </ng-template>
-              </p-select>
+            <bifi-app-form-field previewVariant="italic" previewValueType="date">
+              <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+              <p-date-picker
+                formControlName="warrantyDate"
+                [showIcon]="true"
+                inputId="warrantyDate"
+                class="w-full"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           </div>
         </div>
+
+        <!-- Location Distribution (Non-Serialized only) -->
+        @if (deviceType() === 'non-serialized') {
+          <!-- Location Distribution Card -->
+          <div class="mt-6 border border-surface-200 rounded-md p-4 flex flex-col gap-4">
+            <p class="font-semibold text-sm text-surface-700">Location Distribution</p>
+
+            <!-- Stats -->
+            <div class="flex gap-8 text-sm">
+              <span>Total: <strong>{{ totalQuantity() ?? 0 }}</strong></span>
+              <span>Assigned: <strong>{{ totalAssigned() }}</strong></span>
+              <span>Unassigned: <strong>{{ totalUnassigned() }}</strong></span>
+            </div>
+
+            <!-- Warnings -->
+            @if ((totalQuantity() ?? 0) < totalAssigned()) {
+              <p class="text-red-500 text-sm">Error: Total quantity cannot be less than the total assigned quantity.</p>
+            } @else if ((totalQuantity() ?? 0) > totalAssigned()) {
+              <p class="text-orange-500 text-sm">Warning: Total quantity is greater than assigned quantity.</p>
+            }
+
+            <!-- Edit mode: FormArray rows -->
+            @if (isEditMode()) {
+              <div class="flex flex-col gap-4" formArrayName="locationAssignments">
+                @for (ctrl of locationAssignmentsControls; track $index) {
+                  <div [formGroupName]="$index" class="grid grid-cols-2 gap-4 items-end">
+                    <div>
+                      <bifi-app-form-field>
+                        <bifi-app-form-label>Location</bifi-app-form-label>
+                        <p-select
+                          formControlName="locationId"
+                          [options]="getAvailableRoomOptions($index)"
+                          optionLabel="name"
+                          optionValue="_id"
+                          [filter]="true"
+                          placeholder="Select location"
+                          appendTo="body"
+                        ></p-select>
+                        <bifi-app-form-error></bifi-app-form-error>
+                      </bifi-app-form-field>
+                    </div>
+                    <div class="flex gap-2 items-end">
+                      <div class="flex-1">
+                        <bifi-app-form-field>
+                          <bifi-app-form-label>Assigned Quantity</bifi-app-form-label>
+                          <p-inputnumber
+                            formControlName="assignedQuantity"
+                            [min]="0"
+                            placeholder="Qty"
+                          ></p-inputnumber>
+                          <bifi-app-form-error></bifi-app-form-error>
+                        </bifi-app-form-field>
+                      </div>
+                      <p-button
+                        type="button"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        variant="text"
+                        size="small"
+                        (click)="removeLocation($index)"
+                      ></p-button>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <p-button
+                type="button"
+                icon="pi pi-plus"
+                label="Add Location"
+                variant="text"
+                size="small"
+                (click)="addLocation()"
+              ></p-button>
+            }
+
+            <!-- View mode: read-only rows -->
+            @if (!isEditMode()) {
+              <div class="flex flex-col gap-2">
+                @for (la of assetRoster()?.locationAssignments; track $index) {
+                  <div class="flex justify-between text-sm">
+                    <span>{{ la.locationId.name }}</span>
+                    <span>Assigned: {{ la.assignedQuantity }}</span>
+                  </div>
+                }
+                @if (!assetRoster()?.locationAssignments?.length) {
+                  <p class="text-surface-400 text-sm italic">No locations assigned.</p>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Software Configuration (Software only) -->
+        @if (deviceType() === 'software') {
+          <div
+            formGroupName="softwareConfiguration"
+            class="mt-6 flex flex-col gap-4 border border-surface-200 rounded-md p-4"
+          >
+            <p class="font-semibold text-sm text-surface-700 mb-1">Software Configuration</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <bifi-app-form-field>
+                <bifi-app-form-label>Regulatory Classification</bifi-app-form-label>
+                <p-select
+                  formControlName="regulatoryClassification"
+                  [options]="regulatoryClassificationOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select classification"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Version</bifi-app-form-label>
+                <input pInputText formControlName="version" type="text" placeholder="e.g, 2.1.0" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>License Type</bifi-app-form-label>
+                <p-select
+                  formControlName="licenseType"
+                  [options]="licenseTypeOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select license type"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>Parent Asset ID (Optional)</bifi-app-form-label>
+                <bifi-app-form-preview>
+                  <ng-template #preview let-value let-fallback>
+                    {{ getParentAssetLabel(value, fallback) }}
+                  </ng-template>
+                </bifi-app-form-preview>
+                <p-select
+                  appendTo="body"
+                  formControlName="parentAssetId"
+                  [options]="assetRosterOptions()"
+                  optionValue="_id"
+                  optionLabel="label"
+                  [filter]="true"
+                  [showClear]="true"
+                  placeholder="Select parent asset"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>UDI-DI (Optional)</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="udiDi"
+                  type="text"
+                  placeholder="Unique Device Identifier"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>FDA / MDR Class (Optional)</bifi-app-form-label>
+                <p-select
+                  formControlName="fdaMdrClass"
+                  [options]="fdaMdrClassOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [showClear]="true"
+                  placeholder="Select class (optional)"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <bifi-app-form-field>
+                <bifi-app-form-label>License Key (Optional)</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="licenseKey"
+                  type="text"
+                  placeholder="License key"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+
+              <div class="flex items-center gap-3 md:col-span-2">
+                <p-toggle-switch formControlName="preventAutoUpdate"></p-toggle-switch>
+                <label class="text-sm text-surface-700">Do not patch (Prevent Auto-Update)</label>
+              </div>
+            </div>
+          </div>
+        }
       </div>
 
       <!-- Right Column - Asset Photo -->
