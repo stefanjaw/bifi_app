@@ -198,6 +198,9 @@ export class AssetRosterMaintenance {
         ...(value.maintenanceDate && {
           maintenanceDate: value.maintenanceDate.toISOString(),
         }),
+        ...(value.commissionedDate && {
+          commissionedDate: value.commissionedDate.toISOString(),
+        }),
       },
     });
 
@@ -313,7 +316,31 @@ export class AssetRosterMaintenance {
       descriptor: (doc.fileMetadata?.['descriptor'] as string) || '',
     }));
 
+    const locationAssignmentsArray = this.formService.form.controls.locationAssignments;
+    locationAssignmentsArray.clear();
+    if (assetRoster.locationAssignments?.length) {
+      assetRoster.locationAssignments.forEach(la => {
+        locationAssignmentsArray.pushItem({
+          locationId: (la.locationId as any)?._id ?? la.locationId ?? '',
+          assignedQuantity: la.assignedQuantity ?? 0,
+        });
+      });
+    }
+
     this.formService.patchValue({
+      deviceType: assetRoster.deviceType ?? 'serialized',
+      description: assetRoster.description ?? null,
+      quantity: assetRoster.quantity ?? null,
+      softwareConfiguration: {
+        regulatoryClassification: assetRoster.softwareConfiguration?.regulatoryClassification ?? null,
+        version: assetRoster.softwareConfiguration?.version ?? null,
+        parentAssetId: assetRoster.softwareConfiguration?.parentAssetId ?? null,
+        udiDi: assetRoster.softwareConfiguration?.udiDi ?? null,
+        fdaMdrClass: assetRoster.softwareConfiguration?.fdaMdrClass ?? null,
+        licenseType: assetRoster.softwareConfiguration?.licenseType ?? null,
+        licenseKey: assetRoster.softwareConfiguration?.licenseKey ?? null,
+        preventAutoUpdate: assetRoster.softwareConfiguration?.preventAutoUpdate ?? false,
+      },
       condition: assetRoster.condition,
       currentPrice: assetRoster.currentPrice,
       acquiredDate: assetRoster.acquiredDate ? new Date(assetRoster.acquiredDate) : null,
@@ -326,12 +353,17 @@ export class AssetRosterMaintenance {
       vendorIds: assetRoster.vendorIds?.[0]?._id || '',
       serialNumber: assetRoster.serialNumber,
       assetTypeIds: assetRoster.assetTypeIds?.[0]?._id || '',
-    remarks: assetRoster.remarks?.map(note => ({
-  remark: note.remark,
-  createdBy: note.createdBy?._id ?? note.createdBy,
-  performDate: new Date(note.performDate),
-})),
+      remarks: assetRoster.remarks?.map(note => ({
+        remark: note.remark,
+        createdBy: note.createdBy?._id ?? note.createdBy,
+        performDate: new Date(note.performDate),
+      })),
       warrantyDate: assetRoster.warrantyDate ? new Date(assetRoster.warrantyDate) : null,
+      commissionedDate: assetRoster.commissionedDate ? new Date(assetRoster.commissionedDate) : null,
+      estimatedEconomicLifeYears: assetRoster.estimatedEconomicLifeYears ?? null,
+      salvageValue: assetRoster.salvageValue ?? null,
+      depreciationMethod: assetRoster.depreciationMethod ?? 'straight-line',
+      accelerationFactor: assetRoster.accelerationFactor ?? 200,
       ...((parsedImage && {
         photo: [
           {

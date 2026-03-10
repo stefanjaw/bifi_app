@@ -8,13 +8,34 @@ import { file } from '@avalantec/base-app/resource';
 
 export type assetRosterAttachmentDescriptor = string;
 
+export interface softwareConfiguration {
+  regulatoryClassification?: 'os-middleware' | 'simd' | 'samd';
+  version?: string;
+  parentAssetId?: string;
+  udiDi?: string;
+  fdaMdrClass?: 'class-i' | 'class-ii' | 'class-iii';
+  licenseType?: 'perpetual' | 'subscription-saas';
+  licenseKey?: string;
+  preventAutoUpdate?: boolean;
+}
+
+export interface locationAssignment {
+  locationId: room;
+  assignedQuantity: number;
+}
+
 export interface assetRoster {
   _id: string;
+  deviceType?: 'serialized' | 'non-serialized' | 'software';
   assetTypeIds: assetType[];
   vendorIds: contact[];
   makeIds: contact[];
-  productModel: string;
-  serialNumber: string;
+  productModel?: string;
+  serialNumber?: string;
+  description?: string;
+  quantity?: number;
+  locationAssignments?: locationAssignment[];
+  softwareConfiguration?: softwareConfiguration;
   acquiredDate: Date;
   acquiredPrice: number;
   currentPrice: number;
@@ -31,11 +52,16 @@ export interface assetRoster {
   assetCommission: assetCommissionning;
   assetMaintenances: assetMaintenance[];
   attachments?: file[];
+  commissionedDate?: Date;
+  estimatedEconomicLifeYears?: number;
+  salvageValue?: number;
+  depreciationMethod?: 'straight-line' | 'accelerated-declining-balance';
+  accelerationFactor?: number;
   active: boolean;
 }
 
 export interface notes {
-remark: string;
-createdBy: user;
-performDate: Date ;
+  remark: string;
+  createdBy: user;
+  performDate: Date;
 }

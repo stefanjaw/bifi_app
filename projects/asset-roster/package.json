@@ -11,7 +11,8 @@
     "tailwindcss": "^4.1.11",
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
-    "@avalantec/base-app": "^0.0.1"
+    "@avalantec/base-app": "^0.0.1",
+    "chart.js": "^4.5.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
