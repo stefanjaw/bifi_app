@@ -3,6 +3,11 @@ import { salesOrder } from '../interfaces/sales-order';
 
 export const salesOrderColumns: tableColumn<salesOrder>[] = [
   {
+    field: 'number',
+    title: 'Number',
+    type: 'text',
+  },
+  {
     field: 'crmId.title',
     title: 'Deal',
     type: 'text',

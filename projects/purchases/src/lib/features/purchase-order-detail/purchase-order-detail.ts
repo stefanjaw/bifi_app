@@ -170,8 +170,8 @@ export class PurchaseOrderDetail {
     const payload = {
       contactId: rawValue.contactId,
       status: rawValue.status as purchaseOrderStatus,
-      issueDate: rawValue.issueDate ? new Date(rawValue.issueDate) : undefined,
-      expectedDeliveryDate: rawValue.expectedDeliveryDate ? new Date(rawValue.expectedDeliveryDate) : undefined,
+      issueDate: rawValue.issueDate ? new Date(rawValue.issueDate).toISOString() : undefined,
+      expectedDeliveryDate: rawValue.expectedDeliveryDate ? new Date(rawValue.expectedDeliveryDate).toISOString() : undefined,
       lineItems: this.lineItems(),
       notes: rawValue.notes,
       stageId: rawValue.stageId || null,

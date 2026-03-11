@@ -1,0 +1,53 @@
+<bifi-app-form-layout
+  title="Accounting Configuration"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="Document Sequences" id="document-sequences" [ordinal]="1">
+        <p class="text-sm text-gray-500 mb-4">
+          Select which sequence is used to generate document numbers for invoices.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Invoice Sequence</bifi-app-form-label>
+            <p-select
+              formControlName="invoiceSequence"
+              [options]="sequenceOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a sequence"
+              [showClear]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Additional Information" id="additional-info" [ordinal]="2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Description</bifi-app-form-label>
+          <textarea pInputTextarea formControlName="description" placeholder="Notes about this configuration" rows="3"></textarea>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

@@ -1,0 +1,132 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Sales Order: ' + (entry()?.number ?? '') : 'New Sales Order'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Opportunity *</bifi-app-form-label>
+            <p-select
+              formControlName="crmId"
+              [options]="crmOptions()"
+              optionLabel="title"
+              optionValue="_id"
+              placeholder="Select an opportunity"
+              [filter]="true"
+              filterBy="title"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Contact *</bifi-app-form-label>
+            <p-select
+              formControlName="contact"
+              [options]="contactOptions()"
+              optionLabel="fullName"
+              optionValue="_id"
+              placeholder="Select a contact"
+              [filter]="true"
+              filterBy="fullName,email"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Company *</bifi-app-form-label>
+            <p-select
+              formControlName="company"
+              [options]="companyOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a company"
+              [filter]="true"
+              filterBy="name"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Salesperson</bifi-app-form-label>
+            <p-select
+              formControlName="salesperson"
+              [options]="userOptions()"
+              optionLabel="fullName"
+              optionValue="_id"
+              placeholder="Select a salesperson"
+              [filter]="true"
+              filterBy="fullName,email"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Amount *</bifi-app-form-label>
+            <p-inputnumber
+              formControlName="amount"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              placeholder="0.00"
+            ></p-inputnumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Currency</bifi-app-form-label>
+            <p-select
+              formControlName="currency"
+              [options]="currencyOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select currency"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Close Date *</bifi-app-form-label>
+            <p-datepicker
+              formControlName="closeDate"
+              dateFormat="mm/dd/yy"
+              placeholder="Select date"
+              [showIcon]="true"
+            ></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="2">
+        <div class="grid grid-cols-1 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Notes</bifi-app-form-label>
+            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

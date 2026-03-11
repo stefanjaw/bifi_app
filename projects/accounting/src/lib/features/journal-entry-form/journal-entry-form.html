@@ -1,0 +1,137 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Journal Entry' : 'New Journal Entry'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (canPost()) {
+      <div class="flex justify-end">
+        <p-button
+          label="Post Entry"
+          icon="pi pi-check"
+          severity="success"
+          [loading]="isPostLoading()"
+          (onClick)="postEntry()"
+        ></p-button>
+      </div>
+    }
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Entry Header" id="entry-header" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Journal *</bifi-app-form-label>
+            <p-select
+              formControlName="journalId"
+              [options]="journals() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select journal"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Date *</bifi-app-form-label>
+            <p-datepicker formControlName="date" placeholder="Select date" [showIcon]="true"></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Currency *</bifi-app-form-label>
+            <p-select
+              formControlName="currencyId"
+              [options]="currencies() || []"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select currency"
+              [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Reference</bifi-app-form-label>
+            <input pInputText formControlName="reference" placeholder="e.g. INV-2024-001" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Entry Lines" id="entry-lines" [ordinal]="2">
+        <div class="flex flex-col gap-4">
+          @for (line of lines; track $index) {
+            <div class="grid grid-cols-12 gap-3 items-end border rounded p-4">
+              <div class="col-span-3">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Account *</bifi-app-form-label>
+                  <p-select
+                    [formControl]="$any(line.get('accountId'))"
+                    [options]="accounts() || []"
+                    optionLabel="name"
+                    optionValue="_id"
+                    placeholder="Select account"
+                    [filter]="true"
+                  ></p-select>
+                </bifi-app-form-field>
+              </div>
+              <div class="col-span-3">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Description</bifi-app-form-label>
+                  <input pInputText [formControl]="$any(line.get('description'))" placeholder="Description" />
+                </bifi-app-form-field>
+              </div>
+              <div class="col-span-2">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Debit</bifi-app-form-label>
+                  <p-inputNumber [formControl]="$any(line.get('debit'))" [min]="0" [minFractionDigits]="2"></p-inputNumber>
+                </bifi-app-form-field>
+              </div>
+              <div class="col-span-2">
+                <bifi-app-form-field>
+                  <bifi-app-form-label>Credit</bifi-app-form-label>
+                  <p-inputNumber [formControl]="$any(line.get('credit'))" [min]="0" [minFractionDigits]="2"></p-inputNumber>
+                </bifi-app-form-field>
+              </div>
+              <div class="col-span-2">
+                <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeLine($index)"></p-button>
+              </div>
+            </div>
+          }
+
+          <div class="grid grid-cols-12 gap-3 items-center border-t pt-3">
+            <div class="col-span-3">
+              <p-button severity="secondary" icon="pi pi-plus" label="Add Line" (onClick)="addLine()"></p-button>
+            </div>
+            <div class="col-span-3"></div>
+            <div class="col-span-2 text-right text-sm font-semibold">
+              {{ totalDebit() | number:'1.2-2' }}
+            </div>
+            <div class="col-span-2 text-right text-sm font-semibold"
+              [class.text-red-500]="totalDebit() !== totalCredit()">
+              {{ totalCredit() | number:'1.2-2' }}
+            </div>
+            <div class="col-span-2"></div>
+          </div>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

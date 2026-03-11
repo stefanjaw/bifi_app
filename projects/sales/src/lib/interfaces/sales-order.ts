@@ -11,6 +11,7 @@ export interface salesOrder {
   currency: string;
   closeDate: string;
   notes?: string;
+  number?: string;
   active?: boolean;
   createdAt?: string;
   updatedAt?: string;
