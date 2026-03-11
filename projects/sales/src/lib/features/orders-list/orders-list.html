@@ -1,11 +1,24 @@
 <h1 class="text-2xl font-bold mb-4">Sales Orders</h1>
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Order"
+    severity="secondary"
+    icon="pi pi-plus"
+    (onClick)="navigateToNew()"
+  ></p-button>
+</div>
+
 <bifi-app-search-bar
   label="Search by deal, company or contact"
   [searchFilters]="salesOrderFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="salesOrderColumns" [data]="entries">
+<bifi-app-table-layout
+  [columns]="salesOrderColumns"
+  [data]="entries"
+  [onClickRow]="onClickRow"
+>
   <ng-template #actions let-element>
     <p-button
       severity="danger"

@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { SALES_ROUTES } from '../../routes/sales.routes';
 import { CRM_STAGES_ROUTES } from '../../modules/crm-stages/routes/crm-stages.routes';
+import { SALES_CONFIGURATION_ROUTES } from '../../modules/sales-configuration/routes/sales-configuration.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 
@@ -62,6 +63,12 @@ export function initializeSales() {
             label: 'CRM Stages',
             resource: 'crm-stages/menu',
           },
+          {
+            icon: PrimeIcons.COG,
+            routerLink: ['/settings/sales/configuration'],
+            label: 'Configuration',
+            resource: 'sales/configuration/menu',
+          },
         ],
       },
       childOf: 'settings',
@@ -80,6 +87,10 @@ export function initializeSales() {
         {
           path: 'crm-stages',
           children: CRM_STAGES_ROUTES,
+        },
+        {
+          path: 'configuration',
+          children: SALES_CONFIGURATION_ROUTES,
         },
       ],
     },

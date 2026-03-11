@@ -48,6 +48,11 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/currency').then(m => m.CURRENCY_ROUTES),
   },
   {
+    path: 'sequences',
+    canActivate: [authGuard],
+    loadChildren: () => import('@avalantec/base-app/sequences').then(m => m.SEQUENCE_ROUTES),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },

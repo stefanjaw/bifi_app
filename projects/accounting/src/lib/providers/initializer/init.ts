@@ -1,6 +1,8 @@
 import { inject } from '@angular/core';
 import { ACCOUNTING_ROUTES } from '../../routes/accounting-routes';
+import { ACCOUNTING_CONFIGURATION_ROUTES } from '../../modules/accounting-configuration/routes/accounting-configuration.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
+import { PrimeIcons } from 'primeng/api';
 
 export function initializeAccounting() {
   const mainMenuManager = inject(MainMenuManager);
@@ -72,10 +74,39 @@ export function initializeAccounting() {
         ],
       },
     },
+    {
+      item: {
+        icon: PrimeIcons.COG,
+        label: 'Accounting',
+        resource: 'accounting/settings/menu',
+        items: [
+          {
+            icon: PrimeIcons.COG,
+            routerLink: ['/settings/accounting/configuration'],
+            label: 'Configuration',
+            resource: 'accounting/configuration/menu',
+          },
+        ],
+      },
+      childOf: 'settings',
+    },
   ]);
 
   mainRoutingManager.addRouting({
     basePath: 'accounting',
     newRouting: ACCOUNTING_ROUTES,
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: {
+      path: 'accounting',
+      children: [
+        {
+          path: 'configuration',
+          children: ACCOUNTING_CONFIGURATION_ROUTES,
+        },
+      ],
+    },
+    childOf: 'settings',
   });
 }

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const PURCHASES_ROUTES: Routes = [
   {
@@ -9,32 +9,38 @@ export const PURCHASES_ROUTES: Routes = [
   },
   {
     path: 'suppliers',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/suppliers/suppliers').then(c => c.Suppliers),
+    data: { resource: 'purchases/suppliers/list' },
   },
   {
     path: 'suppliers/:id',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/supplier-detail/supplier-detail').then(c => c.SupplierDetail),
+    data: { resource: 'purchases/suppliers/read' },
   },
   {
     path: 'orders',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/purchase-orders/purchase-orders').then(c => c.PurchaseOrders),
+    data: { resource: 'purchases/orders/list' },
   },
   {
     path: 'orders/new',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/purchase-order-detail/purchase-order-detail').then(c => c.PurchaseOrderDetail),
+    data: { resource: 'purchases/orders/create' },
   },
   {
     path: 'orders/:id',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/purchase-order-detail/purchase-order-detail').then(c => c.PurchaseOrderDetail),
+    data: { resource: 'purchases/orders/read' },
   },
   {
     path: 'pipeline',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
     loadComponent: () => import('../features/purchase-pipeline/purchase-pipeline').then(c => c.PurchasePipeline),
+    data: { resource: 'purchases/pipeline/list' },
   },
 ];

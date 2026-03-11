@@ -1,0 +1,33 @@
+<h1 class="text-2xl font-bold mb-4">Sequences</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Sequence"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'sequences/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name or prefix"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="false"
+  [columns]="sequenceColumns"
+  [data]="sequences"
+  [onClickRow]="goToEditSequence"
+  clickRowPermission="sequences/update:view"
+>
+  <ng-template #actions let-element>
+    <p-button
+      *bifiAppHasPermission="'sequences:delete:model'"
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+      (onClick)="deleteSequence(element._id); $event.stopPropagation()"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

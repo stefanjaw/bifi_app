@@ -15,6 +15,7 @@ import { salesOrder } from '../../interfaces/sales-order';
 import { salesOrderColumns } from '../../libraries/sales-order-columns';
 import { salesOrderFilters } from '../../libraries/sales-order-filters';
 import { ButtonModule } from 'primeng/button';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -31,11 +32,20 @@ export class OrdersList {
   private resourceManager = inject<ResourceManager<salesOrder>>(ResourceManager);
   private crudSalesOrders = inject(CrudSalesOrders);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
 
   salesOrderColumns = salesOrderColumns;
   salesOrderFilters = salesOrderFilters;
 
   entries = this.resourceManager.data;
+
+  navigateToNew() {
+    this.router.navigate(['/sales/orders/new']);
+  }
+
+  onClickRow = (row: salesOrder) => {
+    this.router.navigate(['/sales/orders/edit', row._id]);
+  };
 
   deleteEntry(id: string) {
     this.crudSalesOrders

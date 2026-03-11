@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { PURCHASES_ROUTES } from '../../routes/purchases.routes';
 import { PURCHASE_STAGES_ROUTES } from '../../modules/purchase-stages/routes/purchase-stages.routes';
+import { PURCHASE_CONFIGURATION_ROUTES } from '../../modules/purchase-configuration/routes/purchase-configuration.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 
@@ -50,6 +51,12 @@ export function initializePurchases() {
             label: 'Purchase Stages',
             resource: 'purchase-stages/menu',
           },
+          {
+            icon: PrimeIcons.COG,
+            routerLink: ['/settings/purchases/configuration'],
+            label: 'Configuration',
+            resource: 'purchases/configuration/menu',
+          },
         ],
       },
       childOf: 'settings',
@@ -68,6 +75,10 @@ export function initializePurchases() {
         {
           path: 'purchase-stages',
           children: PURCHASE_STAGES_ROUTES,
+        },
+        {
+          path: 'configuration',
+          children: PURCHASE_CONFIGURATION_ROUTES,
         },
       ],
     },

@@ -69,6 +69,12 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Templates',
             resource: 'templates/menu',
           },
+          {
+            icon: 'pi pi-sort-numeric-up',
+            routerLink: ['/settings/sequences'],
+            label: 'Sequences',
+            resource: 'sequences/menu',
+          },
         ],
       },
       {

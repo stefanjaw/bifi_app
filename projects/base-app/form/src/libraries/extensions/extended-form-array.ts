@@ -102,13 +102,13 @@ export class TypedFormArrayExtension<
       options?.createOrRemoveControls === true
     ) {
       for (let i = this.length; i < value.length; i++) {
-        this.push(this.createControl());
+        this.push(this.createControl(), { emitEvent: false });
       }
 
       // Remove controls that are not needed
       if (value.length < this.length) {
         for (let i = this.length - 1; i >= value.length; i--) {
-          this.removeAt(i);
+          this.removeAt(i, { emitEvent: false });
         }
       }
     }
