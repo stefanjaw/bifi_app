@@ -4,4 +4,7 @@ export * from './bcd-taxes';
 export * from './bcd-transport-options';
 export * from './bcd-types';
 export * from './bcds';
+export * from './customs-chapters';
+export * from './customs-headings';
+export * from './customs-tariffs';
 export * from './shippings';

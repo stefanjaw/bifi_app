@@ -1,0 +1,49 @@
+<div class="bg-white border rounded-lg p-5 sticky top-4">
+  <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider mb-4">
+    Token Estimate for This Request
+  </h3>
+
+  @if (loading()) {
+    <div class="text-sm text-gray-400 animate-pulse">Calculating...</div>
+  } @else if (data(); as est) {
+    <div class="flex flex-col gap-3">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Catalog rows to retrieve:</span>
+        <span class="font-medium">~{{ est.catalogRowsToRetrieve }}</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Freight rows to retrieve:</span>
+        <span class="font-medium">~{{ est.freightRowsToRetrieve }}</span>
+      </div>
+      <hr class="border-gray-200" />
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Estimated input tokens:</span>
+        <span class="font-medium">~{{ est.estimatedInputTokens | number }}</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Estimated output tokens:</span>
+        <span class="font-medium">~{{ est.estimatedOutputTokens | number }}</span>
+      </div>
+      <div class="flex justify-between text-sm font-semibold">
+        <span class="text-gray-700">Total estimated:</span>
+        <span>~{{ est.totalEstimated | number }}</span>
+      </div>
+      <hr class="border-gray-200" />
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-gray-500">Status:</span>
+        @if (est.withinLimits) {
+          <p-tag severity="success" value="✓ Within configured limits"></p-tag>
+        } @else {
+          <p-tag severity="warn" value="⚠ May exceed configured limits"></p-tag>
+        }
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 mt-4 leading-relaxed">
+      This meter updates live as you type. Row counts are from actual fuzzy-match results.
+    </p>
+  } @else {
+    <p class="text-sm text-gray-400">
+      Start typing your product request to see token estimates.
+    </p>
+  }
+</div>

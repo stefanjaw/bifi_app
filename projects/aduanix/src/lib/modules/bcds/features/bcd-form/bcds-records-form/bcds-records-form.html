@@ -64,7 +64,10 @@
 
                     <bifi-app-form-field>
                       <bifi-app-form-label>18. Tariff No.</bifi-app-form-label>
-                      <input type="text" formControlName="tariff" pInputText />
+                      <bifi-app-tariff-picker
+                        formControlName="tariff"
+                        placeholder="Search tariff code or description"
+                      ></bifi-app-tariff-picker>
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 

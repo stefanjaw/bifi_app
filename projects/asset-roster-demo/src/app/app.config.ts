@@ -25,7 +25,6 @@ import { provideSales } from '@avalantec/sales';
 import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
 import { provideAccounting } from '@avalantec/accounting';
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimationsAsync(),

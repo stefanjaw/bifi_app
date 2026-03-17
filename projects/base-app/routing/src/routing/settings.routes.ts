@@ -53,6 +53,16 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/sequences').then(m => m.SEQUENCE_ROUTES),
   },
   {
+    path: 'ai-settings',
+    canActivate: [authGuard],
+    loadChildren: () => import('@avalantec/base-app/ai-settings').then(m => m.AI_SETTINGS_ROUTES),
+  },
+  {
+    path: 'drive-settings',
+    canActivate: [authGuard],
+    loadChildren: () => import('@avalantec/base-app/drive-settings').then(m => m.DRIVE_SETTINGS_ROUTES),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },

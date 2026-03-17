@@ -51,6 +51,7 @@ export interface invoicePDF {
         description?: string;
         rateOfDuty?: number;
         unitOfMeasurement?: string;
+        quantity?: number;
         tax?: number;
       };
     }[];

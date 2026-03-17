@@ -38,7 +38,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   private destroy$ = inject(DestroyRef);
 
   invoiceIndex!: number;
-  lineIndex!: number;
+  lineIndex: number = -1;
 
   form = signal(this.formService.createInvoiceLineForm());
 
@@ -86,17 +86,31 @@ export class InvoiceLinesFormDialog extends BaseDialog {
   }
 
   /**
-   * Opens the dialog with the given data.
-   * @param {Partial<{ invoiceIndex: number }>} data - The data to open the dialog with.
-   * @remarks
-   * If the data is not provided, the dialog will open with the default values.
+   * Opens the dialog for adding a new line or editing an existing one.
+   *
+   * @param invoiceIndex - Index of the invoice to add/edit the line in.
+   * @param lineIndex - Index of the line to edit (-1 means adding a new line).
    */
-  override openDialog(invoiceIndex = -1) {
+  override openDialog(invoiceIndex = -1, lineIndex = -1) {
     this.invoiceIndex = invoiceIndex;
+    this.lineIndex = lineIndex;
 
     const form = this.formService.createInvoiceLineForm();
     this.price.set(0);
     this.quantity.set(0);
+
+    if (lineIndex >= 0) {
+      const existingLine = this.formService.form.controls.invoices
+        .at(invoiceIndex)
+        .controls.extractedData.controls.lines.at(lineIndex)
+        .getRawValue();
+
+      // Cast required: nested FormGroup raw value type does not align with
+      // patchValue's generic constraint on the sibling FormGroup.
+      form.patchValue(existingLine as Parameters<typeof form.patchValue>[0]);
+      this.price.set(existingLine.price ?? 0);
+      this.quantity.set(existingLine.quantity ?? 0);
+    }
 
     this.form.set(form);
 
@@ -105,8 +119,7 @@ export class InvoiceLinesFormDialog extends BaseDialog {
 
   /**
    * Submits the form with the given values and closes the dialog.
-   * @remarks
-   * This function will add the line to the shipping form and close the dialog.
+   * Adds or updates the line in the shipping form depending on lineIndex.
    */
   handleSubmit() {
     this.formService.addLineToShipping(this.invoiceIndex, this.lineIndex, this.form());

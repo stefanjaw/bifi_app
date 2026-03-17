@@ -1,0 +1,21 @@
+<h1 class="text-2xl font-bold mb-4">Pricing History</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Estimate"
+    severity="secondary"
+    icon="pi pi-plus"
+    (onClick)="navigateToNew()"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by estimate number or preparer"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="entries"
+  [onClickRow]="onClickRow"
+></bifi-app-table-layout>

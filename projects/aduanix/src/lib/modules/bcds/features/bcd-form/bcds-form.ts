@@ -84,8 +84,9 @@ export class BcdsForm {
   /**
    * Constructor
    *
-   * If the bcd exists, it will patch the form with the bcd data.
-   * If the shipping exists, it will patch the form with the shipping data.
+   * BCD effect: loads from the BCD object when editing an existing BCD.
+   * Shipping effect: loads from the shipping only in creation mode (no BCD loaded yet).
+   * Each effect only handles its own responsibility; neither clobbers the other.
    */
   constructor() {
     effect(() => {
@@ -98,8 +99,9 @@ export class BcdsForm {
     effect(() => {
       const shipping = this.shipping();
 
-      if (shipping) this.loadBCDByShipping(shipping);
-      else this.formService.reset();
+      // Only pre-fill from the shipping if we are in creation mode (no BCD exists).
+      // When a BCD is already loaded the bcd-effect above has already patched the form.
+      if (shipping && !this.bcd()) this.loadBCDByShipping(shipping);
     });
   }
 
@@ -112,13 +114,6 @@ export class BcdsForm {
    * @param {shipping} The shipping object to load the BCD form from.
    */
   loadBCDByShipping(shipping: shipping) {
-    const lastBCD = shipping.bcds.at(-1);
-
-    if (lastBCD) {
-      this.loadBCDByBCD({ ...lastBCD, shippingId: shipping });
-      return;
-    }
-
     const allLines = shipping.invoices.flatMap(inv => inv.pdf.extractedData.lines);
     const merchandiseLines = allLines.filter(line => this.isMerchandiseLine(line));
     const groupByTariff = this.groupByTariff(merchandiseLines);
@@ -127,18 +122,21 @@ export class BcdsForm {
       shippingId: shipping._id,
       directShipmentCountry: shipping.origin?._id,
       originalShipmentCountry: shipping.destination?._id,
-      records: Object.entries(groupByTariff).map(([tariff, lines], i) => {
+      records: Object.entries(groupByTariff).map(([key, lines], i) => {
         const quantity = lines.reduce((acc, line) => acc + line.quantity, 0);
         const subtotal = lines.reduce((acc, line) => acc + line.subtotal, 0);
-
         return {
           number: i + 1,
           cpc: '',
           origin: lines[0]?.countryId?._id,
-          tariff: tariff,
-          description: lines[0]?.description,
+          tariff: lines[0]?.tariff?.code ?? key,
+          description: lines[0]?.tariff?.description ?? lines[0]?.description,
           quantity: quantity,
-          supplementaryCode: '0000',
+          quantityTwo: (() => {
+            const tariffQty = lines[0]?.tariff?.quantity;
+            return tariffQty != null && tariffQty !== lines[0]?.quantity ? tariffQty : 0;
+          })(),
+          supplementaryCode: lines[0]?.tariff?.unitOfMeasurement ?? '0000',
           currency: lines[0]?.currency ?? 'USD',
           linesSubtotal: subtotal,
           exchangeRate: 1,
@@ -294,7 +292,6 @@ export class BcdsForm {
    */
   async handleSubmit(values: FormValueState<bcdFormModel>) {
     const payload = values.rawValue;
-    console.log('🚀 ~ BcdsForm ~ handleSubmit ~ payload:', payload);
     delete (payload as any).transport.type;
 
     if (!payload.charges || payload.charges.length === 0) {
@@ -335,28 +332,28 @@ export class BcdsForm {
   /**
    * Checks if a line is a merchandise line.
    *
-   * A line is considered a merchandise line if it has a valid HS Code and a valid Tariff Code.
+   * A line is considered a merchandise line if it has a valid tariff code OR a valid HS Code.
+   * (AI extraction often provides one but not the other.)
    *
    * @param line - The line to be checked.
    * @returns True if the line is a merchandise line, false otherwise.
    */
   isMerchandiseLine(line: invoicePDF['extractedData']['lines'][number]) {
-    return Boolean(line.hsCode && line.tariff?.code);
+    return Boolean(line.tariff?.code || line.hsCode);
   }
 
   /**
-   * Groups the given lines by their tariff code.
+   * Groups the given lines by their tariff code, falling back to the HS code when no tariff code
+   * is available.
    *
-   * If a line does not have a tariff code, it will not be included in the result.
-   *
-   * @param lines - The lines to group by tariff code.
-   * @returns An object where the keys are the tariff codes and the values are arrays of lines that have the corresponding tariff code.
+   * @param lines - The lines to group.
+   * @returns An object where the keys are tariff/HS codes and the values are arrays of matching lines.
    */
   groupByTariff(lines: invoicePDF['extractedData']['lines']) {
     return lines.reduce<Record<string, invoicePDF['extractedData']['lines']>>((acc, line) => {
-      const tariff = line.tariff!.code!;
-      acc[tariff] ??= [];
-      acc[tariff].push(line);
+      const key = line.tariff?.code || line.hsCode || 'UNKNOWN';
+      acc[key] ??= [];
+      acc[key].push(line);
       return acc;
     }, {});
   }

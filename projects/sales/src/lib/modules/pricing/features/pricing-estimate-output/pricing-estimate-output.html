@@ -1,0 +1,145 @@
+@if (loading()) {
+  <div class="p-6 ms-4 me-4">
+    <p-progressBar mode="indeterminate" [style]="{ height: '5px' }"></p-progressBar>
+  </div>
+} @else if (estimate(); as est) {
+  <div class="p-6 ms-4 me-4 flex flex-col gap-5">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold">{{ est.number }}</h1>
+        <p class="text-sm text-gray-500">
+          {{ est.date | date:'medium' }} &bull; Prepared by {{ est.preparedBy }}
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-sm" [class]="isDistributorView() ? 'text-gray-400' : 'font-medium text-gray-700'">Customer</span>
+        <p-toggleswitch
+          [ngModel]="isDistributorView()"
+          (ngModelChange)="toggleView()"
+        ></p-toggleswitch>
+        <span class="text-sm" [class]="isDistributorView() ? 'font-medium text-gray-700' : 'text-gray-400'">Distributor</span>
+        <p-button
+          label="PDF"
+          icon="pi pi-file-pdf"
+          severity="secondary"
+          size="small"
+          [loading]="downloadingPdf()"
+          (onClick)="downloadPdf()"
+        ></p-button>
+        <p-button
+          label="Copy Email"
+          icon="pi pi-copy"
+          severity="secondary"
+          size="small"
+          (onClick)="copyEmail()"
+        ></p-button>
+        <p-button
+          label="CSV"
+          icon="pi pi-file"
+          severity="secondary"
+          size="small"
+          [loading]="downloadingCsv()"
+          (onClick)="downloadCsv()"
+        ></p-button>
+      </div>
+    </div>
+
+    <div class="bg-white border rounded-lg overflow-auto">
+      <p-table [value]="lineItems()" [scrollable]="true" scrollDirection="horizontal" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="min-w-[180px]">Product</th>
+            @if (isDistributorView()) {
+              <th>Supplier</th>
+              <th>Part No.</th>
+            }
+            <th class="text-right">Qty</th>
+            @if (isDistributorView()) {
+              <th class="text-right">Unit Price</th>
+              <th class="text-right">Freight/Unit</th>
+              <th>HS Code</th>
+              <th class="text-right">Duty%</th>
+              <th class="text-right">Duty/Unit</th>
+              <th class="text-right">Wharfage</th>
+              <th class="text-right">Landed/Unit</th>
+            }
+            <th class="text-right">Cust. Price/Unit</th>
+            @if (isDistributorView()) {
+              <th class="text-right">Margin%</th>
+            }
+            <th class="text-right">Total Cust.</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td class="min-w-[180px]">{{ item.product }}</td>
+            @if (isDistributorView()) {
+              <td>{{ item.supplier }}</td>
+              <td>{{ item.partNo }}</td>
+            }
+            <td class="text-right">{{ item.qty }}</td>
+            @if (isDistributorView()) {
+              <td class="text-right">{{ item.unitPrice | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td class="text-right">{{ item.freightPerUnit | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td>{{ item.hsCode }}</td>
+              <td class="text-right">{{ item.dutyPct | number:'1.1-2' }}%</td>
+              <td class="text-right">{{ item.dutyPerUnit | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td class="text-right">{{ item.wharfage | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td class="text-right">{{ item.landedPerUnit | currency:'USD':'symbol':'1.2-2' }}</td>
+            }
+            <td class="text-right">{{ item.custPricePerUnit | currency:'USD':'symbol':'1.2-2' }}</td>
+            @if (isDistributorView()) {
+              <td class="text-right">{{ item.marginPct | number:'1.1-2' }}%</td>
+            }
+            <td class="text-right font-semibold">{{ item.totalCust | currency:'USD':'symbol':'1.2-2' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex justify-between text-sm">
+          <span class="font-medium text-blue-800">Total Landed:</span>
+          <span class="font-bold text-blue-900">{{ est.totalLanded | currency:'USD':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-sm mt-1">
+          <span class="font-medium text-blue-800">Total Customer:</span>
+          <span class="font-bold text-blue-900">{{ est.totalCustomer | currency:'USD':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p class="text-sm text-amber-800">
+          <span class="font-medium">Wharfage &amp; Bank Fees ({{ est.wharfageBankFeePct }}%):</span>
+          {{ est.wharfageBankFeeAmount | currency:'USD':'symbol':'1.2-2' }}
+          — Applied to product value on all orders
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 border rounded-lg p-4">
+      <p class="text-xs text-gray-500">
+        Input tokens: {{ est.inputTokens | number }}
+        | Output tokens: {{ est.outputTokens | number }}
+        | Total: {{ est.totalTokens | number }}
+        | Estimated cost: ~{{ est.estimatedCost | currency:'USD':'symbol':'1.4-4' }}
+        ({{ est.aiProvider ?? 'Google' }} / {{ est.aiModel }})
+      </p>
+    </div>
+
+    <div class="bg-gray-50 border rounded-lg p-4">
+      <p class="text-xs text-gray-400 leading-relaxed">
+        <strong>Disclaimer:</strong> This estimate is based on current pricing data and AI analysis.
+        Actual costs may vary depending on market conditions, supplier availability, and customs regulations.
+        All prices are subject to confirmation at the time of order placement.
+        Duty rates are approximate and based on available HS code classifications.
+      </p>
+    </div>
+  </div>
+} @else {
+  <div class="p-6 ms-4 me-4">
+    <p class="text-gray-500">Estimate not found.</p>
+  </div>
+}
