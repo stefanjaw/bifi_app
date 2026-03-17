@@ -6,6 +6,7 @@ import { FormValueState } from '../interfaces/form-helpers';
 import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 import { ToastManager } from '@avalantec/base-app/core';
 import { FormContext } from '../services/form-context';
+import { FormTranslation } from '../services/form-translation';
 
 @Directive({
   providers: [FormContext],
@@ -16,6 +17,7 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
   private group = inject(FormGroupDirective, { self: true });
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);
+  private formTranslation = inject(FormTranslation);
 
   isPreviewMode = input<boolean>(false);
   appSubmit = output<FormValueState<TForm>>();
