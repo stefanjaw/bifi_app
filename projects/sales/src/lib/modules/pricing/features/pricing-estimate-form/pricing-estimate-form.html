@@ -1,0 +1,122 @@
+<div class="p-6 ms-4 me-4">
+  <h1 class="text-2xl font-bold mb-6">New Estimate Request</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <form [formGroup]="form" (ngSubmit)="onGenerate()" class="flex flex-col gap-6">
+        <div class="bg-white border rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-3">Product Request</h3>
+          <textarea
+            pInputTextarea
+            formControlName="requestText"
+            rows="8"
+            class="w-full"
+            placeholder="e.g. 10x Siemens 6ES7 214-1AG40 from Germany, 5x ABB ACS580 drives from Sweden"
+          ></textarea>
+          <p class="text-xs text-gray-500 mt-1">
+            Include product names, part numbers if known, quantities, and origin city/country.
+          </p>
+        </div>
+
+        <div class="bg-white border rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-3">Shipping Method</h3>
+          <p-select
+            formControlName="shippingMethod"
+            [options]="shippingOptions"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+
+        <div class="bg-white border rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-3">Pricing Controls</h3>
+
+          <div class="flex items-center gap-2 mb-4">
+            <p-checkbox
+              formControlName="dutyFree"
+              [binary]="true"
+              inputId="dutyFree"
+            ></p-checkbox>
+            <label for="dutyFree" class="text-sm text-gray-700">
+              Duty-Free Client (e.g. hospital, registered importer)
+            </label>
+          </div>
+
+          <div class="mb-4">
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Pricing Method</label>
+            <div class="flex flex-col gap-3">
+              <div class="flex items-start gap-2">
+                <p-radioButton
+                  formControlName="pricingMethod"
+                  value="markup"
+                  inputId="methodMarkup"
+                ></p-radioButton>
+                <div>
+                  <label for="methodMarkup" class="text-sm font-medium text-gray-800">Mark-up Factor</label>
+                  <p class="text-xs text-gray-500">Customer price = Landed cost × Factor</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <p-radioButton
+                  formControlName="pricingMethod"
+                  value="margin"
+                  inputId="methodMargin"
+                ></p-radioButton>
+                <div>
+                  <label for="methodMargin" class="text-sm font-medium text-gray-800">Gross Margin %</label>
+                  <p class="text-xs text-gray-500">Customer price = Landed cost ÷ (1 − margin/100)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="max-w-xs">
+            <label class="text-sm font-medium text-gray-700 mb-1 block">
+              {{ form.get('pricingMethod')?.value === 'markup' ? 'Markup Factor' : 'Margin %' }}
+            </label>
+            <input
+              pInputText
+              formControlName="pricingValue"
+              type="number"
+              step="0.01"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="bg-white border rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-3">Special Instructions / Notes (optional)</h3>
+          <textarea
+            pInputTextarea
+            formControlName="specialInstructions"
+            rows="3"
+            class="w-full"
+            placeholder="Any additional instructions for this estimate"
+          ></textarea>
+        </div>
+
+        @if (isSubmitting()) {
+          <p-progressBar mode="indeterminate" [style]="{ height: '5px' }"></p-progressBar>
+        }
+
+        <p-button
+          label="Generate Estimate"
+          icon="pi pi-bolt"
+          [loading]="isSubmitting()"
+          [disabled]="form.invalid || isSubmitting()"
+          (onClick)="onGenerate()"
+          styleClass="w-full"
+          severity="primary"
+        ></p-button>
+      </form>
+    </div>
+
+    <div class="lg:col-span-1">
+      <bifi-app-token-estimator-card
+        [data]="tokenData()"
+        [loading]="tokenLoading()"
+      ></bifi-app-token-estimator-card>
+    </div>
+  </div>
+</div>

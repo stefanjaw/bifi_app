@@ -1,0 +1,25 @@
+<p-autoComplete
+  [ngModel]="selectedTariff()"
+  [suggestions]="suggestions()"
+  [forceSelection]="false"
+  [disabled]="disabled()"
+  [showClear]="true"
+  field="code"
+  [placeholder]="placeholder()"
+  (completeMethod)="search($event.query)"
+  (onSelect)="onSelect($event)"
+  (onClear)="onClear()"
+  styleClass="w-full"
+>
+  <ng-template #item let-tariff>
+    <div class="flex flex-col gap-1 py-1">
+      <span class="font-semibold">{{ tariff.code }}</span>
+      @if (tariff.description) {
+        <span class="text-sm text-color-secondary line-clamp-2">{{ tariff.description }}</span>
+      }
+      @if (tariff.rateOfDuty != null) {
+        <span class="text-xs text-color-secondary">Duty: {{ tariff.rateOfDuty * 100 | number:'1.0-2' }}%</span>
+      }
+    </div>
+  </ng-template>
+</p-autoComplete>

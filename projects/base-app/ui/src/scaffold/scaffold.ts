@@ -73,7 +73,14 @@ export class Scaffold {
   // check if logged
   isLogged = computed(() => !!this.user());
 
+  activeSubNavItems!: ReturnType<typeof computed<MenuItem[]>>;
+
   constructor() {
+    this.activeSubNavItems = computed<MenuItem[]>(() => {
+      const route = this.currentRoute();
+      const items = this.menuItems();
+      return this.findDeepestChildren(items, route);
+    });
     effect(() => {
       const isSidenavOpen = this.sidenavManager.opened();
       this.isOpened.set(isSidenavOpen);
@@ -107,5 +114,34 @@ export class Scaffold {
 
   goHome() {
     this.router.navigate(['home']);
+  }
+
+  private getItemUrl(item: MenuItem): string | null {
+    if (Array.isArray(item.routerLink)) {
+      return (item.routerLink as string[]).join('/');
+    }
+    return (item.routerLink as string) || null;
+  }
+
+  private findDeepestChildren(items: MenuItem[], route: string): MenuItem[] {
+    let result: MenuItem[] = [];
+
+    for (const item of items) {
+      if (!item.items || item.items.length === 0) continue;
+
+      const itemUrl = this.getItemUrl(item);
+      const matchesByUrl = itemUrl ? route.startsWith(itemUrl) : false;
+      const matchesByChild = item.items.some(child => {
+        const childUrl = this.getItemUrl(child);
+        return childUrl ? route.startsWith(childUrl) : false;
+      });
+
+      if (matchesByUrl || matchesByChild) {
+        const deeper = this.findDeepestChildren(item.items, route);
+        result = deeper.length > 0 ? deeper : item.items;
+      }
+    }
+
+    return result;
   }
 }

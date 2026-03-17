@@ -59,7 +59,8 @@
         formArrayName="invoices"
       >
         <p-select
-          [(ngModel)]="invoiceViewMode"
+          [ngModel]="invoiceViewMode()"
+          (ngModelChange)="invoiceViewMode.set($event)"
           [ngModelOptions]="{ standalone: true }"
           [options]="invoiceViewModeOptions"
           optionLabel="label"
@@ -365,6 +366,13 @@
                         }
                         <td>
                           <div class="flex gap-2">
+                            <p-button
+                              severity="secondary"
+                              icon="pi pi-pencil"
+                              variant="text"
+                              type="button"
+                              (click)="invoiceLinesFormDialog.openDialog(i, j)"
+                            ></p-button>
                             <p-button
                               severity="danger"
                               icon="pi pi-trash"

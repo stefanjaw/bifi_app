@@ -1,32 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { TextareaModule } from 'primeng/textarea';
-import { ProgressBarModule } from 'primeng/progressbar';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
-import { DatePickerModule } from 'primeng/datepicker';
 import { BcdForm } from '../../../services/bcd-form';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { FormModule } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-bcds-summary-form',
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    SelectModule,
-    ButtonModule,
-    TableModule,
-    DatePickerModule,
-    InputTextModule,
-    TextareaModule,
-    ProgressBarModule,
-  ],
+  imports: [ReactiveFormsModule, FormModule, TableModule, DecimalPipe, DatePipe],
   templateUrl: './bcds-summary-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BcdsSummaryForm {
   private formService = inject(BcdForm);
   protected formManager = inject(BCDFormManager);
+
+  protected form = this.formService.form;
 }

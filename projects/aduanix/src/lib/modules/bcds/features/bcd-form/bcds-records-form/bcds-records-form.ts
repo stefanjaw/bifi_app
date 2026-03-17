@@ -13,6 +13,7 @@ import { BcdForm } from '../../../services/bcd-form';
 import { FormModule } from '@avalantec/base-app/form';
 import { bcdTaxId, bcdTaxType } from '../../../../bcd-taxes';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TariffPicker } from '../../../../customs-tariffs';
 
 @Component({
   selector: 'bifi-app-bcds-records-form',
@@ -26,6 +27,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     ProgressBarModule,
     TableModule,
     AccordionModule,
+    TariffPicker,
   ],
   templateUrl: './bcds-records-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

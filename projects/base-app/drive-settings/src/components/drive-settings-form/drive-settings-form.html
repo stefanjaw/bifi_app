@@ -1,0 +1,41 @@
+<bifi-app-form-layout
+  title="Google Drive Configuration"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="Service Account" id="service-account" [ordinal]="1">
+        <p class="text-sm text-gray-500 mb-4">
+          Paste the Google service account JSON key to connect to Google Drive.
+        </p>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Service Account Key (JSON)</bifi-app-form-label>
+          <textarea
+            pInputTextarea
+            formControlName="serviceAccountKey"
+            placeholder="Paste service account JSON key here"
+            rows="4"
+            class="w-full font-mono text-xs"
+          ></textarea>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

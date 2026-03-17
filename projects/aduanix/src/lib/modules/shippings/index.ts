@@ -7,7 +7,6 @@ export * from './libraries/shipping-columns';
 export * from './libraries/shipping-filters';
 export * from './libraries/shipping-utils';
 export * from './routes/shippings.routes';
-export * from './services/Invoice-lines-hs-code';
 export * from './services/crud-shippings';
 export * from './services/shipping-file-form';
 export * from './services/shipping-form';

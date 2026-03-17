@@ -75,6 +75,18 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Sequences',
             resource: 'sequences/menu',
           },
+          {
+            icon: 'pi pi-microchip',
+            routerLink: ['/settings/ai-settings'],
+            label: 'AI Configuration',
+            resource: 'ai-settings/menu',
+          },
+          {
+            icon: 'pi pi-cloud',
+            routerLink: ['/settings/drive-settings'],
+            label: 'Google Drive Configuration',
+            resource: 'drive-settings/menu',
+          },
         ],
       },
       {
