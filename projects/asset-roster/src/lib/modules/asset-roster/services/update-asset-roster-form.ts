@@ -138,8 +138,8 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       condition: [null],
       locationId: [''],
       facilityId: [''],
-      acquiredPrice: [null, Validators.min(1)],
-      currentPrice: [null, Validators.min(1)],
+      acquiredPrice: [null],
+      currentPrice: [null],
       warrantyDate: [null],
       remarks: {
         template: {

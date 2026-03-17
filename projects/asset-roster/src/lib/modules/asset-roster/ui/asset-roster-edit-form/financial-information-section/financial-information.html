@@ -36,6 +36,21 @@
         </bifi-app-form-field>
       </div>
 
+      <div>
+        <bifi-app-form-field previewVariant="italic" previewValueType="currency">
+          <bifi-app-form-label>Current Price (Optional)</bifi-app-form-label>
+          <p-inputnumber
+            formControlName="currentPrice"
+            mode="currency"
+            currency="USD"
+            locale="en-US"
+            placeholder="e.g., 5000.00"
+            class="w-full"
+          ></p-inputnumber>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+
       <!-- Current Value (Calculated) -->
       <div>
         <bifi-app-form-field previewVariant="italic" previewValueType="currency" [isPreviewMode]="false">
