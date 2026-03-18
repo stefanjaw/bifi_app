@@ -107,12 +107,12 @@ export class CreateAssetRosterForm extends BaseForm<CreateAssetRosterFormModel> 
   override createForm() {
     return this.fb.group<CreateAssetRosterFormModel>({
       deviceType: ['serialized', [Validators.required]],
-      assetTypeIds: [undefined!],
+      assetTypeIds: [undefined!, [Validators.required]],
       createdType: {
         name: [null],
         description: [null],
       },
-      makeIds: [null],
+      makeIds: [null, [Validators.required]],
       createdMake: {
         oemName: [null],
       },

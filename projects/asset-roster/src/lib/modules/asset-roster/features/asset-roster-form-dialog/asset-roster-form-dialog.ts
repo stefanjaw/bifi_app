@@ -122,6 +122,10 @@ export class AssetRosterFormDialog extends BaseDialog {
     const { rawValue } = data;
     const dt = rawValue.deviceType;
 
+      if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
+  }
     this.crudAssetRoster
       .post({
         data: {

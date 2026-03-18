@@ -106,6 +106,8 @@ export class SequenceFormComponent {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
+    if (!rawValue.description) delete (rawValue as any).description;
+
     const action = this.isUpdate()
       ? this.crudSequences.put({ _id: this.sequence()?._id ?? '', data: rawValue as any })
       : this.crudSequences.post({ data: rawValue as any });

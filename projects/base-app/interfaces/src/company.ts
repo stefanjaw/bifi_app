@@ -9,6 +9,7 @@ export interface company {
   address: string;
   contactId: contact;
   active: boolean;
+  defaultCurrencyId?: string;
   parentCompany?: company;
   branchCode?: string;
   isDefault?: boolean;

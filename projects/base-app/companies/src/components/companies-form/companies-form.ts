@@ -134,7 +134,8 @@ export class CompaniesForm implements OnInit {
     this.isSubmitLoading.set(true);
 
     const { rawValue } = data;
-
+    if (!rawValue.defaultCurrencyId) delete (rawValue as any).defaultCurrencyId
+    if (!rawValue.parentCompany) delete (rawValue as any).parentCompany
     const action = this.isUpdate()
       ? this.crudCompanies.put({ _id: this.company()?._id || '', data: rawValue })
       : this.crudCompanies.post({ data: rawValue });
