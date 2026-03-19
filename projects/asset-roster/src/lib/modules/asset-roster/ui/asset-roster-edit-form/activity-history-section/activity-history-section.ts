@@ -1,20 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
-import {
-  activityHistory,
-  CrudActivityHistories,
-  file,
-  FileResolver,
-} from '@avalantec/base-app/resource';
+import { activityHistory, file, FileResolver } from '@avalantec/base-app/resource';
 import { CardModule } from 'primeng/card';
 import { FormModule } from '@avalantec/base-app/form';
 import { assetCommissionning } from '../../../../asset-commissioning';
-import { assetMaintenance, CrudAssetMaintenances } from '../../../../asset-maintenances';
+import { assetMaintenance } from '../../../../asset-maintenances';
 import { Button } from 'primeng/button';
 import { AssetRosterActiviyHistoryAddFileDialog } from '../../../features/asset-roster-maintenance-add-file-dialog/asset-roster-activity-history-add-file-dialog';
 import { assetRoster } from '../../../interfaces/asset-roster';
 import { Tag, TagModule } from 'primeng/tag';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { AssetRosterMaintenanceContext } from 'projects/asset-roster/src/public-api';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
@@ -31,14 +27,10 @@ import { HasPermission } from '@avalantec/base-app/auth';
 })
 export class ActivityHistorySection {
   private fileResolver = inject(FileResolver);
-  private crudActivityHistory = inject(CrudActivityHistories);
+  private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   selectedHistoryDocument = signal<assetCommissionning | assetMaintenance | null>(null);
   activityHistory =
     input.required<activityHistory<assetCommissionning | assetMaintenance | assetRoster>[]>();
-
-  async downloadFile(attachment: file) {
-    this.fileResolver.downloadFileInBrowser({ metadata: attachment });
-  }
 
   getBadgeVariant(activity: activityHistory<any>): Tag['severity'] {
     switch (activity.title?.toLowerCase()) {
@@ -57,7 +49,11 @@ export class ActivityHistorySection {
     return modelId['productModel'];
   }
 
-  exportCsv() {
-    this.crudActivityHistory.exportCSV();
+  downloadFile(attachment: file) {
+    this.fileResolver.downloadFileInBrowser({ metadata: attachment });
+  }
+
+  exportCSV() {
+    this.assetRosterMaintenanceContext.handleExportActivityHistory();
   }
 }

@@ -21,7 +21,8 @@ export type assetRosterMaintenanceContextEvent =
   | 'open-skip-pm'
   | 'skip-pm'
   | 'back-to-dashboard'
-  | 'activity-history-add-file';
+  | 'activity-history-add-file'
+  | 'export-activity-history';
 
 @Injectable({
   providedIn: 'root',
@@ -109,5 +110,9 @@ export class AssetRosterMaintenanceContext {
 
   handleActivityHistoryAddFile() {
     this._handleEvents.next('activity-history-add-file');
+  }
+
+  handleExportActivityHistory() {
+    this._handleEvents.next('export-activity-history');
   }
 }

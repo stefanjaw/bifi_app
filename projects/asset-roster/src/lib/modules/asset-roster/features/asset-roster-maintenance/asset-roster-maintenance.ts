@@ -63,7 +63,7 @@ export class AssetRosterMaintenance {
   private roomsService = inject(CrudRooms);
   private maintenaceWindowsService = inject(CrudMaintenanceWindows);
   private crudAssetMaintenances = inject(CrudAssetMaintenances);
-  private activityHistoriesService = inject(CrudActivityHistories);
+  private crudActivityHistories = inject(CrudActivityHistories);
   private router = inject(Router);
   private toastManager = inject(ToastManager);
   private destroy$ = inject(DestroyRef);
@@ -111,7 +111,7 @@ export class AssetRosterMaintenance {
     { field: 'performDate', order: 'desc' },
   ]);
 
-  activityHistories = this.activityHistoriesService.get<
+  activityHistories = this.crudActivityHistories.get<
     activityHistory<assetCommissionning | assetMaintenance>
   >({
     searchParams: this.activityHistoryQuery,
@@ -293,6 +293,15 @@ export class AssetRosterMaintenance {
     this.activityHistories.reload();
   }
 
+  handleExportActivityHistory() {
+    this.crudActivityHistories.exportCSV(this.assetRoster()?._id);
+  }
+
+  /**
+   * Resets the form values to their initial state, based on the provided asset roster.
+   * If the asset roster is not provided, the form values will be reset to their default state.
+   * @param assetRoster The asset roster to reset the form values to, or undefined to reset to the default state.
+   */
   private async resetValueToInitialState(assetRoster: assetRoster | undefined) {
     if (!assetRoster) {
       this.formService.reset();
@@ -332,7 +341,8 @@ export class AssetRosterMaintenance {
       description: assetRoster.description ?? null,
       quantity: assetRoster.quantity ?? null,
       softwareConfiguration: {
-        regulatoryClassification: assetRoster.softwareConfiguration?.regulatoryClassification ?? null,
+        regulatoryClassification:
+          assetRoster.softwareConfiguration?.regulatoryClassification ?? null,
         version: assetRoster.softwareConfiguration?.version ?? null,
         parentAssetId: assetRoster.softwareConfiguration?.parentAssetId ?? null,
         udiDi: assetRoster.softwareConfiguration?.udiDi ?? null,
@@ -359,7 +369,9 @@ export class AssetRosterMaintenance {
         performDate: new Date(note.performDate),
       })),
       warrantyDate: assetRoster.warrantyDate ? new Date(assetRoster.warrantyDate) : null,
-      commissionedDate: assetRoster.commissionedDate ? new Date(assetRoster.commissionedDate) : null,
+      commissionedDate: assetRoster.commissionedDate
+        ? new Date(assetRoster.commissionedDate)
+        : null,
       estimatedEconomicLifeYears: assetRoster.estimatedEconomicLifeYears ?? null,
       salvageValue: assetRoster.salvageValue ?? null,
       depreciationMethod: assetRoster.depreciationMethod ?? 'straight-line',
@@ -433,6 +445,9 @@ export class AssetRosterMaintenance {
             break;
           case 'activity-history-add-file':
             this.activityHistories.reload();
+            break;
+          case 'export-activity-history':
+            this.handleExportActivityHistory();
             break;
         }
       });
