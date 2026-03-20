@@ -39,9 +39,7 @@ export class CreateAssetRosterForm extends BaseForm<CreateAssetRosterFormModel> 
   assetType = toSignal(this.form.controls.assetTypeIds.valueChanges);
   make = toSignal(this.form.controls.makeIds.valueChanges);
   deviceType = toSignal(
-    this.form.controls.deviceType.valueChanges.pipe(
-      startWith(this.form.controls.deviceType.value),
-    ),
+    this.form.controls.deviceType.valueChanges.pipe(startWith(this.form.controls.deviceType.value))
   );
 
   constructor() {
@@ -112,7 +110,7 @@ export class CreateAssetRosterForm extends BaseForm<CreateAssetRosterFormModel> 
         name: [null],
         description: [null],
       },
-      makeIds: [null, [Validators.required]],
+      makeIds: [null!],
       createdMake: {
         oemName: [null],
       },
