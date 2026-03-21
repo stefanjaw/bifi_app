@@ -27,9 +27,6 @@
       "@avalantec/aduanix": ["dist/aduanix/*", "dist/aduanix"],
       "@avalantec/aduanix/*": ["projects/aduanix/*", "projects/aduanix"],
 
-      "@avalantec/crm": ["dist/crm/*", "dist/crm"],
-      "@avalantec/crm/*": ["projects/crm/*", "projects/crm"],
-
       "@avalantec/sales": ["dist/sales/*", "dist/sales"],
       "@avalantec/sales/*": ["projects/sales/*", "projects/sales"],
 
