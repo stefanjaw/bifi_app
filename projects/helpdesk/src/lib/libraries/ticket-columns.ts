@@ -3,6 +3,12 @@ import { ticket } from '../interfaces/ticket';
 
 export const ticketColumns: tableColumn<ticket>[] = [
   {
+    field: 'active',
+    title: 'Active',
+    type: 'text',
+    parseField: (value: boolean) => (value ? 'Active' : 'Inactive'),
+  },
+  {
     field: 'name',
     title: 'Subject',
     type: 'text',
@@ -40,11 +46,5 @@ export const ticketColumns: tableColumn<ticket>[] = [
     field: 'slaResolutionDeadline',
     title: 'SLA Deadline',
     type: 'date',
-  },
-  {
-    field: 'active',
-    title: 'Active',
-    type: 'text',
-    parseField: (value: boolean) => (value ? 'Active' : 'Inactive'),
   },
 ];
