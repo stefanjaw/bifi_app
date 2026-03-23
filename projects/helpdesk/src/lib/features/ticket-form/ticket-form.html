@@ -81,7 +81,7 @@
             <bifi-app-form-label>Stage</bifi-app-form-label>
             <p-select
               formControlName="stage"
-              [options]="stageOptions()"
+              [options]="stageOptions() ?? []"
               optionLabel="name"
               optionValue="_id"
               placeholder="Select stage"
@@ -93,7 +93,7 @@
             <bifi-app-form-label>Assigned To</bifi-app-form-label>
             <p-select
               formControlName="assigned"
-              [options]="userOptions()"
+              [options]="userOptions() ?? []"
               optionLabel="username"
               optionValue="_id"
               placeholder="Select user"
@@ -105,7 +105,7 @@
             <bifi-app-form-label>Requester</bifi-app-form-label>
             <p-select
               formControlName="senderUser"
-              [options]="userOptions()"
+              [options]="userOptions() ?? []"
               optionLabel="username"
               optionValue="_id"
               placeholder="Select requester"
@@ -113,16 +113,36 @@
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
-          <bifi-app-form-field>
+          <bifi-app-form-field class="md:col-span-2">
             <bifi-app-form-label>Followers</bifi-app-form-label>
-            <p-multiselect
-              formControlName="followers"
-              [options]="userOptions()"
-              optionLabel="username"
-              optionValue="_id"
-              placeholder="Select followers"
-            ></p-multiselect>
-            <bifi-app-form-error></bifi-app-form-error>
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 flex-wrap">
+                @for (ctrl of followersArray.controls; track $index) {
+                  <div
+                    class="flex items-center gap-1 bg-gray-100 text-gray-800 rounded px-3 py-1 text-sm"
+                  >
+                    <span>{{ getFollowerName(ctrl.value) }}</span>
+                    <button
+                      type="button"
+                      class="ml-1 text-gray-500 hover:text-gray-800"
+                      (click)="removeFollower($index)"
+                    >
+                      ×
+                    </button>
+                  </div>
+                }
+                @if (followersArray.controls.length === 0) {
+                  <p class="text-gray-400 text-sm">No followers selected.</p>
+                }
+              </div>
+              <p-select
+                [options]="userOptions() ?? []"
+                optionLabel="username"
+                optionValue="_id"
+                placeholder="Add a follower..."
+                (onChange)="addFollower($event.value)"
+              ></p-select>
+            </div>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
@@ -184,7 +204,7 @@
 
           <div class="flex gap-2 items-center">
             <p-select
-              [options]="allTasks()"
+              [options]="availableTasks()"
               optionLabel="name"
               optionValue="_id"
               placeholder="Add a task..."
@@ -198,21 +218,21 @@
       @if (isUpdate() && (entry()?.activityHistory ?? []).length > 0) {
         <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="3">
           <div class="flex flex-col gap-3">
-            @for (entry of entry()?.activityHistory ?? []; track entry._id) {
+            @for (activity of entry()?.activityHistory ?? []; track activity._id) {
               <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
                 <div class="text-xs text-gray-500">
-                  {{ entry.createdAt | date: 'medium' }}
-                  @if (entry.changedBy) {
+                  {{ activity.createdAt | date: 'medium' }}
+                  @if (activity.changedBy) {
                     —
-                    <span class="font-medium">{{ entry.changedBy.username }}</span>
+                    <span class="font-medium">{{ activity.changedBy?.username }}</span>
                   }
                 </div>
                 <div class="text-sm">
-                  <span class="font-semibold">{{ activityFieldLabel(entry.field) }}</span>
+                  <span class="font-semibold">{{ activityFieldLabel(activity.field) }}</span>
                   changed from
-                  <span class="text-red-600">{{ entry.oldValue | json }}</span>
+                  <span class="text-red-600">{{ activity.oldValue | json }}</span>
                   to
-                  <span class="text-green-600">{{ entry.newValue | json }}</span>
+                  <span class="text-green-600">{{ activity.newValue | json }}</span>
                 </div>
               </div>
             }

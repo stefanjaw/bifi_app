@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { JsonPipe } from '@angular/common';
 
 interface ReportData {
   byStage: { stage: string; count: number }[];
@@ -23,7 +22,7 @@ interface ReportData {
 
 @Component({
   selector: 'bifi-app-helpdesk-report',
-  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule, JsonPipe],
+  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule],
   host: {
     class: 'flex flex-col gap-6 p-6 ms-4 me-4',
   },

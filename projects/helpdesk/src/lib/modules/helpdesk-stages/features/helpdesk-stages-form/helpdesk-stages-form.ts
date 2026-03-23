@@ -41,16 +41,16 @@ export class HelpdeskStagesForm {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  id = input.required<string>();
+  id = input<string>('');
 
   stageResource = this.crudHelpdeskStages.get({
     id: this.id,
-    triggerRequest: computed(() => this.id() !== undefined),
+    triggerRequest: computed(() => !!this.id()),
   });
 
   form = this.formService.form;
   stage = this.stageResource.value;
-  isUpdate = computed(() => !!this.stage());
+  isUpdate = computed(() => !!this.id());
   loading = this.stageResource.isLoading;
   error = this.stageResource.error;
   isSubmitLoading = signal<boolean>(false);

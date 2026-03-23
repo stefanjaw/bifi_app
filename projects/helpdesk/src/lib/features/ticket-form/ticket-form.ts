@@ -20,11 +20,10 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { MultiSelectModule } from 'primeng/multiselect';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket } from '../../interfaces/ticket';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'bifi-app-ticket-form',
@@ -36,15 +35,14 @@ import { CommonModule, DatePipe } from '@angular/common';
     SelectModule,
     TextareaModule,
     ProgressBarModule,
-    MultiSelectModule,
     DatePipe,
-    CommonModule,
+    JsonPipe,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketFormComponent {
-  private formService = inject(TicketFormService);
+  protected formService = inject(TicketFormService);
   private crudTickets = inject(CrudTickets);
   private crudStages = inject(CrudHelpdeskStages);
   private crudUsers = inject(CrudUsers);
@@ -81,6 +79,16 @@ export class TicketFormComponent {
   form = this.formService.form;
 
   linkedTaskIds = signal<string[]>([]);
+
+  availableTasks = computed(() => {
+    const all = (this.allTasks() as any[]) ?? [];
+    const linked = this.linkedTaskIds();
+    return all.filter((t: any) => !linked.includes(t._id));
+  });
+
+  get followersArray() {
+    return this.formService.followersArray;
+  }
 
   priorityOptions = [
     { label: 'Low', value: 'low' },
@@ -137,15 +145,25 @@ export class TicketFormComponent {
     return task?.name ?? taskId;
   }
 
+  addFollower(userId: string) {
+    this.formService.addFollower(userId);
+  }
+
+  removeFollower(index: number) {
+    this.formService.removeFollower(index);
+  }
+
+  getFollowerName(userId: string): string {
+    const user = (this.userOptions() as any[])?.find((u: any) => u._id === userId);
+    return user?.username ?? userId;
+  }
+
   async handleSubmit(data: FormValueState<TicketFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
     const tags = rawValue.tagsInput
-      ? rawValue.tagsInput
-          .split(',')
-          .map((t: string) => t.trim())
-          .filter(Boolean)
+      ? rawValue.tagsInput.split(',').map((t: string) => t.trim()).filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {

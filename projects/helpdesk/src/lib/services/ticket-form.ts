@@ -31,10 +31,29 @@ export class TicketForm extends BaseForm<TicketFormModel> {
       stage: [''],
       assigned: [''],
       senderUser: [''],
-      followers: { template: [''], formArrayElements: [] },
+      followers: {
+        template: [''],
+        formArrayElements: [],
+      },
       tagsInput: [''],
       category: [''],
       appModule: [''],
     });
+  }
+
+  get followersArray() {
+    return this.form.controls.followers;
+  }
+
+  addFollower(userId: string) {
+    if (!userId) return;
+    const current = this.followersArray.controls.map(c => c.value);
+    if (!current.includes(userId)) {
+      this.followersArray.pushItem(userId);
+    }
+  }
+
+  removeFollower(index: number) {
+    this.followersArray.removeAt(index);
   }
 }
