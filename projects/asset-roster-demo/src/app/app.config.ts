@@ -25,6 +25,7 @@ import { provideSales } from '@avalantec/sales';
 import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
 import { provideAccounting } from '@avalantec/accounting';
+import { provideHelpdesk } from '@avalantec/helpdesk';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimationsAsync(),
@@ -62,6 +63,7 @@ export const appConfig: ApplicationConfig = {
     providePurchases(),
     provideInventory(),
     provideAccounting(),
+    provideHelpdesk(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

@@ -15,6 +15,9 @@
       "@avalantec/website": ["./projects/website/src/lib"],
       "@avalantec/website/*": ["./projects/website/src/lib/*"],
 
+      "@avalantec/helpdesk": ["./projects/helpdesk/src/lib"],
+      "@avalantec/helpdesk/*": ["./projects/helpdesk/src/lib/*"],
+
       "@avalantec/tasks": ["./projects/tasks/src/lib"],
       "@avalantec/tasks/*": ["./projects/tasks/src/lib/*"],
 

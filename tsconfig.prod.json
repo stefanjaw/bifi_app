@@ -36,6 +36,9 @@
       "@avalantec/inventory": ["dist/inventory/*", "dist/inventory"],
       "@avalantec/inventory/*": ["projects/inventory/*", "projects/inventory"],
 
+      "@avalantec/helpdesk": ["dist/helpdesk/*", "dist/helpdesk"],
+      "@avalantec/helpdesk/*": ["projects/helpdesk/*", "projects/helpdesk"],
+
       "@avalantec/accounting": ["dist/accounting/*", "dist/accounting"],
       "@avalantec/accounting/*": ["projects/accounting/*", "projects/accounting"]
     }

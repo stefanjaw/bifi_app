@@ -230,6 +230,36 @@
         }
       }
     },
+    "helpdesk": {
+      "projectType": "library",
+      "root": "projects/helpdesk",
+      "sourceRoot": "projects/helpdesk/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/helpdesk/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/helpdesk/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/helpdesk/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
     "tasks": {
       "projectType": "library",
       "root": "projects/tasks",

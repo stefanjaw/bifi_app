@@ -1,0 +1,42 @@
+<h1 class="text-2xl font-bold mb-4">Helpdesk Tickets</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Ticket"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'tickets/create:view'"
+  ></p-button>
+
+  <p-button
+    label="Report"
+    severity="info"
+    icon="pi pi-chart-bar"
+    [routerLink]="['../report']"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by subject, priority, category or module"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [columns]="columns" [data]="tickets">
+  <ng-template #actions let-element>
+    <p-button
+      *bifiAppHasPermission="'tickets/update:view'"
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      routerLink="../edit/{{ element._id }}"
+    ></p-button>
+    <p-button
+      *bifiAppHasPermission="'tickets:delete:model'"
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+      (onClick)="deleteTicket(element._id)"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

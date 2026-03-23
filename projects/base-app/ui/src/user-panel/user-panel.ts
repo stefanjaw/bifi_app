@@ -4,11 +4,9 @@ import {
   effect,
   inject,
   signal,
-  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { injectAuthService } from '@avalantec/base-app/auth';
-import { BugReportingFormDialog } from '@avalantec/base-app/bug-reporting';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
@@ -17,14 +15,13 @@ import { MenuModule } from 'primeng/menu';
 
 @Component({
   selector: 'bifi-app-user-panel',
-  imports: [ButtonModule, AvatarModule, MenuModule, BugReportingFormDialog],
+  imports: [ButtonModule, AvatarModule, MenuModule],
   templateUrl: './user-panel.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPanel {
   private authService = injectAuthService();
   private router = inject(Router);
-  private bugDialog = viewChild(BugReportingFormDialog);
   private fileResolver = inject(FileResolver);
 
   user = this.authService.user;
@@ -49,11 +46,6 @@ export class UserPanel {
     // },
     {
       separator: true,
-    },
-    {
-      label: 'Report Bug',
-      icon: 'pi pi-exclamation-triangle ',
-      command: () => this.bugDialog()?.openDialog(),
     },
     {
       label: 'Log-Out',
