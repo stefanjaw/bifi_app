@@ -4,10 +4,12 @@
   <div
     class="sticky top-0 bg-gray-50 z-10 grid grid-cols-12 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
   >
-    <div class="col-span-5">Task Name</div>
+    <div class="col-span-4">Task Name</div>
     <div class="col-span-2">Start Date</div>
     <div class="col-span-2">End Date</div>
-    <div class="col-span-2 text-center">Progress</div>
+    <div class="col-span-1">Stage</div>
+    <div class="col-span-1">Priority</div>
+    <div class="col-span-1 text-center">Progress</div>
     <div class="col-span-1 text-center">Actions</div>
   </div>
   <div class="border-x border-b border-gray-200">
@@ -17,7 +19,7 @@
         (click)="tasksMaintenanceContext.openUpdateTaskDialog(task.id)"
       >
         <div
-          class="col-span-5 truncate flex items-center px-2"
+          class="col-span-4 truncate flex items-center px-2"
           [style.padding-left.px]="task.level * 24 + 8"
           [pTooltip]="task.name"
         >
@@ -42,7 +44,13 @@
         <div class="col-span-2 px-2">
           {{ task.end | date: 'MMM d yyyy, hh:mm a' }}
         </div>
-        <div class="col-span-2 px-2 flex justify-center">
+        <div class="col-span-1 px-2 truncate">
+          {{ task.stage?.name ?? '—' }}
+        </div>
+        <div class="col-span-1 px-2">
+          {{ formatPriority(task.priority) }}
+        </div>
+        <div class="col-span-1 px-2 flex justify-center">
           <div class="w-4/5 bg-gray-200 rounded-full h-2.5">
             <div class="bg-indigo-600 h-2.5 rounded-full" [style.width.%]="task.progress"></div>
           </div>

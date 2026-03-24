@@ -1,3 +1,5 @@
+import { taskStage } from '../../task-stages/interfaces/task-stage';
+
 // Internal application models
 export interface ganttTask {
   id: string;
@@ -9,6 +11,8 @@ export interface ganttTask {
   level: number;
   children: ganttTask[];
   isExpanded: boolean;
+  stage?: taskStage;
+  priority?: string;
 }
 
 export interface ganttDependency {

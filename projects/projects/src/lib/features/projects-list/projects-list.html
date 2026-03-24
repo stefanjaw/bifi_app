@@ -1,0 +1,30 @@
+<h1 class="text-2xl font-bold mb-4">Projects</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Project"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by name or description"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="false"
+  [columns]="projectColumns"
+  [data]="projects"
+  [onClickRow]="goToEditProject"
+>
+  <ng-template #actions let-element>
+    <p-button
+      severity="danger"
+      label="Delete"
+      icon="pi pi-trash"
+      (onClick)="deleteProject(element._id); $event.stopPropagation()"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>

@@ -10,49 +10,42 @@ export class TasksMaintenanceContext {
   private _openUpdateTaskDialog = new Subject<string>();
   private _openCreateSubTaskDialog = new Subject<string>();
   private _deleteTask = new Subject<string>();
+  private _expandAll = new Subject<void>();
+  private _collapseAll = new Subject<void>();
 
   taskCreatedOrUpdated$ = this._taskCreatedOrUpdated.asObservable();
   toggleExpand$ = this._toggleExpand.asObservable();
   openUpdateTaskDialog$ = this._openUpdateTaskDialog.asObservable();
   openCreateSubTaskDialog$ = this._openCreateSubTaskDialog.asObservable();
   deleteTask$ = this._deleteTask.asObservable();
+  expandAll$ = this._expandAll.asObservable();
+  collapseAll$ = this._collapseAll.asObservable();
 
-  /**
-   * Deletes the task with the given id.
-   * @param id The id of the task to be deleted.
-   */
   deleteTask(id: string) {
     this._deleteTask.next(id);
   }
 
-  /**
-   * Opens the create subtask dialog with the task having the given id.
-   * @param id The id of the task to be updated.
-   */
   openCreateSubTaskDialog(id: string) {
     this._openCreateSubTaskDialog.next(id);
   }
 
-  /**
-   * Opens the update task dialog with the task having the given id.
-   * @param id The id of the task to be updated.
-   */
   openUpdateTaskDialog(id: string) {
     this._openUpdateTaskDialog.next(id);
   }
 
-  /**
-   * Notifies components that the task with the given id should be expanded/collapsed.
-   * @param id The id of the task to be expanded/collapsed.
-   */
   toggleExpand(id: string) {
     this._toggleExpand.next(id);
   }
 
-  /**
-   * Emits the taskCreatedOrUpdated event to notify components that a task has been created or updated.
-   */
   taskCreatedOrUpdated() {
     this._taskCreatedOrUpdated.next();
+  }
+
+  expandAll() {
+    this._expandAll.next();
+  }
+
+  collapseAll() {
+    this._collapseAll.next();
   }
 }

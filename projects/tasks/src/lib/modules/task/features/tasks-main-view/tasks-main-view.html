@@ -1,13 +1,27 @@
 <header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
-    <h1 class="text-2xl font-bold text-gray-800">Project Timeline</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Tasks Timeline</h1>
   </div>
-  <div class="flex items-center space-x-4">
+  <div class="flex items-center space-x-2">
     <p-button
       label="Add Task"
       severity="secondary"
       icon="pi pi-plus"
       (onClick)="createTasksFormDialog.openDialog()"
+    ></p-button>
+
+    <p-button
+      label="Expand All"
+      severity="secondary"
+      icon="pi pi-angle-double-down"
+      (onClick)="expandAll()"
+    ></p-button>
+
+    <p-button
+      label="Collapse All"
+      severity="secondary"
+      icon="pi pi-angle-double-up"
+      (onClick)="collapseAll()"
     ></p-button>
 
     <div class="flex items-center space-x-2">
@@ -45,6 +59,11 @@
     </div>
   </div>
 </header>
+
+<!-- Search Bar -->
+<div class="flex-shrink-0 py-2">
+  <bifi-app-search-bar [searchFilters]="taskFilters"></bifi-app-search-bar>
+</div>
 
 <!-- Main Content -->
 @if (isLoading()) {

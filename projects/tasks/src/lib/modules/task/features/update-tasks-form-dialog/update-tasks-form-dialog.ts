@@ -178,10 +178,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
       const plannedStartDate = dayjs(rawValue.plannedStartDate as Date | undefined);
       const plannedEndDate = dayjs(rawValue.plannedEndDate as Date | undefined);
 
-      if (
-        plannedEndDate.isBefore(plannedStartDate) ||
-        plannedEndDate.isSame(plannedStartDate, 'day')
-      ) {
+      if (plannedEndDate.isBefore(plannedStartDate)) {
         this.toastManager.showError('Planned start date must be before planned end date');
         return;
       }

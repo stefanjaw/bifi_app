@@ -14,6 +14,10 @@ import { TooltipModule } from 'primeng/tooltip';
 export class TasksListView {
   tasks = input<ganttTask[]>([]);
 
-  // services
   protected tasksMaintenanceContext = inject(TasksMaintenanceContext);
+
+  formatPriority(priority: string | undefined): string {
+    if (!priority) return '—';
+    return priority.charAt(0).toUpperCase() + priority.slice(1);
+  }
 }
