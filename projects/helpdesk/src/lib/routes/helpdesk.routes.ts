@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const HELPDESK_ROUTES: Routes = [
   {
@@ -9,25 +9,29 @@ export const HELPDESK_ROUTES: Routes = [
   },
   {
     path: 'list',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'tickets/list' },
     loadComponent: () =>
       import('../features/ticket-list/ticket-list').then(c => c.TicketList),
   },
   {
     path: 'create',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'tickets/create' },
     loadComponent: () =>
       import('../features/ticket-form/ticket-form').then(c => c.TicketFormComponent),
   },
   {
     path: 'edit/:id',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'tickets/update' },
     loadComponent: () =>
       import('../features/ticket-form/ticket-form').then(c => c.TicketFormComponent),
   },
   {
     path: 'report',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'tickets/report' },
     loadComponent: () =>
       import('../features/helpdesk-report/helpdesk-report').then(c => c.HelpdeskReport),
   },

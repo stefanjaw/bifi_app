@@ -22,8 +22,9 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
-import { ticket } from '../../interfaces/ticket';
+import { ticket, ticketAttachment } from '../../interfaces/ticket';
 import { DatePipe, JsonPipe } from '@angular/common';
+import { FileResolver } from '@avalantec/base-app/resource';
 
 @Component({
   selector: 'bifi-app-ticket-form',
@@ -50,6 +51,7 @@ export class TicketFormComponent {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private fileResolver = inject(FileResolver);
 
   id = input<string>('');
 
@@ -201,6 +203,10 @@ export class TicketFormComponent {
   goBack() {
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
+  }
+
+  downloadAttachment(attachment: ticketAttachment) {
+    this.fileResolver.downloadFileInBrowser({ id: attachment.fileId }, 'download');
   }
 
   activityFieldLabel(field: string): string {

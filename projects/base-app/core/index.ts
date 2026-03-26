@@ -17,3 +17,4 @@ export * from './src/pipes/split-caps-pipe';
 export * from './src/services/debug-manager';
 export * from './src/services/sidenav-manager';
 export * from './src/services/toast-manager';
+export * from './src/services/toolbar-manager';

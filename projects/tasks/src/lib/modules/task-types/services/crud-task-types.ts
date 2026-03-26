@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
-import { bugReporting } from '../interfaces/bug-reporting';
+import { taskType } from '../interfaces/task-type';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CrudBugReporting extends ApiRequestManager<bugReporting> {
+export class CrudTaskTypes extends ApiRequestManager<taskType> {
   constructor() {
     super();
-    super.endpoint = 'bug-report';
+    super.endpoint = 'task-types';
   }
 }

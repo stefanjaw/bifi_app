@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudMovements } from '../../services/crud-movements';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudWarehouses } from '../../services/crud-warehouses';
@@ -30,7 +31,7 @@ const MOVEMENT_TYPES = [
 
 @Component({
   selector: 'bifi-app-movement-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, TextareaModule, ProgressBarModule, RouterLink],
+  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, TextareaModule, ProgressBarModule, RouterLink, HasPermission],
   templateUrl: './movement-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

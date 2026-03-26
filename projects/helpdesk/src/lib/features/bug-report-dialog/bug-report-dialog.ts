@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { BugReportingForm, BugReportingFormModel } from '../../services/bug-reporting-form';
-import { CrudBugReporting } from '../../services/crud-bug-reporting';
+import { BugReportForm, BugReportFormModel } from '../../services/bug-report-form';
+import { CrudTickets } from '../../services/crud-tickets';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -12,7 +12,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { injectAuthService } from '@avalantec/base-app/auth';
 
 @Component({
-  selector: 'bifi-app-bug-reporting-form-dialog',
+  selector: 'bifi-helpdesk-bug-report-dialog',
   imports: [
     ReactiveFormsModule,
     DialogModule,
@@ -21,53 +21,46 @@ import { injectAuthService } from '@avalantec/base-app/auth';
     FormModule,
     FileUploadModule,
   ],
-  templateUrl: './bug-reporting-form-dialog.html',
+  templateUrl: './bug-report-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BugReportingFormDialog extends BaseDialog {
-  protected formService = inject(BugReportingForm);
+export class BugReportDialog extends BaseDialog {
+  protected formService = inject(BugReportForm);
   private destroy$ = inject(DestroyRef);
-  private bugReportingService = inject(CrudBugReporting);
+  private crudTickets = inject(CrudTickets);
   private authService = injectAuthService();
 
-  // State
   form = this.formService.form;
   isSubmitLoading = signal(false);
 
-  /**
-   * Opens the dialog and resets the form before opening it.
-   *
-   * This is necessary because the form is reused between multiple dialog instances.
-   */
   override openDialog(): void {
     this.formService.reset();
     super.openDialog();
   }
 
-  /**
-   * Handles the submission of the form and creates a new bug report in the backend.
-   *
-   * @param data the form data
-   */
-  handleSubmit(data: FormValueState<BugReportingFormModel>) {
+  handleSubmit(data: FormValueState<BugReportFormModel>) {
     this.isSubmitLoading.set(true);
 
-    // Get the user's email
     const email = this.authService.user()?.email;
 
-    // Create a new bug report in the backend
-    this.bugReportingService
-      .post({ data: { ...data.rawValue, email, platform: window.location.href } })
-      // Automatically unsubscribe from the observable once the component is destroyed
+    this.crudTickets
+      .post({
+        data: {
+          name: data.rawValue.name,
+          description: data.rawValue.description,
+          category: email,
+          appModule: window.location.href,
+          attachments: data.rawValue.files,
+        } as any,
+        fileFields: ['attachments'],
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
-          // Reset the form and close the dialog
           this.isSubmitLoading.set(false);
           this.closeDialog();
         },
         error: () => {
-          // Reset the form and close the dialog
           this.isSubmitLoading.set(false);
         },
       });

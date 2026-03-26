@@ -9,8 +9,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CreateTaskForm, CreateTaskFormModel } from '../../services/create-task-form';
 import { CrudTasks } from '../../services/crud-tasks';
+import { CrudTaskTypes } from '../../../task-types';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { SliderModule } from 'primeng/slider';
+import { TextareaModule } from 'primeng/textarea';
 import dayjs from 'dayjs';
 
 @Component({
@@ -23,6 +25,7 @@ import dayjs from 'dayjs';
     InputTextModule,
     FormModule,
     SliderModule,
+    TextareaModule,
   ],
   templateUrl: './create-tasks-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,12 +33,14 @@ import dayjs from 'dayjs';
 export class CreateTasksFormDialog extends BaseDialog {
   protected formService = inject(CreateTaskForm);
   private crudTasks = inject(CrudTasks);
+  private crudTaskTypes = inject(CrudTaskTypes);
   private destroy$ = inject(DestroyRef);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private toastManager = inject(ToastManager);
 
   // Data
   tasks = this.crudTasks.get({ triggerRequest: this.dialogState });
+  taskTypes = this.crudTaskTypes.get({ triggerRequest: this.dialogState });
 
   // State
   form = this.formService.form;

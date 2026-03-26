@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudWarehouses } from '../../services/crud-warehouses';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,7 +20,7 @@ import { WarehouseFormService, WarehouseFormModel } from '../../services/warehou
 
 @Component({
   selector: 'bifi-app-warehouse-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule],
+  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule, HasPermission],
   templateUrl: './warehouse-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

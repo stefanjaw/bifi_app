@@ -4,6 +4,8 @@ import { BaseForm } from '@avalantec/base-app/form';
 
 export interface CreateTaskFormModel {
   name: string;
+  description?: string;
+  typeId?: string;
   plannedStartDate?: Date;
   plannedEndDate?: Date;
   progress?: number;
@@ -17,6 +19,8 @@ export class CreateTaskForm extends BaseForm<CreateTaskFormModel> {
   override createForm() {
     return this.fb.group<CreateTaskFormModel>({
       name: ['', [Validators.required]],
+      description: [''],
+      typeId: [''],
       plannedStartDate: [undefined],
       plannedEndDate: [undefined],
       progress: [0, [Validators.min(0), Validators.max(100)]],

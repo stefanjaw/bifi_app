@@ -10,6 +10,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudUoms } from '../../services/crud-uoms';
 import { uom } from '../../interfaces/uom';
 import { uomColumns } from '../../libraries/uom-columns';
@@ -24,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
   templateUrl: './uoms-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

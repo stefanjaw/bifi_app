@@ -1,6 +1,7 @@
 export * from './features/ticket-list/ticket-list';
 export * from './features/ticket-form/ticket-form';
 export * from './features/helpdesk-report/helpdesk-report';
+export * from './features/bug-report-dialog/bug-report-dialog';
 export * from './interfaces/ticket';
 export * from './interfaces/helpdesk-stage';
 export * from './libraries/ticket-columns';
@@ -13,3 +14,4 @@ export * from './services/crud-tickets';
 export * from './services/crud-helpdesk-stages';
 export * from './services/ticket-form';
 export * from './services/helpdesk-stage-form';
+export * from './services/bug-report-form';

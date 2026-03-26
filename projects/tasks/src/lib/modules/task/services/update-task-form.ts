@@ -6,6 +6,7 @@ import { task } from '../interfaces/task';
 export interface UpdateTaskFormModel {
   name: string;
   description?: string;
+  typeId?: string;
   plannedStartDate?: Date;
   plannedEndDate?: Date;
   plannedDuration?: number;
@@ -27,6 +28,7 @@ export class UpdateTaskForm extends BaseForm<UpdateTaskFormModel> {
     return this.fb.group<UpdateTaskFormModel>({
       name: ['', [Validators.required]],
       description: [''],
+      typeId: [''],
       plannedStartDate: [undefined],
       plannedEndDate: [undefined],
       plannedDuration: [0],

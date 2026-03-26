@@ -15,6 +15,7 @@ import { TasksMaintenanceContext } from '../../services/tasks-maintenance-contex
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FileResolver, FilterManager } from '@avalantec/base-app/resource';
 import { CrudTaskStages } from '../../../task-stages';
+import { CrudTaskTypes } from '../../../task-types';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -49,6 +50,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
   private crudTasks = inject(CrudTasks);
   private crudProjects = inject(CrudProjects);
   private crudTaskStages = inject(CrudTaskStages);
+  private crudTaskTypes = inject(CrudTaskTypes);
   private crudUsers = inject(CrudUsers);
   private destroy$ = inject(DestroyRef);
   protected taskMaintenanceContext = inject(TasksMaintenanceContext);
@@ -91,6 +93,10 @@ export class UpdateTasksFormDialog extends BaseDialog {
     triggerRequest: this.dialogState,
   });
 
+  taskTypesResource = this.crudTaskTypes.get({
+    triggerRequest: this.dialogState,
+  });
+
   usersResource = this.crudUsers.get({
     triggerRequest: this.dialogState,
   });
@@ -101,6 +107,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
   parentTasks = computed(() => this.tasks().filter(t => t.parentId?._id !== this._id()));
   taskProjects = this.taskProjectsResource.value;
   taskStages = this.taskStagesResource.value;
+  taskTypes = this.taskTypesResource.value;
   users = this.usersResource.value;
 
   priorityOptions = [
@@ -117,6 +124,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
       this.taskResource.isLoading() ||
       this.taskProjectsResource.isLoading() ||
       this.taskStagesResource.isLoading() ||
+      this.taskTypesResource.isLoading() ||
       this.tasksResource.isLoading()
   );
   isSubmitLoading = signal(false);
@@ -151,6 +159,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
           progress: task.progress,
           projectId: task.projectId?._id,
           stage: task.stage?._id,
+          typeId: (task as any).typeId?._id,
           parentId: task.parentId?._id,
           priority: task.priority,
           assigned: task.assigned?._id,

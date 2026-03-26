@@ -10,6 +10,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudWarehouses } from '../../services/crud-warehouses';
 import { warehouse } from '../../interfaces/warehouse';
 import { warehouseColumns } from '../../libraries/warehouse-columns';
@@ -25,7 +26,7 @@ import { ToastModule } from 'primeng/toast';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission],
   templateUrl: './warehouses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

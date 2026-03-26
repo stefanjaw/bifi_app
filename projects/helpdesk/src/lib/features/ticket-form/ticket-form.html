@@ -217,8 +217,31 @@
         </div>
       </bifi-app-form-section>
 
+      @if (isUpdate()) {
+        <bifi-app-form-section title="Attachments" id="attachments" [ordinal]="3">
+          <div class="flex flex-col gap-2">
+            @if ((entry()?.attachments ?? []).length === 0) {
+              <p class="text-sm text-gray-500 italic">No attachments.</p>
+            }
+            @for (attachment of entry()?.attachments ?? []; track attachment.fileId) {
+              <div class="flex items-center gap-2 rounded border border-gray-200 p-2">
+                <span class="pi pi-file text-gray-500"></span>
+                <p class="flex-1 truncate text-sm">{{ attachment.name }}</p>
+                <p-button
+                  label="Download"
+                  icon="pi pi-download"
+                  severity="secondary"
+                  size="small"
+                  (onClick)="downloadAttachment(attachment)"
+                ></p-button>
+              </div>
+            }
+          </div>
+        </bifi-app-form-section>
+      }
+
       @if (isUpdate() && (entry()?.activityHistory ?? []).length > 0) {
-        <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="3">
+        <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="4">
           <div class="flex flex-col gap-3">
             @for (activity of entry()?.activityHistory ?? []; track activity._id) {
               <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">

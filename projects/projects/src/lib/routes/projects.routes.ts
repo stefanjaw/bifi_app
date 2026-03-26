@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const PROJECTS_ROUTES: Routes = [
   {
@@ -9,19 +9,22 @@ export const PROJECTS_ROUTES: Routes = [
   },
   {
     path: 'list',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'projects/list' },
     loadComponent: () =>
       import('../features/projects-list/projects-list').then(c => c.ProjectsList),
   },
   {
     path: 'create',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'projects/create' },
     loadComponent: () =>
       import('../features/project-form/project-form').then(c => c.ProjectFormComponent),
   },
   {
     path: 'edit/:id',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'projects/update' },
     loadComponent: () =>
       import('../features/project-form/project-form').then(c => c.ProjectFormComponent),
   },

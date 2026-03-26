@@ -80,6 +80,20 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
+          <bifi-app-form-label>Type</bifi-app-form-label>
+          <p-select
+            appendTo="body"
+            formControlName="typeId"
+            [options]="taskTypes()"
+            optionLabel="name"
+            optionValue="_id"
+            [filter]="true"
+            placeholder="Select a type"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
           <bifi-app-form-label>Priority</bifi-app-form-label>
           <p-select
             appendTo="body"

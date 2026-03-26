@@ -15,6 +15,7 @@
       (cancelClicked)="goBack()"
       class="mb-4"
       [formChanged]="form.dirty"
+      *bifiAppHasPermission="'inventory/movements:create:model'"
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {

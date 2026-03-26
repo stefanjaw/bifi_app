@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     routerLink="/inventory/uoms/new"
+    *bifiAppHasPermission="'inventory/uoms/create:view'"
   ></p-button>
 </div>
 
@@ -22,12 +23,14 @@
       icon="pi pi-pencil"
       size="small"
       routerLink="/inventory/uoms/{{ element._id }}/edit"
+      *bifiAppHasPermission="'inventory/uoms/update:view'"
     ></p-button>
     <p-button
       severity="danger"
       icon="pi pi-trash"
       size="small"
       (onClick)="delete(element._id)"
+      *bifiAppHasPermission="'inventory/uoms:delete:model'"
     ></p-button>
   </ng-template>
 </bifi-app-table-layout>

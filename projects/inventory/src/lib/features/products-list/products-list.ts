@@ -10,6 +10,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProducts } from '../../services/crud-products';
 import { product } from '../../interfaces/product';
 import { productColumns } from '../../libraries/product-columns';
@@ -24,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

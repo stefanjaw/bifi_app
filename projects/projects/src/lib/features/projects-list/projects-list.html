@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
+    *bifiAppHasPermission="'projects/create:view'"
   ></p-button>
 </div>
 
@@ -25,6 +26,7 @@
       label="Delete"
       icon="pi pi-trash"
       (onClick)="deleteProject(element._id); $event.stopPropagation()"
+      *bifiAppHasPermission="'projects:delete:model'"
     ></p-button>
   </ng-template>
 </bifi-app-table-layout>

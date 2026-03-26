@@ -35,6 +35,15 @@
       }
 
       <div class="flex items-center gap-2">
+        @for (item of toolbarItems(); track $index) {
+          <p-button
+            [icon]="item.icon"
+            (onClick)="item.command()"
+            variant="text"
+            severity="contrast"
+            [pTooltip]="item.tooltip"
+          ></p-button>
+        }
         <bifi-app-user-panel></bifi-app-user-panel>
       </div>
     </ng-template>

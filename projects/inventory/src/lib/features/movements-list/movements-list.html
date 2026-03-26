@@ -6,12 +6,14 @@
     severity="secondary"
     icon="pi pi-plus"
     routerLink="/inventory/movements/new"
+    *bifiAppHasPermission="'inventory/movements/create:view'"
   ></p-button>
   <p-button
     label="Transfer"
     severity="secondary"
     icon="pi pi-arrows-h"
     routerLink="/inventory/transfer"
+    *bifiAppHasPermission="'inventory/transfer/create:view'"
   ></p-button>
 </div>
 

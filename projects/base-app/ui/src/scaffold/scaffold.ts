@@ -14,7 +14,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { DebugManager, SidenavManager } from '@avalantec/base-app/core';
+import { DebugManager, SidenavManager, ToolbarManager } from '@avalantec/base-app/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
@@ -63,9 +63,13 @@ export class Scaffold {
   protected sidenavManager = inject(SidenavManager);
   isOpened = model(this.sidenavManager.opened());
 
-  // menu managament
+  // menu management
   private menuManager = inject(MainMenuManager);
   menuItems = this.menuManager.menuItems;
+
+  // toolbar management
+  private toolbarManager = inject(ToolbarManager);
+  toolbarItems = this.toolbarManager.toolbarItems;
 
   // current route
   currentRoute = signal(this.router.url);

@@ -16,6 +16,7 @@ import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { ProjectForm as ProjectFormService, ProjectFormModel } from '../../services/project-form';
 import { project } from '../../interfaces/projects';
@@ -29,6 +30,7 @@ import { project } from '../../interfaces/projects';
     ButtonModule,
     TextareaModule,
     CheckboxModule,
+    HasPermission,
   ],
   templateUrl: './project-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

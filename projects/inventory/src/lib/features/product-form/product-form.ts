@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudUoms } from '../../services/crud-uoms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -24,7 +25,7 @@ import { ProductFormService, ProductFormModel } from '../../services/product-for
 
 @Component({
   selector: 'bifi-app-product-form',
-  imports: [FormModule, ReactiveFormsModule, ButtonModule, InputText, InputNumberModule, TextareaModule, SelectModule, ProgressBarModule],
+  imports: [FormModule, ReactiveFormsModule, ButtonModule, InputText, InputNumberModule, TextareaModule, SelectModule, ProgressBarModule, HasPermission],
   templateUrl: './product-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

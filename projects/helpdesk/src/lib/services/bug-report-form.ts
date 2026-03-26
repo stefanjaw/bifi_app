@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
-export interface BugReportingFormModel {
-  subject: string;
+export interface BugReportFormModel {
+  name: string;
   description: string;
   files: FormUploaderFile[];
 }
@@ -11,10 +11,10 @@ export interface BugReportingFormModel {
 @Injectable({
   providedIn: 'root',
 })
-export class BugReportingForm extends BaseForm<BugReportingFormModel> {
+export class BugReportForm extends BaseForm<BugReportFormModel> {
   override createForm() {
-    return this.fb.group<BugReportingFormModel>({
-      subject: ['', [Validators.required]],
+    return this.fb.group<BugReportFormModel>({
+      name: ['', [Validators.required]],
       description: ['', [Validators.required]],
       files: {
         template: {

@@ -8,6 +8,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { projectColumns } from '../../libraries/project-columns';
 import { project } from '../../interfaces/projects';
@@ -18,7 +19,7 @@ import { project } from '../../interfaces/projects';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   templateUrl: './projects-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
