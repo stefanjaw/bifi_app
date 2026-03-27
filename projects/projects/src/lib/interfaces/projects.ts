@@ -1,4 +1,5 @@
 import { user } from '@avalantec/base-app/interfaces';
+import { projectStage } from '../modules/project-stages/interfaces/project-stage';
 
 export interface project {
   _id: string;
@@ -6,5 +7,6 @@ export interface project {
   name: string;
   description: string;
   createdBy: user;
+  stage?: projectStage;
   active: boolean;
 }

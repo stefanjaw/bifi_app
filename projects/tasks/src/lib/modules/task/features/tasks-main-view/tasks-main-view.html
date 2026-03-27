@@ -60,9 +60,10 @@
   </div>
 </header>
 
-<!-- Search Bar -->
-<div class="flex-shrink-0 py-2">
+<!-- Search & Filters -->
+<div class="flex-shrink-0 py-2 flex flex-col gap-2">
   <bifi-app-search-bar [searchFilters]="taskFilters"></bifi-app-search-bar>
+  <bifi-app-filter-bar [filterFields]="taskFilterFields"></bifi-app-filter-bar>
 </div>
 
 <!-- Main Content -->

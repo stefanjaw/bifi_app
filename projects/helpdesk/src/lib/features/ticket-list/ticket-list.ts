@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
+  FilterBar,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -7,7 +8,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { CrudTickets } from '../../services/crud-tickets';
 import { ticketColumns } from '../../libraries/ticket-columns';
-import { ticketFilters } from '../../libraries/ticket-filters';
+import { ticketFilterFields, ticketFilters } from '../../libraries/ticket-filters';
 import { ticket } from '../../interfaces/ticket';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
@@ -20,7 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
+  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, HasPermission, RouterLink],
   templateUrl: './ticket-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,6 +32,7 @@ export class TicketList {
 
   columns = ticketColumns;
   filters = ticketFilters;
+  filterFields = ticketFilterFields;
   tickets = this.resourceManager.data;
 
   deleteTicket(id: string) {

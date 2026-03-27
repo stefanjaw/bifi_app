@@ -8,6 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { projectStage } from '../../modules/project-stages/interfaces/project-stage';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,11 +16,13 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { ProjectForm as ProjectFormService, ProjectFormModel } from '../../services/project-form';
 import { project } from '../../interfaces/projects';
+import { CrudProjectStages } from '../../modules/project-stages/services/crud-project-stages';
 
 @Component({
   selector: 'bifi-app-project-form',
@@ -30,6 +33,7 @@ import { project } from '../../interfaces/projects';
     ButtonModule,
     TextareaModule,
     CheckboxModule,
+    SelectModule,
     HasPermission,
   ],
   templateUrl: './project-form.html',
@@ -38,6 +42,7 @@ import { project } from '../../interfaces/projects';
 export class ProjectFormComponent {
   protected formService = inject(ProjectFormService);
   private crudProjects = inject(CrudProjects);
+  private crudProjectStages = inject(CrudProjectStages);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -49,11 +54,17 @@ export class ProjectFormComponent {
     triggerRequest: computed(() => !!this.id()),
   });
 
+  stagesResource = this.crudProjectStages.get({});
+
   isLoading = this.projectResource.isLoading;
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   form = this.formService.form;
+  stages = computed<projectStage[]>(() => {
+    const data = this.stagesResource.value();
+    return Array.isArray(data) ? data : [];
+  });
 
   constructor() {
     effect(() => {
@@ -62,6 +73,7 @@ export class ProjectFormComponent {
         this.formService.patchValue({
           name: entry.name,
           description: entry.description ?? '',
+          stage: entry.stage?._id ?? null,
           active: entry.active ?? true,
         });
         this.formService.resetDirtyState();
@@ -76,8 +88,8 @@ export class ProjectFormComponent {
     const { rawValue } = data;
 
     const action = this.isUpdate()
-      ? this.crudProjects.put({ _id: this.id(), data: rawValue as project })
-      : this.crudProjects.post({ data: rawValue as project });
+      ? this.crudProjects.put({ _id: this.id(), data: rawValue })
+      : this.crudProjects.post({ data: rawValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {

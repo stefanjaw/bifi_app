@@ -2,23 +2,21 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
-export interface ProjectFormModel {
+export interface ProjectStageFormModel {
   name: string;
   description: string;
-  stage: string | null;
-  active: boolean;
+  isDefault: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectForm extends BaseForm<ProjectFormModel> {
+export class ProjectStageForm extends BaseForm<ProjectStageFormModel> {
   override createForm() {
-    return this.fb.group<ProjectFormModel>({
+    return this.fb.group<ProjectStageFormModel>({
       name: ['', [Validators.required]],
       description: [''],
-      stage: [null],
-      active: [true],
+      isDefault: [false],
     });
   }
 }

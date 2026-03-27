@@ -44,6 +44,19 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
+            <bifi-app-form-label>Stage</bifi-app-form-label>
+            <p-select
+              formControlName="stage"
+              [options]="stages()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a stage"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Active</bifi-app-form-label>
             <p-checkbox formControlName="active" [binary]="true"></p-checkbox>
             <bifi-app-form-error></bifi-app-form-error>

@@ -117,9 +117,14 @@ export class FilterManager {
         value = this.normalizeForFlexibleSearch(value?.toString() || '');
         break;
       case 'not like':
-        operator = '$notRegex';
-        value = this.normalizeForFlexibleSearch(value?.toString() || '');
-        break;
+        return {
+          [filter.field]: {
+            $not: {
+              $regex: this.normalizeForFlexibleSearch(value?.toString() || ''),
+              $options: 'i',
+            },
+          },
+        };
       case 'empty':
         operator = '$size';
         value = 0;
@@ -132,7 +137,7 @@ export class FilterManager {
     return {
       [filter.field]: {
         [operator]: value,
-        ...((filter.operator === 'like' || filter.operator === 'not like') && {
+        ...(filter.operator === 'like' && {
           $options: 'i',
         }),
       },

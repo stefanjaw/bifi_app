@@ -22,6 +22,8 @@
   [searchFilters]="filters"
 ></bifi-app-search-bar>
 
+<bifi-app-filter-bar [filterFields]="filterFields"></bifi-app-filter-bar>
+
 <bifi-app-table-layout [columns]="columns" [data]="tickets">
   <ng-template #actions let-element>
     <p-button

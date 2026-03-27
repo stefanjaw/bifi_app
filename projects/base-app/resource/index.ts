@@ -1,3 +1,4 @@
+export * from './src/components/filter-bar/filter-bar';
 export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
 export * from './src/directives/dynamic-component';

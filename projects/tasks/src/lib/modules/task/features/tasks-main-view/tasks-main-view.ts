@@ -21,8 +21,8 @@ import { TasksMaintenanceContext } from '../../services/tasks-maintenance-contex
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
-import { FilterManager, SearchBar } from '@avalantec/base-app/resource';
-import { taskFilters } from '../../libraries/task-filters';
+import { FilterBar, FilterManager, SearchBar } from '@avalantec/base-app/resource';
+import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
 
 @Component({
   selector: 'bifi-app-tasks-main-view',
@@ -34,6 +34,7 @@ import { taskFilters } from '../../libraries/task-filters';
     CreateTasksFormDialog,
     UpdateTasksFormDialog,
     SearchBar,
+    FilterBar,
   ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
@@ -59,8 +60,9 @@ export class TasksMainView {
   isLoading = this.tasksResource.isLoading;
   error = this.tasksResource.error;
 
-  // exposed filter list for the search bar
+  // exposed filter list for the search bar and filter bar
   taskFilters = taskFilters;
+  taskFilterFields = taskFilterFields;
 
   // tasks
   flat = this.tasksResource.value;
