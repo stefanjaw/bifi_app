@@ -44,7 +44,7 @@
       ></p-button>
     } @else {
       <p-button
-        *bifiAppHasPermission="'users/update:model'"
+        *bifiAppHasPermission="'users:update:model'"
         severity="secondary"
         label="Reactivate"
         (onClick)="reactiveUser(row._id)"

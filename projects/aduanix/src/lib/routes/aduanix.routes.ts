@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@avalantec/base-app/auth';
+import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const ADUANIX_ROUTES: Routes = [
   {
@@ -9,7 +9,8 @@ export const ADUANIX_ROUTES: Routes = [
   },
   {
     path: 'shippings',
-    canActivate: [authGuard],
+    canActivate: [permissionGuard],
+    data: { resource: 'shippings/list' },
     loadChildren: () => import('../modules').then(m => m.SHIPPINGS_ROUTES),
   },
 ];

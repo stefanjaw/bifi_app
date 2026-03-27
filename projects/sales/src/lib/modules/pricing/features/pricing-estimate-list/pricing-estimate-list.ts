@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -15,6 +11,7 @@ import { pricingEstimateColumns } from '../../libraries/pricing-estimate-columns
 import { pricingEstimateFilters } from '../../libraries/pricing-estimate-filters';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-pricing-estimate-list',
@@ -22,7 +19,7 @@ import { Router } from '@angular/router';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
   templateUrl: './pricing-estimate-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

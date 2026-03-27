@@ -19,6 +19,7 @@
   [columns]="projectColumns"
   [data]="projects"
   [onClickRow]="goToEditProject"
+  clickRowPermission="projects/update:view"
 >
   <ng-template #actions let-element>
     <p-button

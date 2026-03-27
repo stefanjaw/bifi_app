@@ -7,13 +7,13 @@ export const BCD_ROUTES: Routes = [
     path: 'create/:shippingId',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/bcd-form/bcds-form').then(m => m.BcdsForm),
-    data: { resource: 'bcds/form' },
+    data: { resource: 'bcds/create' },
   },
   {
     //edit
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/bcd-form/bcds-form').then(m => m.BcdsForm),
-    data: { resource: 'bcds/form' },
+    data: { resource: 'bcds/update' },
   },
 ];

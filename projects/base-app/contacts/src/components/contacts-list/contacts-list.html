@@ -30,6 +30,13 @@
 >
   <ng-template #actions let-element>
     <p-button
+      *bifiAppHasPermission="'contacts/update:view'"
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      (onClick)="goToEditContact(element); $event.stopPropagation()"
+    ></p-button>
+    <p-button
       *bifiAppHasPermission="'contacts:delete:model'"
       severity="danger"
       label="Delete"

@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     (onClick)="navigateToNew()"
+    *bifiAppHasPermission="'sales/orders/create:view'"
   ></p-button>
 </div>
 
@@ -18,9 +19,11 @@
   [columns]="salesOrderColumns"
   [data]="entries"
   [onClickRow]="onClickRow"
+  clickRowPermission="sales/orders/update:view"
 >
   <ng-template #actions let-element>
     <p-button
+      *bifiAppHasPermission="'sales-orders:delete:model'"
       severity="danger"
       icon="pi pi-trash"
       size="small"

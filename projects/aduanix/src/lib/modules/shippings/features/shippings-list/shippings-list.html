@@ -5,7 +5,7 @@
     label="Add New Shipment"
     severity="secondary"
     icon="pi pi-plus"
-    *bifiAppHasPermission="'shipping:create:view'"
+    *bifiAppHasPermission="'shippings:create:model'"
     (onClick)="shippingFileFormDialog.openDialog()"
   ></p-button>
 
@@ -32,10 +32,10 @@
       icon="pi pi-pencil"
       variant="text"
       [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'shipping:update:view'"
+      *bifiAppHasPermission="'shippings/form:view'"
     ></p-button>
     <p-button
-      *bifiAppHasPermission="'shipping:delete:model'"
+      *bifiAppHasPermission="'shippings:delete:model'"
       severity="danger"
       label="Delete"
       variant="text"
@@ -49,7 +49,7 @@
       icon="pi pi-plus"
       variant="text"
       [routerLink]="['../bcd/create', row._id]"
-      *bifiAppHasPermission="'bcd:create:view'"
+      *bifiAppHasPermission="'bcds/create:view'"
     ></p-button>
   </ng-template>
 
@@ -129,6 +129,7 @@
                         icon="pi pi-external-link"
                         [variant]="'text'"
                         [routerLink]="['../bcd/edit/', bcd._id]"
+                        *bifiAppHasPermission="'bcds/update:view'"
                       ></p-button>
                       <span>
                         {{ getBCDName(bcd) }}

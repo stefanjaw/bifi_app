@@ -6,12 +6,14 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
+    *bifiAppHasPermission="'sales/targets/create:view'"
   ></p-button>
 </div>
 
 <bifi-app-table-layout [columns]="salesTargetColumns" [data]="entries">
   <ng-template #actions let-element>
     <p-button
+      *bifiAppHasPermission="'sales/targets/update:view'"
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
@@ -19,6 +21,7 @@
       routerLink="../edit/{{ element._id }}"
     ></p-button>
     <p-button
+      *bifiAppHasPermission="'sales-targets:delete:model'"
       severity="danger"
       icon="pi pi-trash"
       size="small"

@@ -7,6 +7,7 @@
     severity="secondary"
     icon="pi pi-plus"
     routerLink="/sales/opportunities/new"
+    *bifiAppHasPermission="'sales/opportunities/create:view'"
   ></p-button>
 </div>
 
@@ -18,6 +19,7 @@
 <bifi-app-table-layout [columns]="crmColumns" [data]="entries">
   <ng-template #actions let-element>
     <p-button
+      *bifiAppHasPermission="'sales:update:model'"
       severity="success"
       label="Won"
       icon="pi pi-check"
@@ -26,6 +28,7 @@
       (onClick)="markWon(element)"
     ></p-button>
     <p-button
+      *bifiAppHasPermission="'sales:update:model'"
       severity="danger"
       label="Lost"
       icon="pi pi-times"
@@ -34,6 +37,7 @@
       (onClick)="markLost(element)"
     ></p-button>
     <p-button
+      *bifiAppHasPermission="'sales/opportunities/update:view'"
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
@@ -41,6 +45,7 @@
       routerLink="/sales/opportunities/edit/{{ element._id }}"
     ></p-button>
     <p-button
+      *bifiAppHasPermission="'sales:delete:model'"
       severity="danger"
       icon="pi pi-trash"
       size="small"

@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
+    *bifiAppHasPermission="'purchase-stages/create:view'"
   ></p-button>
 </div>
 
@@ -17,12 +18,14 @@
 <bifi-app-table-layout [columns]="purchaseStageColumns" [data]="purchaseStages">
   <ng-template #actions let-row>
     <p-button
+      *bifiAppHasPermission="'purchase-stages/update:view'"
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
       [routerLink]="['../edit/', row._id]"
     ></p-button>
     <p-button
+      *bifiAppHasPermission="'purchase-stages:delete:model'"
       severity="danger"
       label="Delete"
       (onClick)="deleteStage(row._id)"

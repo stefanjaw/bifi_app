@@ -24,6 +24,7 @@ import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-opportunities-list',
@@ -31,7 +32,7 @@ import { ToastModule } from 'primeng/toast';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -59,7 +60,11 @@ export class OpportunitiesList {
   markWon(deal: crm) {
     const wonStage = this.wonStage();
     if (!wonStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in Deal Stages settings first.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No won stage',
+        detail: 'Configure a "Won" stage in Deal Stages settings first.',
+      });
       return;
     }
     this.markingId.set(deal._id);
@@ -86,17 +91,29 @@ export class OpportunitiesList {
             .subscribe({
               next: () => {
                 this.markingId.set(null);
-                this.messageService.add({ severity: 'success', summary: 'Deal Won', detail: 'Deal marked as won and sales order created.' });
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Deal Won',
+                  detail: 'Deal marked as won and sales order created.',
+                });
                 this.entries.reload();
               },
               error: () => {
                 this.markingId.set(null);
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create sales order.' });
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Failed to create sales order.',
+                });
               },
             });
         },
         error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update stage.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update stage.',
+          });
           this.markingId.set(null);
         },
       });
@@ -105,7 +122,11 @@ export class OpportunitiesList {
   markLost(deal: crm) {
     const lostStage = this.lostStage();
     if (!lostStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in Deal Stages settings first.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No lost stage',
+        detail: 'Configure a "Lost" stage in Deal Stages settings first.',
+      });
       return;
     }
     this.markingId.set(deal._id);
@@ -115,12 +136,20 @@ export class OpportunitiesList {
       .subscribe({
         next: () => {
           this.markingId.set(null);
-          this.messageService.add({ severity: 'info', summary: 'Deal Lost', detail: 'Deal marked as lost.' });
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Deal Lost',
+            detail: 'Deal marked as lost.',
+          });
           this.entries.reload();
         },
         error: () => {
           this.markingId.set(null);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update stage.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update stage.',
+          });
         },
       });
   }

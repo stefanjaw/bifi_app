@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   provideResourceManager,
   ResourceManager,
@@ -17,6 +12,7 @@ import { salesOrderFilters } from '../../libraries/sales-order-filters';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-orders-list',
@@ -24,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
   templateUrl: './orders-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -6,6 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     (onClick)="navigateToNew()"
+    *bifiAppHasPermission="'pricing-estimates/create:view'"
   ></p-button>
 </div>
 
@@ -18,4 +19,5 @@
   [columns]="columns"
   [data]="entries"
   [onClickRow]="onClickRow"
+  clickRowPermission="pricing-estimates/read:view"
 ></bifi-app-table-layout>

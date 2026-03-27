@@ -23,7 +23,6 @@ export const SHIPPINGS_ROUTES: Routes = [
   },
   {
     path: 'bcd',
-    canActivate: [permissionGuard],
     loadChildren: () => import('../../bcds').then(m => m.BCD_ROUTES),
   },
 ];

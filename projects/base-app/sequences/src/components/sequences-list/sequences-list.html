@@ -23,6 +23,13 @@
 >
   <ng-template #actions let-element>
     <p-button
+      *bifiAppHasPermission="'sequences/update:view'"
+      severity="secondary"
+      label="Edit"
+      icon="pi pi-pencil"
+      (onClick)="goToEditSequence(element); $event.stopPropagation()"
+    ></p-button>
+    <p-button
       *bifiAppHasPermission="'sequences:delete:model'"
       severity="danger"
       label="Delete"

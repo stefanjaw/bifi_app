@@ -1,13 +1,20 @@
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-2xl font-bold">Invoices</h1>
   <a routerLink="/accounting/invoices/create">
-    <button pButton label="Create Invoice" icon="pi pi-plus" *bifiAppHasPermission="'accounting/invoices/create:view'"></button>
+    <p-button
+      label="Create Invoice"
+      icon="pi pi-plus"
+      *bifiAppHasPermission="'accounting/invoices/create:view'"
+    ></p-button>
   </a>
 </div>
 
 <bifi-app-table-layout [columns]="columns" [data]="invoices">
   <ng-template #actions let-element>
-    <a [routerLink]="['/accounting/invoices/edit', element._id]">
+    <a
+      [routerLink]="['/accounting/invoices/edit', element._id]"
+      *bifiAppHasPermission="'accounting/invoices/update:view'"
+    >
       <p-button icon="pi pi-pencil" severity="secondary" label="Edit"></p-button>
     </a>
     <p-button
