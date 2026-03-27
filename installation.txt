@@ -1,0 +1,7 @@
+if replit for debugging
+Modify the replit environment.development.ts apiURL backend with the replit backend value:
+file and directory
+bifi_app/projects/asset-roster-demo/src/environments/environment.development.ts
+
+export const environment = {
+  apiURL: 'https://25d1d9ac-1989-4ef4-babc-be55a5bab499-00-29dpn9ilh9kdj.worf.replit.dev:8080/api',
