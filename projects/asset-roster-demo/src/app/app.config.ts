@@ -38,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       useValue: {
         apiURL: environment.apiURL,
         rbacEnable: false,
+        bugReportingURL: environment.bugReportingURL,
       },
     },
     providePrimeNG({

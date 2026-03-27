@@ -1,7 +1,10 @@
 import {
+  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
+  createComponent,
   effect,
+  EnvironmentInjector,
   inject,
   signal,
 } from '@angular/core';
@@ -12,6 +15,7 @@ import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
+import { BugReportDialog } from '@avalantec/base-app/bug-reporting';
 
 @Component({
   selector: 'bifi-app-user-panel',
@@ -23,6 +27,10 @@ export class UserPanel {
   private authService = injectAuthService();
   private router = inject(Router);
   private fileResolver = inject(FileResolver);
+  private appRef = inject(ApplicationRef);
+  private envInjector = inject(EnvironmentInjector);
+
+  private bugReportDialogRef: ReturnType<typeof createComponent<BugReportDialog>> | null = null;
 
   user = this.authService.user;
   pictureUrl = signal<string | undefined>(undefined);
@@ -39,11 +47,20 @@ export class UserPanel {
       icon: 'pi pi-user',
       command: () => this.router.navigate(['settings', 'profile']),
     },
-    // {
-    //   label: 'Settings',
-    //   icon: 'pi pi-cog',
-    //   command: () => this.router.navigate(['settings']),
-    // },
+    {
+      label: 'Report a Bug',
+      icon: 'pi pi-exclamation-circle',
+      command: () => {
+        if (!this.bugReportDialogRef) {
+          this.bugReportDialogRef = createComponent(BugReportDialog, {
+            environmentInjector: this.envInjector,
+          });
+          this.appRef.attachView(this.bugReportDialogRef.hostView);
+          document.body.appendChild(this.bugReportDialogRef.location.nativeElement);
+        }
+        this.bugReportDialogRef.instance.openDialog();
+      },
+    },
     {
       separator: true,
     },
