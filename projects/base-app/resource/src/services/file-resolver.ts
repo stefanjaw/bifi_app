@@ -50,6 +50,16 @@ export class FileResolver {
     }
   }
 
+  private extractFilenameFromContentDisposition(header: string | null): string | null {
+    if (!header) return null;
+    const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match) {
+      try { return decodeURIComponent(utf8Match[1]); } catch { /* fall through */ }
+    }
+    const match = header.match(/filename="?([^";\n]+)"?/i);
+    return match ? match[1].trim() : null;
+  }
+
   /**
    * Given a URL, downloads the file and converts it to a File object.
    *
@@ -69,11 +79,20 @@ export class FileResolver {
     const url = this.resolveUrl(props, imageSize);
 
     try {
-      const blob = await firstValueFrom(this.httpClient.get(url, { responseType: 'blob' }));
-      const fileName = 'metadata' in props ? props.metadata.name : url.split('/').pop() || 'image';
-      const file = new File([blob], fileName, { type: blob.type });
-
-      return file;
+      const response = await firstValueFrom(
+        this.httpClient.get(url, { responseType: 'blob', observe: 'response' })
+      );
+      const blob = response.body!;
+      let fileName: string;
+      if ('metadata' in props) {
+        fileName = props.metadata.name;
+      } else {
+        const fromHeader = this.extractFilenameFromContentDisposition(
+          response.headers.get('Content-Disposition')
+        );
+        fileName = fromHeader ?? url.split('/').pop() ?? 'file';
+      }
+      return new File([blob], fileName, { type: blob.type });
     } catch (error) {
       console.error(`Error converting URL ${url} to File`, error);
       return null;
