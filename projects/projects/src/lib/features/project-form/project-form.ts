@@ -21,7 +21,6 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { ProjectForm as ProjectFormService, ProjectFormModel } from '../../services/project-form';
-import { project } from '../../interfaces/projects';
 import { CrudProjectStages } from '../../modules/project-stages/services/crud-project-stages';
 
 @Component({
@@ -55,6 +54,9 @@ export class ProjectFormComponent {
   });
 
   stagesResource = this.crudProjectStages.get({});
+  defaultStageResource = this.crudProjectStages.get({
+    searchParams: computed(() => ({ isDefault: true })),
+  });
 
   isLoading = this.projectResource.isLoading;
   isSubmitLoading = signal(false);
@@ -68,7 +70,8 @@ export class ProjectFormComponent {
 
   constructor() {
     effect(() => {
-      const entry = this.projectResource.value() as project | undefined;
+      const entry = this.projectResource.value();
+
       if (entry) {
         this.formService.patchValue({
           name: entry.name,
@@ -79,6 +82,14 @@ export class ProjectFormComponent {
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
+      }
+    });
+
+    effect(() => {
+      const stage = this.defaultStageResource.value()[0];
+
+      if (stage && !this.isUpdate()) {
+        this.formService.patchValue({ stage: stage._id });
       }
     });
   }
