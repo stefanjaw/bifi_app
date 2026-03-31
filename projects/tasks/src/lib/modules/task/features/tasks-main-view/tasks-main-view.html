@@ -62,7 +62,10 @@
 
 <!-- Search & Filters -->
 <div class="flex-shrink-0 py-2 flex flex-col gap-2">
-  <bifi-app-search-bar [searchFilters]="taskFilters"></bifi-app-search-bar>
+  <bifi-app-search-bar
+    label="Search by name, priority, stage, assigned user, project or type"
+    [searchFilters]="taskFilters"
+  ></bifi-app-search-bar>
   <bifi-app-filter-bar [filterFields]="taskFilterFields"></bifi-app-filter-bar>
 </div>
 

@@ -79,8 +79,6 @@ export class TasksMainView {
     // Listen for changes to the tasksResource
     effect(() => {
       const flat = this.flat();
-      if (!flat || flat.length === 0) return;
-
       this.tree.set(this.buildTree(flat));
       this.dependencies.set(this.buildDependencies(flat));
     });
@@ -152,7 +150,12 @@ export class TasksMainView {
     for (const n of nodes) {
       if (n.parentId) {
         const parent = map.get(n.parentId);
-        parent?.children.push(n);
+
+        if (parent) {
+          parent.children.push(n);
+        } else {
+          roots.push(n);
+        }
       } else {
         roots.push(n);
       }
