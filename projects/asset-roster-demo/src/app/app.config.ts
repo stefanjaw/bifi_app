@@ -37,7 +37,7 @@ export const appConfig: ApplicationConfig = {
       provide: LIBRARY_CONFIG,
       useValue: {
         apiURL: environment.apiURL,
-        rbacEnable: true,
+        rbacEnable: false,
         bugReportingURL: environment.bugReportingURL,
       },
     },
