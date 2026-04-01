@@ -21,7 +21,11 @@
 
       <bifi-app-form-field>
         <bifi-app-form-label>Description</bifi-app-form-label>
-        <textarea pInputTextarea formControlName="description" placeholder="Optional description"></textarea>
+        <textarea
+          pInputTextarea
+          formControlName="description"
+          placeholder="Optional description"
+        ></textarea>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
@@ -35,6 +39,19 @@
           optionValue="_id"
           [filter]="true"
           placeholder="Select a type"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Project</bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="projectId"
+          [options]="projects.value()"
+          optionLabel="name"
+          optionValue="_id"
+          [filter]="true"
         ></p-select>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>

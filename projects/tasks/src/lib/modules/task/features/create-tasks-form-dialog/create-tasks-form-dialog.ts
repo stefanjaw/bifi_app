@@ -1,5 +1,12 @@
 import { TasksMaintenanceContext } from './../../services/tasks-maintenance-context';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -14,6 +21,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { SliderModule } from 'primeng/slider';
 import { TextareaModule } from 'primeng/textarea';
 import dayjs from 'dayjs';
+import { CrudProjects } from '@avalantec/projects';
 
 @Component({
   selector: 'bifi-app-create-tasks-form-dialog',
@@ -34,6 +42,7 @@ export class CreateTasksFormDialog extends BaseDialog {
   protected formService = inject(CreateTaskForm);
   private crudTasks = inject(CrudTasks);
   private crudTaskTypes = inject(CrudTaskTypes);
+  private crudProjects = inject(CrudProjects);
   private destroy$ = inject(DestroyRef);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private toastManager = inject(ToastManager);
@@ -41,10 +50,13 @@ export class CreateTasksFormDialog extends BaseDialog {
   // Data
   tasks = this.crudTasks.get({ triggerRequest: this.dialogState });
   taskTypes = this.crudTaskTypes.get({ triggerRequest: this.dialogState });
+  projects = this.crudProjects.get({ triggerRequest: this.dialogState });
 
   // State
   form = this.formService.form;
-  isLoading = this.tasks.isLoading;
+  isLoading = computed(
+    () => this.tasks.isLoading() || this.taskTypes.isLoading() || this.projects.isLoading()
+  );
   isSubmitLoading = signal(false);
   taskProgress = toSignal(this.form.controls.progress.valueChanges);
 
@@ -79,6 +91,7 @@ export class CreateTasksFormDialog extends BaseDialog {
 
     if (!rawValue.parentId) delete rawValue.parentId;
     if (!rawValue.progress) delete rawValue.progress;
+    if (!rawValue.projectId) delete rawValue.projectId;
 
     this.isSubmitLoading.set(true);
 

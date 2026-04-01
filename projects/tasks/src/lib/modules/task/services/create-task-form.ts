@@ -10,6 +10,7 @@ export interface CreateTaskFormModel {
   plannedEndDate?: Date;
   progress?: number;
   parentId?: string;
+  projectId?: string;
 }
 
 @Injectable({
@@ -20,11 +21,12 @@ export class CreateTaskForm extends BaseForm<CreateTaskFormModel> {
     return this.fb.group<CreateTaskFormModel>({
       name: ['', [Validators.required]],
       description: [''],
-      typeId: [''],
+      typeId: ['', [Validators.required]],
       plannedStartDate: [undefined],
       plannedEndDate: [undefined],
       progress: [0, [Validators.min(0), Validators.max(100)]],
       parentId: [''],
+      projectId: [''],
     });
   }
 
