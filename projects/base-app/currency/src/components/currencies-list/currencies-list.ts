@@ -12,7 +12,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { currency } from '../../interfaces/currency';
 
 @Component({
@@ -29,11 +29,17 @@ export class CurrenciesList {
   private crudCurrencies = inject(CrudCurrencies);
   private destroy$ = inject(DestroyRef);
 
+  //router 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   currencyColumns = currencyColumns;
   currencyFilters = currencyFilters;
 
   currencies = this.resourceManager.data;
 
+  goToEditCurrency = (element: currency) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  }
   deleteCurrency(id: string) {
     this.crudCurrencies
       .delete({ _id: id })
