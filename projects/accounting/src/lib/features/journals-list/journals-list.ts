@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudJournals } from '../../services/crud-journals';
 import { journal } from '../../interfaces/journal';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -10,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { journalColumns } from '../../libraries/journal-columns';
 import { journalFilters } from '../../libraries/journal-filters';
 
@@ -18,8 +19,7 @@ import { journalFilters } from '../../libraries/journal-filters';
   selector: 'bifi-app-journals-list',
   providers: [provideResourceManager(CrudJournals)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './journals-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './journals-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JournalsList {
@@ -27,10 +27,17 @@ export class JournalsList {
   private crudJournals = inject(CrudJournals);
   private destroy$ = inject(DestroyRef);
 
+  // Router
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+
   columns = journalColumns;
   filters = journalFilters;
   journals = this.resourceManager.data;
 
+  goToEditJournal = (element: journal) => {
+    this.router.navigate(['../journals/edit', element._id], { relativeTo: this.route });
+  }
   delete(id: string) {
     this.crudJournals
       .delete({ _id: id })

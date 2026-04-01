@@ -3,6 +3,7 @@ import { CrudBranchOffices } from '../../services/crud-branch-offices';
 import { branchOfficeColumns } from '../../libraries/branch-office-columns';
 import { branchOfficeFilters } from '../../libraries/branch-office-filters';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -20,8 +21,7 @@ import { branchOffice } from '../../interfaces/branch-office';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './branch-offices-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './branch-offices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchOfficesList {

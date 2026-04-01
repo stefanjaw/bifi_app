@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudInvoices } from '../../services/crud-invoices';
 import { invoice } from '../../interfaces/invoice';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -18,7 +19,7 @@ import { invoiceFilters } from '../../libraries/invoice-filters';
   selector: 'bifi-app-invoices-list',
   providers: [provideResourceManager(CrudInvoices)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  
   templateUrl: './invoices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

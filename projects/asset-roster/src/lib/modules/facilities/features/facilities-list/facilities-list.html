@@ -15,9 +15,8 @@
   [searchFilters]="facilityFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="facilityColumns" [data]="facilities">
-  <ng-template #actions let-row>
-    <p-button
+<bifi-app-table-layout [columns]="facilityColumns" [data]="facilities" [onClickRow]="gotoEditFacility" clickRowPermission="facilities/update:view">
+    <!-- <p-button
       severity="secondary"
       label="Edit"
       icon="pi pi-pencil"
@@ -30,6 +29,10 @@
       label="Delete"
       (onClick)="deleteFacility(row._id)"
       icon="pi pi-trash"
-    ></p-button>
+    ></p-button> -->
+  <ng-template #actions let-element>
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteFacility(element._id);"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

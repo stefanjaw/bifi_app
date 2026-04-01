@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -7,7 +8,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { CrudMaintenanceWindows } from '../../services/crud-maintenance-windows';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { maintenanceWindow } from '../../interfaces/maintenance-window';
 import { maintenanceWindowColumns } from '../../libraries/maintenance-window-columns';
 import { maintenanceWindowFilters } from '../../libraries/maintenance-window-filters';
@@ -17,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-maintenance-windows-list',
   providers: [provideResourceManager(CrudMaintenanceWindows)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -29,11 +30,16 @@ export class MaintenanceWindowsList {
   private crudMaintenanceWindows = inject(CrudMaintenanceWindows);
   private destroy$ = inject(DestroyRef);
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   maintenanceWindowColumns = maintenanceWindowColumns;
   maintenanceWindowFilters = maintenanceWindowFilters;
 
   maintenanceWindows = this.resourceManager.data;
   
+  goToEditMaintenanceWindow = (element: maintenanceWindow) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  }
   deleteMaintenanceWindow(id: string) {
     this.crudMaintenanceWindows
       .delete({ _id: id })

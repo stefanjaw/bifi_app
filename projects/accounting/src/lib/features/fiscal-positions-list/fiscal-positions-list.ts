@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudFiscalPositions } from '../../services/crud-fiscal-positions';
 import { fiscalPosition } from '../../interfaces/fiscal-position';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -10,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fiscalPositionColumns } from '../../libraries/fiscal-position-columns';
 import { fiscalPositionFilters } from '../../libraries/fiscal-position-filters';
 
@@ -18,8 +19,7 @@ import { fiscalPositionFilters } from '../../libraries/fiscal-position-filters';
   selector: 'bifi-app-fiscal-positions-list',
   providers: [provideResourceManager(CrudFiscalPositions)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './fiscal-positions-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './fiscal-positions-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiscalPositionsList {
@@ -27,11 +27,17 @@ export class FiscalPositionsList {
   private crudFiscalPositions = inject(CrudFiscalPositions);
   private destroy$ = inject(DestroyRef);
 
+    // Router
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
   columns = fiscalPositionColumns;
   filters = fiscalPositionFilters;
   fiscalPositions = this.resourceManager.data;
 
-  delete(id: string) {
+  goToEditFiscalPosition = (element: fiscalPosition) => {
+    this.router.navigate(['../fiscal-positions/edit/', element._id], { relativeTo: this.route });
+  }
+  deleteFiscalPosition(id: string) {
     this.crudFiscalPositions
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))

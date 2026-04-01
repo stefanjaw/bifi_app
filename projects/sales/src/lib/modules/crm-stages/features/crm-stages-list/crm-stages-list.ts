@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -7,7 +8,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { CrudCrmStages } from '../../services/crud-crm-stages';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { crmStage } from '../../interfaces/crm-stage';
 import { crmStageColumns } from '../../libraries/crm-stage-columns';
@@ -17,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-crm-stages-list',
   providers: [provideResourceManager(CrudCrmStages)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -29,11 +30,17 @@ export class CrmStagesList {
   private crudCrmStages = inject(CrudCrmStages);
   private destroy$ = inject(DestroyRef);
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   crmStageColumns = crmStageColumns;
   crmStageFilters = crmStageFilters;
 
   crmStages = this.resourceManager.data;
 
+  goToEditCrmStage = (element: crmStage) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  };
   deleteCrmStage(id: string) {
     this.crudCrmStages
       .delete({ _id: id })

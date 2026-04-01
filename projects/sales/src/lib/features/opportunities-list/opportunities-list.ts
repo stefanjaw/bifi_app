@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,

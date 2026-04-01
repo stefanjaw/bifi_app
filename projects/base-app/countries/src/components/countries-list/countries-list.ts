@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,

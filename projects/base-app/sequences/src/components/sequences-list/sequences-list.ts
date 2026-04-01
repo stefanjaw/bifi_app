@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,

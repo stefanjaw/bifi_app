@@ -10,9 +10,9 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="discounts">
+<bifi-app-table-layout [columns]="columns" [data]="discounts" [onClickRow]="goToEditDiscount" clickRowPermission="accounting/discounts/update:view">
   <ng-template #actions let-element>
-    <p-button
+    <!-- <p-button
       *bifiAppHasPermission="'accounting/discounts/update:view'"
       severity="secondary"
       label="Edit"
@@ -24,6 +24,8 @@
       severity="danger"
       icon="pi pi-trash"
       (onClick)="delete(element._id)"
-    ></p-button>
-  </ng-template>
-</bifi-app-table-layout>
+    ></p-button> -->
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteDiscount(element._id);"
+    ></bifi-app-buttons-actions>
+  </ng-template></bifi-app-table-layout>
