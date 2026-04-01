@@ -1,6 +1,7 @@
 export * from './src/components/filter-bar/filter-bar';
 export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
+export * from './src/components/buttons-actions/buttons-actions';
 export * from './src/directives/dynamic-component';
 export * from './src/directives/infinite-scroll';
 export * from './src/interfaces/activity-history';
