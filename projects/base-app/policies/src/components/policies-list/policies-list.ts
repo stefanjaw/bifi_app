@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -17,7 +18,7 @@ import { policy } from '@avalantec/base-app/interfaces';
 @Component({
   selector: 'bifi-app-policies-list',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -36,6 +37,9 @@ export class PoliciesList {
 
   policies = this.resourceManager.data;
 
+  gotoEditPolicy = (element: policy<string, string>) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  }
   deletePolicy(id: string) {
     this.crudPolicies
       .delete({ _id: id })

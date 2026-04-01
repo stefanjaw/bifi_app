@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudPaymentTerms } from '../../services/crud-payment-terms';
 import { paymentTerm } from '../../interfaces/payment-term';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -18,8 +19,7 @@ import { paymentTermFilters } from '../../libraries/payment-term-filters';
   selector: 'bifi-app-payment-terms-list',
   providers: [provideResourceManager(CrudPaymentTerms)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './payment-terms-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './payment-terms-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentTermsList {

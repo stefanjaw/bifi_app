@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -17,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-facilities-list',
   providers: [provideResourceManager(CrudFacilities)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -34,6 +35,13 @@ export class FacilitiesList {
 
   facilities = this.resourceManager.data;
 
+  //Router
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+
+  gotoEditFacility = (element: facility) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  }
   deleteFacility(id: string) {
     this.crudFacilities
       .delete({ _id: id })

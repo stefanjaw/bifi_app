@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudPayments } from '../../services/crud-payments';
 import { payment } from '../../interfaces/payment';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -10,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { paymentColumns } from '../../libraries/payment-columns';
 import { paymentFilters } from '../../libraries/payment-filters';
 
@@ -18,8 +19,7 @@ import { paymentFilters } from '../../libraries/payment-filters';
   selector: 'bifi-app-payments-list',
   providers: [provideResourceManager(CrudPayments)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './payments-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './payments-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentsList {
@@ -27,10 +27,16 @@ export class PaymentsList {
   private crudPayments = inject(CrudPayments);
   private destroy$ = inject(DestroyRef);
 
+  //routes
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   columns = paymentColumns;
   filters = paymentFilters;
   payments = this.resourceManager.data;
 
+  goToEditPayment = (element: payment) => {
+    this.router.navigate(['../payments/edit', element._id], { relativeTo: this.route });
+  }
   delete(id: string) {
     this.crudPayments
       .delete({ _id: id })

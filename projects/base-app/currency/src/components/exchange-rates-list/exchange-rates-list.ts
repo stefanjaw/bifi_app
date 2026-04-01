@@ -3,6 +3,7 @@ import { CrudExchangeRates } from '../../services/crud-exchange-rates';
 import { exchangeRateColumns } from '../../libraries/exchange-rate-columns';
 import { exchangeRateFilters } from '../../libraries/exchange-rate-filters';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -20,8 +21,7 @@ import { exchangeRate } from '../../interfaces/exchange-rate';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './exchange-rates-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './exchange-rates-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangeRatesList {

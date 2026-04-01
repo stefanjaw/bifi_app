@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { CrudAccounts } from '../../services/crud-accounts';
 import { account } from '../../interfaces/account';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -10,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { accountColumns } from '../../libraries/account-columns';
 import { accountFilters } from '../../libraries/account-filters';
 
@@ -18,8 +19,7 @@ import { accountFilters } from '../../libraries/account-filters';
   selector: 'bifi-app-accounts-list',
   providers: [provideResourceManager(CrudAccounts)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './accounts-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './accounts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsList {
@@ -27,11 +27,18 @@ export class AccountsList {
   private crudAccounts = inject(CrudAccounts);
   private destroy$ = inject(DestroyRef);
 
+  // Router
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   columns = accountColumns;
   filters = accountFilters;
   accounts = this.resourceManager.data;
 
-  delete(id: string) {
+    goToEditAccount = (element: account) => {
+      this.router.navigate(['../accounts/edit/', element._id], { relativeTo: this.route });
+    };
+  deleteAccount(id: string) {
     this.crudAccounts
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))

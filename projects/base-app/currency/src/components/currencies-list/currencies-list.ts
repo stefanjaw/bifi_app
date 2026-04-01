@@ -3,6 +3,7 @@ import { CrudCurrencies } from '../../services/crud-currencies';
 import { currencyColumns } from '../../libraries/currency-columns';
 import { currencyFilters } from '../../libraries/currency-filters';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -20,8 +21,7 @@ import { currency } from '../../interfaces/currency';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink],
-  templateUrl: './currencies-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './currencies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrenciesList {

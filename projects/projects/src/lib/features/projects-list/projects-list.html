@@ -22,12 +22,15 @@
   clickRowPermission="projects/update:view"
 >
   <ng-template #actions let-element>
-    <p-button
+    <!-- <p-button
       severity="danger"
       label="Delete"
       icon="pi pi-trash"
       (onClick)="deleteProject(element._id); $event.stopPropagation()"
       *bifiAppHasPermission="'projects:delete:model'"
-    ></p-button>
+    ></p-button> -->
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteProject(element._id);"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>
