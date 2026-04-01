@@ -23,12 +23,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field class="md:col-span-2">
             <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="name"
-              type="text"
-              placeholder="Project name"
-            />
+            <input pInputText formControlName="name" type="text" placeholder="Project name" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -44,15 +39,72 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Stage</bifi-app-form-label>
+            <bifi-app-form-label>Stage *</bifi-app-form-label>
             <p-select
               formControlName="stage"
               [options]="stages()"
               optionLabel="name"
               optionValue="_id"
               placeholder="Select a stage"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Priority *</bifi-app-form-label>
+            <p-select
+              formControlName="priority"
+              [options]="priorityOptions"
+              placeholder="Select priority"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Start Date *</bifi-app-form-label>
+            <p-datepicker
+              appendTo="body"
+              formControlName="dateStart"
+              [showIcon]="true"
+              [showTime]="true"
+              [fluid]="true"
+            ></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>End Date *</bifi-app-form-label>
+            <p-datepicker
+              appendTo="body"
+              formControlName="dateEnd"
+              [showIcon]="true"
+              [showTime]="true"
+              [fluid]="true"
+            ></p-datepicker>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Contact</bifi-app-form-label>
+            <p-select
+              formControlName="contactId"
+              [options]="contacts()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a contact"
               [showClear]="true"
             ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Sequence *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="sequence"
+              type="number"
+              placeholder="Project sequence"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

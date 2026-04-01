@@ -22,6 +22,10 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { ProjectForm as ProjectFormService, ProjectFormModel } from '../../services/project-form';
 import { CrudProjectStages } from '../../modules/project-stages/services/crud-project-stages';
+import { CrudContacts } from '@avalantec/base-app/contacts';
+import { DatePickerModule } from 'primeng/datepicker';
+import dayjs from 'dayjs';
+import { ToastManager } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-project-form',
@@ -34,6 +38,7 @@ import { CrudProjectStages } from '../../modules/project-stages/services/crud-pr
     CheckboxModule,
     SelectModule,
     HasPermission,
+    DatePickerModule,
   ],
   templateUrl: './project-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,9 +47,11 @@ export class ProjectFormComponent {
   protected formService = inject(ProjectFormService);
   private crudProjects = inject(CrudProjects);
   private crudProjectStages = inject(CrudProjectStages);
+  private crudContacts = inject(CrudContacts);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toastManager = inject(ToastManager);
 
   id = input<string>('');
 
@@ -54,6 +61,7 @@ export class ProjectFormComponent {
   });
 
   stagesResource = this.crudProjectStages.get({});
+  contactsResource = this.crudContacts.get({});
   defaultStageResource = this.crudProjectStages.get({
     searchParams: computed(() => ({ isDefault: true })),
   });
@@ -63,11 +71,31 @@ export class ProjectFormComponent {
   isUpdate = computed(() => !!this.id());
 
   form = this.formService.form;
+
+  // Select options
   stages = computed<projectStage[]>(() => {
     const data = this.stagesResource.value();
     return Array.isArray(data) ? data : [];
   });
 
+  contacts = computed(() => {
+    const data = this.contactsResource.value();
+    return Array.isArray(data) ? data : [];
+  });
+
+  priorityOptions = [
+    { label: 'Low', value: 'low' },
+    { label: 'Medium', value: 'medium' },
+    { label: 'High', value: 'high' },
+    { label: 'Urgent', value: 'urgent' },
+  ];
+
+  /**
+   * Initialize the form with the project data if the project is being updated
+   * or reset the form if the project is not being updated.
+   * If the project is not being updated and the default stage is available,
+   * initialize the form with the default stage.
+   */
   constructor() {
     effect(() => {
       const entry = this.projectResource.value();
@@ -76,7 +104,12 @@ export class ProjectFormComponent {
         this.formService.patchValue({
           name: entry.name,
           description: entry.description ?? '',
-          stage: entry.stage?._id ?? null,
+          stage: entry.stage?._id ?? '',
+          priority: entry.priority,
+          contactId: entry.contactId?._id ?? '',
+          dateStart: entry.dateStart ? new Date(entry.dateStart) : new Date(),
+          dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : new Date(),
+          sequence: entry.sequence ?? 10,
           active: entry.active ?? true,
         });
         this.formService.resetDirtyState();
@@ -94,13 +127,39 @@ export class ProjectFormComponent {
     });
   }
 
+  /**
+   * Handles submitting the project form.
+   *
+   * If the project is being updated, it will call the projects service put method.
+   * If the project is being created, it will call the projects service post method.
+   *
+   * @param data - The form value state
+   */
   handleSubmit(data: FormValueState<ProjectFormModel>) {
-    this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
+    const payload = {
+      name: rawValue.name,
+      description: rawValue.description,
+      stage: rawValue.stage,
+      priority: rawValue.priority,
+      dateStart: rawValue.dateStart.toISOString(),
+      dateEnd: rawValue.dateEnd.toISOString(),
+      contactId: rawValue.contactId || undefined,
+      sequence: rawValue.sequence,
+      active: rawValue.active,
+    };
+
+    if (dayjs(payload.dateEnd).isBefore(dayjs(payload.dateStart))) {
+      this.toastManager.showError('Start date must be before end date');
+      return;
+    }
+
+    this.isSubmitLoading.set(true);
+
     const action = this.isUpdate()
-      ? this.crudProjects.put({ _id: this.id(), data: rawValue })
-      : this.crudProjects.post({ data: rawValue });
+      ? this.crudProjects.put({ _id: this.id(), data: payload })
+      : this.crudProjects.post({ data: payload });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {

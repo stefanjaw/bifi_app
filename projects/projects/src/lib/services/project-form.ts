@@ -5,7 +5,12 @@ import { BaseForm } from '@avalantec/base-app/form';
 export interface ProjectFormModel {
   name: string;
   description: string;
-  stage: string | null;
+  stage: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  contactId?: string;
+  dateStart: Date;
+  dateEnd: Date;
+  sequence: number;
   active: boolean;
 }
 
@@ -17,7 +22,12 @@ export class ProjectForm extends BaseForm<ProjectFormModel> {
     return this.fb.group<ProjectFormModel>({
       name: ['', [Validators.required]],
       description: [''],
-      stage: [null],
+      stage: ['', [Validators.required]],
+      priority: ['medium', [Validators.required]],
+      contactId: [''],
+      dateStart: [new Date(), [Validators.required]],
+      dateEnd: [new Date(), [Validators.required]],
+      sequence: [10],
       active: [true],
     });
   }

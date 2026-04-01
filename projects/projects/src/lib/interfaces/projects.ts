@@ -1,4 +1,4 @@
-import { user } from '@avalantec/base-app/interfaces';
+import { contact, user } from '@avalantec/base-app/interfaces';
 import { projectStage } from '../modules/project-stages/interfaces/project-stage';
 
 export interface project {
@@ -7,6 +7,11 @@ export interface project {
   name: string;
   description: string;
   createdBy: user;
-  stage?: projectStage;
+  stage: projectStage;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  contactId?: contact;
+  dateStart: Date;
+  dateEnd: Date;
+  sequence: number;
   active: boolean;
 }
