@@ -12,7 +12,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { exchangeRate } from '../../interfaces/exchange-rate';
 
 @Component({
@@ -29,11 +29,18 @@ export class ExchangeRatesList {
   private crudExchangeRates = inject(CrudExchangeRates);
   private destroy$ = inject(DestroyRef);
 
+  // Router
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   exchangeRateColumns = exchangeRateColumns;
   exchangeRateFilters = exchangeRateFilters;
 
   exchangeRates = this.resourceManager.data;
 
+  goToEditExchangeRate = (element: exchangeRate) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  };
   deleteExchangeRate(id: string) {
     this.crudExchangeRates
       .delete({ _id: id })
