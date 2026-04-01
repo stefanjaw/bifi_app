@@ -3,6 +3,7 @@ import { CrudContacts } from '../../services/crud-contacts';
 import { contactColumns } from '../../libraries/contact-columns';
 import { contactFilters } from '../../libraries/contact-filters';
 import {
+  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -20,7 +21,7 @@ import { contact } from '@avalantec/base-app/interfaces';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink, ButtonsActions],
   templateUrl: './contacts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
