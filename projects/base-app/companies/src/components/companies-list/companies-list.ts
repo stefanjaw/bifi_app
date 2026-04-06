@@ -12,7 +12,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { company } from '@avalantec/base-app/interfaces';
 
 @Component({
@@ -28,12 +28,16 @@ export class CompaniesList {
   private resourceManager = inject<ResourceManager<company>>(ResourceManager);
   private crudCompanies = inject(CrudCompanies);
   private destroy$ = inject(DestroyRef);
-
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   companyColumns = companyColumns;
   companyFilters = companyFilters;
 
   companies = this.resourceManager.data;
 
+  goToEditCompany = (element: company) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  };
   deleteCompany(id: string) {
     this.crudCompanies
       .delete({ _id: id })

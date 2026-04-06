@@ -22,7 +22,7 @@
   clickRowPermission="sequences/update:view"
 >
   <ng-template #actions let-element>
-    <p-button
+    <!-- <p-button
       *bifiAppHasPermission="'sequences/update:view'"
       severity="secondary"
       label="Edit"
@@ -35,6 +35,9 @@
       label="Delete"
       icon="pi pi-trash"
       (onClick)="deleteSequence(element._id); $event.stopPropagation()"
-    ></p-button>
+    ></p-button> -->
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteSequence(element._id);"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

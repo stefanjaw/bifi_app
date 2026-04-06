@@ -20,7 +20,7 @@ import { sequence } from '../../interfaces/sequence';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink],
+  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink, ButtonsActions],
   templateUrl: './sequences-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

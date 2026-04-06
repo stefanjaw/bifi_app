@@ -32,11 +32,15 @@ export class TemplatesList {
   private crudTemplates = inject(CrudTemplates);
   private destroy$ = inject(DestroyRef);
 
+  
   templateColumns = templateColumns;
   templateFilters = templateFilters;
 
   reportings = this.resourceManager.data;
 
+  gotoEditTemplate = (element: template) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  }
   deleteTemplate(id: string) {
     this.crudTemplates
       .delete({ _id: id })

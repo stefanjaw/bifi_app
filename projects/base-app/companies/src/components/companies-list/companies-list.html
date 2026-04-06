@@ -15,7 +15,7 @@
   [searchFilters]="companyFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="companyColumns" [data]="companies">
+<bifi-app-table-layout [columns]="companyColumns" [data]="companies" [onClickRow]="goToEditCompany" clickRowPermission="companies/update:view"  >
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
