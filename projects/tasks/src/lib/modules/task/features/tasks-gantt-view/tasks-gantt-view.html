@@ -1,12 +1,15 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="flex-grow flex overflow-hidden pt-4" #ganttContainer>
+<div class="flex-grow flex overflow-hidden pt-4">
   <!-- Task List Sidebar -->
   <div class="w-1/4 flex-shrink-0 overflow-y-auto pr-2">
-    <div
-      class="sticky top-0 bg-gray-50 z-10 h-12 flex items-center border-b border-r border-gray-200"
-    >
-      <h3 class="font-semibold text-gray-700 px-2">Tasks</h3>
+    <div class="sticky top-0 bg-gray-100 z-10 flex flex-col">
+      <!-- 12px spacer matching the gantt flag zone height — no right border -->
+      <div class="h-3"></div>
+      <!-- 32px label row aligned with the gantt ruler -->
+      <div class="h-8 flex items-center border-t border-b border-gray-200 bg-white">
+        <h3 class="font-semibold text-gray-700 px-2">Tasks</h3>
+      </div>
     </div>
     <div class="relative">
       @for (task of visible(); track task.id; let i = $index) {
@@ -70,37 +73,121 @@
     </div>
   </div>
 
-  <!-- Gantt Chart Area -->
-  <div class="flex-grow overflow-x-auto overflow-y-hidden">
+  <!-- Gantt Chart Area
+       All four modes (Day / Week / Month / Year) fill the available width exactly —
+       no horizontal scroll in any mode. Month = 30 fixed day columns; Year = 12 fixed
+       month columns. Panning advances panOffsetDays for all modes; Month/Year snap to
+       the nearest integer month/year on mouseup.
+       #ganttContainer is here (not on the outer wrapper) so the ResizeObserver
+       measures the chart area width only, excluding the sidebar.
+       Drag-to-pan: mousedown here triggers left/right timeline navigation. -->
+  <div
+    #ganttContainer
+    class="flex-grow overflow-x-hidden overflow-y-hidden"
+    [class.cursor-grab]="!isDragging()"
+    [class.cursor-grabbing]="isDragging()"
+    (mousedown)="onGanttMouseDown($event)"
+  >
     <div class="relative" [style.width.px]="timelineWidth()">
-      <!-- Timeline Header -->
-      <div class="sticky top-0 z-20 bg-gray-50">
-        <div class="flex h-12 border-b border-gray-200">
-          @for (date of gridUnits(); track date; let i = $index) {
-            <div
-              class="flex-shrink-0 text-center"
-              [style.width.px]="pixelsPerDay()"
-              [ngClass]="{
-                'border-l border-gray-200': formatDateHeader(date, i),
-              }"
-            >
-              <span class="text-xs font-medium text-gray-500">
-                {{ formatDateHeader(date, i) | titlecase }}
-              </span>
+      <!-- Timeline Header: flag zone (12px) + ruler (32px) = 44px total, sticky -->
+      <div class="sticky top-0 z-20 bg-gray-100">
+        <!-- Flag zone: 12px row in normal layout flow — never clipped by overflow:hidden.
+             No explicit background — inherits bg-gray-100 from the sticky header, which
+             matches the body background (#f3f4f6) set in dense.css. -->
+        <div class="relative h-3">
+          @if (todayOffset() >= 0) {
+            <div class="absolute bottom-0 pointer-events-none z-30" [style.left.px]="todayOffset()">
+              <div
+                class="absolute left-1/2 -translate-x-1/2 -translate-y-full bg-red-500 text-white text-[8px] leading-none font-bold px-1 py-px rounded-sm whitespace-nowrap"
+              >
+                @if (viewMode() === 'Day') {
+                  NOW
+                } @else {
+                  TODAY
+                }
+              </div>
             </div>
           }
         </div>
+
+        @if (viewMode() === 'Day') {
+          <!-- ── Day Mode: Ruler-style tick header ── -->
+          <!-- Ticks anchored to the bottom of the 32px ruler bar.
+               Main ticks (0,3,6,…,24): tallest + bold label.
+               Hour ticks: medium height, no label.
+               Half-hour ticks: shortest, no label.
+               border-t reinstates the top edge below the flag zone. -->
+          <div class="relative h-8 border-t border-b border-gray-200 bg-white">
+            @for (tick of dayViewTicks(); track $index) {
+              <!-- Tick mark (bottom-anchored) -->
+              <div
+                class="absolute bottom-0 pointer-events-none"
+                [style.left.px]="tick.pos"
+                [style.height.px]="tick.type === 'main' ? 8 : tick.type === 'hour' ? 5 : 3"
+                [style.width.px]="tick.type === 'main' ? 1.5 : 1"
+                [ngClass]="tick.type === 'main' ? 'bg-gray-500' : 'bg-gray-400'"
+              ></div>
+              <!-- Label — only on main ticks; alignment adapts at edges to prevent clipping -->
+              @if (tick.label) {
+                <span
+                  class="absolute text-[10px] font-bold text-gray-600 select-none pointer-events-none"
+                  [style.left.px]="tick.pos"
+                  [style.bottom.px]="10"
+                  [style.transform]="tick.labelTransform"
+                >
+                  {{ tick.label }}
+                </span>
+              }
+            }
+            <!-- NOW line — full ruler height (1px); chip is in the flag zone above -->
+            @if (todayOffset() >= 0) {
+              <div
+                class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
+                [style.left.px]="todayOffset()"
+              ></div>
+            }
+          </div>
+        } @else {
+          <!-- ── Week / Month / Year: flex column header ──
+               border-t reinstates the top edge below the flag zone. -->
+          <div class="relative flex h-8 border-t border-b border-gray-200 bg-white">
+            @for (date of gridUnits(); track i; let i = $index) {
+              <div
+                class="flex-shrink-0 flex items-center justify-center overflow-hidden"
+                [style.width.px]="pixelsPerUnit()"
+                [ngClass]="{
+                  'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
+                }"
+              >
+                <span
+                  class="text-xs font-medium text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis px-0.5"
+                >
+                  {{ formatDateHeader(date) | titlecase }}
+                </span>
+              </div>
+            }
+            <!-- TODAY line — full ruler height (1px); chip is in the flag zone above -->
+            @if (todayOffset() >= 0) {
+              <div
+                class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
+                [style.left.px]="todayOffset()"
+              ></div>
+            }
+          </div>
+        }
       </div>
 
-      <!-- Grid Background & Today Marker -->
-      <div class="absolute top-12 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
-        <!-- Grid lines -->
-        @for (date of gridUnits(); track date; let i = $index) {
+      <!-- Grid Background & TODAY / NOW Marker -->
+      <div class="absolute top-11 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
+        <!-- Vertical grid lines -->
+        @for (date of gridUnits(); track i; let i = $index) {
           <div
             class="absolute top-0 bottom-0"
-            [style.left.px]="i * pixelsPerDay()"
-            [style.width.px]="pixelsPerDay()"
-            [ngClass]="{ 'border-l border-gray-200': formatDateHeader(date, i) }"
+            [style.left.px]="i * pixelsPerUnit()"
+            [style.width.px]="pixelsPerUnit()"
+            [ngClass]="{
+              'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
+            }"
           ></div>
         }
         <!-- Horizontal row lines -->
@@ -111,18 +198,12 @@
             [style.height.px]="rowHeight()"
           ></div>
         }
-        <!-- Today marker -->
-        @if (todayOffset() > 0) {
+        <!-- NOW / TODAY line — grid area segment (1px); chip lives in the flag zone above -->
+        @if (todayOffset() >= 0) {
           <div
-            class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-30"
+            class="absolute top-0 bottom-0 w-px bg-red-500 z-30"
             [style.left.px]="todayOffset()"
-          >
-            <div
-              class="absolute top-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-1 rounded-sm whitespace-nowrap"
-            >
-              TODAY
-            </div>
-          </div>
+          ></div>
         }
       </div>
 
@@ -135,7 +216,7 @@
             [height]="rowHeight()"
             [taskOffSet]="getTaskOffset(task)"
             [taskOffWidth]="getTaskWidth(task)"
-            [pixelsPerDay]="pixelsPerDay()"
+            [pixelsPerDay]="pixelsPerUnit()"
             (dateChange)="updateTaskDates(task.id, $event.start, $event.end)"
           ></bifi-app-task-gantt-bar>
         }
@@ -143,7 +224,7 @@
 
       <!-- Dependency Arrows SVG Layer -->
       <svg
-        class="absolute top-12 left-0 w-full pointer-events-none"
+        class="absolute top-11 left-0 w-full pointer-events-none"
         [style.height.px]="visible().length * rowHeight()"
       >
         <defs>

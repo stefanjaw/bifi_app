@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover';
 import { viewMode } from '../../interfaces/task-view';
 import { CrudTasks } from '../../services/crud-tasks';
 import { TasksListView } from '../tasks-list-view/tasks-list-view';
@@ -29,6 +30,7 @@ import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
   providers: [FilterManager],
   imports: [
     ButtonModule,
+    PopoverModule,
     TasksListView,
     TasksGanttView,
     CreateTasksFormDialog,
@@ -57,8 +59,13 @@ export class TasksMainView {
 
   // states
   viewMode = signal<viewMode>('Day');
+  isListView = signal(false);
   isLoading = this.tasksResource.isLoading;
   error = this.tasksResource.error;
+
+  toggleListView() {
+    this.isListView.set(!this.isListView());
+  }
 
   // exposed filter list for the search bar and filter bar
   taskFilters = taskFilters;
@@ -70,6 +77,10 @@ export class TasksMainView {
   visible = signal<ganttTask[]>([]);
   map = signal<Map<string, ganttTask>>(new Map());
   dependencies = signal<ganttDependency[]>([]);
+
+  // filter bar reference for chip data
+  filterBarRef = viewChild(FilterBar);
+  activeChips = computed(() => this.filterBarRef()?.activeChips() ?? []);
 
   // dialogs
   createTasksFormDialog = viewChild<CreateTasksFormDialog>('createTasksFormDialog');
@@ -254,6 +265,10 @@ export class TasksMainView {
     const tree = this.tree();
     this.setExpandedAll(tree, false);
     this.visible.set(this.flattenVisible(tree));
+  }
+
+  removeFilterChip(id: string): void {
+    this.filterBarRef()?.removeRow(id);
   }
 
   deleteTask(id: string) {

@@ -7,6 +7,7 @@ import {
   ElementRef,
   inject,
   input,
+  NgZone,
   OnDestroy,
   signal,
   viewChild,
@@ -29,6 +30,18 @@ import { TooltipModule } from 'primeng/tooltip';
 dayjs.extend(minMax);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
+
+export interface DayTick {
+  pos: number;
+  type: 'main' | 'hour' | 'half';
+  label: string;
+  /** CSS transform applied to the label span.
+   *  h=0  → 'translateX(0)'    (left-aligned, no left-edge clipping)
+   *  h=24 → 'translateX(-100%)' (right-aligned, no right-edge clipping)
+   *  else → 'translateX(-50%)' (centered on tick)
+   */
+  labelTransform: string;
+}
 
 @Component({
   selector: 'bifi-app-tasks-gantt-view',
@@ -53,66 +66,163 @@ export class TasksGanttView implements OnDestroy {
   rowHeight = signal(40);
   ganttContainerWidth = signal(0);
 
+  /** Accumulated pan offset in days (float during drag, snapped to int on mouseup for Day/Week). */
+  panOffsetDays = signal(0);
+
+  /** True while the user is dragging the canvas. Used for cursor class binding. */
+  isDragging = signal(false);
+
   // services
   crudTasks = inject(CrudTasks);
   private destroy$ = inject(DestroyRef);
+  private ngZone = inject(NgZone);
   protected taskMaintenanceContext = inject(TasksMaintenanceContext);
+
+  // Drag-to-pan state (plain fields — not signals, never drive the template)
+  private dragStartX = 0;
+  private dragBaseOffset = 0;
+  private boundMouseMove: ((e: MouseEvent) => void) | null = null;
+  private boundMouseUp: (() => void) | null = null;
 
   //#region Computed
 
-  // The range of the timeline
+  // The range of the timeline.
+  // Day  → the panned day (00:00 – 23:59)
+  // Week → the panned week (Mon–Sun or locale week)
+  // Month / Year → full task date span + 7-day buffer (scroll-based pan, range unchanged)
   timelineRange = computed(() => {
-    const tasks = this.flat();
+    const mode = this.viewMode();
+    const pan = this.panOffsetDays();
+    const today = dayjs();
 
-    if (!tasks.length) {
-      const today = dayjs();
-      return { start: today.startOf('day').toDate(), end: today.endOf('day').toDate() };
+    if (mode === 'Day') {
+      // Pan unit = hours. anchor = midnight + pan hours.
+      // pan=0 → 00:00 today; pan=1 → 01:00 today; pan=24 → 00:00 tomorrow.
+      const anchor = today.startOf('day').add(pan, 'hour');
+      return { start: anchor.toDate(), end: anchor.add(1, 'day').toDate() };
     }
 
-    const startDates = tasks.map(t => dayjs(t.plannedStartDate));
-    const endDates = tasks.map(t => dayjs(t.plannedEndDate));
+    if (mode === 'Week') {
+      // Pan unit = days from Monday of the current ISO week.
+      // pan=0 → Mon of current week; pan=7 → Mon of next week.
+      // Monday offset: (day()+6)%7 days back (0=Sun→6, 1=Mon→0, 6=Sat→5).
+      const monday = today.startOf('day').subtract((today.day() + 6) % 7, 'day');
+      const anchor = monday.add(pan, 'day');
+      return { start: anchor.toDate(), end: anchor.add(7, 'day').toDate() };
+    }
 
-    const minDate = dayjs.min(startDates)!;
-    const maxDate = dayjs.max(endDates)!;
+    if (mode === 'Month') {
+      // Pan unit = days from the 1st of the current month.
+      // pan=0 → day 1 of current month; pan=1 → day 2; pan=30 → day 1 of next month.
+      const anchor = today.startOf('month').add(pan, 'day');
+      return { start: anchor.toDate(), end: anchor.add(29, 'day').endOf('day').toDate() };
+    }
 
-    // Para semana/mes, limitar exactamente a las fechas
-    return {
-      start: minDate.startOf('day').subtract(7, 'day').toDate(),
-      end: maxDate.endOf('day').add(7, 'day').toDate(),
-    };
+    // Year: pan unit = months from 1 Jan of the current year.
+    // pan=0 → Jan; pan=1 → Feb; pan=12 → Jan next year.
+    const anchor = today.startOf('year').add(pan, 'month');
+    return { start: anchor.toDate(), end: anchor.add(11, 'month').endOf('month').toDate() };
   });
 
-  // The number of days in the timeline
-  totalDays = computed(() => {
-    const { start, end } = this.timelineRange();
-    return dayjs(end).diff(dayjs(start), 'day') + 1;
+  // Total number of atomic units shown in the timeline
+  // Day   → 24 (hours)
+  // Week  → 7 (days)
+  // Month → 30 (fixed day columns 1–30)
+  // Year  → 12 (fixed month columns Jan–Dec)
+  totalUnits = computed(() => {
+    const mode = this.viewMode();
+    if (mode === 'Day') return 24;
+    if (mode === 'Week') return 7;
+    if (mode === 'Month') return 30;
+    return 12; // Year
   });
 
-  // The number of pixels per units
-  pixelsPerDay = computed(() => {
+  // Pixels per atomic unit
+  pixelsPerUnit = computed(() => {
     const containerWidth = this.ganttContainerWidth();
-    const totalDays = this.totalDays();
-    return containerWidth / totalDays;
+    return containerWidth / this.totalUnits();
   });
 
-  // The width of the timeline
+  // Total pixel width of the timeline
   timelineWidth = computed(() => {
-    return this.gridUnits().length * this.pixelsPerDay();
+    return this.gridUnits().length * this.pixelsPerUnit();
   });
 
-  // The dates of the grid
+  // The grid units (one entry per visible column).
+  // Day   → 24 hourly dayjs objects starting from the panned anchor day
+  // Week  → 7 daily dayjs objects from the panned anchor week start
+  // Month → 30 daily dayjs objects from day 1 of the panned month
+  // Year  → 12 monthly dayjs objects (Jan–Dec) of the panned year
   gridUnits = computed(() => {
-    const { start, end } = this.timelineRange();
-    const units: dayjs.Dayjs[] = [];
+    const mode = this.viewMode();
+    const pan = this.panOffsetDays();
 
-    let current = dayjs(start);
-
-    while (current.isSameOrBefore(end, 'day')) {
-      units.push(current);
-      current = current.add(1, 'day');
+    if (mode === 'Day') {
+      // Pan unit = hours. Mirror timelineRange anchor exactly.
+      const anchor = dayjs().startOf('day').add(pan, 'hour');
+      return Array.from({ length: 24 }, (_, i) => anchor.add(i, 'hour'));
     }
 
-    return units;
+    if (mode === 'Week') {
+      // Pan unit = days from Monday of current ISO week.
+      const now = dayjs();
+      const monday = now.startOf('day').subtract((now.day() + 6) % 7, 'day');
+      const anchor = monday.add(pan, 'day');
+      return Array.from({ length: 7 }, (_, i) => anchor.add(i, 'day'));
+    }
+
+    if (mode === 'Month') {
+      // Pan unit = days from 1st of current month.
+      const anchor = dayjs().startOf('month').add(pan, 'day');
+      return Array.from({ length: 30 }, (_, i) => anchor.add(i, 'day'));
+    }
+
+    // Year: pan unit = months from 1 Jan of current year.
+    const anchor = dayjs().startOf('year').add(pan, 'month');
+    return Array.from({ length: 12 }, (_, i) => anchor.add(i, 'month'));
+  });
+
+  /**
+   * Tick marks for the Day-mode ruler header.
+   * Covers hours 0–24 (main ticks every 3h, hour ticks otherwise)
+   * plus half-hour subticks at every N.5h.
+   * Each tick carries:
+   *   pos   — left-edge position in px
+   *   type  — 'main' | 'hour' | 'half'
+   *   label — non-empty string only for main ticks (e.g. "0", "3", "24")
+   */
+  dayViewTicks = computed((): DayTick[] => {
+    if (this.viewMode() !== 'Day') return [];
+    const ppu = this.pixelsPerUnit();
+    const pan = this.panOffsetDays();
+    // anchorHour: the wall-clock hour at the left edge of the 24-hour window.
+    // Pan is now in whole hours (snapped on mouseup) so labels are always exact.
+    // Use the same midnight-based anchor as timelineRange / gridUnits.
+    const anchorHour = dayjs().startOf('day').add(pan, 'hour').hour();
+    const ticks: DayTick[] = [];
+
+    for (let h = 0; h <= 24; h++) {
+      const clockHour = (anchorHour + h) % 24;
+      const isMain = clockHour % 3 === 0;
+      const labelTransform =
+        h === 0 ? 'translateX(0)' : h === 24 ? 'translateX(-100%)' : 'translateX(-50%)';
+      ticks.push({
+        pos: h * ppu,
+        type: isMain ? 'main' : 'hour',
+        label: isMain ? String(clockHour) : '',
+        labelTransform,
+      });
+      if (h < 24) {
+        ticks.push({
+          pos: (h + 0.5) * ppu,
+          type: 'half',
+          label: '',
+          labelTransform: 'translateX(-50%)',
+        });
+      }
+    }
+
+    return ticks;
   });
 
   // The paths of the dependencies
@@ -166,11 +276,50 @@ export class TasksGanttView implements OnDestroy {
     return paths;
   });
 
+  // Offset in pixels for the "today" / "NOW" marker, accounting for panning.
+  // Returns -1 when the current moment is outside the panned view (chip + line are hidden).
+  // Day mode: fractional-hour position; hidden if panned day ≠ today.
+  // Week mode: centre of today's column; hidden if today is outside the displayed 7-day window.
+  // Month/Year: centre of today's day column within the date span.
   todayOffset = computed(() => {
-    const today = dayjs().startOf('day');
-    const start = dayjs(this.timelineRange().start);
-    const daysFromStart = today.diff(start, 'day');
-    return daysFromStart * this.pixelsPerDay() + this.pixelsPerDay() / 2;
+    const ppu = this.pixelsPerUnit();
+    const mode = this.viewMode();
+    const pan = this.panOffsetDays();
+
+    if (mode === 'Day') {
+      const now = dayjs();
+      // Pan unit = hours. Anchor = midnight + pan hours.
+      const anchor = dayjs().startOf('day').add(pan, 'hour');
+      const diffHours = now.diff(anchor, 'hour', true);
+      if (diffHours < 0 || diffHours >= 24) return -1;
+      return diffHours * ppu;
+    }
+
+    if (mode === 'Week') {
+      const today = dayjs().startOf('day');
+      // Pan unit = days from Monday of current ISO week.
+      const monday = today.subtract((today.day() + 6) % 7, 'day');
+      const anchor = monday.add(pan, 'day');
+      const daysSinceStart = today.diff(anchor, 'day');
+      if (daysSinceStart < 0 || daysSinceStart >= 7) return -1;
+      return daysSinceStart * ppu + ppu / 2;
+    }
+
+    if (mode === 'Month') {
+      const today = dayjs().startOf('day');
+      // Pan unit = days from 1st of current month.
+      const anchor = dayjs().startOf('month').add(pan, 'day');
+      const daysSinceStart = today.diff(anchor, 'day');
+      if (daysSinceStart < 0 || daysSinceStart >= 30) return -1;
+      return daysSinceStart * ppu + ppu / 2;
+    }
+
+    // Year: pan unit = months from 1 Jan of current year.
+    const today = dayjs();
+    const anchor = dayjs().startOf('year').add(pan, 'month');
+    const monthsSinceStart = today.diff(anchor, 'month');
+    if (monthsSinceStart < 0 || monthsSinceStart >= 12) return -1;
+    return monthsSinceStart * ppu + ppu / 2;
   });
 
   //#endregion
@@ -178,7 +327,7 @@ export class TasksGanttView implements OnDestroy {
   /**
    * Constructor for the TasksGanttViewComponent.
    * Sets up a ResizeObserver to detect changes to the width of the gantt container element.
-   * When the width changes, the component's width is updated.
+   * Resets panOffsetDays when the viewMode changes.
    */
   constructor() {
     effect(() => {
@@ -193,73 +342,160 @@ export class TasksGanttView implements OnDestroy {
 
       this.resizeObserver.observe(ganttContainer.nativeElement);
     });
+
+    // Reset pan when switching view modes so stale offsets don't carry over.
+    effect(() => {
+      this.viewMode();
+      this.panOffsetDays.set(0);
+    });
   }
 
   ngOnDestroy(): void {
     this.resizeObserver?.disconnect();
+    this.removeDragListeners();
   }
+
+  //#region Drag-to-pan
+
+  /**
+   * Mousedown on the gantt canvas. Ignores clicks on task bar elements so they
+   * retain their own drag-to-resize behaviour.
+   * Direction: drag left → canvas moves left → later time. (Google Maps convention.)
+   *
+   * Listeners are registered via runOutsideAngular so every raw mousemove does not
+   * trigger Angular's change detection. Signal writes are wrapped in ngZone.run so
+   * OnPush components still re-render when values change.
+   */
+  onGanttMouseDown(event: MouseEvent): void {
+    if ((event.target as Element).closest('bifi-app-task-gantt-bar')) return;
+
+    event.preventDefault();
+
+    this.viewMode();
+    this.dragStartX = event.clientX;
+    this.dragBaseOffset = this.panOffsetDays();
+
+    this.ngZone.run(() => this.isDragging.set(true));
+
+    this.ngZone.runOutsideAngular(() => {
+      this.boundMouseMove = (e: MouseEvent) => {
+        const deltaX = e.clientX - this.dragStartX;
+        const ppu = this.pixelsPerUnit();
+
+        // Negative deltaX (drag left) → positive offset → later time/date. ✓
+        //
+        // All modes: 1 column drag (ppu px) = 1 pan-unit advance.
+        //   Day   → pan unit = hours  → 1 column = 1 hour
+        //   Week  → pan unit = days   → 1 column = 1 day
+        //   Month → pan unit = days   → 1 column = 1 day  (30-day sliding window)
+        //   Year  → pan unit = months → 1 column = 1 month (12-month sliding window)
+        const delta = -deltaX / ppu;
+
+        this.ngZone.run(() => this.panOffsetDays.set(this.dragBaseOffset + delta));
+      };
+
+      this.boundMouseUp = () => {
+        this.ngZone.run(() => {
+          this.isDragging.set(false);
+          // Snap to nearest integer pan unit for all modes.
+          this.panOffsetDays.set(Math.round(this.panOffsetDays()));
+        });
+        this.removeDragListeners();
+      };
+
+      document.addEventListener('mousemove', this.boundMouseMove!);
+      document.addEventListener('mouseup', this.boundMouseUp!);
+    });
+  }
+
+  private removeDragListeners(): void {
+    if (this.boundMouseMove) document.removeEventListener('mousemove', this.boundMouseMove);
+    if (this.boundMouseUp) document.removeEventListener('mouseup', this.boundMouseUp);
+    this.boundMouseMove = null;
+    this.boundMouseUp = null;
+  }
+
+  //#endregion
 
   //#region Methods
 
   /**
-   * Calculates the offset of a task in pixels, relative to the start of the timeline range.
-   * The offset is calculated by multiplying the difference in days between the task's start date and the start of the timeline range by the number of pixels per day.
-   * @param task - The task to calculate the offset for.
-   * @returns The offset of the task in pixels.
+   * Calculates the offset of a task in pixels relative to the start of the timeline.
+   * Day mode: offset by hours; other modes: offset by days.
    */
   getTaskOffset(task: ganttTask) {
+    const ppu = this.pixelsPerUnit();
+    const mode = this.viewMode();
+
+    if (mode === 'Day') {
+      const rangeStart = dayjs(this.timelineRange().start);
+      return dayjs(task.start).diff(rangeStart, 'hour') * ppu;
+    }
+
+    if (mode === 'Year') {
+      // Each column = 1 month. Offset by whole months from Jan of the displayed year.
+      const rangeStart = dayjs(this.timelineRange().start);
+      return dayjs(task.start).diff(rangeStart, 'month') * ppu;
+    }
+
+    // Day, Week, Month: day-granularity offset.
     const rangeStart = dayjs(this.timelineRange().start);
-    return dayjs(task.start).diff(rangeStart, 'day') * this.pixelsPerDay();
+    return dayjs(task.start).diff(rangeStart, 'day') * ppu;
   }
 
   /**
-   * Calculates the width of a task in pixels, based on the difference in days between its start and end dates.
-   * The width is calculated by multiplying the difference in days by the number of pixels per day.
-   * @param task - The task to calculate the width for.
-   * @returns The width of the task in pixels.
+   * Calculates the width of a task in pixels.
+   * Day: hours. Year: months. Week/Month: days.
    */
   getTaskWidth(task: ganttTask) {
+    const ppu = this.pixelsPerUnit();
+    const mode = this.viewMode();
+
+    if (mode === 'Day') {
+      const start = dayjs(task.start);
+      const end = dayjs(task.end);
+      return Math.max(end.diff(start, 'hour'), 1) * ppu;
+    }
+
+    if (mode === 'Year') {
+      const start = dayjs(task.start);
+      const end = dayjs(task.end);
+      return Math.max(end.diff(start, 'month') + 1, 1) * ppu;
+    }
+
+    // Week + Month: day-granularity width.
     const start = dayjs(task.start);
     const end = dayjs(task.end);
-    return (end.diff(start, 'day') + 1) * this.pixelsPerDay();
+    return (end.diff(start, 'day') + 1) * ppu;
   }
 
   /**
-   * Returns a formatted string representing the given date, depending on the current view mode.
-   * If the view mode is 'Day', the string will be in the format 'MMM D' if the date is the first of the month, and 'D' otherwise.
-   * If the view mode is 'Week', the string will be in the format 'MMM D' - 'D' if the date is the start of the week and the end of the week is in the same month, and 'MMM D' - 'MMM D' otherwise.
-   * If the view mode is 'Month', the string will be in the format 'MMM' if the date is the first of the month, and an empty string otherwise.
-   * @param date - The date to format.
-   * @param index - The index of the date in the array of dates.
-   * @returns A formatted string representing the given date.
+   * Returns the header label for a grid unit (used by Week / Month / Year modes).
+   * Day mode uses the dayViewTicks ruler instead of this function.
    */
-  formatDateHeader(date: dayjs.Dayjs, index: number): string {
+  formatDateHeader(date: dayjs.Dayjs): string {
     switch (this.viewMode()) {
-      case 'Day':
-        return date.date() === 1 || index === 0 ? date.format('MMM D') : date.format('D');
-      case 'Week': {
-        const start = date;
-        const end = date.endOf('week');
-
-        if (!start.isSame(start.startOf('week'), 'day') && index !== 0) return '';
-
-        return start.month() === end.month()
-          ? `${start.format('MMM D')} - ${end.format('D')}`
-          : `${start.format('MMM D')} - ${end.format('MMM D')}`;
-      }
+      case 'Week':
+        return date.format('ddd MMM D');
       case 'Month':
-        return date.date() === 1 || index === 0 ? date.format('MMM') : '';
+        // Each column is one day; label = day number (1–30).
+        return String(date.date());
+      case 'Year':
+        // Each column is one month; label = 3-letter month name.
+        return date.format('MMM');
       default:
         return '';
     }
   }
 
+  /** Whether every column should display a left border (not just labelled ones). */
+  showColumnBorder(): boolean {
+    const mode = this.viewMode();
+    return mode === 'Day' || mode === 'Week';
+  }
+
   /**
    * Updates the planned start and end dates of a task with the given ID.
-   * The task will be updated in the database and the taskCreatedOrUpdated event will be emitted.
-   * @param taskId - The ID of the task to update.
-   * @param start - The new planned start date of the task.
-   * @param end - The new planned end date of the task.
    */
   updateTaskDates(taskId: string, start: dayjs.Dayjs, end: dayjs.Dayjs) {
     this.crudTasks

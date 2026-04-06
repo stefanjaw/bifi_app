@@ -45,6 +45,13 @@ interface FilterRow {
   type: 'string' | 'number' | 'date' | 'boolean' | null;
 }
 
+export interface FilterChip {
+  id: string;
+  fieldLabel: string;
+  operatorLabel: string;
+  valueText: string;
+}
+
 const OPERATORS_BY_TYPE: Record<string, { label: string; value: filter['operator'] }[]> = {
   string: [
     { label: 'Contains', value: 'like' },
@@ -98,6 +105,40 @@ export class FilterBar implements OnDestroy {
   fieldOptions = computed(() =>
     this.filterFields().map(f => ({ label: f.label, value: f.field as string }))
   );
+
+  activeChips = computed<FilterChip[]>(() => {
+    const fields = this.filterFields();
+    return this.rows()
+      .filter(
+        r =>
+          r.field &&
+          r.operator &&
+          (r.operator === 'empty' || (r.value !== null && r.value !== undefined && r.value !== ''))
+      )
+      .map(r => {
+        const fieldConfig = fields.find(f => (f.field as string) === r.field);
+        const operatorOptions = r.type ? (OPERATORS_BY_TYPE[r.type] ?? []) : [];
+        const opEntry = operatorOptions.find(o => o.value === r.operator);
+
+        let valueText = '';
+        if (r.operator !== 'empty') {
+          if (r.value instanceof Date) {
+            valueText = r.value.toLocaleDateString();
+          } else if (typeof r.value === 'boolean') {
+            valueText = r.value ? 'Yes' : 'No';
+          } else {
+            valueText = String(r.value ?? '');
+          }
+        }
+
+        return {
+          id: r.id,
+          fieldLabel: fieldConfig?.label ?? r.field ?? '',
+          operatorLabel: opEntry?.label ?? r.operator ?? '',
+          valueText,
+        };
+      });
+  });
 
   operatorsFor(type: string | null): { label: string; value: filter['operator'] }[] {
     if (!type) return [];

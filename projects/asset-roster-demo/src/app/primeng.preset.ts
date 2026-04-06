@@ -1,26 +1,42 @@
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
-console.log('Prime AURA Preset', Aura);
-
 export const Noir = definePreset(Aura, {
   components: {
     button: {
+      root: {
+        borderRadius: '2px',
+      },
       colorScheme: {
         light: {
           root: {
             secondary: {
-              background: '{indigo.600}',
-              hoverBackground: '{indigo.700}',
-              activeBackground: '{indigo.800}',
-              borderColor: '{indigo.600}',
-              hoverBorderColor: '{indigo.700}',
-              activeBorderColor: '{indigo.800}',
+              background: '{gray.200}',
+              hoverBackground: '{gray.300}',
+              activeBackground: '{gray.400}',
+              borderColor: '{gray.200}',
+              hoverBorderColor: '{gray.300}',
+              activeBorderColor: '{gray.400}',
+              color: '{gray.900}',
+              hoverColor: '{gray.900}',
+              activeColor: '{gray.900}',
+              focusRing: {
+                color: '{gray.500}',
+                shadow: 'none',
+              },
+            },
+            danger: {
+              background: '{red.700}',
+              hoverBackground: '{red.800}',
+              activeBackground: '{red.900}',
+              borderColor: '{red.700}',
+              hoverBorderColor: '{red.800}',
+              activeBorderColor: '{red.900}',
               color: '#ffffff',
               hoverColor: '#ffffff',
               activeColor: '#ffffff',
               focusRing: {
-                color: '{indigo.600}',
+                color: '{red.700}',
                 shadow: 'none',
               },
             },
@@ -31,17 +47,17 @@ export const Noir = definePreset(Aura, {
   },
   semantic: {
     primary: {
-      50: '{blue.50}',
-      100: '{blue.100}',
-      200: '{blue.200}',
-      300: '{blue.300}',
-      400: '{blue.400}',
-      500: '{blue.500}',
-      600: '{blue.600}',
-      700: '{blue.700}',
-      800: '{blue.800}',
-      900: '{blue.900}',
-      950: '{blue.950}',
+      50: '{gray.50}',
+      100: '{gray.100}',
+      200: '{gray.200}',
+      300: '{gray.300}',
+      400: '{gray.400}',
+      500: '{gray.500}',
+      600: '{gray.600}',
+      700: '{gray.700}',
+      800: '{gray.800}',
+      900: '{gray.900}',
+      950: '{gray.950}',
     },
 
     accent: {
@@ -50,14 +66,14 @@ export const Noir = definePreset(Aura, {
     colorScheme: {
       light: {
         primary: {
-          color: '{blue.600}', // más suave que 700 u 800
+          color: '{gray.800}',
           inverseColor: '#ffffff',
-          hoverColor: '{blue.700}',
-          activeColor: '{blue.800}',
+          hoverColor: '{gray.900}',
+          activeColor: '{gray.950}',
         },
         highlight: {
-          background: '{blue.600}',
-          focusBackground: '{blue.700}',
+          background: '{gray.800}',
+          focusBackground: '{gray.900}',
           color: '#ffffff',
           focusColor: '#ffffff',
         },
@@ -67,10 +83,10 @@ export const Noir = definePreset(Aura, {
       },
       dark: {
         primary: {
-          color: '{blue.100}',
-          inverseColor: '{blue.950}',
-          hoverColor: '{blue.200}',
-          activeColor: '{blue.300}',
+          color: '{gray.100}',
+          inverseColor: '{gray.950}',
+          hoverColor: '{gray.200}',
+          activeColor: '{gray.300}',
         },
         highlight: {
           background: 'rgba(250, 250, 250, .16)',
@@ -82,5 +98,3 @@ export const Noir = definePreset(Aura, {
     },
   },
 });
-
-console.log('');

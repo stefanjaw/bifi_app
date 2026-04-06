@@ -1,5 +1,5 @@
-<form (ngSubmit)="performSearch()" class="w-full flex items-center justify-center gap-2">
-  <p-iconfield [classList]="'w-full'">
+<form (ngSubmit)="performSearch()" class="w-full flex items-center flex-wrap gap-2">
+  <p-iconfield class="flex-1 min-w-48">
     <p-inputicon class="pi pi-search"></p-inputicon>
     <input
       pInputText
@@ -14,4 +14,5 @@
       <p-inputIcon class="pi pi-times cursor-pointer" (click)="searchText.set('')"></p-inputIcon>
     }
   </p-iconfield>
+  <ng-content></ng-content>
 </form>

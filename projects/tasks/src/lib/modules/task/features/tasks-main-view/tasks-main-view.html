@@ -1,3 +1,6 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
     <h1 class="text-2xl font-bold text-gray-800">Tasks Timeline</h1>
@@ -24,9 +27,14 @@
       (onClick)="collapseAll()"
     ></p-button>
 
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-3">
       <span class="text-sm font-medium text-gray-600">View:</span>
-      <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+
+      <div
+        class="flex items-center rounded-md bg-gray-200 p-0.5 transition-opacity"
+        [class.opacity-40]="isListView()"
+        [class.pointer-events-none]="isListView()"
+      >
         <button
           (click)="viewMode.set('Day')"
           [class]="viewMode() === 'Day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
@@ -49,25 +57,92 @@
           Month
         </button>
         <button
-          (click)="viewMode.set('List')"
-          [class]="viewMode() === 'List' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          (click)="viewMode.set('Year')"
+          [class]="viewMode() === 'Year' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
           class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
-          List
+          Year
         </button>
       </div>
+
+      <label
+        class="flex items-center gap-2 cursor-pointer select-none"
+        title="Toggle List / Gantt view"
+      >
+        <i
+          class="pi pi-chart-bar text-sm transition-colors"
+          [class.text-indigo-600]="!isListView()"
+          [class.text-gray-400]="isListView()"
+        ></i>
+        <div class="relative" (click)="toggleListView()">
+          <div
+            class="w-10 h-5 rounded-full transition-colors duration-200"
+            [class.bg-indigo-500]="isListView()"
+            [class.bg-gray-300]="!isListView()"
+          ></div>
+          <div
+            class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+            [class.translate-x-5]="isListView()"
+          ></div>
+        </div>
+        <i
+          class="pi pi-list text-sm transition-colors"
+          [class.text-indigo-600]="isListView()"
+          [class.text-gray-400]="!isListView()"
+        ></i>
+      </label>
     </div>
   </div>
 </header>
 
 <!-- Search & Filters -->
-<div class="flex-shrink-0 py-2 flex flex-col gap-2">
+<div class="flex-shrink-0 py-2 flex items-center gap-2">
   <bifi-app-search-bar
+    class="flex-1 min-w-0"
     label="Search by name, priority, stage, assigned user, project or type"
     [searchFilters]="taskFilters"
-  ></bifi-app-search-bar>
-  <bifi-app-filter-bar [filterFields]="taskFilterFields"></bifi-app-filter-bar>
+  >
+    @for (chip of activeChips(); track chip.id) {
+      <span
+        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 border border-indigo-200 whitespace-nowrap"
+      >
+        <span>{{ chip.fieldLabel }}</span>
+        <span class="text-indigo-400">·</span>
+        <span>{{ chip.operatorLabel }}</span>
+        @if (chip.valueText) {
+          <span class="text-indigo-400">·</span>
+          <span>{{ chip.valueText }}</span>
+        }
+        <button
+          type="button"
+          class="ms-0.5 text-indigo-400 hover:text-indigo-700 leading-none cursor-pointer"
+          (click)="removeFilterChip(chip.id)"
+        >
+          ×
+        </button>
+      </span>
+    }
+  </bifi-app-search-bar>
+
+  <p-button
+    icon="pi pi-chevron-down"
+    severity="secondary"
+    [outlined]="true"
+    size="small"
+    (onClick)="filterPopover.toggle($event)"
+    ariaLabel="Open filters"
+  />
 </div>
+
+<p-popover #filterPopover>
+  <div class="flex flex-col gap-3 p-1 min-w-80">
+    <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+      <i class="pi pi-filter text-indigo-500"></i>
+      <span>Filters</span>
+    </div>
+    <bifi-app-filter-bar [filterFields]="taskFilterFields"></bifi-app-filter-bar>
+  </div>
+</p-popover>
 
 <!-- Main Content -->
 @if (isLoading()) {
@@ -88,7 +163,7 @@
     </div>
   </div>
 } @else {
-  @if (viewMode() !== 'List') {
+  @if (!isListView()) {
     <!-- Gantt View -->
     <bifi-app-tasks-gantt-view
       [flat]="flat()"
