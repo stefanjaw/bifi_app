@@ -18,6 +18,7 @@ export interface UpdateTaskFormModel {
   priority: task['priority'];
   assigned?: string;
   attachments?: FormUploaderFile[];
+  isMilestone?: boolean;
 }
 
 @Injectable({
@@ -49,6 +50,7 @@ export class UpdateTaskForm extends BaseForm<UpdateTaskFormModel> {
         },
         formArrayElements: [],
       },
+      isMilestone: [false],
     });
   }
 

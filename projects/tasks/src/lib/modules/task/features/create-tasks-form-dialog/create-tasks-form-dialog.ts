@@ -20,6 +20,7 @@ import { CrudTaskTypes } from '../../../task-types';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { SliderModule } from 'primeng/slider';
 import { TextareaModule } from 'primeng/textarea';
+import { CheckboxModule } from 'primeng/checkbox';
 import dayjs from 'dayjs';
 import { CrudProjects } from '@avalantec/projects';
 
@@ -34,6 +35,7 @@ import { CrudProjects } from '@avalantec/projects';
     FormModule,
     SliderModule,
     TextareaModule,
+    CheckboxModule,
   ],
   templateUrl: './create-tasks-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

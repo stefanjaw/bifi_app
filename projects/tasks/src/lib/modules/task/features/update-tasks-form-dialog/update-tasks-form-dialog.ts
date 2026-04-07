@@ -24,6 +24,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { SliderModule } from 'primeng/slider';
+import { CheckboxModule } from 'primeng/checkbox';
 import dayjs from 'dayjs';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { ButtonModule } from 'primeng/button';
@@ -40,6 +41,7 @@ import { CrudProjects } from '@avalantec/projects';
     TextareaModule,
     FormModule,
     SliderModule,
+    CheckboxModule,
     ButtonModule,
   ],
   templateUrl: './update-tasks-form-dialog.html',
@@ -165,6 +167,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
           assigned: task.assigned?._id,
           dependencyIds: task.dependencyIds?.map(dep => dep._id),
           attachments: parsedAttachments,
+          isMilestone: task.isMilestone ?? false,
         });
       } else {
         this.formService.reset();

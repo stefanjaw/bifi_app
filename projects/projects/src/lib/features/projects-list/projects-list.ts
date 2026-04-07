@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -8,6 +15,8 @@ import {
   ResourceManager,
   SearchBar,
   TableLayout,
+  TimelineItem,
+  TimelineView,
 } from '@avalantec/base-app/resource';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
@@ -20,7 +29,15 @@ import { project } from '../../interfaces/projects';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TimelineView,
+  ],
   templateUrl: './projects-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,6 +50,21 @@ export class ProjectsList {
 
   projectColumns = projectColumns;
   projects = this.resourceManager.data;
+
+  viewState = signal<'list' | 'timeline'>('list');
+
+  timelineItems = computed<TimelineItem[]>(() => {
+    const docs = this.projects.value()?.docs ?? [];
+    return docs
+      .filter(p => p.dateStart)
+      .sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime())
+      .map(p => ({
+        label: p.name,
+        date: p.dateStart,
+        type: 'start' as const,
+        action: () => this.router.navigate(['../edit', p._id], { relativeTo: this.route }),
+      }));
+  });
 
   goToEditProject = (element: project) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });

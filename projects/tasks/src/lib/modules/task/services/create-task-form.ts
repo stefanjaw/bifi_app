@@ -11,6 +11,7 @@ export interface CreateTaskFormModel {
   progress?: number;
   parentId?: string;
   projectId?: string;
+  isMilestone?: boolean;
 }
 
 @Injectable({
@@ -27,6 +28,7 @@ export class CreateTaskForm extends BaseForm<CreateTaskFormModel> {
       progress: [0, [Validators.min(0), Validators.max(100)]],
       parentId: [''],
       projectId: [''],
+      isMilestone: [false],
     });
   }
 

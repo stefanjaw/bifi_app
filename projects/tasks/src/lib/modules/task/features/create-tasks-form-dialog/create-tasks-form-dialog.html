@@ -102,6 +102,17 @@
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
+      <bifi-app-form-field>
+        <div class="flex items-center gap-2">
+          <p-checkbox
+            formControlName="isMilestone"
+            [binary]="true"
+            inputId="isMilestone"
+          ></p-checkbox>
+          <label for="isMilestone" class="cursor-pointer">Is Milestone</label>
+        </div>
+      </bifi-app-form-field>
+
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         (cancelClicked)="closeDialog()"

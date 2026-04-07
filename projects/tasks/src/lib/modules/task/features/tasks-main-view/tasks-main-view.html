@@ -32,8 +32,8 @@
 
       <div
         class="flex items-center rounded-md bg-gray-200 p-0.5 transition-opacity"
-        [class.opacity-40]="isListView()"
-        [class.pointer-events-none]="isListView()"
+        [class.opacity-40]="viewState() !== 'gantt'"
+        [class.pointer-events-none]="viewState() !== 'gantt'"
       >
         <button
           (click)="viewMode.set('Day')"
@@ -65,32 +65,34 @@
         </button>
       </div>
 
-      <label
-        class="flex items-center gap-2 cursor-pointer select-none"
-        title="Toggle List / Gantt view"
-      >
-        <i
-          class="pi pi-chart-bar text-sm transition-colors"
-          [class.text-indigo-600]="!isListView()"
-          [class.text-gray-400]="isListView()"
-        ></i>
-        <div class="relative" (click)="toggleListView()">
-          <div
-            class="w-10 h-5 rounded-full transition-colors duration-200"
-            [class.bg-indigo-500]="isListView()"
-            [class.bg-gray-300]="!isListView()"
-          ></div>
-          <div
-            class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-            [class.translate-x-5]="isListView()"
-          ></div>
-        </div>
-        <i
-          class="pi pi-list text-sm transition-colors"
-          [class.text-indigo-600]="isListView()"
-          [class.text-gray-400]="!isListView()"
-        ></i>
-      </label>
+      <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+        <button
+          (click)="viewState.set('gantt')"
+          [class]="viewState() === 'gantt' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-chart-bar text-xs"></i>
+          Gantt
+        </button>
+        <button
+          (click)="viewState.set('list')"
+          [class]="viewState() === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-list text-xs"></i>
+          List
+        </button>
+        <button
+          (click)="viewState.set('timeline')"
+          [class]="
+            viewState() === 'timeline' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'
+          "
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-calendar text-xs"></i>
+          Timeline
+        </button>
+      </div>
     </div>
   </div>
 </header>
@@ -163,7 +165,7 @@
     </div>
   </div>
 } @else {
-  @if (!isListView()) {
+  @if (viewState() === 'gantt') {
     <!-- Gantt View -->
     <bifi-app-tasks-gantt-view
       [flat]="flat()"
@@ -173,9 +175,12 @@
       [viewMode]="viewMode()"
       [dependencies]="dependencies()"
     ></bifi-app-tasks-gantt-view>
-  } @else {
+  } @else if (viewState() === 'list') {
     <!-- List View -->
     <bifi-app-tasks-list-view [tasks]="visible()"></bifi-app-tasks-list-view>
+  } @else {
+    <!-- Timeline View (milestones only) -->
+    <bifi-app-timeline-view [items]="milestoneItems()"></bifi-app-timeline-view>
   }
 }
 

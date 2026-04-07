@@ -24,4 +24,5 @@ export interface task {
   attachments?: file[];
   childIds?: task[];
   active: boolean;
+  isMilestone?: boolean;
 }

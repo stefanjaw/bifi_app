@@ -22,7 +22,13 @@ import { TasksMaintenanceContext } from '../../services/tasks-maintenance-contex
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
-import { FilterBar, FilterManager, SearchBar } from '@avalantec/base-app/resource';
+import {
+  FilterBar,
+  FilterManager,
+  SearchBar,
+  TimelineItem,
+  TimelineView,
+} from '@avalantec/base-app/resource';
 import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
 
 @Component({
@@ -37,6 +43,7 @@ import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
     UpdateTasksFormDialog,
     SearchBar,
     FilterBar,
+    TimelineView,
   ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
@@ -59,13 +66,10 @@ export class TasksMainView {
 
   // states
   viewMode = signal<viewMode>('Day');
-  isListView = signal(false);
+  viewState = signal<'gantt' | 'list' | 'timeline'>('gantt');
+  isListView = computed(() => this.viewState() === 'list');
   isLoading = this.tasksResource.isLoading;
   error = this.tasksResource.error;
-
-  toggleListView() {
-    this.isListView.set(!this.isListView());
-  }
 
   // exposed filter list for the search bar and filter bar
   taskFilters = taskFilters;
@@ -73,6 +77,27 @@ export class TasksMainView {
 
   // tasks
   flat = this.tasksResource.value;
+
+  // milestone timeline items
+  milestoneItems = computed<TimelineItem[]>(() =>
+    this.flat()
+      .filter(t => t.isMilestone === true)
+      .sort((a, b) => {
+        const aTs = a.plannedStartDate ? new Date(a.plannedStartDate).getTime() : 0;
+        const bTs = b.plannedStartDate ? new Date(b.plannedStartDate).getTime() : 0;
+        return aTs - bTs;
+      })
+      .map(t => ({
+        label: t.name,
+        date: t.plannedStartDate ?? new Date().toISOString(),
+        type: 'milestone' as const,
+        action: () => {
+          this.tasksMaintenanceContext.openUpdateTaskDialog(t._id);
+          this.updateTasksFormDialog()?.openDialog();
+        },
+      }))
+  );
+
   tree = signal<ganttTask[]>([]);
   visible = signal<ganttTask[]>([]);
   map = signal<Map<string, ganttTask>>(new Map());

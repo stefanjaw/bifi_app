@@ -1,6 +1,6 @@
 <h1 class="text-2xl font-bold mb-4">Projects</h1>
 
-<div class="flex gap-2 mb-4">
+<div class="flex items-center justify-between gap-2 mb-4">
   <p-button
     label="Add New Project"
     severity="secondary"
@@ -8,29 +8,50 @@
     [routerLink]="['../create']"
     *bifiAppHasPermission="'projects/create:view'"
   ></p-button>
+
+  <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+    <button
+      (click)="viewState.set('list')"
+      [class]="viewState() === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+      class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+    >
+      <i class="pi pi-list text-xs"></i>
+      List
+    </button>
+    <button
+      (click)="viewState.set('timeline')"
+      [class]="viewState() === 'timeline' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+      class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+    >
+      <i class="pi pi-calendar text-xs"></i>
+      Timeline
+    </button>
+  </div>
 </div>
 
-<bifi-app-search-bar
-  label="Search by name or description"
-></bifi-app-search-bar>
+@if (viewState() === 'list') {
+  <bifi-app-search-bar label="Search by name or description"></bifi-app-search-bar>
 
-<bifi-app-table-layout
-  [infiniteScroll]="false"
-  [columns]="projectColumns"
-  [data]="projects"
-  [onClickRow]="goToEditProject"
-  clickRowPermission="projects/update:view"
->
-  <ng-template #actions let-element>
-    <!-- <p-button
-      severity="danger"
-      label="Delete"
-      icon="pi pi-trash"
-      (onClick)="deleteProject(element._id); $event.stopPropagation()"
-      *bifiAppHasPermission="'projects:delete:model'"
-    ></p-button> -->
-    <bifi-app-buttons-actions
-      (deleteClicked)="deleteProject(element._id);"
-    ></bifi-app-buttons-actions>
-  </ng-template>
-</bifi-app-table-layout>
+  <bifi-app-table-layout
+    [infiniteScroll]="false"
+    [columns]="projectColumns"
+    [data]="projects"
+    [onClickRow]="goToEditProject"
+    clickRowPermission="projects/update:view"
+  >
+    <ng-template #actions let-element>
+      <!-- <p-button
+        severity="danger"
+        label="Delete"
+        icon="pi pi-trash"
+        (onClick)="deleteProject(element._id); $event.stopPropagation()"
+        *bifiAppHasPermission="'projects:delete:model'"
+      ></p-button> -->
+      <bifi-app-buttons-actions
+        (deleteClicked)="deleteProject(element._id)"
+      ></bifi-app-buttons-actions>
+    </ng-template>
+  </bifi-app-table-layout>
+} @else {
+  <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
+}
