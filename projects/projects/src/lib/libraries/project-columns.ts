@@ -17,6 +17,8 @@ export const projectColumns: tableColumn<project>[] = [
   {
     field: 'description',
     title: 'Description',
+    parseField: (value: string | null | undefined) =>
+      value && value.trim() ? value : 'Not set',
     type: 'text',
   },
   {

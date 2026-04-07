@@ -5,7 +5,7 @@ export interface project {
   _id: string;
   number?: string;
   name: string;
-  description: string;
+  description?: string;
   createdBy: user;
   stage: projectStage;
   priority: 'low' | 'medium' | 'high' | 'urgent';
