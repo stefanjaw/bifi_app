@@ -25,7 +25,7 @@
       icon="pi pi-check"
       size="small"
       [loading]="markingId() === element._id"
-      (onClick)="markWon(element)"
+      (onClick)="markWon($event, element)"
     ></p-button>
     <p-button
       *bifiAppHasPermission="'sales:update:model'"
@@ -34,7 +34,7 @@
       icon="pi pi-times"
       size="small"
       [loading]="markingId() === element._id"
-      (onClick)="markLost(element)"
+      (onClick)="markLost($event, element)"
     ></p-button>
     <!-- <p-button
       *bifiAppHasPermission="'sales/opportunities/update:view'"
