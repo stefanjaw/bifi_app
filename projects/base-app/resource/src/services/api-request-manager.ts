@@ -366,6 +366,8 @@ export class ApiRequestManager<T> {
         formData.append(key, value.file);
       } else if (value instanceof File) {
         formData.append(key, value, value.name);
+      } else if (typeof value === 'boolean') {
+        formData.append(key, value ? 'true' : 'false');
       } else if (typeof value === 'object') {
         formData.append(key, JSON.stringify(value));
       } else if (

@@ -61,7 +61,7 @@ export class TypedFormBuilder {
   private buildFormTree(data: any): any {
     if (Array.isArray(data)) {
       // [value, validators]
-      return this.fb.control(data?.[0] || null, data?.[1] || null, data?.[2] || null);
+      return this.fb.control(data?.[0] ?? null, data?.[1] || null, data?.[2] || null);
     }
 
     if (typeof data === 'object' && data !== null) {
