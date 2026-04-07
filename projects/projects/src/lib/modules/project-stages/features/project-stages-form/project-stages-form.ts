@@ -74,9 +74,15 @@ export class ProjectStagesForm {
   handleSubmit(values: FormValueState<ProjectStageFormModel>) {
     this.isSubmitLoading.set(true);
 
+    // Ensure description is never null, convert empty string to empty string if needed
+    const processedData = {
+      ...values.rawValue,
+      description: values.rawValue.description || ''
+    };
+
     const action = this.isUpdate()
-      ? this.crudProjectStages.put({ _id: this.id(), data: values.rawValue })
-      : this.crudProjectStages.post({ data: values.rawValue });
+      ? this.crudProjectStages.put({ _id: this.id(), data: processedData })
+      : this.crudProjectStages.post({ data: processedData });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {

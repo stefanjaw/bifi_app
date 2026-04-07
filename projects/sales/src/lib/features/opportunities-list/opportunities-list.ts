@@ -63,9 +63,10 @@ export class OpportunitiesList {
   markingId = signal<string | null>(null);
 
   editOpportunity = (element: crm) => {
-    this.router.navigate(['../sales/opportunities/edit', element._id], { relativeTo: this.route });
+    this.router.navigate(['../opportunities/edit', element._id], { relativeTo: this.route });
   };
-  markWon(deal: crm) {
+  markWon(event: Event, deal: crm) {
+    event.stopPropagation();
     const wonStage = this.wonStage();
     if (!wonStage) {
       this.messageService.add({
@@ -127,7 +128,8 @@ export class OpportunitiesList {
       });
   }
 
-  markLost(deal: crm) {
+  markLost(event: Event, deal: crm) {
+    event.stopPropagation();
     const lostStage = this.lostStage();
     if (!lostStage) {
       this.messageService.add({
