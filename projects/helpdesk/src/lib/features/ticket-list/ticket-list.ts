@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
+  ButtonsActions,
   FilterBar,
   provideResourceManager,
   ResourceManager,
@@ -12,7 +13,7 @@ import { ticketFilterFields, ticketFilters } from '../../libraries/ticket-filter
 import { ticket } from '../../interfaces/ticket';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -21,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, HasPermission, RouterLink],
+  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],
   templateUrl: './ticket-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,6 +30,8 @@ export class TicketList {
   private resourceManager = inject<ResourceManager<ticket>>(ResourceManager);
   private crudTickets = inject(CrudTickets);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = ticketColumns;
   filters = ticketFilters;
@@ -44,5 +47,9 @@ export class TicketList {
           if (res) this.tickets.reload();
         },
       });
+  }
+
+  gotoEditTicket = (element: ticket) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   }
 }

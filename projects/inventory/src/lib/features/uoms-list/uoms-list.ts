@@ -17,7 +17,7 @@ import { uom } from '../../interfaces/uom';
 import { uomColumns } from '../../libraries/uom-columns';
 import { uomFilters } from '../../libraries/uom-filters';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
   templateUrl: './uoms-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,6 +34,8 @@ export class UomsList {
   private resourceManager = inject<ResourceManager<uom>>(ResourceManager);
   private crudUoms = inject(CrudUoms);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   uomColumns = uomColumns;
   uomFilters = uomFilters;
@@ -45,5 +47,9 @@ export class UomsList {
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: () => this.entries.reload() });
+  }
+
+  gotoEditUom = (element: uom) => {
+    this.router.navigate([`../uoms/${element._id}/edit`], { relativeTo: this.route });
   }
 }

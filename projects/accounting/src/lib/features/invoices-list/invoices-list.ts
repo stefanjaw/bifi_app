@@ -11,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { invoiceColumns } from '../../libraries/invoice-columns';
 import { invoiceFilters } from '../../libraries/invoice-filters';
 
@@ -27,6 +27,8 @@ export class InvoicesList {
   private resourceManager = inject<ResourceManager<invoice>>(ResourceManager);
   private crudInvoices = inject(CrudInvoices);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = invoiceColumns;
   filters = invoiceFilters;
@@ -37,5 +39,9 @@ export class InvoicesList {
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: res => { if (res) this.invoices.reload(); } });
+  }
+
+  gotoEditInvoice = (element: invoice) => {
+    this.router.navigate(['/accounting/invoices/edit', element._id]);
   }
 }

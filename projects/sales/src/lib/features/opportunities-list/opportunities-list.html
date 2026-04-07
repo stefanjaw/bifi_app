@@ -16,7 +16,7 @@
   [searchFilters]="crmFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="crmColumns" [data]="entries">
+<bifi-app-table-layout [columns]="crmColumns" [data]="entries" [onClickRow]="editOpportunity" clickRowPermission="sales/opportunities/update:view">
   <ng-template #actions let-element>
     <p-button
       *bifiAppHasPermission="'sales:update:model'"
@@ -36,7 +36,7 @@
       [loading]="markingId() === element._id"
       (onClick)="markLost(element)"
     ></p-button>
-    <p-button
+    <!-- <p-button
       *bifiAppHasPermission="'sales/opportunities/update:view'"
       severity="secondary"
       label="Edit"
@@ -50,6 +50,9 @@
       icon="pi pi-trash"
       size="small"
       (onClick)="deleteEntry(element._id)"
-    ></p-button>
+    ></p-button> -->
+           <bifi-app-buttons-actions
+      (deleteClicked)="deleteEntry(element._id);"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

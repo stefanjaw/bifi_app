@@ -21,7 +21,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, ButtonsActions],
   templateUrl: './orders-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { CrudUsers } from '../../services/crud-users';
 import { userColumns } from '../../libraries/user-columns';
 import { userFilters } from '../../libraries/user-filters';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { user } from '@avalantec/base-app/interfaces';
@@ -31,6 +31,8 @@ export class UsersList {
   private crudUsers = inject(CrudUsers);
   private destroy$ = inject(DestroyRef);
   private auth = injectAuthService();
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   userColumns = userColumns;
   userFilters = userFilters;
@@ -66,5 +68,9 @@ export class UsersList {
 
   isUserSameAsLoggedInUser(user: user) {
     return this.auth.user()?._id === user._id;
+  }
+
+  gotoEditUser = (element: user) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   }
 }

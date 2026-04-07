@@ -11,7 +11,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { paymentTermColumns } from '../../libraries/payment-term-columns';
 import { paymentTermFilters } from '../../libraries/payment-term-filters';
 
@@ -26,6 +26,8 @@ export class PaymentTermsList {
   private resourceManager = inject<ResourceManager<paymentTerm>>(ResourceManager);
   private crudPaymentTerms = inject(CrudPaymentTerms);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = paymentTermColumns;
   filters = paymentTermFilters;
@@ -36,5 +38,9 @@ export class PaymentTermsList {
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: res => { if (res) this.paymentTerms.reload(); } });
+  }
+
+  gotoEditPaymentTerm = (element: paymentTerm) => {
+    this.router.navigate(['../payment-terms/edit', element._id], { relativeTo: this.route });
   }
 }

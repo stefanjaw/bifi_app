@@ -17,7 +17,7 @@ import { warehouse } from '../../interfaces/warehouse';
 import { warehouseColumns } from '../../libraries/warehouse-columns';
 import { warehouseFilters } from '../../libraries/warehouse-filters';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastModule } from 'primeng/toast';
 
@@ -27,7 +27,7 @@ import { ToastModule } from 'primeng/toast';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
   templateUrl: './warehouses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +35,8 @@ export class WarehousesList {
   private resourceManager = inject<ResourceManager<warehouse>>(ResourceManager);
   private crudWarehouses = inject(CrudWarehouses);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   warehouseColumns = warehouseColumns;
   warehouseFilters = warehouseFilters;
@@ -46,5 +48,9 @@ export class WarehousesList {
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: () => this.entries.reload() });
+  }
+
+  gotoEditWarehouse = (element: warehouse) => {
+    this.router.navigate([`../warehouses/${element._id}/edit`], { relativeTo: this.route });
   }
 }

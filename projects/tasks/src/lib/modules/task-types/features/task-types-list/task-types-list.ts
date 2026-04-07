@@ -11,14 +11,14 @@ import { taskType } from '../../interfaces/task-type';
 import { taskTypeColumns } from '../../libraries/task-type-columns';
 import { taskTypeFilters } from '../../libraries/task-type-filters';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-task-types-list',
   providers: [provideResourceManager(CrudTaskTypes)],
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -29,6 +29,8 @@ export class TaskTypesList {
   private resourceManager = inject<ResourceManager<taskType>>(ResourceManager);
   private crudTaskTypes = inject(CrudTaskTypes);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = taskTypeColumns;
   filters = taskTypeFilters;
@@ -43,5 +45,9 @@ export class TaskTypesList {
           if (res) this.types.reload();
         },
       });
+  }
+
+  gotoEditTaskType = (element: taskType) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   }
 }

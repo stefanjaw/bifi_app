@@ -21,7 +21,7 @@ import { crmColumns } from '../../libraries/crm-columns';
 import { crmFilters } from '../../libraries/crm-filters';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -33,7 +33,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -44,6 +44,10 @@ export class OpportunitiesList {
   private crudSalesOrders = inject(CrudSalesOrders);
   private messageService = inject(MessageService);
   private destroy$ = inject(DestroyRef);
+
+  // Router
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   stagesResource = this.crudCrmStages.get({});
   stages = computed(() => (this.stagesResource.value() as crmStage[]) ?? []);
@@ -58,6 +62,9 @@ export class OpportunitiesList {
 
   markingId = signal<string | null>(null);
 
+  editOpportunity = (element: crm) => {
+    this.router.navigate(['../sales/opportunities/edit', element._id], { relativeTo: this.route });
+  };
   markWon(deal: crm) {
     const wonStage = this.wonStage();
     if (!wonStage) {
@@ -135,6 +142,7 @@ export class OpportunitiesList {
       .put({ _id: deal._id, data: { stage: lostStage._id } as any })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
+
         next: () => {
           this.markingId.set(null);
           this.messageService.add({

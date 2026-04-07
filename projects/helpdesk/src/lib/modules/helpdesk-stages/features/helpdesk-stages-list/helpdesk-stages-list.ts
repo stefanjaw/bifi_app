@@ -11,14 +11,14 @@ import { helpdeskStage } from '../../interfaces/helpdesk-stage';
 import { helpdeskStageColumns } from '../../libraries/helpdesk-stage-columns';
 import { helpdeskStageFilters } from '../../libraries/helpdesk-stage-filters';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-helpdesk-stages-list',
   providers: [provideResourceManager(CrudHelpdeskStages)],
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -29,6 +29,8 @@ export class HelpdeskStagesList {
   private resourceManager = inject<ResourceManager<helpdeskStage>>(ResourceManager);
   private crudHelpdeskStages = inject(CrudHelpdeskStages);
   private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = helpdeskStageColumns;
   filters = helpdeskStageFilters;
@@ -43,5 +45,9 @@ export class HelpdeskStagesList {
           if (res) this.stages.reload();
         },
       });
+  }
+
+  gotoEditHelpdeskStage = (element: helpdeskStage) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   }
 }

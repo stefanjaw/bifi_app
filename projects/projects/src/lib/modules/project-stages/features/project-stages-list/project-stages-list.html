@@ -15,21 +15,10 @@
   [searchFilters]="filters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="columns" [data]="stages">
+<bifi-app-table-layout [columns]="columns" [data]="stages" [onClickRow]="gotoEditProjectStage" clickRowPermission="project-stages/update:view">
   <ng-template #actions let-row>
-    <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'project-stages/update:view'"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'project-stages:delete:model'"
-      severity="danger"
-      label="Delete"
-      (onClick)="deleteStage(row._id)"
-      icon="pi pi-trash"
-    ></p-button>
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteStage(row._id)"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

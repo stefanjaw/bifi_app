@@ -15,22 +15,10 @@
   [searchFilters]="uomFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="uomColumns" [data]="entries">
+<bifi-app-table-layout [columns]="uomColumns" [data]="entries" [onClickRow]="gotoEditUom" clickRowPermission="inventory/uoms/update:view">
   <ng-template #actions let-element>
-    <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      size="small"
-      routerLink="/inventory/uoms/{{ element._id }}/edit"
-      *bifiAppHasPermission="'inventory/uoms/update:view'"
-    ></p-button>
-    <p-button
-      severity="danger"
-      icon="pi pi-trash"
-      size="small"
-      (onClick)="delete(element._id)"
-      *bifiAppHasPermission="'inventory/uoms:delete:model'"
-    ></p-button>
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(element._id)"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

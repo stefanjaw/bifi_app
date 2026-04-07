@@ -10,7 +10,7 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="payments">
+<bifi-app-table-layout [columns]="columns" [data]="payments" [onClickRow]="goToEditPayment" clickRowPermission="accounting/payments/update:view">
   <ng-template #actions let-element>
     <!-- <p-button
       *bifiAppHasPermission="'accounting/payments:delete:model'"
