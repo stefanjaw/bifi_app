@@ -26,6 +26,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { DatePickerModule } from 'primeng/datepicker';
 import dayjs from 'dayjs';
 import { ToastManager } from '@avalantec/base-app/core';
+import { project } from '../../interfaces/projects';
 
 @Component({
   selector: 'bifi-app-project-form',
@@ -60,6 +61,8 @@ export class ProjectFormComponent {
     triggerRequest: computed(() => !!this.id()),
   });
 
+  allProjectsResource = this.crudProjects.get({});
+
   stagesResource = this.crudProjectStages.get({});
   contactsResource = this.crudContacts.get({});
   defaultStageResource = this.crudProjectStages.get({
@@ -72,6 +75,8 @@ export class ProjectFormComponent {
 
   form = this.formService.form;
 
+  children = signal<project[]>([]);
+
   // Select options
   stages = computed<projectStage[]>(() => {
     const data = this.stagesResource.value();
@@ -83,6 +88,12 @@ export class ProjectFormComponent {
     return Array.isArray(data) ? data : [];
   });
 
+  parentOptions = computed<project[]>(() => {
+    const all = this.allProjectsResource.value();
+    const currentId = this.id();
+    return Array.isArray(all) ? all.filter(p => p._id !== currentId) : [];
+  });
+
   priorityOptions = [
     { label: 'Low', value: 'low' },
     { label: 'Medium', value: 'medium' },
@@ -90,12 +101,6 @@ export class ProjectFormComponent {
     { label: 'Urgent', value: 'urgent' },
   ];
 
-  /**
-   * Initialize the form with the project data if the project is being updated
-   * or reset the form if the project is not being updated.
-   * If the project is not being updated and the default stage is available,
-   * initialize the form with the default stage.
-   */
   constructor() {
     effect(() => {
       const entry = this.projectResource.value();
@@ -107,14 +112,17 @@ export class ProjectFormComponent {
           stage: entry.stage?._id ?? '',
           priority: entry.priority,
           contactId: entry.contactId?._id ?? '',
+          parentId: (entry.parentId as project)?._id ?? '',
           dateStart: entry.dateStart ? new Date(entry.dateStart) : new Date(),
           dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : new Date(),
           sequence: entry.sequence ?? 10,
           active: entry.active ?? true,
         });
         this.formService.resetDirtyState();
+        this.children.set(entry.children ?? []);
       } else if (!this.isUpdate()) {
         this.formService.reset();
+        this.children.set([]);
       }
     });
 
@@ -127,14 +135,6 @@ export class ProjectFormComponent {
     });
   }
 
-  /**
-   * Handles submitting the project form.
-   *
-   * If the project is being updated, it will call the projects service put method.
-   * If the project is being created, it will call the projects service post method.
-   *
-   * @param data - The form value state
-   */
   handleSubmit(data: FormValueState<ProjectFormModel>) {
     const { rawValue } = data;
 
@@ -146,6 +146,7 @@ export class ProjectFormComponent {
       dateStart: rawValue.dateStart.toISOString(),
       dateEnd: rawValue.dateEnd.toISOString(),
       contactId: rawValue.contactId || undefined,
+      parentId: rawValue.parentId || undefined,
       sequence: rawValue.sequence,
       active: rawValue.active,
     };
@@ -170,6 +171,10 @@ export class ProjectFormComponent {
         this.isSubmitLoading.set(false);
       },
     });
+  }
+
+  navigateToChild(childId: string) {
+    this.router.navigate(['../../edit', childId], { relativeTo: this.route });
   }
 
   goBack() {

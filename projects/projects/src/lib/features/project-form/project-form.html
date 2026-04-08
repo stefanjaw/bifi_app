@@ -98,6 +98,19 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
+            <bifi-app-form-label>Parent Project</bifi-app-form-label>
+            <p-select
+              formControlName="parentId"
+              [options]="parentOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a parent project"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Sequence *</bifi-app-form-label>
             <input
               pInputText
@@ -115,6 +128,27 @@
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
+
+      @if (isUpdate() && children().length > 0) {
+        <bifi-app-form-section title="Sub-projects" id="sub-projects" [ordinal]="2">
+          <div class="flex flex-col gap-2">
+            @for (child of children(); track child._id) {
+              <div
+                class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                (click)="navigateToChild(child._id)"
+              >
+                <div class="flex flex-col gap-1">
+                  <span class="font-medium text-gray-900">{{ child.name }}</span>
+                  @if (child.number) {
+                    <span class="text-sm text-gray-500">{{ child.number }}</span>
+                  }
+                </div>
+                <i class="pi pi-chevron-right text-gray-400"></i>
+              </div>
+            }
+          </div>
+        </bifi-app-form-section>
+      }
     } @else {
       <p>Loading...</p>
     }

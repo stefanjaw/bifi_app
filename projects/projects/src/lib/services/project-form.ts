@@ -8,6 +8,7 @@ export interface ProjectFormModel {
   stage: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   contactId?: string;
+  parentId?: string;
   dateStart: Date;
   dateEnd: Date;
   sequence: number;
@@ -25,6 +26,7 @@ export class ProjectForm extends BaseForm<ProjectFormModel> {
       stage: ['', [Validators.required]],
       priority: ['medium', [Validators.required]],
       contactId: [''],
+      parentId: [''],
       dateStart: [new Date(), [Validators.required]],
       dateEnd: [new Date(), [Validators.required]],
       sequence: [10],

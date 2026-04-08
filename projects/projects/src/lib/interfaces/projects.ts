@@ -10,6 +10,8 @@ export interface project {
   stage: projectStage;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   contactId?: contact;
+  parentId?: project;
+  children?: project[];
   dateStart: Date;
   dateEnd: Date;
   sequence: number;
