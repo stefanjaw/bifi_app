@@ -1,10 +1,13 @@
-import { Component, input, inject, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, input, inject, computed, DestroyRef, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthForm } from '../../ui/auth-form/auth-form';
 import { authSocialProvider } from '../../interfaces/auth-social-provider';
 import { authFormState } from '../../interfaces/auth-form-state';
 import { authFormModel } from '../../services/auth-form';
 import { LIB_AUTH_SERVICE } from '../../libraries/providers/auth-service-provider';
+import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-auth-page',
@@ -13,6 +16,9 @@ import { LIB_AUTH_SERVICE } from '../../libraries/providers/auth-service-provide
 })
 export class AuthPage {
   private authService = inject(LIB_AUTH_SERVICE);
+  private httpClient = inject(HttpClient);
+  private apiURL = inject(LIBRARY_CONFIG).apiURL;
+  private destroy$ = inject(DestroyRef);
   private router = inject(Router);
 
   // Input from router
@@ -40,6 +46,25 @@ export class AuthPage {
     isLoading: this.authService.isLoading(),
     error: this.authService.error(),
   }));
+
+  backendVersion = signal<string>(''); // Placeholder for backend version, can be set after health check
+
+  constructor() {
+    // Perform health check on component initialization
+    this.httpClient
+      .get<any>(this.getHealthCheckURL())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: healthCheck => {
+          // Health check successful, do nothing
+          this.backendVersion.set(healthCheck.version);
+        },
+        error: () => {
+          // Health check failed, show error toast
+          this.backendVersion.set('N/A');
+        },
+      });
+  }
 
   /**
    * Handle form submission.
@@ -100,5 +125,14 @@ export class AuthPage {
     }
 
     this.authService.clearError();
+  }
+
+  /**
+   * Returns the URL for the health check endpoint.
+   *
+   * @returns {string} The URL for the health check endpoint.
+   */
+  private getHealthCheckURL() {
+    return `${this.apiURL}${this.apiURL[this.apiURL.length - 1] === '/' ? '' : '/'}health-check`;
   }
 }

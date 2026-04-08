@@ -34,6 +34,7 @@ export class AuthForm {
   // Inputs
   formState = input.required<authFormState>();
   socialProviders = input<authSocialProvider[]>([]);
+  backendVersion = input<string>('');
 
   // Outputs
   handleSubmit = output<any>();

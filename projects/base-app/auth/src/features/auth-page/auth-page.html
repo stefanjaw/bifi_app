@@ -1,6 +1,7 @@
 <bifi-app-auth-form
   [formState]="formState()"
   [socialProviders]="socialProviders()"
+  [backendVersion]="backendVersion()"
   (handleSubmit)="handleSubmit($event)"
   (handleSocialLogin)="handleSocialLogin($event)"
   (handleToggleMode)="handleToggleMode()"
