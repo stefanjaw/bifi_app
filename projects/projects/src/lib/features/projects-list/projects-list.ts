@@ -56,12 +56,12 @@ export class ProjectsList {
   timelineItems = computed<TimelineItem[]>(() => {
     const docs = this.projects.value()?.docs ?? [];
     return docs
-      .filter(p => p.dateStart)
-      .sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime())
+      .filter(p => p.dateEnd)
+      .sort((a, b) => new Date(a.dateEnd).getTime() - new Date(b.dateEnd).getTime())
       .map(p => ({
         label: p.name,
-        date: p.dateStart,
-        type: 'start' as const,
+        date: p.dateEnd,
+        type: 'end' as const,
         action: () => this.router.navigate(['../edit', p._id], { relativeTo: this.route }),
       }));
   });

@@ -15,10 +15,14 @@ export const projectColumns: tableColumn<project>[] = [
     sortable: true,
   },
   {
+    field: 'contactId.fullName',
+    title: 'Contact',
+    type: 'text',
+  },
+  {
     field: 'description',
     title: 'Description',
-    parseField: (value: string | null | undefined) =>
-      value && value.trim() ? value : 'Not set',
+    parseField: (value: string | null | undefined) => (value && value.trim() ? value : 'Not set'),
     type: 'text',
   },
   {

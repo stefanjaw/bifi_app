@@ -13,6 +13,7 @@ export interface ganttTask {
   isExpanded: boolean;
   stage?: taskStage;
   priority?: string;
+  projectName?: string;
 }
 
 export interface ganttDependency {

@@ -176,6 +176,7 @@ export class TasksMainView {
       isExpanded: this.findNode(previousTasks, t._id)?.isExpanded || false,
       stage: t.stage,
       priority: t.priority,
+      projectName: t.projectId?.name,
     }));
 
     const map = new Map(nodes.map(n => [n.id, n]));
