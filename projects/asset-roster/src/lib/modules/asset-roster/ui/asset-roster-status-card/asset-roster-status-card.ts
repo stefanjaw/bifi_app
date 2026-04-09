@@ -15,6 +15,7 @@ export class AssetRosterStatusCardComponent {
 
   variant = input.required<statusVariant>();
   units = input.required<number>();
+  compact = input<boolean>(false);
 
   state = computed<statusCardState>(() => {
     const variant = this.variant();

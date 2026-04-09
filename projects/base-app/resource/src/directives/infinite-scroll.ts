@@ -1,5 +1,6 @@
 /* eslint-disable @angular-eslint/directive-selector */
 import {
+  afterNextRender,
   DestroyRef,
   Directive,
   effect,
@@ -7,6 +8,7 @@ import {
   inject,
   input,
   ResourceRef,
+  signal,
 } from '@angular/core';
 import { PaginationManager } from '../services/pagination-manager';
 import { pagination } from '../interfaces/pagination';
@@ -29,39 +31,57 @@ export class InfiniteScroll {
   // state
   private loadingNextPage = false;
   private handleScroll = (event: Event) => this.onContainerScroll(event);
+  private scrollContainer = signal<HTMLElement | null>(null);
   isPaginatedFN = isPaginated;
 
   /**
+   * Walks up the DOM from the given element and returns the first ancestor
+   * whose computed overflow-y style is scrollable (auto, scroll, overlay).
+   * Falls back to document.documentElement if none is found.
+   */
+  private findScrollableAncestor(el: HTMLElement): HTMLElement {
+    let current = el.parentElement;
+    while (current && current !== document.documentElement) {
+      const overflowY = getComputedStyle(current).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return document.documentElement;
+  }
+
+  /**
    * Constructor for the InfiniteScroll directive.
-   * Listens for scroll events on the container element and adds a scroll event listener.
-   * If there is no resource, it removes the scroll event listener.
-   * If there is a resource, it adds the scroll event listener and resets the loadingNextPage flag when the resource is no longer loading.
-   * It also resets the pagination options and removes the scroll event listener when the component is destroyed.
+   * After first render, finds the nearest scrollable ancestor and stores it in a signal.
+   * The main effect reacts to both the resource and the scroll container signal, attaching
+   * the scroll listener to the outer container instead of the directive's own host element.
+   * This allows the table to expand without a height cap while keeping threshold detection
+   * correct via the outer scroll container.
    */
   constructor() {
-    // Listen for scroll events on the container element
-    const scrollContainer = this.el.nativeElement;
+    // After first render, locate and store the nearest scrollable ancestor
+    afterNextRender(() => {
+      if (!this.el.nativeElement) return;
+      this.scrollContainer.set(this.findScrollableAncestor(this.el.nativeElement));
+    });
 
-    // if there is no scrollContainer, return
-    if (!scrollContainer) return;
-
+    // Attach/detach scroll listener whenever the resource or scroll container changes
     effect(() => {
       const resource = this.resource();
+      const container = this.scrollContainer();
 
-      // if there is no resource, return and remove scroll event listener
+      if (!container) return;
+
       if (!resource) {
-        scrollContainer.removeEventListener('scroll', this.handleScroll);
+        container.removeEventListener('scroll', this.handleScroll);
         return;
       }
 
-      // if there is a resource, add scroll event listener
-      scrollContainer.addEventListener('scroll', this.handleScroll, {
-        passive: true,
-      });
+      container.addEventListener('scroll', this.handleScroll, { passive: true });
 
-      // Cleanup function to remove the scroll event listener
       return () => {
-        scrollContainer.removeEventListener('scroll', this.handleScroll);
+        container.removeEventListener('scroll', this.handleScroll);
       };
     });
 
@@ -77,9 +97,9 @@ export class InfiniteScroll {
     // Reset the pagination options
     this.paginationManager.resetPaginationOptions();
 
-    // remove scroll event listener
+    // Remove scroll event listener on destroy
     this.destroy$.onDestroy(() => {
-      scrollContainer.removeEventListener('scroll', this.handleScroll);
+      this.scrollContainer()?.removeEventListener('scroll', this.handleScroll);
     });
   }
 

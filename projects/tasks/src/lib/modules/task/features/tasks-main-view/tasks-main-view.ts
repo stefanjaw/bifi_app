@@ -72,6 +72,7 @@ export class TasksMainView {
   viewMode = signal<viewMode>('Day');
   viewState = signal<'gantt' | 'list' | 'timeline'>('gantt');
   isListView = computed(() => this.viewState() === 'list');
+  allExpanded = signal(false);
   isLoading = this.tasksResource.isLoading;
   error = this.tasksResource.error;
 
@@ -309,6 +310,16 @@ export class TasksMainView {
     const tree = this.tree();
     this.setExpandedAll(tree, false);
     this.visible.set(this.flattenVisible(tree));
+  }
+
+  toggleExpandCollapseAll() {
+    if (this.allExpanded()) {
+      this.collapseAll();
+      this.allExpanded.set(false);
+    } else {
+      this.expandAll();
+      this.allExpanded.set(true);
+    }
   }
 
   removeFilterChip(id: string): void {

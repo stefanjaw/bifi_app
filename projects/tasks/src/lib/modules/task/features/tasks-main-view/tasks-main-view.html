@@ -14,17 +14,10 @@
     ></p-button>
 
     <p-button
-      label="Expand All"
+      [label]="allExpanded() ? 'Collapse All' : 'Expand All'"
       severity="secondary"
-      icon="pi pi-angle-double-down"
-      (onClick)="expandAll()"
-    ></p-button>
-
-    <p-button
-      label="Collapse All"
-      severity="secondary"
-      icon="pi pi-angle-double-up"
-      (onClick)="collapseAll()"
+      [icon]="allExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
+      (onClick)="toggleExpandCollapseAll()"
     ></p-button>
 
     <div class="flex items-center space-x-3">
@@ -71,7 +64,11 @@
           [class]="viewState() === 'gantt' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
-          <i class="pi pi-chart-bar text-xs"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+            <rect x="0" y="1" width="8" height="2" rx="1"/>
+            <rect x="3" y="5" width="7" height="2" rx="1"/>
+            <rect x="1" y="9" width="6" height="2" rx="1"/>
+          </svg>
           Gantt
         </button>
         <button

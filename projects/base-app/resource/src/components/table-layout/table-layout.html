@@ -2,7 +2,6 @@
 @let pagination = state.pagination;
 
 <div
-  [ngClass]="{ 'h-150 overflow-y-scroll': infiniteScroll() }"
   [bifiAppInfiniteScroll]="infiniteScroll() ? $any(data()) : null"
 >
   <p-table
