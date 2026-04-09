@@ -1,22 +1,3 @@
-/**
- * FilterBar — stackable advanced filter component.
- *
- * @example
- * // 1. Define available filter fields (in your list component)
- * filterFields: filterFieldConfig<MyEntity>[] = [
- *   { field: 'name',      label: 'Name',        type: 'string'  },
- *   { field: 'amount',    label: 'Amount',       type: 'number'  },
- *   { field: 'createdAt', label: 'Created date', type: 'date'    },
- *   { field: 'active',    label: 'Active',       type: 'boolean' },
- * ];
- *
- * // 2. Drop the component into the template (alongside SearchBar if needed):
- * <bifi-app-filter-bar [filterFields]="filterFields" />
- *
- * Requires the host component (or a parent) to provide provideResourceManager().
- * Each active, complete row is combined with AND logic and pushed to FilterManager
- * under the stable group id 'filter-bar', so it coexists with SearchBar filters.
- */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -103,18 +84,28 @@ export class FilterBar implements OnDestroy {
   rows = signal<FilterRow[]>([]);
 
   fieldOptions = computed(() =>
-    this.filterFields().map(f => ({ label: f.label, value: f.field as string }))
+    this.filterFields().map(f => ({
+      label: f.label,
+      value: f.field as string,
+    }))
   );
+
+  // ✅ Helper to determine if a row is valid
+  private isRowComplete(r: FilterRow): boolean {
+    return (
+      !!r.field &&
+      !!r.operator &&
+      (r.operator === 'empty' ||
+        r.type === 'boolean' || // ✅ boolean always valid (true/false)
+        (r.value !== null && r.value !== undefined && r.value !== ''))
+    );
+  }
 
   activeChips = computed<FilterChip[]>(() => {
     const fields = this.filterFields();
+
     return this.rows()
-      .filter(
-        r =>
-          r.field &&
-          r.operator &&
-          (r.operator === 'empty' || (r.value !== null && r.value !== undefined && r.value !== ''))
-      )
+      .filter(r => this.isRowComplete(r))
       .map(r => {
         const fieldConfig = fields.find(f => (f.field as string) === r.field);
         const operatorOptions = r.type ? (OPERATORS_BY_TYPE[r.type] ?? []) : [];
@@ -140,7 +131,7 @@ export class FilterBar implements OnDestroy {
       });
   });
 
-  operatorsFor(type: string | null): { label: string; value: filter['operator'] }[] {
+  operatorsFor(type: string | null) {
     if (!type) return [];
     return OPERATORS_BY_TYPE[type] ?? [];
   }
@@ -148,12 +139,8 @@ export class FilterBar implements OnDestroy {
   constructor() {
     effect(() => {
       const rows = this.rows();
-      const completeRows = rows.filter(
-        r =>
-          r.field &&
-          r.operator &&
-          (r.operator === 'empty' || (r.value !== null && r.value !== undefined && r.value !== ''))
-      );
+
+      const completeRows = rows.filter(r => this.isRowComplete(r));
 
       this.filterManager.removeFilter(this.FILTER_ID);
 
@@ -183,7 +170,13 @@ export class FilterBar implements OnDestroy {
   addRow(): void {
     this.rows.update(rows => [
       ...rows,
-      { id: crypto.randomUUID(), field: null, operator: null, value: null, type: null },
+      {
+        id: crypto.randomUUID(),
+        field: null,
+        operator: null,
+        value: null,
+        type: null,
+      },
     ]);
   }
 
@@ -197,18 +190,37 @@ export class FilterBar implements OnDestroy {
 
   onFieldChange(rowId: string, fieldName: string | null): void {
     const fieldConfig = this.filterFields().find(f => (f.field as string) === fieldName);
+
     this.rows.update(rows =>
-      rows.map(r =>
-        r.id === rowId
-          ? { ...r, field: fieldName, operator: null, value: null, type: fieldConfig?.type ?? null }
-          : r
-      )
+      rows.map(r => {
+        if (r.id !== rowId) return r;
+
+        const isBoolean = fieldConfig?.type === 'boolean';
+
+        return {
+          ...r,
+          field: fieldName,
+          type: fieldConfig?.type ?? null,
+          operator: isBoolean ? '==' : null, // ✅ auto operator
+          value: isBoolean ? true : null, // ✅ default TRUE
+        };
+      })
     );
   }
 
   onOperatorChange(rowId: string, operator: filter['operator'] | null): void {
     this.rows.update(rows =>
-      rows.map(r => (r.id === rowId ? { ...r, operator, value: null } : r))
+      rows.map(r => {
+        if (r.id !== rowId) return r;
+
+        let value: any = null;
+
+        if (r.type === 'boolean') {
+          value = true; // ✅ ensure default true
+        }
+
+        return { ...r, operator, value };
+      })
     );
   }
 
