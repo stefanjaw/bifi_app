@@ -54,6 +54,7 @@ export class TasksMainView {
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private filterManager = inject(FilterManager);
   private destroy$ = inject(DestroyRef);
+  private getInactive = signal<boolean | null>(false);
 
   // filter params derived from the FilterManager
   private filterParams = computed(() => {
@@ -62,7 +63,10 @@ export class TasksMainView {
   });
 
   // data (reacts to search filter changes automatically)
-  private tasksResource = this.crudTasks.get({ searchParams: this.filterParams });
+  private tasksResource = this.crudTasks.get({
+    searchParams: this.filterParams,
+    getInactive: this.getInactive,
+  });
 
   // states
   viewMode = signal<viewMode>('Day');
@@ -112,6 +116,20 @@ export class TasksMainView {
   updateTasksFormDialog = viewChild<UpdateTasksFormDialog>('updateTasksFormDialog');
 
   constructor() {
+    effect(() => {
+      const filters = this.filterManager.filters();
+
+      if (filters.length > 0) {
+        const filterObject = this.filterManager.getFilterObject();
+
+        // If the filter object contains the 'active' property, we set getInactive to null to include both active and inactive records in the results.
+        if (this.filterManager.hasActivePropertyUtil(filterObject)) this.getInactive.set(null);
+        else this.getInactive.set(false);
+      } else {
+        this.getInactive.set(false);
+      }
+    });
+
     // Listen for changes to the tasksResource
     effect(() => {
       const flat = this.flat();

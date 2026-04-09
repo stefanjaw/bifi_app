@@ -193,6 +193,23 @@ export class FilterManager {
   }
 
   /**
+   * Checks if an object or any of its nested objects contain the 'active' property.
+   * @param obj The object to check
+   * @returns {boolean} True if the object or any of its nested objects contain the 'active' property, false otherwise.
+   */
+  hasActivePropertyUtil(obj: any): boolean {
+    if (obj == null || typeof obj !== 'object') return false;
+
+    if ('active' in obj) return true;
+
+    for (const key of Object.keys(obj)) {
+      if (this.hasActivePropertyUtil(obj[key])) return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Type guard to check if a given filter is a filterGroup.
    *
    * A filterGroup is an object with a 'filters' property, so this function

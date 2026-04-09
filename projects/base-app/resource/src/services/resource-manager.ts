@@ -26,7 +26,7 @@ export class ResourceManager<T> {
   private _searchParams = signal({});
   private service = inject<ApiRequestManager<T>>(RESOURCE_API_SERVICE_TOKEN);
   private destroy$ = inject(DestroyRef);
-  private _getInactive = signal(false);
+  private _getInactive = signal<boolean | null>(false);
 
   toggleInactiveRecords = () => this._getInactive.update(value => !value);
 
@@ -39,9 +39,16 @@ export class ResourceManager<T> {
       const filters = this.filterManager.filters();
 
       if (filters.length > 0) {
-        this._searchParams.set(this.filterManager.getFilterObject());
+        const filterObject = this.filterManager.getFilterObject();
+
+        this._searchParams.set(filterObject);
+
+        // If the filter object contains the 'active' property, we set _getInactive to null to include both active and inactive records in the results.
+        if (this.filterManager.hasActivePropertyUtil(filterObject)) this._getInactive.set(null);
+        else this._getInactive.set(false);
       } else {
         this._searchParams.set({});
+        this._getInactive.set(false);
       }
     });
 
