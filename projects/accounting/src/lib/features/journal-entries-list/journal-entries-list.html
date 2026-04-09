@@ -10,23 +10,16 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="entries" [onClickRow]="goToEditEntry" clickRowPermission="accounting/journal-entries/update:view"  >
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="entries"
+  [onClickRow]="goToEditEntry"
+  clickRowPermission="accounting/journal-entries/update:view"
+>
   <ng-template #actions let-element>
-    <!-- <p-button
-      *bifiAppHasPermission="'accounting/journal-entries/update:view'"
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      routerLink="../journal-entries/edit/{{ element._id }}"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'accounting/journal-entries:delete:model'"
-      severity="danger"
-      icon="pi pi-trash"
-      (onClick)="delete(element._id)"
-    ></p-button> -->
-  <bifi-app-buttons-actions
-      (deleteClicked)="delete(element._id);"
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(element._id)"
+      resource="accounting/journal-entries"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

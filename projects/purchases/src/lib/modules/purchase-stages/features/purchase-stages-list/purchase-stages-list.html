@@ -15,24 +15,16 @@
   [searchFilters]="purchaseStageFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="purchaseStageColumns" [data]="purchaseStages" [onClickRow]="goToEditStage" clickRowPermission="purchase-stages/update:view"  >
+<bifi-app-table-layout
+  [columns]="purchaseStageColumns"
+  [data]="purchaseStages"
+  [onClickRow]="goToEditStage"
+  clickRowPermission="purchase-stages/update:view"
+>
   <ng-template #actions let-row>
-    <!-- <p-button
-      *bifiAppHasPermission="'purchase-stages/update:view'"
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'purchase-stages:delete:model'"
-      severity="danger"
-      label="Delete"
-      (onClick)="deleteStage(row._id)"
-      icon="pi pi-trash"
-    ></p-button> -->
- <bifi-app-buttons-actions
-      (deleteClicked)="deleteStage(row._id);"
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteStage(row._id)"
+      resource="purchase-stages"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

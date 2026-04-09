@@ -15,7 +15,12 @@
   [searchFilters]="warehouseFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="warehouseColumns" [data]="entries" [onClickRow]="gotoEditWarehouse" clickRowPermission="inventory/warehouses/update:view">
+<bifi-app-table-layout
+  [columns]="warehouseColumns"
+  [data]="entries"
+  [onClickRow]="gotoEditWarehouse"
+  clickRowPermission="inventory/warehouses/update:view"
+>
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
@@ -26,6 +31,7 @@
     ></p-button>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"
+      resource="inventory/warehouses"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

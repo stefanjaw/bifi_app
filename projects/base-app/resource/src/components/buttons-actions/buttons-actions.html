@@ -1,14 +1,19 @@
-<section class="col-span-full flex {{ position() === 'end' ? 'justify-end' : 'justify-start' }} gap-2">
-
-    <!-- Edit Button -->
-    <!-- <p-button type="button" (click)="editClicked.emit(); $event.stopPropagation()"
+<section
+  class="col-span-full flex {{ position() === 'end' ? 'justify-end' : 'justify-start' }} gap-2"
+>
+  <!-- Edit Button -->
+  <!-- <p-button type="button" (click)="editClicked.emit(); $event.stopPropagation()"
         *bifiAppHasPermission="editPermission" icon="pi pi-pencil" [label]="'Edit'" severity="secondary"
         [size]="'small'" [style]="{ 'background-color': 'darkslategrey', 'border-color': 'darkslategrey' }"></p-button> -->
 
-    <!-- Delete Button -->
-    <p-button type="button" (click)="deleteClicked.emit(); $event.stopPropagation()"
-        severity="danger"
-        *bifiAppHasPermission="deletePermission" icon="pi pi-trash" [size]="'small'"
-        [variant]="'text'"></p-button>
-
+  <!-- Delete Button -->
+  <p-button
+    type="button"
+    (click)="deleteClicked.emit(); $event.stopPropagation()"
+    severity="danger"
+    *bifiAppHasPermission="deletePermission"
+    icon="pi pi-trash"
+    [size]="'small'"
+    [variant]="'text'"
+  ></p-button>
 </section>

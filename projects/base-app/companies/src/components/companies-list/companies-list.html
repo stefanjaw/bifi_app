@@ -15,32 +15,23 @@
   [searchFilters]="companyFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="companyColumns" [data]="companies" [onClickRow]="goToEditCompany" clickRowPermission="companies/update:view"  >
+<bifi-app-table-layout
+  [columns]="companyColumns"
+  [data]="companies"
+  [onClickRow]="goToEditCompany"
+  clickRowPermission="companies/update:view"
+>
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
       label="View"
       icon="pi pi-eye"
       routerLink="../detail/{{ element._id }}"
+      (onClick)="$event.stopPropagation(); $event.preventDefault()"
     ></p-button>
-    <!-- <p-button
-      *bifiAppHasPermission="'companies/update:view'"
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      routerLink="../edit/{{ element._id }}"
-    ></p-button>
-        <p-button
-      *bifiAppHasPermission="'companies:delete:model'"
-      severity="danger"
-      label="Delete"
-      icon="pi pi-trash"
-      (onClick)="deleteCompany(element._id)"
-    ></p-button> -->
-
-        <bifi-app-buttons-actions
+    <bifi-app-buttons-actions
       (deleteClicked)="deleteCompany(element._id)"
+      resource="companies"
     ></bifi-app-buttons-actions>
-
   </ng-template>
 </bifi-app-table-layout>

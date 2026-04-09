@@ -14,14 +14,13 @@ export class ButtonsActions {
   deleteClicked = output<void>();
 
   showDelete = input<boolean>(true);
-
-  permission = input<permission>();
+  resource = input<string>();
 
   get editPermission(): permission {
-    return `${this.permission()}/update:view` as permission;
+    return `${this.resource()}/update:view` as permission;
   }
 
   get deletePermission(): permission {
-    return `${this.permission()}:delete:model` as permission;
+    return `${this.resource()}:delete:model` as permission;
   }
 }
