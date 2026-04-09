@@ -29,9 +29,14 @@
   </div>
 </div>
 
-@if (viewState() === 'list') {
-  <bifi-app-search-bar label="Search by name or description"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [searchFilters]="projectFilters"
+  label="Search by name or description"
+></bifi-app-search-bar>
 
+<bifi-app-filter-bar [filterFields]="projectFilterFields"></bifi-app-filter-bar>
+
+@if (viewState() === 'list') {
   <bifi-app-table-layout
     [infiniteScroll]="false"
     [columns]="projectColumns"
@@ -40,13 +45,6 @@
     clickRowPermission="projects/update:view"
   >
     <ng-template #actions let-element>
-      <!-- <p-button
-        severity="danger"
-        label="Delete"
-        icon="pi pi-trash"
-        (onClick)="deleteProject(element._id); $event.stopPropagation()"
-        *bifiAppHasPermission="'projects:delete:model'"
-      ></p-button> -->
       <bifi-app-buttons-actions
         (deleteClicked)="deleteProject(element._id)"
       ></bifi-app-buttons-actions>

@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import {
   ButtonsActions,
+  FilterBar,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -22,6 +23,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
 import { projectColumns } from '../../libraries/project-columns';
 import { project } from '../../interfaces/projects';
+import { projectFilterFields, projectFilters } from '../../libraries/project-filters';
 
 @Component({
   selector: 'bifi-app-projects-list',
@@ -37,6 +39,7 @@ import { project } from '../../interfaces/projects';
     HasPermission,
     ButtonsActions,
     TimelineView,
+    FilterBar,
   ],
   templateUrl: './projects-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +52,8 @@ export class ProjectsList {
   private route = inject(ActivatedRoute);
 
   projectColumns = projectColumns;
+  projectFilters = projectFilters;
+  projectFilterFields = projectFilterFields;
   projects = this.resourceManager.data;
 
   viewState = signal<'list' | 'timeline'>('list');
