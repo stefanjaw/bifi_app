@@ -6,8 +6,8 @@ import { BaseForm } from '@avalantec/base-app/form';
 export interface ContactFormModel {
   name: string;
   lastName: string;
-  phoneNumber: string;
-  email: string;
+  phoneNumber?: string;
+  email?: string;
   website?: string;
   parentId?: string;
   type: 'individual' | 'company';
@@ -49,8 +49,8 @@ export class ContactForm extends BaseForm<ContactFormModel> {
     return this.fb.group<ContactFormModel>({
       name: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
-      phoneNumber: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: [''],
+      email: ['', [Validators.email]],
       website: [
         '',
         // [Validators.pattern(/^(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w\-.]*)*\/?$/)],

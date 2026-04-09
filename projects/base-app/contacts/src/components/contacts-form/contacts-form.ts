@@ -155,6 +155,8 @@ export class ContactsForm {
     if (!rawValue.zipCode) delete rawValue.zipCode;
     if (!rawValue.streetAddress) delete rawValue.streetAddress;
     if (!rawValue.streetAddress2) delete rawValue.streetAddress2;
+    if (!rawValue.phoneNumber) delete rawValue.phoneNumber;
+    if (!rawValue.email) delete rawValue.email;
     if (!rawValue.website) delete rawValue.website;
 
     // if is individual and childIds had something, then erease array
