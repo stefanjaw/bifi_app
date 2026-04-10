@@ -9,10 +9,16 @@
   </a>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="invoices" [onClickRow]="gotoEditInvoice" clickRowPermission="accounting/invoices/update:view">
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="invoices"
+  [onClickRow]="gotoEditInvoice"
+  clickRowPermission="accounting/invoices/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"
+      resource="accounting/invoices"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

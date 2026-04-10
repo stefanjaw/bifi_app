@@ -10,15 +10,18 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar
-  label="Search by name"
-  [searchFilters]="filters"
-></bifi-app-search-bar>
+<bifi-app-search-bar label="Search by name" [searchFilters]="filters"></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="columns" [data]="stages" [onClickRow]="gotoEditProjectStage" clickRowPermission="project-stages/update:view">
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="stages"
+  [onClickRow]="gotoEditProjectStage"
+  clickRowPermission="project-stages/update:view"
+>
   <ng-template #actions let-row>
     <bifi-app-buttons-actions
       (deleteClicked)="deleteStage(row._id)"
+      resource="project-stages"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

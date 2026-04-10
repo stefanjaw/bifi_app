@@ -15,24 +15,16 @@
   [searchFilters]="facilityFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="facilityColumns" [data]="facilities" [onClickRow]="gotoEditFacility" clickRowPermission="facilities/update:view">
-    <!-- <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'facilities/update:view'"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'facilities:delete:model'"
-      severity="danger"
-      label="Delete"
-      (onClick)="deleteFacility(row._id)"
-      icon="pi pi-trash"
-    ></p-button> -->
+<bifi-app-table-layout
+  [columns]="facilityColumns"
+  [data]="facilities"
+  [onClickRow]="gotoEditFacility"
+  clickRowPermission="facilities/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
-      (deleteClicked)="deleteFacility(element._id);"
+      (deleteClicked)="deleteFacility(element._id)"
+      resource="facilities"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

@@ -24,6 +24,7 @@
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="deleteEntry(element._id)"
+      resource="sales/orders"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

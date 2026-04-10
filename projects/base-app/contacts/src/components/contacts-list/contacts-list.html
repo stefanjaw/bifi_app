@@ -30,7 +30,8 @@
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
-      (deleteClicked)="deleteContact(element._id);"
+      (deleteClicked)="deleteContact(element._id)"
+      resource="contacts"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

@@ -10,15 +10,18 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar
-  label="Search by name"
-  [searchFilters]="uomFilters"
-></bifi-app-search-bar>
+<bifi-app-search-bar label="Search by name" [searchFilters]="uomFilters"></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="uomColumns" [data]="entries" [onClickRow]="gotoEditUom" clickRowPermission="inventory/uoms/update:view">
+<bifi-app-table-layout
+  [columns]="uomColumns"
+  [data]="entries"
+  [onClickRow]="gotoEditUom"
+  clickRowPermission="inventory/uoms/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"
+      resource="inventory/uoms"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

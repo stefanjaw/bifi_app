@@ -1,85 +1,97 @@
-<section class="flex justify-between items-center gap-2 mb-4">
-  <h1 class="text-2xl font-bold">Asset Dashboard</h1>
-  <div class="flex gap-2">
-    <p-selectButton
-      [options]="optionsView"
-      optionValue="value"
-      (onChange)="isGrid.set($event.value)"
-    >
-      <ng-template pTemplate="item" let-item>
-        <i [class]="item.icon"></i>
-        {{ item.label }}
-      </ng-template>
-    </p-selectButton>
+<div #scrollSentinel class="h-0"></div>
 
-    <p-button
-      label="Reporting"
-      severity="success"
-      icon="pi pi-file-pdf"
-      (onClick)="downloadReportDialog.openDialog()"
-      *bifiAppHasPermission="'reporting/generate-report:read:model'"
-      [disabled]="downloadReportDialog.reportingTemplates().length === 0"
-      [pTooltip]="
-        downloadReportDialog.reportingTemplates().length === 0
-          ? 'Configure the Report Template under Settings/Reporting'
-          : undefined
-      "
-    ></p-button>
-    <p-button
-      label="Import CSV"
-      severity="success"
-      icon="pi pi-upload"
-      (onClick)="fileInput.click()"
-      *bifiAppHasPermission="'asset-rosters/import:create:model'"
-    ></p-button>
-    <p-button
-      label="Export CSV"
-      icon="pi pi-download"
-      (onClick)="exportCSV()"
-      *bifiAppHasPermission="'asset-rosters/export:read:model'"
-    ></p-button>
-    <p-button
-      label="Add New Asset"
-      severity="secondary"
-      icon="pi pi-plus"
-      (onClick)="createDialog.openDialog()"
-      *bifiAppHasPermission="'asset-rosters:create:model'"
-    ></p-button>
+<section
+  class="sticky top-0 z-10 bg-white py-4 px-6 flex flex-col gap-3 transition-shadow duration-300"
+  [class.shadow-md]="isScrolled()"
+>
+  <div class="flex justify-between items-center gap-2">
+    <h1 class="text-2xl font-bold">Asset Dashboard</h1>
+    <div class="flex gap-2">
+      <p-selectButton
+        [options]="optionsView"
+        optionValue="value"
+        (onChange)="isGrid.set($event.value)"
+      >
+        <ng-template pTemplate="item" let-item>
+          <i [class]="item.icon"></i>
+          {{ item.label }}
+        </ng-template>
+      </p-selectButton>
 
-    <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
+      <p-button
+        label="Reporting"
+        severity="success"
+        icon="pi pi-file-pdf"
+        (onClick)="downloadReportDialog.openDialog()"
+        *bifiAppHasPermission="'reporting/generate-report:read:model'"
+        [disabled]="downloadReportDialog.reportingTemplates().length === 0"
+        [pTooltip]="
+          downloadReportDialog.reportingTemplates().length === 0
+            ? 'Configure the Report Template under Settings/Reporting'
+            : undefined
+        "
+      ></p-button>
+      <p-button
+        label="Import CSV"
+        severity="success"
+        icon="pi pi-upload"
+        (onClick)="fileInput.click()"
+        *bifiAppHasPermission="'asset-rosters/import:create:model'"
+      ></p-button>
+      <p-button
+        label="Export CSV"
+        icon="pi pi-download"
+        (onClick)="exportCSV()"
+        *bifiAppHasPermission="'asset-rosters/export:read:model'"
+      ></p-button>
+      <p-button
+        label="Add New Asset"
+        severity="secondary"
+        icon="pi pi-plus"
+        (onClick)="createDialog.openDialog()"
+        *bifiAppHasPermission="'asset-rosters:create:model'"
+      ></p-button>
+
+      <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
+    </div>
   </div>
-</section>
 
-<section class="flex flex-col lg:flex-row gap-4 mb-4">
-  <bifi-app-asset-roster-status-card
-    [units]="assetRostersUnderServiceCount.value() || 0"
-    variant="under-service"
-    class="w-full"
-  ></bifi-app-asset-roster-status-card>
+  <div class="flex flex-col lg:flex-row gap-2">
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersUnderServiceCount.value() || 0"
+      variant="under-service"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-  <bifi-app-asset-roster-status-card
-    [units]="assetRostersOverdueCount.value() || 0"
-    variant="overdue"
-    class="w-full"
-  ></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersOverdueCount.value() || 0"
+      variant="overdue"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-  <bifi-app-asset-roster-status-card
-    [units]="assetRostersDueCount.value() || 0"
-    variant="due"
-    class="w-full"
-  ></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersDueCount.value() || 0"
+      variant="due"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-  <bifi-app-asset-roster-status-card
-    [units]="assetRostersInPMCount.value() || 0"
-    variant="in-pm"
-    class="w-full"
-  ></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersInPMCount.value() || 0"
+      variant="in-pm"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-  <bifi-app-asset-roster-status-card
-    [units]="assetRostersPMNotSetCount.value() || 0"
-    variant="pm-not-set"
-    class="w-full"
-  ></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersPMNotSetCount.value() || 0"
+      variant="pm-not-set"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
+  </div>
 </section>
 
 <section class="flex flex-col md:flex-row gap-2 mb-4">
@@ -114,7 +126,7 @@
   <!-- grid -->
 } @else {
   <div
-    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 h-150 overflow-y-scroll"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
     [bifiAppInfiniteScroll]="$any(assetRosters)"
   >
     @for (element of assetRosters.value()?.docs; track element._id) {
@@ -174,14 +186,6 @@
             <span class="text-right capitalize">
               {{ element.maintenanceDate }}
             </span>
-            <!-- <p-button
-              label="View details"
-              icon="pi pi-eye"
-              size="small"
-              severity="secondary"
-              routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
-              *bifiAppHasPermission="'asset-rosters/update:view'"
-            ></p-button> -->
           </div>
         </ng-template>
       </p-card>

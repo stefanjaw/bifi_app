@@ -1,11 +1,14 @@
 import { assetRosterFilters } from '../../libraries/asset-roster-filters';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   effect,
+  ElementRef,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { assetRosterColumns } from '../../libraries/asset-roster-columns';
 import { assetRoster } from '../../interfaces/asset-roster';
@@ -77,6 +80,10 @@ export class AssetRosterList {
 
   //View
   isGrid = signal<boolean>(false);
+
+  // Scroll detection
+  private scrollSentinel = viewChild<ElementRef>('scrollSentinel');
+  isScrolled = signal(false);
 
   optionsView = [
     { label: 'List', value: false, icon: 'pi pi-table' },
@@ -155,6 +162,19 @@ export class AssetRosterList {
           this.assetRostersPMNotSetCount.reload();
         }
       });
+
+    afterNextRender(() => {
+      const sentinel = this.scrollSentinel()?.nativeElement;
+      if (!sentinel) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => this.isScrolled.set(!entry.isIntersecting),
+        { threshold: 0 }
+      );
+      observer.observe(sentinel);
+
+      this.destroy$.onDestroy(() => observer.disconnect());
+    });
 
     effect(() => {
       const assets = this.assetRosters.value()?.docs;

@@ -47,6 +47,7 @@
     <ng-template #actions let-element>
       <bifi-app-buttons-actions
         (deleteClicked)="deleteProject(element._id)"
+        resource="projects"
       ></bifi-app-buttons-actions>
     </ng-template>
   </bifi-app-table-layout>

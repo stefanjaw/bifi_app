@@ -10,10 +10,16 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="salesTargetColumns" [data]="entries" [onClickRow]="gotoEditTarget" clickRowPermission="sales/targets/update:view">
+<bifi-app-table-layout
+  [columns]="salesTargetColumns"
+  [data]="entries"
+  [onClickRow]="gotoEditTarget"
+  clickRowPermission="sales/targets/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="deleteEntry(element._id)"
+      resource="sales/targets"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

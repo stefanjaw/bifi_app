@@ -1,29 +1,27 @@
 <h1 class="text-2xl font-bold mb-4">Roles</h1>
 
 <div class="flex gap-2 mb-4">
-  <p-button label="Add New Role" severity="secondary" icon="pi pi-plus" [routerLink]="['../create']"
-    *bifiAppHasPermission="'roles/create:view'"></p-button>
+  <p-button
+    label="Add New Role"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'roles/create:view'"
+  ></p-button>
 </div>
 
 <bifi-app-search-bar label="Search by name" [searchFilters]="roleFilters"></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="roleColumns" [data]="roles" [onClickRow]="goToEditRole"
-  clickRowPermission="roles/update:view">
+<bifi-app-table-layout
+  [columns]="roleColumns"
+  [data]="roles"
+  [onClickRow]="goToEditRole"
+  clickRowPermission="roles/update:view"
+>
   <ng-template #actions let-row>
-    <bifi-app-buttons-actions (deleteClicked)="deleteRole(row._id);"></bifi-app-buttons-actions>
-    <!-- <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'roles/update:view'"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'roles:delete:model'"
-      severity="danger"
-      label="Delete"
-      (click)="deleteRole(row._id)"
-      icon="pi pi-trash"
-    ></p-button> -->
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteRole(row._id)"
+      resource="roles"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

@@ -10,18 +10,16 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="payments" [onClickRow]="goToEditPayment" clickRowPermission="accounting/payments/update:view">
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="payments"
+  [onClickRow]="goToEditPayment"
+  clickRowPermission="accounting/payments/update:view"
+>
   <ng-template #actions let-element>
-    <!-- <p-button
-      *bifiAppHasPermission="'accounting/payments:delete:model'"
-      severity="danger"
-      icon="pi pi-trash"
-      (onClick)="delete(element._id)"
-    ></p-button> -->
-  
-  <bifi-app-buttons-actions
-      (deleteClicked)="delete(element._id);"
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(element._id)"
+      resource="accounting/payments"
     ></bifi-app-buttons-actions>
-    
   </ng-template>
 </bifi-app-table-layout>

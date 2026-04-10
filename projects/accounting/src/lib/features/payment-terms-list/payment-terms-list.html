@@ -10,10 +10,16 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="columns" [data]="paymentTerms" [onClickRow]="gotoEditPaymentTerm" clickRowPermission="accounting/payment-terms/update:view">
+<bifi-app-table-layout
+  [columns]="columns"
+  [data]="paymentTerms"
+  [onClickRow]="gotoEditPaymentTerm"
+  clickRowPermission="accounting/payment-terms/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"
+      resource="accounting/payment-terms"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

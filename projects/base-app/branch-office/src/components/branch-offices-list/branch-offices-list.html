@@ -15,10 +15,16 @@
   [searchFilters]="branchOfficeFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="branchOfficeColumns" [data]="branchOffices" [onClickRow]="gotoEditBranchOffice" clickRowPermission="branch-offices/update:view">
+<bifi-app-table-layout
+  [columns]="branchOfficeColumns"
+  [data]="branchOffices"
+  [onClickRow]="gotoEditBranchOffice"
+  clickRowPermission="branch-offices/update:view"
+>
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="deleteBranchOffice(element._id)"
+      resource="branch-offices"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

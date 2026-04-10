@@ -15,24 +15,16 @@
   [searchFilters]="maintenanceWindowFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="maintenanceWindowColumns" [data]="maintenanceWindows" [onClickRow]="goToEditMaintenanceWindow" clickRowPermission="maintenance-windows/update:view"   >
+<bifi-app-table-layout
+  [columns]="maintenanceWindowColumns"
+  [data]="maintenanceWindows"
+  [onClickRow]="goToEditMaintenanceWindow"
+  clickRowPermission="maintenance-windows/update:view"
+>
   <ng-template #actions let-row>
-    <!-- <p-button
-      severity="secondary"
-      label="Edit"
-      icon="pi pi-pencil"
-      [routerLink]="['../edit/', row._id]"
-      *bifiAppHasPermission="'maintenance-windows/update:view'"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'maintenance-windows:delete:model'"
-      severity="danger"
-      label="Delete"
-      (onClick)="deleteMaintenanceWindow(row._id)"
-      icon="pi pi-trash"
-    ></p-button> -->
-  <bifi-app-buttons-actions
-      (deleteClicked)="deleteMaintenanceWindow(row._id);"
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteMaintenanceWindow(row._id)"
+      resource="maintenance-windows"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>
