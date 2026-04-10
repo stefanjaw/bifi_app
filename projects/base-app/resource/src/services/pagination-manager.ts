@@ -24,6 +24,9 @@ export class PaginationManager {
    * @param limit The number of items per page
    */
   setPaginationOptions(page: number, limit: number) {
+    const current = this._paginationOptions();
+    if (current.page === page && current.limit === limit) return;
+
     this._paginationOptions.set({
       page,
       limit,

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilterManager } from '../../services/filter-manager';
+import { ListStateManager, SerializableFilterRow } from '../../services/list-state-manager';
 import { filter, filterFieldConfig } from '../../interfaces/filter';
 import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
@@ -78,6 +79,7 @@ export class FilterBar implements OnDestroy {
   private readonly FILTER_ID = 'filter-bar';
 
   private filterManager = inject(FilterManager);
+  private listStateManager = inject(ListStateManager);
 
   filterFields = input<filterFieldConfig<any>[]>([]);
 
@@ -137,6 +139,20 @@ export class FilterBar implements OnDestroy {
   }
 
   constructor() {
+    // Restore rows from pending state set by ResourceManager on init
+    const pending = this.listStateManager.pendingRestore;
+    if (pending?.filterRows?.length) {
+      this.rows.set(
+        pending.filterRows.map(r => ({
+          ...(r as Omit<FilterRow, 'id'>),
+          id: crypto.randomUUID(),
+          // Parse ISO date strings back to Date objects
+          value: r.type === 'date' && r.value ? new Date(r.value) : r.value,
+        }))
+      );
+    }
+
+    // Update FilterManager whenever rows change
     effect(() => {
       const rows = this.rows();
 
@@ -160,6 +176,16 @@ export class FilterBar implements OnDestroy {
           filters,
         });
       }
+
+      // Keep partialSave up to date so ResourceManager can sync to URL and localStorage
+      this.listStateManager.savePartialState({
+        filterRows: rows.map<SerializableFilterRow>(r => ({
+          field: r.field,
+          operator: r.operator ?? null,
+          value: r.value instanceof Date ? r.value.toISOString() : r.value,
+          type: r.type,
+        })),
+      });
     });
   }
 

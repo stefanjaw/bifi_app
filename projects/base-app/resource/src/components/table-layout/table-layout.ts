@@ -7,6 +7,7 @@ import {
   input,
   ResourceRef,
   TemplateRef,
+  AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
@@ -42,7 +43,7 @@ import { InfiniteScroll } from '../../directives/infinite-scroll';
   host: { class: 'shadow-xl/30 w-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableLayout<T extends Record<string, any>> {
+export class TableLayout<T extends Record<string, any>> implements AfterViewInit {
   // -----------------------------
   // DEPENDENCIES
   // -----------------------------
@@ -86,6 +87,19 @@ export class TableLayout<T extends Record<string, any>> {
   // INTERNAL STATE
   // -----------------------------
   isPaginatedFN = isPaginated;
+  private skipNextLazyLoad = true;
+  firstSet = false;
+
+  // Derived from PaginationManager so p-table always initialises at the correct
+  // page — even before the first API response arrives. Without this, p-table
+  // would start with [first]="0" and immediately fire lazyLoad(first=0) which
+  // resets pagination back to page 1, overwriting any restored state.
+  paginatorFirst = computed(() => {
+    const opts = this.paginationManager.paginationOptions();
+    return (opts.page - 1) * opts.limit;
+  });
+
+  paginatorRows = computed(() => this.paginationManager.paginationOptions().limit);
 
   // -----------------------------
   // RESOURCE STATE
@@ -149,22 +163,50 @@ export class TableLayout<T extends Record<string, any>> {
     };
   });
 
+  ngAfterViewInit() {
+    // Usamos setTimeout para asegurar que pase un ciclo de renderizado completo
+    // y PrimeNG ya no intente "resetear" el paginador a 0
+    setTimeout(() => {
+      this.firstSet = true;
+    }, 0);
+  }
+
   // -----------------------------
   // TABLE EVENTS
   // -----------------------------
 
   /**
-   * Event handler for the lazy load event.
-   * Called when the table needs to load more data.
-   * @param event The lazy load event
-   * @internal
+   * Called when the table is lazy loaded. This function checks if the pagination options of the table
+   * have changed and if so, it updates the pagination options and calls the sort function if needed.
+   * If the new page is 1 and the current page is not 1, it does nothing.
+   *
+   * @param event - The TableLazyLoadEvent emitted by the table when lazy loaded.
    */
   lazyLoad(event: TableLazyLoadEvent) {
+    const state = this.resourceState(); // Obtenemos el estado actual del resource
+
+    // BLOQUEO CRÍTICO:
+    // Si el recurso está cargando por primera vez y aún no tiene valores,
+    // ignoramos cualquier evento de la tabla. Esto evita que el 'first: 0'
+    // de PrimeNG sobreescriba la página restaurada.
+    if (state.isLoading && !state.hasValue) {
+      return;
+    }
+
+    // Si aún no hemos pasado el AfterViewInit, ignoramos.
+    if (!this.firstSet) return;
+
     if (event.multiSortMeta) this.sort(event.multiSortMeta);
 
-    if (event.rows || event.first) {
-      const page = Math.floor((event.first || 1) / (event.rows || 5) + 1);
-      this.changePage(page, event.rows || 5);
+    if (event.rows != null || event.first != null) {
+      const page =
+        Math.floor((event.first ?? 0) / (event.rows || this.paginationManager.PIVOT)) + 1;
+
+      const current = this.paginationManager.paginationOptions();
+      // Solo disparamos si el cambio es real
+      if (current.page !== page || current.limit !== (event.rows || this.paginationManager.PIVOT)) {
+        this.changePage(page, event.rows || this.paginationManager.PIVOT);
+      }
     }
   }
 

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilterManager } from '../../services/filter-manager';
+import { ListStateManager } from '../../services/list-state-manager';
 import { filter } from '../../interfaces/filter';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputText } from 'primeng/inputtext';
@@ -29,6 +30,7 @@ export class SearchBar implements OnDestroy {
 
   private destroy$ = inject(DestroyRef);
   filterManager = inject(FilterManager);
+  private listStateManager = inject(ListStateManager);
 
   // inputs
   searchFilters = input<filter<any>[]>([]);
@@ -39,14 +41,28 @@ export class SearchBar implements OnDestroy {
   debounce = debouncedSignal({ signal: this.searchText, debounce: this.DEBOUNCE_TIME });
 
   constructor() {
+    // Restore search text from pending state set by ResourceManager on init
+    const pending = this.listStateManager.pendingRestore;
+    if (pending?.searchText) {
+      this.searchText.set(pending.searchText);
+    }
+
+    // Perform the search whenever the debounced value changes
     effect(() => {
-      // Whenever the search text changes, we perform the search
       this.performSearch();
+    });
+
+    // Keep partialSave up to date so ResourceManager can sync to URL and localStorage
+    effect(() => {
+      this.listStateManager.savePartialState({ searchText: this.debounce() });
     });
   }
 
   ngOnDestroy(): void {
-    this.filterManager.clearFilters();
+    // Save the current (non-debounced) text so it is included in the localStorage snapshot
+    this.listStateManager.savePartialState({ searchText: this.searchText() });
+    // Only remove this component's own filter group — not the entire filter state
+    this.filterManager.removeFilter(this.FILTER_ID);
   }
 
   /**

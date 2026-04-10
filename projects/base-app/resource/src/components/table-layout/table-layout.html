@@ -1,9 +1,7 @@
 @let state = resourceState();
 @let pagination = state.pagination;
 
-<div
-  [bifiAppInfiniteScroll]="infiniteScroll() ? $any(data()) : null"
->
+<div [bifiAppInfiniteScroll]="infiniteScroll() ? $any(data()) : null">
   <p-table
     sortMode="multiple"
     (onLazyLoad)="lazyLoad($event)"
@@ -12,8 +10,8 @@
     [loading]="state.isLoading && !state.hasValue"
     class="w-full"
     [paginator]="!infiniteScroll()"
-    [rows]="pagination?.limit ?? 10"
-    [first]="pagination && pagination?.page ? (pagination.page - 1) * (pagination?.limit ?? 5) : 0"
+    [rows]="paginatorRows()"
+    [first]="paginatorFirst()"
     [totalRecords]="pagination?.totalDocs ?? 0"
     [rowsPerPageOptions]="[5, 10, 25, 50]"
     [showCurrentPageReport]="true"

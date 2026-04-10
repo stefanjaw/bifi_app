@@ -2,7 +2,7 @@ import { pagination } from '../interfaces/pagination';
 import { inject, ResourceRef, Signal, signal } from '@angular/core';
 import { HttpClient, HttpContext, HttpParams, httpResource } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
 import { orderByQuery } from '../interfaces/order-by';
 import {
@@ -224,30 +224,39 @@ export class ApiRequestManager<T> {
     sort,
     specificEndpoint = '',
     getInactive = false,
+    triggerRequest,
   }: {
     paginateOptions?: maybeSignal<paginationOptions>;
     searchParams?: maybeSignal<Record<string, any>>;
     sort?: maybeSignal<orderByQuery<T>>;
     specificEndpoint?: string;
     getInactive?: maybeSignal<boolean | null>;
+    triggerRequest?: maybeSignal<boolean>;
   }): ResourceRef<pagination<T> | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     return rxResource({
       params: () => {
-        const pagination = mayBeSignalValue(paginateOptions);
-        const params = mayBeSignalValue(searchParams);
-        const sorts = mayBeSignalValue(sort);
-        const inactive = mayBeSignalValue(getInactive);
+        const trigger = mayBeSignalValue(triggerRequest);
+        if (!trigger) return null;
 
-        return { pagination, params, sorts, inactive };
+        const inactive = mayBeSignalValue(getInactive);
+        const params = structuredClone(mayBeSignalValue(searchParams));
+        const pagination = structuredClone(mayBeSignalValue(paginateOptions));
+        const sorts = structuredClone(mayBeSignalValue(sort));
+
+        return { pagination, params, sorts, inactive, trigger };
       },
-      stream: ({ params: { params, pagination, sorts, inactive } }) => {
+      stream: ({ params }) => {
+        if (!params) return of(undefined);
+
+        const { pagination, params: p, sorts, inactive } = params;
+
         const query = new URLSearchParams({
           paginationOptions: JSON.stringify(pagination),
-          ...((params || !inactive) && {
+          ...((p || !inactive) && {
             searchParams: JSON.stringify({
-              ...params,
+              ...p,
               ...(typeof inactive === 'boolean' && !inactive && { active: true }),
               ...(typeof inactive === 'boolean' && inactive && { active: false }),
             }),
