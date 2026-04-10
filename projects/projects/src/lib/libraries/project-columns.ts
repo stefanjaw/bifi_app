@@ -26,6 +26,17 @@ export const projectColumns: tableColumn<project>[] = [
     type: 'text',
   },
   {
+    field: 'dateStart',
+    title: 'Start Date',
+    type: 'date',
+  },
+  
+  {
+    field: 'dateEnd',
+    title: 'End Date',
+    type: 'date',
+  },
+  {
     field: 'active',
     title: 'Active',
     type: 'text',
