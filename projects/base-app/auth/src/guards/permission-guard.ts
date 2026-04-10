@@ -6,6 +6,9 @@ export const permissionGuard: CanActivateFn = async route => {
   const authService = injectAuthService();
   const resource: resource = route.data['resource'];
 
+  // Wait for the authentication state to be ready before checking permissions
+  await authService.authStateReady;
+
   // create permission checker
   const user = authService.user();
 
