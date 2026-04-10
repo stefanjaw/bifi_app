@@ -1,0 +1,14 @@
+<p-dialog header="Confirmation" [(visible)]="dialogState" [modal]="true"
+    styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]" (click)="$event.stopPropagation()">
+
+
+    <div class="confirmation-message">
+        <p>Are you sure you want to proceed to delete this item of {{ resource() }}?</p>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+        <p-button label="Cancel" severity="secondary" icon="pi pi-times" (click)="closeDialog()"></p-button>
+        <p-button label="Confirm" severity="danger" icon="pi pi-check" (click)="this.confirmClicked.emit();"></p-button>
+    </div>
+
+</p-dialog>
