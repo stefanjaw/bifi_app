@@ -9,7 +9,7 @@
   <!-- Delete Button -->
   <p-button
     type="button"
-    (click)="deleteClicked.emit(); $event.stopPropagation()"
+    (click)="confirmationDialog.openDialog(); $event.stopPropagation()"
     severity="danger"
     *bifiAppHasPermission="deletePermission"
     icon="pi pi-trash"
@@ -17,3 +17,9 @@
     [variant]="'text'"
   ></p-button>
 </section>
+
+<bifi-app-buttons-confirmation-dialog
+  #confirmationDialog
+  (confirmClicked)="deleteClicked.emit(); "
+  [resource]="resource()"
+></bifi-app-buttons-confirmation-dialog>

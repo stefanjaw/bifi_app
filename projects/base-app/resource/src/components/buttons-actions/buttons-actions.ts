@@ -1,10 +1,11 @@
 import { Component, input, output } from '@angular/core';
 import { HasPermission, permission } from '@avalantec/base-app/auth';
 import { ButtonModule } from 'primeng/button';
+import { ButtonsConfirmationDialog } from "./features/buttons-confirmation-dialog/buttons-confirmation-dialog";
 
 @Component({
   selector: 'bifi-app-buttons-actions',
-  imports: [ButtonModule, HasPermission],
+  imports: [ButtonModule, HasPermission, ButtonsConfirmationDialog],
   templateUrl: './buttons-actions.html',
 })
 export class ButtonsActions {
@@ -23,4 +24,6 @@ export class ButtonsActions {
   get deletePermission(): permission {
     return `${this.resource()}:delete:model` as permission;
   }
+
+
 }
