@@ -1,7 +1,5 @@
-import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonsActions } from '../../buttons-actions';
-import { Base } from 'primeng/base';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { ButtonModule } from 'primeng/button';
 
@@ -13,9 +11,11 @@ import { ButtonModule } from 'primeng/button';
 export class ButtonsConfirmationDialog extends BaseDialog {
   confirmClicked = output<void>();
   resource = input<string>();
+
   override openDialog(): void {
     super.openDialog();
   }
+
   confirm() {
     this.confirmClicked.emit();
   }

@@ -30,7 +30,6 @@ export const projectColumns: tableColumn<project>[] = [
     title: 'Start Date',
     type: 'date',
   },
-  
   {
     field: 'dateEnd',
     title: 'End Date',
