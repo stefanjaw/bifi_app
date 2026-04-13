@@ -27,6 +27,7 @@
 <bifi-app-table-layout
   [columns]="columns"
   [data]="tickets"
+  [infiniteScroll]="true"
   [onClickRow]="gotoEditTicket"
   clickRowPermission="tickets/update:view"
 >
