@@ -18,5 +18,6 @@ export interface contact {
   streetAddress2?: string;
   fullName: string;
   fullAddress: string; 
+  displayName: string;
   active: boolean;
 }

@@ -19,11 +19,12 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableLayout } from '@avalantec/base-app/resource';
+import { DisplayName, TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { contact } from '@avalantec/base-app/interfaces';
+import { Tag } from "primeng/tag";
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -37,7 +38,8 @@ import { contact } from '@avalantec/base-app/interfaces';
     RadioButtonModule,
     TableLayout,
     SelectChildContactDialog,
-  ],
+    DisplayName
+],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,6 +47,7 @@ export class ContactsForm {
   private formService = inject(ContactForm);
   private crudContacts = inject(CrudContacts);
   private crudCountries = inject(CrudCountries);
+
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -87,6 +90,9 @@ export class ContactsForm {
   // state
   form = this.formService.form;
   contactType = this.formService.type;
+
+  //Display name options
+
 
   isLoading = computed(
     () =>

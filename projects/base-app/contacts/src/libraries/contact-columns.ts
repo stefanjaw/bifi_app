@@ -3,8 +3,8 @@ import { tableColumn } from '@avalantec/base-app/resource';
 
 export const contactColumns: tableColumn<contact>[] = [
   {
-    field: 'fullName',
-    title: 'Contact Name',
+    field: 'displayName',
+    title: 'Display Name',
     type: 'text',
   },
   {

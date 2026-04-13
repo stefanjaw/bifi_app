@@ -1,224 +1,151 @@
-<bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Contact"
-  titlePosition="center"
-  class="block px-4 bg-gray-50 py-4"
->
-  <form
-    ngProjectAs="div"
-    [formGroup]="form"
-    bifiAppFormActionsHandler
-    (appSubmit)="handleSubmit($event)"
-    class="min-h-screen flex flex-col gap-6"
-  >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
+<bifi-app-form-layout title="{{ isUpdate() ? 'Update' : 'Create' }} Contact" titlePosition="center"
+  class="block px-4 bg-gray-50 py-4">
 
+  <form ngProjectAs="div" [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6">
+    <bifi-app-form-actions [isSubmitting]="isSubmitLoading()" (cancelClicked)="goBack()" class="mb-4"
+      [formChanged]="form.dirty"></bifi-app-form-actions>
+
+    @if (isUpdate()) {
+    <bifi-app-display-name [info]="[
+      contact()?.parentId?.name || '',
+      contact()?.name || 'No name',
+      contact()?.lastName || ''
+    ]">
+    </bifi-app-display-name>
+    }
     @if (!isLoading()) {
-      <bifi-app-form-section
-        title="General information"
-        id="contact-general-information"
-        [ordinal]="1"
-      >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
+    <bifi-app-form-section title="General information" id="contact-general-information" [ordinal]="1">
 
-            <div class="flex justify-start flex-wrap gap-4 pt-2">
-              <div class="flex items-center">
-                <p-radiobutton
-                  formControlName="type"
-                  value="individual"
-                  inputId="type-individual"
-                  size="large"
-                />
-                <label for="type-individual" class="ml-2">Individual</label>
-              </div>
-              <div class="flex items-center">
-                <p-radiobutton
-                  formControlName="type"
-                  value="company"
-                  inputId="type-company"
-                  size="large"
-                />
-                <label for="type-company" class="ml-2">Company</label>
-              </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Type</bifi-app-form-label>
+
+          <div class="flex justify-start flex-wrap gap-4 pt-2">
+            <div class="flex items-center">
+              <p-radiobutton formControlName="type" value="individual" inputId="type-individual" size="large" />
+              <label for="type-individual" class="ml-2">Individual</label>
             </div>
-
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Parent</bifi-app-form-label>
-            <p-select
-              formControlName="parentId"
-              [options]="parentOptions()"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Select a parent"
-              [filter]="true"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          @if (contactType() === 'individual') {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Last Name</bifi-app-form-label>
-              <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          }
-        </div>
-      </bifi-app-form-section>
-
-      <bifi-app-form-section
-        title="Contact information"
-        id="contact-contacting-information"
-        [ordinal]="2"
-      >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Email</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="email"
-              type="text"
-              placeholder="e.g 0tE1a@example.com"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Phone Number</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="phoneNumber"
-              type="text"
-              placeholder="e.g +1 123 456 7890"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          @if (contactType() === 'company') {
-            <bifi-app-form-field>
-              <bifi-app-form-label>Website</bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="website"
-                type="text"
-                placeholder="e.g www.website.com"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          }
-        </div>
-      </bifi-app-form-section>
-
-      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Street Address</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="streetAddress"
-              type="text"
-              placeholder="e.g 123 Main St"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Street Address 2</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="streetAddress2"
-              type="text"
-              placeholder="e.g Apt 4B"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>City</bifi-app-form-label>
-            <input pInputText formControlName="city" type="text" placeholder="e.g New York" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>State/Province/Parish</bifi-app-form-label>
-            <input pInputText formControlName="state" type="text" placeholder="e.g NY" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Postal Code</bifi-app-form-label>
-            <input pInputText formControlName="zipCode" type="text" placeholder="e.g 10001" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Country</bifi-app-form-label>
-            <p-select
-              formControlName="countryId"
-              [options]="countryOptions()"
-              optionLabel="name"
-              optionValue="_id"
-              [filter]="true"
-              placeholder="Select a country"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-        </div>
-      </bifi-app-form-section>
-
-      @if (contactType() === 'company') {
-        <bifi-app-form-section
-          title="Child Contacts"
-          id="contact-children-information"
-          [ordinal]="4"
-        >
-          <p-button
-            label="Add New Child Contact"
-            severity="secondary"
-            icon="pi pi-plus"
-            (onClick)="selectChildContactDialog.openDialog()"
-            styleClass="mb-4"
-          ></p-button>
-
-          <div class="max-w-[90vw]">
-            <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()">
-              <ng-template #actions let-row>
-                <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
-                <p-button
-                  severity="danger"
-                  label="Remove"
-                  icon="pi pi-trash"
-                  (click)="handleContactRemove(row._id)"
-                ></p-button>
-              </ng-template>
-            </bifi-app-table-layout>
+            <div class="flex items-center">
+              <p-radiobutton formControlName="type" value="company" inputId="type-company" size="large" />
+              <label for="type-company" class="ml-2">Company</label>
+            </div>
           </div>
-        </bifi-app-form-section>
-      }
+
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Parent</bifi-app-form-label>
+          <p-select formControlName="parentId" [options]="parentOptions()" optionLabel="name" optionValue="_id"
+            placeholder="Select a parent" [filter]="true"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Name</bifi-app-form-label>
+          <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        @if (contactType() === 'individual') {
+        <bifi-app-form-field>
+          <bifi-app-form-label>Last Name</bifi-app-form-label>
+          <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+        }
+      </div>
+    </bifi-app-form-section>
+
+    <bifi-app-form-section title="Contact information" id="contact-contacting-information" [ordinal]="2">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Email</bifi-app-form-label>
+          <input pInputText formControlName="email" type="text" placeholder="e.g 0tE1a@example.com" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Phone Number</bifi-app-form-label>
+          <input pInputText formControlName="phoneNumber" type="text" placeholder="e.g +1 123 456 7890" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        @if (contactType() === 'company') {
+        <bifi-app-form-field>
+          <bifi-app-form-label>Website</bifi-app-form-label>
+          <input pInputText formControlName="website" type="text" placeholder="e.g www.website.com" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+        }
+      </div>
+    </bifi-app-form-section>
+
+    <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Street Address</bifi-app-form-label>
+          <input pInputText formControlName="streetAddress" type="text" placeholder="e.g 123 Main St" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Street Address 2</bifi-app-form-label>
+          <input pInputText formControlName="streetAddress2" type="text" placeholder="e.g Apt 4B" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>City</bifi-app-form-label>
+          <input pInputText formControlName="city" type="text" placeholder="e.g New York" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>State/Province/Parish</bifi-app-form-label>
+          <input pInputText formControlName="state" type="text" placeholder="e.g NY" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Postal Code</bifi-app-form-label>
+          <input pInputText formControlName="zipCode" type="text" placeholder="e.g 10001" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Country</bifi-app-form-label>
+          <p-select formControlName="countryId" [options]="countryOptions()" optionLabel="name" optionValue="_id"
+            [filter]="true" placeholder="Select a country"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+    </bifi-app-form-section>
+
+    @if (contactType() === 'company') {
+    <bifi-app-form-section title="Child Contacts" id="contact-children-information" [ordinal]="4">
+      <p-button label="Add New Child Contact" severity="secondary" icon="pi pi-plus"
+        (onClick)="selectChildContactDialog.openDialog()" styleClass="mb-4"></p-button>
+
+      <div class="max-w-[90vw]">
+        <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()">
+          <ng-template #actions let-row>
+            <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
+            <p-button severity="danger" label="Remove" icon="pi pi-trash"
+              (click)="handleContactRemove(row._id)"></p-button>
+          </ng-template>
+        </bifi-app-table-layout>
+      </div>
+    </bifi-app-form-section>
+    }
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+    <p>Something went wrong... {{ error() }}</p>
     } @else {
-      <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
+    <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
     }
   </form>
 </bifi-app-form-layout>
 
-<bifi-app-select-child-contact-dialog
-  #selectChildContactDialog
-  [childContactOptions]="childOptions() || []"
-  (selected)="handleContactSelect($event)"
-></bifi-app-select-child-contact-dialog>
+<bifi-app-select-child-contact-dialog #selectChildContactDialog [childContactOptions]="childOptions() || []"
+  (selected)="handleContactSelect($event)"></bifi-app-select-child-contact-dialog>
