@@ -165,7 +165,6 @@ export class ResourceManager<T> {
   private _restoreState(): void {
     const queryParams = this.route.snapshot.queryParams as Record<string, string>;
     const fromQuery = this.listStateManager.parseQueryParams(queryParams);
-    console.log('🚀 ~ ResourceManager ~ _restoreState ~ fromQuery:', fromQuery);
 
     if (fromQuery) {
       this.listStateManager.setPendingRestore(fromQuery);
@@ -175,7 +174,6 @@ export class ResourceManager<T> {
     }
 
     const fromStorage = this.listStateManager.loadFromLocalStorage(this.storageKey);
-    console.log('🚀 ~ ResourceManager ~ _restoreState ~ fromStorage:', fromStorage);
 
     if (fromStorage) {
       this.listStateManager.setPendingRestore(fromStorage);
