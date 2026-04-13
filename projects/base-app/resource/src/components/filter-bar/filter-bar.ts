@@ -253,4 +253,8 @@ export class FilterBar implements OnDestroy {
   onValueChange(rowId: string, value: any): void {
     this.rows.update(rows => rows.map(r => (r.id === rowId ? { ...r, value } : r)));
   }
+
+  areAllCurrentRowsComplete(): boolean {
+    return this.rows().every(r => this.isRowComplete(r));
+  }
 }
