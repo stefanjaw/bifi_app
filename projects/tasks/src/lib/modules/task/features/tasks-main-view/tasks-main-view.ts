@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -9,6 +10,8 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { viewMode } from '../../interfaces/task-view';
@@ -25,15 +28,20 @@ import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-
 import {
   FilterBar,
   FilterManager,
+  ListState,
+  ListStateManager,
   SearchBar,
   TimelineItem,
   TimelineView,
 } from '@avalantec/base-app/resource';
 import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
 
+const TASKS_VIEW_QUERY_KEY = '_view';
+const TASKS_STORAGE_KEY = 'bifi_list_tasks';
+
 @Component({
   selector: 'bifi-app-tasks-main-view',
-  providers: [FilterManager],
+  providers: [FilterManager, ListStateManager],
   imports: [
     ButtonModule,
     PopoverModule,
@@ -53,6 +61,9 @@ export class TasksMainView {
   private crudTasks = inject(CrudTasks);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private filterManager = inject(FilterManager);
+  private listStateManager = inject(ListStateManager);
+  private route = inject(ActivatedRoute);
+  private document = inject(DOCUMENT);
   private destroy$ = inject(DestroyRef);
   private getInactive = signal<boolean | null>(false);
 
@@ -67,6 +78,11 @@ export class TasksMainView {
     searchParams: this.filterParams,
     getInactive: this.getInactive,
   });
+
+  // URL sync: only start syncing after first render to avoid overwriting the
+  // initial URL params that were used to restore state.
+  private _restored = signal(false);
+  private lastUrlState = '';
 
   // states
   viewMode = signal<viewMode>('Day');
@@ -117,6 +133,27 @@ export class TasksMainView {
   updateTasksFormDialog = viewChild<UpdateTasksFormDialog>('updateTasksFormDialog');
 
   constructor() {
+    // --- State restoration (must happen before FilterBar/SearchBar init) ---
+    this._restoreState();
+
+    // Enable URL sync after the first render cycle completes. This prevents
+    // overwriting the original URL params before FilterBar/SearchBar have had
+    // a chance to read pendingRestore from them.
+    afterNextRender(() => {
+      this._restored.set(true);
+    });
+
+    // URL sync effect: silently patch the browser URL whenever filter/view state changes.
+    effect(() => {
+      if (!this._restored()) return;
+
+      const partial = this.listStateManager.partialSave();
+      const view = this.viewState();
+
+      untracked(() => this._replaceUrlState(partial, view));
+    });
+
+    // --- Active / inactive filter logic ---
     effect(() => {
       const filters = this.filterManager.filters();
 
@@ -178,6 +215,80 @@ export class TasksMainView {
     this.tasksMaintenanceContext.deleteTask$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(id => this.deleteTask(id));
+
+    // Persist state to localStorage on destroy so it can be restored on next visit.
+    this.destroy$.onDestroy(() => {
+      const partial = untracked(() => this.listStateManager.partialSave());
+      const state: ListState = {
+        searchText: partial.searchText ?? '',
+        filterRows: partial.filterRows ?? [],
+        page: 1,
+        limit: 10,
+        sort: [],
+      };
+      this.listStateManager.saveToLocalStorage(TASKS_STORAGE_KEY, state);
+      this.listStateManager.clearPartialSave();
+      this.listStateManager.clearPendingRestore();
+    });
+  }
+
+  /**
+   * On init, attempts to restore list state from URL query params first,
+   * then falls back to localStorage. Also restores the selected view mode
+   * from the `_view` query param.
+   */
+  private _restoreState(): void {
+    const queryParams = this.route.snapshot.queryParams as Record<string, string>;
+
+    // Restore view state (gantt / list / timeline) from URL param
+    const viewParam = queryParams[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline';
+    if (viewParam && ['gantt', 'list', 'timeline'].includes(viewParam)) {
+      this.viewState.set(viewParam);
+    }
+
+    // Restore filter/search state — URL params take priority over localStorage
+    const fromQuery = this.listStateManager.parseQueryParams(queryParams);
+    if (fromQuery) {
+      this.listStateManager.setPendingRestore(fromQuery);
+      return;
+    }
+
+    const fromStorage = this.listStateManager.loadFromLocalStorage(TASKS_STORAGE_KEY);
+    if (fromStorage) {
+      this.listStateManager.setPendingRestore(fromStorage);
+    }
+  }
+
+  /**
+   * Silently patches the browser URL's query string with the current list and
+   * view state. Preserves any non-list-state params already in the URL.
+   * Uses window.history.replaceState directly to avoid triggering Angular router
+   * navigation, which would destroy and re-create the component.
+   */
+  private _replaceUrlState(state: Partial<ListState>, view: string): void {
+    const win = this.document?.defaultView;
+    if (!win) return;
+
+    const basePath = win.location.pathname;
+    const existingParams = new URLSearchParams(win.location.search);
+    const listParams = this.listStateManager.buildQueryParams(state);
+
+    Object.entries(listParams).forEach(([key, value]) => {
+      if (value === null || value === undefined) existingParams.delete(key);
+      else existingParams.set(key, value);
+    });
+
+    // Persist selected view separately since it is not part of ListState
+    if (view) existingParams.set(TASKS_VIEW_QUERY_KEY, view);
+    else existingParams.delete(TASKS_VIEW_QUERY_KEY);
+
+    const newSearch = existingParams.toString();
+    const newUrl = basePath + (newSearch ? '?' + newSearch : '');
+
+    if (this.lastUrlState === newUrl) return;
+    this.lastUrlState = newUrl;
+
+    win.history.replaceState(win.history.state, '', newUrl);
   }
 
   private buildTree(flat: task[]): ganttTask[] {

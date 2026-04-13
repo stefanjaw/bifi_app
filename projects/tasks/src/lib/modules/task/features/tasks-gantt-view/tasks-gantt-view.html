@@ -40,6 +40,14 @@
             class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <p-button
+              title="Scroll to Task"
+              size="small"
+              severity="secondary"
+              icon="pi pi-arrow-right"
+              variant="text"
+              (onClick)="scrollToTask(task); $event.stopPropagation()"
+            ></p-button>
+            <p-button
               title="Add Subtask"
               size="small"
               severity="secondary"

@@ -495,6 +495,54 @@ export class TasksGanttView implements OnDestroy {
   }
 
   /**
+   * Pans the Gantt chart so that the given task's bar is horizontally centered
+   * in the visible timeline window. Works in all four view modes.
+   *
+   * The strategy: compute the task's temporal midpoint in the mode's own
+   * pan-unit (hours for Day, days for Week/Month, months for Year), then
+   * subtract half the window width (12h / 3.5d / 15d / 6mo) and snap to the
+   * nearest integer — matching the drag-to-pan snapping behaviour.
+   */
+  scrollToTask(task: ganttTask): void {
+    if (!task.start || !task.end) return;
+
+    const start = dayjs(task.start);
+    const end = dayjs(task.end);
+    const mode = this.viewMode();
+
+    let newPan: number;
+
+    if (mode === 'Day') {
+      // Pan unit = hours from midnight of today.
+      const midnight = dayjs().startOf('day');
+      const midHours =
+        (start.diff(midnight, 'hour', true) + end.diff(midnight, 'hour', true)) / 2;
+      newPan = midHours - 12;
+    } else if (mode === 'Week') {
+      // Pan unit = days from Monday of the current ISO week.
+      const now = dayjs();
+      const monday = now.startOf('day').subtract((now.day() + 6) % 7, 'day');
+      const midDays =
+        (start.diff(monday, 'day', true) + end.diff(monday, 'day', true)) / 2;
+      newPan = midDays - 3.5;
+    } else if (mode === 'Month') {
+      // Pan unit = days from the 1st of the current month.
+      const monthStart = dayjs().startOf('month');
+      const midDays =
+        (start.diff(monthStart, 'day', true) + end.diff(monthStart, 'day', true)) / 2;
+      newPan = midDays - 15;
+    } else {
+      // Year: pan unit = months from 1 Jan of the current year.
+      const yearStart = dayjs().startOf('year');
+      const midMonths =
+        (start.diff(yearStart, 'month', true) + end.diff(yearStart, 'month', true)) / 2;
+      newPan = midMonths - 6;
+    }
+
+    this.panOffsetDays.set(Math.round(newPan));
+  }
+
+  /**
    * Updates the planned start and end dates of a task with the given ID.
    */
   updateTaskDates(taskId: string, start: dayjs.Dayjs, end: dayjs.Dayjs) {
