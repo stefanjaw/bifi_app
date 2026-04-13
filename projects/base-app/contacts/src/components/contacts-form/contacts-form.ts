@@ -19,12 +19,12 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { DisplayName, TableLayout } from '@avalantec/base-app/resource';
+import { TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { contact } from '@avalantec/base-app/interfaces';
-import { Tag } from "primeng/tag";
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -38,8 +38,8 @@ import { Tag } from "primeng/tag";
     RadioButtonModule,
     TableLayout,
     SelectChildContactDialog,
-    DisplayName
-],
+    TagModule,
+  ],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -92,7 +92,6 @@ export class ContactsForm {
   contactType = this.formService.type;
 
   //Display name options
-
 
   isLoading = computed(
     () =>

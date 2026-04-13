@@ -24,7 +24,6 @@ export * from './src/services/resource-manager';
 export * from './src/services/sort-manager';
 export * from './src/components/buttons-actions/buttons-actions';
 export * from './src/components/buttons-actions/features/buttons-confirmation-dialog/buttons-confirmation-dialog';
-export * from './src/components/display-name/display-name';
 export * from './src/components/filter-bar/filter-bar';
 export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
