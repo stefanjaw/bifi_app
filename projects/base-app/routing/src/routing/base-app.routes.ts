@@ -26,4 +26,6 @@ export const BASE_APP_ROUTES: Routes = [
     path: 'auth',
     children: AUTH_ROUTES,
   },
+  // if route does not exist, redirect to home
+  { path: '**', pathMatch: 'full', redirectTo: 'home' },
 ];

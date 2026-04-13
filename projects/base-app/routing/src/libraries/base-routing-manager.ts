@@ -66,6 +66,14 @@ export class BaseRoutingManager {
     // If parent is not found, throw an error
     if (!parent) throw new Error(`Parent route with path ${childOf} not found`);
 
+    // search for wildcard route to add new route before it, if it exists
+    const wildcardRouteIndex = this._routes.findIndex(r => r.path === '**');
+
+    // If wildcard route exists, remove it
+    const wildcardRoute =
+      wildcardRouteIndex !== -1 ? this._routes.splice(wildcardRouteIndex, 1)[0] : null;
+
+    // Add new route to the parent
     if (Array.isArray(newRouting) && basePath) {
       // Create a new route with the path from the new item
       parent.push({
@@ -75,6 +83,14 @@ export class BaseRoutingManager {
     } else if (!Array.isArray(newRouting) && !basePath) {
       // Use the route provided
       parent.push(newRouting);
+    }
+
+    // Add wildcard route back to the end of the routes
+    if (wildcardRoute) {
+      this._routes.push(wildcardRoute);
+    } else {
+      // If no wildcard route exists, add a default one that redirects to home
+      this._routes.push({ path: '**', pathMatch: 'full', redirectTo: 'home' });
     }
   }
 }
