@@ -45,10 +45,22 @@
     clickRowPermission="projects/update:view"
   >
     <ng-template #actions let-element>
-      <bifi-app-buttons-actions
-        (deleteClicked)="deleteProject(element._id)"
-        resource="projects"
-      ></bifi-app-buttons-actions>
+      <div class="flex items-center gap-1">
+        <p-button
+          *bifiAppHasPermission="'tasks/view:view'"
+          icon="pi pi-list-check"
+          severity="secondary"
+          size="small"
+          [text]="true"
+          pTooltip="View Tasks"
+          tooltipPosition="top"
+          (onClick)="$event.stopPropagation(); viewTasks(element)"
+        ></p-button>
+        <bifi-app-buttons-actions
+          (deleteClicked)="deleteProject(element._id)"
+          resource="projects"
+        ></bifi-app-buttons-actions>
+      </div>
     </ng-template>
   </bifi-app-table-layout>
 } @else {

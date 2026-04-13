@@ -10,13 +10,24 @@
     (appSubmit)="handleSubmit($event)"
     class="min-h-screen flex flex-col gap-6"
   >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-      *bifiAppHasPermission="isUpdate() ? 'projects:update:model' : 'projects:create:model'"
-    ></bifi-app-form-actions>
+    <div class="flex items-center justify-between mb-4">
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        [formChanged]="form.dirty"
+        *bifiAppHasPermission="isUpdate() ? 'projects:update:model' : 'projects:create:model'"
+      ></bifi-app-form-actions>
+
+      @if (isUpdate()) {
+        <p-button
+          *bifiAppHasPermission="'tasks/view:view'"
+          label="View Tasks"
+          icon="pi pi-list-check"
+          severity="secondary"
+          (onClick)="viewTasks()"
+        ></p-button>
+      }
+    </div>
 
     @if (!isLoading()) {
       <bifi-app-form-section title="Project Information" id="project-info" [ordinal]="1">

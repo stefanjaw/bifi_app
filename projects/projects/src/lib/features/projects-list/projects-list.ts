@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   ButtonsActions,
   FilterBar,
@@ -34,6 +35,7 @@ import { projectFilterFields, projectFilters } from '../../libraries/project-fil
   imports: [
     TableLayout,
     ButtonModule,
+    TooltipModule,
     SearchBar,
     RouterLink,
     HasPermission,
@@ -74,6 +76,15 @@ export class ProjectsList {
   goToEditProject = (element: project) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+
+  viewTasks(project: project): void {
+    const filters = JSON.stringify([
+      { field: 'projectId.name', operator: 'like', value: project.name, type: 'string' },
+    ]);
+    this.router.navigate(['/tasks/view'], {
+      queryParams: { _filters: filters, _view: 'list' },
+    });
+  }
 
   deleteProject(id: string) {
     this.crudProjects
