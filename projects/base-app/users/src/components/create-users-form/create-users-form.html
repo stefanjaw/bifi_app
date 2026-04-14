@@ -56,8 +56,7 @@
         styleClass="mb-4"
       ></p-button>
 
-      <bifi-app-table-layout
-  [infiniteScroll]="true" [columns]="roleCols" [data]="rolesData()">
+      <bifi-app-table-layout [columns]="roleCols" [data]="rolesData()">
         <ng-template #actions let-row>
           <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
           <p-button
