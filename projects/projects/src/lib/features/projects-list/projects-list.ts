@@ -227,6 +227,11 @@ export class ProjectsList {
     });
   }
 
+  viewTasksById(id: string): void {
+    const project = this.flat().find(p => p._id === id);
+    if (project) this.viewTasks(project);
+  }
+
   deleteProject(id: string) {
     this.crudProjects
       .delete({ _id: id })

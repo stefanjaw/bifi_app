@@ -113,6 +113,8 @@
       [projects]="ganttFlat()"
       (expandToggle)="toggleExpand($event)"
       (editProject)="goToEditProject($event)"
+      (viewTasks)="viewTasksById($event)"
+      (deleteProject)="deleteProject($event)"
     ></bifi-app-projects-list-view>
   } @else {
     <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>

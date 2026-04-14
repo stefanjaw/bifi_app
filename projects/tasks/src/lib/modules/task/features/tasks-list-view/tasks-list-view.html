@@ -70,24 +70,10 @@
               tasksMaintenanceContext.openCreateSubTaskDialog(task.id); $event.stopPropagation()
             "
           ></p-button>
-          <p-button
-            title="Edit Task"
-            size="small"
-            severity="secondary"
-            icon="pi pi-pencil"
-            variant="text"
-            (onClick)="
-              tasksMaintenanceContext.openUpdateTaskDialog(task.id); $event.stopPropagation()
-            "
-          ></p-button>
-          <p-button
-            title="Delete Task"
-            size="small"
-            severity="danger"
-            icon="pi pi-trash"
-            variant="text"
-            (onClick)="tasksMaintenanceContext.deleteTask(task.id); $event.stopPropagation()"
-          ></p-button>
+          <bifi-app-buttons-actions
+            resource="tasks"
+            (deleteClicked)="tasksMaintenanceContext.deleteTask(task.id)"
+          ></bifi-app-buttons-actions>
         </div>
       </div>
     }
