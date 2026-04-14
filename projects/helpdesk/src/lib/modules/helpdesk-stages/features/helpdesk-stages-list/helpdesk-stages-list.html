@@ -13,6 +13,7 @@
 <bifi-app-search-bar label="Search by name" [searchFilters]="filters"></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="columns"
   [data]="stages"
   [onClickRow]="gotoEditHelpdeskStage"

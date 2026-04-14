@@ -38,6 +38,7 @@
 
 @if (viewState() === 'list') {
   <bifi-app-table-layout
+  [infiniteScroll]="true"
     [infiniteScroll]="false"
     [columns]="projectColumns"
     [data]="projects"

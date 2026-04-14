@@ -15,7 +15,8 @@
   [searchFilters]="uomCategoryFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="uomCategoryColumns" [data]="entries">
+<bifi-app-table-layout
+  [infiniteScroll]="true" [columns]="uomCategoryColumns" [data]="entries">
   <ng-template #actions let-element>
     <p-button
       severity="secondary"

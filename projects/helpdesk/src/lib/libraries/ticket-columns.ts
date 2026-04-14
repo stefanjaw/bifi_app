@@ -43,6 +43,16 @@ export const ticketColumns: tableColumn<ticket>[] = [
     type: 'text',
   },
   {
+    field: 'dateStart',
+    title: 'Start Date',
+    type: 'date',
+  },
+  {
+    field: 'dateEnd',
+    title: 'End Date',
+    type: 'date',
+  },
+  {
     field: 'slaResolutionDeadline',
     title: 'SLA Deadline',
     type: 'date',

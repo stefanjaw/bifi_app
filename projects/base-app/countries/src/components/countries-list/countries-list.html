@@ -24,6 +24,7 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="countryColumns"
   [data]="countries"
   [onClickRow]="goToEditCountry"

@@ -13,6 +13,7 @@
 <bifi-app-search-bar label="Search by name" [searchFilters]="roleFilters"></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="roleColumns"
   [data]="roles"
   [onClickRow]="goToEditRole"

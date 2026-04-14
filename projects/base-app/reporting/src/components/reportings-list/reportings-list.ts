@@ -18,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-reportings-list',
   providers: [provideResourceManager(CrudReporting)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
