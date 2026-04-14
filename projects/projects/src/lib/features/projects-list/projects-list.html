@@ -1,68 +1,120 @@
-<h1 class="text-2xl font-bold mb-4">Projects</h1>
-
-<div class="flex items-center justify-between gap-2 mb-4">
-  <p-button
-    label="Add New Project"
-    severity="secondary"
-    icon="pi pi-plus"
-    [routerLink]="['../create']"
-    *bifiAppHasPermission="'projects/create:view'"
-  ></p-button>
-
-  <div class="flex items-center rounded-md bg-gray-200 p-0.5">
-    <button
-      (click)="viewState.set('list')"
-      [class]="viewState() === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-      class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-    >
-      <i class="pi pi-list text-xs"></i>
-      List
-    </button>
-    <button
-      (click)="viewState.set('timeline')"
-      [class]="viewState() === 'timeline' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-      class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-    >
-      <i class="pi pi-calendar text-xs"></i>
-      Timeline
-    </button>
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800">Projects</h1>
   </div>
+  <div class="flex items-center space-x-2">
+    @if (viewState() === 'gantt' || viewState() === 'list') {
+      <p-button
+        [title]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
+        size="small"
+        severity="secondary"
+        [icon]="ganttAnyExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
+        variant="text"
+        (onClick)="toggleExpandAll()"
+      ></p-button>
+    }
+    <p-button
+      label="Add New Project"
+      severity="secondary"
+      icon="pi pi-plus"
+      [routerLink]="['../create']"
+      *bifiAppHasPermission="'projects/create:view'"
+    ></p-button>
+
+    <div class="flex items-center space-x-3">
+      <span class="text-sm font-medium text-gray-600">View:</span>
+
+      <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+        <button
+          (click)="viewState.set('gantt')"
+          [class]="viewState() === 'gantt' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <rect x="0" y="1" width="8" height="2" rx="1" />
+            <rect x="3" y="5" width="7" height="2" rx="1" />
+            <rect x="1" y="9" width="6" height="2" rx="1" />
+          </svg>
+          Gantt
+        </button>
+        <button
+          (click)="viewState.set('list')"
+          [class]="viewState() === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-list text-xs"></i>
+          List
+        </button>
+        <button
+          (click)="viewState.set('timeline')"
+          [class]="
+            viewState() === 'timeline' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'
+          "
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-calendar text-xs"></i>
+          Timeline
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="flex-shrink-0 py-2 flex items-center gap-2">
+  <bifi-app-search-bar
+    class="flex-1 min-w-0"
+    [searchFilters]="projectFilters"
+    label="Search by name or description"
+  ></bifi-app-search-bar>
+
+  <bifi-app-filter-bar [filterFields]="projectFilterFields"></bifi-app-filter-bar>
 </div>
 
-<bifi-app-search-bar
-  [searchFilters]="projectFilters"
-  label="Search by name or description"
-></bifi-app-search-bar>
-
-<bifi-app-filter-bar [filterFields]="projectFilterFields"></bifi-app-filter-bar>
-
-@if (viewState() === 'list') {
-  <bifi-app-table-layout
-    [infiniteScroll]="false"
-    [columns]="projectColumns"
-    [data]="projects"
-    [onClickRow]="goToEditProject"
-    clickRowPermission="projects/update:view"
-  >
-    <ng-template #actions let-element>
-      <div class="flex items-center gap-1">
-        <p-button
-          *bifiAppHasPermission="'tasks/view:view'"
-          icon="pi pi-list-check"
-          severity="secondary"
-          size="small"
-          [text]="true"
-          pTooltip="View Tasks"
-          tooltipPosition="top"
-          (onClick)="$event.stopPropagation(); viewTasks(element)"
-        ></p-button>
-        <bifi-app-buttons-actions
-          (deleteClicked)="deleteProject(element._id)"
-          resource="projects"
-        ></bifi-app-buttons-actions>
-      </div>
-    </ng-template>
-  </bifi-app-table-layout>
+@if (isLoading()) {
+  <div class="flex-grow flex items-center justify-center">
+    <div class="text-center">
+      <i class="pi pi-spinner pi-spin"></i>
+      <p class="mt-2 text-gray-600">Loading Projects...</p>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="flex-grow flex items-center justify-center">
+    <div
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative"
+      role="alert"
+    >
+      <strong class="font-bold">Error:</strong>
+      <span class="block sm:inline">{{ error() }}</span>
+    </div>
+  </div>
 } @else {
-  <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
+  @if (viewState() === 'gantt') {
+    <bifi-app-gantt-view
+      title="Projects"
+      [flat]="ganttFlat()"
+      [map]="ganttMap()"
+      [dependencies]="[]"
+      (cardDateChange)="onGanttCardDateChange($event)"
+      (itemClick)="onGanttItemClick($event)"
+      (deleteItem)="onGanttDeleteItem($event)"
+      (expandToggle)="toggleExpand($event)"
+    ></bifi-app-gantt-view>
+  } @else if (viewState() === 'list') {
+    <bifi-app-projects-list-view
+      [projects]="ganttFlat()"
+      (expandToggle)="toggleExpand($event)"
+      (editProject)="goToEditProject($event)"
+    ></bifi-app-projects-list-view>
+  } @else {
+    <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
+  }
 }
