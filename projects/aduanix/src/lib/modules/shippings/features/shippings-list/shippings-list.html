@@ -24,7 +24,8 @@
   [searchFilters]="shippingFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="shippingColumns" [data]="shippings">
+<bifi-app-table-layout
+  [infiniteScroll]="true" [columns]="shippingColumns" [data]="shippings">
   <ng-template #actions let-row>
     <p-button
       severity="secondary"

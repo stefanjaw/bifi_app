@@ -16,6 +16,7 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="productColumns"
   [data]="entries"
   [onClickRow]="gotoEditProduct"

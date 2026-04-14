@@ -1,271 +1,205 @@
-<bifi-app-form-layout
-  title="{{ isUpdate() ? 'Edit Ticket' : 'New Ticket' }}"
-  titlePosition="center"
-  class="block px-4 bg-gray-50 py-4"
->
-  <form
-    ngProjectAs="div"
-    [formGroup]="form"
-    bifiAppFormActionsHandler
-    (appSubmit)="handleSubmit($event)"
-    class="min-h-screen flex flex-col gap-6"
-  >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
+<bifi-app-form-layout title="{{ isUpdate() ? 'Edit Ticket' : 'New Ticket' }}" titlePosition="center"
+  class="block px-4 bg-gray-50 py-4">
+  <form ngProjectAs="div" [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6">
+    <bifi-app-form-actions [isSubmitting]="isSubmitLoading()" (cancelClicked)="goBack()" class="mb-4"
+      [formChanged]="form.dirty"></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Ticket Information" id="ticket-info" [ordinal]="1">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Subject *</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="name"
-              type="text"
-              placeholder="Brief description of the issue"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+    <bifi-app-form-section title="Ticket Information" id="ticket-info" [ordinal]="1">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <bifi-app-form-field class="md:col-span-2">
+          <bifi-app-form-label>Subject *</bifi-app-form-label>
+          <input pInputText formControlName="name" type="text" placeholder="Brief description of the issue" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea
-              pInputTextarea
-              formControlName="description"
-              rows="4"
-              placeholder="Detailed description"
-            ></textarea>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field class="md:col-span-2">
+          <bifi-app-form-label>Description</bifi-app-form-label>
+          <textarea pInputTextarea formControlName="description" rows="4" placeholder="Detailed description"></textarea>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Internal Notes</bifi-app-form-label>
-            <textarea
-              pInputTextarea
-              formControlName="internalNotes"
-              rows="3"
-              placeholder="Internal notes (not visible to requester)"
-            ></textarea>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field class="md:col-span-2">
+          <bifi-app-form-label>Internal Notes</bifi-app-form-label>
+          <textarea pInputTextarea formControlName="internalNotes" rows="3"
+            placeholder="Internal notes (not visible to requester)"></textarea>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Priority</bifi-app-form-label>
-            <p-select
-              formControlName="priority"
-              [options]="priorityOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select priority"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Priority</bifi-app-form-label>
+          <p-select formControlName="priority" [options]="priorityOptions" optionLabel="label" optionValue="value"
+            placeholder="Select priority"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
-            <p-select
-              formControlName="type"
-              [options]="typeOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select type"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Type</bifi-app-form-label>
+          <p-select formControlName="type" [options]="typeOptions" optionLabel="label" optionValue="value"
+            placeholder="Select type"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Stage</bifi-app-form-label>
-            <p-select
-              formControlName="stage"
-              [options]="stageOptions() ?? []"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Select stage"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Stage</bifi-app-form-label>
+          <p-select formControlName="stage" [options]="stageOptions()" optionLabel="name" optionValue="_id"
+            placeholder="Select stage"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Assigned To</bifi-app-form-label>
-            <p-select
-              formControlName="assigned"
-              [options]="userOptions() ?? []"
-              optionLabel="username"
-              optionValue="_id"
-              placeholder="Select user"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Assigned To</bifi-app-form-label>
+          <p-select formControlName="assigned" [options]="userOptions()" optionLabel="username" optionValue="_id"
+            placeholder="Select user"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Requester</bifi-app-form-label>
-            <p-select
-              formControlName="senderUser"
-              [options]="userOptions() ?? []"
-              optionLabel="username"
-              optionValue="_id"
-              placeholder="Select requester"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Requester</bifi-app-form-label>
+          <p-select formControlName="senderUser" [options]="userOptions()" optionLabel="username" optionValue="_id"
+            placeholder="Select requester"></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Followers</bifi-app-form-label>
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-2 flex-wrap">
-                @for (ctrl of followersArray.controls; track $index) {
-                  <div
-                    class="flex items-center gap-1 bg-gray-100 text-gray-800 rounded px-3 py-1 text-sm"
-                  >
-                    <span>{{ getFollowerName(ctrl.value) }}</span>
-                    <button
-                      type="button"
-                      class="ml-1 text-gray-500 hover:text-gray-800"
-                      (click)="removeFollower($index)"
-                    >
-                      ×
-                    </button>
-                  </div>
-                }
-                @if (followersArray.controls.length === 0) {
-                  <p class="text-gray-400 text-sm">No followers selected.</p>
-                }
-              </div>
-              <p-select
-                [options]="userOptions() ?? []"
-                optionLabel="username"
-                optionValue="_id"
-                placeholder="Add a follower..."
-                (onChange)="addFollower($event.value)"
-              ></p-select>
-            </div>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Category</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="category"
-              type="text"
-              placeholder="e.g. Billing, Technical"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Module</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="appModule"
-              type="text"
-              placeholder="e.g. Inventory, CRM"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
-            <input
-              pInputText
-              formControlName="tagsInput"
-              type="text"
-              placeholder="tag1, tag2, tag3"
-            />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <div class="flex items-center gap-2 md:grid-cols-2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Duration</bifi-app-form-label>
+          <input pInputText formControlName="duration" type="text" />
+          <!-- <p-select [options]="timeOptions" 
+            optionLabel="label" 
+            optionValue="value" 
+            [ngModel]="selectedUnit()"
+            (onChange)="selectedUnit.set($event.value ?? $event)"
+>
+          </p-select> -->
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
         </div>
-      </bifi-app-form-section>
 
-      <bifi-app-form-section title="Linked Tasks" id="linked-tasks" [ordinal]="2">
-        <div class="flex flex-col gap-4">
-          <div class="flex gap-2 flex-wrap">
-            @for (id of linkedTaskIds(); track id) {
-              <div
-                class="flex items-center gap-1 bg-blue-100 text-blue-800 rounded px-3 py-1 text-sm font-medium"
-              >
-                @let taskId = typeof id === 'string' ? id : $any(id)._id;
+        <bifi-app-form-field>
+          <bifi-app-form-label>Date start</bifi-app-form-label>
+          <p-datepicker formControlName="dateStart" placeholder="Select date" [showIcon]="true"></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-                <span>{{ getTaskName(taskId) }}</span>
-                <button
-                  type="button"
-                  class="ml-1 text-blue-500 hover:text-blue-800"
-                  (click)="removeTask(taskId)"
-                >
+        <bifi-app-form-field>
+          <bifi-app-form-label>Date end</bifi-app-form-label>
+          <p-datepicker formControlName="dateEnd" placeholder="Select date" [showIcon]="true"></p-datepicker>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+
+        <bifi-app-form-field class="md:col-span-2">
+          <bifi-app-form-label>Followers</bifi-app-form-label>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 flex-wrap">
+              @for (ctrl of followersArray.controls; track $index) {
+              <div class="flex items-center gap-1 bg-gray-100 text-gray-800 rounded px-3 py-1 text-sm">
+                <span>{{ getFollowerName(ctrl.value) }}</span>
+                <button type="button" class="ml-1 text-gray-500 hover:text-gray-800" (click)="removeFollower($index)">
                   ×
                 </button>
               </div>
-            }
-            @if (linkedTaskIds().length === 0) {
-              <p class="text-gray-400 text-sm">No tasks linked to this ticket.</p>
+              }
+              @if (followersArray.controls.length === 0) {
+              <p class="text-gray-400 text-sm">No followers selected.</p>
+              }
+            </div>
+            <p-select [options]="userOptions()" optionLabel="username" optionValue="_id" placeholder="Add a follower..."
+              (onChange)="addFollower($event.value)"></p-select>
+          </div>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Category</bifi-app-form-label>
+          <input pInputText formControlName="category" type="text" placeholder="e.g. Billing, Technical" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field>
+          <bifi-app-form-label>Module</bifi-app-form-label>
+          <input pInputText formControlName="appModule" type="text" placeholder="e.g. Inventory, CRM" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field class="md:col-span-2">
+          <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
+          <input pInputText formControlName="tagsInput" type="text" placeholder="tag1, tag2, tag3" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </div>
+    </bifi-app-form-section>
+
+    <bifi-app-form-section title="Linked Tasks" id="linked-tasks" [ordinal]="2">
+      <div class="flex flex-col gap-4">
+        <div class="flex gap-2 flex-wrap">
+          @for (id of linkedTaskIds(); track id) {
+          <div class="flex items-center gap-1 bg-blue-100 text-blue-800 rounded px-3 py-1 text-sm font-medium">
+            @let taskId = typeof id === 'string' ? id : $any(id)._id;
+
+            <span>{{ getTaskName(taskId) }}</span>
+            <button type="button" class="ml-1 text-blue-500 hover:text-blue-800" (click)="removeTask(taskId)">
+              ×
+            </button>
+          </div>
+          }
+          @if (linkedTaskIds().length === 0) {
+          <p class="text-gray-400 text-sm">No tasks linked to this ticket.</p>
+          }
+        </div>
+
+        <div class="flex gap-2 items-center">
+          <p-select [options]="availableTasks()" optionLabel="name" optionValue="_id" placeholder="Add a task..."
+            (onChange)="addTask($event.value)" class="flex-1"></p-select>
+        </div>
+      </div>
+    </bifi-app-form-section>
+
+    @if (isUpdate()) {
+    <bifi-app-form-section title="Attachments" id="attachments" [ordinal]="3">
+      <div class="flex flex-col gap-2">
+        @if ((entry()?.attachments ?? []).length === 0) {
+        <p class="text-sm text-gray-500 italic">No attachments.</p>
+        }
+        @for (attachment of entry()?.attachments ?? []; track attachment.fileId) {
+        <div class="flex items-center gap-2 rounded border border-gray-200 p-2">
+          <span class="pi pi-file text-gray-500"></span>
+          <p class="flex-1 truncate text-sm">{{ attachment.name }}</p>
+          <p-button label="Download" icon="pi pi-download" severity="secondary" size="small"
+            (onClick)="downloadAttachment(attachment)"></p-button>
+        </div>
+        }
+      </div>
+    </bifi-app-form-section>
+    }
+
+    @if (isUpdate() && (entry()?.activityHistory ?? []).length > 0) {
+    <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="4">
+      <div class="flex flex-col gap-3">
+        @for (activity of entry()?.activityHistory ?? []; track activity._id) {
+        <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
+          <div class="text-xs text-gray-500">
+            {{ activity.createdAt | date: 'medium' }}
+            @if (activity.changedBy) {
+            —
+            <span class="font-medium">{{ activity.changedBy.username }}</span>
             }
           </div>
-
-          <div class="flex gap-2 items-center">
-            <p-select
-              [options]="availableTasks()"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Add a task..."
-              (onChange)="addTask($event.value)"
-              class="flex-1"
-            ></p-select>
+          <div class="text-sm">
+            <span class="font-semibold">{{ activityFieldLabel(activity.field) }}</span>
+            changed from
+            <span class="text-red-600">{{ activity.oldValue | json }}</span>
+            to
+            <span class="text-green-600">{{ activity.newValue | json }}</span>
           </div>
         </div>
-      </bifi-app-form-section>
-
-      @if (isUpdate()) {
-        <bifi-app-form-section title="Attachments" id="attachments" [ordinal]="3">
-          <div class="flex flex-col gap-2">
-            @if ((entry()?.attachments ?? []).length === 0) {
-              <p class="text-sm text-gray-500 italic">No attachments.</p>
-            }
-            @for (attachment of entry()?.attachments ?? []; track attachment.fileId) {
-              <div class="flex items-center gap-2 rounded border border-gray-200 p-2">
-                <span class="pi pi-file text-gray-500"></span>
-                <p class="flex-1 truncate text-sm">{{ attachment.name }}</p>
-                <p-button
-                  label="Download"
-                  icon="pi pi-download"
-                  severity="secondary"
-                  size="small"
-                  (onClick)="downloadAttachment(attachment)"
-                ></p-button>
-              </div>
-            }
-          </div>
-        </bifi-app-form-section>
-      }
-
-      @if (isUpdate() && (entry()?.activityHistory ?? []).length > 0) {
-        <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="4">
-          <div class="flex flex-col gap-3">
-            @for (activity of entry()?.activityHistory ?? []; track activity._id) {
-              <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
-                <div class="text-xs text-gray-500">
-                  {{ activity.createdAt | date: 'medium' }}
-                  @if (activity.changedBy) {
-                    —
-                    <span class="font-medium">{{ activity.changedBy?.username }}</span>
-                  }
-                </div>
-                <div class="text-sm">
-                  <span class="font-semibold">{{ activityFieldLabel(activity.field) }}</span>
-                  changed from
-                  <span class="text-red-600">{{ activity.oldValue | json }}</span>
-                  to
-                  <span class="text-green-600">{{ activity.newValue | json }}</span>
-                </div>
-              </div>
-            }
-          </div>
-        </bifi-app-form-section>
-      }
+        }
+      </div>
+    </bifi-app-form-section>
+    }
     } @else {
-      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }
   </form>
 </bifi-app-form-layout>

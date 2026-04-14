@@ -9,7 +9,8 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [columns]="supplierColumns" [data]="entries">
+<bifi-app-table-layout
+  [infiniteScroll]="true" [columns]="supplierColumns" [data]="entries">
   <ng-template #actions let-element>
     <p-button
       severity="info"

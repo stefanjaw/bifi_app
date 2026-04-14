@@ -13,6 +13,7 @@
 <bifi-app-search-bar label="Search by name" [searchFilters]="crmStageFilters"></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="crmStageColumns"
   [data]="crmStages"
   [onClickRow]="goToEditCrmStage"

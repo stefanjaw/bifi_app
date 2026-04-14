@@ -14,7 +14,7 @@ import { TicketForm as TicketFormService, TicketFormModel } from '../../services
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -25,11 +25,14 @@ import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { FileResolver } from '@avalantec/base-app/resource';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputNumber } from 'primeng/inputnumber';
 
 @Component({
   selector: 'bifi-app-ticket-form',
   imports: [
     FormModule,
+    FormsModule,
     ReactiveFormsModule,
     InputText,
     ButtonModule,
@@ -37,6 +40,7 @@ import { FileResolver } from '@avalantec/base-app/resource';
     TextareaModule,
     ProgressBarModule,
     DatePipe,
+    DatePickerModule,
     JsonPipe,
   ],
   templateUrl: './ticket-form.html',
@@ -81,6 +85,7 @@ export class TicketFormComponent {
   form = this.formService.form;
 
   linkedTaskIds = signal<string[]>([]);
+  selectedUnit = signal('minutes'); // default
 
   availableTasks = computed(() => {
     const all = (this.allTasks() as any[]) ?? [];
@@ -104,6 +109,12 @@ export class TicketFormComponent {
     { label: 'Task', value: 'task' },
   ];
 
+  timeOptions = [
+    { label: 'min', value: 'minutes' },
+    { label: 'hrs', value: 'hours' },
+    { label: 'days', value: 'days' },
+  ];
+
   constructor() {
     effect(() => {
       const entry = this.entry();
@@ -121,12 +132,21 @@ export class TicketFormComponent {
           tagsInput: (entry.tags ?? []).join(', '),
           category: entry.category ?? '',
           appModule: entry.appModule ?? '',
+          dateStart: entry.dateStart ? new Date(entry.dateStart) : undefined,
+          dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : undefined,
+          duration: entry.duration ?? '30',
         });
         this.linkedTaskIds.set(entry.taskIds ?? []);
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
         this.linkedTaskIds.set([]);
+
+        this.form.patchValue({
+          duration: '30',
+        });
+
+        this.selectedUnit.set('minutes');
       }
     });
   }
@@ -165,7 +185,10 @@ export class TicketFormComponent {
     const { rawValue } = data;
 
     const tags = rawValue.tagsInput
-      ? rawValue.tagsInput.split(',').map((t: string) => t.trim()).filter(Boolean)
+      ? rawValue.tagsInput
+          .split(',')
+          .map((t: string) => t.trim())
+          .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {
@@ -184,6 +207,24 @@ export class TicketFormComponent {
     if (rawValue.followers?.length) payload['followers'] = rawValue.followers;
     if (rawValue.category) payload['category'] = rawValue.category;
     if (rawValue.appModule) payload['appModule'] = rawValue.appModule;
+    if (rawValue.duration) payload['duration'] = rawValue.duration;
+
+    payload['dateStart'] = rawValue.dateStart
+      ? new Date(rawValue.dateStart).toISOString()
+      : new Date().toISOString();
+    if (rawValue.dateEnd) {
+      payload['dateEnd'] = new Date(rawValue.dateEnd).toISOString();
+      // Calcular automáticamente slaResolutionDeadline como 3 días después de dateEnd
+      const dateEnd = new Date(rawValue.dateEnd);
+      const slaDeadline = new Date(dateEnd);
+      slaDeadline.setDate(slaDeadline.getDate() + 3);
+      payload['slaResolutionDeadline'] = slaDeadline.toISOString();
+    }
+
+    //     const durationFull = rawValue.duration
+    //   ? `${rawValue.duration} ${this.selectedUnit()}`
+    //   : '';
+    // payload['duration'] = durationFull;
 
     const action = this.isUpdate()
       ? this.crudTickets.put({ _id: this.id() || '', data: payload as ticket })
@@ -224,6 +265,9 @@ export class TicketFormComponent {
       category: 'Category',
       appModule: 'Module',
       active: 'Active',
+      dateStart: 'Start Date',
+      dateEnd: 'End Date',
+      duration: 'Duration',
     };
     return labels[field] ?? field;
   }

@@ -39,6 +39,9 @@ export interface ticket {
   taskIds?: string[];
   activityHistory?: ticketActivityEntry[];
   active: boolean;
+  dateStart?: Date;
+  dateEnd?: Date;
+  duration?: string;
   createdAt?: string;
   updatedAt?: string;
 }

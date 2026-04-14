@@ -40,6 +40,7 @@
       </bifi-app-form-section>
       <bifi-app-form-section title="Rooms Preview" id="rooms" [ordinal]="2">
         <bifi-app-table-layout
+          [infiniteScroll]="true"
           [columns]="roomColumns"
           [data]="facility()?.rooms || []"
         ></bifi-app-table-layout>

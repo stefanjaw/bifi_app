@@ -15,6 +15,9 @@ export interface TicketFormModel {
   tagsInput: string;
   category: string;
   appModule: string;
+  dateStart?: Date;
+  dateEnd?: Date;
+  duration?: string;
 }
 
 @Injectable({
@@ -35,6 +38,10 @@ export class TicketForm extends BaseForm<TicketFormModel> {
         template: [''],
         formArrayElements: [],
       },
+      dateStart: [new Date()],
+      dateEnd: [new Date()],
+
+      duration: [''],
       tagsInput: [''],
       category: [''],
       appModule: [''],

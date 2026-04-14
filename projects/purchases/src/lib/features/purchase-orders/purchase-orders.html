@@ -15,7 +15,8 @@
   [searchFilters]="purchaseOrderFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [columns]="purchaseOrderColumns" [data]="entries">
+<bifi-app-table-layout
+  [infiniteScroll]="true" [columns]="purchaseOrderColumns" [data]="entries">
   <ng-template #actions let-element>
     <p-button
       severity="info"

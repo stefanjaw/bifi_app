@@ -22,6 +22,7 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [infiniteScroll]="true"
   [columns]="currencyColumns"
   [data]="currencies"
   [onClickRow]="goToEditCurrency"
