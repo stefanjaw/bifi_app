@@ -42,7 +42,6 @@ import { InputNumber } from 'primeng/inputnumber';
     DatePipe,
     DatePickerModule,
     JsonPipe,
-    InputNumber,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
