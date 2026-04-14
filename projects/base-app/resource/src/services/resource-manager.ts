@@ -7,6 +7,7 @@ import {
   InjectionToken,
   Provider,
   ProviderToken,
+  ResourceRef,
   signal,
   untracked,
 } from '@angular/core';
@@ -18,10 +19,13 @@ import { SortManager } from './sort-manager';
 import { ApiRequestManager } from './api-request-manager';
 import { ListState, ListStateManager } from './list-state-manager';
 
-// Injection token to be used in the resource manager to access the ApiRequestManager
 const RESOURCE_API_SERVICE_TOKEN = new InjectionToken<ApiRequestManager<unknown>>(
   'RESOURCE_API_SERVICE'
 );
+
+const RESOURCE_MODE_TOKEN = new InjectionToken<'paginated' | 'all'>('RESOURCE_MODE', {
+  factory: () => 'paginated',
+});
 
 @Injectable()
 export class ResourceManager<T> {
@@ -31,6 +35,7 @@ export class ResourceManager<T> {
   private listStateManager = inject(ListStateManager);
   private document = inject(DOCUMENT);
   private route = inject(ActivatedRoute);
+  private mode = inject(RESOURCE_MODE_TOKEN);
   // Deep equality prevents spurious re-fetches when the filter effect sets a
   // new `{}` object with the same content (e.g. no active filters).
   private _searchParams = signal<Record<string, any>>(
@@ -47,15 +52,21 @@ export class ResourceManager<T> {
   // triggering:
   private _restored = signal(false);
   private _trigger = signal(false);
+
+  // Paginated mode: exposes a page object (docs, totalDocs, page, limit, …)
   data!: ReturnType<ApiRequestManager<T>['getWithPagination']>;
 
+  // Fetch-all mode: exposes the full flat array of records
+  allData!: ResourceRef<T[]>;
+
   /**
-   * Handles the side effects of setting the search params and resetting the pagination options based on the presence of filters.
-   * Also resets the filters and pagination options when the component is destroyed.
+   * Handles the side effects of setting the search params and resetting the
+   * pagination options based on the presence of filters. Also resets the
+   * filters and pagination options when the component is destroyed.
    */
   constructor() {
     // Restore saved state FIRST so that paginationOptions/sort reflect the
-    // correct page before `data` (the rxResource) is created below.
+    // correct page before the resource is created below.
     this._restoreState();
 
     afterNextRender(() => {
@@ -71,7 +82,8 @@ export class ResourceManager<T> {
 
         this._searchParams.set(filterObject);
 
-        // If the filter object contains the 'active' property, we set _getInactive to null to include both active and inactive records in the results.
+        // If the filter object contains the 'active' property, we set
+        // _getInactive to null to include both active and inactive records.
         if (this.filterManager.hasActivePropertyUtil(filterObject)) this._getInactive.set(null);
         else this._getInactive.set(false);
       } else {
@@ -83,17 +95,27 @@ export class ResourceManager<T> {
     effect(() => {
       if (!this._restored()) return;
 
-      const pagination = this.paginationManager.paginationOptions();
-      const sort = this.sortManager.sort();
       const partial = this.listStateManager.partialSave();
 
-      const state: Partial<ListState> = {
-        page: pagination.page,
-        limit: pagination.limit,
-        sort: sort as ListState['sort'],
-        searchText: partial.searchText,
-        filterRows: partial.filterRows,
-      };
+      let state: Partial<ListState>;
+
+      if (this.mode === 'all') {
+        // Fetch-all mode: page/limit/sort are not meaningful — omit them from URL.
+        state = {
+          searchText: partial.searchText,
+          filterRows: partial.filterRows,
+        };
+      } else {
+        const pagination = this.paginationManager.paginationOptions();
+        const sort = this.sortManager.sort();
+        state = {
+          page: pagination.page,
+          limit: pagination.limit,
+          sort: sort as ListState['sort'],
+          searchText: partial.searchText,
+          filterRows: partial.filterRows,
+        };
+      }
 
       untracked(() => this._replaceUrlState(state));
     });
@@ -105,32 +127,37 @@ export class ResourceManager<T> {
       this.listStateManager.clearPendingRestore();
     });
 
-    // Create the paginated resource LAST — after _restoreState() has already
-    // set the correct page/limit on PaginationManager. This guarantees that
-    // rxResource's internal effect fires once with the restored page rather
-    // than the default page=1, eliminating the spurious initial page=1 request
-    // that previously appeared in backend logs before the correct page request.
-    this.data = this.service.getWithPagination({
-      searchParams: this.searchParams,
-      sort: this.sortManager.sort,
-      paginateOptions: this.paginationManager.paginationOptions,
-      getInactive: this._getInactive,
-      triggerRequest: this._trigger,
-    });
+    // Create the resource LAST — after _restoreState() has already set the
+    // correct page/limit on PaginationManager (paginated mode) or restored
+    // filter state (all mode). This guarantees the resource fires once with
+    // the correct initial state.
+    if (this.mode === 'all') {
+      this.allData = this.service.get({
+        searchParams: this.searchParams,
+        getInactive: this._getInactive,
+        triggerRequest: this._trigger,
+      }) as unknown as ResourceRef<T[]>;
+    } else {
+      this.data = this.service.getWithPagination({
+        searchParams: this.searchParams,
+        sort: this.sortManager.sort,
+        paginateOptions: this.paginationManager.paginationOptions,
+        getInactive: this._getInactive,
+        triggerRequest: this._trigger,
+      });
+    }
   }
 
   /**
-   * Silently patches the browser URL's query string with the current list state,
-   * preserving any non-list-state query params already in the URL.
+   * Silently patches the browser URL's query string with the current list
+   * state, preserving any non-list-state query params already in the URL.
    *
-   * Uses window.history.replaceState directly (via DOCUMENT injection) to bypass
-   * Angular's Location service. Angular's Location.replaceState() calls
-   * _notifyUrlChangeListeners() which triggers Router navigation — causing the
-   * component to be destroyed/re-created and pagination to oscillate. Calling
-   * window.history.replaceState directly emits no Angular events at all.
-   *
-   * window.location always reflects the real browser URL including any previous
-   * history.replaceState calls, so merging with existing params is always accurate.
+   * Uses window.history.replaceState directly (via DOCUMENT injection) to
+   * bypass Angular's Location service. Angular's Location.replaceState()
+   * calls _notifyUrlChangeListeners() which triggers Router navigation —
+   * causing the component to be destroyed/re-created and pagination to
+   * oscillate. Calling window.history.replaceState directly emits no Angular
+   * events at all.
    */
   private lastUrlState = '';
 
@@ -158,9 +185,9 @@ export class ResourceManager<T> {
 
   /**
    * On init, attempts to restore list state from URL query params first,
-   * then falls back to localStorage. Restored state is applied to
-   * PaginationManager/SortManager immediately, and made available to
-   * FilterBar/SearchBar via ListStateManager.pendingRestore.
+   * then falls back to localStorage. In paginated mode, also restores
+   * page/limit/sort on PaginationManager/SortManager immediately. In
+   * fetch-all mode, only searchText/filterRows are restored (no pagination).
    */
   private _restoreState(): void {
     const queryParams = this.route.snapshot.queryParams as Record<string, string>;
@@ -168,37 +195,52 @@ export class ResourceManager<T> {
 
     if (fromQuery) {
       this.listStateManager.setPendingRestore(fromQuery);
-      this.paginationManager.setPaginationOptions(fromQuery.page, fromQuery.limit);
-      if (fromQuery.sort.length) this.sortManager.sortBy(fromQuery.sort as any);
+      if (this.mode !== 'all') {
+        this.paginationManager.setPaginationOptions(fromQuery.page, fromQuery.limit);
+        if (fromQuery.sort.length) this.sortManager.sortBy(fromQuery.sort as any);
+      }
       return;
     }
 
     const fromStorage = this.listStateManager.loadFromLocalStorage(this.storageKey);
-
     if (fromStorage) {
       this.listStateManager.setPendingRestore(fromStorage);
-      this.paginationManager.setPaginationOptions(fromStorage.page, fromStorage.limit);
-      if (fromStorage.sort.length) this.sortManager.sortBy(fromStorage.sort as any);
+      if (this.mode !== 'all') {
+        this.paginationManager.setPaginationOptions(fromStorage.page, fromStorage.limit);
+        if (fromStorage.sort.length) this.sortManager.sortBy(fromStorage.sort as any);
+      }
     }
   }
 
   /**
-   * Compiles the full list state from PaginationManager, SortManager, and the
-   * partial state saved by FilterBar/SearchBar, then persists it to localStorage
-   * so it can be restored on the next visit.
+   * Compiles the full list state and persists it to localStorage so it can
+   * be restored on the next visit. In fetch-all mode, page/limit/sort are
+   * not meaningful and are stored with sensible defaults.
    */
   private _saveState(): void {
-    const pagination = this.paginationManager.paginationOptions();
-    const sort = this.sortManager.sort();
     const partial = this.listStateManager.partialSave();
 
-    const state: ListState = {
-      searchText: partial.searchText ?? '',
-      filterRows: partial.filterRows ?? [],
-      page: pagination.page,
-      limit: pagination.limit,
-      sort: sort as ListState['sort'],
-    };
+    let state: ListState;
+
+    if (this.mode === 'all') {
+      state = {
+        searchText: partial.searchText ?? '',
+        filterRows: partial.filterRows ?? [],
+        page: 1,
+        limit: 10,
+        sort: [],
+      };
+    } else {
+      const pagination = this.paginationManager.paginationOptions();
+      const sort = this.sortManager.sort();
+      state = {
+        searchText: partial.searchText ?? '',
+        filterRows: partial.filterRows ?? [],
+        page: pagination.page,
+        limit: pagination.limit,
+        sort: sort as ListState['sort'],
+      };
+    }
 
     this.listStateManager.saveToLocalStorage(this.storageKey, state);
   }
@@ -213,19 +255,27 @@ export class ResourceManager<T> {
 }
 
 /**
- * Provides the resource manager service to the component tree.
+ * Provides the ResourceManager service to the component tree.
  *
- * @param service The provider token of the api request manager service to be used by the resource manager.
- * @returns An array of providers that can be used in the component's or module's @NgModule decorator.
+ * @param service The provider token of the ApiRequestManager service.
+ * @param options.mode 'paginated' (default) uses getWithPagination() and exposes
+ *   `data`. 'all' uses get() without pagination and exposes `allData` — required
+ *   for views (Gantt, timeline) that need the full dataset upfront. All existing
+ *   callers that omit `options` continue to work unchanged.
  */
 export function provideResourceManager<T>(
-  service: ProviderToken<ApiRequestManager<T>>
+  service: ProviderToken<ApiRequestManager<T>>,
+  options?: { mode?: 'paginated' | 'all' }
 ): Provider[] {
   return [
     {
       provide: RESOURCE_API_SERVICE_TOKEN,
       useFactory: () => inject(service),
       deps: [service],
+    },
+    {
+      provide: RESOURCE_MODE_TOKEN,
+      useValue: options?.mode ?? 'paginated',
     },
     ResourceManager,
   ];

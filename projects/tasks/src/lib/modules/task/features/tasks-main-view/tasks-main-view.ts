@@ -14,22 +14,28 @@ import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
-import { viewMode } from '../../interfaces/task-view';
 import { CrudTasks } from '../../services/crud-tasks';
 import { TasksListView } from '../tasks-list-view/tasks-list-view';
-import { TasksGanttView } from '../tasks-gantt-view/tasks-gantt-view';
 import { task } from '../../interfaces/task';
-import { ganttDependency, ganttTask } from '../../interfaces/task-gantt';
+import { ganttTask } from '../../interfaces/task-gantt';
 import dayjs from 'dayjs';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
+  buildGanttTree,
+  collapseAllNodes,
+  expandAllNodes,
   FilterBar,
   FilterManager,
-  ListState,
+  flattenVisible,
+  GanttDependency,
+  GanttNode,
+  GanttView,
+  injectResourceManager,
   ListStateManager,
+  provideResourceManager,
   SearchBar,
   TimelineItem,
   TimelineView,
@@ -37,16 +43,19 @@ import {
 import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
-const TASKS_STORAGE_KEY = 'bifi_list_tasks';
 
 @Component({
   selector: 'bifi-app-tasks-main-view',
-  providers: [FilterManager, ListStateManager],
+  providers: [
+    FilterManager,
+    ListStateManager,
+    ...provideResourceManager(CrudTasks, { mode: 'all' }),
+  ],
   imports: [
     ButtonModule,
     PopoverModule,
     TasksListView,
-    TasksGanttView,
+    GanttView,
     CreateTasksFormDialog,
     UpdateTasksFormDialog,
     SearchBar,
@@ -60,44 +69,30 @@ const TASKS_STORAGE_KEY = 'bifi_list_tasks';
 export class TasksMainView {
   private crudTasks = inject(CrudTasks);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
-  private filterManager = inject(FilterManager);
-  private listStateManager = inject(ListStateManager);
   private route = inject(ActivatedRoute);
   private document = inject(DOCUMENT);
   private destroy$ = inject(DestroyRef);
-  private getInactive = signal<boolean | null>(false);
 
-  // filter params derived from the FilterManager
-  private filterParams = computed(() => {
-    const filters = this.filterManager.filters();
-    return filters.length > 0 ? this.filterManager.getFilterObject() : {};
-  });
+  // ResourceManager (fetch-all mode) owns: filter→searchParams, active/inactive
+  // logic, URL sync for list state, and localStorage save/restore.
+  private rm = injectResourceManager<task>();
 
-  // data (reacts to search filter changes automatically)
-  private tasksResource = this.crudTasks.get({
-    searchParams: this.filterParams,
-    getInactive: this.getInactive,
-  });
-
-  // URL sync: only start syncing after first render to avoid overwriting the
-  // initial URL params that were used to restore state.
-  private _restored = signal(false);
-  private lastUrlState = '';
+  // Guard so the _view URL sync effect does not overwrite the restored URL
+  // on the initial render.
+  private _viewRestored = signal(false);
 
   // states
-  viewMode = signal<viewMode>('Day');
   viewState = signal<'gantt' | 'list' | 'timeline'>('gantt');
   isListView = computed(() => this.viewState() === 'list');
-  allExpanded = signal(false);
-  isLoading = this.tasksResource.isLoading;
-  error = this.tasksResource.error;
+
+  // data / loading / error — all owned by ResourceManager
+  flat = computed(() => (this.rm.allData.value() ?? []) as task[]);
+  isLoading = this.rm.allData.isLoading;
+  error = this.rm.allData.error;
 
   // exposed filter list for the search bar and filter bar
   taskFilters = taskFilters;
   taskFilterFields = taskFilterFields;
-
-  // tasks
-  flat = this.tasksResource.value;
 
   // milestone timeline items
   milestoneItems = computed<TimelineItem[]>(() =>
@@ -119,10 +114,34 @@ export class TasksMainView {
       }))
   );
 
-  tree = signal<ganttTask[]>([]);
-  visible = signal<ganttTask[]>([]);
-  map = signal<Map<string, ganttTask>>(new Map());
-  dependencies = signal<ganttDependency[]>([]);
+  // Maps raw task[] → ganttTask[] (GanttItem extension with domain-specific fields)
+  private ganttItems = computed<ganttTask[]>(() => this.flat().map(t => this.mapToGanttTask(t)));
+
+  // ganttDependencies derived from the raw task list
+  ganttDependencies = computed<GanttDependency[]>(() => {
+    const tasks = this.flat();
+    const ids = new Set(tasks.map(t => t._id));
+    const deps: GanttDependency[] = [];
+    for (const t of tasks) {
+      if (!t.dependencyIds?.length) continue;
+      for (const dep of t.dependencyIds) {
+        if (!ids.has(dep._id)) continue;
+        deps.push({ from: dep._id, to: t._id });
+      }
+    }
+    return deps;
+  });
+
+  // Tree and map as WritableSignals so expand/collapse can mutate them
+  // without triggering a full tree rebuild.
+  ganttTree = signal<GanttNode<ganttTask>[]>([]);
+  ganttMap = signal<Map<string, GanttNode<ganttTask>>>(new Map());
+
+  // Visible rows: recomputed whenever ganttTree reference changes
+  ganttFlat = computed<GanttNode<ganttTask>[]>(() => flattenVisible(this.ganttTree()));
+
+  // True if at least one root node is expanded (drives the header toggle button icon)
+  ganttAnyExpanded = computed(() => this.ganttTree().some(n => n.isExpanded));
 
   // filter bar reference for chip data
   filterBarRef = viewChild(FilterBar);
@@ -133,317 +152,169 @@ export class TasksMainView {
   updateTasksFormDialog = viewChild<UpdateTasksFormDialog>('updateTasksFormDialog');
 
   constructor() {
-    // --- State restoration (must happen before FilterBar/SearchBar init) ---
-    this._restoreState();
+    // Restore only the _view param — ResourceManager restores list state.
+    this._restoreViewState();
 
-    // Enable URL sync after the first render cycle completes. This prevents
-    // overwriting the original URL params before FilterBar/SearchBar have had
-    // a chance to read pendingRestore from them.
+    // After the first render, allow the _view URL sync effect to write.
     afterNextRender(() => {
-      this._restored.set(true);
+      this._viewRestored.set(true);
     });
 
-    // URL sync effect: silently patch the browser URL whenever filter/view state changes.
+    // Sync _view to the URL independently of ResourceManager's list-state sync.
     effect(() => {
-      if (!this._restored()) return;
-
-      const partial = this.listStateManager.partialSave();
+      if (!this._viewRestored()) return;
       const view = this.viewState();
-
-      untracked(() => this._replaceUrlState(partial, view));
+      untracked(() => {
+        const win = this.document?.defaultView;
+        if (!win) return;
+        const existing = new URLSearchParams(win.location.search);
+        existing.set(TASKS_VIEW_QUERY_KEY, view);
+        win.history.replaceState(
+          win.history.state,
+          '',
+          win.location.pathname + '?' + existing.toString()
+        );
+      });
     });
 
-    // --- Active / inactive filter logic ---
+    // Rebuild tree whenever ganttItems() changes; carry expand state from prevMap
     effect(() => {
-      const filters = this.filterManager.filters();
-
-      if (filters.length > 0) {
-        const filterObject = this.filterManager.getFilterObject();
-
-        // If the filter object contains the 'active' property, we set getInactive to null to include both active and inactive records in the results.
-        if (this.filterManager.hasActivePropertyUtil(filterObject)) this.getInactive.set(null);
-        else this.getInactive.set(false);
-      } else {
-        this.getInactive.set(false);
-      }
+      const items = this.ganttItems();
+      const prevMap = untracked(() => this.ganttMap());
+      const { tree, map } = buildGanttTree(
+        items,
+        { idField: 'id', parentField: 'parentId' },
+        prevMap
+      );
+      this.ganttTree.set(tree);
+      this.ganttMap.set(map);
     });
 
-    // Listen for changes to the tasksResource
-    effect(() => {
-      const flat = this.flat();
-      this.tree.set(this.buildTree(flat));
-      this.dependencies.set(this.buildDependencies(flat));
-    });
-
-    // Listen for changes to the tree
-    effect(() => {
-      const tree = this.tree();
-      this.visible.set(this.flattenVisible(tree));
-    });
-
-    // Listen for changes to the taskCreatedOrUpdated event
+    // Listen for task created/updated to reload data
     this.tasksMaintenanceContext.taskCreatedOrUpdated$
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe(() => this.tasksResource.reload());
+      .subscribe(() => this.rm.allData.reload());
 
-    // Listen for changes to the toggleExpand event
+    // List view expand/collapse
     this.tasksMaintenanceContext.toggleExpand$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(id => this.toggleExpand(id));
 
-    // Listen for the expandAll event
     this.tasksMaintenanceContext.expandAll$
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe(() => this.expandAll());
+      .subscribe(() => {
+        const tree = this.ganttTree();
+        expandAllNodes(tree);
+        this.ganttTree.set([...tree]);
+      });
 
-    // Listen for the collapseAll event
     this.tasksMaintenanceContext.collapseAll$
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe(() => this.collapseAll());
+      .subscribe(() => {
+        const tree = this.ganttTree();
+        collapseAllNodes(tree);
+        this.ganttTree.set([...tree]);
+      });
 
-    // Listen for changes to the openCreateSubTaskDialog event
+    // Dialog management
     this.tasksMaintenanceContext.openCreateSubTaskDialog$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => this.createTasksFormDialog()?.openDialog());
 
-    // Listen for changes to the openUpdateTaskDialog event
     this.tasksMaintenanceContext.openUpdateTaskDialog$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => this.updateTasksFormDialog()?.openDialog());
 
-    // Listen for changes to the deleteTask event
     this.tasksMaintenanceContext.deleteTask$
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(id => this.deleteTask(id));
-
-    // Persist state to localStorage on destroy so it can be restored on next visit.
-    this.destroy$.onDestroy(() => {
-      const partial = untracked(() => this.listStateManager.partialSave());
-      const state: ListState = {
-        searchText: partial.searchText ?? '',
-        filterRows: partial.filterRows ?? [],
-        page: 1,
-        limit: 10,
-        sort: [],
-      };
-      this.listStateManager.saveToLocalStorage(TASKS_STORAGE_KEY, state);
-      this.listStateManager.clearPartialSave();
-      this.listStateManager.clearPendingRestore();
-    });
   }
 
-  /**
-   * On init, attempts to restore list state from URL query params first,
-   * then falls back to localStorage. Also restores the selected view mode
-   * from the `_view` query param.
-   */
-  private _restoreState(): void {
-    const queryParams = this.route.snapshot.queryParams as Record<string, string>;
-
-    // Restore view state (gantt / list / timeline) from URL param
-    const viewParam = queryParams[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline';
-    if (viewParam && ['gantt', 'list', 'timeline'].includes(viewParam)) {
-      this.viewState.set(viewParam);
-    }
-
-    // Restore filter/search state — URL params take priority over localStorage
-    const fromQuery = this.listStateManager.parseQueryParams(queryParams);
-    if (fromQuery) {
-      this.listStateManager.setPendingRestore(fromQuery);
-      return;
-    }
-
-    const fromStorage = this.listStateManager.loadFromLocalStorage(TASKS_STORAGE_KEY);
-    if (fromStorage) {
-      this.listStateManager.setPendingRestore(fromStorage);
-    }
+  // Restores only the view mode (gantt/list/timeline) from the URL.
+  // ResourceManager handles all other list state (filters, search, page).
+  private _restoreViewState(): void {
+    const params = this.route.snapshot.queryParams as Record<string, string>;
+    const view = params[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline';
+    if (view && ['gantt', 'list', 'timeline'].includes(view)) this.viewState.set(view);
   }
 
-  /**
-   * Silently patches the browser URL's query string with the current list and
-   * view state. Preserves any non-list-state params already in the URL.
-   * Uses window.history.replaceState directly to avoid triggering Angular router
-   * navigation, which would destroy and re-create the component.
-   */
-  private _replaceUrlState(state: Partial<ListState>, view: string): void {
-    const win = this.document?.defaultView;
-    if (!win) return;
-
-    const basePath = win.location.pathname;
-    const existingParams = new URLSearchParams(win.location.search);
-    const listParams = this.listStateManager.buildQueryParams(state);
-
-    Object.entries(listParams).forEach(([key, value]) => {
-      if (value === null || value === undefined) existingParams.delete(key);
-      else existingParams.set(key, value);
-    });
-
-    // Persist selected view separately since it is not part of ListState
-    if (view) existingParams.set(TASKS_VIEW_QUERY_KEY, view);
-    else existingParams.delete(TASKS_VIEW_QUERY_KEY);
-
-    const newSearch = existingParams.toString();
-    const newUrl = basePath + (newSearch ? '?' + newSearch : '');
-
-    if (this.lastUrlState === newUrl) return;
-    this.lastUrlState = newUrl;
-
-    win.history.replaceState(win.history.state, '', newUrl);
-  }
-
-  private buildTree(flat: task[]): ganttTask[] {
-    const previousTasks = untracked(this.tree);
-
-    const nodes = flat.map<ganttTask>(t => ({
+  // Maps a raw task to a ganttTask (GanttItem extension)
+  private mapToGanttTask(t: task): ganttTask {
+    return {
       id: t._id,
       name: t.name,
       start: t.plannedStartDate || dayjs().toISOString(),
       end: t.plannedEndDate || dayjs().add(1, 'day').toISOString(),
       progress: t.progress,
       parentId: t.parentId?._id || null,
-      level: 0,
-      children: [],
-      isExpanded: this.findNode(previousTasks, t._id)?.isExpanded || false,
       stage: t.stage,
       priority: t.priority,
       projectName: t.projectId?.name,
-    }));
-
-    const map = new Map(nodes.map(n => [n.id, n]));
-    this.map.set(map);
-
-    const roots: ganttTask[] = [];
-
-    for (const n of nodes) {
-      if (n.parentId) {
-        const parent = map.get(n.parentId);
-
-        if (parent) {
-          parent.children.push(n);
-        } else {
-          roots.push(n);
-        }
-      } else {
-        roots.push(n);
-      }
-    }
-
-    this.assignLevels(roots);
-
-    return roots;
-  }
-
-  private buildDependencies(tasks: task[]): ganttDependency[] {
-    const ids = new Set(tasks.map(t => t._id));
-    const deps: ganttDependency[] = [];
-
-    for (const t of tasks) {
-      if (!t.dependencyIds?.length) continue;
-
-      for (const dep of t.dependencyIds) {
-        if (!ids.has(dep._id)) continue;
-
-        deps.push({
-          from: dep._id,
-          to: t._id,
-        });
-      }
-    }
-
-    return deps;
-  }
-
-  private flattenVisible(tree: ganttTask[]): ganttTask[] {
-    const result: ganttTask[] = [];
-
-    const walk = (nodes: ganttTask[]) => {
-      for (const n of nodes) {
-        result.push(n);
-
-        if (n.isExpanded && n.children.length > 0) {
-          walk(n.children);
-        }
-      }
     };
-
-    walk(tree);
-    return result;
   }
 
-  private findNode(tree: ganttTask[], id: string): ganttTask | null {
-    const stack = [...tree];
+  // Expand / collapse
 
-    while (stack.length) {
-      const n = stack.pop()!;
-      if (n.id === id) return n;
-      stack.push(...n.children);
-    }
-    return null;
-  }
-
-  private assignLevels(nodes: ganttTask[], level = 0) {
-    for (const n of nodes) {
-      n.level = level;
-      if (n.children.length) {
-        this.assignLevels(n.children, level + 1);
-      }
-    }
-  }
-
-  private setExpandedAll(nodes: ganttTask[], value: boolean) {
-    for (const n of nodes) {
-      if (n.children.length > 0 || value === false) {
-        n.isExpanded = value;
-      }
-      if (n.children.length > 0) {
-        this.setExpandedAll(n.children, value);
-      }
-    }
-  }
-
-  toggleExpand(id: string) {
-    const tree = this.tree();
-    const node = this.findNode(tree, id);
-
+  toggleExpand(id: string): void {
+    const node = this.ganttMap().get(id);
     if (!node) return;
-
     node.isExpanded = !node.isExpanded;
-    this.visible.set(this.flattenVisible(tree));
+    this.ganttTree.set([...this.ganttTree()]);
   }
 
-  expandAll() {
-    const tree = this.tree();
-    this.setExpandedAll(tree, true);
-    this.visible.set(this.flattenVisible(tree));
-  }
-
-  collapseAll() {
-    const tree = this.tree();
-    this.setExpandedAll(tree, false);
-    this.visible.set(this.flattenVisible(tree));
-  }
-
-  toggleExpandCollapseAll() {
-    if (this.allExpanded()) {
-      this.collapseAll();
-      this.allExpanded.set(false);
+  toggleExpandAll(): void {
+    const tree = this.ganttTree();
+    const anyExpanded = tree.some(n => n.isExpanded);
+    if (anyExpanded) {
+      collapseAllNodes(tree);
     } else {
-      this.expandAll();
-      this.allExpanded.set(true);
+      expandAllNodes(tree);
     }
+    this.ganttTree.set([...tree]);
+  }
+
+  // GanttView output handlers
+
+  onGanttCardDateChange(event: { id: string; start: dayjs.Dayjs; end: dayjs.Dayjs }): void {
+    this.crudTasks
+      .put({
+        _id: event.id,
+        data: {
+          plannedStartDate: event.start.toISOString(),
+          plannedEndDate: event.end.toISOString(),
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: result => {
+          if (result) this.tasksMaintenanceContext.taskCreatedOrUpdated();
+        },
+      });
+  }
+
+  onGanttItemClick(id: string): void {
+    this.tasksMaintenanceContext.openUpdateTaskDialog(id);
+  }
+
+  onGanttAddSubitem(id: string): void {
+    this.tasksMaintenanceContext.openCreateSubTaskDialog(id);
+  }
+
+  onGanttDeleteItem(id: string): void {
+    this.deleteTask(id);
   }
 
   removeFilterChip(id: string): void {
     this.filterBarRef()?.removeRow(id);
   }
 
-  deleteTask(id: string) {
+  deleteTask(id: string): void {
     this.crudTasks
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: res => {
-          if (res) this.tasksResource.reload();
+          if (res) this.rm.allData.reload();
         },
       });
   }

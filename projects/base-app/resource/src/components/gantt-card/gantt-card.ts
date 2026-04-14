@@ -1,21 +1,22 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
-import { ganttTask } from '../../interfaces/task-gantt';
+import { GanttItem } from '../../interfaces/gantt';
+import { GanttNode } from '../../libraries/gantt-utils';
 import dayjs from 'dayjs';
 
 @Component({
-  selector: 'bifi-app-task-gantt-bar',
+  selector: 'bifi-app-gantt-card',
   imports: [],
-  templateUrl: './task-gantt-bar.html',
+  templateUrl: './gantt-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskGanttCard {
+export class GanttCard {
   // inputs
-  task = input.required<ganttTask>();
+  item = input.required<GanttNode<GanttItem>>();
   index = input.required<number>();
   height = input.required<number>();
-  taskOffSet = input.required<number>();
-  taskOffWidth = input.required<number>();
-  pixelsPerDay = input.required<number>();
+  itemOffset = input.required<number>();
+  itemWidth = input.required<number>();
+  pixelsPerUnit = input.required<number>();
 
   // outputs
   dateChange = output<{ start: dayjs.Dayjs; end: dayjs.Dayjs }>();
@@ -34,13 +35,13 @@ export class TaskGanttCard {
 
   constructor() {
     effect(() => {
-      const t = this.task();
-      if (!t) return;
+      const item = this.item();
+      if (!item) return;
 
-      this.taskOffset.set(this.taskOffSet());
-      this.taskWidth.set(this.taskOffWidth());
-      this.initialStart.set(dayjs(t.start));
-      this.initialEnd.set(dayjs(t.end));
+      this.taskOffset.set(this.itemOffset());
+      this.taskWidth.set(this.itemWidth());
+      this.initialStart.set(dayjs(item.start));
+      this.initialEnd.set(dayjs(item.end));
     });
   }
 
@@ -58,8 +59,8 @@ export class TaskGanttCard {
     this.initialX = clientX;
     this.draggingType.set(type);
 
-    this.initialStart.set(dayjs(this.task().start));
-    this.initialEnd.set(dayjs(this.task().end));
+    this.initialStart.set(dayjs(this.item().start));
+    this.initialEnd.set(dayjs(this.item().end));
     this.initialOffset = this.taskOffset();
     this.initialWidth = this.taskWidth();
 
@@ -74,18 +75,18 @@ export class TaskGanttCard {
     if (!this.draggingType()) return;
 
     const deltaX = event.clientX - this.initialX;
-    const unitsDelta = Math.round(deltaX / this.pixelsPerDay());
+    const unitsDelta = Math.round(deltaX / this.pixelsPerUnit());
 
     if (this.draggingType() === 'move') {
-      this.taskOffset.set(this.initialOffset + unitsDelta * this.pixelsPerDay());
+      this.taskOffset.set(this.initialOffset + unitsDelta * this.pixelsPerUnit());
     } else if (this.draggingType() === 'resizeEnd') {
-      this.taskWidth.set(this.initialWidth + unitsDelta * this.pixelsPerDay());
+      this.taskWidth.set(this.initialWidth + unitsDelta * this.pixelsPerUnit());
     }
   }
 
   private stopDrag(moveHandler: any, upHandler: any) {
     const deltaX = (event as MouseEvent).clientX - this.initialX;
-    const unitsDelta = Math.round(deltaX / this.pixelsPerDay());
+    const unitsDelta = Math.round(deltaX / this.pixelsPerUnit());
 
     let newStart = this.initialStart();
     let newEnd = this.initialEnd();

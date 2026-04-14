@@ -95,7 +95,7 @@ export class InfiniteScroll {
     });
 
     // Reset the pagination options
-    this.paginationManager.resetPaginationOptions();
+    // this.paginationManager.resetPaginationOptions();
 
     // Remove scroll event listener on destroy
     this.destroy$.onDestroy(() => {

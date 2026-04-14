@@ -1,6 +1,4 @@
 export * from './features/create-tasks-form-dialog/create-tasks-form-dialog';
-export * from './features/task-gantt-bar/task-gantt-bar';
-export * from './features/tasks-gantt-view/tasks-gantt-view';
 export * from './features/tasks-list-view/tasks-list-view';
 export * from './features/tasks-main-view/tasks-main-view';
 export * from './features/update-tasks-form-dialog/update-tasks-form-dialog';

@@ -1,0 +1,30 @@
+<div class="flex items-center rounded-md bg-gray-200 p-0.5">
+  <button
+    (click)="mode.set('Day')"
+    [class]="mode() === 'Day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+    class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+  >
+    Day
+  </button>
+  <button
+    (click)="mode.set('Week')"
+    [class]="mode() === 'Week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+    class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+  >
+    Week
+  </button>
+  <button
+    (click)="mode.set('Month')"
+    [class]="mode() === 'Month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+    class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+  >
+    Month
+  </button>
+  <button
+    (click)="mode.set('Year')"
+    [class]="mode() === 'Year' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+    class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+  >
+    Year
+  </button>
+</div>

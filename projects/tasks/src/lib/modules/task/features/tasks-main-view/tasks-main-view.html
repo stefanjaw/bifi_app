@@ -6,6 +6,16 @@
     <h1 class="text-2xl font-bold text-gray-800">Tasks Timeline</h1>
   </div>
   <div class="flex items-center space-x-2">
+    @if (viewState() === 'gantt' || viewState() === 'list') {
+      <p-button
+        [title]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
+        size="small"
+        severity="secondary"
+        [icon]="ganttAnyExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
+        variant="text"
+        (onClick)="toggleExpandAll()"
+      ></p-button>
+    }
     <p-button
       label="Add Task"
       severity="secondary"
@@ -13,50 +23,8 @@
       (onClick)="createTasksFormDialog.openDialog()"
     ></p-button>
 
-    <p-button
-      [label]="allExpanded() ? 'Collapse All' : 'Expand All'"
-      severity="secondary"
-      [icon]="allExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
-      (onClick)="toggleExpandCollapseAll()"
-    ></p-button>
-
     <div class="flex items-center space-x-3">
       <span class="text-sm font-medium text-gray-600">View:</span>
-
-      <div
-        class="flex items-center rounded-md bg-gray-200 p-0.5 transition-opacity"
-        [class.opacity-40]="viewState() !== 'gantt'"
-        [class.pointer-events-none]="viewState() !== 'gantt'"
-      >
-        <button
-          (click)="viewMode.set('Day')"
-          [class]="viewMode() === 'Day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-        >
-          Day
-        </button>
-        <button
-          (click)="viewMode.set('Week')"
-          [class]="viewMode() === 'Week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-        >
-          Week
-        </button>
-        <button
-          (click)="viewMode.set('Month')"
-          [class]="viewMode() === 'Month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-        >
-          Month
-        </button>
-        <button
-          (click)="viewMode.set('Year')"
-          [class]="viewMode() === 'Year' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
-          class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
-        >
-          Year
-        </button>
-      </div>
 
       <div class="flex items-center rounded-md bg-gray-200 p-0.5">
         <button
@@ -64,10 +32,17 @@
           [class]="viewState() === 'gantt' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-            <rect x="0" y="1" width="8" height="2" rx="1"/>
-            <rect x="3" y="5" width="7" height="2" rx="1"/>
-            <rect x="1" y="9" width="6" height="2" rx="1"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <rect x="0" y="1" width="8" height="2" rx="1" />
+            <rect x="3" y="5" width="7" height="2" rx="1" />
+            <rect x="1" y="9" width="6" height="2" rx="1" />
           </svg>
           Gantt
         </button>
@@ -164,17 +139,20 @@
 } @else {
   @if (viewState() === 'gantt') {
     <!-- Gantt View -->
-    <bifi-app-tasks-gantt-view
-      [flat]="flat()"
-      [map]="map()"
-      [tree]="tree()"
-      [visible]="visible()"
-      [viewMode]="viewMode()"
-      [dependencies]="dependencies()"
-    ></bifi-app-tasks-gantt-view>
+    <bifi-app-gantt-view
+      title="Tasks"
+      [flat]="ganttFlat()"
+      [map]="ganttMap()"
+      [dependencies]="ganttDependencies()"
+      (cardDateChange)="onGanttCardDateChange($event)"
+      (itemClick)="onGanttItemClick($event)"
+      (addSubitem)="onGanttAddSubitem($event)"
+      (deleteItem)="onGanttDeleteItem($event)"
+      (expandToggle)="toggleExpand($event)"
+    ></bifi-app-gantt-view>
   } @else if (viewState() === 'list') {
     <!-- List View -->
-    <bifi-app-tasks-list-view [tasks]="visible()"></bifi-app-tasks-list-view>
+    <bifi-app-tasks-list-view [tasks]="ganttFlat()"></bifi-app-tasks-list-view>
   } @else {
     <!-- Timeline View (milestones only) -->
     <bifi-app-timeline-view [items]="milestoneItems()"></bifi-app-timeline-view>

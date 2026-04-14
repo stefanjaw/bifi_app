@@ -1,40 +1,41 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex-grow flex overflow-hidden pt-4">
-  <!-- Task List Sidebar -->
+  <!-- Sidebar -->
   <div class="w-1/4 flex-shrink-0 overflow-y-auto pr-2">
     <div class="sticky top-0 bg-gray-100 z-10 flex flex-col">
-      <!-- 12px spacer matching the gantt flag zone height — no right border -->
       <div class="h-3"></div>
-      <!-- 32px label row aligned with the gantt ruler -->
       <div class="h-8 flex items-center border-t border-b border-gray-200 bg-white">
-        <h3 class="font-semibold text-gray-700 px-2">Tasks</h3>
+        <h3 class="font-semibold text-gray-700 px-2 flex-1">{{ title() }}</h3>
+        <div class="flex items-center gap-1 pr-2">
+          <bifi-app-gantt-switcher [(mode)]="viewMode"></bifi-app-gantt-switcher>
+        </div>
       </div>
     </div>
     <div class="relative">
-      @for (task of visible(); track task.id; let i = $index) {
+      @for (item of flat(); track item.id; let i = $index) {
         <div
           class="group flex items-center justify-between border-b border-r border-gray-200 h-10 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50"
-          (click)="taskMaintenanceContext.openUpdateTaskDialog(task.id)"
+          (click)="itemClick.emit(item.id)"
           [style.height.px]="rowHeight()"
-          [pTooltip]="task.name"
+          [pTooltip]="item.name"
         >
           <div
             class="flex-grow flex justify-start items-center truncate"
-            [style.padding-left.px]="task.level * 24 + 8"
+            [style.padding-left.px]="item.level * 24 + 8"
           >
-            @if (task.children.length > 0) {
+            @if (item.children.length > 0) {
               <p-button
                 variant="text"
                 severity="secondary"
                 icon="pi pi-chevron-right"
                 class="transition-transform me-1"
-                [class.rotate-90]="task.isExpanded"
+                [class.rotate-90]="item.isExpanded"
                 size="small"
-                (onClick)="taskMaintenanceContext.toggleExpand(task.id); $event.stopPropagation()"
+                (onClick)="expandToggle.emit(item.id); $event.stopPropagation()"
               ></p-button>
             }
-            <span class="truncate">{{ task.name }}</span>
+            <span class="truncate">{{ item.name }}</span>
           </div>
           <div
             class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -45,7 +46,7 @@
               severity="secondary"
               icon="pi pi-arrow-right"
               variant="text"
-              (onClick)="scrollToTask(task); $event.stopPropagation()"
+              (onClick)="scrollToTask(item); $event.stopPropagation()"
             ></p-button>
             <p-button
               title="Add Subtask"
@@ -53,27 +54,23 @@
               severity="secondary"
               icon="pi pi-plus"
               variant="text"
-              (onClick)="
-                taskMaintenanceContext.openCreateSubTaskDialog(task.id); $event.stopPropagation()
-              "
+              (onClick)="addSubitem.emit(item.id); $event.stopPropagation()"
             ></p-button>
             <p-button
-              title="Edit Task"
+              title="Edit"
               size="small"
               severity="secondary"
               icon="pi pi-pencil"
               variant="text"
-              (onClick)="
-                taskMaintenanceContext.openUpdateTaskDialog(task.id); $event.stopPropagation()
-              "
+              (onClick)="itemClick.emit(item.id); $event.stopPropagation()"
             ></p-button>
             <p-button
-              title="Delete Task"
+              title="Delete"
               size="small"
               severity="danger"
               icon="pi pi-trash"
               variant="text"
-              (onClick)="taskMaintenanceContext.deleteTask(task.id); $event.stopPropagation()"
+              (onClick)="deleteItem.emit(item.id); $event.stopPropagation()"
             ></p-button>
           </div>
         </div>
@@ -81,14 +78,7 @@
     </div>
   </div>
 
-  <!-- Gantt Chart Area
-       All four modes (Day / Week / Month / Year) fill the available width exactly —
-       no horizontal scroll in any mode. Month = 30 fixed day columns; Year = 12 fixed
-       month columns. Panning advances panOffsetDays for all modes; Month/Year snap to
-       the nearest integer month/year on mouseup.
-       #ganttContainer is here (not on the outer wrapper) so the ResizeObserver
-       measures the chart area width only, excluding the sidebar.
-       Drag-to-pan: mousedown here triggers left/right timeline navigation. -->
+  <!-- Gantt Chart Area -->
   <div
     #ganttContainer
     class="flex-grow overflow-x-hidden overflow-y-hidden"
@@ -97,13 +87,8 @@
     (mousedown)="onGanttMouseDown($event)"
   >
     <div class="relative" [style.width.px]="timelineWidth()">
-      <!-- Timeline Header: flag zone (12px) + ruler (32px) = 44px total, sticky -->
+      <!-- Timeline Header -->
       <div class="sticky top-0 z-20 bg-gray-100">
-        <!-- Flag zone: 12px row in normal layout flow — never clipped by overflow:hidden.
-             No explicit background — inherits bg-gray-100 from the sticky header, which
-             matches the body background (#f3f4f6) set in dense.css.
-             All modes show a small context label at the left edge (same zone as
-             the TODAY chip): Month/Week → "MMM YYYY"; Year → "YYYY"; Day → "Ddd MMM D". -->
         <div class="relative h-3">
           @if (viewMode() === 'Month') {
             <span
@@ -149,15 +134,8 @@
         </div>
 
         @if (viewMode() === 'Day') {
-          <!-- ── Day Mode: Ruler-style tick header ── -->
-          <!-- Ticks anchored to the bottom of the 32px ruler bar.
-               Main ticks (0,3,6,…,24): tallest + bold label.
-               Hour ticks: medium height, no label.
-               Half-hour ticks: shortest, no label.
-               border-t reinstates the top edge below the flag zone. -->
           <div class="relative h-8 border-t border-b border-gray-200 bg-white">
             @for (tick of dayViewTicks(); track $index) {
-              <!-- Tick mark (bottom-anchored) -->
               <div
                 class="absolute bottom-0 pointer-events-none"
                 [style.left.px]="tick.pos"
@@ -165,7 +143,6 @@
                 [style.width.px]="tick.type === 'main' ? 1.5 : 1"
                 [ngClass]="tick.type === 'main' ? 'bg-gray-500' : 'bg-gray-400'"
               ></div>
-              <!-- Label — only on main ticks; alignment adapts at edges to prevent clipping -->
               @if (tick.label) {
                 <span
                   class="absolute text-[10px] font-bold text-gray-600 select-none pointer-events-none"
@@ -177,7 +154,6 @@
                 </span>
               }
             }
-            <!-- NOW line — full ruler height (1px); chip is in the flag zone above -->
             @if (todayOffset() >= 0) {
               <div
                 class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
@@ -186,8 +162,6 @@
             }
           </div>
         } @else {
-          <!-- ── Week / Month / Year: flex column header ──
-               border-t reinstates the top edge below the flag zone. -->
           <div class="relative flex h-8 border-t border-b border-gray-200 bg-white">
             @for (date of gridUnits(); track i; let i = $index) {
               <div
@@ -204,7 +178,6 @@
                 </span>
               </div>
             }
-            <!-- TODAY line — full ruler height (1px); chip is in the flag zone above -->
             @if (todayOffset() >= 0) {
               <div
                 class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
@@ -215,9 +188,8 @@
         }
       </div>
 
-      <!-- Grid Background & TODAY / NOW Marker -->
+      <!-- Grid Background -->
       <div class="absolute top-11 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
-        <!-- Vertical grid lines -->
         @for (date of gridUnits(); track i; let i = $index) {
           <div
             class="absolute top-0 bottom-0"
@@ -228,15 +200,13 @@
             }"
           ></div>
         }
-        <!-- Horizontal row lines -->
-        @for (task of visible(); track task.id; let i = $index) {
+        @for (item of flat(); track item.id; let i = $index) {
           <div
             class="absolute left-0 right-0 border-b border-gray-200"
             [style.top.px]="i * rowHeight()"
             [style.height.px]="rowHeight()"
           ></div>
         }
-        <!-- NOW / TODAY line — grid area segment (1px); chip lives in the flag zone above -->
         @if (todayOffset() >= 0) {
           <div
             class="absolute top-0 bottom-0 w-px bg-red-500 z-30"
@@ -245,25 +215,25 @@
         }
       </div>
 
-      <!-- Task Bars -->
-      <div class="relative" [style.height.px]="visible().length * rowHeight()">
-        @for (task of visible(); track task.id; let i = $index) {
-          <bifi-app-task-gantt-bar
-            [task]="task"
+      <!-- Item Bars -->
+      <div class="relative" [style.height.px]="flat().length * rowHeight()">
+        @for (item of flat(); track item.id; let i = $index) {
+          <bifi-app-gantt-card
+            [item]="item"
             [index]="i"
             [height]="rowHeight()"
-            [taskOffSet]="getTaskOffset(task)"
-            [taskOffWidth]="getTaskWidth(task)"
-            [pixelsPerDay]="pixelsPerUnit()"
-            (dateChange)="updateTaskDates(task.id, $event.start, $event.end)"
-          ></bifi-app-task-gantt-bar>
+            [itemOffset]="getItemOffset(item)"
+            [itemWidth]="getItemWidth(item)"
+            [pixelsPerUnit]="pixelsPerUnit()"
+            (dateChange)="onCardDateChange(item.id, $event.start, $event.end)"
+          ></bifi-app-gantt-card>
         }
       </div>
 
-      <!-- Dependency Arrows SVG Layer -->
+      <!-- Dependency Arrows -->
       <svg
         class="absolute top-11 left-0 w-full pointer-events-none"
-        [style.height.px]="visible().length * rowHeight()"
+        [style.height.px]="flat().length * rowHeight()"
       >
         <defs>
           <marker
