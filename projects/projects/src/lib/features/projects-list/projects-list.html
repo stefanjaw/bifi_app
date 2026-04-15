@@ -64,6 +64,16 @@
           <i class="pi pi-calendar text-xs"></i>
           Timeline
         </button>
+        <button
+          (click)="viewState.set('calendar')"
+          [class]="
+            viewState() === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'
+          "
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-th-large text-xs"></i>
+          Calendar
+        </button>
       </div>
     </div>
   </div>
@@ -116,6 +126,8 @@
       (viewTasks)="viewTasksById($event)"
       (deleteProject)="deleteProject($event)"
     ></bifi-app-projects-list-view>
+  } @else if (viewState() === 'calendar') {
+    <bifi-app-calendar-view [events]="calendarEvents()"></bifi-app-calendar-view>
   } @else {
     <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
   }

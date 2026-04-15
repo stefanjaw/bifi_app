@@ -17,6 +17,8 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import {
   buildGanttTree,
+  CalendarEvent,
+  CalendarView,
   collapseAllNodes,
   expandAllNodes,
   FilterBar,
@@ -62,6 +64,7 @@ const PROJECTS_VIEW_QUERY_KEY = '_view';
     FilterBar,
     GanttView,
     ProjectsListView,
+    CalendarView,
   ],
   templateUrl: './projects-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,7 +80,7 @@ export class ProjectsList {
 
   private _viewRestored = signal(false);
 
-  viewState = signal<'gantt' | 'list' | 'timeline'>('gantt');
+  viewState = signal<'gantt' | 'list' | 'timeline' | 'calendar'>('gantt');
 
   flat = computed(() => (this.rm.allData.value() ?? []) as project[]);
   isLoading = this.rm.allData.isLoading;
@@ -89,6 +92,21 @@ export class ProjectsList {
 
   filterBarRef = viewChild(FilterBar);
   activeChips = computed(() => this.filterBarRef()?.activeChips() ?? []);
+
+  calendarEvents = computed<CalendarEvent[]>(() => {
+    const today = new Date();
+    return this.flat().map(p => {
+      const start = p.dateStart ? new Date(p.dateStart) : today;
+      const end = p.dateEnd ? new Date(p.dateEnd) : start;
+      return {
+        id: p._id,
+        title: p.name,
+        start,
+        end,
+        color: 'green' as const,
+      };
+    });
+  });
 
   timelineItems = computed<TimelineItem[]>(() =>
     this.flat()
@@ -151,8 +169,8 @@ export class ProjectsList {
 
   private _restoreViewState(): void {
     const params = this.route.snapshot.queryParams as Record<string, string>;
-    const view = params[PROJECTS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline';
-    if (view && ['gantt', 'list', 'timeline'].includes(view)) this.viewState.set(view);
+    const view = params[PROJECTS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline' | 'calendar';
+    if (view && ['gantt', 'list', 'timeline', 'calendar'].includes(view)) this.viewState.set(view);
   }
 
   private mapToGanttProject(p: project): ganttProject {
