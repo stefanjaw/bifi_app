@@ -64,6 +64,16 @@
           <i class="pi pi-calendar text-xs"></i>
           Timeline
         </button>
+        <button
+          (click)="viewState.set('calendar')"
+          [class]="
+            viewState() === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'
+          "
+          class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+        >
+          <i class="pi pi-th-large text-xs"></i>
+          Calendar
+        </button>
       </div>
     </div>
   </div>
@@ -144,8 +154,8 @@
       [flat]="ganttFlat()"
       [map]="ganttMap()"
       [dependencies]="ganttDependencies()"
-      (cardDateChange)="onGanttCardDateChange($event)"
-      (itemClick)="onGanttItemClick($event)"
+      (cardDateChange)="onTaskDateChange($event)"
+      (itemClick)="onTaskItemClick($event)"
       (addSubitem)="onGanttAddSubitem($event)"
       (deleteItem)="onGanttDeleteItem($event)"
       (expandToggle)="toggleExpand($event)"
@@ -153,6 +163,13 @@
   } @else if (viewState() === 'list') {
     <!-- List View -->
     <bifi-app-tasks-list-view [tasks]="ganttFlat()"></bifi-app-tasks-list-view>
+  } @else if (viewState() === 'calendar') {
+    <!-- Calendar View -->
+    <bifi-app-calendar-view
+      [events]="calendarEvents()"
+      (itemClick)="onTaskItemClick($event)"
+      (eventDateChange)="onTaskDateChange($event)"
+    ></bifi-app-calendar-view>
   } @else {
     <!-- Timeline View (milestones only) -->
     <bifi-app-timeline-view [items]="milestoneItems()"></bifi-app-timeline-view>

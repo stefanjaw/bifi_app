@@ -25,6 +25,8 @@ import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
   buildGanttTree,
+  CalendarEvent,
+  CalendarView,
   collapseAllNodes,
   expandAllNodes,
   FilterBar,
@@ -61,6 +63,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     SearchBar,
     FilterBar,
     TimelineView,
+    CalendarView,
   ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
@@ -82,7 +85,7 @@ export class TasksMainView {
   private _viewRestored = signal(false);
 
   // states
-  viewState = signal<'gantt' | 'list' | 'timeline'>('gantt');
+  viewState = signal<'gantt' | 'list' | 'timeline' | 'calendar'>('gantt');
   isListView = computed(() => this.viewState() === 'list');
 
   // data / loading / error — all owned by ResourceManager
@@ -93,6 +96,22 @@ export class TasksMainView {
   // exposed filter list for the search bar and filter bar
   taskFilters = taskFilters;
   taskFilterFields = taskFilterFields;
+
+  // calendar events — all tasks mapped to CalendarEvent[]
+  calendarEvents = computed<CalendarEvent[]>(() => {
+    const today = new Date();
+    return this.flat().map(t => {
+      const start = t.plannedStartDate ? new Date(t.plannedStartDate) : today;
+      const end = t.plannedEndDate ? new Date(t.plannedEndDate) : start;
+      return {
+        id: t._id,
+        title: t.name,
+        start,
+        end,
+        color: 'blue' as const,
+      };
+    });
+  });
 
   // milestone timeline items
   milestoneItems = computed<TimelineItem[]>(() =>
@@ -234,8 +253,8 @@ export class TasksMainView {
   // ResourceManager handles all other list state (filters, search, page).
   private _restoreViewState(): void {
     const params = this.route.snapshot.queryParams as Record<string, string>;
-    const view = params[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline';
-    if (view && ['gantt', 'list', 'timeline'].includes(view)) this.viewState.set(view);
+    const view = params[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline' | 'calendar';
+    if (view && ['gantt', 'list', 'timeline', 'calendar'].includes(view)) this.viewState.set(view);
   }
 
   // Maps a raw task to a ganttTask (GanttItem extension)
@@ -275,13 +294,17 @@ export class TasksMainView {
 
   // GanttView output handlers
 
-  onGanttCardDateChange(event: { id: string; start: dayjs.Dayjs; end: dayjs.Dayjs }): void {
+  onTaskDateChange(event: {
+    id: string;
+    start: dayjs.Dayjs | Date;
+    end: dayjs.Dayjs | Date;
+  }): void {
     this.crudTasks
       .put({
         _id: event.id,
         data: {
-          plannedStartDate: event.start.toISOString(),
-          plannedEndDate: event.end.toISOString(),
+          plannedStartDate: dayjs(event.start).toISOString(),
+          plannedEndDate: dayjs(event.end).toISOString(),
         },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
@@ -292,7 +315,7 @@ export class TasksMainView {
       });
   }
 
-  onGanttItemClick(id: string): void {
+  onTaskItemClick(id: string): void {
     this.tasksMaintenanceContext.openUpdateTaskDialog(id);
   }
 

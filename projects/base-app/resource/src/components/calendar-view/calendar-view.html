@@ -1,5 +1,9 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+<div
+  class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
+  [class.cursor-grabbing]="isDragging()"
+  [class.select-none]="isDragging()"
+>
   <!-- Header -->
   <header
     class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex flex-wrap items-center justify-between gap-4"
@@ -68,7 +72,7 @@
   </header>
 
   <!-- Calendar Body -->
-  <div class="p-1 sm:p-2">
+  <div #calendarBody class="p-1 sm:p-2">
     @switch (view()) {
       @case ('month') {
         <div class="grid grid-cols-7">
@@ -78,7 +82,7 @@
             </div>
           }
         </div>
-        <div class="grid grid-cols-7">
+        <div #monthCellGrid class="grid grid-cols-7">
           @for (week of monthGrid(); track week) {
             @for (day of week; track day.date) {
               <div
@@ -102,13 +106,61 @@
                   {{ day.date.getDate() }}
                 </time>
                 @if (day.events.length > 0) {
-                  <div class="mt-1 space-y-1 overflow-y-auto">
+                  <div class="mt-1 space-y-0.5 overflow-y-auto">
                     @for (event of day.events; track event.id) {
+                      <div
+                        class="relative group cursor-grab transition-opacity"
+                        [class.opacity-40]="isEventBeingDragged(event.id)"
+                        (mousedown)="onEventMouseDown($event, event, 'move')"
+                      >
+                        @if (getSpanType(event, day.date) === 'standalone' || getSpanType(event, day.date) === 'start') {
+                          <div
+                            class="absolute left-0 top-0 bottom-0 w-1.5 cursor-w-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-l"
+                            (mousedown)="onEventMouseDown($event, event, 'resizeStart')"
+                          ></div>
+                        }
+                        <bifi-app-calendar-event-card
+                          [event]="event"
+                          variant="month"
+                          [spanPosition]="getSpanType(event, day.date)"
+                        ></bifi-app-calendar-event-card>
+                        @if (getSpanType(event, day.date) === 'standalone' || getSpanType(event, day.date) === 'end') {
+                          <div
+                            class="absolute right-0 top-0 bottom-0 w-1.5 cursor-e-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-r"
+                            (mousedown)="onEventMouseDown($event, event, 'resizeEnd')"
+                          ></div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+                @if (previewEvent() && dragTypeSignal() === 'move' && isSameDay(previewEvent()!.start, day.date)) {
+                  <div class="mt-1 pointer-events-none">
+                    <div class="opacity-70 ring-2 ring-dashed ring-indigo-400 rounded-md">
                       <bifi-app-calendar-event-card
-                        [event]="event"
+                        [event]="previewEvent()!"
                         variant="month"
                       ></bifi-app-calendar-event-card>
-                    }
+                    </div>
+                    <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+                      {{ previewMoveLabel() }}
+                    </p>
+                  </div>
+                }
+                @if (previewEvent() && dragTypeSignal() === 'resizeEnd' && isSameDay(previewEvent()!.end, day.date)) {
+                  <div class="mt-1 pointer-events-none">
+                    <div class="h-2 rounded bg-amber-400 dark:bg-amber-500 opacity-80"></div>
+                    <p class="text-xs text-center text-amber-600 dark:text-amber-400 mt-0.5 font-medium truncate">
+                      {{ previewResizeEndLabel() }}
+                    </p>
+                  </div>
+                }
+                @if (previewEvent() && dragTypeSignal() === 'resizeStart' && isSameDay(previewEvent()!.start, day.date)) {
+                  <div class="mt-1 pointer-events-none">
+                    <div class="h-2 rounded bg-amber-400 dark:bg-amber-500 opacity-80"></div>
+                    <p class="text-xs text-center text-amber-600 dark:text-amber-400 mt-0.5 font-medium truncate">
+                      {{ previewResizeStartLabel() }}
+                    </p>
                   </div>
                 }
               </div>
@@ -137,14 +189,62 @@
                   {{ day.date.getDate() }}
                 </p>
               </div>
-              <div class="space-y-2">
+              <div class="space-y-1">
                 @for (event of getEventsForDay(day.date); track event.id) {
-                  <bifi-app-calendar-event-card
-                    [event]="event"
-                    variant="week"
-                  ></bifi-app-calendar-event-card>
+                  <div
+                    class="relative group cursor-grab transition-opacity"
+                    [class.opacity-40]="isEventBeingDragged(event.id)"
+                    (mousedown)="onEventMouseDown($event, event, 'move')"
+                  >
+                    @if (getSpanType(event, day.date) === 'standalone' || getSpanType(event, day.date) === 'start') {
+                      <div
+                        class="absolute left-0 top-0 bottom-0 w-1.5 cursor-w-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-l"
+                        (mousedown)="onEventMouseDown($event, event, 'resizeStart')"
+                      ></div>
+                    }
+                    <bifi-app-calendar-event-card
+                      [event]="event"
+                      variant="week"
+                      [spanPosition]="getSpanType(event, day.date)"
+                    ></bifi-app-calendar-event-card>
+                    @if (getSpanType(event, day.date) === 'standalone' || getSpanType(event, day.date) === 'end') {
+                      <div
+                        class="absolute right-0 top-0 bottom-0 w-1.5 cursor-e-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-r"
+                        (mousedown)="onEventMouseDown($event, event, 'resizeEnd')"
+                      ></div>
+                    }
+                  </div>
                 }
-                @if (getEventsForDay(day.date).length === 0) {
+                @if (previewEvent() && dragTypeSignal() === 'move' && isSameDay(previewEvent()!.start, day.date)) {
+                  <div class="pointer-events-none">
+                    <div class="opacity-70 ring-2 ring-dashed ring-indigo-400 rounded-md">
+                      <bifi-app-calendar-event-card
+                        [event]="previewEvent()!"
+                        variant="week"
+                      ></bifi-app-calendar-event-card>
+                    </div>
+                    <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+                      {{ previewMoveLabel() }}
+                    </p>
+                  </div>
+                }
+                @if (previewEvent() && dragTypeSignal() === 'resizeEnd' && isSameDay(previewEvent()!.end, day.date)) {
+                  <div class="pointer-events-none">
+                    <div class="h-2 rounded bg-amber-400 dark:bg-amber-500 opacity-80"></div>
+                    <p class="text-xs text-center text-amber-600 dark:text-amber-400 mt-0.5 font-medium truncate">
+                      {{ previewResizeEndLabel() }}
+                    </p>
+                  </div>
+                }
+                @if (previewEvent() && dragTypeSignal() === 'resizeStart' && isSameDay(previewEvent()!.start, day.date)) {
+                  <div class="pointer-events-none">
+                    <div class="h-2 rounded bg-amber-400 dark:bg-amber-500 opacity-80"></div>
+                    <p class="text-xs text-center text-amber-600 dark:text-amber-400 mt-0.5 font-medium truncate">
+                      {{ previewResizeStartLabel() }}
+                    </p>
+                  </div>
+                }
+                @if (getEventsForDay(day.date).length === 0 && !isDragging()) {
                   <p class="text-center text-xs text-gray-400 dark:text-gray-500 py-4">No events</p>
                 }
               </div>
@@ -166,13 +266,40 @@
           </div>
           <div class="p-4 border-t border-gray-200 dark:border-gray-700">
             <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">Events for today</h3>
-            @for (event of getEventsForDay(currentDate()); track event.id) {
-              <bifi-app-calendar-event-card
-                [event]="event"
-                variant="day"
-              ></bifi-app-calendar-event-card>
+            @if (previewEvent() && dragTypeSignal() === 'move' && !isSameDay(previewEvent()!.start, currentDate())) {
+              <div class="pointer-events-none mb-2">
+                <div class="opacity-70 ring-2 ring-dashed ring-indigo-400 rounded-md">
+                  <bifi-app-calendar-event-card
+                    [event]="previewEvent()!"
+                    variant="day"
+                  ></bifi-app-calendar-event-card>
+                </div>
+                <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-0.5">
+                  {{ previewMoveLabel() }}
+                </p>
+              </div>
             }
-            @if (getEventsForDay(currentDate()).length === 0) {
+            @for (event of getEventsForDay(currentDate()); track event.id) {
+              <div
+                class="relative group cursor-grab mb-2 transition-opacity"
+                [class.opacity-40]="isEventBeingDragged(event.id)"
+                (mousedown)="onEventMouseDown($event, event, 'move')"
+              >
+                <div
+                  class="absolute left-0 top-0 bottom-0 w-1.5 cursor-w-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-l"
+                  (mousedown)="onEventMouseDown($event, event, 'resizeStart')"
+                ></div>
+                <bifi-app-calendar-event-card
+                  [event]="event"
+                  variant="day"
+                ></bifi-app-calendar-event-card>
+                <div
+                  class="absolute right-0 top-0 bottom-0 w-1.5 cursor-e-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-r"
+                  (mousedown)="onEventMouseDown($event, event, 'resizeEnd')"
+                ></div>
+              </div>
+            }
+            @if (getEventsForDay(currentDate()).length === 0 && !isDragging()) {
               <p class="text-center text-sm text-gray-400 dark:text-gray-500 py-4">No events</p>
             }
           </div>
@@ -220,10 +347,12 @@
         <div class="p-4">
           <div class="space-y-3">
             @for (event of sortedEvents(); track event.id) {
-              <bifi-app-calendar-event-card
-                [event]="event"
-                variant="list"
-              ></bifi-app-calendar-event-card>
+              <div class="cursor-pointer" (mousedown)="onEventMouseDown($event, event, 'move')">
+                <bifi-app-calendar-event-card
+                  [event]="event"
+                  variant="list"
+                ></bifi-app-calendar-event-card>
+              </div>
             }
             @if (events().length === 0) {
               <p class="text-center text-gray-500 dark:text-gray-400 py-8">No events scheduled.</p>

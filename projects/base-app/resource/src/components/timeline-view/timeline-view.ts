@@ -6,12 +6,19 @@ const AXIS_RIGHT = 955;
 const AXIS_RANGE = AXIS_RIGHT - AXIS_LEFT;
 const AXIS_Y = 105;
 
+const MIN_LABEL_GAP = 130;
+const MAX_LABEL_CHARS = 20;
+
 const COLOR_MAP: Record<NonNullable<TimelineItem['type']>, string> = {
   milestone: '#1e40af',
   checkpoint: '#d97706',
   start: '#dc2626',
   end: '#16a34a',
 };
+
+function truncate(text: string, max: number): string {
+  return text.length > max ? text.slice(0, max - 1) + '…' : text;
+}
 
 function getPoints(type: NonNullable<TimelineItem['type']>, cx: number, cy: number): string {
   switch (type) {
@@ -37,6 +44,7 @@ function getPoints(type: NonNullable<TimelineItem['type']>, cx: number, cy: numb
 
 interface PositionedItem {
   label: string;
+  fullLabel: string;
   dateLabel: string;
   type: NonNullable<TimelineItem['type']>;
   x: number;
@@ -84,18 +92,43 @@ export class TimelineView {
 
     const toX = (ts: number): number => AXIS_LEFT + ((ts - startTs) / totalRange) * AXIS_RANGE;
 
-    const items: PositionedItem[] = sorted.map((item, index) => {
+    let lastAboveX = -Infinity;
+    let lastBelowX = -Infinity;
+
+    const items: PositionedItem[] = sorted.map(item => {
       const type = item.type ?? 'milestone';
       const x = toX(new Date(item.date).getTime());
+
+      const canAbove = x - lastAboveX >= MIN_LABEL_GAP;
+      const canBelow = x - lastBelowX >= MIN_LABEL_GAP;
+
+      let above: boolean;
+      if (canAbove && canBelow) {
+        above = lastAboveX <= lastBelowX;
+      } else if (canAbove) {
+        above = true;
+      } else if (canBelow) {
+        above = false;
+      } else {
+        above = x - lastAboveX >= x - lastBelowX;
+      }
+
+      if (above) {
+        lastAboveX = x;
+      } else {
+        lastBelowX = x;
+      }
+
       return {
-        label: item.label,
+        label: truncate(item.label, MAX_LABEL_CHARS),
+        fullLabel: item.label,
         dateLabel: new Date(item.date).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
         }),
         type,
         x,
-        above: index % 2 === 0,
+        above,
         color: COLOR_MAP[type],
         points: getPoints(type, x, AXIS_Y),
         action: item.action,

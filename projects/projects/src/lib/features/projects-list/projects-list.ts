@@ -236,6 +236,31 @@ export class ProjectsList {
     this.deleteProject(id);
   }
 
+  onProjectDateChange(event: {
+    id: string;
+    start: dayjs.Dayjs | Date;
+    end: dayjs.Dayjs | Date;
+  }): void {
+    this.crudProjects
+      .put({
+        _id: event.id,
+        data: {
+          dateStart: dayjs(event.start).toISOString(),
+          dateEnd: dayjs(event.end).toISOString(),
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: result => {
+          if (result) this.rm.allData.reload();
+        },
+      });
+  }
+
+  onProjectItemClick(id: string): void {
+    this.goToEditProject(id);
+  }
+
   viewTasks(project: project): void {
     const filters = JSON.stringify([
       { field: 'projectId.name', operator: 'like', value: project.name, type: 'string' },

@@ -3,8 +3,12 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   input,
+  OnDestroy,
+  output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalendarDay, CalendarEvent, CalendarViewMode } from '../../interfaces/calendar';
@@ -16,8 +20,11 @@ import { CalendarEventCard } from '../calendar-event-card/calendar-event-card';
   templateUrl: './calendar-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalendarView {
+export class CalendarView implements OnDestroy {
   events = input<CalendarEvent[]>([]);
+
+  itemClick = output<string>();
+  eventDateChange = output<{ id: string; start: Date; end: Date }>();
 
   view = signal<CalendarViewMode>('month');
   currentDate = signal(new Date());
@@ -26,11 +33,47 @@ export class CalendarView {
   weekDays = signal<CalendarDay[]>([]);
   yearMonths = signal<Date[][]>([]);
 
+  isDragging = signal(false);
+  dragEventId = signal<string | null>(null);
+  dragTypeSignal = signal<'move' | 'resizeStart' | 'resizeEnd' | null>(null);
+  dragPreviewStart = signal<Date | null>(null);
+  dragPreviewEnd = signal<Date | null>(null);
+
   sortedEvents = computed(() =>
     this.events()
       .slice()
       .sort((a, b) => a.start.getTime() - b.start.getTime())
   );
+
+  previewEvent = computed<CalendarEvent | null>(() => {
+    const id = this.dragEventId();
+    const start = this.dragPreviewStart();
+    const end = this.dragPreviewEnd();
+    if (!id || !start || !end) return null;
+    const event = this.events().find(e => String(e.id) === id);
+    if (!event) return null;
+    return { ...event, start, end };
+  });
+
+  previewMoveLabel = computed(() => {
+    const start = this.dragPreviewStart();
+    const end = this.dragPreviewEnd();
+    if (!start || !end) return '';
+    const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+    return `${fmt.format(start)} → ${fmt.format(end)}`;
+  });
+
+  previewResizeEndLabel = computed(() => {
+    const end = this.dragPreviewEnd();
+    if (!end) return '';
+    return `Until ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(end)}`;
+  });
+
+  previewResizeStartLabel = computed(() => {
+    const start = this.dragPreviewStart();
+    if (!start) return '';
+    return `From ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(start)}`;
+  });
 
   headerTitle = computed(() => {
     const date = this.currentDate();
@@ -64,6 +107,20 @@ export class CalendarView {
   weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
+  calendarBody = viewChild<ElementRef<HTMLDivElement>>('calendarBody');
+  monthCellGrid = viewChild<ElementRef<HTMLDivElement>>('monthCellGrid');
+
+  private dragType: 'move' | 'resizeStart' | 'resizeEnd' | null = null;
+  private dragInitialX = 0;
+  private dragInitialY = 0;
+  private lastDragX = 0;
+  private lastDragY = 0;
+  private hasDragged = false;
+  private dragInitialStart: Date = new Date();
+  private dragInitialEnd: Date = new Date();
+  private boundDragMove: ((e: MouseEvent) => void) | null = null;
+  private boundDragUp: (() => void) | null = null;
+
   constructor() {
     this.updateCalendarData();
 
@@ -72,6 +129,10 @@ export class CalendarView {
       this.events();
       this.updateCalendarData();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.removeDragListeners();
   }
 
   changeView(newView: CalendarViewMode): void {
@@ -135,7 +196,7 @@ export class CalendarView {
 
   getEventsForDay(date: Date): CalendarEvent[] {
     return this.events()
-      .filter(event => this.isSameDay(event.start, date))
+      .filter(event => this.eventCoversDay(event, date))
       .sort((a, b) => a.start.getTime() - b.start.getTime());
   }
 
@@ -161,6 +222,190 @@ export class CalendarView {
     return new Date(this.currentDate().getFullYear(), monthIndex, 1).getDay();
   }
 
+  isEventBeingDragged(eventId: string | number): boolean {
+    return this.isDragging() && this.dragEventId() === String(eventId);
+  }
+
+  getSpanType(event: CalendarEvent, cellDate: Date): 'standalone' | 'start' | 'middle' | 'end' {
+    const isActualStart = this.isSameDay(event.start, cellDate);
+    const isActualEnd = this.isSameDay(event.end, cellDate);
+
+    if (isActualStart && isActualEnd) return 'standalone';
+
+    if (this.view() === 'month') {
+      const isWeekBoundaryStart = cellDate.getDay() === 0;
+      const isWeekBoundaryEnd = cellDate.getDay() === 6;
+      const isVisualStart = isActualStart || isWeekBoundaryStart;
+      const isVisualEnd = isActualEnd || isWeekBoundaryEnd;
+      if (isVisualStart && isVisualEnd) return 'standalone';
+      if (isVisualStart) return 'start';
+      if (isVisualEnd) return 'end';
+      return 'middle';
+    }
+
+    if (isActualStart) return 'start';
+    if (isActualEnd) return 'end';
+    return 'middle';
+  }
+
+  private eventCoversDay(event: CalendarEvent, date: Date): boolean {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    const s = new Date(event.start.getFullYear(), event.start.getMonth(), event.start.getDate()).getTime();
+    const e = new Date(event.end.getFullYear(), event.end.getMonth(), event.end.getDate()).getTime();
+    return s <= d && d <= e;
+  }
+
+  onEventMouseDown(
+    event: MouseEvent,
+    calendarEvent: CalendarEvent,
+    type: 'move' | 'resizeStart' | 'resizeEnd'
+  ): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.dragType = type;
+    this.dragInitialX = event.clientX;
+    this.dragInitialY = event.clientY;
+    this.lastDragX = event.clientX;
+    this.lastDragY = event.clientY;
+    this.hasDragged = false;
+    this.dragInitialStart = new Date(calendarEvent.start);
+    this.dragInitialEnd = new Date(calendarEvent.end);
+
+    this.dragEventId.set(String(calendarEvent.id));
+    this.dragTypeSignal.set(type);
+    this.dragPreviewStart.set(new Date(calendarEvent.start));
+    this.dragPreviewEnd.set(new Date(calendarEvent.end));
+    this.isDragging.set(true);
+
+    this.boundDragMove = (e: MouseEvent) => this.onDragMove(e);
+    this.boundDragUp = () => this.onDragUp();
+    window.addEventListener('mousemove', this.boundDragMove);
+    window.addEventListener('mouseup', this.boundDragUp);
+  }
+
+  private onDragMove(event: MouseEvent): void {
+    this.lastDragX = event.clientX;
+    this.lastDragY = event.clientY;
+
+    const absDeltaX = Math.abs(event.clientX - this.dragInitialX);
+    const absDeltaY = Math.abs(event.clientY - this.dragInitialY);
+    if (absDeltaX > 5 || absDeltaY > 5) {
+      this.hasDragged = true;
+    }
+
+    if (this.hasDragged) {
+      const { newStart, newEnd } = this.computeNewDates(this.lastDragX, this.lastDragY);
+      this.dragPreviewStart.set(newStart);
+      this.dragPreviewEnd.set(newEnd);
+    }
+  }
+
+  private onDragUp(): void {
+    if (!this.hasDragged && this.dragType === 'move') {
+      this.itemClick.emit(this.dragEventId()!);
+    } else if (this.hasDragged) {
+      const { newStart, newEnd } = this.computeNewDates(this.lastDragX, this.lastDragY);
+      this.eventDateChange.emit({ id: this.dragEventId()!, start: newStart, end: newEnd });
+    }
+
+    this.isDragging.set(false);
+    this.dragEventId.set(null);
+    this.dragTypeSignal.set(null);
+    this.dragPreviewStart.set(null);
+    this.dragPreviewEnd.set(null);
+    this.dragType = null;
+    this.hasDragged = false;
+
+    this.removeDragListeners();
+  }
+
+  private computeNewDates(mouseX: number, mouseY: number): { newStart: Date; newEnd: Date } {
+    const newStart = new Date(this.dragInitialStart);
+    const newEnd = new Date(this.dragInitialEnd);
+
+    if (this.dragType === 'move') {
+      const deltaX = mouseX - this.dragInitialX;
+      const deltaY = mouseY - this.dragInitialY;
+      const dayDelta = this.getDayDelta(deltaX, deltaY);
+      newStart.setDate(newStart.getDate() + dayDelta);
+      newEnd.setDate(newEnd.getDate() + dayDelta);
+    } else if (this.dragType === 'resizeEnd') {
+      const target = this.getDateAtPosition(mouseX, mouseY);
+      if (target) {
+        newEnd.setFullYear(target.getFullYear(), target.getMonth(), target.getDate());
+        if (newEnd < newStart) newEnd.setTime(newStart.getTime());
+      }
+    } else if (this.dragType === 'resizeStart') {
+      const target = this.getDateAtPosition(mouseX, mouseY);
+      if (target) {
+        newStart.setFullYear(target.getFullYear(), target.getMonth(), target.getDate());
+        if (newStart > newEnd) newStart.setTime(newEnd.getTime());
+      }
+    }
+
+    return { newStart, newEnd };
+  }
+
+  private getDateAtPosition(mouseX: number, mouseY: number): Date | null {
+    const container = this.calendarBody();
+    if (!container) return null;
+
+    const rect = container.nativeElement.getBoundingClientRect();
+    const relativeX = mouseX - rect.left;
+    const colIndex = Math.max(0, Math.min(6, Math.floor(relativeX / (rect.width / 7))));
+
+    if (this.view() === 'week') {
+      const days = this.weekDays();
+      return days[colIndex] ? new Date(days[colIndex].date) : null;
+    }
+
+    if (this.view() === 'month') {
+      const grid = this.monthCellGrid();
+      if (!grid) return null;
+      const gridRect = grid.nativeElement.getBoundingClientRect();
+      const weeks = this.monthGrid();
+      const numWeeks = weeks.length;
+      if (numWeeks === 0) return null;
+      const rowIndex = Math.max(
+        0,
+        Math.min(numWeeks - 1, Math.floor((mouseY - gridRect.top) / (gridRect.height / numWeeks)))
+      );
+      return weeks[rowIndex]?.[colIndex] ? new Date(weeks[rowIndex][colIndex].date) : null;
+    }
+
+    return null;
+  }
+
+  private getDayDelta(deltaX: number, deltaY: number = 0): number {
+    const container = this.calendarBody();
+    if (!container) return 0;
+    const containerWidth = container.nativeElement.clientWidth;
+    const pixelsPerDay = containerWidth / 7;
+    const columnDelta = Math.round(deltaX / pixelsPerDay);
+
+    let rowDelta = 0;
+    if (this.dragType === 'move' && this.view() === 'month') {
+      const grid = this.monthCellGrid();
+      if (grid) {
+        const numWeeks = this.monthGrid().length;
+        if (numWeeks > 0) {
+          const pixelsPerRow = grid.nativeElement.clientHeight / numWeeks;
+          rowDelta = Math.round(deltaY / pixelsPerRow);
+        }
+      }
+    }
+
+    return columnDelta + rowDelta * 7;
+  }
+
+  private removeDragListeners(): void {
+    if (this.boundDragMove) window.removeEventListener('mousemove', this.boundDragMove);
+    if (this.boundDragUp) window.removeEventListener('mouseup', this.boundDragUp);
+    this.boundDragMove = null;
+    this.boundDragUp = null;
+  }
+
   private updateCalendarData(): void {
     const date = this.currentDate();
     const events = this.events();
@@ -168,14 +413,18 @@ export class CalendarView {
     const monthGridData = this.getMonthGrid(date);
     monthGridData.forEach(week =>
       week.forEach(day => {
-        day.events = events.filter(e => this.isSameDay(e.start, day.date));
+        day.events = events
+          .filter(e => this.eventCoversDay(e, day.date))
+          .sort((a, b) => a.start.getTime() - b.start.getTime());
       })
     );
     this.monthGrid.set(monthGridData);
 
     const weekDaysData = this.getWeekDays(date);
     weekDaysData.forEach(day => {
-      day.events = events.filter(e => this.isSameDay(e.start, day.date));
+      day.events = events
+        .filter(e => this.eventCoversDay(e, day.date))
+        .sort((a, b) => a.start.getTime() - b.start.getTime());
     });
     this.weekDays.set(weekDaysData);
 

@@ -39,6 +39,7 @@ const COLOR_MAP = {
 export class CalendarEventCard {
   event = input.required<CalendarEvent>();
   variant = input<'month' | 'week' | 'day' | 'list'>('month');
+  spanPosition = input<'standalone' | 'start' | 'middle' | 'end'>('standalone');
 
   colors = computed(() => COLOR_MAP[this.event().color] ?? COLOR_MAP['blue']);
 }

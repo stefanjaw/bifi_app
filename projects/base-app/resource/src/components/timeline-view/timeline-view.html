@@ -38,6 +38,7 @@
       <!-- Items -->
       @for (item of layout().items; track item.label + item.x) {
         <g [attr.cursor]="item.action ? 'pointer' : 'default'" (click)="item.action?.()">
+          <title>{{ item.fullLabel }} — {{ item.dateLabel }}</title>
           @if (item.above) {
             <!-- Connector line above track -->
             <line

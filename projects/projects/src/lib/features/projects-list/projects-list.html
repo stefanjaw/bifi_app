@@ -122,7 +122,11 @@
       (deleteProject)="deleteProject($event)"
     ></bifi-app-projects-list-view>
   } @else if (viewState() === 'calendar') {
-    <bifi-app-calendar-view [events]="calendarEvents()"></bifi-app-calendar-view>
+    <bifi-app-calendar-view
+      [events]="calendarEvents()"
+      (itemClick)="onProjectItemClick($event)"
+      (eventDateChange)="onProjectDateChange($event)"
+    ></bifi-app-calendar-view>
   } @else {
     <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
   }
