@@ -5,7 +5,6 @@ import {
   ButtonsActions,
   provideResourceManager,
   ResourceManager,
-  SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +18,7 @@ import { invoiceFilters } from '../../libraries/invoice-filters';
   selector: 'bifi-app-invoices-list',
   providers: [provideResourceManager(CrudInvoices)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
   templateUrl: './invoices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,10 +37,14 @@ export class InvoicesList {
     this.crudInvoices
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({ next: res => { if (res) this.invoices.reload(); } });
+      .subscribe({
+        next: res => {
+          if (res) this.invoices.reload();
+        },
+      });
   }
 
   gotoEditInvoice = (element: invoice) => {
     this.router.navigate(['/accounting/invoices/edit', element._id]);
-  }
+  };
 }

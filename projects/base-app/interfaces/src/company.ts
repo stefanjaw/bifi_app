@@ -5,9 +5,9 @@ export interface company {
   _id: string;
   name: string;
   type?: 'company' | 'branch-office';
-  countryId: country;
+  countryId?: country;
   address: string;
-  contactId: contact;
+  contactId?: contact;
   active: boolean;
   defaultCurrencyId?: string;
   parentCompany?: company;

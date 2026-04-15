@@ -5,7 +5,6 @@ import {
   ButtonsActions,
   provideResourceManager,
   ResourceManager,
-  SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +18,8 @@ import { accountFilters } from '../../libraries/account-filters';
   selector: 'bifi-app-accounts-list',
   providers: [provideResourceManager(CrudAccounts)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './accounts-list.html',
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  templateUrl: './accounts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsList {
@@ -35,13 +35,17 @@ export class AccountsList {
   filters = accountFilters;
   accounts = this.resourceManager.data;
 
-    goToEditAccount = (element: account) => {
-      this.router.navigate(['../accounts/edit/', element._id], { relativeTo: this.route });
-    };
+  goToEditAccount = (element: account) => {
+    this.router.navigate(['../accounts/edit/', element._id], { relativeTo: this.route });
+  };
   deleteAccount(id: string) {
     this.crudAccounts
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({ next: res => { if (res) this.accounts.reload(); } });
+      .subscribe({
+        next: res => {
+          if (res) this.accounts.reload();
+        },
+      });
   }
 }

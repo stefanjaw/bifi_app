@@ -5,7 +5,6 @@ import {
   ButtonsActions,
   provideResourceManager,
   ResourceManager,
-  SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +18,8 @@ import { journalFilters } from '../../libraries/journal-filters';
   selector: 'bifi-app-journals-list',
   providers: [provideResourceManager(CrudJournals)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './journals-list.html',
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  templateUrl: './journals-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JournalsList {
@@ -28,8 +28,8 @@ export class JournalsList {
   private destroy$ = inject(DestroyRef);
 
   // Router
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   columns = journalColumns;
   filters = journalFilters;
@@ -37,11 +37,15 @@ export class JournalsList {
 
   goToEditJournal = (element: journal) => {
     this.router.navigate(['../journals/edit', element._id], { relativeTo: this.route });
-  }
+  };
   delete(id: string) {
     this.crudJournals
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({ next: res => { if (res) this.journals.reload(); } });
+      .subscribe({
+        next: res => {
+          if (res) this.journals.reload();
+        },
+      });
   }
 }

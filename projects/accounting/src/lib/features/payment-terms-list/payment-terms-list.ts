@@ -5,7 +5,6 @@ import {
   ButtonsActions,
   provideResourceManager,
   ResourceManager,
-  SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +18,8 @@ import { paymentTermFilters } from '../../libraries/payment-term-filters';
   selector: 'bifi-app-payment-terms-list',
   providers: [provideResourceManager(CrudPaymentTerms)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './payment-terms-list.html',
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  templateUrl: './payment-terms-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentTermsList {
@@ -37,10 +37,14 @@ export class PaymentTermsList {
     this.crudPaymentTerms
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({ next: res => { if (res) this.paymentTerms.reload(); } });
+      .subscribe({
+        next: res => {
+          if (res) this.paymentTerms.reload();
+        },
+      });
   }
 
   gotoEditPaymentTerm = (element: paymentTerm) => {
     this.router.navigate(['../payment-terms/edit', element._id], { relativeTo: this.route });
-  }
+  };
 }
