@@ -8,6 +8,7 @@ const AXIS_Y = 105;
 
 const MIN_LABEL_GAP = 130;
 const MAX_LABEL_CHARS = 20;
+const LEVEL_HEIGHT = 30;
 
 const COLOR_MAP: Record<NonNullable<TimelineItem['type']>, string> = {
   milestone: '#1e40af',
@@ -49,6 +50,7 @@ interface PositionedItem {
   type: NonNullable<TimelineItem['type']>;
   x: number;
   above: boolean;
+  level: number;
   color: string;
   points: string;
   action?: () => void;
@@ -73,6 +75,9 @@ interface TimelineLayout {
 export class TimelineView {
   items = input<TimelineItem[]>([]);
 
+  // 🔥 expuesto al template
+  readonly LEVEL_HEIGHT = LEVEL_HEIGHT;
+
   layout = computed<TimelineLayout>(() => {
     const sorted = [...this.items()].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -92,32 +97,46 @@ export class TimelineView {
 
     const toX = (ts: number): number => AXIS_LEFT + ((ts - startTs) / totalRange) * AXIS_RANGE;
 
-    let lastAboveX = -Infinity;
-    let lastBelowX = -Infinity;
+    const aboveLevels: number[] = [];
+    const belowLevels: number[] = [];
+
+    function assignLevel(x: number, levels: number[]): number {
+      for (let i = 0; i < levels.length; i++) {
+        if (x - levels[i] >= MIN_LABEL_GAP) {
+          levels[i] = x;
+          return i;
+        }
+      }
+      levels.push(x);
+      return levels.length - 1;
+    }
 
     const items: PositionedItem[] = sorted.map(item => {
       const type = item.type ?? 'milestone';
       const x = toX(new Date(item.date).getTime());
 
-      const canAbove = x - lastAboveX >= MIN_LABEL_GAP;
-      const canBelow = x - lastBelowX >= MIN_LABEL_GAP;
-
       let above: boolean;
+
+      const lastAbove = aboveLevels.length ? aboveLevels[aboveLevels.length - 1] : -Infinity;
+
+      const lastBelow = belowLevels.length ? belowLevels[belowLevels.length - 1] : -Infinity;
+
+      const canAbove = x - lastAbove >= MIN_LABEL_GAP;
+      const canBelow = x - lastBelow >= MIN_LABEL_GAP;
+
       if (canAbove && canBelow) {
-        above = lastAboveX <= lastBelowX;
+        // balancea lados
+        above = lastAbove <= lastBelow;
       } else if (canAbove) {
         above = true;
       } else if (canBelow) {
         above = false;
       } else {
-        above = x - lastAboveX >= x - lastBelowX;
+        // fallback: el lado más cercano
+        above = x - lastAbove >= x - lastBelow;
       }
 
-      if (above) {
-        lastAboveX = x;
-      } else {
-        lastBelowX = x;
-      }
+      const level = above ? assignLevel(x, aboveLevels) : assignLevel(x, belowLevels);
 
       return {
         label: truncate(item.label, MAX_LABEL_CHARS),
@@ -129,6 +148,7 @@ export class TimelineView {
         type,
         x,
         above,
+        level,
         color: COLOR_MAP[type],
         points: getPoints(type, x, AXIS_Y),
         action: item.action,

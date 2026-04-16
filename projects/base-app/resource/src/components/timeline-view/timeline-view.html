@@ -5,15 +5,15 @@
     </div>
   } @else {
     <svg
-      viewBox="0 0 1000 190"
+      viewBox="0 0 1000 240"
       xmlns="http://www.w3.org/2000/svg"
       class="w-full"
-      style="min-width: 600px; height: 190px"
+      style="min-width: 600px; height: 240px"
     >
-      <!-- Track bar -->
+      <!-- Track -->
       <rect x="45" y="97" width="910" height="16" rx="8" fill="#1e3a5f" />
 
-      <!-- Month ticks and labels -->
+      <!-- Months -->
       @for (month of layout().months; track month.x) {
         <line
           [attr.x1]="month.x"
@@ -21,14 +21,12 @@
           [attr.x2]="month.x"
           y2="120"
           stroke="#94a3b8"
-          stroke-width="1"
         />
         <text
           [attr.x]="month.x"
           y="132"
           text-anchor="middle"
           font-size="10"
-          font-family="sans-serif"
           fill="#64748b"
         >
           {{ month.label }}
@@ -37,81 +35,76 @@
 
       <!-- Items -->
       @for (item of layout().items; track item.label + item.x) {
-        <g [attr.cursor]="item.action ? 'pointer' : 'default'" (click)="item.action?.()">
+        <g
+          [attr.cursor]="item.action ? 'pointer' : 'default'"
+          (click)="item.action?.()"
+        >
           <title>{{ item.fullLabel }} — {{ item.dateLabel }}</title>
+
           @if (item.above) {
-            <!-- Connector line above track -->
             <line
               [attr.x1]="item.x"
-              y1="56"
+              [attr.y1]="56 - (item.level * LEVEL_HEIGHT)"
               [attr.x2]="item.x"
               y2="96"
               [attr.stroke]="item.color"
-              stroke-width="1.5"
               stroke-dasharray="3,2"
               stroke-opacity="0.7"
             />
-            <!-- Item name -->
+
             <text
               [attr.x]="item.x"
-              y="36"
+              [attr.y]="36 - (item.level * LEVEL_HEIGHT)"
               text-anchor="middle"
               font-size="11"
               font-weight="600"
-              font-family="sans-serif"
               fill="#0f172a"
             >
               {{ item.label }}
             </text>
-            <!-- Item date -->
+
             <text
               [attr.x]="item.x"
-              y="51"
+              [attr.y]="51 - (item.level * LEVEL_HEIGHT)"
               text-anchor="middle"
               font-size="10"
-              font-family="sans-serif"
               fill="#64748b"
             >
               {{ item.dateLabel }}
             </text>
           } @else {
-            <!-- Connector line below track -->
             <line
               [attr.x1]="item.x"
               y1="113"
               [attr.x2]="item.x"
-              y2="150"
+              [attr.y2]="150 + (item.level * LEVEL_HEIGHT)"
               [attr.stroke]="item.color"
-              stroke-width="1.5"
               stroke-dasharray="3,2"
               stroke-opacity="0.7"
             />
-            <!-- Item date -->
+
             <text
               [attr.x]="item.x"
-              y="161"
+              [attr.y]="161 + (item.level * LEVEL_HEIGHT)"
               text-anchor="middle"
               font-size="10"
-              font-family="sans-serif"
               fill="#64748b"
             >
               {{ item.dateLabel }}
             </text>
-            <!-- Item name -->
+
             <text
               [attr.x]="item.x"
-              y="175"
+              [attr.y]="175 + (item.level * LEVEL_HEIGHT)"
               text-anchor="middle"
               font-size="11"
               font-weight="600"
-              font-family="sans-serif"
               fill="#0f172a"
             >
               {{ item.label }}
             </text>
           }
 
-          <!-- Marker icon -->
           <polygon
             [attr.points]="item.points"
             [attr.fill]="item.color"
