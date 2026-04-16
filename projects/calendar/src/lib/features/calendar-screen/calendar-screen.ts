@@ -3,6 +3,7 @@ import { CalendarEvent, CalendarView } from '@avalantec/base-app/resource';
 import { CrudTasks } from '@avalantec/tasks';
 import { CrudTickets } from '@avalantec/helpdesk';
 import { CrudProjects } from '@avalantec/projects';
+import dayjs from 'dayjs';
 
 @Component({
   selector: 'bifi-app-calendar-screen',
@@ -28,8 +29,8 @@ export class CalendarScreen {
     const events: CalendarEvent[] = [];
 
     tasks.forEach(task => {
-      const start = task.plannedStartDate ? new Date(task.plannedStartDate) : today;
-      const end = task.plannedEndDate ? new Date(task.plannedEndDate) : start;
+      const start = task.plannedStartDate ? dayjs(task.plannedStartDate).toDate() : today;
+      const end = task.plannedEndDate ? dayjs(task.plannedEndDate).toDate() : start;
       events.push({
         id: task._id,
         title: `(Task) ${task.name}`,
@@ -40,8 +41,8 @@ export class CalendarScreen {
     });
 
     tickets.forEach(ticket => {
-      const start = ticket.dateStart ? new Date(ticket.dateStart) : today;
-      const end = ticket.dateEnd ? new Date(ticket.dateEnd) : start;
+      const start = ticket.dateStart ? dayjs(ticket.dateStart).toDate() : today;
+      const end = ticket.dateEnd ? dayjs(ticket.dateEnd).toDate() : start;
       events.push({
         id: ticket._id,
         title: `(Ticket) ${ticket.name}`,
@@ -52,8 +53,8 @@ export class CalendarScreen {
     });
 
     projects.forEach(project => {
-      const start = project.dateStart ? new Date(project.dateStart) : today;
-      const end = project.dateEnd ? new Date(project.dateEnd) : start;
+      const start = project.dateStart ? dayjs(project.dateStart).toDate() : today;
+      const end = project.dateEnd ? dayjs(project.dateEnd).toDate() : start;
       events.push({
         id: project._id,
         title: `(Project) ${project.name}`,

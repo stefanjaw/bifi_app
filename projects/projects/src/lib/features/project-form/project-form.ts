@@ -113,8 +113,8 @@ export class ProjectFormComponent {
           priority: entry.priority,
           contactId: entry.contactId?._id ?? '',
           parentId: (entry.parentId as project)?._id ?? '',
-          dateStart: entry.dateStart ? new Date(entry.dateStart) : new Date(),
-          dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : new Date(),
+          dateStart: entry.dateStart ? dayjs(entry.dateStart as any).toDate() : new Date(),
+          dateEnd: entry.dateEnd ? dayjs(entry.dateEnd as any).toDate() : new Date(),
           sequence: entry.sequence ?? 10,
           active: entry.active ?? true,
         });
@@ -122,6 +122,7 @@ export class ProjectFormComponent {
         this.children.set(entry.children ?? []);
       } else if (!this.isUpdate()) {
         this.formService.reset();
+        this.formService.patchValue({ dateStart: new Date(), dateEnd: new Date() });
         this.children.set([]);
       }
     });

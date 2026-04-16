@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CalendarDay, CalendarEvent, CalendarViewMode } from '../../interfaces/calendar';
 import { CalendarEventCard } from '../calendar-event-card/calendar-event-card';
+import dayjs from 'dayjs';
 
 @Component({
   selector: 'bifi-app-calendar-view',
@@ -39,11 +40,26 @@ export class CalendarView implements OnDestroy {
   dragPreviewStart = signal<Date | null>(null);
   dragPreviewEnd = signal<Date | null>(null);
 
+  readonly DAY_SLOT_PX = 64; // h-16 = 64px per hour row
+
   sortedEvents = computed(() =>
     this.events()
       .slice()
       .sort((a, b) => a.start.getTime() - b.start.getTime())
   );
+
+  dayEvents = computed(() =>
+    this.events()
+      .filter(e => this.eventCoversDay(e, this.currentDate()))
+      .sort((a, b) => a.start.getTime() - b.start.getTime())
+  );
+
+  listEvents = computed(() => {
+    const date = this.currentDate();
+    return this.sortedEvents().filter(
+      e => e.start.getFullYear() === date.getFullYear() && e.start.getMonth() === date.getMonth()
+    );
+  });
 
   previewEvent = computed<CalendarEvent | null>(() => {
     const id = this.dragEventId();
@@ -59,6 +75,14 @@ export class CalendarView implements OnDestroy {
     const start = this.dragPreviewStart();
     const end = this.dragPreviewEnd();
     if (!start || !end) return '';
+    if (this.view() === 'day') {
+      const fmt = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+      return `${fmt.format(start)} → ${fmt.format(end)}`;
+    }
     const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
     return `${fmt.format(start)} → ${fmt.format(end)}`;
   });
@@ -66,12 +90,18 @@ export class CalendarView implements OnDestroy {
   previewResizeEndLabel = computed(() => {
     const end = this.dragPreviewEnd();
     if (!end) return '';
+    if (this.view() === 'day') {
+      return `Until ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(end)}`;
+    }
     return `Until ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(end)}`;
   });
 
   previewResizeStartLabel = computed(() => {
     const start = this.dragPreviewStart();
     if (!start) return '';
+    if (this.view() === 'day') {
+      return `From ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(start)}`;
+    }
     return `From ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(start)}`;
   });
 
@@ -81,23 +111,25 @@ export class CalendarView implements OnDestroy {
       case 'day':
         return new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(date);
       case 'week': {
-        const startOfWeek = new Date(date);
-        startOfWeek.setDate(date.getDate() - date.getDay());
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        const startMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(startOfWeek);
-        const endMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(endOfWeek);
+        const startOfWeek = dayjs(date).startOf('week');
+        const endOfWeek = startOfWeek.add(6, 'day');
+        const startMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+          startOfWeek.toDate()
+        );
+        const endMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+          endOfWeek.toDate()
+        );
         if (startMonth === endMonth) {
-          return `${startMonth} ${startOfWeek.getFullYear()}`;
+          return `${startMonth} ${startOfWeek.year()}`;
         }
-        return `${startMonth} - ${endMonth} ${endOfWeek.getFullYear()}`;
+        return `${startMonth} - ${endMonth} ${endOfWeek.year()}`;
       }
       case 'month':
         return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
       case 'year':
         return date.getFullYear().toString();
       case 'list':
-        return 'All Events';
+        return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
       default:
         return '';
     }
@@ -109,6 +141,7 @@ export class CalendarView implements OnDestroy {
 
   calendarBody = viewChild<ElementRef<HTMLDivElement>>('calendarBody');
   monthCellGrid = viewChild<ElementRef<HTMLDivElement>>('monthCellGrid');
+  dayGrid = viewChild<ElementRef<HTMLDivElement>>('dayGrid');
 
   private dragType: 'move' | 'resizeStart' | 'resizeEnd' | null = null;
   private dragInitialX = 0;
@@ -145,52 +178,42 @@ export class CalendarView implements OnDestroy {
 
   previousPeriod(): void {
     this.currentDate.update(d => {
-      const newDate = new Date(d);
       switch (this.view()) {
         case 'day':
-          newDate.setDate(d.getDate() - 1);
-          break;
+          return dayjs(d).subtract(1, 'day').toDate();
         case 'week':
-          newDate.setDate(d.getDate() - 7);
-          break;
+          return dayjs(d).subtract(7, 'day').toDate();
         case 'month':
-          newDate.setMonth(d.getMonth() - 1);
-          break;
+        case 'list':
+          return dayjs(d).subtract(1, 'month').toDate();
         case 'year':
-          newDate.setFullYear(d.getFullYear() - 1);
-          break;
+          return dayjs(d).subtract(1, 'year').toDate();
+        default:
+          return d;
       }
-      return newDate;
     });
   }
 
   nextPeriod(): void {
     this.currentDate.update(d => {
-      const newDate = new Date(d);
       switch (this.view()) {
         case 'day':
-          newDate.setDate(d.getDate() + 1);
-          break;
+          return dayjs(d).add(1, 'day').toDate();
         case 'week':
-          newDate.setDate(d.getDate() + 7);
-          break;
+          return dayjs(d).add(7, 'day').toDate();
         case 'month':
-          newDate.setMonth(d.getMonth() + 1);
-          break;
+        case 'list':
+          return dayjs(d).add(1, 'month').toDate();
         case 'year':
-          newDate.setFullYear(d.getFullYear() + 1);
-          break;
+          return dayjs(d).add(1, 'year').toDate();
+        default:
+          return d;
       }
-      return newDate;
     });
   }
 
   selectMonthInYearView(monthIndex: number): void {
-    this.currentDate.update(d => {
-      const newDate = new Date(d);
-      newDate.setMonth(monthIndex);
-      return newDate;
-    });
+    this.currentDate.update(d => dayjs(d).month(monthIndex).toDate());
     this.view.set('month');
   }
 
@@ -209,7 +232,7 @@ export class CalendarView implements OnDestroy {
   }
 
   isToday(date: Date): boolean {
-    return this.isSameDay(date, new Date());
+    return dayjs(date).isSame(dayjs(), 'day');
   }
 
   getMonthName(monthIndex: number): string {
@@ -224,6 +247,39 @@ export class CalendarView implements OnDestroy {
 
   isEventBeingDragged(eventId: string | number): boolean {
     return this.isDragging() && this.dragEventId() === String(eventId);
+  }
+
+  private getDayBounds(date: Date): { start: dayjs.Dayjs; end: dayjs.Dayjs } {
+    const start = dayjs(date).startOf('day');
+    const end = start.add(1, 'day');
+    return { start, end };
+  }
+
+  getDayEventTop(event: CalendarEvent): number {
+    const { start: dayStart, end: dayEnd } = this.getDayBounds(this.currentDate());
+
+    const evStart = dayjs(event.start);
+    const evEnd = dayjs(event.end);
+
+    // segmento visible dentro del día actual
+    const visibleStart = evStart.isBefore(dayStart) ? dayStart : evStart;
+    const visibleEnd = evEnd.isAfter(dayEnd) ? dayEnd : evEnd;
+
+    const minutes = visibleStart.diff(dayStart, 'minute');
+    return Math.max(0, minutes * (this.DAY_SLOT_PX / 60));
+  }
+
+  getDayEventHeight(event: CalendarEvent): number {
+    const { start: dayStart, end: dayEnd } = this.getDayBounds(this.currentDate());
+
+    const evStart = dayjs(event.start);
+    const evEnd = dayjs(event.end);
+
+    const visibleStart = evStart.isBefore(dayStart) ? dayStart : evStart;
+    const visibleEnd = evEnd.isAfter(dayEnd) ? dayEnd : evEnd;
+
+    const minutes = Math.max(30, visibleEnd.diff(visibleStart, 'minute'));
+    return Math.max(30, minutes * (this.DAY_SLOT_PX / 60));
   }
 
   getSpanType(event: CalendarEvent, cellDate: Date): 'standalone' | 'start' | 'middle' | 'end' {
@@ -248,11 +304,16 @@ export class CalendarView implements OnDestroy {
     return 'middle';
   }
 
+  private dayBoundaryMs(date: Date): { start: number; end: number } {
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    return { start, end: start + 24 * 60 * 60 * 1000 };
+  }
+
   private eventCoversDay(event: CalendarEvent, date: Date): boolean {
-    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-    const s = new Date(event.start.getFullYear(), event.start.getMonth(), event.start.getDate()).getTime();
-    const e = new Date(event.end.getFullYear(), event.end.getMonth(), event.end.getDate()).getTime();
-    return s <= d && d <= e;
+    const d = dayjs(date).startOf('day');
+    const s = dayjs(event.start).startOf('day');
+    const e = dayjs(event.end).startOf('day');
+    return !d.isBefore(s) && !d.isAfter(e);
   }
 
   onEventMouseDown(
@@ -320,40 +381,117 @@ export class CalendarView implements OnDestroy {
     this.removeDragListeners();
   }
 
+  // ── Single flat entry point for all views ────────────────────────────────
   private computeNewDates(mouseX: number, mouseY: number): { newStart: Date; newEnd: Date } {
-    const newStart = new Date(this.dragInitialStart);
-    const newEnd = new Date(this.dragInitialEnd);
+    let newStart = dayjs(this.dragInitialStart).toDate();
+    let newEnd = dayjs(this.dragInitialEnd).toDate();
 
+    // ── MOVE: shift both endpoints by the same delta ──────────────────────
     if (this.dragType === 'move') {
-      const deltaX = mouseX - this.dragInitialX;
-      const deltaY = mouseY - this.dragInitialY;
-      const dayDelta = this.getDayDelta(deltaX, deltaY);
-      newStart.setDate(newStart.getDate() + dayDelta);
-      newEnd.setDate(newEnd.getDate() + dayDelta);
+      const deltaMs = this.resolveMoveDeltaMs(mouseX, mouseY);
+      newStart = dayjs(this.dragInitialStart).add(deltaMs, 'ms').toDate();
+      newEnd = dayjs(this.dragInitialEnd).add(deltaMs, 'ms').toDate();
+
+      // ── RESIZE END ────────────────────────────────────────────────────────
     } else if (this.dragType === 'resizeEnd') {
-      const target = this.getDateAtPosition(mouseX, mouseY);
-      if (target) {
-        newEnd.setFullYear(target.getFullYear(), target.getMonth(), target.getDate());
-        if (newEnd < newStart) newEnd.setTime(newStart.getTime());
+      if (this.view() === 'day') {
+        const min = this.resolveTargetMinutes(mouseY);
+        if (min >= 0) {
+          const sameDay = this.isSameDay(this.dragInitialStart, this.dragInitialEnd);
+          const initStartMin =
+            dayjs(this.dragInitialStart).hour() * 60 + dayjs(this.dragInitialStart).minute();
+          const floor = sameDay ? initStartMin + 15 : 0;
+          const clamped = Math.max(floor, Math.min(1439, min));
+          newEnd = dayjs(newEnd)
+            .hour(Math.floor(clamped / 60))
+            .minute(clamped % 60)
+            .second(0)
+            .millisecond(0)
+            .toDate();
+        }
+      } else {
+        const target = this.resolveTargetDate(mouseX, mouseY);
+        if (target) {
+          newEnd = dayjs(newEnd)
+            .year(target.getFullYear())
+            .month(target.getMonth())
+            .date(target.getDate())
+            .toDate();
+          if (newEnd < newStart) newEnd = new Date(newStart.getTime());
+        }
       }
+
+      // ── RESIZE START ──────────────────────────────────────────────────────
     } else if (this.dragType === 'resizeStart') {
-      const target = this.getDateAtPosition(mouseX, mouseY);
-      if (target) {
-        newStart.setFullYear(target.getFullYear(), target.getMonth(), target.getDate());
-        if (newStart > newEnd) newStart.setTime(newEnd.getTime());
+      if (this.view() === 'day') {
+        const min = this.resolveTargetMinutes(mouseY);
+        if (min >= 0) {
+          const sameDay = this.isSameDay(this.dragInitialStart, this.dragInitialEnd);
+          const initEndMin =
+            dayjs(this.dragInitialEnd).hour() * 60 + dayjs(this.dragInitialEnd).minute();
+          const ceil = sameDay ? initEndMin - 15 : 1439;
+          const clamped = Math.min(ceil, Math.max(0, min));
+          newStart = dayjs(newStart)
+            .hour(Math.floor(clamped / 60))
+            .minute(clamped % 60)
+            .second(0)
+            .millisecond(0)
+            .toDate();
+        }
+      } else {
+        const target = this.resolveTargetDate(mouseX, mouseY);
+        if (target) {
+          newStart = dayjs(newStart)
+            .year(target.getFullYear())
+            .month(target.getMonth())
+            .date(target.getDate())
+            .toDate();
+          if (newStart > newEnd) newStart = new Date(newEnd.getTime());
+        }
       }
     }
 
     return { newStart, newEnd };
   }
 
-  private getDateAtPosition(mouseX: number, mouseY: number): Date | null {
+  // Returns ms to add to both start and end for a move operation.
+  // Day view: Y-axis pixel delta → minute delta → ms.
+  // Week/month: X/Y pixel delta → day delta → ms.
+  private resolveMoveDeltaMs(mouseX: number, mouseY: number): number {
+    if (this.view() === 'day') {
+      const deltaY = mouseY - this.dragInitialY;
+      const deltaMin = Math.round(deltaY / (this.DAY_SLOT_PX / 60) / 15) * 15;
+      return deltaMin * 60_000;
+    }
+
+    const container = this.calendarBody();
+    if (!container) return 0;
+
+    const deltaX = mouseX - this.dragInitialX;
+    const deltaY = mouseY - this.dragInitialY;
+    const columnDelta = Math.round(deltaX / (container.nativeElement.clientWidth / 7));
+
+    let rowDelta = 0;
+    if (this.view() === 'month') {
+      const grid = this.monthCellGrid();
+      if (grid) {
+        const numWeeks = this.monthGrid().length;
+        if (numWeeks > 0) {
+          rowDelta = Math.round(deltaY / (grid.nativeElement.clientHeight / numWeeks));
+        }
+      }
+    }
+
+    return (columnDelta + rowDelta * 7) * 86_400_000;
+  }
+
+  // Returns the calendar date under the mouse for week/month resize operations.
+  private resolveTargetDate(mouseX: number, mouseY: number): Date | null {
     const container = this.calendarBody();
     if (!container) return null;
 
     const rect = container.nativeElement.getBoundingClientRect();
-    const relativeX = mouseX - rect.left;
-    const colIndex = Math.max(0, Math.min(6, Math.floor(relativeX / (rect.width / 7))));
+    const colIndex = Math.max(0, Math.min(6, Math.floor((mouseX - rect.left) / (rect.width / 7))));
 
     if (this.view() === 'week') {
       const days = this.weekDays();
@@ -377,26 +515,16 @@ export class CalendarView implements OnDestroy {
     return null;
   }
 
-  private getDayDelta(deltaX: number, deltaY: number = 0): number {
-    const container = this.calendarBody();
-    if (!container) return 0;
-    const containerWidth = container.nativeElement.clientWidth;
-    const pixelsPerDay = containerWidth / 7;
-    const columnDelta = Math.round(deltaX / pixelsPerDay);
-
-    let rowDelta = 0;
-    if (this.dragType === 'move' && this.view() === 'month') {
-      const grid = this.monthCellGrid();
-      if (grid) {
-        const numWeeks = this.monthGrid().length;
-        if (numWeeks > 0) {
-          const pixelsPerRow = grid.nativeElement.clientHeight / numWeeks;
-          rowDelta = Math.round(deltaY / pixelsPerRow);
-        }
-      }
-    }
-
-    return columnDelta + rowDelta * 7;
+  // Returns minute-of-day [0–1439] under the mouse for day-view resize.
+  // Uses the inner grid element so getBoundingClientRect already accounts for scroll.
+  // Returns -1 when the grid element is not yet in the DOM.
+  private resolveTargetMinutes(mouseY: number): number {
+    const grid = this.dayGrid();
+    if (!grid) return -1;
+    const rect = grid.nativeElement.getBoundingClientRect();
+    const relativeY = mouseY - rect.top;
+    const rawMinutes = relativeY / (this.DAY_SLOT_PX / 60);
+    return Math.max(0, Math.min(1439, Math.round(rawMinutes / 15) * 15));
   }
 
   private removeDragListeners(): void {
@@ -432,69 +560,54 @@ export class CalendarView implements OnDestroy {
   }
 
   private getMonthGrid(date: Date): CalendarDay[][] {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-
-    const startDate = new Date(firstDayOfMonth);
-    startDate.setDate(startDate.getDate() - startDate.getDay());
-
-    const endDate = new Date(lastDayOfMonth);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+    const month = dayjs(date).month();
+    const start = dayjs(date).startOf('month').startOf('week'); // Sunday before month start
+    const end = dayjs(date).endOf('month').endOf('week'); // Saturday after month end
 
     const grid: CalendarDay[][] = [];
     let week: CalendarDay[] = [];
-    const currentDate = new Date(startDate);
+    let cur = start;
 
-    while (currentDate <= endDate) {
+    while (!cur.isAfter(end, 'day')) {
       week.push({
-        date: new Date(currentDate),
-        isCurrentMonth: currentDate.getMonth() === month,
-        isToday: this.isSameDay(currentDate, new Date()),
+        date: cur.toDate(),
+        isCurrentMonth: cur.month() === month,
+        isToday: cur.isSame(dayjs(), 'day'),
         events: [],
       });
       if (week.length === 7) {
         grid.push(week);
         week = [];
       }
-      currentDate.setDate(currentDate.getDate() + 1);
+      cur = cur.add(1, 'day');
     }
-
     return grid;
   }
 
   private getWeekDays(date: Date): CalendarDay[] {
-    const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay());
-
-    const week: CalendarDay[] = [];
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
-      week.push({
-        date: day,
+    const startOfWeek = dayjs(date).startOf('week'); // Sunday
+    return Array.from({ length: 7 }, (_, i) => {
+      const day = startOfWeek.add(i, 'day');
+      return {
+        date: day.toDate(),
         isCurrentMonth: true,
-        isToday: this.isSameDay(day, new Date()),
+        isToday: day.isSame(dayjs(), 'day'),
         events: [],
-      });
-    }
-    return week;
+      };
+    });
   }
 
   private getYearMonths(year: number): Date[][] {
-    const yearGrid: Date[][] = [];
-    for (let i = 0; i < 12; i++) {
-      const monthGrid: Date[] = [];
-      const firstDayOfMonth = new Date(year, i, 1);
-      const lastDayOfMonth = new Date(year, i + 1, 0);
-      const currentDate = new Date(firstDayOfMonth);
-      while (currentDate <= lastDayOfMonth) {
-        monthGrid.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
+    return Array.from({ length: 12 }, (_, month) => {
+      const start = dayjs(new Date(year, month, 1));
+      const end = start.endOf('month');
+      const days: Date[] = [];
+      let cur = start;
+      while (!cur.isAfter(end, 'day')) {
+        days.push(cur.toDate());
+        cur = cur.add(1, 'day');
       }
-      yearGrid.push(monthGrid);
-    }
-    return yearGrid;
+      return days;
+    });
   }
 }

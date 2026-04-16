@@ -10,6 +10,8 @@ const MIN_LABEL_GAP = 130;
 const MAX_LABEL_CHARS = 20;
 const LEVEL_HEIGHT = 30;
 
+const BASE_SVG_HEIGHT = 240;
+
 const COLOR_MAP: Record<NonNullable<TimelineItem['type']>, string> = {
   milestone: '#1e40af',
   checkpoint: '#d97706',
@@ -49,6 +51,7 @@ interface PositionedItem {
   dateLabel: string;
   type: NonNullable<TimelineItem['type']>;
   x: number;
+  labelX: number;
   above: boolean;
   level: number;
   color: string;
@@ -64,6 +67,8 @@ interface MonthTick {
 interface TimelineLayout {
   items: PositionedItem[];
   months: MonthTick[];
+  viewBox: string;
+  svgHeight: number;
 }
 
 @Component({
@@ -75,7 +80,6 @@ interface TimelineLayout {
 export class TimelineView {
   items = input<TimelineItem[]>([]);
 
-  // 🔥 expuesto al template
   readonly LEVEL_HEIGHT = LEVEL_HEIGHT;
 
   layout = computed<TimelineLayout>(() => {
@@ -83,7 +87,9 @@ export class TimelineView {
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
-    if (sorted.length === 0) return { items: [], months: [] };
+    if (sorted.length === 0) {
+      return { items: [], months: [], viewBox: `0 0 1000 ${BASE_SVG_HEIGHT}`, svgHeight: BASE_SVG_HEIGHT };
+    }
 
     const timestamps = sorted.map(i => new Date(i.date).getTime());
     const minTs = Math.min(...timestamps);
@@ -115,24 +121,20 @@ export class TimelineView {
       const type = item.type ?? 'milestone';
       const x = toX(new Date(item.date).getTime());
 
-      let above: boolean;
-
-      const lastAbove = aboveLevels.length ? aboveLevels[aboveLevels.length - 1] : -Infinity;
-
-      const lastBelow = belowLevels.length ? belowLevels[belowLevels.length - 1] : -Infinity;
+      const lastAbove = aboveLevels.length ? Math.max(...aboveLevels) : -Infinity;
+      const lastBelow = belowLevels.length ? Math.max(...belowLevels) : -Infinity;
 
       const canAbove = x - lastAbove >= MIN_LABEL_GAP;
       const canBelow = x - lastBelow >= MIN_LABEL_GAP;
 
+      let above: boolean;
       if (canAbove && canBelow) {
-        // balancea lados
         above = lastAbove <= lastBelow;
       } else if (canAbove) {
         above = true;
       } else if (canBelow) {
         above = false;
       } else {
-        // fallback: el lado más cercano
         above = x - lastAbove >= x - lastBelow;
       }
 
@@ -147,6 +149,7 @@ export class TimelineView {
         }),
         type,
         x,
+        labelX: x,
         above,
         level,
         color: COLOR_MAP[type],
@@ -154,6 +157,44 @@ export class TimelineView {
         action: item.action,
       };
     });
+
+    // ── Horizontal nudge pass ──────────────────────────────────────────────
+    // Group items by (above, level), then push label centers apart when they
+    // are closer than MIN_LABEL_GAP pixels so text does not overlap sideways.
+    const groups = new Map<string, PositionedItem[]>();
+    for (const item of items) {
+      const key = `${item.above}:${item.level}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(item);
+    }
+
+    for (const group of groups.values()) {
+      group.sort((a, b) => a.x - b.x);
+      for (let i = 0; i < group.length - 1; i++) {
+        const left = group[i];
+        const right = group[i + 1];
+        const gap = right.labelX - left.labelX;
+        if (gap < MIN_LABEL_GAP) {
+          const shift = (MIN_LABEL_GAP - gap) / 2;
+          left.labelX = Math.max(AXIS_LEFT + 30, left.labelX - shift);
+          right.labelX = Math.min(AXIS_RIGHT - 30, right.labelX + shift);
+        }
+      }
+    }
+
+    // ── Dynamic viewBox ────────────────────────────────────────────────────
+    const maxAboveLevel = items.filter(i => i.above).reduce((m, i) => Math.max(m, i.level), 0);
+    const maxBelowLevel = items.filter(i => !i.above).reduce((m, i) => Math.max(m, i.level), 0);
+
+    // Level-0 above: label at Y=36 → needs 36px from top with 16px breathing room.
+    // Each extra level pushes 30px higher, so topPad grows by LEVEL_HEIGHT per level.
+    const topPad = maxAboveLevel * LEVEL_HEIGHT;
+    // Level-0 below: bottommost text at Y=175 (base 240 gives 65px breathing).
+    // Each extra level pushes 30px lower.
+    const bottomOverflow = maxBelowLevel * LEVEL_HEIGHT;
+
+    const svgHeight = BASE_SVG_HEIGHT + topPad + bottomOverflow;
+    const viewBox = `0 -${topPad} 1000 ${svgHeight}`;
 
     const months: MonthTick[] = [];
     const startDate = new Date(startTs);
@@ -170,6 +211,6 @@ export class TimelineView {
       cur.setMonth(cur.getMonth() + 1);
     }
 
-    return { items, months };
+    return { items, months, viewBox, svgHeight };
   });
 }

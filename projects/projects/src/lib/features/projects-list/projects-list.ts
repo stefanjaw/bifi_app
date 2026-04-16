@@ -96,8 +96,8 @@ export class ProjectsList {
   calendarEvents = computed<CalendarEvent[]>(() => {
     const today = new Date();
     return this.flat().map(p => {
-      const start = p.dateStart ? new Date(p.dateStart) : today;
-      const end = p.dateEnd ? new Date(p.dateEnd) : start;
+      const start = p.dateStart ? dayjs(p.dateStart).toDate() : today;
+      const end = p.dateEnd ? dayjs(p.dateEnd).toDate() : start;
       return {
         id: p._id,
         title: p.name,
