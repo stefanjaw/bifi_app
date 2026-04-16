@@ -14,6 +14,11 @@ import { CommonModule } from '@angular/common';
 import { CalendarDay, CalendarEvent, CalendarViewMode } from '../../interfaces/calendar';
 import { CalendarEventCard } from '../calendar-event-card/calendar-event-card';
 import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 @Component({
   selector: 'bifi-app-calendar-view',
@@ -48,11 +53,20 @@ export class CalendarView implements OnDestroy {
       .sort((a, b) => a.start.getTime() - b.start.getTime())
   );
 
-  dayEvents = computed(() =>
-    this.events()
-      .filter(e => this.eventCoversDay(e, this.currentDate()))
-      .sort((a, b) => a.start.getTime() - b.start.getTime())
-  );
+  dayEvents = computed(() => {
+    const dayStart = dayjs(this.currentDate()).startOf('day');
+    const dayEnd = dayStart.add(1, 'day');
+
+    return this.events()
+      .filter(e => {
+        const evStart = dayjs(e.start);
+        const evEnd = dayjs(e.end);
+
+        // Solo eventos que realmente intersectan el día
+        return evStart.isBefore(dayEnd) && evEnd.isAfter(dayStart);
+      })
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
+  });
 
   listEvents = computed(() => {
     const date = this.currentDate();
@@ -249,7 +263,7 @@ export class CalendarView implements OnDestroy {
     return this.isDragging() && this.dragEventId() === String(eventId);
   }
 
-  private getDayBounds(date: Date): { start: dayjs.Dayjs; end: dayjs.Dayjs } {
+  private getDayBounds(date: Date) {
     const start = dayjs(date).startOf('day');
     const end = start.add(1, 'day');
     return { start, end };
@@ -261,12 +275,15 @@ export class CalendarView implements OnDestroy {
     const evStart = dayjs(event.start);
     const evEnd = dayjs(event.end);
 
-    // segmento visible dentro del día actual
+    // Si no intersecta, no renderizar (defensivo)
+    if (evEnd.isSameOrBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
+      return 0;
+    }
+
     const visibleStart = evStart.isBefore(dayStart) ? dayStart : evStart;
-    const visibleEnd = evEnd.isAfter(dayEnd) ? dayEnd : evEnd;
 
     const minutes = visibleStart.diff(dayStart, 'minute');
-    return Math.max(0, minutes * (this.DAY_SLOT_PX / 60));
+    return minutes * (this.DAY_SLOT_PX / 60);
   }
 
   getDayEventHeight(event: CalendarEvent): number {
@@ -275,11 +292,17 @@ export class CalendarView implements OnDestroy {
     const evStart = dayjs(event.start);
     const evEnd = dayjs(event.end);
 
+    // No intersección → altura 0
+    if (evEnd.isSameOrBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
+      return 0;
+    }
+
     const visibleStart = evStart.isBefore(dayStart) ? dayStart : evStart;
     const visibleEnd = evEnd.isAfter(dayEnd) ? dayEnd : evEnd;
 
-    const minutes = Math.max(30, visibleEnd.diff(visibleStart, 'minute'));
-    return Math.max(30, minutes * (this.DAY_SLOT_PX / 60));
+    const duration = visibleEnd.diff(visibleStart, 'minute');
+
+    return Math.max(30, duration * (this.DAY_SLOT_PX / 60));
   }
 
   getSpanType(event: CalendarEvent, cellDate: Date): 'standalone' | 'start' | 'middle' | 'end' {
