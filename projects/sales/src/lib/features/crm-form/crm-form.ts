@@ -94,7 +94,7 @@ export class CrmFormComponent {
           probability: entry.probability,
           expectedCloseDate: entry.expectedCloseDate || '',
           contact: entry.contact?._id,
-          company: entry.company?._id,
+          company: entry.company?._id || '',
           owner: entry.owner?._id || '',
           salesperson: entry.salesperson?._id || '',
           tagsInput: (entry.tags ?? []).join(', '),
