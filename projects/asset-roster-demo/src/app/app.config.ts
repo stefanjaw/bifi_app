@@ -14,10 +14,9 @@ import { MessageService } from 'primeng/api';
 import { APP_AUTH_SERVICE, provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/users';
-import { provideAssetRoster } from '@avalantec/asset-roster';
 import { withLibraryInterceptors } from '@avalantec/base-app/routing';
-import { provideCalendar } from '@avalantec/calendar';
 import { Noir } from './primeng.preset';
+import { provideAssetRoster } from '@avalantec/asset-roster';
 import { provideWebsite } from '@avalantec/website';
 import { provideTasks } from '@avalantec/tasks';
 import { provideAduanix } from '@avalantec/aduanix';
@@ -26,7 +25,9 @@ import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
 import { provideAccounting } from '@avalantec/accounting';
 import { provideHelpdesk } from '@avalantec/helpdesk';
+import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimationsAsync(),

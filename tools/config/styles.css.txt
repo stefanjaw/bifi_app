@@ -14,6 +14,9 @@
 /* @source "../../../dist/base-app/"; */
 /* @source "@avalantec/base-app"; */
 
+/* Libraries */
+@source "../node_modules/@avalantec/**/*.{html,ts,js,mjs}";
+
 html,
 body {
   height: 100%;

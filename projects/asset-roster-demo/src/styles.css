@@ -2,16 +2,19 @@
 @import 'tailwindcss';
 
 /* PrimeNG tailwind plugin */
-@plugin "tailwindcss-primeui";
+@import 'tailwindcss-primeui';
 @import 'primeicons/primeicons.css';
 
 /* TailwindCSS: Style asset roster library */
 /* @source "../../../dist/asset-roster/"; */
-@source "../../../projects/asset-roster/";
+/* @source "../../../projects/asset-roster/"; */
 
 /* TailwindCSS: Style base app library */
 /* @source "../../../dist/base-app/"; */
-@source "../../../projects/base-app/";
+/* @source "../../../projects/base-app/"; */
+
+/* Libraries */
+@source "../node_modules/@avalantec/**/*.{html,ts,js,mjs}";
 
 html,
 body {
@@ -34,30 +37,30 @@ body {
 /* ─── Body / Container ────────────────────────────────────────────────────── */
 body {
   background-color: #f3f4f6; /* gray-100 */
-  color: #111827;            /* gray-900 */
+  color: #111827; /* gray-900 */
 }
 
 /* ─── Dense Design Token CSS Variables ───────────────────────────────────── */
 :root {
-  --dense-text-size: 0.75rem;         /* text-xs  = 12px */
-  --dense-text-color: #1f2937;        /* gray-800 */
+  --dense-text-size: 0.75rem; /* text-xs  = 12px */
+  --dense-text-color: #1f2937; /* gray-800 */
   --dense-text-muted-size: 0.6875rem; /* 11px     */
-  --dense-text-muted-color: #6b7280;  /* gray-500 */
+  --dense-text-muted-color: #6b7280; /* gray-500 */
 
   --dense-card-bg: #ffffff;
-  --dense-card-border: #d1d5db;       /* gray-300 */
-  --dense-card-radius: 2px;           /* rounded-sm */
+  --dense-card-border: #d1d5db; /* gray-300 */
+  --dense-card-radius: 2px; /* rounded-sm */
 
   --dense-btn-radius: 2px;
-  --dense-btn-padding-x: 0.625rem;    /* px-2.5 = 10px */
-  --dense-btn-padding-y: 0.25rem;     /* py-1   =  4px */
-  --dense-btn-font-size: 0.75rem;     /* text-xs */
+  --dense-btn-padding-x: 0.625rem; /* px-2.5 = 10px */
+  --dense-btn-padding-y: 0.25rem; /* py-1   =  4px */
+  --dense-btn-font-size: 0.75rem; /* text-xs */
 
-  --dense-input-border: #9ca3af;      /* gray-400 */
+  --dense-input-border: #9ca3af; /* gray-400 */
   --dense-input-radius: 2px;
-  --dense-input-padding-x: 0.5rem;   /* px-2   =  8px */
-  --dense-input-padding-y: 0.25rem;  /* py-1   =  4px */
-  --dense-input-font-size: 0.75rem;  /* text-xs */
+  --dense-input-padding-x: 0.5rem; /* px-2   =  8px */
+  --dense-input-padding-y: 0.25rem; /* py-1   =  4px */
+  --dense-input-font-size: 0.75rem; /* text-xs */
 }
 
 /* ─── PrimeNG CSS Variable Overrides – Button ─────────────────────────────── */
@@ -140,7 +143,7 @@ body {
 
 /* ─── PrimeNG Checkbox & Radio – compact sizing ───────────────────────────── */
 .p-checkbox .p-checkbox-box {
-  width: 0.875rem;   /* h-3.5 */
+  width: 0.875rem; /* h-3.5 */
   height: 0.875rem;
   border-radius: 2px;
   border-color: var(--dense-input-border);
@@ -201,12 +204,12 @@ body {
 
 /* ─── PrimeNG Toggle Switch – compact ────────────────────────────────────── */
 .p-toggleswitch {
-  width: 1.75rem;   /* w-7 */
-  height: 1rem;     /* h-4 */
+  width: 1.75rem; /* w-7 */
+  height: 1rem; /* h-4 */
 }
 
 .p-toggleswitch .p-toggleswitch-slider::before {
-  width: 0.75rem;   /* h-3 w-3 */
+  width: 0.75rem; /* h-3 w-3 */
   height: 0.75rem;
 }
 
