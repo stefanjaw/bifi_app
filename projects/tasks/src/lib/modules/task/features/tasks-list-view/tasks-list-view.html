@@ -14,31 +14,19 @@
     <div class="col-span-1 text-center">Actions</div>
   </div>
   <div class="border-x border-b border-gray-200">
-    @for (task of tasks(); track task.id) {
-      <div
-        class="grid grid-cols-14 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
-        (click)="tasksMaintenanceContext.openUpdateTaskDialog(task.id)"
-      >
-        <div
-          class="col-span-4 truncate flex items-center px-2"
-          [style.padding-left.px]="task.level * 24 + 8"
-          [pTooltip]="task.name"
-        >
-          @if (task.children.length > 0) {
-            <p-button
-              variant="text"
-              severity="secondary"
-              icon="pi pi-chevron-right"
-              class="transition-transform me-1"
-              [class.rotate-90]="task.isExpanded"
-              size="small"
-              (onClick)="tasksMaintenanceContext.toggleExpand(task.id); $event.stopPropagation()"
-            ></p-button>
-          } @else {
-            <span class="w-5 mr-1"></span>
-          }
-          <span class="truncate">{{ task.name }}</span>
-        </div>
+    <bifi-app-tree-list
+      [items]="tasks()"
+      [enableDragDrop]="false"
+      rowClass="group grid grid-cols-14 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
+      nameColClass="col-span-4 truncate flex items-center px-2"
+      [levelIndentBase]="8"
+      [showExpandPlaceholder]="true"
+      (expandToggle)="tasksMaintenanceContext.toggleExpand($event)"
+      (itemClick)="tasksMaintenanceContext.openUpdateTaskDialog($event)"
+      (itemReorder)="itemReorder.emit($event)"
+      (itemReparent)="itemReparent.emit($event)"
+    >
+      <ng-template #rowActions let-task>
         <div class="col-span-2 px-2">
           {{ task.projectName ?? '—' }}
         </div>
@@ -75,7 +63,7 @@
             (deleteClicked)="tasksMaintenanceContext.deleteTask(task.id)"
           ></bifi-app-buttons-actions>
         </div>
-      </div>
-    }
+      </ng-template>
+    </bifi-app-tree-list>
   </div>
 </div>

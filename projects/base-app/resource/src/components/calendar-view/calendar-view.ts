@@ -275,8 +275,8 @@ export class CalendarView implements OnDestroy {
     const evStart = dayjs(event.start);
     const evEnd = dayjs(event.end);
 
-    // Si no intersecta, no renderizar (defensivo)
-    if (evEnd.isSameOrBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
+    // Strict less-than so midnight-end events are not excluded on their end day
+    if (evEnd.isBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
       return 0;
     }
 
@@ -292,8 +292,8 @@ export class CalendarView implements OnDestroy {
     const evStart = dayjs(event.start);
     const evEnd = dayjs(event.end);
 
-    // No intersección → altura 0
-    if (evEnd.isSameOrBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
+    // Strict less-than so midnight-end events are not excluded on their end day
+    if (evEnd.isBefore(dayStart) || evStart.isSameOrAfter(dayEnd)) {
       return 0;
     }
 
@@ -302,7 +302,9 @@ export class CalendarView implements OnDestroy {
 
     const duration = visibleEnd.diff(visibleStart, 'minute');
 
-    return Math.max(30, duration * (this.DAY_SLOT_PX / 60));
+    // Minimum of 60 minutes (one full slot) so zero-duration events are visible
+    const effectiveMinutes = Math.max(60, duration);
+    return effectiveMinutes * (this.DAY_SLOT_PX / 60);
   }
 
   getSpanType(event: CalendarEvent, cellDate: Date): 'standalone' | 'start' | 'middle' | 'end' {

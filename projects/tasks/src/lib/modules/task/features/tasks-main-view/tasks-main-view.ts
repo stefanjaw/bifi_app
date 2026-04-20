@@ -21,6 +21,7 @@ import { ganttTask } from '../../interfaces/task-gantt';
 import dayjs from 'dayjs';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
@@ -38,6 +39,7 @@ import {
   injectResourceManager,
   ListStateManager,
   provideResourceManager,
+  resolveGanttReorder,
   SearchBar,
   TimelineItem,
   TimelineView,
@@ -102,7 +104,9 @@ export class TasksMainView {
     const today = new Date();
     return this.flat().map(t => {
       const start = t.plannedStartDate ? new Date(t.plannedStartDate) : today;
-      const end = t.plannedEndDate ? new Date(t.plannedEndDate) : start;
+      const end = t.plannedEndDate
+        ? new Date(t.plannedEndDate)
+        : new Date(start.getTime() + 3600000);
       return {
         id: t._id,
         title: t.name,
@@ -202,7 +206,7 @@ export class TasksMainView {
       const prevMap = untracked(() => this.ganttMap());
       const { tree, map } = buildGanttTree(
         items,
-        { idField: 'id', parentField: 'parentId' },
+        { idField: 'id', parentField: 'parentId', sequenceField: 'sequence' },
         prevMap
       );
       this.ganttTree.set(tree);
@@ -266,6 +270,7 @@ export class TasksMainView {
       end: t.plannedEndDate || dayjs().add(1, 'day').toISOString(),
       progress: t.progress,
       parentId: t.parentId?._id || null,
+      sequence: t.sequence ?? 1,
       stage: t.stage,
       priority: t.priority,
       projectName: t.projectId?.name,
@@ -325,6 +330,28 @@ export class TasksMainView {
 
   onGanttDeleteItem(id: string): void {
     this.deleteTask(id);
+  }
+
+  onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {
+    const patches = resolveGanttReorder(this.ganttMap(), event);
+    if (!patches) return;
+
+    const requests = patches.map(({ id, sequence, parentId }) => {
+      const data: Record<string, unknown> = { sequence };
+      if (parentId != null) data['parentId'] = parentId;
+      return this.crudTasks.put({ _id: id, data });
+    });
+
+    forkJoin(requests)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.rm.allData.reload() });
+  }
+
+  onGanttItemReparent(event: { id: string; parentId: string }): void {
+    this.crudTasks
+      .put({ _id: event.id, data: { parentId: event.parentId } })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.rm.allData.reload() });
   }
 
   removeFilterChip(id: string): void {

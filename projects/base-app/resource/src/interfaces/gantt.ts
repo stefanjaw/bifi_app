@@ -7,6 +7,7 @@ export interface GanttItem {
   end: string;
   progress: number;
   parentId: string | null;
+  sequence: number;
 }
 
 export interface GanttDependency {

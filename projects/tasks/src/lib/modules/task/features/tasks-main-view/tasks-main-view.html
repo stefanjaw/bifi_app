@@ -156,13 +156,19 @@
       [dependencies]="ganttDependencies()"
       (cardDateChange)="onTaskDateChange($event)"
       (itemClick)="onTaskItemClick($event)"
+      (itemReorder)="onGanttItemReorder($event)"
+      (itemReparent)="onGanttItemReparent($event)"
       (addSubitem)="onGanttAddSubitem($event)"
       (deleteItem)="onGanttDeleteItem($event)"
       (expandToggle)="toggleExpand($event)"
     ></bifi-app-gantt-view>
   } @else if (viewState() === 'list') {
     <!-- List View -->
-    <bifi-app-tasks-list-view [tasks]="ganttFlat()"></bifi-app-tasks-list-view>
+    <bifi-app-tasks-list-view
+      [tasks]="ganttFlat()"
+      (itemReorder)="onGanttItemReorder($event)"
+      (itemReparent)="onGanttItemReparent($event)"
+    ></bifi-app-tasks-list-view>
   } @else if (viewState() === 'calendar') {
     <!-- Calendar View -->
     <bifi-app-calendar-view

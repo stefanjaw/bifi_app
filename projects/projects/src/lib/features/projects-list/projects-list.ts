@@ -13,6 +13,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import {
@@ -29,6 +30,7 @@ import {
   injectResourceManager,
   ListStateManager,
   provideResourceManager,
+  resolveGanttReorder,
   SearchBar,
   TimelineItem,
   TimelineView,
@@ -97,7 +99,7 @@ export class ProjectsList {
     const today = new Date();
     return this.flat().map(p => {
       const start = p.dateStart ? dayjs(p.dateStart).toDate() : today;
-      const end = p.dateEnd ? dayjs(p.dateEnd).toDate() : start;
+      const end = p.dateEnd ? dayjs(p.dateEnd).toDate() : new Date(start.getTime() + 3600000);
       return {
         id: p._id,
         title: p.name,
@@ -159,7 +161,7 @@ export class ProjectsList {
       const prevMap = untracked(() => this.ganttMap());
       const { tree, map } = buildGanttTree(
         items,
-        { idField: 'id', parentField: 'parentId' },
+        { idField: 'id', parentField: 'parentId', sequenceField: 'sequence' },
         prevMap
       );
       this.ganttTree.set(tree);
@@ -181,6 +183,7 @@ export class ProjectsList {
       end: p.dateEnd ? dayjs(p.dateEnd).toISOString() : dayjs().add(1, 'day').toISOString(),
       progress: 0,
       parentId: p.parentId?._id ?? null,
+      sequence: p.sequence ?? 1,
       stage: p.stage,
       priority: p.priority,
       contactName: p.contactId
@@ -234,6 +237,28 @@ export class ProjectsList {
 
   onGanttDeleteItem(id: string): void {
     this.deleteProject(id);
+  }
+
+  onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {
+    const patches = resolveGanttReorder(this.ganttMap(), event);
+    if (!patches) return;
+
+    const requests = patches.map(({ id, sequence, parentId }) => {
+      const data: Record<string, unknown> = { sequence };
+      if (parentId != null) data['parentId'] = parentId;
+      return this.crudProjects.put({ _id: id, data });
+    });
+
+    forkJoin(requests)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.rm.allData.reload() });
+  }
+
+  onGanttItemReparent(event: { id: string; parentId: string }): void {
+    this.crudProjects
+      .put({ _id: event.id, data: { parentId: event.parentId } })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.rm.allData.reload() });
   }
 
   onProjectDateChange(event: {

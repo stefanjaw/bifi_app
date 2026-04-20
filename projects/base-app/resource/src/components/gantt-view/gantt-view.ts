@@ -17,6 +17,7 @@ import { GanttDependency, GanttItem, GanttViewMode } from '../../interfaces/gant
 import { GanttNode } from '../../libraries/gantt-utils';
 import { GanttCard } from '../gantt-card/gantt-card';
 import { GanttSwitcher } from '../gantt-switcher/gantt-switcher';
+import { TreeList } from '../tree-list/tree-list';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
@@ -38,7 +39,7 @@ export interface DayTick {
 
 @Component({
   selector: 'bifi-app-gantt-view',
-  imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule],
+  imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule, TreeList],
   templateUrl: './gantt-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,6 +59,8 @@ export class GanttView implements OnDestroy {
   addSubitem = output<string>();
   deleteItem = output<string>();
   expandToggle = output<string>();
+  itemReorder = output<{ id: string; targetId: string; mode: 'before' | 'after' }>();
+  itemReparent = output<{ id: string; parentId: string }>();
 
   // Internal signals
   ganttContainer = viewChild<ElementRef<HTMLDivElement>>('ganttContainer');

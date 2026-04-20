@@ -33,6 +33,7 @@ export * from './src/components/filter-bar/filter-bar';
 export * from './src/components/gantt-card/gantt-card';
 export * from './src/components/gantt-switcher/gantt-switcher';
 export * from './src/components/gantt-view/gantt-view';
+export * from './src/components/tree-list/tree-list';
 export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
 export * from './src/components/timeline-view/timeline-item';

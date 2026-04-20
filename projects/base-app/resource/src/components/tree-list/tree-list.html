@@ -1,0 +1,69 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div class="relative">
+  @for (item of items(); track item.id) {
+    <div
+      [class]="rowClass()"
+      [class.bg-indigo-50]="rowDragItemId() === item.id"
+      [class.border-t-2]="rowDropTargetId() === item.id && rowDropMode() === 'before'"
+      [class.border-b-2]="rowDropTargetId() === item.id && rowDropMode() === 'after'"
+      [class.border-indigo-500]="
+        rowDropTargetId() === item.id && (rowDropMode() === 'before' || rowDropMode() === 'after')
+      "
+      [class.ring-2]="rowDropTargetId() === item.id && rowDropMode() === 'into'"
+      [class.ring-indigo-400]="rowDropTargetId() === item.id && rowDropMode() === 'into'"
+      [class.ring-inset]="rowDropTargetId() === item.id && rowDropMode() === 'into'"
+      [style.height.px]="rowHeight()"
+      (click)="itemClick.emit(item.id)"
+      (dragover)="enableDragDrop() ? onRowDragOver($event, item.id) : null"
+      (dragleave)="enableDragDrop() ? onRowDragLeave($event, item.id) : null"
+      (drop)="enableDragDrop() ? onRowDrop($event, item.id) : null"
+    >
+      @if (enableDragDrop()) {
+        <div
+          class="flex-shrink-0 flex items-center justify-center w-6 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
+          draggable="true"
+          (dragstart)="onRowDragStart($event, item.id)"
+          (dragend)="onRowDragEnd()"
+          (click)="$event.stopPropagation()"
+        >
+          <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor">
+            <circle cx="3" cy="2.5" r="1.2" />
+            <circle cx="3" cy="7" r="1.2" />
+            <circle cx="3" cy="11.5" r="1.2" />
+            <circle cx="7" cy="2.5" r="1.2" />
+            <circle cx="7" cy="7" r="1.2" />
+            <circle cx="7" cy="11.5" r="1.2" />
+          </svg>
+        </div>
+      }
+
+      <div
+        [class]="nameColClass()"
+        [style.padding-left.px]="item.level * 24 + levelIndentBase()"
+        [pTooltip]="item.name"
+      >
+        @if (item.children.length > 0) {
+          <p-button
+            variant="text"
+            severity="secondary"
+            icon="pi pi-chevron-right"
+            class="transition-transform me-1"
+            [class.rotate-90]="item.isExpanded"
+            size="small"
+            (onClick)="expandToggle.emit(item.id); $event.stopPropagation()"
+          ></p-button>
+        } @else if (showExpandPlaceholder()) {
+          <span class="w-5 mr-1"></span>
+        }
+        <span class="truncate">{{ item.name }}</span>
+      </div>
+
+      @if (rowActionsTemplate) {
+        <ng-container
+          *ngTemplateOutlet="rowActionsTemplate; context: { $implicit: item }"
+        ></ng-container>
+      }
+    </div>
+  }
+</div>
