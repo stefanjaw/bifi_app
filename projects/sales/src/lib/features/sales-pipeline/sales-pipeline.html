@@ -48,7 +48,7 @@
                 <h3 class="font-semibold text-gray-800 text-sm truncate">{{ deal.title }}</h3>
                 <p class="text-xs text-gray-500 mt-0.5">{{ deal.company?.name }}</p>
                 <div class="mt-2 flex justify-between items-center">
-                  <span class="text-sm font-bold text-green-600">{{ deal.amount | currency: deal.currency }}</span>
+                  <span class="text-sm font-bold text-green-600">{{ deal.amount | currency: deal.currency.code }}</span>
                   @if (deal.expectedCloseDate) {
                     <span class="text-xs text-gray-400">{{ deal.expectedCloseDate | date: 'MMM d' }}</span>
                   }
