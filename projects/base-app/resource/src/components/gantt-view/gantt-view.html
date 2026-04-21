@@ -1,8 +1,6 @@
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="flex-grow flex overflow-hidden pt-4">
+<div class="grow flex overflow-hidden pt-4">
   <!-- Sidebar -->
-  <div class="w-1/4 flex-shrink-0 overflow-y-auto pr-2">
+  <div class="w-1/4 shrink-0 overflow-y-auto pr-2">
     <div class="sticky top-0 bg-gray-100 z-10 flex flex-col">
       <div class="h-3"></div>
       <div class="h-8 flex items-center border-t border-b border-gray-200 bg-white">
@@ -65,7 +63,7 @@
   <!-- Gantt Chart Area -->
   <div
     #ganttContainer
-    class="flex-grow overflow-x-hidden overflow-y-hidden"
+    class="grow overflow-x-hidden overflow-y-hidden"
     [class.cursor-grab]="!isDragging()"
     [class.cursor-grabbing]="isDragging()"
     (mousedown)="onGanttMouseDown($event)"
@@ -149,7 +147,7 @@
           <div class="relative flex h-8 border-t border-b border-gray-200 bg-white">
             @for (date of gridUnits(); track i; let i = $index) {
               <div
-                class="flex-shrink-0 flex items-center justify-center overflow-hidden"
+                class="shrink-0 flex items-center justify-center overflow-hidden"
                 [style.width.px]="pixelsPerUnit()"
                 [ngClass]="{
                   'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
@@ -209,6 +207,7 @@
             [itemOffset]="getItemOffset(item)"
             [itemWidth]="getItemWidth(item)"
             [pixelsPerUnit]="pixelsPerUnit()"
+            [unit]="unit()"
             (dateChange)="onCardDateChange(item.id, $event.start, $event.end)"
           ></bifi-app-gantt-card>
         }

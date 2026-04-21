@@ -3,6 +3,8 @@ import { GanttItem } from '../../interfaces/gantt';
 import { GanttNode } from '../../libraries/gantt-utils';
 import dayjs from 'dayjs';
 
+export type GanttCardUnit = 'hour' | 'day' | 'month';
+
 @Component({
   selector: 'bifi-app-gantt-card',
   imports: [],
@@ -17,6 +19,7 @@ export class GanttCard {
   itemOffset = input.required<number>();
   itemWidth = input.required<number>();
   pixelsPerUnit = input.required<number>();
+  unit = input.required<GanttCardUnit>();
 
   // outputs
   dateChange = output<{ start: dayjs.Dayjs; end: dayjs.Dayjs }>();
@@ -29,6 +32,7 @@ export class GanttCard {
   private initialX = 0;
   private initialOffset = 0;
   private initialWidth = 0;
+  private currentUnitsDelta = 0;
   private draggingType = signal<'move' | 'resizeEnd' | null>(null);
   private initialStart = signal<dayjs.Dayjs>(dayjs());
   private initialEnd = signal<dayjs.Dayjs>(dayjs());
@@ -63,6 +67,7 @@ export class GanttCard {
     this.initialEnd.set(dayjs(this.item().end));
     this.initialOffset = this.taskOffset();
     this.initialWidth = this.taskWidth();
+    this.currentUnitsDelta = 0;
 
     const moveHandler = (e: MouseEvent) => this.onMouseMove(e);
     const upHandler = () => this.stopDrag(moveHandler, upHandler);
@@ -76,6 +81,7 @@ export class GanttCard {
 
     const deltaX = event.clientX - this.initialX;
     const unitsDelta = Math.round(deltaX / this.pixelsPerUnit());
+    this.currentUnitsDelta = unitsDelta;
 
     if (this.draggingType() === 'move') {
       this.taskOffset.set(this.initialOffset + unitsDelta * this.pixelsPerUnit());
@@ -84,18 +90,18 @@ export class GanttCard {
     }
   }
 
-  private stopDrag(moveHandler: any, upHandler: any) {
-    const deltaX = (event as MouseEvent).clientX - this.initialX;
-    const unitsDelta = Math.round(deltaX / this.pixelsPerUnit());
+  private stopDrag(moveHandler: (e: MouseEvent) => void, upHandler: () => void) {
+    const unitsDelta = this.currentUnitsDelta;
+    const unit = this.unit();
 
     let newStart = this.initialStart();
     let newEnd = this.initialEnd();
 
     if (this.draggingType() === 'move') {
-      newStart = newStart.add(unitsDelta, 'day');
-      newEnd = newEnd.add(unitsDelta, 'day');
+      newStart = newStart.add(unitsDelta, unit);
+      newEnd = newEnd.add(unitsDelta, unit);
     } else if (this.draggingType() === 'resizeEnd') {
-      newEnd = newEnd.add(unitsDelta, 'day');
+      newEnd = newEnd.add(unitsDelta, unit);
       if (newEnd.isBefore(newStart)) newEnd = newStart;
     }
 
@@ -104,5 +110,6 @@ export class GanttCard {
     window.removeEventListener('mousemove', moveHandler);
     window.removeEventListener('mouseup', upHandler);
     this.draggingType.set(null);
+    this.currentUnitsDelta = 0;
   }
 }

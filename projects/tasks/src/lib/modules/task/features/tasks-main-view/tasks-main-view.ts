@@ -46,6 +46,14 @@ import {
 } from '@avalantec/base-app/resource';
 import { taskFilterFields, taskFilters } from '../../libraries/task-filters';
 
+const CALENDAR_COLORS: CalendarEvent['color'][] = ['blue', 'indigo', 'green', 'purple', 'pink'];
+function calendarColorFromId(id: string | number): CalendarEvent['color'] {
+  const s = String(id);
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return CALENDAR_COLORS[h % CALENDAR_COLORS.length];
+}
+
 const TASKS_VIEW_QUERY_KEY = '_view';
 
 @Component({
@@ -112,7 +120,7 @@ export class TasksMainView {
         title: t.name,
         start,
         end,
-        color: 'blue' as const,
+        color: calendarColorFromId(t._id),
       };
     });
   });

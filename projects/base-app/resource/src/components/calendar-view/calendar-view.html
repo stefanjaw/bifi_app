@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 
 <!--
@@ -305,41 +306,42 @@
                 style="left: 0; right: 0"
               >
                 <div
-                  class="w-16 flex-shrink-0 text-right pr-2 pt-1 text-xs text-gray-500 dark:text-gray-400"
+                  class="w-16 shrink-0 text-right pr-2 pt-1 text-xs text-gray-500 dark:text-gray-400"
                 >
                   {{ hour }}
                 </div>
-                <div class="flex-grow border-l border-gray-200 dark:border-gray-700"></div>
+                <div class="grow border-l border-gray-200 dark:border-gray-700"></div>
               </div>
             }
 
-            <!-- Event blocks -->
-            @for (event of dayEvents(); track event.id) {
+            <!-- Event blocks — overlap-aware: events sharing the same hours render side-by-side -->
+            @for (item of dayEventsWithLayout(); track item.event.id) {
               <div
                 class="absolute rounded-md overflow-hidden group cursor-grab transition-opacity"
-                style="left: 68px; right: 4px"
-                [style.top.px]="getDayEventTop(event)"
-                [style.height.px]="getDayEventHeight(event)"
-                [class.opacity-40]="isEventBeingDragged(event.id)"
-                (mousedown)="onEventMouseDown($event, event, 'move')"
+                [style.left]="getDayEventLeftCss(item.column, item.columnCount)"
+                [style.right]="getDayEventRightCss(item.column, item.columnCount)"
+                [style.top.px]="getDayEventTop(item.event)"
+                [style.height.px]="getDayEventHeight(item.event)"
+                [class.opacity-40]="isEventBeingDragged(item.event.id)"
+                (mousedown)="onEventMouseDown($event, item.event, 'move')"
               >
                 <!-- Top resize handle: only when this day is the event's start day -->
-                @if (isSameDay(event.start, currentDate())) {
+                @if (isSameDay(item.event.start, currentDate())) {
                   <div
                     class="absolute left-0 right-0 top-0 h-2 cursor-ns-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-t"
-                    (mousedown)="onEventMouseDown($event, event, 'resizeStart')"
+                    (mousedown)="onEventMouseDown($event, item.event, 'resizeStart')"
                   ></div>
                 }
                 <bifi-app-calendar-event-card
-                  [event]="event"
+                  [event]="item.event"
                   variant="day"
-                  [spanPosition]="getSpanType(event, currentDate())"
+                  [spanPosition]="getSpanType(item.event, currentDate())"
                 ></bifi-app-calendar-event-card>
                 <!-- Bottom resize handle: only when this day is the event's end day -->
-                @if (isSameDay(event.end, currentDate())) {
+                @if (isSameDay(item.event.end, currentDate())) {
                   <div
                     class="absolute left-0 right-0 bottom-0 h-2 cursor-ns-resize z-10 opacity-0 group-hover:opacity-100 bg-black/10 rounded-b"
-                    (mousedown)="onEventMouseDown($event, event, 'resizeEnd')"
+                    (mousedown)="onEventMouseDown($event, item.event, 'resizeEnd')"
                   ></div>
                 }
               </div>
@@ -417,7 +419,6 @@
       }
 
       @case ('year') {
-        <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           @for (monthIndex of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track monthIndex) {
             <div

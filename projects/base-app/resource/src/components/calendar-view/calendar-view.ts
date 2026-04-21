@@ -68,6 +68,52 @@ export class CalendarView implements OnDestroy {
       .sort((a, b) => a.start.getTime() - b.start.getTime());
   });
 
+  // Assigns each day-view event a column index and column count so overlapping
+  // events render side-by-side instead of stacking on top of each other.
+  dayEventsWithLayout = computed(() => {
+    const dayStart = dayjs(this.currentDate()).startOf('day');
+    const dayEnd = dayStart.add(1, 'day');
+
+    const items = this.dayEvents().map(event => {
+      const evStart = dayjs(event.start);
+      const evEnd = dayjs(event.end);
+      const visStart = (evStart.isBefore(dayStart) ? dayStart : evStart).diff(dayStart, 'minute');
+      const visEnd = (evEnd.isAfter(dayEnd) ? dayEnd : evEnd).diff(dayStart, 'minute');
+      return { event, visStart, visEnd, column: 0, columnCount: 1 };
+    });
+
+    // Greedy column assignment: find the earliest free column
+    const colEnds: number[] = [];
+    for (const item of items) {
+      let placed = false;
+      for (let c = 0; c < colEnds.length; c++) {
+        if (colEnds[c] <= item.visStart) {
+          item.column = c;
+          colEnds[c] = item.visEnd;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        item.column = colEnds.length;
+        colEnds.push(item.visEnd);
+      }
+    }
+
+    // columnCount = max column index of all items that overlap with this item + 1
+    for (let i = 0; i < items.length; i++) {
+      let maxCol = items[i].column;
+      for (let j = 0; j < items.length; j++) {
+        if (i !== j && items[j].visStart < items[i].visEnd && items[j].visEnd > items[i].visStart) {
+          maxCol = Math.max(maxCol, items[j].column);
+        }
+      }
+      items[i].columnCount = maxCol + 1;
+    }
+
+    return items;
+  });
+
   listEvents = computed(() => {
     const date = this.currentDate();
     return this.sortedEvents().filter(
@@ -307,6 +353,25 @@ export class CalendarView implements OnDestroy {
     return effectiveMinutes * (this.DAY_SLOT_PX / 60);
   }
 
+  // Returns CSS `left` value for a day-view event column.
+  // The available column area starts at 68px (hour-label gutter) and ends 4px from the right.
+  // Formula: left_px = 68 + column/columnCount * (W - 72) → calc(${frac*100}% + ${68 - frac*72}px)
+  getDayEventLeftCss(column: number, columnCount: number): string {
+    if (columnCount <= 1) return '68px';
+    const frac = column / columnCount;
+    const offset = 68 - frac * 72;
+    return `calc(${frac * 100}% + ${offset.toFixed(2)}px)`;
+  }
+
+  // Returns CSS `right` value for a day-view event column.
+  // Formula: right_px = (n-c-1)/columnCount * (W - 72) + 4 → calc(${frac*100}% + ${4 - frac*72}px)
+  getDayEventRightCss(column: number, columnCount: number): string {
+    if (columnCount <= 1) return '4px';
+    const frac = (columnCount - column - 1) / columnCount;
+    const offset = 4 - frac * 72;
+    return `calc(${frac * 100}% + ${offset.toFixed(2)}px)`;
+  }
+
   getSpanType(event: CalendarEvent, cellDate: Date): 'standalone' | 'start' | 'middle' | 'end' {
     const isActualStart = this.isSameDay(event.start, cellDate);
     const isActualEnd = this.isSameDay(event.end, cellDate);
@@ -425,8 +490,9 @@ export class CalendarView implements OnDestroy {
           const sameDay = this.isSameDay(this.dragInitialStart, this.dragInitialEnd);
           const initStartMin =
             dayjs(this.dragInitialStart).hour() * 60 + dayjs(this.dragInitialStart).minute();
-          const floor = sameDay ? initStartMin + 15 : 0;
-          const clamped = Math.max(floor, Math.min(1439, min));
+          // Hour-aware: keep at least one whole hour after start when same day.
+          const floor = sameDay ? initStartMin + 60 : 0;
+          const clamped = Math.max(floor, Math.min(1440, min));
           newEnd = dayjs(newEnd)
             .hour(Math.floor(clamped / 60))
             .minute(clamped % 60)
@@ -454,7 +520,8 @@ export class CalendarView implements OnDestroy {
           const sameDay = this.isSameDay(this.dragInitialStart, this.dragInitialEnd);
           const initEndMin =
             dayjs(this.dragInitialEnd).hour() * 60 + dayjs(this.dragInitialEnd).minute();
-          const ceil = sameDay ? initEndMin - 15 : 1439;
+          // Hour-aware: keep at least one whole hour before end when same day.
+          const ceil = sameDay ? initEndMin - 60 : 1440;
           const clamped = Math.min(ceil, Math.max(0, min));
           newStart = dayjs(newStart)
             .hour(Math.floor(clamped / 60))
@@ -485,7 +552,8 @@ export class CalendarView implements OnDestroy {
   private resolveMoveDeltaMs(mouseX: number, mouseY: number): number {
     if (this.view() === 'day') {
       const deltaY = mouseY - this.dragInitialY;
-      const deltaMin = Math.round(deltaY / (this.DAY_SLOT_PX / 60) / 15) * 15;
+      // Day view grid is hourly — snap drag delta to whole hours.
+      const deltaMin = Math.round(deltaY / this.DAY_SLOT_PX) * 60;
       return deltaMin * 60_000;
     }
 
@@ -549,7 +617,9 @@ export class CalendarView implements OnDestroy {
     const rect = grid.nativeElement.getBoundingClientRect();
     const relativeY = mouseY - rect.top;
     const rawMinutes = relativeY / (this.DAY_SLOT_PX / 60);
-    return Math.max(0, Math.min(1439, Math.round(rawMinutes / 15) * 15));
+    // Snap to whole hours so resize commits land on the visible hourly grid.
+    const snapped = Math.round(rawMinutes / 60) * 60;
+    return Math.max(0, Math.min(1440, snapped));
   }
 
   private removeDragListeners(): void {

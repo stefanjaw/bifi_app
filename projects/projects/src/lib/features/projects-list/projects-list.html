@@ -114,6 +114,7 @@
       (expandToggle)="toggleExpand($event)"
       (itemReorder)="onGanttItemReorder($event)"
       (itemReparent)="onGanttItemReparent($event)"
+      (addSubitem)="onGanttAddSubitem($event)"
     ></bifi-app-gantt-view>
   } @else if (viewState() === 'list') {
     <bifi-app-projects-list-view
@@ -124,6 +125,7 @@
       (deleteProject)="deleteProject($event)"
       (itemReorder)="onGanttItemReorder($event)"
       (itemReparent)="onGanttItemReparent($event)"
+      (addSubitem)="onGanttAddSubitem($event)"
     ></bifi-app-projects-list-view>
   } @else if (viewState() === 'calendar') {
     <bifi-app-calendar-view

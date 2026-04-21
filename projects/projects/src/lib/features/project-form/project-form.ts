@@ -102,6 +102,8 @@ export class ProjectFormComponent {
   ];
 
   constructor() {
+    this._restoreParentIdFromQuery();
+
     effect(() => {
       const entry = this.projectResource.value();
 
@@ -123,6 +125,7 @@ export class ProjectFormComponent {
       } else if (!this.isUpdate()) {
         this.formService.reset();
         this.formService.patchValue({ dateStart: new Date(), dateEnd: new Date() });
+        this._restoreParentIdFromQuery();
         this.children.set([]);
       }
     });
@@ -134,6 +137,15 @@ export class ProjectFormComponent {
         this.formService.patchValue({ stage: stage._id });
       }
     });
+  }
+
+  private _restoreParentIdFromQuery(): void {
+    if (this.isUpdate()) return;
+    const params = this.route.snapshot.queryParams as Record<string, string>;
+    const parentId = params['parentId'];
+    if (parentId) {
+      this.formService.patchValue({ parentId });
+    }
   }
 
   handleSubmit(data: FormValueState<ProjectFormModel>) {

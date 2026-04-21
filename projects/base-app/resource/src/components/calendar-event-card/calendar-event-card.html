@@ -1,18 +1,12 @@
 @switch (variant()) {
   @case ('month') {
     @if (spanPosition() === 'standalone') {
-      <div
-        class="text-xs p-1 rounded-md truncate"
-        [class]="colors().bg + ' ' + colors().text"
-      >
+      <div class="text-xs p-1 rounded-md truncate" [class]="colors().bg + ' ' + colors().text">
         {{ event().title }}
       </div>
     }
     @if (spanPosition() === 'start') {
-      <div
-        class="text-xs p-1 rounded-l-md truncate"
-        [class]="colors().bg + ' ' + colors().text"
-      >
+      <div class="text-xs p-1 rounded-l-md truncate" [class]="colors().bg + ' ' + colors().text">
         {{ event().title }}
       </div>
     }
@@ -25,10 +19,7 @@
   }
   @case ('week') {
     @if (spanPosition() === 'standalone' || spanPosition() === 'start') {
-      <div
-        class="p-2 rounded-lg"
-        [class]="colors().bg + ' ' + colors().text"
-      >
+      <div class="p-2 rounded-lg" [class]="colors().bg + ' ' + colors().text">
         <p class="font-semibold text-xs truncate">{{ event().title }}</p>
         <p class="text-xs opacity-80">
           {{ event().start | date: 'shortTime' }} - {{ event().end | date: 'shortTime' }}
@@ -43,10 +34,7 @@
     }
   }
   @case ('day') {
-    <div
-      class="p-2 rounded-lg mb-2"
-      [class]="colors().bg + ' ' + colors().text"
-    >
+    <div class="h-full p-2 rounded-lg flex flex-col" [class]="colors().bg + ' ' + colors().text">
       <p class="font-semibold text-sm truncate">{{ event().title }}</p>
       <p class="text-xs opacity-80">
         {{ event().start | date: 'shortTime' }} - {{ event().end | date: 'shortTime' }}
@@ -54,11 +42,8 @@
     </div>
   }
   @case ('list') {
-    <div
-      class="flex items-start gap-4 p-3 rounded-lg"
-      [class]="colors().bg + ' ' + colors().text"
-    >
-      <div class="text-center font-semibold w-20 flex-shrink-0">
+    <div class="flex items-start gap-4 p-3 rounded-lg" [class]="colors().bg + ' ' + colors().text">
+      <div class="text-center font-semibold w-20 shrink-0">
         <p class="text-sm">{{ event().start | date: 'MMM' }}</p>
         <p class="text-2xl">{{ event().start.getDate() }}</p>
         <p class="text-xs opacity-70">{{ event().start.getFullYear() }}</p>

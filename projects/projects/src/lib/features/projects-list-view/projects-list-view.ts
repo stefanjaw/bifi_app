@@ -18,6 +18,7 @@ export class ProjectsListView {
   editProject = output<string>();
   viewTasks = output<string>();
   deleteProject = output<string>();
+  addSubitem = output<string>();
   itemReorder = output<{ id: string; targetId: string; mode: 'before' | 'after' }>();
   itemReparent = output<{ id: string; parentId: string }>();
 

@@ -44,6 +44,14 @@ import { projectFilterFields, projectFilters } from '../../libraries/project-fil
 import { ProjectsListView } from '../projects-list-view/projects-list-view';
 import dayjs from 'dayjs';
 
+const CALENDAR_COLORS: CalendarEvent['color'][] = ['blue', 'indigo', 'green', 'purple', 'pink'];
+function calendarColorFromId(id: string | number): CalendarEvent['color'] {
+  const s = String(id);
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return CALENDAR_COLORS[h % CALENDAR_COLORS.length];
+}
+
 const PROJECTS_VIEW_QUERY_KEY = '_view';
 
 @Component({
@@ -105,7 +113,7 @@ export class ProjectsList {
         title: p.name,
         start,
         end,
-        color: 'green' as const,
+        color: calendarColorFromId(p._id),
       };
     });
   });
@@ -212,6 +220,13 @@ export class ProjectsList {
 
   goToEditProject(id: string): void {
     this.router.navigate(['../edit', id], { relativeTo: this.route });
+  }
+
+  onGanttAddSubitem(id: string): void {
+    this.router.navigate(['../create'], {
+      relativeTo: this.route,
+      queryParams: { parentId: id },
+    });
   }
 
   onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {

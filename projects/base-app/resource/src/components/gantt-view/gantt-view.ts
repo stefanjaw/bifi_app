@@ -113,6 +113,13 @@ export class GanttView implements OnDestroy {
 
   pixelsPerUnit = computed(() => this.ganttContainerWidth() / this.totalUnits());
 
+  unit = computed<'hour' | 'day' | 'month'>(() => {
+    const mode = this.viewMode();
+    if (mode === 'Day') return 'hour';
+    if (mode === 'Year') return 'month';
+    return 'day';
+  });
+
   timelineWidth = computed(() => this.gridUnits().length * this.pixelsPerUnit());
 
   gridUnits = computed(() => {
