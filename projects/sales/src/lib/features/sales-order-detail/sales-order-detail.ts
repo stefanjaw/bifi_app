@@ -115,7 +115,7 @@ export class SalesOrderDetail {
           salesperson: salespersonId,
           amount: entry.amount,
           currency: entry.currency,
-          closeDate: entry.closeDate || '',
+          closeDate: new Date(entry.closeDate),
           notes: entry.notes || '',
         });
         this.lineItems.set((entry as any).lineItems ? [...(entry as any).lineItems] : []);

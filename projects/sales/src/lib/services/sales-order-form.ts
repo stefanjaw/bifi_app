@@ -9,7 +9,7 @@ export interface SalesOrderFormModel {
   salesperson: string;
   amount: number;
   currency: string;
-  closeDate: string;
+  closeDate: Date;
   notes: string;
 }
 
@@ -25,7 +25,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       salesperson: [''],
       amount: [0, [Validators.required, Validators.min(0.01)]],
       currency: ['USD'],
-      closeDate: ['', [Validators.required]],
+      closeDate: [new Date(), [Validators.required]],
       notes: [''],
     });
   }
