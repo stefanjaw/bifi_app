@@ -25,4 +25,5 @@ export interface task {
   childIds?: task[];
   active: boolean;
   isMilestone?: boolean;
+  sequence?: number;
 }

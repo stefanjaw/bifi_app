@@ -1,6 +1,9 @@
+import { GanttItem } from '../interfaces/gantt';
+
 export interface GanttTreeConfig {
   idField: string;
   parentField: string;
+  sequenceField?: string;
 }
 
 export type GanttNode<T> = T & {
@@ -8,6 +11,79 @@ export type GanttNode<T> = T & {
   children: GanttNode<T>[];
   isExpanded: boolean;
 };
+
+/**
+ * Patch descriptor returned by resolveGanttReorder.
+ * `parentId` is only present when the dragged item moves to a different sibling group.
+ * When `parentId` is a string, it is the new parent's ID.
+ * When `parentId` is null, the item should move to the root level.
+ */
+export interface GanttReorderPatch {
+  id: string;
+  sequence: number;
+  parentId?: string | null;
+}
+
+/**
+ * Pure helper that computes the sequence patch descriptors needed to
+ * persist a before/after Gantt row reorder.
+ *
+ * Given the current node map and a drag-and-drop event it returns an
+ * array of `{ id, sequence, parentId? }` descriptors — one per sibling
+ * in the affected group — that consumers can map directly to their own
+ * CRUD `put` calls.  Returns `null` when the event is invalid (unknown
+ * id / targetId, or the target was removed during the splice).
+ *
+ * `parentId` is only included in the descriptor for the dragged item
+ * when it crosses sibling groups (i.e. its parent changes).
+ *
+ * @example
+ * const patches = resolveGanttReorder(this.ganttMap(), event);
+ * if (!patches) return;
+ * forkJoin(patches.map(({ id, sequence, parentId }) => {
+ *   const data: Record<string, unknown> = { sequence };
+ *   if (parentId != null) data['parentId'] = parentId;
+ *   return this.crudItems.put({ _id: id, data });
+ * })).pipe(takeUntilDestroyed(this.destroy$))
+ *   .subscribe({ next: () => this.rm.allData.reload() });
+ */
+export function resolveGanttReorder<T extends GanttItem>(
+  ganttMap: Map<string, GanttNode<T>>,
+  event: { id: string; targetId: string; mode: 'before' | 'after' }
+): GanttReorderPatch[] | null {
+  const target = ganttMap.get(event.targetId);
+  if (!target) return null;
+
+  const dragged = ganttMap.get(event.id);
+  if (!dragged) return null;
+
+  const targetParentId = target.parentId ?? null;
+
+  const siblings = Array.from(ganttMap.values()).filter(
+    n => (n.parentId ?? null) === targetParentId
+  );
+  siblings.sort((a, b) => (a.sequence ?? 1) - (b.sequence ?? 1));
+
+  const draggedIdx = siblings.findIndex(n => n.id === event.id);
+  if (draggedIdx >= 0) siblings.splice(draggedIdx, 1);
+
+  const targetIdx = siblings.findIndex(n => n.id === event.targetId);
+  if (targetIdx < 0) return null;
+
+  const insertAt = event.mode === 'before' ? targetIdx : targetIdx + 1;
+  siblings.splice(insertAt, 0, dragged);
+
+  const draggedOldParentId = dragged.parentId ?? null;
+  const parentChanged = draggedOldParentId !== targetParentId;
+
+  return siblings.map((item, i) => {
+    const patch: GanttReorderPatch = { id: item.id, sequence: i + 1 };
+    if (item.id === event.id && parentChanged) {
+      patch.parentId = targetParentId;
+    }
+    return patch;
+  });
+}
 
 /**
  * Builds a parent→child tree from a flat array of any type T.
@@ -41,6 +117,16 @@ export function buildGanttTree<T extends Record<string, any>>(
       map.get(parentId)!.children.push(n);
     } else {
       roots.push(n);
+    }
+  }
+
+  if (config.sequenceField) {
+    const seq = config.sequenceField;
+    const sortBySeq = (a: GanttNode<T>, b: GanttNode<T>) =>
+      ((a[seq] as number) ?? 1) - ((b[seq] as number) ?? 1);
+    roots.sort(sortBySeq);
+    for (const node of map.values()) {
+      if (node.children.length > 1) node.children.sort(sortBySeq);
     }
   }
 

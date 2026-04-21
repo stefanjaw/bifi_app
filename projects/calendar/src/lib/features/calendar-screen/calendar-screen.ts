@@ -30,7 +30,9 @@ export class CalendarScreen {
 
     tasks.forEach(task => {
       const start = task.plannedStartDate ? dayjs(task.plannedStartDate).toDate() : today;
-      const end = task.plannedEndDate ? dayjs(task.plannedEndDate).toDate() : start;
+      const end = task.plannedEndDate
+        ? dayjs(task.plannedEndDate).toDate()
+        : new Date(start.getTime() + 3600000);
       events.push({
         id: task._id,
         title: `(Task) ${task.name}`,
@@ -42,7 +44,9 @@ export class CalendarScreen {
 
     tickets.forEach(ticket => {
       const start = ticket.dateStart ? dayjs(ticket.dateStart).toDate() : today;
-      const end = ticket.dateEnd ? dayjs(ticket.dateEnd).toDate() : start;
+      const end = ticket.dateEnd
+        ? dayjs(ticket.dateEnd).toDate()
+        : new Date(start.getTime() + 3600000);
       events.push({
         id: ticket._id,
         title: `(Ticket) ${ticket.name}`,
@@ -54,7 +58,9 @@ export class CalendarScreen {
 
     projects.forEach(project => {
       const start = project.dateStart ? dayjs(project.dateStart).toDate() : today;
-      const end = project.dateEnd ? dayjs(project.dateEnd).toDate() : start;
+      const end = project.dateEnd
+        ? dayjs(project.dateEnd).toDate()
+        : new Date(start.getTime() + 3600000);
       events.push({
         id: project._id,
         title: `(Project) ${project.name}`,

@@ -108,10 +108,12 @@
       [flat]="ganttFlat()"
       [map]="ganttMap()"
       [dependencies]="[]"
-      (cardDateChange)="onGanttCardDateChange($event)"
-      (itemClick)="onGanttItemClick($event)"
-      (deleteItem)="onGanttDeleteItem($event)"
+      (cardDateChange)="onProjectDateChange($event)"
+      (itemClick)="goToEditProject($event)"
+      (deleteItem)="deleteProject($event)"
       (expandToggle)="toggleExpand($event)"
+      (itemReorder)="onGanttItemReorder($event)"
+      (itemReparent)="onGanttItemReparent($event)"
     ></bifi-app-gantt-view>
   } @else if (viewState() === 'list') {
     <bifi-app-projects-list-view
@@ -120,11 +122,13 @@
       (editProject)="goToEditProject($event)"
       (viewTasks)="viewTasksById($event)"
       (deleteProject)="deleteProject($event)"
+      (itemReorder)="onGanttItemReorder($event)"
+      (itemReparent)="onGanttItemReparent($event)"
     ></bifi-app-projects-list-view>
   } @else if (viewState() === 'calendar') {
     <bifi-app-calendar-view
       [events]="calendarEvents()"
-      (itemClick)="onProjectItemClick($event)"
+      (itemClick)="goToEditProject($event)"
       (eventDateChange)="onProjectDateChange($event)"
     ></bifi-app-calendar-view>
   } @else {

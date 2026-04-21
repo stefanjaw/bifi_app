@@ -12,70 +12,54 @@
         </div>
       </div>
     </div>
-    <div class="relative">
-      @for (item of flat(); track item.id; let i = $index) {
+    <bifi-app-tree-list
+      [items]="flat()"
+      [enableDragDrop]="true"
+      [rowHeight]="rowHeight()"
+      (expandToggle)="expandToggle.emit($event)"
+      (itemClick)="itemClick.emit($event)"
+      (itemReorder)="itemReorder.emit($event)"
+      (itemReparent)="itemReparent.emit($event)"
+    >
+      <ng-template #rowActions let-item>
         <div
-          class="group flex items-center justify-between border-b border-r border-gray-200 h-10 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50"
-          (click)="itemClick.emit(item.id)"
-          [style.height.px]="rowHeight()"
-          [pTooltip]="item.name"
+          class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
         >
-          <div
-            class="flex-grow flex justify-start items-center truncate"
-            [style.padding-left.px]="item.level * 24 + 8"
-          >
-            @if (item.children.length > 0) {
-              <p-button
-                variant="text"
-                severity="secondary"
-                icon="pi pi-chevron-right"
-                class="transition-transform me-1"
-                [class.rotate-90]="item.isExpanded"
-                size="small"
-                (onClick)="expandToggle.emit(item.id); $event.stopPropagation()"
-              ></p-button>
-            }
-            <span class="truncate">{{ item.name }}</span>
-          </div>
-          <div
-            class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <p-button
-              title="Scroll to Task"
-              size="small"
-              severity="secondary"
-              icon="pi pi-arrow-right"
-              variant="text"
-              (onClick)="scrollToTask(item); $event.stopPropagation()"
-            ></p-button>
-            <p-button
-              title="Add Subtask"
-              size="small"
-              severity="secondary"
-              icon="pi pi-plus"
-              variant="text"
-              (onClick)="addSubitem.emit(item.id); $event.stopPropagation()"
-            ></p-button>
-            <p-button
-              title="Edit"
-              size="small"
-              severity="secondary"
-              icon="pi pi-pencil"
-              variant="text"
-              (onClick)="itemClick.emit(item.id); $event.stopPropagation()"
-            ></p-button>
-            <p-button
-              title="Delete"
-              size="small"
-              severity="danger"
-              icon="pi pi-trash"
-              variant="text"
-              (onClick)="deleteItem.emit(item.id); $event.stopPropagation()"
-            ></p-button>
-          </div>
+          <p-button
+            title="Scroll to Task"
+            size="small"
+            severity="secondary"
+            icon="pi pi-arrow-right"
+            variant="text"
+            (onClick)="scrollToTask(item); $event.stopPropagation()"
+          ></p-button>
+          <p-button
+            title="Add Subtask"
+            size="small"
+            severity="secondary"
+            icon="pi pi-plus"
+            variant="text"
+            (onClick)="addSubitem.emit(item.id); $event.stopPropagation()"
+          ></p-button>
+          <p-button
+            title="Edit"
+            size="small"
+            severity="secondary"
+            icon="pi pi-pencil"
+            variant="text"
+            (onClick)="itemClick.emit(item.id); $event.stopPropagation()"
+          ></p-button>
+          <p-button
+            title="Delete"
+            size="small"
+            severity="danger"
+            icon="pi pi-trash"
+            variant="text"
+            (onClick)="deleteItem.emit(item.id); $event.stopPropagation()"
+          ></p-button>
         </div>
-      }
-    </div>
+      </ng-template>
+    </bifi-app-tree-list>
   </div>
 
   <!-- Gantt Chart Area -->
