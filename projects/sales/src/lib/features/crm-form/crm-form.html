@@ -47,7 +47,14 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Currency</bifi-app-form-label>
-            <input pInputText formControlName="currency" type="text" placeholder="USD" maxlength="3" />
+            <p-select
+              formControlName="currency"
+              [options]="currencyOptions()"
+              optionLabel="code"
+              optionValue="_id"
+              placeholder="Select currency"
+              [filter]="true"
+            ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
