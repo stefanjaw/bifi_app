@@ -24,6 +24,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { LineItemsTable } from '../../components/line-items-table/line-items-table';
+import { lineItem } from '../../interfaces/line-item';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
@@ -36,6 +38,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     TextareaModule,
     DatePickerModule,
     ProgressBarModule,
+    LineItemsTable,
   ],
   templateUrl: './sales-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,6 +84,8 @@ export class SalesOrderDetail {
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
+  lineItems = signal<lineItem[]>([]);
+
   form = this.formService.form;
 
   currencyOptions = [
@@ -93,29 +98,37 @@ export class SalesOrderDetail {
   constructor() {
     effect(() => {
       const entry = this.entry();
-      if (!entry) return;
+      if (entry) {
+        const crmData = entry.crmId as any;
+        const crmId = crmData?._id ?? crmData ?? '';
+        const contactData = entry.contact as any;
+        const contactId = contactData?._id ?? contactData ?? '';
+        const companyData = entry.company as any;
+        const companyId = companyData?._id ?? companyData ?? '';
+        const salespersonData = entry.salesperson as any;
+        const salespersonId = salespersonData?._id ?? salespersonData ?? '';
 
-      const crmData = entry.crmId as any;
-      const crmId = crmData?._id ?? crmData ?? '';
-      const contactData = entry.contact as any;
-      const contactId = contactData?._id ?? contactData ?? '';
-      const companyData = entry.company as any;
-      const companyId = companyData?._id ?? companyData ?? '';
-      const salespersonData = entry.salesperson as any;
-      const salespersonId = salespersonData?._id ?? salespersonData ?? '';
-
-      this.formService.patchValue({
-        crmId,
-        contact: contactId,
-        company: companyId,
-        salesperson: salespersonId,
-        amount: entry.amount,
-        currency: entry.currency,
-        closeDate: entry.closeDate || '',
-        notes: entry.notes || '',
-      });
-      this.formService.resetDirtyState();
+        this.formService.patchValue({
+          crmId,
+          contact: contactId,
+          company: companyId,
+          salesperson: salespersonId,
+          amount: entry.amount,
+          currency: entry.currency,
+          closeDate: entry.closeDate || '',
+          notes: entry.notes || '',
+        });
+        this.lineItems.set((entry as any).lineItems ? [...(entry as any).lineItems] : []);
+        this.formService.resetDirtyState();
+      } else if (!this.isUpdate()) {
+        this.formService.reset();
+        this.lineItems.set([]);
+      }
     });
+  }
+
+  onLineItemsChange(items: lineItem[]) {
+    this.lineItems.set(items);
   }
 
   goBack() {
@@ -135,6 +148,7 @@ export class SalesOrderDetail {
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,
+      lineItems: this.lineItems(),
     };
 
     if (this.isUpdate()) {
