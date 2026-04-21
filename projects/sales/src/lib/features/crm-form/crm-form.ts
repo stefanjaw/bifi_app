@@ -97,7 +97,7 @@ export class CrmFormComponent {
           currency: entry.currency?._id ?? '',
           stage: entry.stage?._id ?? '',
           probability: entry.probability,
-          expectedCloseDate: entry.expectedCloseDate || '',
+          expectedCloseDate: entry.expectedCloseDate ? entry.expectedCloseDate.split('T')[0] : '',
           contact: entry.contact?._id,
           company: entry.company?._id || '',
           owner: entry.owner?._id || '',
@@ -118,7 +118,10 @@ export class CrmFormComponent {
     const { rawValue } = data;
 
     const tags = rawValue.tagsInput
-      ? rawValue.tagsInput.split(',').map(t => t.trim()).filter(Boolean)
+      ? rawValue.tagsInput
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {

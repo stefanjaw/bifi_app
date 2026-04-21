@@ -11,7 +11,7 @@ export interface crm {
   currency: currency;
   stage?: crmStage;
   probability: number;
-  expectedCloseDate?: Date;
+  expectedCloseDate?: string;
   actualCloseDate?: string;
   contact?: contact;
   company?: company;

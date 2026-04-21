@@ -26,7 +26,7 @@ export class CrmForm extends BaseForm<CrmFormModel> {
     return this.fb.group<CrmFormModel>({
       title: ['', [Validators.required]],
       amount: [0, [Validators.required, Validators.min(0)]],
-      currency: [''],
+      currency: ['' , [Validators.required]],
       stage: [''],
       probability: [10, [Validators.min(0), Validators.max(100), Validators.required]],
       expectedCloseDate: [''],
