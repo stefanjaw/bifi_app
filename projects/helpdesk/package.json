@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/helpdesk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "peerDependencies": {
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
@@ -10,7 +10,7 @@
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
     "@avalantec/base-app": "^0.0.2",
-    "@avalantec/tasks": "^0.0.1"
+    "@avalantec/tasks": "^0.0.2"
   },
   "dependencies": {
     "tslib": "^2.3.0"
