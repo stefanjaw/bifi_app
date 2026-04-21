@@ -24,6 +24,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { CrudCurrencies } from '@avalantec/base-app/currency';
 
 @Component({
   selector: 'bifi-app-crm-form',
@@ -46,6 +47,7 @@ export class CrmFormComponent {
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);
   private crudCrmStages = inject(CrudCrmStages);
+  private crudCurrencies = inject(CrudCurrencies);
   private crudUsers = inject(CrudUsers);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
@@ -62,10 +64,12 @@ export class CrmFormComponent {
   companiesResource = this.crudCompanies.get({});
   stagesResource = this.crudCrmStages.get({});
   usersResource = this.crudUsers.get({});
+  currenciesResource = this.crudCurrencies.get({});
 
   entry = this.crmResource.value;
   contactOptions = this.contactsResource.value;
   companyOptions = this.companiesResource.value;
+  currencyOptions = this.currenciesResource.value;
   stageOptions = this.stagesResource.value;
   userOptions = this.usersResource.value;
 
@@ -75,7 +79,8 @@ export class CrmFormComponent {
       this.contactsResource.isLoading() ||
       this.companiesResource.isLoading() ||
       this.stagesResource.isLoading() ||
-      this.usersResource.isLoading()
+      this.usersResource.isLoading() ||
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
@@ -89,10 +94,10 @@ export class CrmFormComponent {
         this.formService.patchValue({
           title: entry.title,
           amount: entry.amount,
-          currency: entry.currency,
+          currency: entry.currency?._id ?? '',
           stage: entry.stage?._id ?? '',
           probability: entry.probability,
-          expectedCloseDate: entry.expectedCloseDate || '',
+          expectedCloseDate: entry.expectedCloseDate ? entry.expectedCloseDate.split('T')[0] : '',
           contact: entry.contact?._id,
           company: entry.company?._id || '',
           owner: entry.owner?._id || '',
@@ -113,7 +118,10 @@ export class CrmFormComponent {
     const { rawValue } = data;
 
     const tags = rawValue.tagsInput
-      ? rawValue.tagsInput.split(',').map(t => t.trim()).filter(Boolean)
+      ? rawValue.tagsInput
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {

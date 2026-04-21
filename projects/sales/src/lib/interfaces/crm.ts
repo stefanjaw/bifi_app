@@ -2,12 +2,13 @@ import { contact } from '@avalantec/base-app/interfaces';
 import { company } from '@avalantec/base-app/interfaces';
 import { user } from '@avalantec/base-app/interfaces';
 import { crmStage } from '../modules/crm-stages';
+import { currency } from '@avalantec/base-app/currency';
 
 export interface crm {
   _id: string;
   title: string;
   amount: number;
-  currency: string;
+  currency: currency;
   stage?: crmStage;
   probability: number;
   expectedCloseDate?: string;

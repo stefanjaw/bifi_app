@@ -25,7 +25,7 @@ export const crmColumns: tableColumn<crm>[] = [
     sortable: true,
   },
   {
-    field: 'currency',
+    field: 'currency.code',
     title: 'Currency',
     type: 'text',
   },
