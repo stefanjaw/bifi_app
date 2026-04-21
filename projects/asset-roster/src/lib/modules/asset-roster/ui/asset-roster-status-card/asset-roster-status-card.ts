@@ -25,7 +25,7 @@ export class AssetRosterStatusCardComponent {
         return {
           title: 'Under Service',
           icon: 'pi pi-hammer',
-          className: 'bg-orange-500 hover:bg-orange-600 ring-orange-400',
+          className: 'bg-orange-500 hover:bg-orange-600 ring-orange-400 whitespace-nowrap',
         };
       case 'overdue':
         return {
