@@ -13,7 +13,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import {
@@ -214,31 +214,6 @@ export class ProjectsList {
     this.router.navigate(['../edit', id], { relativeTo: this.route });
   }
 
-  onGanttCardDateChange(event: { id: string; start: dayjs.Dayjs; end: dayjs.Dayjs }): void {
-    this.crudProjects
-      .put({
-        _id: event.id,
-        data: {
-          dateStart: event.start.toISOString(),
-          dateEnd: event.end.toISOString(),
-        },
-      })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: result => {
-          if (result) this.rm.allData.reload();
-        },
-      });
-  }
-
-  onGanttItemClick(id: string): void {
-    this.goToEditProject(id);
-  }
-
-  onGanttDeleteItem(id: string): void {
-    this.deleteProject(id);
-  }
-
   onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {
     const patches = resolveGanttReorder(this.ganttMap(), event);
     if (!patches) return;
@@ -249,7 +224,7 @@ export class ProjectsList {
       return this.crudProjects.put({ _id: id, data });
     });
 
-    forkJoin(requests)
+    combineLatest(requests)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: () => this.rm.allData.reload() });
   }
@@ -280,10 +255,6 @@ export class ProjectsList {
           if (result) this.rm.allData.reload();
         },
       });
-  }
-
-  onProjectItemClick(id: string): void {
-    this.goToEditProject(id);
   }
 
   viewTasks(project: project): void {

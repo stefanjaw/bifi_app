@@ -21,7 +21,7 @@ import { ganttTask } from '../../interfaces/task-gantt';
 import dayjs from 'dayjs';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
@@ -320,16 +320,8 @@ export class TasksMainView {
       });
   }
 
-  onTaskItemClick(id: string): void {
-    this.tasksMaintenanceContext.openUpdateTaskDialog(id);
-  }
-
   onGanttAddSubitem(id: string): void {
     this.tasksMaintenanceContext.openCreateSubTaskDialog(id);
-  }
-
-  onGanttDeleteItem(id: string): void {
-    this.deleteTask(id);
   }
 
   onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {
@@ -342,7 +334,7 @@ export class TasksMainView {
       return this.crudTasks.put({ _id: id, data });
     });
 
-    forkJoin(requests)
+    combineLatest(requests)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({ next: () => this.rm.allData.reload() });
   }
@@ -356,6 +348,10 @@ export class TasksMainView {
 
   removeFilterChip(id: string): void {
     this.filterBarRef()?.removeRow(id);
+  }
+
+  onTaskItemClick(id: string): void {
+    this.tasksMaintenanceContext.openUpdateTaskDialog(id);
   }
 
   deleteTask(id: string): void {
