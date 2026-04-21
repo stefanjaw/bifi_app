@@ -114,7 +114,15 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="2">
+      <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
+        <bifi-app-line-items-table 
+          [items]="lineItems()" 
+          (itemsChange)="onLineItemsChange($event)"
+          [readonly]="false">
+        </bifi-app-line-items-table>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Notes</bifi-app-form-label>

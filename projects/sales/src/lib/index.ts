@@ -9,6 +9,8 @@ export * from './interfaces/crm';
 export * from './interfaces/sales-order';
 export * from './interfaces/sales-target';
 export * from './interfaces/sales-dashboard';
+export * from './interfaces/line-item';
+export * from './components/line-items-table/line-items-table';
 export * from './libraries/crm-columns';
 export * from './libraries/crm-filters';
 export * from './libraries/sales-order-columns';
