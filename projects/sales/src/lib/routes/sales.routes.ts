@@ -64,6 +64,45 @@ export const SALES_ROUTES: Routes = [
     data: { resource: 'sales/orders/update' },
   },
   {
+    path: 'order-stages',
+    canActivate: [permissionGuard],
+    data: { resource: 'sales-order-stages/list' },
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'list',
+      },
+      {
+        path: 'list',
+        canActivate: [permissionGuard],
+        loadComponent: () =>
+          import('../modules/sales-order-stages/features/sales-order-stages-list/sales-order-stages-list').then(
+            m => m.SalesOrderStagesList
+          ),
+        data: { resource: 'sales-order-stages/list' },
+      },
+      {
+        path: 'create',
+        canActivate: [permissionGuard],
+        loadComponent: () =>
+          import('../modules/sales-order-stages/features/sales-order-stages-form/sales-order-stages-form').then(
+            m => m.SalesOrderStagesForm
+          ),
+        data: { resource: 'sales-order-stages/create' },
+      },
+      {
+        path: 'edit/:id',
+        canActivate: [permissionGuard],
+        loadComponent: () =>
+          import('../modules/sales-order-stages/features/sales-order-stages-form/sales-order-stages-form').then(
+            m => m.SalesOrderStagesForm
+          ),
+        data: { resource: 'sales-order-stages/update' },
+      },
+    ],
+  },
+  {
     path: 'targets',
     canActivate: [permissionGuard],
     data: { resource: 'sales/targets/list' },

@@ -4,8 +4,15 @@ import { salesOrder } from '../interfaces/sales-order';
 export const salesOrderColumns: tableColumn<salesOrder>[] = [
   {
     field: 'number',
-    title: 'Number',
+    title: 'Order #',
     type: 'text',
+    sortable: true,
+  },
+  {
+    field: 'stageId.name',
+    title: 'Stage',
+    type: 'text',
+    sortable: true,
   },
   {
     field: 'crmId.title',

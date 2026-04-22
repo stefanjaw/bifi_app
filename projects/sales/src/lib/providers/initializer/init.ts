@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { SALES_ROUTES } from '../../routes/sales.routes';
 import { CRM_STAGES_ROUTES } from '../../modules/crm-stages/routes/crm-stages.routes';
+import { SALES_ORDER_STAGES_ROUTES } from '../../modules/sales-order-stages/routes/sales-order-stages.routes';
 import { SALES_CONFIGURATION_ROUTES } from '../../modules/sales-configuration/routes/sales-configuration.routes';
 import { PRICING_SETTINGS_ROUTES } from '../../modules/pricing/routes/pricing-settings.routes';
 import { PRICING_ESTIMATES_ROUTES } from '../../modules/pricing/routes/pricing-estimates.routes';
@@ -78,6 +79,12 @@ export function initializeSales() {
             resource: 'crm-stages/menu',
           },
           {
+            icon: PrimeIcons.TAG,
+            routerLink: ['/settings/sales/order-stages'],
+            label: 'Order Stages',
+            resource: 'sales-order-stages/menu',
+          },
+          {
             icon: PrimeIcons.COG,
             routerLink: ['/settings/sales/configuration'],
             label: 'Configuration',
@@ -107,6 +114,10 @@ export function initializeSales() {
         {
           path: 'crm-stages',
           children: CRM_STAGES_ROUTES,
+        },
+        {
+          path: 'order-stages',
+          children: SALES_ORDER_STAGES_ROUTES,
         },
         {
           path: 'configuration',

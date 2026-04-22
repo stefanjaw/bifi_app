@@ -19,7 +19,10 @@ export class SalesTargetForm extends BaseForm<SalesTargetFormModel> {
     return this.fb.group<SalesTargetFormModel>({
       name: ['', [Validators.required]],
       year: [new Date().getFullYear(), [Validators.required]],
-      month: [new Date().getMonth() + 1, [Validators.required, Validators.min(1), Validators.max(12)]],
+      month: [
+        new Date().getMonth() + 1,
+        [Validators.required, Validators.min(1), Validators.max(12)],
+      ],
       targetAmount: [0, [Validators.required, Validators.min(0.01)]],
       currency: ['USD'],
       salesperson: [''],

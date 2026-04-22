@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["@avalantec/base-app"]
+  "allowedNonPeerDependencies": ["@avalantec/base-app", "@avalantec/inventory"]
 }

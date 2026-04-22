@@ -14,6 +14,8 @@ import { CrudCrm } from '../../services/crud-crm';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
+import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +27,6 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { LineItemsTable } from '../../components/line-items-table/line-items-table';
-import { lineItem } from '../../interfaces/line-item';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
@@ -50,6 +51,9 @@ export class SalesOrderDetail {
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);
   private crudUsers = inject(CrudUsers);
+  private crudProducts = inject(CrudProducts);
+  private crudStockBalances = inject(CrudStockBalances);
+  private crudSalesOrderStages = inject(CrudSalesOrderStages);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -65,6 +69,9 @@ export class SalesOrderDetail {
   contactsResource = this.crudContacts.get({});
   companiesResource = this.crudCompanies.get({});
   usersResource = this.crudUsers.get({});
+  productsResource = this.crudProducts.get({});
+  stockResource = this.crudStockBalances.get({});
+  stagesResource = this.crudSalesOrderStages.get({});
 
   entry = this.orderResource.value;
 
@@ -73,18 +80,39 @@ export class SalesOrderDetail {
   companyOptions = computed(() => (this.companiesResource.value() as any[]) ?? []);
   userOptions = computed(() => (this.usersResource.value() as any[]) ?? []);
 
+  productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
+  stageOptions = computed(() => (this.stagesResource.value() as any[]) ?? []);
+
+  defaultStageId = computed(() => {
+    const stages = this.stageOptions();
+    const def = stages.find((s: any) => s.isDefault);
+    return def?._id ?? '';
+  });
+
+  stockMap = computed<Record<string, number>>(() => {
+    const balances = (this.stockResource.value() as any[]) ?? [];
+    return balances.reduce((map: Record<string, number>, balance: any) => {
+      const productId =
+        typeof balance.productId === 'object' ? balance.productId?._id : balance.productId;
+      if (productId) {
+        map[productId] = (map[productId] ?? 0) + (balance.quantity ?? 0);
+      }
+      return map;
+    }, {});
+  });
+
   isLoading = computed(
     () =>
       this.orderResource.isLoading() ||
       this.crmResource.isLoading() ||
       this.contactsResource.isLoading() ||
       this.companiesResource.isLoading() ||
-      this.usersResource.isLoading()
+      this.usersResource.isLoading() ||
+      this.productsResource.isLoading() ||
+      this.stagesResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
-
-  lineItems = signal<lineItem[]>([]);
 
   form = this.formService.form;
 
@@ -108,47 +136,72 @@ export class SalesOrderDetail {
         const salespersonData = entry.salesperson as any;
         const salespersonId = salespersonData?._id ?? salespersonData ?? '';
 
+        const stageData = entry.stageId as any;
+        const stageId = stageData?._id ?? stageData ?? '';
+
         this.formService.patchValue({
           crmId,
           contact: contactId,
           company: companyId,
           salesperson: salespersonId,
+          stageId,
           amount: entry.amount,
           currency: entry.currency,
           closeDate: new Date(entry.closeDate),
           notes: entry.notes || '',
         });
-        this.lineItems.set((entry as any).lineItems ? [...(entry as any).lineItems] : []);
+
+        const rawLineItems = (entry.lineItems ?? []) as any[];
+        const mappedLineItems = rawLineItems.map((item: any) => ({
+          productId:
+            typeof item.productId === 'object'
+              ? (item.productId?._id ?? '')
+              : (item.productId ?? ''),
+          description: item.description ?? '',
+          quantity: item.quantity ?? 1,
+          unitPrice: item.unitPrice ?? 0,
+          total: item.total ?? 0,
+        }));
+        this.formService.patchLineItems(mappedLineItems);
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
-        this.lineItems.set([]);
+        const defaultId = this.defaultStageId();
+        if (defaultId) {
+          this.formService.patchValue({ stageId: defaultId });
+        }
       }
     });
   }
 
-  onLineItemsChange(items: lineItem[]) {
-    this.lineItems.set(items);
-  }
-
   goBack() {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    const isUpdate = this.isUpdate();
+    this.router.navigate([isUpdate ? '../../' : '../'], { relativeTo: this.route });
   }
 
   handleSubmit(data: FormValueState<SalesOrderFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
+    const lineItems = (rawValue.lineItems ?? []).map((item: any) => ({
+      productId: item.productId || undefined,
+      description: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      total: (item.quantity ?? 0) * (item.unitPrice ?? 0),
+    }));
+
     const payload: Record<string, any> = {
-      crmId: rawValue.crmId,
+      crmId: rawValue.crmId || undefined,
       contact: rawValue.contact,
       company: rawValue.company,
       salesperson: rawValue.salesperson || undefined,
+      stageId: rawValue.stageId || undefined,
       amount: rawValue.amount,
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,
-      lineItems: this.lineItems(),
+      lineItems,
     };
 
     if (this.isUpdate()) {

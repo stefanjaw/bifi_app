@@ -16,8 +16,10 @@
     <table class="w-full text-sm border-collapse">
       <thead>
         <tr class="bg-gray-100">
+          <th class="text-left p-3 border-b">Product</th>
           <th class="text-left p-3 border-b">Description</th>
-          <th class="text-left p-3 border-b w-28">Quantity</th>
+          <th class="text-left p-3 border-b w-36">Quantity</th>
+          <th class="text-left p-3 border-b w-20">UoM</th>
           <th class="text-left p-3 border-b w-32">Unit Price</th>
           <th class="text-left p-3 border-b w-32">Total</th>
           @if (!readonly()) {
@@ -26,50 +28,82 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of internalItems(); track $index) {
-          <tr class="hover:bg-gray-50">
+        @for (control of lineItemsArray.controls; track $index) {
+          <tr class="hover:bg-gray-50" [formGroup]="$any(control)">
+            <td class="p-2 border-b">
+              @if (!readonly()) {
+                <p-select
+                  formControlName="productId"
+                  [options]="productOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  placeholder="Select product"
+                  [filter]="true"
+                  filterBy="name,sku"
+                  styleClass="w-full"
+                  (onChange)="onProductChange($index, $event.value)"
+                  appendTo="body"
+                ></p-select>
+              } @else {
+                {{ getProductName($index) }}
+              }
+            </td>
             <td class="p-2 border-b">
               @if (!readonly()) {
                 <input
                   pInputText
-                  [value]="item.description"
-                  (input)="updateItem($index, 'description', $any($event.target).value)"
-                  placeholder="Item description"
+                  formControlName="description"
+                  placeholder="Description"
                   class="w-full"
                 />
               } @else {
-                {{ item.description }}
+                {{ $any(control).value.description }}
               }
             </td>
             <td class="p-2 border-b">
               @if (!readonly()) {
                 <p-inputnumber
-                  [ngModel]="item.quantity"
-                  (ngModelChange)="updateItem($index, 'quantity', $event)"
+                  formControlName="quantity"
                   [min]="0"
                   [showButtons]="true"
                   styleClass="w-full"
+                  (onInput)="onQuantityChange($index, $event.value)"
                 ></p-inputnumber>
+                @if ($any(control).value.productId) {
+                  <small
+                    [class]="
+                      isOverStock($index) ? 'block mt-1 text-amber-500' : 'block mt-1 text-gray-400'
+                    "
+                  >
+                    Available: {{ getAvailableStock($index) }}
+                    @if (isOverStock($index)) {
+                      &mdash; Exceeds available stock
+                    }
+                  </small>
+                }
               } @else {
-                {{ item.quantity }}
+                {{ $any(control).value.quantity }}
               }
+            </td>
+            <td class="p-2 border-b text-gray-500">
+              {{ getUom($index) }}
             </td>
             <td class="p-2 border-b">
               @if (!readonly()) {
                 <p-inputnumber
-                  [ngModel]="item.unitPrice"
-                  (ngModelChange)="updateItem($index, 'unitPrice', $event)"
+                  formControlName="unitPrice"
                   [min]="0"
                   mode="decimal"
                   [minFractionDigits]="2"
                   styleClass="w-full"
+                  (onInput)="onUnitPriceChange($index, $event.value)"
                 ></p-inputnumber>
               } @else {
-                {{ item.unitPrice | currency }}
+                {{ $any(control).value.unitPrice | currency }}
               }
             </td>
             <td class="p-2 border-b font-semibold">
-              {{ (item.quantity * item.unitPrice) | currency }}
+              {{ $any(control).value.quantity * $any(control).value.unitPrice | currency }}
             </td>
             @if (!readonly()) {
               <td class="p-2 border-b">
@@ -84,18 +118,18 @@
             }
           </tr>
         }
-        @if (internalItems().length === 0) {
+        @if (lineItemsArray.controls.length === 0) {
           <tr>
-            <td [colSpan]="readonly() ? 4 : 5" class="p-4 text-center text-gray-500">
+            <td [colSpan]="readonly() ? 6 : 7" class="p-4 text-center text-gray-500">
               No items yet. {{ readonly() ? '' : 'Click "Add Item" to get started.' }}
             </td>
           </tr>
         }
       </tbody>
-      @if (internalItems().length > 0) {
+      @if (lineItemsArray.controls.length > 0) {
         <tfoot>
           <tr class="bg-gray-50 font-bold">
-            <td [colSpan]="readonly() ? 3 : 4" class="p-3 text-right">Grand Total:</td>
+            <td [colSpan]="readonly() ? 5 : 6" class="p-3 text-right">Grand Total:</td>
             <td class="p-3 text-green-600">{{ grandTotal() | currency }}</td>
           </tr>
         </tfoot>

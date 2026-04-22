@@ -23,8 +23,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
-import { DatePipe, JsonPipe } from '@angular/common';
-import { FileResolver } from '@avalantec/base-app/resource';
+import { DatePipe } from '@angular/common';
+import { CrudActivityHistories, FileResolver } from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 
@@ -41,7 +41,6 @@ import { InputNumber } from 'primeng/inputnumber';
     ProgressBarModule,
     DatePipe,
     DatePickerModule,
-    JsonPipe,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +55,7 @@ export class TicketFormComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private fileResolver = inject(FileResolver);
+  private crudActivityHistories = inject(CrudActivityHistories);
 
   id = input<string>('');
 
@@ -67,11 +67,19 @@ export class TicketFormComponent {
   stagesResource = this.crudStages.get({});
   usersResource = this.crudUsers.get({});
   tasksResource = this.crudTasks.get({});
+  activityHistoriesResource = this.crudActivityHistories.get({
+    searchParams: computed(() =>
+      this.id() ? { model: 'Ticket', modelId: this.id() } : undefined
+    ),
+    triggerRequest: computed(() => !!this.id()),
+    getInactive: null,
+  });
 
   entry = this.ticketResource.value;
   stageOptions = this.stagesResource.value;
   userOptions = this.usersResource.value;
   allTasks = this.tasksResource.value;
+  activityHistories = this.activityHistoriesResource.value;
 
   isLoading = computed(
     () =>

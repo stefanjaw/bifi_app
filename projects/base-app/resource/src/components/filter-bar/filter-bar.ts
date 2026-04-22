@@ -40,7 +40,6 @@ const OPERATORS_BY_TYPE: Record<string, { label: string; value: filter['operator
     { label: 'Does not contain', value: 'not like' },
     { label: 'Equals', value: '==' },
     { label: 'Not equals', value: '!=' },
-    { label: 'Is empty', value: 'empty' },
   ],
   number: [
     { label: 'Equals', value: '==' },

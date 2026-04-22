@@ -22,7 +22,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Opportunity *</bifi-app-form-label>
+            <bifi-app-form-label>Opportunity</bifi-app-form-label>
             <p-select
               formControlName="crmId"
               [options]="crmOptions()"
@@ -31,6 +31,7 @@
               placeholder="Select an opportunity"
               [filter]="true"
               filterBy="title"
+              [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -68,11 +69,10 @@
             <p-select
               formControlName="salesperson"
               [options]="userOptions()"
-              optionLabel="fullName"
+              optionLabel="username"
               optionValue="_id"
               placeholder="Select a salesperson"
               [filter]="true"
-              filterBy="fullName,email"
               [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
@@ -102,6 +102,21 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
+            <bifi-app-form-label>Stage</bifi-app-form-label>
+            <p-select
+              formControlName="stageId"
+              [options]="stageOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a stage"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
             <bifi-app-form-label>Close Date *</bifi-app-form-label>
             <p-datepicker
               formControlName="closeDate"
@@ -115,11 +130,11 @@
       </bifi-app-form-section>
 
       <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
-        <bifi-app-line-items-table 
-          [items]="lineItems()" 
-          (itemsChange)="onLineItemsChange($event)"
-          [readonly]="false">
-        </bifi-app-line-items-table>
+        <bifi-app-line-items-table
+          [productOptions]="productOptions()"
+          [stockMap]="stockMap()"
+          [readonly]="false"
+        ></bifi-app-line-items-table>
       </bifi-app-form-section>
 
       <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">

@@ -42,6 +42,7 @@ export interface ticket {
   dateStart?: Date;
   dateEnd?: Date;
   duration?: string;
+  number?: string;
   createdAt?: string;
   updatedAt?: string;
 }

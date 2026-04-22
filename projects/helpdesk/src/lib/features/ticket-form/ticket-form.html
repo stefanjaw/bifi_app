@@ -174,24 +174,26 @@
     </bifi-app-form-section>
     }
 
-    @if (isUpdate() && (entry()?.activityHistory ?? []).length > 0) {
+    @if (isUpdate()) {
     <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="4">
       <div class="flex flex-col gap-3">
-        @for (activity of entry()?.activityHistory ?? []; track activity._id) {
+        @if (activityHistories().length === 0) {
+          <p class="text-sm text-gray-500 italic">No activity recorded yet.</p>
+        }
+        @for (activity of activityHistories(); track activity._id) {
         <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
           <div class="text-xs text-gray-500">
-            {{ activity.createdAt | date: 'medium' }}
-            @if (activity.changedBy) {
+            {{ activity.performDate | date: 'medium' }}
+            @if (activity.userId) {
             —
-            <span class="font-medium">{{ activity.changedBy.username }}</span>
+            <span class="font-medium">{{ $any(activity.userId).username ?? $any(activity.userId).name ?? activity.userId }}</span>
             }
           </div>
           <div class="text-sm">
-            <span class="font-semibold">{{ activityFieldLabel(activity.field) }}</span>
-            changed from
-            <span class="text-red-600">{{ activity.oldValue | json }}</span>
-            to
-            <span class="text-green-600">{{ activity.newValue | json }}</span>
+            <span class="font-semibold">{{ activity.title }}</span>
+            @if (activity.details) {
+            <span class="text-gray-600 ml-1">— {{ activity.details }}</span>
+            }
           </div>
         </div>
         }

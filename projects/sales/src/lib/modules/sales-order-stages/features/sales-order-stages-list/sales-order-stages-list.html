@@ -1,0 +1,28 @@
+<h1 class="text-2xl font-bold mb-4">Sales Order Stages</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New Stage"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'sales-order-stages/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar label="Search by name" [searchFilters]="salesOrderStageFilters"></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="salesOrderStageColumns"
+  [data]="stages"
+  [onClickRow]="goToEditStage"
+  clickRowPermission="sales-order-stages/update:view"
+>
+  <ng-template #actions let-row>
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteStage(row._id)"
+      resource="sales-order-stages"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>

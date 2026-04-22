@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/purchases",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "peerDependencies": {
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
@@ -9,7 +9,7 @@
     "tailwindcss": "^4.1.11",
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
-    "@avalantec/base-app": "^0.0.2"
+    "@avalantec/base-app": "^0.0.3"
   },
   "dependencies": {
     "tslib": "^2.3.0"

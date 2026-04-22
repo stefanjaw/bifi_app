@@ -18,6 +18,7 @@ export * from './libraries/sales-target-columns';
 export * from './libraries/sales-order-filters';
 export * from './modules/crm-stages';
 export * from './modules/sales-configuration';
+export * from './modules/sales-order-stages';
 export * from './providers/provider';
 export * from './routes/sales.routes';
 export * from './services/crud-crm';

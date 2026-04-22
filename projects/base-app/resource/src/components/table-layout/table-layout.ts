@@ -90,6 +90,13 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   private skipNextLazyLoad = true;
   firstSet = false;
 
+  allLoaded = computed(() => {
+    if (!this.infiniteScroll()) return false;
+    const state = this.resourceState();
+    if (!state.isPaginated || !state.pagination) return false;
+    return !state.pagination.hasNextPage;
+  });
+
   // Derived from PaginationManager so p-table always initialises at the correct
   // page — even before the first API response arrives. Without this, p-table
   // would start with [first]="0" and immediately fire lazyLoad(first=0) which

@@ -2,74 +2,120 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
-  output,
-  signal,
 } from '@angular/core';
-import { lineItem } from '../../interfaces/line-item';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { startWith } from 'rxjs';
+import { CurrencyPipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { FormsModule } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
+import { SelectModule } from 'primeng/select';
+import { product } from '@avalantec/inventory';
+import { SalesOrderForm } from '../../services/sales-order-form';
 
 @Component({
   selector: 'bifi-app-line-items-table',
-  imports: [ButtonModule, InputTextModule, InputNumberModule, FormsModule, CurrencyPipe],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    InputTextModule,
+    InputNumberModule,
+    SelectModule,
+    CurrencyPipe,
+  ],
   templateUrl: './line-items-table.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineItemsTable {
-  items = input<lineItem[]>([]);
-  itemsChange = output<lineItem[]>();
+  private formService = inject(SalesOrderForm);
+
+  productOptions = input<product[]>([]);
+  stockMap = input<Record<string, number>>({});
   readonly = input<boolean>(false);
 
-  internalItems = signal<lineItem[]>([]);
-
-  constructor() {
-    const syncEffect = () => {
-      const incoming = this.items();
-      if (incoming && incoming.length > 0 && this.internalItems().length === 0) {
-        this.internalItems.set(incoming.map(i => ({ ...i })));
-      }
-    };
+  get lineItemsArray() {
+    return this.formService.lineItemsArray;
   }
 
-  ngOnInit() {
-    const incoming = this.items();
-    if (incoming && incoming.length > 0) {
-      this.internalItems.set(incoming.map(i => ({ ...i })));
-    }
-  }
+  private lineItemValues = toSignal(
+    this.formService.lineItemsArray.valueChanges.pipe(
+      startWith(this.formService.lineItemsArray.value)
+    ),
+    { initialValue: this.formService.lineItemsArray.value }
+  );
 
   grandTotal = computed(() =>
-    this.internalItems().reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0)
+    (this.lineItemValues() as any[]).reduce(
+      (sum, item) => sum + ((item?.quantity ?? 0) * (item?.unitPrice ?? 0)),
+      0
+    )
   );
 
   addItem() {
-    this.internalItems.update(items => [
-      ...items,
-      { description: '', quantity: 1, unitPrice: 0, total: 0 },
-    ]);
-    this.emit();
+    this.formService.addLineItem();
   }
 
   removeItem(index: number) {
-    this.internalItems.update(items => items.filter((_, i) => i !== index));
-    this.emit();
+    this.formService.removeLineItem(index);
   }
 
-  updateItem(index: number, field: keyof lineItem, value: string | number) {
-    this.internalItems.update(items => {
-      const updated = [...items];
-      updated[index] = { ...updated[index], [field]: value };
-      updated[index].total = updated[index].quantity * updated[index].unitPrice;
-      return updated;
-    });
-    this.emit();
+  onProductChange(index: number, productId: string) {
+    const prod = this.productOptions().find(p => p._id === productId);
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    if (prod) {
+      const qty = (control.get('quantity')?.value as number) ?? 1;
+      control.patchValue({
+        description: prod.description ?? prod.name,
+        unitPrice: prod.salePrice,
+        total: qty * prod.salePrice,
+      });
+    }
   }
 
-  private emit() {
-    this.itemsChange.emit(this.internalItems());
+  onQuantityChange(index: number, newQty: number | null) {
+    const qty = newQty ?? 0;
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const unitPrice = (control.get('unitPrice')?.value as number) ?? 0;
+    control.patchValue({ total: qty * unitPrice });
+  }
+
+  onUnitPriceChange(index: number, newPrice: number | null) {
+    const price = newPrice ?? 0;
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const qty = (control.get('quantity')?.value as number) ?? 0;
+    control.patchValue({ total: qty * price });
+  }
+
+  getUom(index: number): string {
+    const productId = (this.lineItemsArray.controls[index] as FormGroup).get('productId')?.value;
+    if (!productId) return '—';
+    const prod = this.productOptions().find(p => p._id === productId);
+    if (!prod) return '—';
+    return (prod.unitOfMeasureId as any)?.symbol ?? prod.unit ?? '—';
+  }
+
+  getProductName(index: number): string {
+    const productId = (this.lineItemsArray.controls[index] as FormGroup).get('productId')?.value;
+    if (!productId) return '—';
+    const prod = this.productOptions().find(p => p._id === productId);
+    return prod ? `[${prod.sku}] ${prod.name}` : productId;
+  }
+
+  getAvailableStock(index: number): number {
+    const productId = (this.lineItemsArray.controls[index] as FormGroup).get('productId')?.value;
+    if (!productId) return 0;
+    return this.stockMap()[productId] ?? 0;
+  }
+
+  isOverStock(index: number): boolean {
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const productId = control.get('productId')?.value;
+    if (!productId) return false;
+    const qty = (control.get('quantity')?.value as number) ?? 0;
+    const available = this.stockMap()[productId];
+    return available !== undefined && qty > available;
   }
 }

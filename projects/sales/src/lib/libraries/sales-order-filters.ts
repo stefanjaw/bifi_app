@@ -14,4 +14,8 @@ export const salesOrderFilters: filter<salesOrder>[] = [
     field: 'contact.name',
     type: 'string',
   },
+  {
+    field: 'stageId.name',
+    type: 'string',
+  },
 ];

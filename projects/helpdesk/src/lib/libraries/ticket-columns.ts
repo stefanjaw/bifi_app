@@ -3,6 +3,12 @@ import { ticket } from '../interfaces/ticket';
 
 export const ticketColumns: tableColumn<ticket>[] = [
   {
+    field: 'number',
+    title: 'Number',
+    type: 'text',
+    parseField: (value: string) => value ?? '—',
+  },
+  {
     field: 'active',
     title: 'Active',
     type: 'text',
