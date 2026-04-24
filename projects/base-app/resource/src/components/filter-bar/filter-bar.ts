@@ -57,7 +57,10 @@ const OPERATORS_BY_TYPE: Record<string, { label: string; value: filter['operator
     { label: 'Before or on', value: '<=' },
     { label: 'Not on', value: '!=' },
   ],
-  boolean: [{ label: 'Is', value: '==' }],
+  boolean: [
+    { label: 'Is', value: '==' },
+    { label: 'Both', value: 'in' },
+  ],
 };
 
 @Component({
@@ -97,7 +100,7 @@ export class FilterBar implements OnDestroy {
       !!r.field &&
       !!r.operator &&
       (r.operator === 'empty' ||
-        r.type === 'boolean' || // ✅ boolean always valid (true/false)
+        r.type === 'boolean' ||
         (r.value !== null && r.value !== undefined && r.value !== ''))
     );
   }
@@ -113,13 +116,18 @@ export class FilterBar implements OnDestroy {
         const opEntry = operatorOptions.find(o => o.value === r.operator);
 
         let valueText = '';
+
+        // Only show the value if the operator is not "empty"
         if (r.operator !== 'empty') {
           if (r.value instanceof Date) {
             valueText = r.value.toLocaleDateString();
-          } else if (typeof r.value === 'boolean') {
-            valueText = r.value ? 'Yes' : 'No';
-          } else {
-            valueText = String(r.value ?? '');
+            if (r.operator === 'in' && r.type === 'boolean') {
+              valueText = 'True & False';
+            } else if (typeof r.value === 'boolean') {
+              valueText = r.value ? 'Yes' : 'No';
+            } else {
+              valueText = String(r.value ?? '');
+            }
           }
         }
 
@@ -238,10 +246,10 @@ export class FilterBar implements OnDestroy {
       rows.map(r => {
         if (r.id !== rowId) return r;
 
-        let value: any = null;
+        let value: any = r.value;
 
         if (r.type === 'boolean') {
-          value = true; // ✅ ensure default true
+          value = operator === 'in' ? [true, false] : true;
         }
 
         return { ...r, operator, value };

@@ -51,12 +51,16 @@
             appendTo="body"
           />
         } @else if (row.type === 'boolean') {
-          <p-checkbox
-            [ngModel]="row.value"
-            (ngModelChange)="onValueChange(row.id, $event)"
-            [ngModelOptions]="{ standalone: true }"
-            [binary]="true"
-          />
+          @if (row.operator === '==') {
+            <p-checkbox
+              [ngModel]="row.value"
+              (ngModelChange)="onValueChange(row.id, $event)"
+              [ngModelOptions]="{ standalone: true }"
+              [binary]="true"
+            ></p-checkbox>
+          } @else if (row.operator === 'in') {
+            <span class="text-sm italic text-gray-500">Include both</span>
+          }
         }
       }
       <p-button
