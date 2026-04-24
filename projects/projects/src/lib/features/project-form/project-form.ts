@@ -189,9 +189,11 @@ export class ProjectFormComponent {
   viewTasks(): void {
     const name = this.projectResource.value()?.name;
     if (!name) return;
+
     const filters = JSON.stringify([
-      { field: 'projectId.name', operator: 'like', value: name, type: 'string' },
+      { field: 'projectId.name', operator: '==', value: name, type: 'string' },
     ]);
+    
     this.router.navigate(['/tasks/view'], {
       queryParams: { _filters: filters, _view: 'list' },
     });
