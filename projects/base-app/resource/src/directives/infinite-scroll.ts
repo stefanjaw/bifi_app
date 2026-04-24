@@ -68,18 +68,23 @@ export class InfiniteScroll {
 
     // Attach/detach scroll listener whenever the resource or scroll container changes
     effect(() => {
+      // Get the current resource and scroll container
       const resource = this.resource();
       const container = this.scrollContainer();
 
+      // If there is no resource or scroll container, remove the scroll listener and exit
       if (!container) return;
 
+      // If there is no resource, remove the scroll listener
       if (!resource) {
         container.removeEventListener('scroll', this.handleScroll);
         return;
       }
 
+      // Add the scroll listener
       container.addEventListener('scroll', this.handleScroll, { passive: true });
 
+      // Return a cleanup function to remove the scroll listener when the effect re-runs or is destroyed
       return () => {
         container.removeEventListener('scroll', this.handleScroll);
       };
@@ -94,8 +99,21 @@ export class InfiniteScroll {
       }
     });
 
-    // Reset the pagination options
-    // this.paginationManager.resetPaginationOptions();
+    // Nuevo efecto para verificar si hay que cargar más datos
+    // cada vez que el valor del recurso cambie (después de una carga exitosa)
+    effect(() => {
+      const value = this.resource()?.value();
+      const isLoading = this.resource()?.isLoading();
+
+      // Si terminó de cargar y tenemos datos, verificamos si hay espacio vacío
+      if (!isLoading && value) {
+        // Usamos un pequeño timeout o requestAnimationFrame para esperar a que
+        // el DOM se actualice con los nuevos elementos antes de medir
+        setTimeout(() => {
+          this.checkIfShouldLoadMore();
+        }, 100);
+      }
+    });
 
     // Remove scroll event listener on destroy
     this.destroy$.onDestroy(() => {
@@ -140,7 +158,7 @@ export class InfiniteScroll {
     const state = this.resource();
     if (!this.isPaginatedFN(state?.value())) return;
 
-    const { page, totalDocs, limit } = state.value() as pagination<any>;
+    const { totalDocs, limit } = state.value() as pagination<any>;
 
     // Si ya tenemos todos los documentos, no hacer nada
     if (limit >= totalDocs) return;
@@ -149,6 +167,39 @@ export class InfiniteScroll {
 
     this.loadingNextPage = true;
 
-    this.paginationManager.setPaginationOptions(page, limit + pivot);
+    // FORZAMOS page a 1 para que el backend traiga desde el principio
+    // hasta el nuevo límite (limit + pivot)
+    const FIRST_PAGE = 1;
+    this.paginationManager.setPaginationOptions(FIRST_PAGE, limit + pivot);
+  }
+
+  private checkIfShouldLoadMore() {
+    const container = this.scrollContainer();
+    const state = this.resource();
+
+    if (!container || !state) return;
+
+    // Si ya está cargando, no hacer nada para evitar loops infinitos
+    if (state.isLoading() || this.loadingNextPage) return;
+
+    const data = state.value();
+    if (!this.isPaginatedFN(data)) return;
+
+    // Si ya cargamos todo lo que existe en la DB, detenerse
+    if (data.limit >= data.totalDocs) return;
+
+    const fullHeight = container.scrollHeight;
+    const viewportHeight = container.clientHeight;
+
+    // Umbral de seguridad
+    const threshold = 10;
+
+    // CONDICIÓN CLAVE: Si la altura total del contenido es menor o casi igual
+    // a la altura visible, significa que NO hay scroll o estamos muy cerca del final.
+    const isNotScrollable = fullHeight <= viewportHeight + threshold;
+
+    if (isNotScrollable) {
+      this.loadNextPage();
+    }
   }
 }
