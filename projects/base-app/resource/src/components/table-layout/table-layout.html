@@ -2,6 +2,14 @@
 @let pagination = state.pagination;
 
 <div [bifiAppInfiniteScroll]="infiniteScroll() ? $any(data()) : null">
+  @if (infiniteScroll() && state.isPaginated) {
+    <!-- include total records and total records in display when using infinite scroll -->
+    <div class="p-2 text-sm text-gray-500 flex flex-row gap-4 items-center justify-start">
+      <span>Total Records: {{ pagination?.totalDocs ?? 0 }}</span>
+      <span>Showing: {{ state.value.length }}</span>
+    </div>
+  }
+
   <p-table
     sortMode="multiple"
     (onLazyLoad)="lazyLoad($event)"
