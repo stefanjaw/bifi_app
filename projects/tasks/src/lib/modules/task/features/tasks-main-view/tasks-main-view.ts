@@ -282,6 +282,7 @@ export class TasksMainView {
       stage: t.stage,
       priority: t.priority,
       projectName: t.projectId?.name,
+      assignedUserName: t.assigned?.username,
     };
   }
 

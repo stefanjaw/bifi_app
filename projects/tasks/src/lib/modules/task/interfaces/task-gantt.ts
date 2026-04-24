@@ -7,6 +7,7 @@ export interface ganttTask extends GanttItem {
   stage?: taskStage;
   priority?: string;
   projectName?: string;
+  assignedUserName?: string;
 }
 
 export interface ganttData {

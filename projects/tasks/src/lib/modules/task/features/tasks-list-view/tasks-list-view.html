@@ -2,7 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex-grow overflow-y-auto pt-4 pr-4">
   <div
-    class="sticky top-0 bg-gray-50 z-10 grid grid-cols-14 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
+    class="sticky top-0 bg-gray-50 z-10 grid grid-cols-16 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
   >
     <div class="col-span-4">Task Name</div>
     <div class="col-span-2">Project</div>
@@ -10,6 +10,7 @@
     <div class="col-span-2">End Date</div>
     <div class="col-span-1">Stage</div>
     <div class="col-span-1">Priority</div>
+    <div class="col-span-2">Assigned</div>
     <div class="col-span-1 text-center">Progress</div>
     <div class="col-span-1 text-center">Actions</div>
   </div>
@@ -17,7 +18,7 @@
     <bifi-app-tree-list
       [items]="tasks()"
       [enableDragDrop]="false"
-      rowClass="group grid grid-cols-14 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
+      rowClass="group grid grid-cols-16 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
       nameColClass="col-span-4 truncate flex items-center px-2"
       [levelIndentBase]="8"
       [showExpandPlaceholder]="true"
@@ -41,6 +42,9 @@
         </div>
         <div class="col-span-1 px-2">
           {{ formatPriority(task.priority) }}
+        </div>
+        <div class="col-span-2 px-2 truncate">
+          {{ task.assignedUserName ?? '—' }}
         </div>
         <div class="col-span-1 px-2 flex justify-center">
           <div class="w-4/5 bg-gray-200 rounded-full h-2.5">
