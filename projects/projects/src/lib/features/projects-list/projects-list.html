@@ -1,4 +1,4 @@
-<header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
+<header class="shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
     <h1 class="text-2xl font-bold text-gray-800">Projects</h1>
   </div>
@@ -84,56 +84,37 @@
 
 <bifi-app-filter-bar [filterFields]="projectFilterFields"></bifi-app-filter-bar>
 
-@if (isLoading()) {
-  <div class="flex-grow flex items-center justify-center">
-    <div class="text-center">
-      <i class="pi pi-spinner pi-spin"></i>
-      <p class="mt-2 text-gray-600">Loading Projects...</p>
-    </div>
-  </div>
-} @else if (error()) {
-  <div class="flex-grow flex items-center justify-center">
-    <div
-      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative"
-      role="alert"
-    >
-      <strong class="font-bold">Error:</strong>
-      <span class="block sm:inline">{{ error() }}</span>
-    </div>
-  </div>
+@if (viewState() === 'gantt') {
+  <bifi-app-gantt-view
+    title="Projects"
+    [flat]="ganttFlat()"
+    [map]="ganttMap()"
+    [dependencies]="[]"
+    (cardDateChange)="onProjectDateChange($event)"
+    (itemClick)="goToEditProject($event)"
+    (deleteItem)="deleteProject($event)"
+    (expandToggle)="toggleExpand($event)"
+    (itemReorder)="onGanttItemReorder($event)"
+    (itemReparent)="onGanttItemReparent($event)"
+    (addSubitem)="onGanttAddSubitem($event)"
+  ></bifi-app-gantt-view>
+} @else if (viewState() === 'list') {
+  <bifi-app-projects-list-view
+    [projects]="ganttFlat()"
+    (expandToggle)="toggleExpand($event)"
+    (editProject)="goToEditProject($event)"
+    (viewTasks)="viewTasksById($event)"
+    (deleteProject)="deleteProject($event)"
+    (itemReorder)="onGanttItemReorder($event)"
+    (itemReparent)="onGanttItemReparent($event)"
+    (addSubitem)="onGanttAddSubitem($event)"
+  ></bifi-app-projects-list-view>
+} @else if (viewState() === 'calendar') {
+  <bifi-app-calendar-view
+    [events]="calendarEvents()"
+    (itemClick)="goToEditProject($event)"
+    (eventDateChange)="onProjectDateChange($event)"
+  ></bifi-app-calendar-view>
 } @else {
-  @if (viewState() === 'gantt') {
-    <bifi-app-gantt-view
-      title="Projects"
-      [flat]="ganttFlat()"
-      [map]="ganttMap()"
-      [dependencies]="[]"
-      (cardDateChange)="onProjectDateChange($event)"
-      (itemClick)="goToEditProject($event)"
-      (deleteItem)="deleteProject($event)"
-      (expandToggle)="toggleExpand($event)"
-      (itemReorder)="onGanttItemReorder($event)"
-      (itemReparent)="onGanttItemReparent($event)"
-      (addSubitem)="onGanttAddSubitem($event)"
-    ></bifi-app-gantt-view>
-  } @else if (viewState() === 'list') {
-    <bifi-app-projects-list-view
-      [projects]="ganttFlat()"
-      (expandToggle)="toggleExpand($event)"
-      (editProject)="goToEditProject($event)"
-      (viewTasks)="viewTasksById($event)"
-      (deleteProject)="deleteProject($event)"
-      (itemReorder)="onGanttItemReorder($event)"
-      (itemReparent)="onGanttItemReparent($event)"
-      (addSubitem)="onGanttAddSubitem($event)"
-    ></bifi-app-projects-list-view>
-  } @else if (viewState() === 'calendar') {
-    <bifi-app-calendar-view
-      [events]="calendarEvents()"
-      (itemClick)="goToEditProject($event)"
-      (eventDateChange)="onProjectDateChange($event)"
-    ></bifi-app-calendar-view>
-  } @else {
-    <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
-  }
+  <bifi-app-timeline-view [items]="timelineItems()"></bifi-app-timeline-view>
 }
