@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import {
   ButtonsActions,
+  CalendarEvent,
   CalendarView,
   FilterBar,
   ListStateManager,
@@ -28,7 +29,6 @@ import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CalendarEvent } from 'dist/base-app/resource';
 import dayjs from 'dayjs';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
