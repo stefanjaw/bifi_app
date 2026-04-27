@@ -26,7 +26,6 @@ import { ticket, ticketAttachment } from '../../interfaces/ticket';
 import { DatePipe } from '@angular/common';
 import { CrudActivityHistories, FileResolver } from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
-import { InputNumber } from 'primeng/inputnumber';
 
 @Component({
   selector: 'bifi-app-ticket-form',

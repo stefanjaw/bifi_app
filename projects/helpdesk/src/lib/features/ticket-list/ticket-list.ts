@@ -29,6 +29,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CalendarEvent } from 'dist/base-app/resource';
+import dayjs from 'dayjs';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
 
@@ -117,6 +118,23 @@ export class TicketList {
     const params = this.route.snapshot.queryParams as Record<string, string>;
     const view = params[TASKS_VIEW_QUERY_KEY] as 'list' | 'calendar';
     if (view && ['list', 'calendar'].includes(view)) this.viewState.set(view);
+  }
+
+  onTicketDateChange(event: { id: string; start: dayjs.Dayjs | Date; end: dayjs.Dayjs | Date }) {
+    this.crudTickets
+      .put({
+        _id: event.id,
+        data: {
+          dateStart: dayjs(event.start).toISOString(),
+          dateEnd: dayjs(event.end).toISOString(),
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: result => {
+          if (result) this.tickets.reload();
+        },
+      });
   }
 
   deleteTicket(id: string) {
