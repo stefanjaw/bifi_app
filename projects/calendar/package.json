@@ -12,7 +12,7 @@
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
     "@avalantec/base-app": "^0.0.4",
-    "@avalantec/tasks": "^0.0.5",
+    "@avalantec/tasks": "^0.0.6",
     "@avalantec/helpdesk": "^0.0.6",
     "@avalantec/projects": "^0.0.5"
   },
