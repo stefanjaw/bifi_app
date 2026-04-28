@@ -142,7 +142,7 @@ export class TicketFormComponent {
           dateScheduled: entry.dateScheduled ? new Date(entry.dateScheduled) : undefined,
           duration: entry.duration ?? '30',
         });
-        this.linkedTaskIds.set(entry.taskIds ?? []);
+        this.linkedTaskIds.set(entry.taskIds?.map(t => t._id) ?? []);
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();

@@ -30,6 +30,9 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import dayjs from 'dayjs';
+import { CrudTasks, CrudTaskTypes } from '@avalantec/tasks';
+import { switchMap } from 'rxjs';
+import { TooltipModule } from 'primeng/tooltip';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
 
@@ -48,6 +51,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     RouterLink,
     ButtonsActions,
     CalendarView,
+    TooltipModule
   ],
   templateUrl: './ticket-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +59,8 @@ const TASKS_VIEW_QUERY_KEY = '_view';
 export class TicketList {
   private resourceManager = inject<ResourceManager<ticket>>(ResourceManager);
   private crudTickets = inject(CrudTickets);
+  private crudTasks = inject(CrudTasks);
+  private crudTaskTypes = inject(CrudTaskTypes);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -65,9 +71,15 @@ export class TicketList {
   private _viewRestored = signal(false);
   isListView = computed(() => this.viewState() === 'list');
 
+  // resources
+  taskTypeResource = this.crudTaskTypes.get({});
+
   columns = ticketColumns;
   filters = ticketFilters;
   filterFields = ticketFilterFields;
+
+  // data
+  taskTypes = this.taskTypeResource.value;
   tickets = this.resourceManager.data;
   isLoading = this.resourceManager.data.isLoading;
   error = this.resourceManager.data.error;
@@ -151,4 +163,37 @@ export class TicketList {
   gotoEditTicket = (element: ticket) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+
+  createTask(ticket: ticket) {
+    // Get the first task type (you might want to make this more sophisticated in a real app)
+    const taskType = this.taskTypes()?.[0];
+
+    // Create the task
+    const createTask = this.crudTasks.post({
+      data: {
+        name: ticket.name,
+        description: ticket.description,
+        typeId: taskType?._id,
+        plannedStartDate: ticket.dateStart,
+        plannedEndDate: ticket.dateEnd,
+      },
+    });
+
+    // update ticket with the created task id
+    const ticketUpdate = (taskId: string) =>
+      this.crudTickets.put({
+        _id: ticket._id,
+        data: {
+          taskIds: [...(ticket.taskIds?.map(t => t._id) ?? []), taskId],
+        },
+      });
+
+    // Update the ticket
+    createTask
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        switchMap(res => ticketUpdate(res?._id ?? ''))
+      )
+      .subscribe({});
+  }
 }
