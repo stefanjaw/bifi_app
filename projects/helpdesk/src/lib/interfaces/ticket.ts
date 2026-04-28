@@ -41,6 +41,7 @@ export interface ticket {
   active: boolean;
   dateStart?: Date;
   dateEnd?: Date;
+  dateScheduled?: Date;
   duration?: string;
   number?: string;
   createdAt?: string;

@@ -67,9 +67,7 @@ export class TicketFormComponent {
   usersResource = this.crudUsers.get({});
   tasksResource = this.crudTasks.get({});
   activityHistoriesResource = this.crudActivityHistories.get({
-    searchParams: computed(() =>
-      this.id() ? { model: 'Ticket', modelId: this.id() } : undefined
-    ),
+    searchParams: computed(() => (this.id() ? { model: 'Ticket', modelId: this.id() } : undefined)),
     triggerRequest: computed(() => !!this.id()),
     getInactive: null,
   });
@@ -141,6 +139,7 @@ export class TicketFormComponent {
           appModule: entry.appModule ?? '',
           dateStart: entry.dateStart ? new Date(entry.dateStart) : undefined,
           dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : undefined,
+          dateScheduled: entry.dateScheduled ? new Date(entry.dateScheduled) : undefined,
           duration: entry.duration ?? '30',
         });
         this.linkedTaskIds.set(entry.taskIds ?? []);
@@ -219,6 +218,8 @@ export class TicketFormComponent {
     payload['dateStart'] = rawValue.dateStart
       ? new Date(rawValue.dateStart).toISOString()
       : new Date().toISOString();
+
+    // * If dateEnd is provided, set it and also calculate slaResolutionDeadline as 3 days after dateEnd
     if (rawValue.dateEnd) {
       payload['dateEnd'] = new Date(rawValue.dateEnd).toISOString();
       // Calcular automáticamente slaResolutionDeadline como 3 días después de dateEnd
@@ -226,6 +227,16 @@ export class TicketFormComponent {
       const slaDeadline = new Date(dateEnd);
       slaDeadline.setDate(slaDeadline.getDate() + 3);
       payload['slaResolutionDeadline'] = slaDeadline.toISOString();
+    }
+
+    // * If dateScheduled is provided, set it and also calculate slaResponseDeadline as 3 days before dateScheduled
+    if (rawValue.dateScheduled) {
+      payload['dateScheduled'] = new Date(rawValue.dateScheduled).toISOString();
+      // Calcular automáticamente slaResponseDeadline como 3 días antes de dateScheduled
+      const dateScheduled = new Date(rawValue.dateScheduled);
+      const slaDeadline = new Date(dateScheduled);
+      slaDeadline.setDate(slaDeadline.getDate() - 3);
+      payload['slaResponseDeadline'] = slaDeadline.toISOString();
     }
 
     //     const durationFull = rawValue.duration
