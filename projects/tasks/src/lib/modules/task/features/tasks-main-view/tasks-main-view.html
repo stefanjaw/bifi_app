@@ -1,4 +1,4 @@
-<header class="flex-shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
+<header class="shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
     <h1 class="text-2xl font-bold text-gray-800">Tasks Timeline</h1>
   </div>
@@ -77,7 +77,7 @@
 </header>
 
 <!-- Search & Filters -->
-<div class="flex-shrink-0 py-2 flex items-center gap-2">
+<div class="shrink-0 py-2 flex items-center gap-2">
   <bifi-app-search-bar
     class="flex-1 min-w-0"
     label="Search by name, priority, stage, assigned user, project or type"
@@ -126,7 +126,7 @@
 </p-popover>
 
 <!-- Main Content -->
-@if (isLoading()) {
+<!-- @if (isLoading()) {
   <div class="flex-grow flex items-center justify-center">
     <div class="text-center">
       <i class="pi pi-spinner pi-spin"></i>
@@ -144,39 +144,41 @@
     </div>
   </div>
 } @else {
-  @if (viewState() === 'gantt') {
-    <!-- Gantt View -->
-    <bifi-app-gantt-view
-      title="Tasks"
-      [flat]="ganttFlat()"
-      [map]="ganttMap()"
-      [dependencies]="ganttDependencies()"
-      (cardDateChange)="onTaskDateChange($event)"
-      (itemClick)="onTaskItemClick($event)"
-      (itemReorder)="onGanttItemReorder($event)"
-      (itemReparent)="onGanttItemReparent($event)"
-      (addSubitem)="onGanttAddSubitem($event)"
-      (deleteItem)="deleteTask($event)"
-      (expandToggle)="toggleExpand($event)"
-    ></bifi-app-gantt-view>
-  } @else if (viewState() === 'list') {
-    <!-- List View -->
-    <bifi-app-tasks-list-view
-      [tasks]="ganttFlat()"
-      (itemReorder)="onGanttItemReorder($event)"
-      (itemReparent)="onGanttItemReparent($event)"
-    ></bifi-app-tasks-list-view>
-  } @else if (viewState() === 'calendar') {
-    <!-- Calendar View -->
-    <bifi-app-calendar-view
-      [events]="calendarEvents()"
-      (itemClick)="onTaskItemClick($event)"
-      (eventDateChange)="onTaskDateChange($event)"
-    ></bifi-app-calendar-view>
-  } @else {
-    <!-- Timeline View (milestones only) -->
-    <bifi-app-timeline-view [items]="milestoneItems()"></bifi-app-timeline-view>
-  }
+  
+} -->
+
+@if (viewState() === 'gantt') {
+  <!-- Gantt View -->
+  <bifi-app-gantt-view
+    title="Tasks"
+    [flat]="ganttFlat()"
+    [map]="ganttMap()"
+    [dependencies]="ganttDependencies()"
+    (cardDateChange)="onTaskDateChange($event)"
+    (itemClick)="onTaskItemClick($event)"
+    (itemReorder)="onGanttItemReorder($event)"
+    (itemReparent)="onGanttItemReparent($event)"
+    (addSubitem)="onGanttAddSubitem($event)"
+    (deleteItem)="deleteTask($event)"
+    (expandToggle)="toggleExpand($event)"
+  ></bifi-app-gantt-view>
+} @else if (viewState() === 'list') {
+  <!-- List View -->
+  <bifi-app-tasks-list-view
+    [tasks]="ganttFlat()"
+    (itemReorder)="onGanttItemReorder($event)"
+    (itemReparent)="onGanttItemReparent($event)"
+  ></bifi-app-tasks-list-view>
+} @else if (viewState() === 'calendar') {
+  <!-- Calendar View -->
+  <bifi-app-calendar-view
+    [events]="calendarEvents()"
+    (itemClick)="onTaskItemClick($event)"
+    (eventDateChange)="onTaskDateChange($event)"
+  ></bifi-app-calendar-view>
+} @else {
+  <!-- Timeline View (milestones only) -->
+  <bifi-app-timeline-view [items]="milestoneItems()"></bifi-app-timeline-view>
 }
 
 <bifi-app-create-tasks-form-dialog #createTasksFormDialog></bifi-app-create-tasks-form-dialog>

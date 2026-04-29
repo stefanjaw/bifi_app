@@ -1,5 +1,6 @@
 import { user } from '@avalantec/base-app/interfaces';
 import { helpdeskStage } from './helpdesk-stage';
+import { task } from '@avalantec/tasks';
 
 export interface ticketActivityEntry {
   _id: string;
@@ -36,11 +37,12 @@ export interface ticket {
   slaResolutionDeadline?: string;
   resolvedAt?: string;
   closedAt?: string;
-  taskIds?: string[];
+  taskIds?: task[];
   activityHistory?: ticketActivityEntry[];
   active: boolean;
   dateStart?: Date;
   dateEnd?: Date;
+  dateScheduled?: Date;
   duration?: string;
   number?: string;
   createdAt?: string;

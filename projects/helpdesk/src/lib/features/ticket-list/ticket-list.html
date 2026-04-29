@@ -38,25 +38,6 @@
   </div>
 </header>
 
-<!-- <h1 class="text-2xl font-bold mb-4">Helpdesk Tickets</h1>
-
-<div class="flex gap-2 mb-4">
-  <p-button
-    label="New Ticket"
-    severity="secondary"
-    icon="pi pi-plus"
-    [routerLink]="['../create']"
-    *bifiAppHasPermission="'tickets/create:view'"
-  ></p-button>
-
-  <p-button
-    label="Report"
-    severity="info"
-    icon="pi pi-chart-bar"
-    [routerLink]="['../report']"
-  ></p-button>
-</div> -->
-
 <bifi-app-search-bar
   label="Search by subject, type, priority, stage, category, module or assigned user"
   [searchFilters]="filters"
@@ -64,43 +45,34 @@
 
 <bifi-app-filter-bar [filterFields]="filterFields"></bifi-app-filter-bar>
 
-@if (isLoading()) {
-  <div class="grow flex items-center justify-center">
-    <div class="text-center">
-      <i class="pi pi-spinner pi-spin"></i>
-      <p class="mt-2 text-gray-600">Loading Tickets Data...</p>
-    </div>
-  </div>
-} @else if (error()) {
-  <div class="grow flex items-center justify-center">
-    <div
-      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative"
-      role="alert"
-    >
-      <strong class="font-bold">Error:</strong>
-      <span class="block sm:inline">{{ error() }}</span>
-    </div>
-  </div>
-} @else {
-  @if (viewState() === 'list') {
-    <bifi-app-table-layout
-      [columns]="columns"
-      [data]="tickets"
-      [infiniteScroll]="true"
-      [onClickRow]="gotoEditTicket"
-      clickRowPermission="tickets/update:view"
-    >
-      <ng-template #actions let-element>
-        <bifi-app-buttons-actions
-          (deleteClicked)="deleteTicket(element._id)"
-          resource="tickets"
-        ></bifi-app-buttons-actions>
-      </ng-template>
-    </bifi-app-table-layout>
-  } @else if (viewState() === 'calendar') {
-    <bifi-app-calendar-view
-      [events]="calendarEvents()"
-      (eventDateChange)="onTicketDateChange($event)"
-    ></bifi-app-calendar-view>
-  }
+@if (viewState() === 'list') {
+  <bifi-app-table-layout
+    [columns]="columns"
+    [data]="tickets"
+    [infiniteScroll]="true"
+    [onClickRow]="gotoEditTicket"
+    clickRowPermission="tickets/update:view"
+  >
+    <ng-template #actions let-element>
+      <p-button
+        size="small"
+        variant="text"
+        severity="info"
+        icon="pi pi-plus"
+        pTooltip="Create Task"
+        (onClick)="$event.stopPropagation(); createTask(element)"
+      ></p-button>
+      <bifi-app-buttons-actions
+        (deleteClicked)="deleteTicket(element._id)"
+        resource="tickets"
+      ></bifi-app-buttons-actions>
+    </ng-template>
+  </bifi-app-table-layout>
+} @else if (viewState() === 'calendar') {
+  <bifi-app-calendar-view
+    [events]="calendarEvents()"
+    (eventDateChange)="onTicketDateChange($event)"
+  ></bifi-app-calendar-view>
 }
+
+<bifi-app-create-tasks-form-dialog #createTasksFormDialog></bifi-app-create-tasks-form-dialog>

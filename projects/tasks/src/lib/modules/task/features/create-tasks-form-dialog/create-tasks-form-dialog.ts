@@ -5,6 +5,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  output,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +24,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import dayjs from 'dayjs';
 import { CrudProjects } from '@avalantec/projects';
+import { task } from '../../interfaces/task';
 
 @Component({
   selector: 'bifi-app-create-tasks-form-dialog',
@@ -62,6 +64,9 @@ export class CreateTasksFormDialog extends BaseDialog {
   isSubmitLoading = signal(false);
   taskProgress = toSignal(this.form.controls.progress.valueChanges);
 
+  // outputs
+  createdTask = output<task>();
+
   constructor() {
     super();
 
@@ -74,8 +79,9 @@ export class CreateTasksFormDialog extends BaseDialog {
       });
   }
 
-  override openDialog(): void {
+  override openDialog(data?: CreateTaskFormModel): void {
     this.formService.reset();
+    if (data) this.formService.patchValue(data);
     super.openDialog();
   }
 
@@ -107,11 +113,14 @@ export class CreateTasksFormDialog extends BaseDialog {
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: () => {
-          this.isSubmitLoading.set(false);
-          this.formService.reset();
-          this.closeDialog();
-          this.tasksMaintenanceContext.taskCreatedOrUpdated();
+        next: task => {
+          if (task) {
+            this.isSubmitLoading.set(false);
+            this.formService.reset();
+            this.closeDialog();
+            this.tasksMaintenanceContext.taskCreatedOrUpdated();
+            this.createdTask.emit(task);
+          }
         },
         error: () => {
           this.isSubmitLoading.set(false);

@@ -9,6 +9,7 @@ import {
   inject,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import {
   ButtonsActions,
@@ -30,6 +31,8 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import dayjs from 'dayjs';
+import { CreateTasksFormDialog } from '@avalantec/tasks';
+import { TooltipModule } from 'primeng/tooltip';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
 
@@ -48,6 +51,8 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     RouterLink,
     ButtonsActions,
     CalendarView,
+    TooltipModule,
+    CreateTasksFormDialog,
   ],
   templateUrl: './ticket-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,9 +73,14 @@ export class TicketList {
   columns = ticketColumns;
   filters = ticketFilters;
   filterFields = ticketFilterFields;
+
+  // data
   tickets = this.resourceManager.data;
   isLoading = this.resourceManager.data.isLoading;
   error = this.resourceManager.data.error;
+
+  // children
+  private createTasksFormDialog = viewChild(CreateTasksFormDialog);
 
   calendarEvents = computed<CalendarEvent[]>(() => {
     const today = new Date();
@@ -151,4 +161,16 @@ export class TicketList {
   gotoEditTicket = (element: ticket) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+
+  createTask(ticket: ticket) {
+    this.createTasksFormDialog()?.openDialog({
+      name: ticket.name,
+      description: ticket.description,
+      plannedStartDate: ticket.dateStart ? new Date(ticket.dateStart) : undefined,
+      plannedEndDate: ticket.dateEnd ? new Date(ticket.dateEnd) : undefined,
+    });
+
+    // mark the form as dirty
+    this.createTasksFormDialog()?.form.markAsDirty();
+  }
 }
