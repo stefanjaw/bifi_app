@@ -29,69 +29,62 @@ body {
   --toolbar-color: #1a1f3b;
 }
 
-/* Dense Data – Global Stylesheet
- * Compact controls for data-heavy applications.
- * Maps the Dense Data design token set to PrimeNG components and global elements.
- */
+/* Dense Data – Global Stylesheet (FIXED) */
 
 /* ─── Body / Container ────────────────────────────────────────────────────── */
 body {
-  background-color: #f3f4f6; /* gray-100 */
-  color: #111827; /* gray-900 */
+  background-color: #f3f4f6;
+  color: #111827;
 }
 
-/* ─── Dense Design Token CSS Variables ───────────────────────────────────── */
+/* ─── Dense Design Tokens ─────────────────────────────────────────────────── */
 :root {
-  --dense-text-size: 0.75rem; /* text-xs  = 12px */
-  --dense-text-color: #1f2937; /* gray-800 */
-  --dense-text-muted-size: 0.6875rem; /* 11px     */
-  --dense-text-muted-color: #6b7280; /* gray-500 */
+  --dense-text-size: 0.75rem;
+  --dense-text-color: #1f2937;
+  --dense-text-muted-size: 0.6875rem;
+  --dense-text-muted-color: #6b7280;
 
   --dense-card-bg: #ffffff;
-  --dense-card-border: #d1d5db; /* gray-300 */
-  --dense-card-radius: 2px; /* rounded-sm */
+  --dense-card-border: #d1d5db;
+  --dense-card-radius: 2px;
 
   --dense-btn-radius: 2px;
-  --dense-btn-padding-x: 0.625rem; /* px-2.5 = 10px */
-  --dense-btn-padding-y: 0.25rem; /* py-1   =  4px */
-  --dense-btn-font-size: 0.75rem; /* text-xs */
+  --dense-btn-padding-x: 0.625rem;
+  --dense-btn-padding-y: 0.25rem;
+  --dense-btn-font-size: 0.75rem;
 
-  --dense-input-border: #9ca3af; /* gray-400 */
+  --dense-input-border: #9ca3af;
   --dense-input-radius: 2px;
-  --dense-input-padding-x: 0.5rem; /* px-2   =  8px */
-  --dense-input-padding-y: 0.25rem; /* py-1   =  4px */
-  --dense-input-font-size: 0.75rem; /* text-xs */
+  --dense-input-padding-x: 0.5rem;
+  --dense-input-padding-y: 0.25rem;
+  --dense-input-font-size: 0.75rem;
+
+  /* 🔥 NUEVO: altura unificada */
+  --dense-control-height: 1.75rem;
 }
 
-/* ─── PrimeNG CSS Variable Overrides – Button ─────────────────────────────── */
-/* These override the generated PrimeNG design-token CSS variables so every
-   button variant (primary, text, link, outlined, etc.) inherits compact sizing */
+/* ─── PrimeNG Button Tokens ───────────────────────────────────────────────── */
 :root {
   --p-button-border-radius: 2px;
   --p-button-padding-x: 0.625rem;
   --p-button-padding-y: 0.25rem;
   --p-button-font-size: 0.75rem;
-  --p-button-sm-font-size: 0.6875rem;
-  --p-button-sm-padding-x: 0.5rem;
-  --p-button-sm-padding-y: 0.1875rem;
-  --p-button-lg-font-size: 0.875rem;
-  --p-button-lg-padding-x: 0.75rem;
-  --p-button-lg-padding-y: 0.375rem;
 }
 
-/* ─── PrimeNG CSS Variable Overrides – Input ──────────────────────────────── */
+/* ─── PrimeNG Input Tokens ────────────────────────────────────────────────── */
 :root {
   --p-inputtext-border-radius: 2px;
   --p-inputtext-padding-x: 0.5rem;
   --p-inputtext-padding-y: 0.25rem;
   --p-inputtext-font-size: 0.75rem;
-  --p-inputtext-border-color: #9ca3af; /* gray-400 – Dense Data inputBase token */
+  --p-inputtext-border-color: #9ca3af;
+
   --p-select-border-radius: 2px;
   --p-multiselect-border-radius: 2px;
   --p-autocomplete-border-radius: 2px;
 }
 
-/* ─── PrimeNG Buttons – compact sizing (fallback class overrides) ─────────── */
+/* ─── Buttons ─────────────────────────────────────────────────────────────── */
 .p-button {
   padding: var(--dense-btn-padding-y) var(--dense-btn-padding-x);
   font-size: var(--dense-btn-font-size);
@@ -105,64 +98,77 @@ body {
   height: 0.75rem;
 }
 
-/* ─── PrimeNG Inputs – compact sizing + gray-400 border ───────────────────── */
-.p-inputtext {
-  padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
-  font-size: var(--dense-input-font-size);
-  border-radius: var(--dense-input-radius);
-  border-color: var(--dense-input-border);
-}
+/* ─── 🔥 UNIFICACIÓN INPUTS + SELECTS ─────────────────────────────────────── */
 
-.p-textarea {
-  padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
-  font-size: var(--dense-input-font-size);
-  border-radius: var(--dense-input-radius);
-  border-color: var(--dense-input-border);
-}
-
-/* ─── PrimeNG Select / Dropdown – compact sizing + gray-400 border ────────── */
+/* Base height */
+.p-inputtext,
 .p-select,
 .p-multiselect,
-.p-autocomplete {
+.p-autocomplete,
+.p-datepicker-input {
+  height: var(--dense-control-height);
+  min-height: var(--dense-control-height);
+  font-size: var(--dense-input-font-size);
+  border-radius: var(--dense-input-radius);
+  border-color: var(--dense-input-border);
+  display: flex;
+  align-items: center;
+}
+
+/* Text alignment fix */
+.p-inputtext,
+.p-select-label,
+.p-multiselect-label,
+.p-autocomplete-input {
+  line-height: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Padding */
+.p-inputtext,
+.p-textarea,
+.p-select .p-select-label,
+.p-multiselect .p-multiselect-label,
+.p-autocomplete .p-autocomplete-input {
+  padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
+}
+
+/* Dropdown button FIX */
+.p-select-dropdown,
+.p-multiselect-dropdown {
+  width: var(--dense-control-height);
+  height: var(--dense-control-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--dense-input-radius);
+}
+
+/* ─── Textarea ───────────────────────────────────────────────────────────── */
+.p-textarea {
+  font-size: var(--dense-input-font-size);
   border-radius: var(--dense-input-radius);
   border-color: var(--dense-input-border);
 }
 
-.p-select .p-select-label,
-.p-multiselect .p-multiselect-label,
-.p-autocomplete .p-autocomplete-input,
-.p-datepicker-input {
-  padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
-  font-size: var(--dense-input-font-size);
-}
-
-.p-select-dropdown,
-.p-multiselect-dropdown {
-  width: 1.75rem;
-}
-
-/* ─── PrimeNG Checkbox & Radio – compact sizing ───────────────────────────── */
-.p-checkbox .p-checkbox-box {
-  width: 0.875rem; /* h-3.5 */
+/* ─── Checkbox & Radio ───────────────────────────────────────────────────── */
+.p-checkbox .p-checkbox-box,
+.p-radiobutton .p-radiobutton-box {
+  width: 0.875rem;
   height: 0.875rem;
   border-radius: 2px;
   border-color: var(--dense-input-border);
 }
 
-.p-radiobutton .p-radiobutton-box {
-  width: 0.875rem;
-  height: 0.875rem;
-  border-color: var(--dense-input-border);
-}
-
-/* ─── PrimeNG Datatable – dense rows ─────────────────────────────────────── */
+/* ─── Datatable ─────────────────────────────────────────────────────────── */
 .p-datatable .p-datatable-thead > tr > th,
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 0.375rem 0.625rem;
   font-size: var(--dense-text-size);
 }
 
-/* ─── PrimeNG Dialog – compact header ────────────────────────────────────── */
+/* ─── Dialog ─────────────────────────────────────────────────────────────── */
 .p-dialog .p-dialog-header {
   padding: 0.625rem 1rem;
 }
@@ -175,7 +181,7 @@ body {
   padding: 0.5rem 1rem;
 }
 
-/* ─── PrimeNG Panel / Card – compact padding ─────────────────────────────── */
+/* ─── Panel / Card ───────────────────────────────────────────────────────── */
 .p-panel .p-panel-header {
   padding: 0.5rem 0.75rem;
   font-size: var(--dense-text-size);
@@ -189,31 +195,31 @@ body {
   padding: 0.5rem 0;
 }
 
-/* ─── PrimeNG Menu / Listbox – compact items ─────────────────────────────── */
+/* ─── Menu ──────────────────────────────────────────────────────────────── */
 .p-menu .p-menu-item-link,
 .p-menubar .p-menubar-item-link {
   padding: 0.375rem 0.625rem;
   font-size: var(--dense-text-size);
 }
 
-/* ─── PrimeNG Tabs – compact tabs ────────────────────────────────────────── */
+/* ─── Tabs ──────────────────────────────────────────────────────────────── */
 .p-tabs .p-tab {
   padding: 0.375rem 0.75rem;
   font-size: var(--dense-text-size);
 }
 
-/* ─── PrimeNG Toggle Switch – compact ────────────────────────────────────── */
+/* ─── Toggle Switch ─────────────────────────────────────────────────────── */
 .p-toggleswitch {
-  width: 1.75rem; /* w-7 */
-  height: 1rem; /* h-4 */
+  width: 1.75rem;
+  height: 1rem;
 }
 
 .p-toggleswitch .p-toggleswitch-slider::before {
-  width: 0.75rem; /* h-3 w-3 */
+  width: 0.75rem;
   height: 0.75rem;
 }
 
-/* ─── PrimeNG Slider – compact ───────────────────────────────────────────── */
+/* ─── Slider ────────────────────────────────────────────────────────────── */
 .p-slider .p-slider-handle {
   width: 0.75rem;
   height: 0.75rem;
@@ -223,20 +229,20 @@ body {
   height: 0.25rem;
 }
 
-/* ─── PrimeNG Tooltip – compact ──────────────────────────────────────────── */
+/* ─── Tooltip ───────────────────────────────────────────────────────────── */
 .p-tooltip .p-tooltip-text {
   font-size: var(--dense-text-size);
   padding: 0.25rem 0.5rem;
 }
 
-/* ─── PrimeNG Tag / Badge – compact ──────────────────────────────────────── */
+/* ─── Tag ───────────────────────────────────────────────────────────────── */
 .p-tag {
-  font-size: 0.6875rem; /* 11px */
+  font-size: 0.6875rem;
   padding: 0.125rem 0.375rem;
   border-radius: 2px;
 }
 
-/* ─── PrimeNG InputGroup – compact ───────────────────────────────────────── */
+/* ─── InputGroup ───────────────────────────────────────────────────────── */
 .p-inputgroup .p-inputgroup-addon {
   padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
   font-size: var(--dense-input-font-size);
