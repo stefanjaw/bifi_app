@@ -22,7 +22,7 @@ export interface task {
   updatedBy: user;
   assigned?: user;
   attachments?: file[];
-  childIds?: task[];
+  // childIds?: task[];
   active: boolean;
   isMilestone?: boolean;
   sequence?: number;
