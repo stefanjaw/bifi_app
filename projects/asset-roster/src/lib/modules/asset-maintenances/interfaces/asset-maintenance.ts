@@ -12,4 +12,5 @@ export interface assetMaintenance {
   dateEnd: string;
   type: 'service' | 'preventive-maintenance';
   active: boolean;
+  cost?: number;
 }

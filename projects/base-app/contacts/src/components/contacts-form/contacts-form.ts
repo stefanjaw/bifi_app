@@ -11,7 +11,7 @@ import {
 import { ContactForm, ContactFormModel } from '../../services/contact-form';
 import { CrudContacts } from '../../services/crud-contacts';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormUploader, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -25,11 +25,13 @@ import { contactColumns } from '../../libraries/contact-columns';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { contact } from '@avalantec/base-app/interfaces';
 import { TagModule } from 'primeng/tag';
+import { FileUpload } from 'primeng/fileupload';
 
 @Component({
   selector: 'bifi-app-contacts-form',
   imports: [
     FormModule,
+    FormUploader,
     ReactiveFormsModule,
     SelectModule,
     InputText,
@@ -39,6 +41,7 @@ import { TagModule } from 'primeng/tag';
     TableLayout,
     SelectChildContactDialog,
     TagModule,
+    FileUpload,
   ],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,8 +94,6 @@ export class ContactsForm {
   form = this.formService.form;
   contactType = this.formService.type;
 
-  //Display name options
-
   isLoading = computed(
     () =>
       this.contactResource.isLoading() ||
@@ -128,6 +129,7 @@ export class ContactsForm {
           zipCode: contact.zipCode,
           streetAddress: contact.streetAddress,
           streetAddress2: contact.streetAddress2,
+          photo: contact.photo ? [{ id: contact.photo, file: null! }] : [],
         });
 
         this.formService.resetDirtyState();
@@ -135,6 +137,7 @@ export class ContactsForm {
       } else {
         this.formService.reset();
         this.formService.form.controls.childIds.clear();
+        this.formService.form.controls.photo.clear();
         this.childIdsData.set([]);
       }
     });
@@ -164,14 +167,18 @@ export class ContactsForm {
     if (!rawValue.email) delete rawValue.email;
     if (!rawValue.website) delete rawValue.website;
 
-    // if is individual and childIds had something, then erease array
+    // if is individual and childIds had something, then erase array
     if (rawValue.type === 'individual' && rawValue.childIds && rawValue.childIds.length > 0) {
       rawValue.childIds = [];
     }
 
     const action = this.isUpdate()
-      ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })
-      : this.crudContacts.post({ data: rawValue });
+      ? this.crudContacts.put({
+          _id: this.contact()?._id || '',
+          data: rawValue,
+          fileFields: ['photo'],
+        })
+      : this.crudContacts.post({ data: rawValue, fileFields: ['photo'] });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
@@ -200,9 +207,6 @@ export class ContactsForm {
 
   /**
    * Navigates back to the list of contacts.
-   *
-   * If the contact is being updated, it will navigate to the list of contacts.
-   * If the contact is being created, it will navigate to the list of contacts.
    */
   goBack() {
     const route = this.isUpdate() ? '../../list' : '../list';

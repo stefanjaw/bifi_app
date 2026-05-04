@@ -1,7 +1,7 @@
 import { effect, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ContactFormModel {
   name: string;
@@ -12,6 +12,7 @@ export interface ContactFormModel {
   parentId?: string;
   type: 'individual' | 'company';
   childIds?: string[];
+  photo?: FormUploaderFile[];
   countryId?: string;
   state?: string;
   city?: string;
@@ -59,6 +60,13 @@ export class ContactForm extends BaseForm<ContactFormModel> {
       type: ['individual', [Validators.required]],
       childIds: {
         template: [''],
+        formArrayElements: [],
+      },
+      photo: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
         formArrayElements: [],
       },
       countryId: [''],

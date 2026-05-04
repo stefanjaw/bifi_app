@@ -22,6 +22,7 @@ import { assetMaintenance } from '../../interfaces/asset-maintenance';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TextareaModule } from 'primeng/textarea';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'bifi-app-asset-finish-maintenance-form-dialog',
@@ -33,6 +34,7 @@ import { TextareaModule } from 'primeng/textarea';
     CommonModule,
     FormModule,
     TextareaModule,
+    InputNumberModule,
   ],
   templateUrl: './asset-finish-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,6 +76,7 @@ export class AssetFinishMaintenanceFormDialog extends BaseDialog {
           attachments: rawValue.attachments,
           active: 'false',
           notes: rawValue.notes,
+          cost: rawValue.cost ?? undefined,
           dateEnd: new Date().toISOString(),
         },
       })

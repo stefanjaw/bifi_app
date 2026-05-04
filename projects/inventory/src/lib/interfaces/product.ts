@@ -10,6 +10,8 @@ export interface product {
   costPrice: number;
   salePrice: number;
   active?: boolean;
+  photo?: string;
+  attachments?: { fileId: string; name: string; mimeType: string; size: number }[];
   createdAt?: string;
   updatedAt?: string;
 }

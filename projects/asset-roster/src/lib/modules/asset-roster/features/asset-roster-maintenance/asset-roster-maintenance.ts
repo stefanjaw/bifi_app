@@ -18,7 +18,8 @@ import { CrudRooms } from '../../../facilities';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudMaintenanceWindows } from '../../../maintenance-windows';
 import { ToastManager } from '@avalantec/base-app/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs';
 import {
   AssetCommissioningFormDialog,
   assetCommissionning,
@@ -41,6 +42,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { AssetRosterAddDocumentFormDialog } from '../asset-roster-document-dialog/asset-roster-document-dialog';
 import { addDocumentFormModel } from '../../services/add-document-form';
+import { AssetRosterImageDialog } from '../asset-roster-image-dialog/asset-roster-image-dialog';
 
 @Component({
   selector: 'bifi-app-asset-roster-maintenance',
@@ -52,6 +54,7 @@ import { addDocumentFormModel } from '../../services/add-document-form';
     AssetFinishMaintenanceFormDialog,
     AssetRosterAddDocumentFormDialog,
     AssetSkipMaintenanceFormDialog,
+    AssetRosterImageDialog,
   ],
   templateUrl: './asset-roster-maintenance.html',
 })
@@ -84,6 +87,10 @@ export class AssetRosterMaintenance {
   contacts = this.contactsService.get({});
   rooms = this.roomsService.get({});
   maintenanceWindows = this.maintenaceWindowsService.get({});
+
+  // Full active asset roster list — used to power prev/next header navigation
+  // and the "X of Y" counter. Uses the default list ordering.
+  allAssetRosters = this.crudAssetRoster.get({});
 
   // Histories
   private activityHistoryQuery = computed(() => {
@@ -136,8 +143,48 @@ export class AssetRosterMaintenance {
   // get first assetRoster and store it
   assetRoster = this.assetRosterResource.value;
 
-  // State
-  isEditMode = signal(false);
+  // State — edit mode is enabled by default; the wrapper used to flip this
+  // back and forth via an "Edit Details" button, but every field is now
+  // editable on arrival. The Save / Cancel buttons in the header are gated
+  // on `isDirty` instead of on this flag.
+  isEditMode = signal(true);
+
+  // Reactive dirty-state of the form — drives the visibility of the
+  // header's Cancel + Save Changes buttons. We listen to `form.events`
+  // (Angular 18+) so the signal updates on every value change AND every
+  // pristine/dirty change — including the `markAsPristine()` called by
+  // `resetValueToInitialState()` on save/cancel/reload, which would not
+  // emit a value change.
+  isDirty = toSignal(
+    this.formService.form.events.pipe(
+      startWith(null),
+      map(() => this.formService.form.dirty)
+    ),
+    { initialValue: this.formService.form.dirty }
+  );
+
+  // Header navigation — derive the current asset's index in the full list
+  // and expose prev/next ids and a total count for the X-of-Y counter.
+  currentIndex = computed(() => {
+    const list = this.allAssetRosters.value() ?? [];
+    const id = this.assetRoster()?._id;
+    if (!id || list.length === 0) return -1;
+    return list.findIndex(a => a._id === id);
+  });
+
+  totalAssets = computed(() => (this.allAssetRosters.value() ?? []).length);
+
+  prevAssetId = computed<string | null>(() => {
+    const list = this.allAssetRosters.value() ?? [];
+    const idx = this.currentIndex();
+    return idx > 0 ? (list[idx - 1]._id ?? null) : null;
+  });
+
+  nextAssetId = computed<string | null>(() => {
+    const list = this.allAssetRosters.value() ?? [];
+    const idx = this.currentIndex();
+    return idx >= 0 && idx < list.length - 1 ? (list[idx + 1]._id ?? null) : null;
+  });
 
   // children
   commissioningInitFormDialog = viewChild<AssetCommissioningFormDialog>(
@@ -151,6 +198,7 @@ export class AssetRosterMaintenance {
   finishPMDialog = viewChild<AssetFinishMaintenanceFormDialog>('finishPM');
   documentDialog = viewChild<AssetRosterAddDocumentFormDialog>(AssetRosterAddDocumentFormDialog);
   skipPMDialog = viewChild<AssetSkipMaintenanceFormDialog>(AssetSkipMaintenanceFormDialog);
+  imageDialog = viewChild<AssetRosterImageDialog>(AssetRosterImageDialog);
 
   constructor() {
     effect(() => {
@@ -165,6 +213,24 @@ export class AssetRosterMaintenance {
 
   toggleEditMode() {
     this.isEditMode.set(!this.isEditMode());
+  }
+
+  handleOpenPhotoDialog() {
+    this.imageDialog()?.openDialog();
+  }
+
+  handleNavigatePrevAsset() {
+    const id = this.prevAssetId();
+    if (!id) return;
+    if (!this.confirmDiscardUnsavedChanges()) return;
+    this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
+  }
+
+  handleNavigateNextAsset() {
+    const id = this.nextAssetId();
+    if (!id) return;
+    if (!this.confirmDiscardUnsavedChanges()) return;
+    this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
   }
 
   handleSave() {
@@ -207,7 +273,9 @@ export class AssetRosterMaintenance {
     assetRosterRequest.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.submitLoading.set(false);
-        this.isEditMode.set(false);
+        // Edit mode stays on (edit-by-default); resetValueToInitialState
+        // marks the form pristine via the asset reload effect, which hides
+        // the Save / Cancel buttons.
         this.assetRosterMaintenanceContext.handleSaved();
         this.handleReloadAssetRoster();
         this.toastManager.showSuccess('Asset updated successfully');
@@ -219,8 +287,8 @@ export class AssetRosterMaintenance {
   }
 
   handleCancel() {
+    // Revert all edits and mark pristine; edit mode stays on.
     this.resetValueToInitialState(this.assetRoster());
-    this.isEditMode.set(false);
   }
 
   handleOpencommissionDialog() {
@@ -285,7 +353,25 @@ export class AssetRosterMaintenance {
   }
 
   handleBackToDashboard() {
+    if (!this.confirmDiscardUnsavedChanges()) return;
     this.router.navigate(['asset-roster', 'equipment', 'list']);
+  }
+
+  /**
+   * Returns true when navigation away from the current asset should proceed.
+   * Blocks while a save is in flight (the asset reload + toast would land on
+   * the new asset and confuse the user). Otherwise prompts the user to
+   * confirm discarding any unsaved edits.
+   */
+  private confirmDiscardUnsavedChanges(): boolean {
+    if (this.submitLoading()) {
+      this.toastManager.showInfo('Please wait — your changes are still being saved.');
+      return false;
+    }
+    if (!this.formService.form.dirty) return true;
+    return window.confirm(
+      'You have unsaved changes on this asset. Leaving will discard them. Continue?'
+    );
   }
 
   handleReloadAssetRoster() {
@@ -448,6 +534,15 @@ export class AssetRosterMaintenance {
             break;
           case 'export-activity-history':
             this.handleExportActivityHistory();
+            break;
+          case 'open-photo-dialog':
+            this.handleOpenPhotoDialog();
+            break;
+          case 'navigate-prev-asset':
+            this.handleNavigatePrevAsset();
+            break;
+          case 'navigate-next-asset':
+            this.handleNavigateNextAsset();
             break;
         }
       });

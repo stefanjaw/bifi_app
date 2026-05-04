@@ -1,103 +1,85 @@
-<bifi-app-form-section title="Equipment Notes" id="notes" [ordinal]="2">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <bifi-app-form-section title="Equipment Notes" id="notes" [ordinal]="2">
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <!-- Input area -->
+      @if (isEditMode()) {
+        <div class="flex items-end gap-3">
+          <div class="flex-1">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Add Note</bifi-app-form-label>
 
+              <textarea
+                pInputTextarea
+                [(ngModel)]="remarkTextModel"
+                [ngModelOptions]="{ standalone: true }"
+                rows="1"
+                placeholder="Enter a note..."
+                class="w-full"
+              ></textarea>
 
-  <form [formGroup]="form" class="flex flex-col gap-4">
-
-    <!-- Input area -->
-    @if (isEditMode()) {
-
-  <div class="flex items-end gap-3">
-
-    <div class="flex-1">
-      <bifi-app-form-field>
-        <bifi-app-form-label>Add Note</bifi-app-form-label>
-
-        <textarea
-          pInputTextarea
-          [(ngModel)]="remarkTextModel"
-          [ngModelOptions]="{ standalone: true }"
-          rows="1"
-          placeholder="Enter a note..."
-          class="w-full">
-        </textarea>
-
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
-    </div>
-
-    <p-button
-      type="button"
-      icon="pi pi-plus"
-      label="Add Note"
-      severity="secondary"
-      (click)="addNote()">
-    </p-button>
-
-  </div>
-
-}
-
-  <!-- Notes Display -->
-
-    @if (sortedNotes().length > 0) {
-
-      <!-- 🔹 Most Recent Note -->
-      @let latest = sortedNotes()[0];
-
-      <p-message severity="info" class="w-full mt-2 p-3 border-l-4 border-primary">
-
-        <div class="flex flex-col gap-2 w-full">
-
-          <span class="text-sm whitespace-pre-line font-medium">
-            {{ latest.value.remark }}
-          </span>
-
-          <div class="w-full flex justify-end">
-            <span class="text-xs text-gray-500 text-right">
-              Created by
-              <span class="font-medium text-gray-700">
-                {{ getUserName(latest.value.createdBy) }}
-              </span>,
-              {{ latest.value.performDate | date:'medium' }}
-            </span>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
           </div>
 
+          <p-button
+            type="button"
+            icon="pi pi-plus"
+            label="Add Note"
+            severity="secondary"
+            (click)="addNote()"
+          ></p-button>
         </div>
+      }
 
-      </p-message>
+      <!-- Notes Display -->
 
+      @if (sortedNotes().length > 0) {
+        <!-- 🔹 Most Recent Note -->
+        @let latest = sortedNotes()[0];
 
+        <p-message severity="info" class="w-full mt-2 p-3 border-l-4 border-primary">
+          <div class="flex flex-col gap-2 w-full">
+            <span class="text-sm whitespace-pre-line font-medium">
+              {{ latest.value.remark }}
+            </span>
 
-      <!-- 🔹 Older Notes -->
-      @if (showAllNotes()) {
-
-        @for (control of sortedNotes().slice(1); track control.value._id ?? $index) {
-
-          <p-message severity="secondary" class="w-full mt-2 opacity-90">
-
-            <div class="flex flex-col gap-2 w-full">
-
-              <span class="text-sm whitespace-pre-line">
-                {{ control.value.remark }}
-              </span>
-
-              <div class="w-full flex justify-end">
-                <span class="text-xs text-gray-500 text-right">
-                  Created by
-                  <span class="font-medium text-gray-700">
-                    {{ getUserName(control.value.createdBy) }}
-                  </span>,
-                  {{ control.value.performDate | date:'medium' }}
+            <div class="w-full flex justify-end">
+              <span class="text-xs text-gray-500 text-right">
+                Created by
+                <span class="font-medium text-gray-700">
+                  {{ getUserName(latest.value.createdBy) }}
                 </span>
-              </div>
-
+                ,
+                {{ latest.value.performDate | date: 'medium' }}
+              </span>
             </div>
+          </div>
+        </p-message>
 
-          </p-message>
+        <!-- 🔹 Older Notes -->
+        @if (showAllNotes()) {
+          @for (control of sortedNotes().slice(1); track control.value._id ?? $index) {
+            <p-message severity="secondary" class="w-full mt-2 opacity-90">
+              <div class="flex flex-col gap-2 w-full">
+                <span class="text-sm whitespace-pre-line">
+                  {{ control.value.remark }}
+                </span>
 
+                <div class="w-full flex justify-end">
+                  <span class="text-xs text-gray-500 text-right">
+                    Created by
+                    <span class="font-medium text-gray-700">
+                      {{ getUserName(control.value.createdBy) }}
+                    </span>
+                    ,
+                    {{ control.value.performDate | date: 'medium' }}
+                  </span>
+                </div>
+              </div>
+            </p-message>
+          }
         }
       }
-    }
       <!-- 🔹 Toggle Button -->
       @if (sortedNotes().length > 1) {
         <div class="flex justify-left mt-2">
@@ -105,9 +87,10 @@
             [label]="showAllNotes() ? 'Hide previous notes' : 'Show previous notes'"
             [icon]="showAllNotes() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
             variant="text"
-            (onClick)="showAllNotes.set(!showAllNotes())">
-          </p-button>
+            (onClick)="showAllNotes.set(!showAllNotes())"
+          ></p-button>
         </div>
       }
-  </form>
-</bifi-app-form-section>
+    </form>
+  </bifi-app-form-section>
+</div>

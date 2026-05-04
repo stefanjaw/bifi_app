@@ -31,6 +31,20 @@
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
+    <bifi-app-form-field>
+      <bifi-app-form-label>Service Cost (Optional)</bifi-app-form-label>
+      <p-inputnumber
+        formControlName="cost"
+        mode="currency"
+        currency="USD"
+        locale="en-US"
+        [min]="0"
+        placeholder="e.g., 250.00"
+        class="w-full"
+      ></p-inputnumber>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
     <bifi-app-form-uploader formArrayName="attachments">
       <p-fileUpload
         showUploadButton="false"

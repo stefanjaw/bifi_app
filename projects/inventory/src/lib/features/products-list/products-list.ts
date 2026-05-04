@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -49,6 +44,6 @@ export class ProductsList {
   }
 
   gotoEditProduct = (element: product) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+    this.router.navigate([`../products/${element._id}/edit`], { relativeTo: this.route });
+  };
 }

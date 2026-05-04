@@ -1,96 +1,110 @@
-<bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="5">
-  @if (activityHistory.length > 0) {
-    <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
-  } @else {
-    <!--Export Csv-->
-    <div class="flex justify-end mb-4">
-      <p-button
-        severity="success"
-        label="Export CSV"
-        (onClick)="exportCSV()"
-        *bifiAppHasPermission="'activity-history/export:read:model'"
-        icon="pi pi-download"
-      ></p-button>
-    </div>
-    @for (history of activityHistory(); track history._id) {
-      <p-card class="shadow-2xl mb-3">
-        <ng-template #content>
-          <div class="flex justify-between items-center">
-            <!-- <bifi-app-badge [variant]="getBadgeVariant(history)">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="5">
+    @if (activityHistory().length === 0) {
+      <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
+    } @else {
+      <!--Export Csv-->
+      <div class="flex justify-end mb-4">
+        <p-button
+          severity="success"
+          label="Export CSV"
+          (onClick)="exportCSV()"
+          *bifiAppHasPermission="'activity-history/export:read:model'"
+          icon="pi pi-download"
+        ></p-button>
+      </div>
+      @for (history of activityHistory(); track history._id) {
+        <p-card class="shadow-sm mb-3 border border-gray-200 rounded-lg">
+          <ng-template #content>
+            <div class="flex justify-between items-center">
+              <!-- <bifi-app-badge [variant]="getBadgeVariant(history)">
               {{ history.title }}
             </bifi-app-badge> -->
-            <p-tag [severity]="getBadgeVariant(history)" [value]="history.title"></p-tag>
-            <div>
-              @if ('type' in history.modelId) {
-                @let maintenance = history.modelId;
+              <p-tag [severity]="getBadgeVariant(history)" [value]="history.title"></p-tag>
+              <div>
+                @if ('type' in history.modelId) {
+                  @let maintenance = history.modelId;
+
+                  <p class="text-sm text-gray-600">
+                    Initiated:
+                    {{ maintenance.dateStart | date: 'MM/dd/yyyy h:mm a' }}
+                  </p>
+
+                  <p class="text-sm text-gray-600">
+                    Finished:
+                    {{ maintenance.dateEnd | date: 'MM/dd/yyyy h:mm a' }}
+                  </p>
+
+                  <p class="text-sm text-gray-600">
+                    Cost:
+                    @if (maintenance.cost !== null) {
+                      {{ maintenance.cost | currency: 'USD' }}
+                    } @else {
+                      —
+                    }
+                  </p>
+                }
 
                 <p class="text-sm text-gray-600">
-                  Initiated:
-                  {{ maintenance.dateStart | date: 'MM/dd/yyyy h:mm a' }}
+                  Logged By: {{ history.userId?.username || 'No User' }}
                 </p>
+              </div>
+            </div>
 
-                <p class="text-sm text-gray-600">
-                  Finished:
-                  {{ maintenance.dateEnd | date: 'MM/dd/yyyy h:mm a' }}
-                </p>
-              }
+            <div class="mt-4">
+              <p class="text-sm text-gray-600">
+                Performed:
+                {{ history.performDate | date: 'MM/dd/yyyy' }}
+              </p>
 
               <p class="text-sm text-gray-600">
-                Logged By: {{ history.userId?.username || 'No User' }}
+                Details:
+                {{ history.details }}
               </p>
             </div>
-          </div>
+          </ng-template>
+          <!-- footer -->
+          <ng-template #footer>
+            <div class="flex justify-start gap-3">
+              @if (
+                history.modelId.attachments &&
+                history.modelId.attachments.length > 0 &&
+                history.title !== 'Decommissioned'
+              ) {
+                @let attachment = history.modelId.attachments[0];
 
-          <div class="mt-4">
-            <p class="text-sm text-gray-600">
-              Performed:
-              {{ history.performDate | date: 'MM/dd/yyyy' }}
-            </p>
-
-            <p class="text-sm text-gray-600">
-              Details:
-              {{ history.details }}
-            </p>
-          </div>
-        </ng-template>
-        <!-- footer -->
-        <ng-template #footer>
-          <div class="flex justify-start gap-3">
-            @if (
-              history.modelId.attachments &&
-              history.modelId.attachments.length > 0 &&
-              history.title !== 'Decommissioned'
-            ) {
-              @let attachment = history.modelId.attachments[0];
-
-              <p-button
-                [label]="'View: ' + attachment.name"
-                severity="primary"
-                icon="pi pi-file"
-                variant="text"
-                (onClick)="downloadFile(attachment)"
-              ></p-button>
-            } @else if (
-              history.title !== 'Decommissioned' && !isNotValidForAttachmentAdding(history.modelId)
-            ) {
-              <p-button
-                label="Add Attachment"
-                severity="primary"
-                icon="pi pi-plus"
-                variant="text"
-                (onClick)="selectedHistoryDocument.set(history.modelId); addFileDialog.openDialog()"
-              ></p-button>
-            } @else {
-              <div class="text-sm text-gray-500 italic">No attachment available.</div>
-            }
-          </div>
-        </ng-template>
-      </p-card>
+                <p-button
+                  [label]="'View: ' + attachment.name"
+                  severity="primary"
+                  icon="pi pi-file"
+                  variant="text"
+                  (onClick)="downloadFile(attachment)"
+                ></p-button>
+              } @else if (
+                history.title !== 'Decommissioned' &&
+                !isNotValidForAttachmentAdding(history.modelId)
+              ) {
+                <p-button
+                  label="Add Attachment"
+                  severity="primary"
+                  icon="pi pi-plus"
+                  variant="text"
+                  (onClick)="
+                    selectedHistoryDocument.set(history.modelId); addFileDialog.openDialog()
+                  "
+                ></p-button>
+              } @else {
+                <div class="text-sm text-gray-500 italic">No attachment available.</div>
+              }
+            </div>
+          </ng-template>
+        </p-card>
+      }
     }
-  }
 
-  <bifi-app-asset-roster-activity-history-add-file-dialog
-    #addFileDialog
-    [activityHistoryDocument]="selectedHistoryDocument()"
-  ></bifi-app-asset-roster-activity-history-add-file-dialog>
-</bifi-app-form-section>
+    <bifi-app-asset-roster-activity-history-add-file-dialog
+      #addFileDialog
+      [activityHistoryDocument]="selectedHistoryDocument()"
+    ></bifi-app-asset-roster-activity-history-add-file-dialog>
+  </bifi-app-form-section>
+</div>

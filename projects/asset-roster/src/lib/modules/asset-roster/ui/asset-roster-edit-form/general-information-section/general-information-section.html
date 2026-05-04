@@ -1,5 +1,4 @@
-<section class="flex flex-col gap-6">
-  <bifi-app-status-banner-section [assetRoster]="assetRoster()" class="w-full" />
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
   <bifi-app-form-section
     [formGroup]="formService.form"
     title="General Information"
@@ -9,7 +8,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <!-- Serial Number (Serialized only) -->
           @if (deviceType() === 'serialized' || !deviceType()) {
             <bifi-app-form-field previewVariant="tag">
@@ -300,16 +299,29 @@
 
             <!-- Stats -->
             <div class="flex gap-8 text-sm">
-              <span>Total: <strong>{{ totalQuantity() ?? 0 }}</strong></span>
-              <span>Assigned: <strong>{{ totalAssigned() }}</strong></span>
-              <span>Unassigned: <strong>{{ totalUnassigned() }}</strong></span>
+              <span>
+                Total:
+                <strong>{{ totalQuantity() ?? 0 }}</strong>
+              </span>
+              <span>
+                Assigned:
+                <strong>{{ totalAssigned() }}</strong>
+              </span>
+              <span>
+                Unassigned:
+                <strong>{{ totalUnassigned() }}</strong>
+              </span>
             </div>
 
             <!-- Warnings -->
             @if ((totalQuantity() ?? 0) < totalAssigned()) {
-              <p class="text-red-500 text-sm">Error: Total quantity cannot be less than the total assigned quantity.</p>
+              <p class="text-red-500 text-sm">
+                Error: Total quantity cannot be less than the total assigned quantity.
+              </p>
             } @else if ((totalQuantity() ?? 0) > totalAssigned()) {
-              <p class="text-orange-500 text-sm">Warning: Total quantity is greater than assigned quantity.</p>
+              <p class="text-orange-500 text-sm">
+                Warning: Total quantity is greater than assigned quantity.
+              </p>
             }
 
             <!-- Edit mode: FormArray rows -->
@@ -478,8 +490,13 @@
               </bifi-app-form-field>
 
               <div class="flex items-center gap-3 md:col-span-2">
-                <p-toggle-switch formControlName="preventAutoUpdate"></p-toggle-switch>
-                <label class="text-sm text-surface-700">Do not patch (Prevent Auto-Update)</label>
+                <p-toggle-switch
+                  id="preventAutoUpdate"
+                  formControlName="preventAutoUpdate"
+                ></p-toggle-switch>
+                <label for="preventAutoUpdate" class="text-sm text-surface-700">
+                  Do not patch (Prevent Auto-Update)
+                </label>
               </div>
             </div>
           </div>
@@ -488,37 +505,48 @@
 
       <!-- Right Column - Asset Photo -->
       <div class="lg:col-span-1">
-        <p-card
-          header="Asset Photo"
-          class="h-full bg-surface-50! border border-surface-300 rounded-md!"
-        >
-          <div class="rounded-lg p-8 text-center">
+        <p-card header="Asset Photo" class="h-full bg-gray-50! border border-gray-200 rounded-xl!">
+          <div class="rounded-lg p-4 text-center flex flex-col items-center justify-center gap-3">
+            <!-- Always show the saved photo (clickable to open full-size) so the
+                 thumbnail is reachable in edit mode too. The uploader appears
+                 below it for replacing the image. -->
+            @if (uploadedFile(); as file) {
+              <img
+                [src]="file.url"
+                alt="Asset photo"
+                class="mx-auto asset-photo-thumbnail"
+                (click)="openPhotoDialog()"
+                role="button"
+                tabindex="0"
+                (keydown.enter)="openPhotoDialog()"
+                (keydown.space)="openPhotoDialog(); $event.preventDefault()"
+                title="Click to view full size"
+              />
+            } @else if (!isEditMode()) {
+              <div class="text-gray-500">No photo</div>
+            }
             @if (isEditMode()) {
-              <bifi-app-form-uploader formArrayName="photo">
-                <p-fileupload
-                  showUploadButton="false"
-                  showCancelButton="false"
-                  name="images"
-                  [multiple]="false"
-                  accept="image/*"
-                  maxFileSize="100000000"
-                  mode="advanced"
-                >
-                  <ng-template #empty>
-                    <div>Drag and drop files to here to upload.</div>
-                  </ng-template>
-                </p-fileupload>
-              </bifi-app-form-uploader>
-            } @else {
-              @if (uploadedFile(); as file) {
-                <img [src]="file.url" alt="Asset photo" class="mx-auto" />
-              } @else {
-                <div class="text-gray-500 mb-4">No photo</div>
-              }
+              <div class="photo-uploader-wrap">
+                <bifi-app-form-uploader formArrayName="photo" [inline]="true">
+                  <p-fileupload
+                    showUploadButton="false"
+                    showCancelButton="false"
+                    name="images"
+                    [multiple]="false"
+                    accept="image/*"
+                    maxFileSize="100000000"
+                    mode="basic"
+                    [auto]="false"
+                    [chooseLabel]="uploadedFile() ? 'Replace photo' : 'Choose photo'"
+                    [chooseIcon]="uploadedFile() ? 'pi pi-pencil' : 'pi pi-upload'"
+                    [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+                  />
+                </bifi-app-form-uploader>
+              </div>
             }
           </div>
         </p-card>
       </div>
     </div>
   </bifi-app-form-section>
-</section>
+</div>

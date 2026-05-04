@@ -15,40 +15,70 @@
       (cancelClicked)="goBack()"
       class="mb-4"
       [formChanged]="form.dirty"
-      *bifiAppHasPermission="isUpdate() ? 'inventory/products:update:model' : 'inventory/products:create:model'"
+      *bifiAppHasPermission="
+        isUpdate() ? 'inventory/products:update:model' : 'inventory/products:create:model'
+      "
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
       <bifi-app-form-section title="Product Information" id="product-info" [ordinal]="1">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="Product name" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+        <div class="flex flex-col md:flex-row gap-8">
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Name *</bifi-app-form-label>
+              <input pInputText formControlName="name" placeholder="Product name" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>SKU *</bifi-app-form-label>
-            <input pInputText formControlName="sku" placeholder="Unique product code" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>SKU *</bifi-app-form-label>
+              <input pInputText formControlName="sku" placeholder="Unique product code" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
-            <p-select
-              formControlName="unitOfMeasureId"
-              [options]="uoms() || []"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Select a unit of measure"
-              [showClear]="true"
-            ></p-select>
-          </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
+              <p-select
+                formControlName="unitOfMeasureId"
+                [options]="uoms() || []"
+                optionLabel="name"
+                optionValue="_id"
+                placeholder="Select a unit of measure"
+                [showClear]="true"
+              ></p-select>
+            </bifi-app-form-field>
 
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pTextarea formControlName="description" rows="3" placeholder="Optional description"></textarea>
-          </bifi-app-form-field>
+            <bifi-app-form-field class="md:col-span-2">
+              <bifi-app-form-label>Description</bifi-app-form-label>
+              <textarea
+                pTextarea
+                formControlName="description"
+                rows="3"
+                placeholder="Optional description"
+              ></textarea>
+            </bifi-app-form-field>
+          </div>
+
+          <div class="md:w-56 flex flex-col gap-2">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Product Image</bifi-app-form-label>
+              <bifi-app-form-uploader formArrayName="photo" [inline]="true">
+                <p-fileupload
+                  showUploadButton="false"
+                  showCancelButton="false"
+                  name="photo"
+                  [multiple]="false"
+                  accept="image/*"
+                  [maxFileSize]="5000000"
+                  mode="basic"
+                  [auto]="false"
+                  chooseLabel="Choose image"
+                  chooseIcon="pi pi-upload"
+                  [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+                />
+              </bifi-app-form-uploader>
+            </bifi-app-form-field>
+          </div>
         </div>
       </bifi-app-form-section>
 
@@ -56,14 +86,45 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Cost Price</bifi-app-form-label>
-            <p-inputNumber formControlName="costPrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
+            <p-inputNumber
+              formControlName="costPrice"
+              [min]="0"
+              mode="currency"
+              currency="USD"
+            ></p-inputNumber>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Sale Price</bifi-app-form-label>
-            <p-inputNumber formControlName="salePrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
+            <p-inputNumber
+              formControlName="salePrice"
+              [min]="0"
+              mode="currency"
+              currency="USD"
+            ></p-inputNumber>
           </bifi-app-form-field>
         </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Documents" id="product-documents" [ordinal]="3">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Attachments</bifi-app-form-label>
+          <bifi-app-form-uploader formArrayName="attachments">
+            <p-fileupload
+              showUploadButton="false"
+              showCancelButton="false"
+              name="attachments"
+              [multiple]="true"
+              accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain"
+              [maxFileSize]="20000000"
+              mode="basic"
+              [auto]="false"
+              chooseLabel="Choose documents"
+              chooseIcon="pi pi-paperclip"
+              [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+            />
+          </bifi-app-form-uploader>
+        </bifi-app-form-field>
       </bifi-app-form-section>
     }
 

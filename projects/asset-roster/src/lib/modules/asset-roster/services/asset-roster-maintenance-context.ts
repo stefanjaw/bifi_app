@@ -22,7 +22,10 @@ export type assetRosterMaintenanceContextEvent =
   | 'skip-pm'
   | 'back-to-dashboard'
   | 'activity-history-add-file'
-  | 'export-activity-history';
+  | 'export-activity-history'
+  | 'open-photo-dialog'
+  | 'navigate-prev-asset'
+  | 'navigate-next-asset';
 
 @Injectable({
   providedIn: 'root',
@@ -114,5 +117,17 @@ export class AssetRosterMaintenanceContext {
 
   handleExportActivityHistory() {
     this._handleEvents.next('export-activity-history');
+  }
+
+  handleOpenPhotoDialog() {
+    this._handleEvents.next('open-photo-dialog');
+  }
+
+  handleNavigatePrevAsset() {
+    this._handleEvents.next('navigate-prev-asset');
+  }
+
+  handleNavigateNextAsset() {
+    this._handleEvents.next('navigate-next-asset');
   }
 }

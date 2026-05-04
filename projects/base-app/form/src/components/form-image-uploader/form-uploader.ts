@@ -6,6 +6,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  input,
   OnInit,
   signal,
 } from '@angular/core';
@@ -61,6 +62,9 @@ export class FormUploader implements OnInit {
   onChangeFn = (_value: FormUploaderFile[]) => {
     // Function to be called when the control value changes
   };
+
+  /** When true, the choose button and Clear button render side-by-side. */
+  inline = input(false);
 
   protected formValue = signal<FormUploaderFile[]>([]);
   disabled = signal<boolean>(false);

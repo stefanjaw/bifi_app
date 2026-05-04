@@ -1,47 +1,27 @@
-<bifi-app-form-section
-  [formGroup]="formService.form"
-  title="Maintenance & Service"
-  id="maintenance-service"
-  [ordinal]="3"
->
-  <section class="grid grid-cols-[auto_0.4fr] gap-6">
-    <p-card styleClass="bg-surface-50! border border-surface-300">
-      <div>
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Preventive Maintenance</h3>
-        <div class="space-y-4">
-          <div>
-            @if (isEditMode() && assetRoster()?.assetCommission?.outcome === 'pass') {
-              <bifi-app-form-field class="mb-4">
-                <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
-                <p-select
-                  formControlName="maintenanceWindowIds"
-                  [options]="maintenanceWindows()"
-                  optionLabel="name"
-                  optionValue="_id"
-                  [filter]="true"
-                  placeholder="Select an interval"
-                ></p-select>
-
-                @if (isMaintenanceWindowsEditLocked()) {
-                  <bifi-app-form-hint>
-                    <small class="text-orange-300">
-                      Cannot change: PM has been logged for this schedule.
-                    </small>
-                  </bifi-app-form-hint>
-                }
-
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-
-              @if (formService.rawValue().maintenanceWindowIds) {
-                <bifi-app-form-field>
-                  <bifi-app-form-label>First PM Date</bifi-app-form-label>
-                  <p-date-picker
-                    formControlName="maintenanceDate"
-                    [showIcon]="true"
-                    inputId="maintenanceDate"
-                    class="w-full"
-                  />
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <bifi-app-form-section
+    [formGroup]="formService.form"
+    title="Maintenance & Service"
+    id="maintenance-service"
+    [ordinal]="3"
+  >
+    <section class="grid grid-cols-[auto_0.4fr] gap-6">
+      <p-card styleClass="bg-gray-50! border border-gray-200 rounded-lg!">
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 mb-4">Preventive Maintenance</h3>
+          <div class="space-y-4">
+            <div>
+              @if (isEditMode() && assetRoster()?.assetCommission?.outcome === 'pass') {
+                <bifi-app-form-field class="mb-4">
+                  <bifi-app-form-label>Maintenance Interval</bifi-app-form-label>
+                  <p-select
+                    formControlName="maintenanceWindowIds"
+                    [options]="maintenanceWindows()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [filter]="true"
+                    placeholder="Select an interval"
+                  ></p-select>
 
                   @if (isMaintenanceWindowsEditLocked()) {
                     <bifi-app-form-hint>
@@ -53,118 +33,139 @@
 
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
-              }
-            } @else {
-              <div class="mb-4">
-                <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
-                <div class="text-sm text-gray-500 italic">
-                  {{ assetRoster()?.maintenanceWindowIds?.[0]?.name || 'Not set' }}
+
+                @if (formService.rawValue().maintenanceWindowIds) {
+                  <bifi-app-form-field>
+                    <bifi-app-form-label>First PM Date</bifi-app-form-label>
+                    <p-date-picker
+                      formControlName="maintenanceDate"
+                      [showIcon]="true"
+                      inputId="maintenanceDate"
+                      class="w-full"
+                    />
+
+                    @if (isMaintenanceWindowsEditLocked()) {
+                      <bifi-app-form-hint>
+                        <small class="text-orange-300">
+                          Cannot change: PM has been logged for this schedule.
+                        </small>
+                      </bifi-app-form-hint>
+                    }
+
+                    <bifi-app-form-error></bifi-app-form-error>
+                  </bifi-app-form-field>
+                }
+              } @else {
+                <div class="mb-4">
+                  <div class="text-sm font-medium text-gray-700">Maintenance Interval</div>
+                  <div class="text-sm text-gray-500 italic">
+                    {{ assetRoster()?.maintenanceWindowIds?.[0]?.name || 'Not set' }}
+                  </div>
                 </div>
-              </div>
+              }
+            </div>
+
+            <!-- status of pm -->
+            <div class="mb-4">
+              @let status = pmScheduleStatus();
+
+              <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
+
+              @if (status === 'decommissioned') {
+                <div class="text-sm text-red-500">This asset is decommissioned.</div>
+              } @else if (status === 'not-commissioned') {
+                <div class="text-sm text-orange-500">
+                  This asset is awaiting commissioning. PM schedule cannot be determined yet.
+                </div>
+              } @else if (status === 'not-scheduled') {
+                <div class="text-sm text-orange-500">
+                  No active preventive maintenance schedule. Set an interval and first PM date to
+                  begin.
+                </div>
+              } @else if (status === 'under-service') {
+                <div class="text-sm text-orange-500">
+                  Cannot initiate PM. Asset is under service.
+                </div>
+              } @else if (status === 'available') {
+                <div class="text-sm text-green-500">
+                  PM due on {{ assetRoster()?.maintenanceDate | date }}. (Window:
+                  {{ assetRoster()?.minMaintenanceDate | date }} -
+                  {{ assetRoster()?.maxMaintenanceDate | date }}).
+                </div>
+              } @else if (status === 'in-progress') {
+                <div class="text-sm text-blue-500">
+                  PM in progress, initiated on {{ currPM()?.dateStart | date }}.
+                </div>
+              } @else if (status === 'finished') {
+                <div class="text-sm">
+                  Next Scheduled PM: {{ assetRoster()?.maintenanceDate | date }}
+                </div>
+              }
+            </div>
+
+            @if (!pmStarted()) {
+              <p-button
+                (onClick)="handleInitPM()"
+                size="small"
+                label="Initiate PM"
+                severity="success"
+                type="button"
+                class="me-2"
+                [disabled]="!canStartOrSkipPM()"
+              ></p-button>
+              <p-button
+                (onClick)="handleOpenSkipPMDialog()"
+                size="small"
+                label="Skip PM"
+                severity="secondary"
+                type="button"
+                [disabled]="!canStartOrSkipPM()"
+              ></p-button>
+            } @else {
+              <p-button
+                (onClick)="handleOpenFinishPMDialog()"
+                size="small"
+                label="Finish PM"
+                severity="success"
+                type="button"
+              ></p-button>
             }
           </div>
+        </div>
+      </p-card>
 
-          <!-- status of pm -->
-          <div class="mb-4">
-            @let status = pmScheduleStatus();
+      <p-card styleClass="bg-gray-50! border border-gray-200 rounded-lg!">
+        <!-- Service Actions -->
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 mb-4">Service Actions</h3>
 
-            <div class="text-sm font-medium text-gray-700 mb-2">PM Schedule Status:</div>
-
-            @if (status === 'decommissioned') {
-              <div class="text-sm text-red-500">This asset is decommissioned.</div>
-            } @else if (status === 'not-commissioned') {
-              <div class="text-sm text-orange-500">
-                This asset is awaiting commissioning. PM schedule cannot be determined yet.
-              </div>
-            } @else if (status === 'not-scheduled') {
-              <div class="text-sm text-orange-500">
-                No active preventive maintenance schedule. Set an interval and first PM date to
-                begin.
-              </div>
-            } @else if (status === 'under-service') {
-              <div class="text-sm text-orange-500">Cannot initiate PM. Asset is under service.</div>
-            } @else if (status === 'available') {
-              <div class="text-sm text-green-500">
-                PM due on {{ assetRoster()?.maintenanceDate | date }}. (Window:
-                {{ assetRoster()?.minMaintenanceDate | date }} -
-                {{ assetRoster()?.maxMaintenanceDate | date }}).
-              </div>
-            } @else if (status === 'in-progress') {
-              <div class="text-sm text-blue-500">
-                PM in progress, initiated on {{ currPM()?.dateStart | date }}.
-              </div>
-            } @else if (status === 'finished') {
-              <div class="text-sm">
-                Next Scheduled PM: {{ assetRoster()?.maintenanceDate | date }}
-              </div>
-            }
-          </div>
-
-          @if (!pmStarted()) {
+          @if (canStartService()) {
             <p-button
-              (onClick)="handleInitPM()"
+              (onClick)="handleOpenServiceDialog()"
               size="small"
-              label="Initiate PM"
-              severity="success"
-              type="button"
-              class="me-2"
-              [disabled]="!canStartOrSkipPM()"
-            ></p-button>
-            <p-button
-              (onClick)="handleOpenSkipPMDialog()"
-              size="small"
-              label="Skip PM"
-              severity="secondary"
-              type="button"
-              [disabled]="!canStartOrSkipPM()"
-            ></p-button>
-          } @else {
-            <p-button
-              (onClick)="handleOpenFinishPMDialog()"
-              size="small"
-              label="Finish PM"
-              severity="success"
+              label="Initiate Service"
+              severity="warn"
               type="button"
             ></p-button>
+          } @else if (serviceStarted()) {
+            <p class="mb-4">
+              Service in progress:
+              {{
+                `${(currService()?.dateStart | date)} (${(currService()?.name?.replace('-', ' ') | titlecase)})`
+              }}
+            </p>
+            <p-button
+              (onClick)="handleOpenFinishServiceDialog()"
+              size="small"
+              label="Finish Service"
+              severity="warn"
+              type="button"
+            ></p-button>
+          } @else if (pmStarted()) {
+            <div class="text-sm text-orange-500">Cannot initiate service. PM in progress.</div>
           }
         </div>
-      </div>
-    </p-card>
-
-    <p-card styleClass="bg-surface-50! border border-surface-300">
-      <!-- Service Actions -->
-      <div>
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Service Actions</h3>
-        @if (isEditMode()) {
-          <div class="text-sm text-gray-500 italic">
-            Service actions are disabled while editing asset details.
-          </div>
-        }
-
-        @if (canStartService()) {
-          <p-button
-            (onClick)="handleOpenServiceDialog()"
-            size="small"
-            label="Initiate Service"
-            severity="warn"
-            type="button"
-          ></p-button>
-        } @else if (serviceStarted()) {
-          <p class="mb-4">
-            Service in progress:
-            {{
-              `${(currService()?.dateStart | date)} (${(currService()?.name?.replace('-', ' ') | titlecase)})`
-            }}
-          </p>
-          <p-button
-            (onClick)="handleOpenFinishServiceDialog()"
-            size="small"
-            label="Finish Service"
-            severity="warn"
-            type="button"
-          ></p-button>
-        }
-      </div>
-    </p-card>
-  </section>
-</bifi-app-form-section>
+      </p-card>
+    </section>
+  </bifi-app-form-section>
+</div>

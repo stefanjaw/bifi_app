@@ -38,9 +38,14 @@ export class NotesSection {
   private remarksVersion = signal(0);
   readonly sortedNotes = computed(() => {
     this.remarksVersion(); // Trigger recomputation when remarksVersion changes
-    return [...this.notesControl.controls].sort(
-      (a, b) => new Date(b.value.performDate).getTime() - new Date(a.value.performDate).getTime()
-    );
+    return [...this.notesControl.controls]
+      .filter(c => {
+        const remark = c.value?.remark;
+        return typeof remark === 'string' && remark.trim().length > 0;
+      })
+      .sort(
+        (a, b) => new Date(b.value.performDate).getTime() - new Date(a.value.performDate).getTime()
+      );
   });
   showAllNotes = signal(false);
 
@@ -59,6 +64,7 @@ export class NotesSection {
   get notesControl() {
     return this.form.get('remarks') as FormArray;
   }
+
   getUserName(userId: string) {
     console.log('🚀 ~ NotesSection ~ getUserName ~ userId:', userId);
     const user = this.userResource.value();

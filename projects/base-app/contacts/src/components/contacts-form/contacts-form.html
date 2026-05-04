@@ -25,9 +25,36 @@
     }
     @if (!isLoading()) {
       <bifi-app-form-section
+        [title]="contactType() === 'company' ? 'Logo' : 'Photo'"
+        id="contact-photo"
+        [ordinal]="1"
+      >
+        <bifi-app-form-field>
+          <bifi-app-form-label>
+            {{ contactType() === 'company' ? 'Logo' : 'Photo' }}
+          </bifi-app-form-label>
+          <bifi-app-form-uploader formArrayName="photo" [inline]="true">
+            <p-fileupload
+              showUploadButton="false"
+              showCancelButton="false"
+              name="photo"
+              [multiple]="false"
+              accept="image/*"
+              [maxFileSize]="5000000"
+              mode="basic"
+              [auto]="false"
+              [chooseLabel]="contactType() === 'company' ? 'Choose logo' : 'Choose photo'"
+              [chooseIcon]="'pi pi-upload'"
+              [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+            />
+          </bifi-app-form-uploader>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
         title="General information"
         id="contact-general-information"
-        [ordinal]="1"
+        [ordinal]="2"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
@@ -89,7 +116,7 @@
       <bifi-app-form-section
         title="Contact information"
         id="contact-contacting-information"
-        [ordinal]="2"
+        [ordinal]="3"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
@@ -129,7 +156,7 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
+      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Street Address</bifi-app-form-label>

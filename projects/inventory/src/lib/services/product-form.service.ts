@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ProductFormModel {
   name: string;
@@ -9,6 +9,8 @@ export interface ProductFormModel {
   unitOfMeasureId: string;
   costPrice: number;
   salePrice: number;
+  photo: FormUploaderFile[];
+  attachments: FormUploaderFile[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +23,20 @@ export class ProductFormService extends BaseForm<ProductFormModel> {
       unitOfMeasureId: [''],
       costPrice: [0],
       salePrice: [0],
+      photo: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
+      attachments: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
     });
   }
 }

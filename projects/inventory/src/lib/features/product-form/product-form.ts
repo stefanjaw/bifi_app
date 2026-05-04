@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormUploader, FormValueState } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudUoms } from '../../services/crud-uoms';
@@ -20,12 +20,25 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductFormService, ProductFormModel } from '../../services/product-form.service';
 
 @Component({
   selector: 'bifi-app-product-form',
-  imports: [FormModule, ReactiveFormsModule, ButtonModule, InputText, InputNumberModule, TextareaModule, SelectModule, ProgressBarModule, HasPermission],
+  imports: [
+    FormModule,
+    FormUploader,
+    ReactiveFormsModule,
+    ButtonModule,
+    InputText,
+    InputNumberModule,
+    TextareaModule,
+    SelectModule,
+    ProgressBarModule,
+    FileUpload,
+    HasPermission,
+  ],
   templateUrl: './product-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,7 +53,10 @@ export class ProductForm {
 
   form = this.formService.form;
 
-  productResource = this.crudProducts.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  productResource = this.crudProducts.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   uomsResource = this.crudUoms.get({});
 
   isUpdate = computed(() => !!this.id());
@@ -53,6 +69,9 @@ export class ProductForm {
     effect(() => {
       const entry = this.productResource.value();
       if (entry) {
+        this.formService.form.controls.photo.clear();
+        this.formService.form.controls.attachments.clear();
+
         this.formService.patchValue({
           name: entry.name,
           sku: entry.sku,
@@ -60,9 +79,13 @@ export class ProductForm {
           unitOfMeasureId: (entry.unitOfMeasureId as any)?._id ?? entry.unitOfMeasureId ?? '',
           costPrice: entry.costPrice,
           salePrice: entry.salePrice,
+          photo: entry.photo ? [{ id: entry.photo, file: null! }] : [],
+          attachments: entry.attachments?.map(a => ({ id: a.fileId, file: null! })) ?? [],
         });
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
+        this.formService.form.controls.photo.clear();
+        this.formService.form.controls.attachments.clear();
         this.formService.reset();
       }
     });
@@ -72,8 +95,12 @@ export class ProductForm {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
     const action = this.isUpdate()
-      ? this.crudProducts.put({ _id: this.id(), data: rawValue as any })
-      : this.crudProducts.post({ data: rawValue as any });
+      ? this.crudProducts.put({
+          _id: this.id(),
+          data: rawValue as any,
+          fileFields: ['photo', 'attachments'],
+        })
+      : this.crudProducts.post({ data: rawValue as any, fileFields: ['photo', 'attachments'] });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
