@@ -29,6 +29,20 @@
         id="contact-photo"
         [ordinal]="1"
       >
+        @if (uploadedFile(); as file) {
+          <img
+            [src]="file.url"
+            alt="Asset photo"
+            class="mx-auto asset-photo-thumbnail"
+            role="button"
+            tabindex="0"
+            title="Click to view full size"
+            width="250"
+            height="250"
+          />
+        } @else {
+          <div class="text-gray-500">No photo</div>
+        }
         <bifi-app-form-field>
           <bifi-app-form-label>
             {{ contactType() === 'company' ? 'Logo' : 'Photo' }}

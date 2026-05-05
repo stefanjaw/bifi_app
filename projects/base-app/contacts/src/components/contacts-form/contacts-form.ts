@@ -11,7 +11,12 @@ import {
 import { ContactForm, ContactFormModel } from '../../services/contact-form';
 import { CrudContacts } from '../../services/crud-contacts';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormModule, FormUploader, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormFileControlHelper,
+  FormModule,
+  FormUploader,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -19,7 +24,7 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableLayout } from '@avalantec/base-app/resource';
+import { FileResolver, TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
 import { CrudCountries } from '@avalantec/base-app/countries';
@@ -50,9 +55,10 @@ export class ContactsForm {
   private formService = inject(ContactForm);
   private crudContacts = inject(CrudContacts);
   private crudCountries = inject(CrudCountries);
-
+  private fileHelper = inject(FormFileControlHelper);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
+  private fileResolverService = inject(FileResolver);
   private route = inject(ActivatedRoute);
 
   // inputs
@@ -105,6 +111,9 @@ export class ContactsForm {
   error = this.contactResource.error;
   childIdsData = signal<contact[]>([]);
 
+  private fileState = this.fileHelper.generateMetadataFromFileControl(this.form.controls.photo);
+  uploadedFile = this.fileState.firstFile;
+
   /**
    * Constructor that initializes the form values if the contact is being updated.
    * If the contact is not available (i.e. it's being created), it resets the form values.
@@ -113,33 +122,7 @@ export class ContactsForm {
     effect(() => {
       const contact = this.contact();
 
-      if (contact) {
-        this.formService.patchValue({
-          name: contact.name,
-          lastName: contact.lastName,
-          parentId: contact.parentId?._id,
-          email: contact.email,
-          website: contact.website,
-          phoneNumber: contact.phoneNumber,
-          childIds: contact.childIds?.map(c => c._id) || [],
-          type: contact.type,
-          countryId: contact.countryId?._id,
-          state: contact.state,
-          city: contact.city,
-          zipCode: contact.zipCode,
-          streetAddress: contact.streetAddress,
-          streetAddress2: contact.streetAddress2,
-          photo: contact.photo ? [{ id: contact.photo, file: null! }] : [],
-        });
-
-        this.formService.resetDirtyState();
-        this.childIdsData.set(contact.childIds || []);
-      } else {
-        this.formService.reset();
-        this.formService.form.controls.childIds.clear();
-        this.formService.form.controls.photo.clear();
-        this.childIdsData.set([]);
-      }
+      this.resetValueToInitialState(contact);
     });
   }
 
@@ -211,5 +194,49 @@ export class ContactsForm {
   goBack() {
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
+  }
+
+  private async resetValueToInitialState(contact: contact | undefined) {
+    if (!contact) {
+      this.formService.reset();
+      this.formService.form.controls.childIds.clear();
+      this.formService.form.controls.photo.clear();
+      this.childIdsData.set([]);
+      return;
+    }
+
+    const parsedImage = contact.photo
+      ? await this.fileResolverService.resolveFile({ id: contact.photo }, 'preview')
+      : null;
+
+    this.formService.patchValue({
+      name: contact.name,
+      lastName: contact.lastName,
+      parentId: contact.parentId?._id,
+      email: contact.email,
+      website: contact.website,
+      phoneNumber: contact.phoneNumber,
+      childIds: contact.childIds?.map(c => c._id) || [],
+      type: contact.type,
+      countryId: contact.countryId?._id,
+      state: contact.state,
+      city: contact.city,
+      zipCode: contact.zipCode,
+      streetAddress: contact.streetAddress,
+      streetAddress2: contact.streetAddress2,
+      ...((parsedImage && {
+        photo: [
+          {
+            id: contact.photo,
+            file: parsedImage,
+          },
+        ],
+      }) || {
+        photo: [],
+      }),
+    });
+
+    this.formService.resetDirtyState();
+    this.childIdsData.set(contact.childIds || []);
   }
 }
