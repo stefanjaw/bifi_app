@@ -7,6 +7,7 @@ export interface ProductFormModel {
   sku: string;
   description: string;
   unitOfMeasureId: string;
+  productTypeId: string;
   costPrice: number;
   salePrice: number;
   photo: FormUploaderFile[];
@@ -21,6 +22,7 @@ export class ProductFormService extends BaseForm<ProductFormModel> {
       sku: ['', [Validators.required]],
       description: [''],
       unitOfMeasureId: [''],
+      productTypeId: [''],
       costPrice: [0],
       salePrice: [0],
       photo: {

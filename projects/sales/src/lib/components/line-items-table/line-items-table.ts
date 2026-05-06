@@ -5,7 +5,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { product } from '@avalantec/inventory';
 import { SalesOrderForm } from '../../services/sales-order-form';
 
@@ -20,10 +21,12 @@ import { SalesOrderForm } from '../../services/sales-order-form';
   selector: 'bifi-app-line-items-table',
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     ButtonModule,
     InputTextModule,
     InputNumberModule,
     SelectModule,
+    MultiSelectModule,
     CurrencyPipe,
   ],
   templateUrl: './line-items-table.html',
@@ -33,11 +36,16 @@ export class LineItemsTable {
   private formService = inject(SalesOrderForm);
 
   productOptions = input<product[]>([]);
+  taxOptions = input<any[]>([]);
   stockMap = input<Record<string, number>>({});
   readonly = input<boolean>(false);
 
   get lineItemsArray() {
     return this.formService.lineItemsArray;
+  }
+
+  get lineTaxIds() {
+    return this.formService.lineTaxIds;
   }
 
   private lineItemValues = toSignal(
@@ -72,7 +80,47 @@ export class LineItemsTable {
         unitPrice: prod.salePrice,
         total: qty * prod.salePrice,
       });
+      const rawTaxIds: any[] = Array.isArray(prod.defaultSaleTaxIds) ? prod.defaultSaleTaxIds : [];
+      const taxIds: string[] = rawTaxIds
+        .map((id: any) => {
+          if (!id) return '';
+          if (typeof id === 'string') return id;
+          if (typeof id === 'object') return (id._id ?? id.$oid ?? '').toString();
+          return String(id);
+        })
+        .filter(Boolean);
+      this.formService.setLineTaxIds(index, taxIds);
     }
+  }
+
+  onLineTaxChange(index: number, value: string[] | null) {
+    this.formService.setLineTaxIds(index, value ?? []);
+  }
+
+  getLineTaxIds(index: number): string[] {
+    return this.lineTaxIds()[index] ?? [];
+  }
+
+  getLineTaxRateSum(index: number): number {
+    const ids = this.getLineTaxIds(index);
+    return ids.reduce((sum, id) => {
+      const tax = this.taxOptions().find((t: any) => t._id === id);
+      return sum + ((tax?.percentage ?? 0) / 100);
+    }, 0);
+  }
+
+  getLineTaxPerUnit(index: number): number {
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const unitPrice = (control?.get('unitPrice')?.value as number) ?? 0;
+    return Number((unitPrice * this.getLineTaxRateSum(index)).toFixed(2));
+  }
+
+  getLineGrossTotal(index: number): number {
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const qty = (control?.get('quantity')?.value as number) ?? 0;
+    const unitPrice = (control?.get('unitPrice')?.value as number) ?? 0;
+    const taxPerUnit = this.getLineTaxPerUnit(index);
+    return Number((qty * (unitPrice + taxPerUnit)).toFixed(2));
   }
 
   onQuantityChange(index: number, newQty: number | null) {
@@ -94,7 +142,14 @@ export class LineItemsTable {
     if (!productId) return '—';
     const prod = this.productOptions().find(p => p._id === productId);
     if (!prod) return '—';
-    return (prod.unitOfMeasureId as any)?.symbol ?? prod.unit ?? '—';
+    const uom = prod.unitOfMeasureId as any;
+    if (uom && typeof uom === 'object') {
+      const symbol = (uom.symbol ?? '').toString().trim();
+      if (symbol) return symbol;
+      const name = (uom.name ?? '').toString().trim();
+      if (name) return name;
+    }
+    return '—';
   }
 
   getProductName(index: number): string {
@@ -117,5 +172,16 @@ export class LineItemsTable {
     const qty = (control.get('quantity')?.value as number) ?? 0;
     const available = this.stockMap()[productId];
     return available !== undefined && qty > available;
+  }
+
+  getAppliedTaxLabels(index: number): string {
+    const ids = this.getLineTaxIds(index);
+    if (!ids.length) return '—';
+    return ids
+      .map(id => {
+        const tax = this.taxOptions().find((t: any) => t._id === id);
+        return tax ? `${tax.name} (${tax.percentage}%)` : id;
+      })
+      .join(', ');
   }
 }

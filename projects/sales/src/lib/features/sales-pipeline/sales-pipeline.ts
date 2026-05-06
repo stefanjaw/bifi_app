@@ -110,12 +110,13 @@ export class SalesPipeline {
       .subscribe({
         next: () => {
           const salespersonId = (deal as any).salesperson?._id;
+          const dealCurrency = deal.currency as any;
+          const currencyId = dealCurrency?._id ?? dealCurrency;
           const orderPayload: Record<string, any> = {
             crmId: deal._id,
             contact: deal.contact?._id,
             company: deal.company?._id,
-            amount: deal.amount,
-            currency: deal.currency,
+            currency: currencyId,
             closeDate: new Date().toISOString(),
           };
           if (salespersonId) orderPayload['salesperson'] = salespersonId;

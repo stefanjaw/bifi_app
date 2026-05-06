@@ -14,12 +14,16 @@ import { CrudCrm } from '../../services/crud-crm';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
+import { CrudTaxes } from '@avalantec/accounting';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
+import { startWith } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -27,10 +31,12 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { LineItemsTable } from '../../components/line-items-table/line-items-table';
+import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
   imports: [
+    DecimalPipe,
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -51,9 +57,11 @@ export class SalesOrderDetail {
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);
   private crudUsers = inject(CrudUsers);
+  private crudCurrencies = inject(CrudCurrencies);
   private crudProducts = inject(CrudProducts);
   private crudStockBalances = inject(CrudStockBalances);
   private crudSalesOrderStages = inject(CrudSalesOrderStages);
+  private crudTaxes = inject(CrudTaxes);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -69,9 +77,11 @@ export class SalesOrderDetail {
   contactsResource = this.crudContacts.get({});
   companiesResource = this.crudCompanies.get({});
   usersResource = this.crudUsers.get({});
+  currenciesResource = this.crudCurrencies.get({});
   productsResource = this.crudProducts.get({});
   stockResource = this.crudStockBalances.get({});
   stagesResource = this.crudSalesOrderStages.get({});
+  taxesResource = this.crudTaxes.get({});
 
   entry = this.orderResource.value;
 
@@ -83,9 +93,25 @@ export class SalesOrderDetail {
   productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
   stageOptions = computed(() => (this.stagesResource.value() as any[]) ?? []);
 
+  currencyOptions = computed(() =>
+    ((this.currenciesResource.value() as any[]) ?? []).filter((c: any) => c?.active !== false),
+  );
+
+  taxOptions = computed(() =>
+    ((this.taxesResource.value() as any[]) ?? []).filter(
+      (t: any) => t?.active === true && t?.taxType === 'sales',
+    ),
+  );
+
   defaultStageId = computed(() => {
     const stages = this.stageOptions();
     const def = stages.find((s: any) => s.isDefault);
+    return def?._id ?? '';
+  });
+
+  defaultCurrencyId = computed(() => {
+    const currencies = this.currencyOptions();
+    const def = currencies.find((c: any) => c.isDefault);
     return def?._id ?? '';
   });
 
@@ -108,22 +134,38 @@ export class SalesOrderDetail {
       this.contactsResource.isLoading() ||
       this.companiesResource.isLoading() ||
       this.usersResource.isLoading() ||
+      this.currenciesResource.isLoading() ||
       this.productsResource.isLoading() ||
-      this.stagesResource.isLoading()
+      this.stagesResource.isLoading() ||
+      this.taxesResource.isLoading(),
   );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   form = this.formService.form;
 
-  currencyOptions = [
-    { label: 'USD', value: 'USD' },
-    { label: 'EUR', value: 'EUR' },
-    { label: 'GBP', value: 'GBP' },
-    { label: 'MXN', value: 'MXN' },
-  ];
+  private lineItemValues = toSignal(
+    this.formService.lineItemsArray.valueChanges.pipe(
+      startWith(this.formService.lineItemsArray.value),
+    ),
+    { initialValue: this.formService.lineItemsArray.value },
+  );
+
+  totalsPreview = computed<TotalsPreview>(() => {
+    const items = (this.lineItemValues() ?? []) as any[];
+    const lineTaxIds = this.formService.lineTaxIds();
+    const allTaxes = this.taxOptions();
+    return calculateTotalsPerLine(items, lineTaxIds, allTaxes);
+  });
 
   constructor() {
+    this.form.controls.amount.disable({ emitEvent: false });
+
+    effect(() => {
+      const preview = this.totalsPreview();
+      this.form.controls.amount.setValue(preview.grandTotal, { emitEvent: false });
+    });
+
     effect(() => {
       const entry = this.entry();
       if (entry) {
@@ -135,9 +177,10 @@ export class SalesOrderDetail {
         const companyId = companyData?._id ?? companyData ?? '';
         const salespersonData = entry.salesperson as any;
         const salespersonId = salespersonData?._id ?? salespersonData ?? '';
-
         const stageData = entry.stageId as any;
         const stageId = stageData?._id ?? stageData ?? '';
+        const currencyData = entry.currency as any;
+        const currencyId = currencyData?._id ?? currencyData ?? '';
 
         this.formService.patchValue({
           crmId,
@@ -146,7 +189,7 @@ export class SalesOrderDetail {
           salesperson: salespersonId,
           stageId,
           amount: entry.amount,
-          currency: entry.currency,
+          currency: currencyId,
           closeDate: new Date(entry.closeDate),
           notes: entry.notes || '',
         });
@@ -161,14 +204,23 @@ export class SalesOrderDetail {
           quantity: item.quantity ?? 1,
           unitPrice: item.unitPrice ?? 0,
           total: item.total ?? 0,
+          taxIds: Array.isArray(item.taxIds)
+            ? item.taxIds.map((id: any) =>
+                typeof id === 'object' ? (id?._id?.toString() ?? '') : id?.toString() ?? '',
+              ).filter(Boolean)
+            : [],
         }));
-        this.formService.patchLineItems(mappedLineItems);
+        this.formService.initLineItems(mappedLineItems);
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
         const defaultId = this.defaultStageId();
         if (defaultId) {
           this.formService.patchValue({ stageId: defaultId });
+        }
+        const defCurrency = this.defaultCurrencyId();
+        if (defCurrency && !this.form.controls.currency.value) {
+          this.formService.patchValue({ currency: defCurrency });
         }
       }
     });
@@ -183,12 +235,16 @@ export class SalesOrderDetail {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
-    const lineItems = (rawValue.lineItems ?? []).map((item: any) => ({
+    // amount, subtotal, taxTotal, grandTotal, and lineItems[].total are all
+    // derived on the server — never sent by the frontend.
+    // taxIds per line are sent; the server aggregates them into order-level taxes[].
+    const lineTaxIds = this.formService.lineTaxIds();
+    const lineItems = (rawValue.lineItems ?? []).map((item: any, i: number) => ({
       productId: item.productId || undefined,
       description: item.description,
       quantity: item.quantity,
       unitPrice: item.unitPrice,
-      total: (item.quantity ?? 0) * (item.unitPrice ?? 0),
+      taxIds: lineTaxIds[i] ?? [],
     }));
 
     const payload: Record<string, any> = {
@@ -197,7 +253,6 @@ export class SalesOrderDetail {
       company: rawValue.company,
       salesperson: rawValue.salesperson || undefined,
       stageId: rawValue.stageId || undefined,
-      amount: rawValue.amount,
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,

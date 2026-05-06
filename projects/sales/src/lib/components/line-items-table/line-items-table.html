@@ -21,6 +21,9 @@
           <th class="text-left p-3 border-b w-36">Quantity</th>
           <th class="text-left p-3 border-b w-20">UoM</th>
           <th class="text-left p-3 border-b w-32">Unit Price</th>
+          @if (taxOptions().length > 0) {
+            <th class="text-left p-3 border-b w-28">Tax / unit</th>
+          }
           <th class="text-left p-3 border-b w-32">Total</th>
           @if (!readonly()) {
             <th class="p-3 border-b w-16"></th>
@@ -102,8 +105,13 @@
                 {{ $any(control).value.unitPrice | currency }}
               }
             </td>
+            @if (taxOptions().length > 0) {
+              <td class="p-2 border-b text-gray-500">
+                {{ getLineTaxPerUnit($index) | currency }}
+              </td>
+            }
             <td class="p-2 border-b font-semibold">
-              {{ $any(control).value.quantity * $any(control).value.unitPrice | currency }}
+              {{ getLineGrossTotal($index) | currency }}
             </td>
             @if (!readonly()) {
               <td class="p-2 border-b">
@@ -117,23 +125,42 @@
               </td>
             }
           </tr>
+          <tr class="bg-gray-50/50">
+            <td [colSpan]="6 + (taxOptions().length > 0 ? 1 : 0) + (!readonly() ? 1 : 0)" class="px-3 pb-2 pt-0">
+              @if (!readonly()) {
+                <p-multiselect
+                  [ngModel]="getLineTaxIds($index)"
+                  (ngModelChange)="onLineTaxChange($index, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                  [options]="taxOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  placeholder="Taxes for this line (optional)"
+                  [filter]="true"
+                  filterBy="name"
+                  [showClear]="true"
+                  display="chip"
+                  styleClass="w-full text-xs"
+                  appendTo="body"
+                >
+                  <ng-template pTemplate="item" let-tax>
+                    <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+                  </ng-template>
+                </p-multiselect>
+              } @else {
+                <span class="text-xs text-gray-500">Taxes: {{ getAppliedTaxLabels($index) }}</span>
+              }
+            </td>
+          </tr>
         }
         @if (lineItemsArray.controls.length === 0) {
           <tr>
-            <td [colSpan]="readonly() ? 6 : 7" class="p-4 text-center text-gray-500">
+            <td [colSpan]="6 + (taxOptions().length > 0 ? 1 : 0) + (!readonly() ? 1 : 0)" class="p-4 text-center text-gray-500">
               No items yet. {{ readonly() ? '' : 'Click "Add Item" to get started.' }}
             </td>
           </tr>
         }
       </tbody>
-      @if (lineItemsArray.controls.length > 0) {
-        <tfoot>
-          <tr class="bg-gray-50 font-bold">
-            <td [colSpan]="readonly() ? 5 : 6" class="p-3 text-right">Grand Total:</td>
-            <td class="p-3 text-green-600">{{ grandTotal() | currency }}</td>
-          </tr>
-        </tfoot>
-      }
     </table>
   </div>
 </div>

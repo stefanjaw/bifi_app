@@ -48,6 +48,18 @@
               ></p-select>
             </bifi-app-form-field>
 
+            <bifi-app-form-field>
+              <bifi-app-form-label>Product Type</bifi-app-form-label>
+              <p-select
+                formControlName="productTypeId"
+                [options]="productTypes()"
+                optionLabel="name"
+                optionValue="_id"
+                placeholder="Select a product type"
+                [showClear]="true"
+              ></p-select>
+            </bifi-app-form-field>
+
             <bifi-app-form-field class="md:col-span-2">
               <bifi-app-form-label>Description</bifi-app-form-label>
               <textarea
@@ -102,6 +114,54 @@
               mode="currency"
               currency="USD"
             ></p-inputNumber>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Default Sale Taxes</bifi-app-form-label>
+            <p-multiselect
+              [ngModel]="defaultSaleTaxIds()"
+              (ngModelChange)="onSaleTaxesChange($event)"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="saleTaxOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select default sale taxes"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              display="chip"
+            >
+              <ng-template pTemplate="item" let-tax>
+                <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+              </ng-template>
+            </p-multiselect>
+            <small class="text-gray-500">
+              Pre-filled on Sales Orders when this product is added.
+            </small>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Default Purchase Taxes</bifi-app-form-label>
+            <p-multiselect
+              [ngModel]="defaultPurchaseTaxIds()"
+              (ngModelChange)="onPurchaseTaxesChange($event)"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="purchaseTaxOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select default purchase taxes"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              display="chip"
+            >
+              <ng-template pTemplate="item" let-tax>
+                <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+              </ng-template>
+            </p-multiselect>
+            <small class="text-gray-500">
+              Pre-filled on Purchase Orders when this product is added.
+            </small>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>

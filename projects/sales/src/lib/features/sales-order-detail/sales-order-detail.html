@@ -79,24 +79,27 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Amount *</bifi-app-form-label>
+            <bifi-app-form-label>Amount</bifi-app-form-label>
             <p-inputnumber
               formControlName="amount"
               [minFractionDigits]="2"
               [maxFractionDigits]="2"
               placeholder="0.00"
             ></p-inputnumber>
+            <small class="text-gray-500">Calculated from line items and taxes.</small>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Currency</bifi-app-form-label>
+            <bifi-app-form-label>Currency *</bifi-app-form-label>
             <p-select
               formControlName="currency"
-              [options]="currencyOptions"
-              optionLabel="label"
-              optionValue="value"
+              [options]="currencyOptions()"
+              optionLabel="code"
+              optionValue="_id"
               placeholder="Select currency"
+              [filter]="true"
+              filterBy="code,name"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -132,9 +135,33 @@
       <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
         <bifi-app-line-items-table
           [productOptions]="productOptions()"
+          [taxOptions]="taxOptions()"
           [stockMap]="stockMap()"
           [readonly]="false"
         ></bifi-app-line-items-table>
+
+        <div class="mt-6 flex flex-col items-end gap-2">
+          <div class="w-full max-w-sm space-y-2">
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>Subtotal</span>
+              <span class="font-medium">{{ totalsPreview().subtotal | number: '1.2-2' }}</span>
+            </div>
+            @for (appliedTax of totalsPreview().appliedTaxes; track appliedTax.taxId) {
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>{{ appliedTax.name }} ({{ appliedTax.percentage }}%)</span>
+                <span>{{ appliedTax.amount | number: '1.2-2' }}</span>
+              </div>
+            }
+            <div class="flex justify-between text-sm text-gray-600 border-t pt-1">
+              <span>Tax Total</span>
+              <span>{{ totalsPreview().taxTotal | number: '1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between font-semibold text-base border-t pt-1">
+              <span>Grand Total</span>
+              <span>{{ totalsPreview().grandTotal | number: '1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
       </bifi-app-form-section>
 
       <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">

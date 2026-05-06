@@ -30,13 +30,19 @@ export const salesOrderColumns: tableColumn<salesOrder>[] = [
     type: 'text',
   },
   {
-    field: 'amount',
-    title: 'Amount',
+    field: 'grandTotal',
+    title: 'Grand Total',
     type: 'currency',
     sortable: true,
   },
   {
-    field: 'currency',
+    field: 'taxTotal',
+    title: 'Tax',
+    type: 'currency',
+    sortable: true,
+  },
+  {
+    field: 'currency.code',
     title: 'Currency',
     type: 'text',
   },

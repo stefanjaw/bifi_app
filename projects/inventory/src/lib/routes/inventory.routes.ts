@@ -1,6 +1,36 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
 
+export const INVENTORY_SETTINGS_ROUTES: Routes = [
+  {
+    path: 'product-types',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/product-types-list/product-types-list').then(
+        (c) => c.ProductTypesList
+      ),
+    data: { resource: 'inventory/product-types/list' },
+  },
+  {
+    path: 'product-types/new',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/product-type-form/product-type-form').then(
+        (c) => c.ProductTypeForm
+      ),
+    data: { resource: 'inventory/product-types/create' },
+  },
+  {
+    path: 'product-types/:id/edit',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/product-type-form/product-type-form').then(
+        (c) => c.ProductTypeForm
+      ),
+    data: { resource: 'inventory/product-types/update' },
+  },
+];
+
 export const INVENTORY_ROUTES: Routes = [
   {
     path: '',

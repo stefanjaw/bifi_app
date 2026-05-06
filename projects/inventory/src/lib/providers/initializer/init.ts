@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { INVENTORY_ROUTES } from '../../routes/inventory.routes';
+import { INVENTORY_ROUTES, INVENTORY_SETTINGS_ROUTES } from '../../routes/inventory.routes';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 
@@ -55,10 +55,34 @@ export function initializeInventory() {
         ],
       },
     },
+    {
+      item: {
+        icon: PrimeIcons.COG,
+        label: 'Inventory',
+        resource: 'inventory/settings/menu',
+        items: [
+          {
+            icon: PrimeIcons.LIST,
+            routerLink: ['/settings/inventory/product-types'],
+            label: 'Product Types',
+            resource: 'inventory/product-types/menu',
+          },
+        ],
+      },
+      childOf: 'settings',
+    },
   ]);
 
   mainRoutingManager.addRouting({
     basePath: 'inventory',
     newRouting: INVENTORY_ROUTES,
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: {
+      path: 'inventory',
+      children: INVENTORY_SETTINGS_ROUTES,
+    },
+    childOf: 'settings',
   });
 }

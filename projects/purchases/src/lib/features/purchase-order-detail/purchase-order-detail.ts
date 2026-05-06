@@ -13,6 +13,7 @@ import { CrudPurchaseOrders } from '../../services/crud-purchase-orders';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -28,10 +29,14 @@ import { contact } from '@avalantec/base-app/interfaces';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudPurchaseStages } from '../../modules/purchase-stages/services/crud-purchase-stages';
 import { purchaseStage } from '../../modules/purchase-stages/interfaces/purchase-stage';
+import { CrudTaxes } from '@avalantec/accounting';
+import { CrudProducts } from '@avalantec/inventory';
+import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 
 @Component({
   selector: 'bifi-app-purchase-order-detail',
   imports: [
+    DecimalPipe,
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -51,6 +56,8 @@ export class PurchaseOrderDetail {
   private crudPurchaseOrders = inject(CrudPurchaseOrders);
   private crudContacts = inject(CrudContacts);
   private crudPurchaseStages = inject(CrudPurchaseStages);
+  private crudTaxes = inject(CrudTaxes);
+  private crudProducts = inject(CrudProducts);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -64,6 +71,8 @@ export class PurchaseOrderDetail {
 
   contactsResource = this.crudContacts.get({});
   stagesResource = this.crudPurchaseStages.get({});
+  taxesResource = this.crudTaxes.get({});
+  productsResource = this.crudProducts.get({});
 
   private _selectedContact = signal<contact | null>(null);
 
@@ -81,11 +90,32 @@ export class PurchaseOrderDetail {
 
   stageOptions = computed(() => (this.stagesResource.value() as purchaseStage[]) ?? []);
 
-  isLoading = computed(() => this.orderResource.isLoading() || this.contactsResource.isLoading());
+  purchaseTaxOptions = computed(() =>
+    ((this.taxesResource.value() as any[]) ?? []).filter(
+      (t: any) => t?.active === true && t?.taxType === 'purchase',
+    ),
+  );
+
+  productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
+
+  isLoading = computed(
+    () =>
+      this.orderResource.isLoading() ||
+      this.contactsResource.isLoading() ||
+      this.taxesResource.isLoading() ||
+      this.productsResource.isLoading(),
+  );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   lineItems = signal<lineItem[]>([]);
+
+  totalsPreview = computed<TotalsPreview>(() => {
+    const items = this.lineItems();
+    const lineTaxIds = items.map(item => item.taxIds ?? []);
+    const allTaxes = this.purchaseTaxOptions();
+    return calculateTotalsPerLine(items, lineTaxIds, allTaxes);
+  });
 
   form = this.formService.form;
 
@@ -116,7 +146,30 @@ export class PurchaseOrderDetail {
           notes: entry.notes || '',
           stageId,
         });
-        this.lineItems.set(entry.lineItems ? [...entry.lineItems] : []);
+        const rawLineItems = (entry.lineItems ?? []) as any[];
+        this.lineItems.set(
+          rawLineItems.map((item: any) => {
+            const rawTaxIds: any[] = Array.isArray(item.taxIds) ? item.taxIds : [];
+            const taxIds: string[] = rawTaxIds
+              .map((id: any) => {
+                if (!id) return '';
+                if (typeof id === 'string') return id;
+                if (typeof id === 'object') return (id._id ?? id.$oid ?? '').toString();
+                return String(id);
+              })
+              .filter(Boolean);
+            return {
+              productId: typeof item.productId === 'object'
+                ? (item.productId?._id ?? undefined)
+                : (item.productId ?? undefined),
+              description: item.description ?? '',
+              quantity: item.quantity ?? 1,
+              unitPrice: item.unitPrice ?? 0,
+              total: item.total ?? 0,
+              taxIds,
+            };
+          })
+        );
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
@@ -141,6 +194,7 @@ export class PurchaseOrderDetail {
 
   onLineItemsChange(items: lineItem[]) {
     this.lineItems.set(items);
+    this.form.markAsDirty();
   }
 
   markAsReceived() {
@@ -163,7 +217,7 @@ export class PurchaseOrderDetail {
       });
   }
 
-  async handleSubmit(data: FormValueState<PurchaseOrderFormModel>) {
+  handleSubmit(data: FormValueState<PurchaseOrderFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
@@ -172,7 +226,7 @@ export class PurchaseOrderDetail {
       status: rawValue.status as purchaseOrderStatus,
       issueDate: rawValue.issueDate ? new Date(rawValue.issueDate).toISOString() : undefined,
       expectedDeliveryDate: rawValue.expectedDeliveryDate ? new Date(rawValue.expectedDeliveryDate).toISOString() : undefined,
-      lineItems: this.lineItems(),
+      lineItems: this.lineItems().map(item => ({ ...item })),
       notes: rawValue.notes,
       stageId: rawValue.stageId || null,
     };

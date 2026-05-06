@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
@@ -27,6 +27,8 @@ export interface SalesOrderFormModel {
   providedIn: 'root',
 })
 export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
+  lineTaxIds = signal<string[][]>([]);
+
   override createForm() {
     return this.fb.group<SalesOrderFormModel>({
       crmId: [''],
@@ -34,8 +36,8 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       company: ['', [Validators.required]],
       salesperson: [''],
       stageId: [''],
-      amount: [0, [Validators.required, Validators.min(0.01)]],
-      currency: ['USD'],
+      amount: [0],
+      currency: ['', [Validators.required]],
       closeDate: [new Date(), [Validators.required]],
       notes: [''],
       lineItems: {
@@ -49,6 +51,11 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
         formArrayElements: [],
       },
     });
+  }
+
+  override reset() {
+    super.reset();
+    this.lineTaxIds.set([]);
   }
 
   get lineItemsArray() {
@@ -67,10 +74,37 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
 
   addLineItem() {
     this.form.controls.lineItems.push(this.createLineItemGroup());
+    this.lineTaxIds.update(ids => [...ids, []]);
   }
 
   removeLineItem(index: number) {
     this.form.controls.lineItems.removeAt(index);
+    this.lineTaxIds.update(ids => ids.filter((_, i) => i !== index));
+  }
+
+  setLineTaxIds(index: number, taxIds: string[]) {
+    this.lineTaxIds.update(current => {
+      const next = [...current];
+      while (next.length <= index) next.push([]);
+      next[index] = taxIds;
+      return next;
+    });
+  }
+
+  /**
+   * Clears the line items FormArray and re-populates it from `items`,
+   * also restoring the per-line taxIds. Use this when loading an existing order.
+   */
+  initLineItems(items: Array<Partial<LineItemFormModel> & { taxIds?: string[] }>) {
+    const arr = this.form.controls.lineItems;
+    while (arr.length > 0) arr.removeAt(0, { emitEvent: false });
+    const taxIdsArray: string[][] = [];
+    for (const item of items) {
+      arr.push(this.createLineItemGroup(item), { emitEvent: false });
+      taxIdsArray.push(item.taxIds ?? []);
+    }
+    arr.updateValueAndValidity();
+    this.lineTaxIds.set(taxIdsArray);
   }
 
   patchLineItems(items: Partial<LineItemFormModel>[]) {
