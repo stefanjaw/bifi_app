@@ -106,6 +106,12 @@ export class FinancialInformation {
     )
   );
 
+  private currentPrice = toSignal(
+    this.form.controls.currentPrice.valueChanges.pipe(
+      startWith(this.form.controls.currentPrice.value)
+    )
+  );
+
   private commissionedDate = toSignal(
     this.form.controls.commissionedDate.valueChanges.pipe(
       startWith(this.form.controls.commissionedDate.value)
@@ -139,7 +145,9 @@ export class FinancialInformation {
   isAccelerated = computed(() => this.depreciationMethod() === 'accelerated-declining-balance');
 
   depreciationResults = computed<DepreciationResults>(() => {
-    const cost = this.acquiredPrice() ?? 0;
+    const acquiredPrice = this.acquiredPrice();
+    const currentPrice = this.currentPrice();
+    const cost = (acquiredPrice && acquiredPrice > 0 ? acquiredPrice : currentPrice) ?? 0;
     const salvage = this.salvageValue() ?? 0;
     const life = this.estimatedEconomicLifeYears() ?? 0;
     const method = this.depreciationMethod() ?? 'straight-line';
@@ -288,6 +296,9 @@ export class FinancialInformation {
     }
 
     if (!datasets.length) return null;
+
+    const allZero = datasets.every(ds => (ds.data as number[]).every(v => v === 0));
+    if (allZero) return null;
 
     return { labels, datasets };
   });
