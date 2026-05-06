@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudFiscalPositions } from '../../services/crud-fiscal-positions';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';

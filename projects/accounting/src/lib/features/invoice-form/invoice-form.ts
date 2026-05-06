@@ -14,7 +14,7 @@ import { CrudJournals } from '../../services/crud-journals';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudContacts } from '@avalantec/base-app/contacts';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudPaymentTerms } from '../../services/crud-payment-terms';
 import { CrudDiscounts } from '../../services/crud-discounts';
 import { CrudProducts } from '@avalantec/inventory';

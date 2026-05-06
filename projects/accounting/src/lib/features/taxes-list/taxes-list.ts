@@ -1,18 +1,19 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { tax } from '../../interfaces/tax';
 import {
   ButtonsActions,
+  filter,
   provideResourceManager,
   ResourceManager,
+  tableColumn,
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { taxColumns } from '../../libraries/tax-columns';
-import { taxFilters } from '../../libraries/tax-filters';
+import { taxColumns, taxFilters } from '@avalantec/base-app/taxes';
 
 @Component({
   selector: 'bifi-app-taxes-list',
@@ -31,8 +32,8 @@ export class TaxesList {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  columns = taxColumns;
-  filters = taxFilters;
+  columns = taxColumns as unknown as tableColumn<tax>[];
+  filters = taxFilters as unknown as filter<tax>[];
   taxes = this.resourceManager.data;
 
   goToEditTax = (element: tax) => {

@@ -1,10 +1,6 @@
+import { tax as BaseTax } from '@avalantec/base-app/taxes';
 import { account } from './account';
 
-export interface tax {
-  _id: string;
-  name: string;
-  taxType: 'sales' | 'purchase';
-  percentage: number;
+export interface tax extends BaseTax {
   accountId: account;
-  active: boolean;
 }

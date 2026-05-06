@@ -16,7 +16,7 @@ import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
-import { CrudTaxes } from '@avalantec/accounting';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';

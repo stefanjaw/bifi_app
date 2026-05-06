@@ -29,7 +29,7 @@ import { contact } from '@avalantec/base-app/interfaces';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudPurchaseStages } from '../../modules/purchase-stages/services/crud-purchase-stages';
 import { purchaseStage } from '../../modules/purchase-stages/interfaces/purchase-stage';
-import { CrudTaxes } from '@avalantec/accounting';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudProducts } from '@avalantec/inventory';
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 

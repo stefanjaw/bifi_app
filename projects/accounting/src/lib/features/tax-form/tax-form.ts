@@ -9,7 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
+import { tax } from '../../interfaces/tax';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -58,7 +59,7 @@ export class TaxForm {
 
   constructor() {
     effect(() => {
-      const entry = this.taxResource.value();
+      const entry = this.taxResource.value() as tax | undefined;
       if (entry) {
         this.formService.patchValue({
           name: entry.name,

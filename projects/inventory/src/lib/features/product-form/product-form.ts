@@ -8,12 +8,17 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { FormModule, FormUploader, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormFileControlHelper,
+  FormModule,
+  FormUploader,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudUoms } from '../../services/crud-uoms';
 import { CrudProductTypes } from '../../services/crud-product-types';
-import { CrudTaxes } from '@avalantec/accounting';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -26,6 +31,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductFormService, ProductFormModel } from '../../services/product-form.service';
+import { FileResolver } from '@avalantec/base-app/resource';
+import { product } from '../../interfaces/product';
 
 @Component({
   selector: 'bifi-app-product-form',
@@ -53,6 +60,8 @@ export class ProductForm {
   private crudUoms = inject(CrudUoms);
   private crudProductTypes = inject(CrudProductTypes);
   private crudTaxes = inject(CrudTaxes);
+  private fileResolverService = inject(FileResolver);
+  private fileHelper = inject(FormFileControlHelper);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
@@ -60,17 +69,21 @@ export class ProductForm {
 
   form = this.formService.form;
 
-  productResource = this.crudProducts.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  productResource = this.crudProducts.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   uomsResource = this.crudUoms.get({});
   productTypesResource = this.crudProductTypes.get({});
   taxesResource = this.crudTaxes.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(() =>
-    this.productResource.isLoading() ||
-    this.uomsResource.isLoading() ||
-    this.productTypesResource.isLoading() ||
-    this.taxesResource.isLoading(),
+  isLoading = computed(
+    () =>
+      this.productResource.isLoading() ||
+      this.uomsResource.isLoading() ||
+      this.productTypesResource.isLoading() ||
+      this.taxesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -78,18 +91,17 @@ export class ProductForm {
 
   productTypes = this.productTypesResource.value;
   saleTaxOptions = computed(() =>
-    ((this.taxesResource.value() as any[]) ?? []).filter(
-      (t: any) => t?.taxType === 'sales',
-    ),
+    ((this.taxesResource.value() as any[]) ?? []).filter((t: any) => t?.taxType === 'sales')
   );
   purchaseTaxOptions = computed(() =>
-    ((this.taxesResource.value() as any[]) ?? []).filter(
-      (t: any) => t?.taxType === 'purchase',
-    ),
+    ((this.taxesResource.value() as any[]) ?? []).filter((t: any) => t?.taxType === 'purchase')
   );
 
   defaultSaleTaxIds = signal<string[]>([]);
   defaultPurchaseTaxIds = signal<string[]>([]);
+
+  private fileState = this.fileHelper.generateMetadataFromFileControl(this.form.controls.photo);
+  uploadedFile = this.fileState.firstFile;
 
   onSaleTaxesChange(value: string[] | null) {
     this.defaultSaleTaxIds.set(value ?? []);
@@ -104,40 +116,7 @@ export class ProductForm {
   constructor() {
     effect(() => {
       const entry = this.productResource.value();
-      if (entry) {
-        this.formService.form.controls.photo.clear();
-        this.formService.form.controls.attachments.clear();
-
-	this.defaultSaleTaxIds.set(
-          ((entry.defaultSaleTaxIds ?? []) as any[]).map((id: any) =>
-            id?._id?.toString() ?? id?.toString() ?? '',
-          ).filter(Boolean),
-        );
-        this.defaultPurchaseTaxIds.set(
-          ((entry.defaultPurchaseTaxIds ?? []) as any[]).map((id: any) =>
-            id?._id?.toString() ?? id?.toString() ?? '',
-          ).filter(Boolean),
-        );
-
-        this.formService.patchValue({
-          name: entry.name,
-          sku: entry.sku,
-          description: entry.description ?? '',
-          unitOfMeasureId: (entry.unitOfMeasureId as any)?._id ?? entry.unitOfMeasureId ?? '',
-          productTypeId: (entry.productTypeId as any)?._id ?? entry.productTypeId ?? '',
-          costPrice: entry.costPrice,
-          salePrice: entry.salePrice,
-          photo: entry.photo ? [{ id: entry.photo, file: null! }] : [],
-          attachments: entry.attachments?.map(a => ({ id: a.fileId, file: null! })) ?? [],
-        });
-        this.formService.resetDirtyState();
-      } else if (!this.isUpdate()) {
-        this.formService.form.controls.photo.clear();
-        this.formService.form.controls.attachments.clear();
-	this.defaultSaleTaxIds.set([]);
-        this.defaultPurchaseTaxIds.set([]);
-        this.formService.reset();
-      }
+      this.resetValueToInitialState(entry);
     });
   }
 
@@ -170,5 +149,54 @@ export class ProductForm {
 
   goBack() {
     this.router.navigate(['/inventory/products']);
+  }
+
+  private async resetValueToInitialState(product: product | undefined) {
+    if (!product) {
+      this.formService.form.controls.photo.clear();
+      this.formService.form.controls.attachments.clear();
+      this.defaultSaleTaxIds.set([]);
+      this.defaultPurchaseTaxIds.set([]);
+      this.formService.reset();
+      return;
+    }
+
+    this.formService.form.controls.photo.clear();
+    this.formService.form.controls.attachments.clear();
+
+    this.defaultSaleTaxIds.set(
+      ((product.defaultSaleTaxIds ?? []) as any[])
+        .map((id: any) => id?._id?.toString() ?? id?.toString() ?? '')
+        .filter(Boolean)
+    );
+    this.defaultPurchaseTaxIds.set(
+      ((product.defaultPurchaseTaxIds ?? []) as any[])
+        .map((id: any) => id?._id?.toString() ?? id?.toString() ?? '')
+        .filter(Boolean)
+    );
+
+    const parsedImage = product.photo
+      ? await this.fileResolverService.resolveFile({ id: product.photo })
+      : null;
+
+    const parsedDocuments = await Promise.all(
+      product.attachments?.map(async file => ({
+        id: file.fileId,
+        file: (await this.fileResolverService.resolveFile({ metadata: file }))!,
+      })) || []
+    );
+
+    this.formService.patchValue({
+      name: product.name,
+      sku: product.sku,
+      description: product.description ?? '',
+      unitOfMeasureId: (product.unitOfMeasureId as any)?._id ?? product.unitOfMeasureId ?? '',
+      productTypeId: (product.productTypeId as any)?._id ?? product.productTypeId ?? '',
+      costPrice: product.costPrice,
+      salePrice: product.salePrice,
+      photo: parsedImage ? [{ id: product.photo, file: parsedImage }] : [],
+      attachments: parsedDocuments ?? [],
+    });
+    this.formService.resetDirtyState();
   }
 }

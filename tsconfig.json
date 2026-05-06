@@ -4,6 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "paths": {
       // Works on localhost
       "@avalantec/asset-roster": ["projects/asset-roster/src/lib"],
