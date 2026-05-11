@@ -280,6 +280,7 @@ export class TasksMainView {
       parentId: t.parentId?._id || null,
       sequence: t.sequence ?? 1,
       stage: t.stage,
+      color: t.stage?.color,
       priority: t.priority,
       projectName: t.projectId?.name,
       assignedUserName: t.assigned?.username,

@@ -1,14 +1,17 @@
-<div class="grow flex overflow-hidden pt-4">
+<div class="grow flex flex-col overflow-hidden pt-4">
+  <!-- Full-width header: title + view-mode switcher -->
+  <div class="shrink-0 h-8 flex items-center border-t border-b border-gray-200 bg-white px-3 gap-3">
+    <h3 class="font-semibold text-gray-700 flex-1">{{ title() }}</h3>
+    <bifi-app-gantt-switcher [(mode)]="viewMode"></bifi-app-gantt-switcher>
+  </div>
+
+  <!-- Sidebar + Chart row -->
+  <div class="flex flex-1 overflow-hidden">
   <!-- Sidebar -->
-  <div class="w-1/4 shrink-0 overflow-y-auto pr-2">
+  <div class="min-w-52 w-1/4 shrink-0 overflow-y-auto pr-2">
     <div class="sticky top-0 bg-gray-100 z-10 flex flex-col">
       <div class="h-3"></div>
-      <div class="h-8 flex items-center border-t border-b border-gray-200 bg-white">
-        <h3 class="font-semibold text-gray-700 px-2 flex-1">{{ title() }}</h3>
-        <div class="flex items-center gap-1 pr-2">
-          <bifi-app-gantt-switcher [(mode)]="viewMode"></bifi-app-gantt-switcher>
-        </div>
-      </div>
+      <div class="h-8 border-t border-b border-gray-200 bg-white"></div>
     </div>
     <bifi-app-tree-list
       [showExpandPlaceholder]="true"
@@ -24,14 +27,16 @@
         <div
           class="pr-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
         >
-          <p-button
-            title="Scroll to Task"
-            size="small"
-            severity="secondary"
-            icon="pi pi-arrow-right"
-            variant="text"
-            (onClick)="scrollToTask(item); $event.stopPropagation()"
-          ></p-button>
+          @if (viewMode() !== 'Overview') {
+            <p-button
+              title="Scroll to Task"
+              size="small"
+              severity="secondary"
+              icon="pi pi-arrow-right"
+              variant="text"
+              (onClick)="scrollToTask(item); $event.stopPropagation()"
+            ></p-button>
+          }
           <p-button
             title="Add Subtask"
             size="small"
@@ -62,186 +67,262 @@
   </div>
 
   <!-- Gantt Chart Area -->
-  <div
-    #ganttContainer
-    class="grow overflow-x-hidden overflow-y-hidden"
-    [class.cursor-grab]="!isDragging()"
-    [class.cursor-grabbing]="isDragging()"
-    (mousedown)="onGanttMouseDown($event)"
-  >
-    <div class="relative" [style.width.px]="timelineWidth()">
-      <!-- Timeline Header -->
-      <div class="sticky top-0 z-20 bg-gray-100">
-        <div class="relative h-3">
-          @if (viewMode() === 'Month') {
-            <span
-              class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
-            >
-              {{ gridUnits()[0].format('MMM YYYY') }}
-            </span>
+  @if (viewMode() === 'Overview') {
+    <!-- ── Overview mode: no time axis, dependency-depth columns ── -->
+    <div
+      #ganttContainer
+      class="grow overflow-x-auto overflow-y-hidden"
+    >
+      <div class="relative" [style.width.px]="overviewTotalWidth()">
+        <!-- Header matching the visual style of timed modes -->
+        <div class="sticky top-0 z-20 bg-gray-100">
+          <div class="h-3"></div>
+          <div class="h-8 border-t border-b border-gray-200 bg-white"></div>
+        </div>
+
+        <!-- Row stripes -->
+        <div class="absolute top-11 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
+          @for (item of flat(); track item.id; let i = $index) {
+            <div
+              class="absolute left-0 right-0 border-b border-gray-200"
+              [style.top.px]="i * rowHeight()"
+              [style.height.px]="rowHeight()"
+            ></div>
           }
-          @if (viewMode() === 'Year') {
-            <span
-              class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
-            >
-              {{ gridUnits()[0].format('YYYY') }}
-            </span>
+        </div>
+
+        <!-- Item cards -->
+        <div class="relative" [style.height.px]="flat().length * rowHeight()">
+          @for (item of flat(); track item.id; let i = $index) {
+            <bifi-app-gantt-card
+              [item]="item"
+              [index]="i"
+              [height]="rowHeight()"
+              [itemOffset]="getOverviewItemOffset(item.id)"
+              [itemWidth]="getOverviewItemWidth(item.id)"
+              [pixelsPerUnit]="1"
+              [unit]="'day'"
+              [overview]="true"
+              [color]="item.color"
+            ></bifi-app-gantt-card>
           }
-          @if (viewMode() === 'Week') {
-            <span
-              class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
+        </div>
+
+        <!-- Dependency arrows -->
+        <svg
+          class="absolute top-11 left-0 w-full pointer-events-none"
+          [style.height.px]="flat().length * rowHeight()"
+        >
+          <defs>
+            <marker
+              id="arrowhead-overview"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
             >
-              {{ gridUnits()[0].format('MMM YYYY') }}
-            </span>
+              <path d="M 0 0 L 10 5 L 0 10 z" class="fill-gray-500"></path>
+            </marker>
+          </defs>
+          @for (path of overviewDependencyPaths(); track $index) {
+            <path
+              [attr.d]="path"
+              class="stroke-gray-500"
+              stroke-width="1.5"
+              fill="none"
+              marker-end="url(#arrowhead-overview)"
+            ></path>
           }
-          @if (viewMode() === 'Day') {
-            <span
-              class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
-            >
-              {{ gridUnits()[0].format('ddd MMM D') | titlecase }}
-            </span>
-          }
-          @if (todayOffset() >= 0) {
-            <div class="absolute bottom-0 pointer-events-none z-30" [style.left.px]="todayOffset()">
-              <div
-                class="absolute left-1/2 -translate-x-1/2 -translate-y-full bg-red-500 text-white text-[8px] leading-none font-bold px-1 py-px rounded-sm whitespace-nowrap"
+        </svg>
+      </div>
+    </div>
+  } @else {
+    <!-- ── Time-based modes: Day / Week / Month / Year ── -->
+    <div
+      #ganttContainer
+      class="grow overflow-x-hidden overflow-y-hidden"
+      [class.cursor-grab]="!isDragging()"
+      [class.cursor-grabbing]="isDragging()"
+      (mousedown)="onGanttMouseDown($event)"
+    >
+      <div class="relative" [style.width.px]="timelineWidth()">
+        <!-- Timeline Header -->
+        <div class="sticky top-0 z-20 bg-gray-100">
+          <div class="relative h-3">
+            @if (viewMode() === 'Month') {
+              <span
+                class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
               >
-                @if (viewMode() === 'Day') {
-                  NOW
-                } @else {
-                  TODAY
-                }
+                {{ gridUnits()[0].format('MMM YYYY') }}
+              </span>
+            }
+            @if (viewMode() === 'Year') {
+              <span
+                class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
+              >
+                {{ gridUnits()[0].format('YYYY') }}
+              </span>
+            }
+            @if (viewMode() === 'Week') {
+              <span
+                class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
+              >
+                {{ gridUnits()[0].format('MMM YYYY') }}
+              </span>
+            }
+            @if (viewMode() === 'Day') {
+              <span
+                class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
+              >
+                {{ gridUnits()[0].format('ddd MMM D') | titlecase }}
+              </span>
+            }
+            @if (todayOffset() >= 0) {
+              <div class="absolute bottom-0 pointer-events-none z-30" [style.left.px]="todayOffset()">
+                <div
+                  class="absolute left-1/2 -translate-x-1/2 -translate-y-full bg-red-500 text-white text-[8px] leading-none font-bold px-1 py-px rounded-sm whitespace-nowrap"
+                >
+                  @if (viewMode() === 'Day') {
+                    NOW
+                  } @else {
+                    TODAY
+                  }
+                </div>
               </div>
+            }
+          </div>
+
+          @if (viewMode() === 'Day') {
+            <div class="relative h-8 border-t border-b border-gray-200 bg-white">
+              @for (tick of dayViewTicks(); track $index) {
+                <div
+                  class="absolute bottom-0 pointer-events-none"
+                  [style.left.px]="tick.pos"
+                  [style.height.px]="tick.type === 'main' ? 8 : tick.type === 'hour' ? 5 : 3"
+                  [style.width.px]="tick.type === 'main' ? 1.5 : 1"
+                  [ngClass]="tick.type === 'main' ? 'bg-gray-500' : 'bg-gray-400'"
+                ></div>
+                @if (tick.label) {
+                  <span
+                    class="absolute text-[10px] font-bold text-gray-600 select-none pointer-events-none"
+                    [style.left.px]="tick.pos"
+                    [style.bottom.px]="10"
+                    [style.transform]="tick.labelTransform"
+                  >
+                    {{ tick.label }}
+                  </span>
+                }
+              }
+              @if (todayOffset() >= 0) {
+                <div
+                  class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
+                  [style.left.px]="todayOffset()"
+                ></div>
+              }
+            </div>
+          } @else {
+            <div class="relative flex h-8 border-t border-b border-gray-200 bg-white">
+              @for (date of gridUnits(); track i; let i = $index) {
+                <div
+                  class="shrink-0 flex items-center justify-center overflow-hidden"
+                  [style.width.px]="pixelsPerUnit()"
+                  [ngClass]="{
+                    'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
+                  }"
+                >
+                  <span
+                    class="text-xs font-medium text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis px-0.5"
+                  >
+                    {{ formatDateHeader(date) | titlecase }}
+                  </span>
+                </div>
+              }
+              @if (todayOffset() >= 0) {
+                <div
+                  class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
+                  [style.left.px]="todayOffset()"
+                ></div>
+              }
             </div>
           }
         </div>
 
-        @if (viewMode() === 'Day') {
-          <div class="relative h-8 border-t border-b border-gray-200 bg-white">
-            @for (tick of dayViewTicks(); track $index) {
-              <div
-                class="absolute bottom-0 pointer-events-none"
-                [style.left.px]="tick.pos"
-                [style.height.px]="tick.type === 'main' ? 8 : tick.type === 'hour' ? 5 : 3"
-                [style.width.px]="tick.type === 'main' ? 1.5 : 1"
-                [ngClass]="tick.type === 'main' ? 'bg-gray-500' : 'bg-gray-400'"
-              ></div>
-              @if (tick.label) {
-                <span
-                  class="absolute text-[10px] font-bold text-gray-600 select-none pointer-events-none"
-                  [style.left.px]="tick.pos"
-                  [style.bottom.px]="10"
-                  [style.transform]="tick.labelTransform"
-                >
-                  {{ tick.label }}
-                </span>
-              }
-            }
-            @if (todayOffset() >= 0) {
-              <div
-                class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
-                [style.left.px]="todayOffset()"
-              ></div>
-            }
-          </div>
-        } @else {
-          <div class="relative flex h-8 border-t border-b border-gray-200 bg-white">
-            @for (date of gridUnits(); track i; let i = $index) {
-              <div
-                class="shrink-0 flex items-center justify-center overflow-hidden"
-                [style.width.px]="pixelsPerUnit()"
-                [ngClass]="{
-                  'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
-                }"
-              >
-                <span
-                  class="text-xs font-medium text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis px-0.5"
-                >
-                  {{ formatDateHeader(date) | titlecase }}
-                </span>
-              </div>
-            }
-            @if (todayOffset() >= 0) {
-              <div
-                class="absolute top-0 bottom-0 w-px bg-red-500 z-30 pointer-events-none"
-                [style.left.px]="todayOffset()"
-              ></div>
-            }
-          </div>
-        }
-      </div>
+        <!-- Grid Background -->
+        <div class="absolute top-11 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
+          @for (date of gridUnits(); track i; let i = $index) {
+            <div
+              class="absolute top-0 bottom-0"
+              [style.left.px]="i * pixelsPerUnit()"
+              [style.width.px]="pixelsPerUnit()"
+              [ngClass]="{
+                'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
+              }"
+            ></div>
+          }
+          @for (item of flat(); track item.id; let i = $index) {
+            <div
+              class="absolute left-0 right-0 border-b border-gray-200"
+              [style.top.px]="i * rowHeight()"
+              [style.height.px]="rowHeight()"
+            ></div>
+          }
+          @if (todayOffset() >= 0) {
+            <div
+              class="absolute top-0 bottom-0 w-px bg-red-500 z-30"
+              [style.left.px]="todayOffset()"
+            ></div>
+          }
+        </div>
 
-      <!-- Grid Background -->
-      <div class="absolute top-11 left-0 w-full" [style.height.px]="flat().length * rowHeight()">
-        @for (date of gridUnits(); track i; let i = $index) {
-          <div
-            class="absolute top-0 bottom-0"
-            [style.left.px]="i * pixelsPerUnit()"
-            [style.width.px]="pixelsPerUnit()"
-            [ngClass]="{
-              'border-l border-gray-200': showColumnBorder() || formatDateHeader(date),
-            }"
-          ></div>
-        }
-        @for (item of flat(); track item.id; let i = $index) {
-          <div
-            class="absolute left-0 right-0 border-b border-gray-200"
-            [style.top.px]="i * rowHeight()"
-            [style.height.px]="rowHeight()"
-          ></div>
-        }
-        @if (todayOffset() >= 0) {
-          <div
-            class="absolute top-0 bottom-0 w-px bg-red-500 z-30"
-            [style.left.px]="todayOffset()"
-          ></div>
-        }
-      </div>
+        <!-- Item Bars -->
+        <div class="relative" [style.height.px]="flat().length * rowHeight()">
+          @for (item of flat(); track item.id; let i = $index) {
+            <bifi-app-gantt-card
+              [item]="item"
+              [index]="i"
+              [height]="rowHeight()"
+              [itemOffset]="getItemOffset(item)"
+              [itemWidth]="getItemWidth(item)"
+              [pixelsPerUnit]="pixelsPerUnit()"
+              [unit]="unit()"
+              [color]="item.color"
+              (dateChange)="onCardDateChange(item.id, $event.start, $event.end)"
+            ></bifi-app-gantt-card>
+          }
+        </div>
 
-      <!-- Item Bars -->
-      <div class="relative" [style.height.px]="flat().length * rowHeight()">
-        @for (item of flat(); track item.id; let i = $index) {
-          <bifi-app-gantt-card
-            [item]="item"
-            [index]="i"
-            [height]="rowHeight()"
-            [itemOffset]="getItemOffset(item)"
-            [itemWidth]="getItemWidth(item)"
-            [pixelsPerUnit]="pixelsPerUnit()"
-            [unit]="unit()"
-            (dateChange)="onCardDateChange(item.id, $event.start, $event.end)"
-          ></bifi-app-gantt-card>
-        }
+        <!-- Dependency Arrows -->
+        <svg
+          class="absolute top-11 left-0 w-full pointer-events-none"
+          [style.height.px]="flat().length * rowHeight()"
+        >
+          <defs>
+            <marker
+              id="arrowhead"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" class="fill-gray-500"></path>
+            </marker>
+          </defs>
+          @for (path of dependencyPaths(); track $index) {
+            <path
+              [attr.d]="path"
+              class="stroke-gray-500"
+              stroke-width="1.5"
+              fill="none"
+              marker-end="url(#arrowhead)"
+            ></path>
+          }
+        </svg>
       </div>
-
-      <!-- Dependency Arrows -->
-      <svg
-        class="absolute top-11 left-0 w-full pointer-events-none"
-        [style.height.px]="flat().length * rowHeight()"
-      >
-        <defs>
-          <marker
-            id="arrowhead"
-            viewBox="0 0 10 10"
-            refX="8"
-            refY="5"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 0 L 10 5 L 0 10 z" class="fill-gray-500"></path>
-          </marker>
-        </defs>
-        @for (path of dependencyPaths(); track $index) {
-          <path
-            [attr.d]="path"
-            class="stroke-gray-500"
-            stroke-width="1.5"
-            fill="none"
-            marker-end="url(#arrowhead)"
-          ></path>
-        }
-      </svg>
     </div>
-  </div>
+  }
+  </div><!-- end Sidebar + Chart row -->
 </div>

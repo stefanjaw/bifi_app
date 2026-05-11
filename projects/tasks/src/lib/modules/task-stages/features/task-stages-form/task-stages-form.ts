@@ -62,6 +62,7 @@ export class TaskStagesForm {
         this.formService.patchValue({
           name: stage.name,
           description: stage.description ?? '',
+          color: stage.color ?? '#6366f1',
           isDefault: stage.isDefault,
         });
         this.formService.resetDirtyState();

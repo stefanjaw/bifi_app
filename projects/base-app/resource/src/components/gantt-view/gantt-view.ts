@@ -37,6 +37,10 @@ export interface DayTick {
   labelTransform: string;
 }
 
+const OVERVIEW_COL_WIDTH = 160;
+const OVERVIEW_CARD_WIDTH = 120;
+const OVERVIEW_LEFT_PAD = 16;
+
 @Component({
   selector: 'bifi-app-gantt-view',
   imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule, TreeList],
@@ -76,7 +80,7 @@ export class GanttView implements OnDestroy {
   private boundMouseMove: ((e: MouseEvent) => void) | null = null;
   private boundMouseUp: (() => void) | null = null;
 
-  //#region Computed
+  //#region Computed — time-based modes
 
   timelineRange = computed(() => {
     const mode = this.viewMode();
@@ -257,6 +261,135 @@ export class GanttView implements OnDestroy {
 
   //#endregion
 
+  //#region Computed — Overview mode
+
+  overviewLayout = computed((): Map<string, { x: number; width: number }> | null => {
+    if (this.viewMode() !== 'Overview') return null;
+
+    const items = this.flat();
+    const deps = this.dependencies();
+
+    // Build predecessor map: dep.from must finish before dep.to starts
+    const predecessors = new Map<string, string[]>();
+    const itemIdSet = new Set(items.map(i => i.id));
+    for (const item of items) predecessors.set(item.id, []);
+    for (const dep of deps) {
+      const list = predecessors.get(dep.to);
+      if (list) list.push(dep.from);
+    }
+    // Also treat parentId as an implicit predecessor so children are always
+    // placed at least one column to the right of their parent.
+    for (const item of items) {
+      if (item.parentId && itemIdSet.has(item.parentId)) {
+        predecessors.get(item.id)!.push(item.parentId);
+      }
+    }
+
+    // Compute column depth via memoised recursion (longest predecessor chain)
+    const depthCache = new Map<string, number>();
+    const getDepth = (id: string, visiting: Set<string>): number => {
+      if (depthCache.has(id)) return depthCache.get(id)!;
+      if (visiting.has(id)) return 0; // cycle guard
+      const next = new Set(visiting);
+      next.add(id);
+      const preds = predecessors.get(id) ?? [];
+      const depth =
+        preds.length === 0 ? 0 : Math.max(...preds.map(p => getDepth(p, next))) + 1;
+      depthCache.set(id, depth);
+      return depth;
+    };
+
+    for (const item of items) getDepth(item.id, new Set());
+
+    // Build children map from parentId so we can compute subtree widths
+    const childrenOf = new Map<string, string[]>();
+    for (const item of items) childrenOf.set(item.id, []);
+    for (const item of items) {
+      if (item.parentId && itemIdSet.has(item.parentId)) {
+        childrenOf.get(item.parentId)!.push(item.id);
+      }
+    }
+
+    // Compute the rightmost pixel edge of each item's entire subtree (memoised)
+    const subtreeRight = new Map<string, number>();
+    const getSubtreeRight = (id: string): number => {
+      if (subtreeRight.has(id)) return subtreeRight.get(id)!;
+      const col = depthCache.get(id) ?? 0;
+      const selfRight = OVERVIEW_LEFT_PAD + col * OVERVIEW_COL_WIDTH + OVERVIEW_CARD_WIDTH;
+      const children = childrenOf.get(id) ?? [];
+      const right = children.length === 0
+        ? selfRight
+        : Math.max(selfRight, ...children.map(c => getSubtreeRight(c)));
+      subtreeRight.set(id, right);
+      return right;
+    };
+    for (const item of items) getSubtreeRight(item.id);
+
+    // Each item's width stretches from its own x to the right edge of its deepest descendant
+    const layout = new Map<string, { x: number; width: number }>();
+    for (const item of items) {
+      const col = depthCache.get(item.id) ?? 0;
+      const x = OVERVIEW_LEFT_PAD + col * OVERVIEW_COL_WIDTH;
+      layout.set(item.id, { x, width: subtreeRight.get(item.id)! - x });
+    }
+
+    return layout;
+  });
+
+  overviewTotalWidth = computed(() => {
+    const layout = this.overviewLayout();
+    if (!layout) return 0;
+    let maxRight = 0;
+    for (const { x, width } of layout.values()) {
+      maxRight = Math.max(maxRight, x + width);
+    }
+    return maxRight + 32;
+  });
+
+  overviewDependencyPaths = computed((): string[] => {
+    const layout = this.overviewLayout();
+    if (!layout) return [];
+
+    const visible = this.flat();
+    const deps = this.dependencies();
+    const rowHeight = this.rowHeight();
+
+    if (!visible.length || !deps.length) return [];
+
+    const indexMap = new Map<string, number>();
+    visible.forEach((item, i) => indexMap.set(item.id, i));
+
+    const paths: string[] = [];
+
+    for (const dep of deps) {
+      const fromLayout = layout.get(dep.from);
+      const toLayout = layout.get(dep.to);
+      const fromIndex = indexMap.get(dep.from);
+      const toIndex = indexMap.get(dep.to);
+
+      if (!fromLayout || !toLayout || fromIndex == null || toIndex == null) continue;
+
+      const startX = fromLayout.x + fromLayout.width;
+      const startY = fromIndex * rowHeight + rowHeight / 2;
+      const endX = toLayout.x - 8;
+      const endY = toIndex * rowHeight + rowHeight / 2;
+      const r = 15;
+
+      if (endX > startX) {
+        paths.push(`M ${startX},${startY} H ${startX + r / 2} V ${endY} H ${endX}`);
+      } else {
+        const midY = startY < endY ? startY + rowHeight / 2 : startY - rowHeight / 2;
+        paths.push(
+          `M ${startX},${startY} H ${startX + r} V ${midY} H ${endX - r} V ${endY} H ${endX}`
+        );
+      }
+    }
+
+    return paths;
+  });
+
+  //#endregion
+
   constructor() {
     effect(() => {
       const ganttContainer = this.ganttContainer();
@@ -284,11 +417,11 @@ export class GanttView implements OnDestroy {
   //#region Drag-to-pan
 
   onGanttMouseDown(event: MouseEvent): void {
+    if (this.viewMode() === 'Overview') return;
     if ((event.target as Element).closest('bifi-app-gantt-card')) return;
 
     event.preventDefault();
 
-    this.viewMode();
     this.dragStartX = event.clientX;
     this.dragBaseOffset = this.panOffsetDays();
 
@@ -365,6 +498,14 @@ export class GanttView implements OnDestroy {
     return (end.diff(start, 'day') + 1) * ppu;
   }
 
+  getOverviewItemOffset(itemId: string): number {
+    return this.overviewLayout()?.get(itemId)?.x ?? 0;
+  }
+
+  getOverviewItemWidth(itemId: string): number {
+    return this.overviewLayout()?.get(itemId)?.width ?? OVERVIEW_CARD_WIDTH;
+  }
+
   formatDateHeader(date: dayjs.Dayjs): string {
     switch (this.viewMode()) {
       case 'Week':
@@ -384,6 +525,7 @@ export class GanttView implements OnDestroy {
   }
 
   scrollToTask(item: GanttNode<GanttItem>): void {
+    if (this.viewMode() === 'Overview') return;
     if (!item.start || !item.end) return;
 
     const start = dayjs(item.start);

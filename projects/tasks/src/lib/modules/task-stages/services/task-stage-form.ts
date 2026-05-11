@@ -5,6 +5,7 @@ import { BaseForm } from '@avalantec/base-app/form';
 export interface TaskStageFormModel {
   name: string;
   description: string;
+  color: string;
   isDefault: boolean;
 }
 
@@ -16,6 +17,7 @@ export class TaskStageForm extends BaseForm<TaskStageFormModel> {
     return this.fb.group<TaskStageFormModel>({
       name: ['', [Validators.required]],
       description: [''],
+      color: ['#6366f1'],
       isDefault: [false],
     });
   }

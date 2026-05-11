@@ -20,6 +20,8 @@ export class GanttCard {
   itemWidth = input.required<number>();
   pixelsPerUnit = input.required<number>();
   unit = input.required<GanttCardUnit>();
+  overview = input<boolean>(false);
+  color = input<string | undefined>(undefined);
 
   // outputs
   dateChange = output<{ start: dayjs.Dayjs; end: dayjs.Dayjs }>();
@@ -50,11 +52,13 @@ export class GanttCard {
   }
 
   onMouseDown(event: MouseEvent) {
+    if (this.overview()) return;
     event.stopPropagation();
     this.startDrag(event.clientX, 'move');
   }
 
   onResizeMouseDown(event: MouseEvent) {
+    if (this.overview()) return;
     event.stopPropagation();
     this.startDrag(event.clientX, 'resizeEnd');
   }

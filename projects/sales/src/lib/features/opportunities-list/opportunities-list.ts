@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import {
   ButtonsActions,
+  FilterBar,
+  ListStateManager,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -18,7 +20,7 @@ import { CrudCrmStages } from '../../modules/crm-stages/services/crud-crm-stages
 import { crmStage } from '../../modules/crm-stages/interfaces/crm-stage';
 import { crm } from '../../interfaces/crm';
 import { crmColumns } from '../../libraries/crm-columns';
-import { crmFilters } from '../../libraries/crm-filters';
+import { crmFilterFields, crmFilters } from '../../libraries/crm-filters';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -29,11 +31,11 @@ import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-opportunities-list',
-  providers: [provideResourceManager(CrudCrm)],
+  providers: [ListStateManager, ...provideResourceManager(CrudCrm)],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
+  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,6 +59,7 @@ export class OpportunitiesList {
 
   crmColumns = crmColumns;
   crmFilters = crmFilters;
+  filterFields = crmFilterFields;
 
   entries = this.resourceManager.data;
 
