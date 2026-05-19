@@ -31,6 +31,7 @@ import { CrudCountries } from '@avalantec/base-app/countries';
 import { contact } from '@avalantec/base-app/interfaces';
 import { TagModule } from 'primeng/tag';
 import { FileUpload } from 'primeng/fileupload';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -47,7 +48,9 @@ import { FileUpload } from 'primeng/fileupload';
     SelectChildContactDialog,
     TagModule,
     FileUpload,
+    PluginSlot,
   ],
+  providers: [providePluginContext(ContactsForm)],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

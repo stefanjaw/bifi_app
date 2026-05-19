@@ -256,6 +256,8 @@
           </div>
         </bifi-app-form-section>
       }
+
+      <bifi-app-plugin-slot name="contact-form-plugin"></bifi-app-plugin-slot>
     } @else if (error()) {
       <p>Something went wrong... {{ error() }}</p>
     } @else {
