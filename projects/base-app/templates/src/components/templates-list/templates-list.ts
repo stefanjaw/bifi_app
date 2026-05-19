@@ -39,7 +39,7 @@ export class TemplatesList {
   reportings = this.resourceManager.data;
 
   gotoEditTemplate = (element: template) => {
-    this.router.navigate(['..templates/edit', element._id], { relativeTo: this.route });
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   }
   deleteTemplate(id: string) {
     this.crudTemplates
