@@ -12,6 +12,9 @@
       "@avalantec/asset-roster": ["dist/asset-roster/*", "dist/asset-roster"],
       "@avalantec/asset-roster/*": ["projects/asset-roster/*", "projects/asset-roster"],
 
+      "@avalantec/l10n_cr_einvoice": ["dist/l10n_cr_einvoice/*", "dist/l10n_cr_einvoice"],
+      "@avalantec/l10n_cr_einvoice/*": ["projects/l10n_cr_einvoice/*", "projects/l10n_cr_einvoice"],
+
       "@avalantec/calendar": ["dist/calendar/*", "dist/calendar"],
       "@avalantec/calendar/*": ["projects/calendar/*", "projects/calendar"],
 

@@ -1,13 +1,16 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
+  effect,
   inject,
   input,
   ResourceRef,
+  signal,
   TemplateRef,
-  AfterViewInit,
+  untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
@@ -90,6 +93,15 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   private skipNextLazyLoad = true;
   firstSet = false;
 
+  // Infinite scroll accumulation — managed reactively via effect() in constructor.
+  // Using signals (instead of plain mutable fields inside computed()) ensures
+  // Angular's reactive system always sees every write and never skips an update.
+  private _accumulatedPages = signal<number>(0);
+  private _accumulatedDocs = signal<T[]>([]);
+
+  // Simple cache used only in non-infinite-scroll mode to prevent loading flicker.
+  private lastValueCache: T[] | null = null;
+
   allLoaded = computed(() => {
     if (!this.infiniteScroll()) return false;
     const state = this.resourceState();
@@ -108,10 +120,46 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
 
   paginatorRows = computed(() => this.paginationManager.paginationOptions().limit);
 
+  constructor() {
+    // Reactively accumulate pages as they arrive in infinite scroll mode.
+    //
+    // An effect() is the correct Angular primitive for this — it is designed
+    // for side effects (writing to signals). A computed() must remain pure;
+    // writing mutable class fields inside computed() is unreliable because
+    // Angular may re-evaluate the computed at any time during its scheduling
+    // cycle, causing the accumulated page counter to reset unexpectedly.
+    effect(() => {
+      if (!this.infiniteScroll()) return;
+
+      const data = this.data();
+
+      // Only handle ResourceRef inputs — skip plain arrays / plain pagination
+      // objects passed directly (those don't use accumulation).
+      if (!data || Array.isArray(data) || isPaginated(data)) return;
+
+      const resourceValue = (data as ResourceRef<tableRows<T>>).value();
+      if (!isPaginated<T>(resourceValue)) return;
+
+      // Read the last accumulated page WITHOUT creating a reactive dependency.
+      // If we tracked _accumulatedPages here the effect would re-run after
+      // writing it, producing an infinite loop.
+      const lastPage = untracked(() => this._accumulatedPages());
+
+      if (resourceValue.page === 1) {
+        // Filter / search reset — start accumulator fresh.
+        this._accumulatedDocs.set([...resourceValue.docs]);
+        this._accumulatedPages.set(1);
+      } else if (resourceValue.page > lastPage) {
+        // New page arrived — append to the existing accumulator.
+        this._accumulatedDocs.update(prev => [...prev, ...resourceValue.docs]);
+        this._accumulatedPages.set(resourceValue.page);
+      }
+    });
+  }
+
   // -----------------------------
   // RESOURCE STATE
   // -----------------------------
-  private lastValueCache: T[] | null = null;
 
   resourceState = computed(() => {
     const data = this.data();
@@ -147,16 +195,26 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
       }
     }
 
-    // ---------- cache logic ----------
-    // if hay value, we cache
-    if (hasValue && Array.isArray(value) && value.length >= 0) {
-      this.lastValueCache = value;
-    }
+    // ---------- cache / accumulation logic ----------
+    if (this.infiniteScroll()) {
+      // Infinite scroll mode: read from the reactively-managed accumulator.
+      // The effect() above writes to _accumulatedDocs whenever a new page
+      // arrives, keeping this computed pure — no side effects here.
+      value = this._accumulatedDocs();
 
-    // if no value, we use the cache
-    if (!hasValue && this.lastValueCache) {
-      value = this.lastValueCache;
-      hasValue = true;
+      // hasValue is true once the accumulator has any docs, or when we know
+      // the result set is genuinely empty (totalDocs === 0 from the server).
+      hasValue =
+        value.length > 0 || (isDataPaginated && pagination !== null && pagination.totalDocs === 0);
+    } else {
+      // Regular (paginator) mode: simple cache to prevent loading flicker.
+      if (hasValue && Array.isArray(value) && value.length >= 0) {
+        this.lastValueCache = value;
+      }
+      if (!hasValue && this.lastValueCache) {
+        value = this.lastValueCache;
+        hasValue = true;
+      }
     }
     // ----------------------------------
 
@@ -190,6 +248,8 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
    * @param event - The TableLazyLoadEvent emitted by the table when lazy loaded.
    */
   lazyLoad(event: TableLazyLoadEvent) {
+    if (this.infiniteScroll()) return;
+
     const state = this.resourceState(); // Obtenemos el estado actual del resource
 
     // BLOQUEO CRÍTICO:

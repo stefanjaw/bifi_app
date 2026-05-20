@@ -27,6 +27,7 @@ import { provideAccounting } from '@avalantec/accounting';
 import { provideHelpdesk } from '@avalantec/helpdesk';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
+import { provideL10nCrEinvoice } from '@avalantec/l10n_cr_einvoice';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -68,6 +69,7 @@ export const appConfig: ApplicationConfig = {
     provideAccounting(),
     provideHelpdesk(),
     provideProjects(),
+    provideL10nCrEinvoice(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

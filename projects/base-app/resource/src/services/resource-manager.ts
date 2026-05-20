@@ -90,6 +90,12 @@ export class ResourceManager<T> {
         this._searchParams.set({});
         this._getInactive.set(false);
       }
+
+      // Reset to page 1 whenever filters change so accumulated pages reset cleanly.
+      // untracked() prevents a reactive cycle since paginationOptions is read elsewhere.
+      if (this.mode === 'paginated') {
+        untracked(() => this.paginationManager.resetPaginationOptions());
+      }
     });
 
     effect(() => {

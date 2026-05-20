@@ -152,6 +152,7 @@ export class ContactsForm {
     if (!rawValue.phoneNumber) delete rawValue.phoneNumber;
     if (!rawValue.email) delete rawValue.email;
     if (!rawValue.website) delete rawValue.website;
+    if (!rawValue.vat) delete rawValue.vat;
 
     // if is individual and childIds had something, then erase array
     if (rawValue.type === 'individual' && rawValue.childIds && rawValue.childIds.length > 0) {
@@ -227,6 +228,7 @@ export class ContactsForm {
       zipCode: contact.zipCode,
       streetAddress: contact.streetAddress,
       streetAddress2: contact.streetAddress2,
+      vat: contact.vat,
       ...((parsedImage && {
         photo: [
           {

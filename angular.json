@@ -65,6 +65,32 @@
         }
       }
     },
+    "l10n_cr_einvoice": {
+      "projectType": "library",
+      "root": "projects/l10n_cr_einvoice",
+      "sourceRoot": "projects/l10n_cr_einvoice/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/l10n_cr_einvoice/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/l10n_cr_einvoice/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/l10n_cr_einvoice/tsconfig.spec.json"
+          }
+        }
+      }
+    },
     "asset-roster-demo": {
       "projectType": "application",
       "schematics": {},

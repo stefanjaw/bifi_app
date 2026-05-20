@@ -21,14 +21,6 @@ export const userColumns: tableColumn<user>[] = [
     sortable: true,
   },
   {
-    field: 'roles',
-    title: 'Roles',
-    type: 'text',
-    parseField(value: user['roles']) {
-      return value.map(role => role.name).join(', ');
-    },
-  },
-  {
     field: 'contactId.name',
     title: 'Contact Name',
     type: 'text',

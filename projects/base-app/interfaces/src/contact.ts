@@ -16,6 +16,7 @@ export interface contact {
   zipCode?: string;
   streetAddress?: string;
   streetAddress2?: string;
+  vat?: string;
   photo?: string;
   fullName: string;
   fullAddress: string;

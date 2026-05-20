@@ -19,6 +19,7 @@ export interface ContactFormModel {
   zipCode?: string;
   streetAddress?: string;
   streetAddress2?: string;
+  vat?: string;
 }
 
 @Injectable({
@@ -75,6 +76,7 @@ export class ContactForm extends BaseForm<ContactFormModel> {
       zipCode: [''],
       streetAddress: [''],
       streetAddress2: [''],
+      vat: [''],
     });
   }
 }
