@@ -24,7 +24,12 @@ import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
 import { DatePipe } from '@angular/common';
-import { CrudActivityHistories, FileResolver } from '@avalantec/base-app/resource';
+import {
+  activityHistory,
+  CrudActivityHistories,
+  FileResolver,
+  orderByQuery,
+} from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
@@ -63,11 +68,16 @@ export class TicketFormComponent {
     triggerRequest: computed(() => !!this.id()),
   });
 
+  private activityHistoryOrder = signal<orderByQuery<activityHistory>>([
+    { field: 'performDate', order: 'desc' },
+  ]);
+
   stagesResource = this.crudStages.get({});
   usersResource = this.crudUsers.get({});
   tasksResource = this.crudTasks.get({});
   activityHistoriesResource = this.crudActivityHistories.get({
     searchParams: computed(() => (this.id() ? { model: 'Ticket', modelId: this.id() } : undefined)),
+    sort: this.activityHistoryOrder,
     triggerRequest: computed(() => !!this.id()),
     getInactive: null,
   });
