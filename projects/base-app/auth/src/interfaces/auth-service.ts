@@ -10,14 +10,14 @@ import {
   resource,
   user,
 } from '@avalantec/base-app/interfaces';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth } from '@angular/fire/auth';
 import { permission } from './permission';
 
 export abstract class IAuthService<
   TUser extends user,
   TSession extends Session<TUser> = Session<TUser>,
 > {
-  abstract authClient: AngularFireAuth | any;
+  abstract authClient: Auth | any;
   abstract session: Signal<TSession | null>;
   abstract user: Signal<TUser | null>;
 
@@ -63,7 +63,6 @@ export abstract class IAuthService<
       const resourceDataValue = mayBeSignalValue(resourceData);
       const contextValue = mayBeSignalValue(context);
 
-      // If no resource or action is provided, grant permission by default
       if (!resourceValue || (!actionValue && !typeValue)) return true;
 
       return this.hasPermission({
@@ -94,7 +93,6 @@ export abstract class IAuthService<
   getPermissionAction(permission: permission | undefined): policyAction | undefined {
     const split = permission?.split(':');
 
-    // check if segment is an action
     const segment = split?.[1];
 
     if (segment && this.isPermissionAction(segment)) return segment as policyAction;
@@ -130,38 +128,28 @@ export abstract class IAuthService<
   }): boolean {
     if (!this.rbacEnable) return true;
 
-    // Get all user's policies
     const userPolicies = user.roles.flatMap(role => role.policies);
 
-    // Find the policy that matches the resource and action and/or type
     const policies = userPolicies.filter(p => {
-      // if resource doesnt match, then no
       if (p.policyId.resource !== resource) return false;
-
-      // if action doesnt match if included, then no
       if (action && !p.actions.includes(action)) return false;
-
-      // if type doesnt match if included, then no
       if (type && p.policyId.type !== type) return false;
-
       return true;
     });
 
     if (!policies.length) {
-      return false; // No policy found for the resource and action
+      return false;
     }
 
     return policies.some(policy => {
       if (policy.policyId.conditions.length === 0) {
-        return true; // No conditions, permission granted
+        return true;
       }
 
-      // If conditions are provided, check if they match the resource data
       if (!resourceData) {
-        return false; // No resource data provided, cannot evaluate conditions
+        return false;
       }
 
-      // Check if all conditions are met
       return policy.policyId.conditions.every(condition => {
         return this.evaluateCondition({
           cond: condition,
@@ -219,9 +207,8 @@ export abstract class IAuthService<
     resourceData: TModel;
     context: object;
   }) {
-    // Ejemplo {{user.id}}
     if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
-      const path = value.slice(2, -2).trim(); // ej: "user.id"
+      const path = value.slice(2, -2).trim();
       const [root, ...rest] = path.split('.');
 
       let source: any;

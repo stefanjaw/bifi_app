@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormCodeEditor } from '@avalantec/base-app/form';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CrudReporting } from '../../services/crud-reporting';
@@ -27,6 +28,7 @@ import { SelectModule } from 'primeng/select';
   imports: [
     ReactiveFormsModule,
     FormModule,
+    FormCodeEditor,
     InputTextModule,
     ProgressBarModule,
     ButtonModule,
@@ -53,7 +55,6 @@ export class ReportingsForm implements OnInit {
 
   modelsListResource = this.backendModels.getModelsList();
 
-  // data
   reporting = this.reportingResource.value;
   modelsList = this.modelsListResource.value;
 

@@ -7,7 +7,7 @@ import { FirebaseSession } from '../interfaces/session-user';
 import { LIB_AUTH_SERVICE } from './providers/auth-service-provider';
 import { FirebaseAuth } from './firebase-auth';
 import { FirebaseRemoteConfigObject } from '@angular/fire/remote-config';
-import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 import { AUTH_ENABLED_TOKEN } from './providers/enable-auth-provider';
 
 interface FirebaseAuthProviderSettings<
@@ -55,23 +55,20 @@ export const provideAppAuth = <TUser>({
 }: AppAuthSettings<TUser>): (Provider | EnvironmentProviders)[] => {
   const providers: (Provider | EnvironmentProviders)[] = [];
 
-  // Firebase provider token
   if (authProvider.type === 'FIREBASE') {
-    providers.push({ provide: FIREBASE_OPTIONS, useValue: authProvider.config });
     providers.push(provideFirebaseApp(() => initializeApp(authProvider.config)));
+    providers.push(provideAuth(() => getAuth()));
 
     const token = authProvider.token || LIB_AUTH_SERVICE;
     providers.push({ provide: token, useClass: FirebaseAuth });
   }
 
-  // Custom provider
   if (authProvider.type === 'CUSTOM') {
     providers.push({ provide: authProvider.token, useValue: authProvider.value });
   }
 
   providers.push({ provide: APP_BACKEND_AUTH_SERVICE, useClass: backendAuth });
 
-  // Auth enabled token
   providers.push({ provide: AUTH_ENABLED_TOKEN, useValue: true });
 
   return providers;

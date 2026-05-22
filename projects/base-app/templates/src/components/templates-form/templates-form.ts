@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormCodeEditor } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -26,6 +27,7 @@ import { AccessTokenDialog } from '@avalantec/base-app/auth';
   imports: [
     ReactiveFormsModule,
     FormModule,
+    FormCodeEditor,
     InputTextModule,
     ProgressBarModule,
     ButtonModule,

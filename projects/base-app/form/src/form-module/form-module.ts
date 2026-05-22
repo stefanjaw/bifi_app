@@ -12,7 +12,6 @@ import { Hint } from '../components/hint/hint';
 import { FormActionsHandler } from '../directives/form-actions-handler';
 import { FormControlExtension } from '../directives/form-control-extension';
 import { TranslatedErrors } from '../directives/translated-errors';
-import { FormCodeEditor } from '../components/form-code-editor/form-code-editor';
 
 @NgModule({
   imports: [
@@ -29,7 +28,6 @@ import { FormCodeEditor } from '../components/form-code-editor/form-code-editor'
     FormActionsHandler,
     FormControlExtension,
     TranslatedErrors,
-    FormCodeEditor,
   ],
   exports: [
     FormActions,
@@ -45,7 +43,6 @@ import { FormCodeEditor } from '../components/form-code-editor/form-code-editor'
     FormActionsHandler,
     FormControlExtension,
     TranslatedErrors,
-    FormCodeEditor,
   ],
 })
 export class FormModule {}

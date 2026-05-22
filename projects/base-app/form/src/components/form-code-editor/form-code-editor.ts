@@ -7,25 +7,16 @@ import {
   input,
   effect,
   AfterViewInit,
-  computed,
 } from '@angular/core';
 
-import { EditorView, basicSetup } from 'codemirror';
-import { MergeView } from '@codemirror/merge';
-import { indentWithTab } from '@codemirror/commands';
-import { keymap } from '@codemirror/view';
-
-// Languages...
-import { html } from '@codemirror/lang-html';
-import { javascript } from '@codemirror/lang-javascript';
-import { css } from '@codemirror/lang-css';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { Diagnostic, linter } from '@codemirror/lint';
+import type { EditorView } from 'codemirror';
+import type { MergeView } from '@codemirror/merge';
+import type { LanguageSupport } from '@codemirror/language';
+import type { Compartment } from '@codemirror/state';
+import type { Diagnostic } from '@codemirror/lint';
 
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { formCodeEditorLanguages } from '../../interfaces/form-code-editor-languages';
-import { LanguageSupport, syntaxTree } from '@codemirror/language';
-import { Compartment } from '@codemirror/state';
 import { ButtonModule } from 'primeng/button';
 import { FormCodeFormatter } from '../../services/form-code-formatter';
 
@@ -45,102 +36,144 @@ import { FormCodeFormatter } from '../../services/form-code-formatter';
 })
 export class FormCodeEditor implements AfterViewInit {
   private editor!: EditorView | MergeView;
-  private languageCompartment = new Compartment();
+  private languageCompartment!: Compartment;
   private formCodeFormatter = inject(FormCodeFormatter);
-
-  // inputs normales
-  language = input<formCodeEditorLanguages | undefined>('text/html');
-
-  languageSupport = computed(() => {
-    const language = this.language();
-
-    switch (language) {
-      case 'application/javascript':
-      case 'text/javascript':
-        return javascript();
-      case 'application/typescript':
-      case 'text/typescript':
-        return javascript({ typescript: true });
-      case 'text/css':
-        return css();
-      case 'text/html':
-        return html();
-      default:
-        return javascript();
-    }
-  });
-
-  // diff mode
-  diffMode = input<boolean>(false);
-  leftFormControl = input<FormControl>(); // original
-  rightFormControl = input<FormControl>(); // updated
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange = (value: string) => {
-    // empty
-  };
-  private onTouched = () => {
-    // empty
-  };
-
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private initialValue: string | undefined = undefined;
 
-  codeExtentions = [basicSetup, oneDark, keymap.of([indentWithTab]), EditorView.lineWrapping];
+  private _cm: any = null;
+  private _modulesReady = false;
+
+  language = input<formCodeEditorLanguages | undefined>('text/html');
+  diffMode = input<boolean>(false);
+  leftFormControl = input<FormControl>();
+  rightFormControl = input<FormControl>();
+
+  private initialValue: string | undefined = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private onChange = (_value: string) => {};
+  private onTouched = () => {};
 
   constructor() {
     effect(() => {
-      const languageSupport = this.languageSupport();
+      const language = this.language();
+      if (!this._modulesReady || !this.editor || !this._cm) return;
 
-      // if no editor, abort
-      if (!this.editor) return;
+      const languageSupport: LanguageSupport = this._cm.getLanguage(language);
 
       if (this.diffMode()) {
         const editor = this.editor as MergeView;
-
-        editor.a.dispatch({
-          effects: this.languageCompartment.reconfigure(languageSupport),
-        });
-        editor.b.dispatch({
-          effects: this.languageCompartment.reconfigure(languageSupport),
-        });
+        editor.a.dispatch({ effects: this.languageCompartment.reconfigure(languageSupport) });
+        editor.b.dispatch({ effects: this.languageCompartment.reconfigure(languageSupport) });
       } else {
-        const editor = this.editor as EditorView;
-        editor.dispatch({ effects: this.languageCompartment.reconfigure(languageSupport) });
+        (this.editor as EditorView).dispatch({
+          effects: this.languageCompartment.reconfigure(languageSupport),
+        });
       }
     });
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
+    const [
+      { EditorView, basicSetup },
+      { MergeView },
+      { indentWithTab },
+      { keymap },
+      { html },
+      { javascript },
+      { css },
+      { oneDark },
+      { linter },
+      { syntaxTree },
+      { Compartment },
+    ] = await Promise.all([
+      import('codemirror'),
+      import('@codemirror/merge'),
+      import('@codemirror/commands'),
+      import('@codemirror/view'),
+      import('@codemirror/lang-html'),
+      import('@codemirror/lang-javascript'),
+      import('@codemirror/lang-css'),
+      import('@codemirror/theme-one-dark'),
+      import('@codemirror/lint'),
+      import('@codemirror/language'),
+      import('@codemirror/state'),
+    ]);
+
+    this.languageCompartment = new Compartment();
+
+    const getLanguage = (lang: formCodeEditorLanguages | undefined): LanguageSupport => {
+      switch (lang) {
+        case 'application/javascript':
+        case 'text/javascript':
+          return javascript();
+        case 'application/typescript':
+        case 'text/typescript':
+          return javascript({ typescript: true });
+        case 'text/css':
+          return css();
+        case 'text/html':
+          return html();
+        default:
+          return javascript();
+      }
+    };
+
+    this._cm = {
+      getLanguage,
+      extensions: [basicSetup, oneDark, keymap.of([indentWithTab]), EditorView.lineWrapping],
+      EditorView,
+      MergeView,
+      linter,
+      syntaxTree,
+    };
+    this._modulesReady = true;
+
+    const languageSupport = getLanguage(this.language());
+
     if (this.diffMode()) {
-      this.createDiffEditor(this.languageSupport());
+      this.createDiffEditor(languageSupport);
     } else {
-      this.createNormalEditor(this.languageSupport());
+      this.createNormalEditor(languageSupport);
 
       if (this.initialValue) {
         const editor = this.editor as EditorView;
-
         editor.dispatch({
           changes: { from: 0, to: editor.state.doc.length, insert: this.initialValue },
         });
-
-        // once flag was used, empty it
         this.initialValue = undefined;
       }
     }
   }
 
-  // ------------------------------
-  // NORMAL MODE
-  // ------------------------------
-  private createNormalEditor(languageSupport: LanguageSupport) {
+  private syntaxErrorLinterFn(): (view: EditorView) => Diagnostic[] {
+    const syntaxTree = this._cm.syntaxTree;
+    return (view: EditorView): Diagnostic[] => {
+      const diagnostics: Diagnostic[] = [];
+      syntaxTree(view.state).iterate({
+        enter(node: any) {
+          if (node.type.isError) {
+            diagnostics.push({
+              from: node.from,
+              to: node.to,
+              severity: 'error',
+              message: 'Syntax error',
+            });
+          }
+        },
+      });
+      return diagnostics;
+    };
+  }
+
+  private createNormalEditor(languageSupport: LanguageSupport): void {
+    const { extensions, EditorView, linter } = this._cm;
     this.editor = new EditorView({
       doc: '',
       extensions: [
-        ...this.codeExtentions,
+        ...extensions,
         this.languageCompartment.of(languageSupport),
-        linter(this.syntaxErrorLinter()),
-        EditorView.updateListener.of(update => {
+        linter(this.syntaxErrorLinterFn()),
+        EditorView.updateListener.of((update: any) => {
           if (update.docChanged) {
             this.onChange(update.state.doc.toString());
           }
@@ -150,10 +183,8 @@ export class FormCodeEditor implements AfterViewInit {
     });
   }
 
-  // ------------------------------
-  // DIFF MODE
-  // ------------------------------
-  private createDiffEditor(languageSupport: LanguageSupport) {
+  private createDiffEditor(languageSupport: LanguageSupport): void {
+    const { extensions, EditorView, MergeView, linter } = this._cm;
     const original = this.leftFormControl()?.value ?? '';
     const modified = this.rightFormControl()?.value ?? '';
 
@@ -161,10 +192,10 @@ export class FormCodeEditor implements AfterViewInit {
       a: {
         doc: original,
         extensions: [
-          ...this.codeExtentions,
+          ...extensions,
           this.languageCompartment.of(languageSupport),
-          linter(this.syntaxErrorLinter()),
-          EditorView.updateListener.of(update => {
+          linter(this.syntaxErrorLinterFn()),
+          EditorView.updateListener.of((update: any) => {
             if (update.docChanged) {
               this.leftFormControl()?.setValue(update.state.doc.toString());
               this.leftFormControl()?.markAsDirty();
@@ -175,10 +206,10 @@ export class FormCodeEditor implements AfterViewInit {
       b: {
         doc: modified,
         extensions: [
-          ...this.codeExtentions,
+          ...extensions,
           this.languageCompartment.of(languageSupport),
-          linter(this.syntaxErrorLinter()),
-          EditorView.updateListener.of(update => {
+          linter(this.syntaxErrorLinterFn()),
+          EditorView.updateListener.of((update: any) => {
             if (update.docChanged) {
               this.rightFormControl()?.setValue(update.state.doc.toString());
               this.rightFormControl()?.markAsDirty();
@@ -191,8 +222,7 @@ export class FormCodeEditor implements AfterViewInit {
     });
   }
 
-  // CVA solo se usa en modo normal
-  writeValue(value: string) {
+  writeValue(value: string): void {
     if (this.diffMode()) return;
 
     this.initialValue = value ?? '';
@@ -200,61 +230,33 @@ export class FormCodeEditor implements AfterViewInit {
     if (!this.editor) return;
 
     const view = this.editor as EditorView;
-
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: value ?? '' },
     });
   }
 
-  registerOnChange(fn: any) {
+  registerOnChange(fn: any): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
 
-  syntaxErrorLinter() {
-    return (view: EditorView): Diagnostic[] => {
-      const diagnostics: Diagnostic[] = [];
-      const tree = syntaxTree(view.state);
-
-      tree.iterate({
-        enter(node) {
-          if (node.type.isError) {
-            diagnostics.push({
-              from: node.from,
-              to: node.to,
-              severity: 'error',
-              message: 'Syntax error',
-            });
-          }
-        },
-      });
-
-      return diagnostics;
-    };
-  }
-
-  async formatCode() {
+  async formatCode(): Promise<void> {
     const lang = this.language() ?? 'text/html';
-
     const formatContent = (content: string) => this.formCodeFormatter.format(content, lang);
 
     if (this.diffMode()) {
-      // Format BOTH panels
       const merge = this.editor as MergeView;
-
-      const leftDoc = merge.a.state.doc.toString();
-      const rightDoc = merge.b.state.doc.toString();
-
-      const leftFormatted = await formatContent(leftDoc);
-      const rightFormatted = await formatContent(rightDoc);
+      const [leftFormatted, rightFormatted] = await Promise.all([
+        formatContent(merge.a.state.doc.toString()),
+        formatContent(merge.b.state.doc.toString()),
+      ]);
 
       merge.a.dispatch({
         changes: { from: 0, to: merge.a.state.doc.length, insert: leftFormatted },
       });
-
       merge.b.dispatch({
         changes: { from: 0, to: merge.b.state.doc.length, insert: rightFormatted },
       });
@@ -262,15 +264,11 @@ export class FormCodeEditor implements AfterViewInit {
       this.leftFormControl()?.setValue(leftFormatted);
       this.rightFormControl()?.setValue(rightFormatted);
     } else {
-      // Normal editor
       const editor = this.editor as EditorView;
-      const current = editor.state.doc.toString();
-      const formatted = await formatContent(current);
-
+      const formatted = await formatContent(editor.state.doc.toString());
       editor.dispatch({
         changes: { from: 0, to: editor.state.doc.length, insert: formatted },
       });
-
       this.onChange(formatted);
     }
   }
