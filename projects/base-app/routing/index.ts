@@ -7,3 +7,4 @@ export * from './src/routing/base-app.routes';
 export * from './src/routing/settings.routes';
 export * from './src/services/main-menu-manager';
 export * from './src/services/main-routing-manager';
+export * from './src/services/user-shortcuts.service';

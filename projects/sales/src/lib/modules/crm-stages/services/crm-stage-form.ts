@@ -10,6 +10,7 @@ export interface CrmStageFormModel {
   probability: number;
   isWon: boolean;
   isLost: boolean;
+  isDefault: boolean;
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ export class CrmStageForm extends BaseForm<CrmStageFormModel> {
       probability: [0, [Validators.min(0), Validators.max(100)]],
       isWon: [false],
       isLost: [false],
+      isDefault: [false],
     });
   }
 }

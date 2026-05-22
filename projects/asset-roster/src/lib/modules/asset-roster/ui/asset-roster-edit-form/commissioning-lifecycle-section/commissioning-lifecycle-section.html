@@ -1,29 +1,27 @@
-@if (!isEditMode() && assetRoster()?.status !== 'decommissioned') {
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-    <bifi-app-form-section
-      title="Commissioning & Lifecycle"
-      id="commissioning-lifecycle"
-      [ordinal]="4"
-    >
-      @let assetCommissioning = assetRoster()?.assetCommission;
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+  <bifi-app-form-section
+    title="Commissioning & Lifecycle"
+    id="commissioning-lifecycle"
+    [ordinal]="4"
+  >
+    @let assetCommissioning = assetRoster()?.assetCommission;
 
-      @if (!assetCommissioning || assetCommissioning.outcome === 'fail') {
-        <p-button
-          (onClick)="handleOpencommissionDialog()"
-          [label]="!assetCommissioning ? 'Commission' : 'Re-attempt Commission'"
-          [severity]="!assetCommissioning ? 'success' : 'warn'"
-          class="w-full"
-          size="small"
-        />
-      } @else {
-        <p-button
-          label="Decommission"
-          severity="danger"
-          class="w-full"
-          (onClick)="handleOpenDecommissionDialog()"
-          size="small"
-        />
-      }
-    </bifi-app-form-section>
-  </div>
-}
+    @if (!assetCommissioning || assetCommissioning.outcome === 'fail') {
+      <p-button
+        (onClick)="handleOpencommissionDialog()"
+        [label]="!assetCommissioning ? 'Commission' : 'Re-attempt Commission'"
+        [severity]="!assetCommissioning ? 'success' : 'warn'"
+        class="w-full"
+        size="small"
+      />
+    } @else {
+      <p-button
+        label="Decommission"
+        severity="danger"
+        class="w-full"
+        (onClick)="handleOpenDecommissionDialog()"
+        size="small"
+      />
+    }
+  </bifi-app-form-section>
+</div>

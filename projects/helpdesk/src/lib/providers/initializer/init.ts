@@ -27,7 +27,7 @@ export function initializeHelpdesk() {
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/helpdesk/helpdesk-stages'],
-            label: 'Helpdesk Stages',
+            label: 'Ticket Stages',
             resource: 'helpdesk-stages/menu',
           },
         ],

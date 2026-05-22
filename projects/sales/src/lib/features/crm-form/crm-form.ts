@@ -63,6 +63,9 @@ export class CrmFormComponent {
   contactsResource = this.crudContacts.get({});
   companiesResource = this.crudCompanies.get({});
   stagesResource = this.crudCrmStages.get({});
+  defaultStageResource = this.crudCrmStages.get({
+    searchParams: computed(() => ({ isDefault: true })),
+  });
   usersResource = this.crudUsers.get({});
   currenciesResource = this.crudCurrencies.get({});
 
@@ -109,6 +112,13 @@ export class CrmFormComponent {
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
+      }
+    });
+
+    effect(() => {
+      const stage = (this.defaultStageResource.value() as any[])[0];
+      if (stage && !this.isUpdate()) {
+        this.formService.patchValue({ stage: stage._id });
       }
     });
   }

@@ -31,6 +31,7 @@ import {
   orderByQuery,
 } from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'bifi-app-ticket-form',
@@ -45,6 +46,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     ProgressBarModule,
     DatePipe,
     DatePickerModule,
+    ToggleSwitchModule,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -151,6 +153,7 @@ export class TicketFormComponent {
           dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : undefined,
           dateScheduled: entry.dateScheduled ? new Date(entry.dateScheduled) : undefined,
           duration: entry.duration ?? '30',
+          active: entry.active ?? true,
         });
         this.linkedTaskIds.set(entry.taskIds?.map(t => t._id) ?? []);
         this.formService.resetDirtyState();
@@ -224,6 +227,7 @@ export class TicketFormComponent {
     if (rawValue.category) payload['category'] = rawValue.category;
     if (rawValue.appModule) payload['appModule'] = rawValue.appModule;
     if (rawValue.duration) payload['duration'] = rawValue.duration;
+    payload['active'] = rawValue.active ?? true;
 
     payload['dateStart'] = rawValue.dateStart
       ? new Date(rawValue.dateStart).toISOString()

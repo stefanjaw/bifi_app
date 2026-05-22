@@ -71,6 +71,7 @@ export class CrmStagesForm {
           probability: stage.probability,
           isWon: stage.isWon,
           isLost: stage.isLost,
+          isDefault: stage.isDefault,
         });
         this.formService.resetDirtyState();
       } else {

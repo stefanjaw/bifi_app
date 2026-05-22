@@ -216,6 +216,17 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Active</bifi-app-form-label>
+            <div class="flex items-center gap-3 pt-1">
+              <p-toggle-switch formControlName="active"></p-toggle-switch>
+              <span class="text-sm text-gray-600">
+                {{ form.get('active')?.value ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
             <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
             <input
               pInputText

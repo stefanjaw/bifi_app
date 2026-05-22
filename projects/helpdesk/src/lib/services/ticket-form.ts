@@ -15,6 +15,7 @@ export interface TicketFormModel {
   tagsInput: string;
   category: string;
   appModule: string;
+  active: boolean;
   dateStart?: Date;
   dateEnd?: Date;
   dateScheduled?: Date;
@@ -46,6 +47,7 @@ export class TicketForm extends BaseForm<TicketFormModel> {
       tagsInput: [''],
       category: [''],
       appModule: [''],
+      active: [true],
     });
   }
 

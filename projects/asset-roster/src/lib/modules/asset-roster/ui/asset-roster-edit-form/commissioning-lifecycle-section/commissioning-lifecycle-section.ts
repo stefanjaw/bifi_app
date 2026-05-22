@@ -14,7 +14,6 @@ export class CommissioningLifecycleSection {
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
 
   assetRoster = input.required<assetRoster | undefined>();
-  isEditMode = input.required<boolean>();
 
   handleOpencommissionDialog() {
     this.assetRosterMaintenanceContext.handleOpenCommissionDialog();

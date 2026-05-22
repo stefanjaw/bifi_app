@@ -91,28 +91,59 @@
 
     <!-- this is the contents of the app -->
     <div id="bifi-app-scaffold-outlet" class="h-full flex-1 overflow-auto flex flex-col">
-      @if (activeSubNavItems().length > 0) {
+      <!-- Favorites shortcuts bar -->
+      @if (isLogged() && userConfirmed) {
         <div
-          class="flex flex-row items-center gap-1 px-4 py-2 border-b border-surface-200 bg-surface-0 shrink-0 overflow-x-scroll"
+          class="flex flex-row items-center gap-1 px-4 py-2 border-b border-surface-200 shrink-0 overflow-x-auto transition-colors min-h-[42px]"
+          [ngClass]="{
+            'bg-primary-50 border-primary-200': isDragOver(),
+            'bg-surface-0': !isDragOver(),
+          }"
+          (dragover)="onBarDragOver($event)"
+          (dragleave)="onBarDragLeave($event)"
+          (drop)="onBarDrop($event)"
         >
-          @for (subItem of activeSubNavItems(); track $index) {
-            <a
-              *bifiAppHasPermission="
-                subItem['resource'] ? `${subItem['resource']}:menu` : undefined
-              "
-              pRipple
-              [routerLink]="subItem.routerLink"
-              class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm cursor-pointer hover:bg-surface-100 transition-colors"
-              [ngClass]="{
-                'bg-primary-100 text-primary-700 font-semibold': isItemActive(subItem),
-                'text-surface-600': !isItemActive(subItem),
-              }"
+          @if (userShortcutsService.shortcuts().length === 0) {
+            <span class="text-xs text-surface-400 italic select-none pointer-events-none">
+              Drag items from the sidebar to pin shortcuts here
+            </span>
+          }
+          @for (shortcut of userShortcutsService.shortcuts(); track $index) {
+            <div
+              class="relative group flex items-center shrink-0"
+              draggable="true"
+              (dragstart)="onShortcutDragStart($event, $index)"
+              (dragover)="onShortcutDragOver($event, $index)"
             >
-              @if (subItem.icon) {
-                <span [class]="subItem.icon" class="text-xs"></span>
+              @if (dragOverIndex() === $index && isDragOver()) {
+                <div class="w-0.5 h-5 bg-primary-400 rounded mr-1 shrink-0"></div>
               }
-              <span>{{ subItem.label }}</span>
-            </a>
+              <a
+                *bifiAppHasPermission="
+                  $any(shortcut.resource ? shortcut.resource + ':menu' : undefined)
+                "
+                pRipple
+                [routerLink]="shortcut.routerLink"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm cursor-pointer hover:bg-surface-100 transition-colors pr-6"
+                [ngClass]="{
+                  'bg-primary-100 text-primary-700 font-semibold': isShortcutActive(shortcut),
+                  'text-surface-600': !isShortcutActive(shortcut),
+                }"
+              >
+                @if (shortcut.icon) {
+                  <span [class]="shortcut.icon" class="text-xs"></span>
+                }
+                <span>{{ shortcut.label }}</span>
+              </a>
+              <button
+                class="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center w-4 h-4 rounded-full hover:bg-surface-200 text-surface-400 hover:text-surface-700"
+                (click)="userShortcutsService.removeShortcut($index)"
+                type="button"
+                [pTooltip]="'Remove shortcut'"
+              >
+                <span class="pi pi-times text-[9px]"></span>
+              </button>
+            </div>
           }
         </div>
       }
@@ -138,6 +169,8 @@
       'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
     }"
     [pTooltip]="item.label"
+    draggable="true"
+    (dragstart)="onMenuItemDragStart($event, item)"
   >
     <span [class]="item.icon"></span>
   </a>
@@ -152,6 +185,8 @@
     [ngClass]="{
       'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
     }"
+    draggable="true"
+    (dragstart)="onMenuItemDragStart($event, item)"
   >
     <span [class]="item.icon"></span>
     <span class="ml-2">{{ item.label }}</span>
@@ -179,6 +214,8 @@
           'bg-primary-100! border-b-2 border-b-primary-400':
             isItemActive(item) || hasActiveChild(item),
         }"
+        draggable="true"
+        (dragstart)="onMenuItemDragStart($event, item)"
       >
         <span [class]="item.icon"></span>
         <span class="ml-2">{{ item.label }}</span>

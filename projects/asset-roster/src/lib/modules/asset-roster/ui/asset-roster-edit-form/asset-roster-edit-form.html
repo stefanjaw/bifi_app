@@ -82,9 +82,9 @@
       <div class="max-w-7xl mx-auto px-6 pt-4 pb-8">
         @if (!isLoading()) {
           <bifi-app-form-layout title="">
-            <div class="flex flex-col gap-8">
+            <div class="flex flex-col gap-4">
               <p-tabpanel value="0">
-                <div class="flex flex-col gap-8">
+                <div class="flex flex-col gap-4">
                   <!-- the general information of the assetRoster -->
                   <bifi-app-general-information-section
                     [assetRoster]="assetRoster()"
@@ -108,10 +108,7 @@
                   />
 
                   <!-- the commissioning and lifecycle of the assetRoster -->
-                  <bifi-app-commissioning-lifecycle-section
-                    [assetRoster]="assetRoster()"
-                    [isEditMode]="isEditMode()"
-                  />
+                  <bifi-app-commissioning-lifecycle-section [assetRoster]="assetRoster()" />
                   <!-- the activity history of the assetRoster -->
                   <bifi-app-activity-history-section [activityHistory]="activityHistories()" />
 
@@ -124,7 +121,7 @@
               </p-tabpanel>
 
               <p-tabpanel value="1">
-                <div class="flex flex-col gap-8">
+                <div class="flex flex-col gap-4">
                   <bifi-app-asset-roster-financial-information
                     [assetRoster]="assetRoster()"
                     [assetTypes]="assetTypes()"
