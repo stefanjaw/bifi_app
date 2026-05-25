@@ -1,6 +1,6 @@
 import { HttpContextToken, type HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { switchMap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { LIB_AUTH_SERVICE } from '../providers/auth-service-provider';
 import { AUTH_ENABLED_TOKEN } from '../providers/enable-auth-provider';
 
@@ -20,6 +20,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(LIB_AUTH_SERVICE);
 
   return authService.idToken$.pipe(
+    take(1),
     switchMap(token => {
       if (!token) return next(req);
 

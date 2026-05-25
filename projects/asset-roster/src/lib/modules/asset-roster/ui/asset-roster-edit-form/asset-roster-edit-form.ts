@@ -85,6 +85,15 @@ export class AssetRosterEditForm {
       }
     }
 
+    const locationAssignmentsArray = this.formService.form.controls.locationAssignments;
+
+    for (let i = locationAssignmentsArray.length - 1; i >= 0; i--) {
+      const value = locationAssignmentsArray.at(i).value;
+      if (!value?.locationId || !((value?.assignedQuantity ?? 0) > 0)) {
+        locationAssignmentsArray.removeAt(i);
+      }
+    }
+
     this.assetRosterMaintenanceContext.handleSave();
   }
 

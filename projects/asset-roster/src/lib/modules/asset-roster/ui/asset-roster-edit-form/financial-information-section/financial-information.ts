@@ -307,7 +307,8 @@ export class FinancialInformation {
     const stacked = this.chartType() === 'bar' && this.stackedBars();
     return {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
+      aspectRatio: 2.5,
       plugins: {
         legend: { display: true },
         tooltip: {

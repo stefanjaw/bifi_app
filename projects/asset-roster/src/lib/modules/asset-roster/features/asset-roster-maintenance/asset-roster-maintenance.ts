@@ -243,6 +243,11 @@ export class AssetRosterMaintenance {
       fileFields: ['photo'],
       data: {
         ...value,
+        ...(value.locationAssignments !== undefined && {
+          locationAssignments: value.locationAssignments.filter(
+            (la: any) => la?.locationId && la?.assignedQuantity > 0
+          ),
+        }),
         ...(value.assetTypeIds && {
           assetTypeIds: [value.assetTypeIds],
         }),

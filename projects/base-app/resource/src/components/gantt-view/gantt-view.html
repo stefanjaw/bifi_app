@@ -1,17 +1,14 @@
 <div class="grow flex flex-col overflow-hidden pt-4">
-  <!-- Full-width header: title + view-mode switcher -->
-  <div class="shrink-0 h-8 flex items-center border-t border-b border-gray-200 bg-white px-3 gap-3">
-    <h3 class="font-semibold text-gray-700 flex-1">{{ title() }}</h3>
-    <bifi-app-gantt-switcher [(mode)]="viewMode"></bifi-app-gantt-switcher>
-  </div>
-
   <!-- Sidebar + Chart row -->
   <div class="flex flex-1 overflow-hidden">
   <!-- Sidebar -->
   <div class="min-w-52 w-1/4 shrink-0 overflow-y-auto pr-2">
     <div class="sticky top-0 bg-gray-100 z-10 flex flex-col">
       <div class="h-3"></div>
-      <div class="h-8 border-t border-b border-gray-200 bg-white"></div>
+      <div class="h-8 border-t border-b border-gray-200 bg-white flex items-center px-3 gap-3 overflow-x-auto">
+        <h3 class="font-semibold text-gray-700 shrink-0">{{ title() }}</h3>
+        <bifi-app-gantt-switcher [(mode)]="viewMode"></bifi-app-gantt-switcher>
+      </div>
     </div>
     <bifi-app-tree-list
       [showExpandPlaceholder]="true"

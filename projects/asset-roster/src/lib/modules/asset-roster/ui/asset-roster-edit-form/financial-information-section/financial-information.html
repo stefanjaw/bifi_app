@@ -316,16 +316,13 @@
 
     <!-- Chart or empty state -->
     @if (tcoChartData(); as chartData) {
-      <div style="position: relative; width: 100%; overflow: hidden">
-        <div style="padding-top: 33.33%"></div>
-        <div style="position: absolute; inset: 0">
-          <p-chart
-            [type]="chartType()"
-            [data]="chartData"
-            [options]="tcoChartOptions()"
-            style="width: 100%; height: 100%; display: block"
-          ></p-chart>
-        </div>
+      <div style="width: 100%">
+        <p-chart
+          [type]="chartType()"
+          [data]="chartData"
+          [options]="tcoChartOptions()"
+          style="width: 100%; display: block"
+        ></p-chart>
       </div>
       <div
         class="border border-gray-200 bg-gray-50 rounded-lg px-4 py-3 flex items-center justify-between"

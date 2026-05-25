@@ -8,27 +8,29 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 items-end">
           <!-- Serial Number (Serialized only) -->
           @if (deviceType() === 'serialized' || !deviceType()) {
-            <bifi-app-form-field previewVariant="tag">
-              <bifi-app-form-label>
-                Serial Number
-                <p-tag
-                  [value]="deviceTypeLabel()"
-                  severity="info"
-                  styleClass="ml-2 text-xs"
-                ></p-tag>
-              </bifi-app-form-label>
-              <input
-                pInputText
-                formControlName="serialNumber"
-                type="text"
-                class="w-full"
-                placeholder="SN00X"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
+            <div>
+              <bifi-app-form-field previewVariant="tag">
+                <bifi-app-form-label>
+                  Serial Number
+                  <p-tag
+                    [value]="deviceTypeLabel()"
+                    severity="info"
+                    styleClass="ml-2 text-xs align-middle"
+                  ></p-tag>
+                </bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="serialNumber"
+                  type="text"
+                  class="w-full"
+                  placeholder="SN00X"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
           }
 
           <!-- Type of Equipment -->
@@ -40,7 +42,7 @@
                   <p-tag
                     [value]="deviceTypeLabel()"
                     severity="info"
-                    styleClass="ml-2 text-xs"
+                    styleClass="ml-2 text-xs align-middle"
                   ></p-tag>
                 }
               </bifi-app-form-label>
