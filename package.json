@@ -1,6 +1,7 @@
 {
   "name": "bifi-app",
   "version": "0.0.0",
+  "packageManager": "npm@11.8.0",
   "scripts": {
     "ng": "ng",
     "dev": "ng serve --host 0.0.0.0 --port 4200",
@@ -72,6 +73,7 @@
     "ng-packagr": "^20.0.0",
     "node-fetch": "^3.3.2",
     "ts-node": "^10.9.2",
+    "turbo": "^2.9.14",
     "typescript": "~5.8.2",
     "typescript-eslint": "8.34.1"
   }
