@@ -12,7 +12,6 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyNode = GanttNode<any>;
 
 @Component({
@@ -24,13 +23,14 @@ type AnyNode = GanttNode<any>;
 export class TreeList {
   items = input<AnyNode[]>([]);
   enableDragDrop = input<boolean>(false);
-  rowHeight = input<number>(40);
+  rowHeight = input<number | null>(null);
   rowClass = input<string>(
     'group relative flex items-center justify-between border-b border-r border-gray-200 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50 transition-colors'
   );
   nameColClass = input<string>('flex-grow flex justify-start items-center truncate');
   levelIndentBase = input<number>(0);
   showExpandPlaceholder = input<boolean>(false);
+  wrapName = input<boolean>(false);
 
   expandToggle = output<string>();
   itemClick = output<string>();

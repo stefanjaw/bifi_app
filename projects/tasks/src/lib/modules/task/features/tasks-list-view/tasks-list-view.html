@@ -1,6 +1,4 @@
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="flex-grow overflow-y-auto pt-4 pr-4">
+<div class="grow overflow-y-auto pt-4 pr-4">
   <div
     class="sticky top-0 bg-gray-50 z-10 grid grid-cols-16 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
   >
@@ -18,29 +16,30 @@
     <bifi-app-tree-list
       [items]="tasks()"
       [enableDragDrop]="false"
-      rowClass="group grid grid-cols-16 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
-      nameColClass="col-span-4 truncate flex items-center px-2"
+      rowClass="group grid grid-cols-16 items-start border-b border-gray-200 min-h-10 py-1.5 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
+      nameColClass="col-span-4 overflow-hidden flex items-center px-2"
       [levelIndentBase]="8"
       [showExpandPlaceholder]="true"
+      [wrapName]="true"
       (expandToggle)="tasksMaintenanceContext.toggleExpand($event)"
       (itemClick)="tasksMaintenanceContext.openUpdateTaskDialog($event)"
       (itemReorder)="itemReorder.emit($event)"
       (itemReparent)="itemReparent.emit($event)"
     >
       <ng-template #rowActions let-task>
-        <div class="col-span-2 px-2">
+        <div class="col-span-2 px-2 truncate">
           {{ task.projectName ?? '—' }}
         </div>
-        <div class="col-span-2 px-2">
-          {{ task.start | date: 'MMM d yyyy, hh:mm a' }}
+        <div class="col-span-2 px-2 truncate">
+          {{ task.start | date: 'MMM d, yy' }}
         </div>
-        <div class="col-span-2 px-2">
-          {{ task.end | date: 'MMM d yyyy, hh:mm a' }}
+        <div class="col-span-2 px-2 truncate">
+          {{ task.end | date: 'MMM d, yy' }}
         </div>
         <div class="col-span-1 px-2 truncate">
           {{ task.stage?.name ?? '—' }}
         </div>
-        <div class="col-span-1 px-2">
+        <div class="col-span-1 px-2 truncate">
           {{ formatPriority(task.priority) }}
         </div>
         <div class="col-span-2 px-2 truncate">

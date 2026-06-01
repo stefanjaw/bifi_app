@@ -1,4 +1,4 @@
-<div class="flex-grow overflow-y-auto pt-4 pr-4">
+<div class="grow overflow-y-auto pt-4 pr-4">
   <div
     class="sticky top-0 bg-gray-50 z-10 grid grid-cols-14 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
   >
@@ -14,29 +14,30 @@
     <bifi-app-tree-list
       [items]="projects()"
       [enableDragDrop]="false"
-      rowClass="group grid grid-cols-14 items-center border-b border-gray-200 h-10 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
-      nameColClass="col-span-4 truncate flex items-center px-2"
+      rowClass="group grid grid-cols-14 items-start border-b border-gray-200 min-h-10 py-1.5 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer"
+      nameColClass="col-span-4 overflow-hidden flex items-center px-2"
       [levelIndentBase]="8"
       [showExpandPlaceholder]="true"
+      [wrapName]="true"
       (expandToggle)="expandToggle.emit($event)"
       (itemClick)="editProject.emit($event)"
       (itemReorder)="itemReorder.emit($event)"
       (itemReparent)="itemReparent.emit($event)"
     >
       <ng-template #rowActions let-project>
-        <div class="col-span-2 px-2">
+        <div class="col-span-2 px-2 truncate">
           {{ project.contactName ?? '—' }}
         </div>
-        <div class="col-span-2 px-2">
-          {{ project.start | date: 'MMM d, yyyy' }}
+        <div class="col-span-2 px-2 truncate">
+          {{ project.start | date: 'MMM d, yy' }}
         </div>
-        <div class="col-span-2 px-2">
-          {{ project.end | date: 'MMM d, yyyy' }}
+        <div class="col-span-2 px-2 truncate">
+          {{ project.end | date: 'MMM d, yy' }}
         </div>
         <div class="col-span-1 px-2 truncate">
           {{ project.stage?.name ?? '—' }}
         </div>
-        <div class="col-span-1 px-2">
+        <div class="col-span-1 px-2 truncate">
           {{ formatPriority(project.priority) }}
         </div>
         <div class="col-span-2 flex items-center justify-center gap-1">
