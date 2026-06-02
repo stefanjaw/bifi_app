@@ -1,0 +1,193 @@
+<bifi-app-form-layout
+  title="Email Marketing Configuration"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="Sending Provider" id="provider" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Email Service Provider</bifi-app-form-label>
+            <p-select
+              formControlName="provider"
+              [options]="providerOptions"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onProviderChange($event.value)"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        @if (selectedProvider() === 'resend') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Resend API Key</bifi-app-form-label>
+              <input pInputText formControlName="resendApiKey" type="text" placeholder="re_..." />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'mailgun') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Mailgun API Key</bifi-app-form-label>
+              <input pInputText formControlName="mailgunApiKey" type="text" placeholder="key-..." />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Mailgun Domain</bifi-app-form-label>
+              <input pInputText formControlName="mailgunDomain" type="text" placeholder="mg.example.com" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Region</bifi-app-form-label>
+              <p-select
+                formControlName="mailgunRegion"
+                [options]="mailgunRegionOptions"
+                optionLabel="label"
+                optionValue="value"
+                class="w-full"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'ses') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Access Key ID</bifi-app-form-label>
+              <input pInputText formControlName="sesAccessKeyId" type="text" placeholder="AKIA..." />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Secret Access Key</bifi-app-form-label>
+              <input pInputText formControlName="sesSecretAccessKey" type="text" placeholder="••••••••" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>Region</bifi-app-form-label>
+              <input pInputText formControlName="sesRegion" type="text" placeholder="us-east-1" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'sendgrid') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>SendGrid API Key</bifi-app-form-label>
+              <input pInputText formControlName="sendgridApiKey" type="text" placeholder="SG...." />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        <div class="mt-4 flex items-center gap-3">
+          <p-button
+            label="Test Connection"
+            severity="secondary"
+            icon="pi pi-bolt"
+            [loading]="testLoading()"
+            (onClick)="testConnection()"
+            type="button"
+          ></p-button>
+          @if (testResult(); as result) {
+            <p-message
+              [severity]="result.ok ? 'success' : 'error'"
+              [text]="result.message"
+            ></p-message>
+          }
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Sender Defaults" id="sender" [ordinal]="2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>From Name</bifi-app-form-label>
+            <input pInputText formControlName="fromName" type="text" placeholder="Acme Inc." />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>From Email</bifi-app-form-label>
+            <input pInputText formControlName="fromEmail" type="email" placeholder="hello@example.com" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Reply-To</bifi-app-form-label>
+            <input pInputText formControlName="replyTo" type="email" placeholder="support@example.com" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Public Base URL (for tracking/unsubscribe)</bifi-app-form-label>
+            <input pInputText formControlName="publicBaseUrl" type="text" placeholder="https://app.example.com" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Tracking & Footer" id="tracking" [ordinal]="3">
+        <div class="flex flex-col gap-6">
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox formControlName="trackOpens" [binary]="true" inputId="trackOpens"></p-checkbox>
+              <label for="trackOpens" class="cursor-pointer font-medium text-gray-700">Track email opens</label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox formControlName="trackClicks" [binary]="true" inputId="trackClicks"></p-checkbox>
+              <label for="trackClicks" class="cursor-pointer font-medium text-gray-700">Track link clicks</label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Footer Text</bifi-app-form-label>
+            <textarea pInputTextarea formControlName="footerText" placeholder="Company address, etc." rows="2"></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Unsubscribe Link Text</bifi-app-form-label>
+            <input pInputText formControlName="unsubscribeText" type="text" placeholder="Unsubscribe" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Test Mode" id="test-mode" [ordinal]="4">
+        <div class="flex flex-col gap-6">
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox formControlName="testMode" [binary]="true" inputId="testMode"></p-checkbox>
+              <label for="testMode" class="cursor-pointer font-medium text-gray-700">
+                Enable test mode (redirect all sends to test recipient)
+              </label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Test Recipient</bifi-app-form-label>
+            <input pInputText formControlName="testRecipient" type="email" placeholder="test@example.com" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

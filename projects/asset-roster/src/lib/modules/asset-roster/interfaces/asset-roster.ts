@@ -44,6 +44,7 @@ export interface assetRoster {
   photo: string;
   locationId: room;
   warrantyDate: Date;
+  supportEndDate?: Date;
   remarks?: notes[] | null;
   status: 'active' | 'awaiting-commissioning' | 'under-service' | 'decommissioned' | 'in-pm';
   minMaintenanceDate: string;

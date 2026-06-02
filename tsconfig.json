@@ -42,6 +42,9 @@
       "@avalantec/accounting": ["./projects/accounting/src/lib"],
       "@avalantec/accounting/*": ["./projects/accounting/src/lib/*"],
 
+      "@avalantec/email-marketing": ["./projects/email-marketing/src/lib"],
+      "@avalantec/email-marketing/*": ["./projects/email-marketing/src/lib/*"],
+
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },

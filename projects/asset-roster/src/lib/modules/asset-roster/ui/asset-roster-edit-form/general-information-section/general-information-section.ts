@@ -9,7 +9,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { assetRoster } from '../../../interfaces/asset-roster';
@@ -26,6 +26,7 @@ import { map, startWith } from 'rxjs';
 @Component({
   selector: 'bifi-app-general-information-section',
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
@@ -81,6 +82,9 @@ export class GeneralInformationSection {
   formService = inject(UpdateAssetRosterForm);
   showVendorForm = signal(false);
   showRoomForm = signal(false);
+  openNewLocationForIndex = signal<number | null>(null);
+  newLocationNameForAssignment = model('');
+  newFacilityIdForAssignment = model<string | null>(null);
   form = this.formService.form;
 
   deviceType = toSignal(
@@ -196,7 +200,9 @@ export class GeneralInformationSection {
       .post({
         data: {
           name: this.roomName(),
-          facilityId: this.form.controls.facilityId.value,
+          ...(this.form.controls.facilityId.value && {
+            facilityId: this.form.controls.facilityId.value,
+          }),
           code: ' ',
           address: ' ',
         },
@@ -218,6 +224,35 @@ export class GeneralInformationSection {
 
   toggleRoomForm() {
     this.showRoomForm.update(v => !v);
+  }
+
+  toggleLocationFormForRow(index: number) {
+    this.openNewLocationForIndex.update(i => (i === index ? null : index));
+    this.newLocationNameForAssignment.set('');
+    this.newFacilityIdForAssignment.set(null);
+  }
+
+  handleRoomCreationForRow(index: number) {
+    this.crudRooms
+      .post({
+        data: {
+          name: this.newLocationNameForAssignment(),
+          facilityId: this.newFacilityIdForAssignment()!,
+          code: ' ',
+          address: ' ',
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: created => {
+          if (!created) return;
+          this.roomsResources.reload();
+          this.form.controls.locationAssignments.at(index).controls.locationId.setValue(created._id);
+          this.newLocationNameForAssignment.set('');
+          this.newFacilityIdForAssignment.set(null);
+          this.openNewLocationForIndex.set(null);
+        },
+      });
   }
 
   openPhotoDialog() {

@@ -44,6 +44,7 @@ interface UpdateAssetRosterFormModel {
   acquiredPrice: number | null;
   currentPrice: number | null;
   warrantyDate: Date | null;
+  supportEndDate: Date | null;
   remarks: NotesModel[] | null;
   aiquestion: string | null;
   photo: FormUploaderFile[];
@@ -141,6 +142,7 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       acquiredPrice: [null],
       currentPrice: [null],
       warrantyDate: [null],
+      supportEndDate: [null],
       remarks: {
         template: {
           remark: [''],

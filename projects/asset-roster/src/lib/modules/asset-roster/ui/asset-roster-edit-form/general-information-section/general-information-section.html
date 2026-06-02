@@ -8,29 +8,27 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <!-- Left Column - Form Fields -->
       <div class="lg:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 items-end">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <!-- Serial Number (Serialized only) -->
           @if (deviceType() === 'serialized' || !deviceType()) {
-            <div>
-              <bifi-app-form-field previewVariant="tag">
-                <bifi-app-form-label>
-                  Serial Number
-                  <p-tag
-                    [value]="deviceTypeLabel()"
-                    severity="info"
-                    styleClass="ml-2 text-xs align-middle"
-                  ></p-tag>
-                </bifi-app-form-label>
-                <input
-                  pInputText
-                  formControlName="serialNumber"
-                  type="text"
-                  class="w-full"
-                  placeholder="SN00X"
-                />
-                <bifi-app-form-error></bifi-app-form-error>
-              </bifi-app-form-field>
-            </div>
+            <bifi-app-form-field previewVariant="tag">
+              <bifi-app-form-label>
+                Serial Number
+                <p-tag
+                  [value]="deviceTypeLabel()"
+                  severity="info"
+                  styleClass="ml-2 text-xs"
+                ></p-tag>
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="serialNumber"
+                type="text"
+                class="w-full"
+                placeholder="SN00X"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
           }
 
           <!-- Type of Equipment -->
@@ -42,7 +40,7 @@
                   <p-tag
                     [value]="deviceTypeLabel()"
                     severity="info"
-                    styleClass="ml-2 text-xs align-middle"
+                    styleClass="ml-2 text-xs"
                   ></p-tag>
                 }
               </bifi-app-form-label>
@@ -146,17 +144,19 @@
             </bifi-app-form-field>
           </div>
 
-          <!-- Condition -->
-          <div>
-            <bifi-app-form-field previewVariant="italic">
-              <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
-              <p-select
-                formControlName="condition"
-                [options]="['excellent', 'good', 'fair', 'poor']"
-              ></p-select>
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          </div>
+          <!-- Condition (hidden for software) -->
+          @if (deviceType() !== 'software') {
+            <div>
+              <bifi-app-form-field previewVariant="italic">
+                <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
+                <p-select
+                  formControlName="condition"
+                  [options]="['excellent', 'good', 'fair', 'poor']"
+                ></p-select>
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
 
           <!-- Vendor -->
           <div>
@@ -278,19 +278,35 @@
             </div>
           }
 
-          <!-- Warranty Expiration Date -->
-          <div>
-            <bifi-app-form-field previewVariant="italic" previewValueType="date">
-              <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
-              <p-date-picker
-                formControlName="warrantyDate"
-                [showIcon]="true"
-                inputId="warrantyDate"
-                class="w-full"
-              />
-              <bifi-app-form-error></bifi-app-form-error>
-            </bifi-app-form-field>
-          </div>
+          <!-- Warranty Expiration Date (non-software) / Support End Date (software) -->
+          @if (deviceType() !== 'software') {
+            <div>
+              <bifi-app-form-field previewVariant="italic" previewValueType="date">
+                <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+                <p-date-picker
+                  formControlName="warrantyDate"
+                  [showIcon]="true"
+                  inputId="warrantyDate"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
+          @if (deviceType() === 'software') {
+            <div>
+              <bifi-app-form-field previewVariant="italic" previewValueType="date">
+                <bifi-app-form-label>Support End Date (Optional)</bifi-app-form-label>
+                <p-date-picker
+                  formControlName="supportEndDate"
+                  [showIcon]="true"
+                  inputId="supportEndDate"
+                  class="w-full"
+                />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            </div>
+          }
         </div>
 
         <!-- Location Distribution (Non-Serialized only) -->
@@ -342,7 +358,46 @@
                           [filter]="true"
                           placeholder="Select location"
                           appendTo="body"
-                        ></p-select>
+                        >
+                          <ng-template #footer>
+                            <button
+                              type="button"
+                              class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
+                              (click)="toggleLocationFormForRow($index)"
+                            >
+                              Other location +
+                            </button>
+                            @if (openNewLocationForIndex() === $index) {
+                              <div class="flex flex-col gap-3 p-4">
+                                <input
+                                  class="w-full"
+                                  pInputText
+                                  type="text"
+                                  placeholder="Location name"
+                                  [value]="newLocationNameForAssignment()"
+                                  (input)="newLocationNameForAssignment.set($any($event.target).value)"
+                                />
+                                <p-select
+                                  [options]="facilityOptions()"
+                                  optionLabel="name"
+                                  optionValue="_id"
+                                  [filter]="true"
+                                  placeholder="Select a facility"
+                                  [(ngModel)]="newFacilityIdForAssignment"
+                                  [ngModelOptions]="{ standalone: true }"
+                                ></p-select>
+                                <p-button
+                                  type="button"
+                                  size="small"
+                                  variant="text"
+                                  icon="pi pi-plus"
+                                  (click)="handleRoomCreationForRow($index)"
+                                  [disabled]="!newLocationNameForAssignment().trim() || !newFacilityIdForAssignment()"
+                                ></p-button>
+                              </div>
+                            }
+                          </ng-template>
+                        </p-select>
                         <bifi-app-form-error></bifi-app-form-error>
                       </bifi-app-form-field>
                     </div>

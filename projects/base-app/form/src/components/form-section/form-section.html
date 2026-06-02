@@ -1,14 +1,21 @@
-<header class="flex gap-2 items-center {{class()}}">
-  <!-- @if (ordinal()) {
+<header
+  class="flex gap-2 items-center {{class()}}"
+  [class.cursor-pointer]="collapsible()"
+  [class.select-none]="collapsible()"
+  (click)="collapsible() && toggle()"
+>
+  <h3 class="text-lg font-bold flex-1">{{ title() }}</h3>
+  @if (collapsible()) {
     <span
-      class="w-6 h-6 rounded-lg bg-primary text-primary-contrast flex items-center justify-center"
-    >
-      {{ ordinal() }}
-    </span>
-  } -->
-  <h3 class="text-lg font-bold">{{ title() }}</h3>
+      class="pi text-gray-400"
+      [class.pi-chevron-up]="!collapsed()"
+      [class.pi-chevron-down]="collapsed()"
+    ></span>
+  }
 </header>
-<p-divider></p-divider>
-<div class="mt-6">
-  <ng-content></ng-content>
-</div>
+@if (!collapsed()) {
+  <p-divider></p-divider>
+  <div class="mt-6">
+    <ng-content></ng-content>
+  </div>
+}

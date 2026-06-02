@@ -24,6 +24,7 @@ import { provideSales } from '@avalantec/sales';
 import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
 import { provideAccounting } from '@avalantec/accounting';
+import { provideEmailMarketing } from '@avalantec/email-marketing';
 import { provideHelpdesk } from '@avalantec/helpdesk';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
@@ -67,6 +68,7 @@ export const appConfig: ApplicationConfig = {
     providePurchases(),
     provideInventory(),
     provideAccounting(),
+    provideEmailMarketing(),
     provideHelpdesk(),
     provideProjects(),
     provideL10nCrEinvoice(),

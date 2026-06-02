@@ -43,7 +43,10 @@
       "@avalantec/helpdesk/*": ["projects/helpdesk/*", "projects/helpdesk"],
 
       "@avalantec/accounting": ["dist/accounting/*", "dist/accounting"],
-      "@avalantec/accounting/*": ["projects/accounting/*", "projects/accounting"]
+      "@avalantec/accounting/*": ["projects/accounting/*", "projects/accounting"],
+
+      "@avalantec/email-marketing": ["dist/email-marketing/*", "dist/email-marketing"],
+      "@avalantec/email-marketing/*": ["projects/email-marketing/*", "projects/email-marketing"]
     }
   },
   "angularCompilerOptions": {

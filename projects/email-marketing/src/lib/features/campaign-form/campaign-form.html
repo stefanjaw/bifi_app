@@ -1,0 +1,184 @@
+<bifi-app-form-layout
+  title="{{ isUpdate() ? 'Edit' : 'Create' }} Campaign"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="true"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      @if (actionMessage(); as msg) {
+        <p-message [severity]="msg.ok ? 'success' : 'error'" [text]="msg.message"></p-message>
+      }
+
+      @if (isUpdate()) {
+        <div class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3">
+          <span class="text-sm text-gray-500 mr-2">Status:</span>
+          <span class="font-semibold capitalize">{{ status() }}</span>
+          <div class="flex-1"></div>
+          <p-button
+            label="Send Test"
+            icon="pi pi-paper-plane"
+            severity="secondary"
+            type="button"
+            (onClick)="openTestDialog()"
+          ></p-button>
+          @if (isEditable()) {
+            <p-button
+              label="Schedule"
+              icon="pi pi-clock"
+              severity="secondary"
+              type="button"
+              (onClick)="openScheduleDialog()"
+            ></p-button>
+            <p-button
+              label="Send Now"
+              icon="pi pi-send"
+              type="button"
+              [loading]="actionLoading()"
+              (onClick)="sendNow()"
+            ></p-button>
+          }
+          @if (status() === 'scheduled') {
+            <p-button
+              label="Cancel Send"
+              icon="pi pi-times"
+              severity="danger"
+              type="button"
+              (onClick)="cancelCampaign()"
+            ></p-button>
+          }
+        </div>
+      }
+
+      <bifi-app-form-section title="Campaign Details" id="campaign-details" [ordinal]="1" [collapsible]="true">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Campaign Name</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" placeholder="Internal name" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Subject Line</bifi-app-form-label>
+            <input pInputText formControlName="subject" type="text" placeholder="What recipients see" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Preview Text</bifi-app-form-label>
+            <input pInputText formControlName="previewText" type="text" placeholder="Inbox preview snippet" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Mailing Lists</bifi-app-form-label>
+            <p-multiselect
+              formControlName="listIds"
+              [options]="listOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select lists"
+              class="w-full"
+            ></p-multiselect>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Sender" id="sender" [ordinal]="2" [collapsible]="true">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>From Name</bifi-app-form-label>
+            <input pInputText formControlName="fromName" type="text" placeholder="Leave blank for default" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>From Email</bifi-app-form-label>
+            <input pInputText formControlName="fromEmail" type="email" placeholder="Leave blank for default" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>Reply-To</bifi-app-form-label>
+            <input pInputText formControlName="replyTo" type="email" placeholder="Optional" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Content" id="content" [ordinal]="3">
+        <bifi-app-form-field class="mb-4 block max-w-md">
+          <bifi-app-form-label>Start from Template (optional)</bifi-app-form-label>
+          <p-select
+            formControlName="templateId"
+            [options]="templateOptions()"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Select a template"
+            [showClear]="true"
+            (onChange)="onTemplateChange($event.value)"
+            class="w-full"
+          ></p-select>
+        </bifi-app-form-field>
+        <bifi-app-email-editor #editor [designJson]="designJson()"></bifi-app-email-editor>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
+
+<p-dialog
+  header="Send Test Email"
+  [visible]="testDialogVisible()"
+  (visibleChange)="testDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '28rem' }"
+>
+  <div class="flex flex-col gap-3">
+    <label class="text-sm font-medium text-gray-700">Recipient email</label>
+    <input
+      pInputText
+      type="email"
+      [value]="testEmail()"
+      (input)="testEmail.set($any($event.target).value)"
+      placeholder="you@example.com"
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (onClick)="testDialogVisible.set(false)"></p-button>
+    <p-button label="Send Test" [loading]="actionLoading()" (onClick)="sendTest()"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Schedule Campaign"
+  [visible]="scheduleDialogVisible()"
+  (visibleChange)="scheduleDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '28rem' }"
+>
+  <div class="flex flex-col gap-3">
+    <label class="text-sm font-medium text-gray-700">Send at</label>
+    <p-datepicker
+      [showTime]="true"
+      [ngModel]="scheduleDate()"
+      (ngModelChange)="scheduleDate.set($event)"
+      [ngModelOptions]="{ standalone: true }"
+      [minDate]="undefined"
+      appendTo="body"
+    ></p-datepicker>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (onClick)="scheduleDialogVisible.set(false)"></p-button>
+    <p-button label="Schedule" [loading]="actionLoading()" (onClick)="confirmSchedule()"></p-button>
+  </ng-template>
+</p-dialog>

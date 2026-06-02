@@ -1,0 +1,142 @@
+<div class="email-editor-shell">
+
+  <!-- Left sidebar: blocks + actions (collapsible) -->
+  <aside class="ee-sidebar ee-sidebar-left" [class.ee-sidebar--collapsed]="leftCollapsed()">
+
+    <button
+      type="button"
+      class="ee-collapse-btn"
+      (click)="toggleLeft()"
+      [title]="leftCollapsed() ? 'Expand panel' : 'Collapse panel'"
+    >
+      <i [class]="leftCollapsed() ? 'pi pi-chevron-right' : 'pi pi-chevron-left'"></i>
+    </button>
+
+    <div class="ee-sidebar-inner" [hidden]="leftCollapsed()">
+
+      <!-- Compact toolbar strip — top of sidebar -->
+      <div class="ee-toolbar">
+        <button type="button" class="ee-toolbar-btn" (click)="undo()" title="Undo">
+          <i class="pi pi-undo"></i><span>Undo</span>
+        </button>
+        <button type="button" class="ee-toolbar-btn" (click)="redo()" title="Redo">
+          <i class="pi pi-refresh"></i><span>Redo</span>
+        </button>
+        <button type="button" class="ee-toolbar-btn" (click)="openCode()" title="View code">
+          <i class="pi pi-code"></i><span>Code</span>
+        </button>
+      </div>
+
+      <div class="ee-panel-title">Components</div>
+      <!-- Block manager mounts here — must always be in the DOM -->
+      <div #blocks class="ee-blocks"></div>
+    </div>
+  </aside>
+
+  <!-- Center: canvas + device bar -->
+  <main class="ee-canvas-area">
+
+    <!-- Device switcher bar -->
+    <div class="ee-device-bar">
+      <button
+        type="button"
+        class="ee-device-btn"
+        [class.ee-device-btn--active]="activeDevice() === 'desktop'"
+        (click)="setActiveDevice('desktop')"
+        title="Desktop preview"
+      >
+        <i class="pi pi-desktop"></i>
+        <span>Desktop</span>
+      </button>
+      <button
+        type="button"
+        class="ee-device-btn"
+        [class.ee-device-btn--active]="activeDevice() === 'tablet'"
+        (click)="setActiveDevice('tablet')"
+        title="Tablet preview (768 px)"
+      >
+        <i class="pi pi-tablet"></i>
+        <span>Tablet</span>
+      </button>
+      <button
+        type="button"
+        class="ee-device-btn"
+        [class.ee-device-btn--active]="activeDevice() === 'mobile'"
+        (click)="setActiveDevice('mobile')"
+        title="Mobile preview (375 px)"
+      >
+        <i class="pi pi-mobile"></i>
+        <span>Mobile</span>
+      </button>
+    </div>
+
+    <div #gjs class="ee-canvas"></div>
+  </main>
+
+  <!-- Right sidebar: inspector (collapsible) -->
+  <aside class="ee-sidebar ee-sidebar-right" [class.ee-sidebar--collapsed]="rightCollapsed()">
+
+    <button
+      type="button"
+      class="ee-collapse-btn"
+      (click)="toggleRight()"
+      [title]="rightCollapsed() ? 'Expand panel' : 'Collapse panel'"
+    >
+      <i [class]="rightCollapsed() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"></i>
+    </button>
+
+    <div class="ee-sidebar-inner ee-sidebar-inner--right" [hidden]="rightCollapsed()">
+      <div class="ee-tabs">
+        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'styles'" (click)="setTab('styles')">Styles</button>
+        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'settings'" (click)="setTab('settings')">Settings</button>
+        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'layers'" (click)="setTab('layers')">Layers</button>
+      </div>
+
+      <!-- All manager containers use [hidden] — DOM is NEVER destroyed -->
+      <div class="ee-tab-body" [hidden]="activeTab() !== 'styles'">
+        <div #selectors class="ee-selectors"></div>
+        <div #styles class="ee-styles"></div>
+      </div>
+      <div class="ee-tab-body" [hidden]="activeTab() !== 'settings'">
+        <div #traits class="ee-traits"></div>
+      </div>
+      <div class="ee-tab-body" [hidden]="activeTab() !== 'layers'">
+        <div #layers class="ee-layers"></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Code viewer dialog -->
+@if (codeDialogVisible()) {
+  <div class="ee-code-overlay" (click)="closeCode()">
+    <div class="ee-code-dialog" (click)="$event.stopPropagation()">
+      <div class="ee-code-header">
+        <span>Email code</span>
+        <button type="button" class="ee-code-close" (click)="closeCode()" title="Close">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <div class="ee-code-body">
+        <div class="ee-code-block">
+          <div class="ee-code-block-head">
+            <span>MJML</span>
+            <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeMjml())">
+              <i class="pi pi-copy"></i><span>Copy</span>
+            </button>
+          </div>
+          <pre class="ee-code-pre">{{ codeMjml() }}</pre>
+        </div>
+        <div class="ee-code-block">
+          <div class="ee-code-block-head">
+            <span>Compiled HTML</span>
+            <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeHtml())">
+              <i class="pi pi-copy"></i><span>Copy</span>
+            </button>
+          </div>
+          <pre class="ee-code-pre">{{ codeHtml() }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+}

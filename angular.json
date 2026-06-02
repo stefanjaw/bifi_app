@@ -113,7 +113,8 @@
               }
             ],
             "styles": [
-              "projects/asset-roster-demo/src/styles.css"
+              "projects/asset-roster-demo/src/styles.css",
+              "node_modules/grapesjs/dist/css/grapes.min.css"
             ]
           },
           "configurations": {
@@ -465,6 +466,26 @@
             },
             "development": {
               "tsConfig": "projects/accounting/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    },
+    "email-marketing": {
+      "projectType": "library",
+      "root": "projects/email-marketing",
+      "sourceRoot": "projects/email-marketing/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/email-marketing/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/email-marketing/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"

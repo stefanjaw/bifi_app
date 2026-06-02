@@ -266,6 +266,9 @@ export class AssetRosterMaintenance {
         ...(value.warrantyDate && {
           warrantyDate: value.warrantyDate.toISOString(),
         }),
+        ...(value.supportEndDate && {
+          supportEndDate: value.supportEndDate.toISOString(),
+        }),
         ...(value.maintenanceDate && {
           maintenanceDate: value.maintenanceDate.toISOString(),
         }),
@@ -460,6 +463,7 @@ export class AssetRosterMaintenance {
         performDate: new Date(note.performDate),
       })),
       warrantyDate: assetRoster.warrantyDate ? new Date(assetRoster.warrantyDate) : null,
+      supportEndDate: assetRoster.supportEndDate ? new Date(assetRoster.supportEndDate) : null,
       commissionedDate: assetRoster.commissionedDate
         ? new Date(assetRoster.commissionedDate)
         : null,

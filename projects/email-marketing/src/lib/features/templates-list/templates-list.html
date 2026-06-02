@@ -1,0 +1,37 @@
+<p-button
+  label="Dashboard"
+  severity="secondary"
+  variant="text"
+  icon="pi pi-arrow-left"
+  [routerLink]="['../dashboard']"
+  class="mb-1"
+></p-button>
+
+<h1 class="text-2xl font-bold mb-4">Email Templates</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="New Template"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['create']"
+    *bifiAppHasPermission="'email-templates/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar label="Search by name" [searchFilters]="filters"></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="columns"
+  [data]="templates"
+  [onClickRow]="goToEdit"
+  clickRowPermission="email-templates/update:view"
+>
+  <ng-template #actions let-row>
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteTemplate(row._id)"
+      resource="email-templates"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>
