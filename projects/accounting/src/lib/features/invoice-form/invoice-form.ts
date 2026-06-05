@@ -223,12 +223,6 @@ export class InvoiceForm {
             credit: l.credit ?? 0,
           })),
         });
-        (this.form as any).patchValue({
-          crEinvoiceType: entry.crEinvoiceType ?? '',
-          crCondicionVentaId: (entry.crCondicionVentaId as any)?._id ?? entry.crCondicionVentaId ?? '',
-          crMedioPagoId: (entry.crMedioPagoId as any)?._id ?? entry.crMedioPagoId ?? '',
-          crPlazoCredito: entry.crPlazoCredito ?? null,
-        });
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
@@ -256,18 +250,10 @@ export class InvoiceForm {
     }));
 
     const payload = {
-      contactId: val.contactId || undefined,
-      paymentTermId: val.paymentTermId || undefined,
+      ...val,
       invoiceDate: val.invoiceDate ? (val.invoiceDate as Date).toISOString() : '',
       dueDate: val.dueDate ? (val.dueDate as Date).toISOString() : undefined,
-      journalId: val.journalId,
-      paymentReference: val.paymentReference || undefined,
-      currencyId: val.currencyId,
       lines,
-      crEinvoiceType: val.crEinvoiceType || undefined,
-      crCondicionVentaId: val.crCondicionVentaId || undefined,
-      crMedioPagoId: val.crMedioPagoId || undefined,
-      crPlazoCredito: val.crPlazoCredito != null ? val.crPlazoCredito : undefined,
     };
 
     if (this.isUpdate()) {
