@@ -11,6 +11,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCrEinvoiceSettings, crEinvoiceSettings } from '../../services/crud-cr-einvoice-settings';
 import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form.service';
+import { CrudCompanies } from '@avalantec/base-app/companies';
 
 @Component({
   selector: 'bifi-l10n-cr-einvoice-settings-form',
@@ -20,6 +21,7 @@ import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../.
 })
 export class CrEinvoiceSettingsFormComponent {
   private crud = inject(CrudCrEinvoiceSettings);
+  private crudCompanies = inject(CrudCompanies);
   private formService = inject(CrEinvoiceSettingsFormService);
   private destroy$ = inject(DestroyRef);
 
@@ -28,9 +30,16 @@ export class CrEinvoiceSettingsFormComponent {
   protected settingsResource = this.crud.getSettings();
   protected loading = computed(() => this.settingsResource.isLoading() && !this.settingsResource.error());
 
+  protected companiesResource = this.crudCompanies.get({});
+
+  protected companyOptions = computed(() => {
+    const docs = this.companiesResource.value() ?? [];
+    return docs.map((c) => ({ label: c.name, value: c._id }));
+  });
+
   protected environmentOptions = [
-    { label: 'Sandbox (Testing)', value: 'sandbox' },
-    { label: 'Production', value: 'production' },
+    { label: 'Sandbox (Pruebas)', value: 'sandbox' },
+    { label: 'Producción', value: 'production' },
   ];
 
   constructor() {
@@ -43,10 +52,12 @@ export class CrEinvoiceSettingsFormComponent {
         haciendaUsername: s.haciendaUsername ?? '',
         haciendaPassword: s.haciendaPassword ?? '',
         certificateBase64: s.certificateBase64 ?? '',
-        economicActivityCode: s.economicActivityCode ?? '',
+        certificatePassword: s.certificatePassword ?? '',
         haciendaEnvironment: s.haciendaEnvironment ?? 'sandbox',
         codigoEstablecimiento: s.codigoEstablecimiento ?? '001',
         codigoPuntoVenta: s.codigoPuntoVenta ?? '00001',
+        feVersion: s.feVersion ?? '4.4',
+        emisorCompanyId: (s.emisorCompanyId as any)?._id ?? s.emisorCompanyId ?? '',
       });
     });
   }

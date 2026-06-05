@@ -22,8 +22,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { HttpClient } from '@angular/common/http';
-import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { DecimalPipe } from '@angular/common';
 import { JournalEntryFormService, JournalEntryFormModel } from '../../services/journal-entry-form';
 
@@ -51,8 +49,6 @@ export class JournalEntryForm {
   private crudCurrencies = inject(CrudCurrencies);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
-  private http = inject(HttpClient);
-  private apiURL = inject(LIBRARY_CONFIG).apiURL;
 
   id = input<string>('');
 
@@ -164,8 +160,7 @@ export class JournalEntryForm {
 
   postEntry() {
     this.isPostLoading.set(true);
-    const url = `${this.apiURL}/accounting/journal-entries/${this.id()}/post`;
-    this.http.put(url, {}).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+    this.crudJournalEntries.postEntry(this.id()).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => { this.isPostLoading.set(false); this.goBack(); },
       error: () => this.isPostLoading.set(false),
     });

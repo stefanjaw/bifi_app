@@ -8,10 +8,12 @@ export interface crEinvoiceSettings {
   haciendaUsername?: string;
   haciendaPassword?: string;
   certificateBase64?: string;
-  economicActivityCode?: string;
+  certificatePassword?: string;
   haciendaEnvironment?: 'production' | 'sandbox';
   codigoEstablecimiento?: string;
   codigoPuntoVenta?: string;
+  feVersion?: string;
+  emisorCompanyId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
