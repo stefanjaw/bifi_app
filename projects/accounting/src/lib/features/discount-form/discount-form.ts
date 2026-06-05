@@ -19,10 +19,12 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DiscountFormService, DiscountFormModel } from '../../services/discount-form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 
 @Component({
   selector: 'bifi-app-discount-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule],
+  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule, PluginSlot],
+  providers: [providePluginContext(DiscountForm)],
   templateUrl: './discount-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -33,6 +33,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductFormService, ProductFormModel } from '../../services/product-form.service';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { product } from '../../interfaces/product';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 
 @Component({
   selector: 'bifi-app-product-form',
@@ -50,7 +51,9 @@ import { product } from '../../interfaces/product';
     ProgressBarModule,
     FileUpload,
     HasPermission,
+    PluginSlot,
   ],
+  providers: [providePluginContext(ProductForm)],
   templateUrl: './product-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

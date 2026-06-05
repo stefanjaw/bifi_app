@@ -21,10 +21,12 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TaxFormService, TaxFormModel } from '../../services/tax-form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 
 @Component({
   selector: 'bifi-app-tax-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule],
+  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule, PluginSlot],
+  providers: [providePluginContext(TaxForm)],
   templateUrl: './tax-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

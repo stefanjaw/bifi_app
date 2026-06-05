@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 import { CrudInvoices } from '../../services/crud-invoices';
 import { CrudJournals } from '../../services/crud-journals';
 import { CrudAccounts } from '../../services/crud-accounts';
@@ -37,6 +38,7 @@ import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-for
   selector: 'bifi-app-invoice-form',
   imports: [
     FormModule,
+    PluginSlot,
     ReactiveFormsModule,
     InputText,
     SelectModule,
@@ -51,6 +53,7 @@ import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-for
   ],
   templateUrl: './invoice-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [providePluginContext(InvoiceForm)],
 })
 export class InvoiceForm {
   private formService = inject(InvoiceFormService);
@@ -220,6 +223,12 @@ export class InvoiceForm {
             credit: l.credit ?? 0,
           })),
         });
+        (this.form as any).patchValue({
+          crEinvoiceType: entry.crEinvoiceType ?? '',
+          crCondicionVentaId: (entry.crCondicionVentaId as any)?._id ?? entry.crCondicionVentaId ?? '',
+          crMedioPagoId: (entry.crMedioPagoId as any)?._id ?? entry.crMedioPagoId ?? '',
+          crPlazoCredito: entry.crPlazoCredito ?? null,
+        });
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
@@ -255,6 +264,10 @@ export class InvoiceForm {
       paymentReference: val.paymentReference || undefined,
       currencyId: val.currencyId,
       lines,
+      crEinvoiceType: val.crEinvoiceType || undefined,
+      crCondicionVentaId: val.crCondicionVentaId || undefined,
+      crMedioPagoId: val.crMedioPagoId || undefined,
+      crPlazoCredito: val.crPlazoCredito != null ? val.crPlazoCredito : undefined,
     };
 
     if (this.isUpdate()) {
