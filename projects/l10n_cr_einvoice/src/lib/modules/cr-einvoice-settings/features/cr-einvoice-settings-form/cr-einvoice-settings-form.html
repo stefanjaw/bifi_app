@@ -50,11 +50,16 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Certificado Digital (Base64)</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="certificateBase64"
-              placeholder="Pegue su certificado P12 en formato Base64 aquí"
-              rows="4"
-            ></textarea>
+            <bifi-app-form-label>Certificado Digital (.p12)</bifi-app-form-label>
+            <bifi-app-form-uploader formArrayName="certificateFile">
+              <p-fileUpload
+                mode="basic"
+                accept=".p12,application/x-pkcs12"
+                [maxFileSize]="5242880"
+                chooseLabel="Seleccionar certificado .p12"
+                [multiple]="false"
+              ></p-fileUpload>
+            </bifi-app-form-uploader>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

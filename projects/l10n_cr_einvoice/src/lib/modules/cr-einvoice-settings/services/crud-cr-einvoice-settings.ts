@@ -7,7 +7,7 @@ export interface crEinvoiceSettings {
   proveedorSistemas?: string;
   haciendaUsername?: string;
   haciendaPassword?: string;
-  certificateBase64?: string;
+  certificateFile?: any;
   certificatePassword?: string;
   haciendaEnvironment?: 'production' | 'sandbox';
   codigoEstablecimiento?: string;
@@ -33,6 +33,7 @@ export class CrudCrEinvoiceSettings extends ApiRequestManager<crEinvoiceSettings
   }
 
   putSettings(data: Record<string, any>): Observable<crEinvoiceSettings | undefined> {
-    return this._httpClient.put<crEinvoiceSettings>(`${this._apiURL}/${this.endpoint}`, data);
+    const formData = this.createFormDataFromObject(data);
+    return this._httpClient.put<crEinvoiceSettings>(`${this._apiURL}/${this.endpoint}`, formData);
   }
 }

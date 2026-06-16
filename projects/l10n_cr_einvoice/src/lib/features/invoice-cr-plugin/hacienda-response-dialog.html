@@ -1,0 +1,14 @@
+<p-dialog
+  header="Respuesta de Hacienda"
+  [(visible)]="dialogState"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-full max-w-full sm:max-w-2xl md:max-w-3xl"
+>
+  <pre class="text-xs bg-gray-50 p-3 rounded overflow-auto max-h-[60vh] whitespace-pre-wrap break-all font-mono leading-relaxed">{{ decodedXml() }}</pre>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cerrar" severity="secondary" (onClick)="closeDialog()"></p-button>
+  </ng-template>
+</p-dialog>

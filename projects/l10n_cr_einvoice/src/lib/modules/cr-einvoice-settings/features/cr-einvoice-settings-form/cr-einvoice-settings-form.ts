@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { TextareaModule } from 'primeng/textarea';
+import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCrEinvoiceSettings, crEinvoiceSettings } from '../../services/crud-cr-einvoice-settings';
 import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form.service';
@@ -15,7 +15,7 @@ import { CrudCompanies } from '@avalantec/base-app/companies';
 
 @Component({
   selector: 'bifi-l10n-cr-einvoice-settings-form',
-  imports: [ReactiveFormsModule, FormModule, InputTextModule, SelectModule, ButtonModule, ProgressBarModule, TextareaModule],
+  imports: [ReactiveFormsModule, FormModule, InputTextModule, SelectModule, ButtonModule, ProgressBarModule, FileUpload],
   templateUrl: './cr-einvoice-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,7 +51,6 @@ export class CrEinvoiceSettingsFormComponent {
         proveedorSistemas: s.proveedorSistemas ?? '',
         haciendaUsername: s.haciendaUsername ?? '',
         haciendaPassword: s.haciendaPassword ?? '',
-        certificateBase64: s.certificateBase64 ?? '',
         certificatePassword: s.certificatePassword ?? '',
         haciendaEnvironment: s.haciendaEnvironment ?? 'sandbox',
         codigoEstablecimiento: s.codigoEstablecimiento ?? '001',

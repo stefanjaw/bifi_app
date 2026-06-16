@@ -10,9 +10,11 @@ import { ToastManager } from '@avalantec/base-app/core';
 import { InvoiceForm } from '@avalantec/accounting';
 import { CrudCondicionVenta } from '../../modules/condicion-venta/services/crud-condicion-venta';
 import { CrudMedioPago } from '../../modules/medio-pago/services/crud-medio-pago';
+import { CrudCrEinvoiceSettings } from '../../modules/cr-einvoice-settings/services/crud-cr-einvoice-settings';
 import { CrudInvoices } from '@avalantec/accounting';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
 
 @Component({
   selector: 'bifi-l10n-invoice-cr-plugin',
@@ -25,6 +27,7 @@ import { CommonModule } from '@angular/common';
     ButtonModule,
     TagModule,
     CommonModule,
+    HaciendaResponseDialogComponent,
   ],
   template: `
     <div class="border-t border-gray-200 mt-4 pt-4">
@@ -94,11 +97,37 @@ import { CommonModule } from '@angular/common';
             ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Actividad Económica Emisor</bifi-app-form-label>
+            <p-select
+              formControlName="crCodigoActividadEmisor"
+              [options]="emisorActivityOptions()"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccionar actividad emisor"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Actividad Económica Receptor</bifi-app-form-label>
+            <p-select
+              formControlName="crCodigoActividadReceptor"
+              [options]="receptorActivityOptions()"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccionar actividad receptor"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </ng-container>
 
-      @if (canSubmitToHacienda()) {
-        <div class="mt-3">
+      <div class="mt-3 flex gap-2 flex-wrap">
+        @if (canSubmitToHacienda()) {
           <p-button
             label="Submit to Hacienda"
             icon="pi pi-send"
@@ -106,8 +135,30 @@ import { CommonModule } from '@angular/common';
             [loading]="isSubmitting()"
             (onClick)="submitToHacienda()"
           ></p-button>
-        </div>
-      }
+        }
+        @if (canPollStatus()) {
+          <p-button
+            label="Check Status"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [loading]="isPolling()"
+            (onClick)="checkStatus()"
+          ></p-button>
+        }
+        @if (crHaciendaResponseXml()) {
+          <p-button
+            label="Respuesta de Hacienda"
+            icon="pi pi-file-export"
+            severity="secondary"
+            (onClick)="responseDialog.openDialog()"
+          ></p-button>
+        }
+      </div>
+
+      <bifi-l10n-hacienda-response-dialog
+        [responseXml]="crHaciendaResponseXml()"
+        #responseDialog
+      ></bifi-l10n-hacienda-response-dialog>
     </div>
   `,
 })
@@ -116,6 +167,7 @@ export class InvoiceCrPluginComponent implements OnInit {
   private crudInvoices = inject(CrudInvoices);
   private crudCondicionVenta = inject(CrudCondicionVenta);
   private crudMedioPago = inject(CrudMedioPago);
+  private crudEinvoiceSettings = inject(CrudCrEinvoiceSettings);
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);
 
@@ -123,11 +175,15 @@ export class InvoiceCrPluginComponent implements OnInit {
 
   condicionVentaResource = this.crudCondicionVenta.get({});
   medioPagoResource = this.crudMedioPago.get({});
+  settingsResource = this.crudEinvoiceSettings.getSettings();
 
   condicionVentas = this.condicionVentaResource.value;
   medioPagos = this.medioPagoResource.value;
 
+  private selectedContactId = signal<string>('');
+
   isSubmitting = signal(false);
+  isPolling = signal(false);
 
   einvoiceTypeOptions = [
     { label: 'FE - Factura Electrónica', value: 'FE' },
@@ -139,11 +195,39 @@ export class InvoiceCrPluginComponent implements OnInit {
     { label: 'REP - Recibo Electrónico de Pago', value: 'REP' },
   ];
 
+  emisorActivityOptions = computed(() => {
+    const settings = this.settingsResource.value() as any;
+    const activities: any[] =
+      settings?.emisorCompanyId?.contactId?.crEconomicActivityCodes ?? [];
+    return activities.map((a: any) => ({
+      label: a.description ? `${a.code} — ${a.description}` : a.code,
+      value: a.code,
+    }));
+  });
+
+  receptorActivityOptions = computed(() => {
+    const contactId = this.selectedContactId();
+    const contacts = (this.host.contacts() ?? []) as any[];
+    const contact = contacts.find((c: any) => c._id === contactId);
+    const activities: any[] = contact?.crEconomicActivityCodes ?? [];
+    return activities.map((a: any) => ({
+      label: a.description ? `${a.code} — ${a.description}` : a.code,
+      value: a.code,
+    }));
+  });
+
   canSubmitToHacienda = computed(() => {
     const entry = this.host.invoiceResource.value() as any;
     if (!entry || entry.status !== 'posted') return false;
     const s = entry.crEinvoiceStatus;
     return !s || s === 'failed';
+  });
+
+  canPollStatus = computed(() => {
+    const entry = this.host.invoiceResource.value() as any;
+    if (!entry) return false;
+    const s = entry.crEinvoiceStatus;
+    return s === 'sent' || s === 'received';
   });
 
   crEinvoiceStatus = computed(() => {
@@ -154,6 +238,13 @@ export class InvoiceCrPluginComponent implements OnInit {
   crClave = computed(() => {
     const entry = this.host.invoiceResource.value() as any;
     return entry?.crClave ?? null;
+  });
+
+  crHaciendaResponseXml = computed(() => {
+    const entry = this.host.invoiceResource.value() as any;
+    const r = entry?.crHaciendaResponse;
+    if (!r) return null;
+    return r['respuesta-xml'] ?? r['xml_hacienda'] ?? null;
   });
 
   ngOnInit() {
@@ -169,6 +260,20 @@ export class InvoiceCrPluginComponent implements OnInit {
     if (!this.hostForm.contains('crPlazoCredito')) {
       this.hostForm.addControl('crPlazoCredito', new FormControl(null));
     }
+    if (!this.hostForm.contains('crCodigoActividadEmisor')) {
+      this.hostForm.addControl('crCodigoActividadEmisor', new FormControl(''));
+    }
+    if (!this.hostForm.contains('crCodigoActividadReceptor')) {
+      this.hostForm.addControl('crCodigoActividadReceptor', new FormControl(''));
+    }
+
+    const contactCtrl = this.hostForm.get('contactId');
+    if (contactCtrl) {
+      this.selectedContactId.set(contactCtrl.value ?? '');
+      contactCtrl.valueChanges
+        .pipe(takeUntilDestroyed(this.destroy$))
+        .subscribe((val: string) => this.selectedContactId.set(val ?? ''));
+    }
   }
 
   constructor() {
@@ -182,6 +287,8 @@ export class InvoiceCrPluginComponent implements OnInit {
         crMedioPagoId:
           (entry.crMedioPagoId as any)?._id ?? entry.crMedioPagoId ?? '',
         crPlazoCredito: entry.crPlazoCredito ?? null,
+        crCodigoActividadEmisor: entry.crCodigoActividadEmisor ?? '',
+        crCodigoActividadReceptor: entry.crCodigoActividadReceptor ?? '',
       });
     });
   }
@@ -207,6 +314,27 @@ export class InvoiceCrPluginComponent implements OnInit {
             err?.message ??
             'An error occurred while submitting to Hacienda.';
           this.toastManager.showError(`Hacienda submission failed: ${detail}`);
+        },
+      });
+  }
+
+  checkStatus() {
+    if (this.isPolling()) return;
+    this.isPolling.set(true);
+    this.crudInvoices
+      .pollEinvoiceStatus(this.host.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isPolling.set(false);
+          this.host.invoiceResource.reload();
+          this.toastManager.showSuccess('E-Invoice status updated.');
+        },
+        error: (err: any) => {
+          this.isPolling.set(false);
+          const detail =
+            err?.error?.message ?? err?.message ?? 'Failed to check e-invoice status.';
+          this.toastManager.showError(detail);
         },
       });
   }

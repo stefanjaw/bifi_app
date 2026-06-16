@@ -31,4 +31,8 @@ export class CrudInvoices extends ApiRequestManager<invoice> {
   submitEinvoice(invoiceId: string): Observable<any> {
     return this._httpClient.post<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/submit-einvoice`, {});
   }
+
+  pollEinvoiceStatus(invoiceId: string): Observable<any> {
+    return this._httpClient.post<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/poll-einvoice-status`, {});
+  }
 }

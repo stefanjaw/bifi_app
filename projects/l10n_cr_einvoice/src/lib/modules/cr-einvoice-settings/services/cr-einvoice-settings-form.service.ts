@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface CrEinvoiceSettingsFormModel {
   proveedorSistemas: string;
   haciendaUsername: string;
   haciendaPassword: string;
-  certificateBase64: string;
+  certificateFile: FormUploaderFile[];
   certificatePassword: string;
   haciendaEnvironment: string;
   codigoEstablecimiento: string;
@@ -22,7 +22,13 @@ export class CrEinvoiceSettingsFormService extends BaseForm<CrEinvoiceSettingsFo
       proveedorSistemas: ['', [Validators.required]],
       haciendaUsername: ['', [Validators.required]],
       haciendaPassword: ['', [Validators.required]],
-      certificateBase64: ['', [Validators.required]],
+      certificateFile: {
+        template: {
+          id: [undefined],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
       certificatePassword: ['', [Validators.required]],
       haciendaEnvironment: ['sandbox', [Validators.required]],
       codigoEstablecimiento: ['001', [Validators.required]],
