@@ -5,16 +5,28 @@
   <div id="main-menu-options-container">
     @for (item of menuItems(); track $index) {
       @if (item['showInMainMenu']) {
-        <a
-          [routerLink]="item.routerLink"
-          class="bg-white rounded-xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out border-t-4 border-primary-500 flex items-center gap-4 h-[80px] w-full"
+        <div
+          class="relative"
           *bifiAppHasPermission="item['resource'] ? `${item['resource']}:menu` : undefined"
         >
-          <span [bifiAppIcon]="'lg'" [class]="item.icon"></span>
-          <span class="w-full overflow-ellipsis text-nowrap overflow-hidden text-center">
-            {{ item.label }}
-          </span>
-        </a>
+          <a
+            [routerLink]="item.routerLink"
+            class="relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out border-t-4 border-primary-500 flex items-center gap-4 h-[80px] w-full"
+          >
+            <span [bifiAppIcon]="'lg'" [class]="item.icon"></span>
+            <span class="w-full overflow-ellipsis text-nowrap overflow-hidden text-center">
+              {{ item.label }}
+            </span>
+            @let chip = getChipCount(item);
+            @if (chip > 0) {
+              <span
+                class="absolute -top-3 -right-3 min-w-[28px] h-[28px] px-1.5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center leading-none pointer-events-none"
+              >
+                {{ chip > 99 ? '99+' : chip }}
+              </span>
+            }
+          </a>
+        </div>
       }
     }
   </div>

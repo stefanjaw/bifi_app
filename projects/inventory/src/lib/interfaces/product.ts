@@ -9,6 +9,7 @@ export interface product {
   unit?: string;
   unitOfMeasureId?: uom;
   productTypeId?: productType;
+  barcode?: string;
   costPrice: number;
   salePrice: number;
   defaultSaleTaxIds?: string[];

@@ -6,11 +6,29 @@
     <ng-template #start>
       @if (userConfirmed) {
         <p-button
-          icon="pi pi-bars"
           (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
           variant="text"
           severity="contrast"
-        ></p-button>
+          [pTooltip]="isOpened() ? 'Collapse sidebar' : 'Expand sidebar'"
+        >
+          @if (isOpened()) {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <path d="M9 3v18"/>
+              <path d="m16 15-3-3 3-3"/>
+            </svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <path d="M9 3v18"/>
+              <path d="m14 9 3 3-3 3"/>
+            </svg>
+          }
+        </p-button>
       }
 
       <p-button
@@ -19,6 +37,11 @@
         variant="text"
         severity="contrast"
       ></p-button>
+    </ng-template>
+    <ng-template #center>
+      @if (userConfirmed) {
+        <bifi-app-global-search></bifi-app-global-search>
+      }
     </ng-template>
     <ng-template #end>
       @if (debugManager.debugEnable()) {
@@ -43,6 +66,9 @@
             severity="contrast"
             [pTooltip]="item.tooltip"
           ></p-button>
+        }
+        @if (userConfirmed) {
+          <bifi-app-notification-panel></bifi-app-notification-panel>
         }
         <bifi-app-user-panel></bifi-app-user-panel>
       </div>
@@ -91,60 +117,88 @@
 
     <!-- this is the contents of the app -->
     <div id="bifi-app-scaffold-outlet" class="h-full flex-1 overflow-auto flex flex-col">
-      <!-- Favorites shortcuts bar -->
+      <!-- Combined breadcrumbs + shortcuts bar -->
       @if (isLogged() && userConfirmed) {
-        <div
-          class="flex flex-row items-center gap-1 px-4 py-2 border-b border-surface-200 shrink-0 overflow-x-auto transition-colors min-h-[42px]"
-          [ngClass]="{
-            'bg-primary-50 border-primary-200': isDragOver(),
-            'bg-surface-0': !isDragOver(),
-          }"
-          (dragover)="onBarDragOver($event)"
-          (dragleave)="onBarDragLeave($event)"
-          (drop)="onBarDrop($event)"
-        >
-          @if (userShortcutsService.shortcuts().length === 0) {
-            <span class="text-xs text-surface-400 italic select-none pointer-events-none">
-              Drag items from the sidebar to pin shortcuts here
-            </span>
-          }
-          @for (shortcut of userShortcutsService.shortcuts(); track $index) {
-            <div
-              class="relative group flex items-center shrink-0"
-              draggable="true"
-              (dragstart)="onShortcutDragStart($event, $index)"
-              (dragover)="onShortcutDragOver($event, $index)"
-            >
-              @if (dragOverIndex() === $index && isDragOver()) {
-                <div class="w-0.5 h-5 bg-primary-400 rounded mr-1 shrink-0"></div>
-              }
-              <a
-                *bifiAppHasPermission="
-                  $any(shortcut.resource ? shortcut.resource + ':menu' : undefined)
-                "
-                pRipple
-                [routerLink]="shortcut.routerLink"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm cursor-pointer hover:bg-surface-100 transition-colors pr-6"
-                [ngClass]="{
-                  'bg-primary-100 text-primary-700 font-semibold': isShortcutActive(shortcut),
-                  'text-surface-600': !isShortcutActive(shortcut),
-                }"
-              >
-                @if (shortcut.icon) {
-                  <span [class]="shortcut.icon" class="text-xs"></span>
+        <div class="flex items-stretch px-4 border-b border-surface-200 shrink-0 bg-surface-0 min-h-[42px]">
+          <!-- Left: breadcrumbs -->
+          @if (breadcrumbs().length > 0) {
+            <nav class="flex-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 py-1.5 text-sm min-w-0 pr-3">
+              @for (crumb of breadcrumbs(); track $index) {
+                @if ($index > 0) {
+                  <span class="pi pi-angle-right text-surface-300 text-[10px] shrink-0"></span>
                 }
-                <span>{{ shortcut.label }}</span>
-              </a>
-              <button
-                class="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center w-4 h-4 rounded-full hover:bg-surface-200 text-surface-400 hover:text-surface-700"
-                (click)="userShortcutsService.removeShortcut($index)"
-                type="button"
-                [pTooltip]="'Remove shortcut'"
-              >
-                <span class="pi pi-times text-[9px]"></span>
-              </button>
-            </div>
+                @if (crumb.isLast) {
+                  <span class="text-surface-700 font-medium">{{ crumb.label }}</span>
+                } @else {
+                  <a
+                    [routerLink]="crumb.link"
+                    class="text-surface-500 hover:text-primary-600 shrink-0"
+                  >{{ crumb.label }}</a>
+                }
+              }
+            </nav>
+            <!-- Divider -->
+            <div class="w-px bg-surface-200 self-stretch shrink-0 my-2"></div>
           }
+          <!-- Right: shortcuts drop zone -->
+          <div
+            class="flex-1 flex items-center gap-1 py-1 pl-3 min-w-0 transition-colors rounded-sm"
+            [ngClass]="{
+              'bg-primary-50': isDragOver(),
+              'bg-red-50': isDragRejected(),
+            }"
+            (dragover)="onBarDragOver($event)"
+            (dragleave)="onBarDragLeave($event)"
+            (drop)="onBarDrop($event)"
+          >
+            @if (isDragRejected()) {
+              <span class="text-xs text-red-500 italic select-none pointer-events-none flex items-center gap-1 shrink-0">
+                <span class="pi pi-ban" style="font-size: 10px;"></span>
+                Only {{ currentModuleLabel() }} shortcuts can be pinned here
+              </span>
+            } @else if (filteredShortcuts().length === 0) {
+              <span class="text-xs text-surface-400 italic select-none pointer-events-none">
+                Drag items from the sidebar to pin shortcuts here
+              </span>
+            }
+            @for (shortcut of filteredShortcuts(); track $index) {
+              <div
+                class="relative group flex items-center shrink-0"
+                draggable="true"
+                (dragstart)="onShortcutDragStart($event, shortcut, $index)"
+                (dragover)="onShortcutDragOver($event, $index)"
+              >
+                @if (dragOverIndex() === $index && isDragOver()) {
+                  <div class="w-0.5 h-4 bg-primary-400 rounded mr-1 shrink-0"></div>
+                }
+                <a
+                  *bifiAppHasPermission="
+                    $any(shortcut.resource ? shortcut.resource + ':menu' : undefined)
+                  "
+                  pRipple
+                  [routerLink]="shortcut.routerLink"
+                  class="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs cursor-pointer hover:bg-surface-100 transition-colors pr-5"
+                  [ngClass]="{
+                    'bg-primary-100 text-primary-700 font-semibold': isShortcutActive(shortcut),
+                    'text-surface-600': !isShortcutActive(shortcut),
+                  }"
+                >
+                  @if (shortcut.icon) {
+                    <span [class]="shortcut.icon" class="text-[10px]"></span>
+                  }
+                  <span>{{ shortcut.label }}</span>
+                </a>
+                <button
+                  class="absolute right-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center w-4 h-4 rounded-full hover:bg-surface-200 text-surface-400 hover:text-surface-700"
+                  (click)="userShortcutsService.removeShortcutByItem(shortcut)"
+                  type="button"
+                  [pTooltip]="'Remove shortcut'"
+                >
+                  <span class="pi pi-times text-[9px]"></span>
+                </button>
+              </div>
+            }
+          </div>
         </div>
       }
       <div class="flex-1 overflow-auto">
@@ -194,36 +248,43 @@
 </ng-template>
 
 <ng-template #openedMenuItemWithChildren let-mainItem="mainItem">
-  <p-panelmenu
-    *bifiAppHasPermission="mainItem['resource'] ? `${mainItem['resource']}:menu` : undefined"
-    [model]="[
-      {
-        label: mainItem.label,
-        icon: mainItem.icon,
-        items: mainItem.items,
-      },
-    ]"
+  <div
+    *bifiAppHasPermission="$any(mainItem['resource'] ? mainItem['resource'] + ':menu' : undefined)"
+    class="w-full"
   >
-    <ng-template #item let-item>
+    <!-- Parent row: label navigates, chevron toggles -->
+    <div class="flex items-center ms-1 gap-0.5">
       <a
-        *bifiAppHasPermission="item['resource'] ? `${item['resource']}:menu` : undefined"
         pRipple
-        class="flex items-start p-menu-item-link w-full hover:bg-gray-100 rounded-md"
-        [routerLink]="item.routerLink || undefined"
+        class="flex items-center flex-1 min-w-0 p-menu-item-link hover:bg-gray-100 rounded-md"
+        [routerLink]="mainItem.routerLink || undefined"
         [ngClass]="{
           'bg-primary-100! border-b-2 border-b-primary-400':
-            isItemActive(item) || hasActiveChild(item),
+            isItemActive(mainItem) || hasActiveChild(mainItem),
         }"
         draggable="true"
-        (dragstart)="onMenuItemDragStart($event, item)"
+        (dragstart)="onMenuItemDragStart($event, mainItem)"
       >
-        <span [class]="item.icon"></span>
-        <span class="ml-2">{{ item.label }}</span>
-
-        @if (item.items) {
-          <span class="pi pi-angle-down ml-auto mt-1"></span>
-        }
+        <span [class]="mainItem.icon"></span>
+        <span class="ml-2 truncate">{{ mainItem.label }}</span>
       </a>
-    </ng-template>
-  </p-panelmenu>
+      <button
+        type="button"
+        class="flex items-center justify-center w-7 h-7 rounded hover:bg-gray-100 text-surface-500 shrink-0 transition-transform duration-200"
+        [class.rotate-180]="isExpanded(mainItem)"
+        (click)="toggleExpanded(mainItem)"
+        [attr.aria-label]="isExpanded(mainItem) ? 'Collapse ' + mainItem.label : 'Expand ' + mainItem.label"
+      >
+        <span class="pi pi-angle-down text-xs"></span>
+      </button>
+    </div>
+    <!-- Children -->
+    @if (isExpanded(mainItem)) {
+      <div class="ml-3 mt-0.5 flex flex-col gap-0.5">
+        @for (child of $any(mainItem.items); track $index) {
+          <ng-container *ngTemplateOutlet="openedMenuItem; context: { item: child }"></ng-container>
+        }
+      </div>
+    }
+  </div>
 </ng-template>

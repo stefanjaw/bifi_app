@@ -7,15 +7,17 @@
         [size]="'small'" [style]="{ 'background-color': 'darkslategrey', 'border-color': 'darkslategrey' }"></p-button> -->
 
   <!-- Delete Button -->
-  <p-button
-    type="button"
-    (click)="confirmationDialog.openDialog(); $event.stopPropagation()"
-    severity="danger"
-    *bifiAppHasPermission="deletePermission"
-    icon="pi pi-trash"
-    [size]="'small'"
-    [variant]="'text'"
-  ></p-button>
+  @if (showDelete()) {
+    <p-button
+      type="button"
+      (click)="confirmationDialog.openDialog(); $event.stopPropagation()"
+      severity="danger"
+      *bifiAppHasPermission="deletePermission"
+      icon="pi pi-trash"
+      [size]="'small'"
+      [variant]="'text'"
+    ></p-button>
+  }
 </section>
 
 <bifi-app-buttons-confirmation-dialog

@@ -244,4 +244,9 @@ export class ContactsForm {
     this.formService.resetDirtyState();
     this.childIdsData.set(contact.childIds || []);
   }
+
+  openPhotoFullSize() {
+    const url = this.uploadedFile()?.url;
+    if (url) window.open(url, '_blank');
+  }
 }

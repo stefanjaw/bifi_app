@@ -6,6 +6,7 @@
     @if (viewState() === 'gantt' || viewState() === 'list') {
       <p-button
         [title]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
+        [label]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
         size="small"
         severity="secondary"
         [icon]="ganttAnyExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"

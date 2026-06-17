@@ -53,6 +53,12 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/sequences').then(m => m.SEQUENCE_ROUTES),
   },
   {
+    path: 'search-destinations',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@avalantec/base-app/search-destinations').then(m => m.SEARCH_DESTINATION_ROUTES),
+  },
+  {
     path: 'ai-settings',
     canActivate: [authGuard],
     loadChildren: () => import('@avalantec/base-app/ai-settings').then(m => m.AI_SETTINGS_ROUTES),
@@ -61,6 +67,12 @@ export const SETTINGS_ROUTES: Routes = [
     path: 'drive-settings',
     canActivate: [authGuard],
     loadChildren: () => import('@avalantec/base-app/drive-settings').then(m => m.DRIVE_SETTINGS_ROUTES),
+  },
+  {
+    path: 'notification-settings',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@avalantec/base-app/notification-settings').then(m => m.NOTIFICATION_SETTINGS_ROUTES),
   },
   {
     path: 'profile',

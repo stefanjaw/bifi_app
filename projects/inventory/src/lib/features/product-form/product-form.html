@@ -37,6 +37,11 @@
             </bifi-app-form-field>
 
             <bifi-app-form-field>
+              <bifi-app-form-label>Barcode</bifi-app-form-label>
+              <input pInputText formControlName="barcode" placeholder="e.g. 012345678905" />
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
               <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
               <p-select
                 formControlName="unitOfMeasureId"
@@ -112,7 +117,7 @@
       <bifi-app-form-section title="Pricing" id="product-pricing" [ordinal]="2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Cost Price</bifi-app-form-label>
+            <bifi-app-form-label>Purchase Price</bifi-app-form-label>
             <p-inputNumber
               formControlName="costPrice"
               [min]="0"

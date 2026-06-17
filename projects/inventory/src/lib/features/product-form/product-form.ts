@@ -192,6 +192,7 @@ export class ProductForm {
     this.formService.patchValue({
       name: product.name,
       sku: product.sku,
+      barcode: product.barcode ?? '',
       description: product.description ?? '',
       unitOfMeasureId: (product.unitOfMeasureId as any)?._id ?? product.unitOfMeasureId ?? '',
       productTypeId: (product.productTypeId as any)?._id ?? product.productTypeId ?? '',

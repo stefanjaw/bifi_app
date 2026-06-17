@@ -1,0 +1,162 @@
+<p-toast></p-toast>
+
+<bifi-app-form-layout
+  title="Notification Events"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <div ngProjectAs="div" class="min-h-screen flex flex-col gap-6">
+
+    <div class="flex items-center justify-between gap-4">
+      <p class="text-sm text-gray-500">
+        Add events from the catalog, toggle each on/off, and choose which roles receive each notification.
+      </p>
+      <div class="flex gap-2 flex-shrink-0">
+        <p-button
+          label="Add Event"
+          icon="pi pi-plus"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="openAddDialog()"
+          [disabled]="availableCatalogEntries().length === 0"
+        ></p-button>
+        <p-button
+          label="Save"
+          icon="pi pi-save"
+          [loading]="saving()"
+          (onClick)="save()"
+        ></p-button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p-progressbar mode="indeterminate" styleClass="h-1"></p-progressbar>
+    }
+
+    @if (!loading()) {
+      <div class="flex flex-col gap-4">
+        @for (event of activeEvents(); track event.type) {
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
+
+            <div
+              class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mt-1"
+              [ngClass]="event.iconBg"
+            >
+              <i [class]="event.icon + ' text-xl'"></i>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-900 text-sm">{{ event.label }}</p>
+              <p class="text-xs text-gray-500 mt-0.5">{{ event.description }}</p>
+
+              <div class="mt-3">
+                <label class="text-xs font-medium text-gray-600 mb-1 block">Notify</label>
+                <p-multiselect
+                  [options]="event.recipientOptions"
+                  [ngModel]="event.recipients"
+                  (ngModelChange)="updateRecipients(event.type, $any($event))"
+                  optionLabel="label"
+                  optionValue="id"
+                  placeholder="Select recipients"
+                  styleClass="w-full text-sm"
+                  [showClear]="false"
+                ></p-multiselect>
+              </div>
+            </div>
+
+            <div class="flex-shrink-0 flex flex-col items-center gap-1 pt-1">
+              <p-toggleswitch
+                [ngModel]="event.enabled"
+                (ngModelChange)="toggleEvent(event.type, $any($event))"
+              ></p-toggleswitch>
+              <span
+                class="text-xs font-medium"
+                [ngClass]="event.enabled ? 'text-green-600' : 'text-gray-400'"
+              >
+                {{ event.enabled ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+
+            <div class="flex-shrink-0 pt-1">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                size="small"
+                pTooltip="Remove event"
+                tooltipPosition="left"
+                (onClick)="removeEvent(event.type)"
+              ></p-button>
+            </div>
+
+          </div>
+        }
+
+        @if (activeEvents().length === 0) {
+          <div class="bg-white rounded-xl border border-dashed border-gray-300 p-10 flex flex-col items-center gap-3 text-center">
+            <i class="pi pi-bell text-3xl text-gray-300"></i>
+            <p class="text-sm font-medium text-gray-500">No notification events configured</p>
+            <p class="text-xs text-gray-400">Click "Add Event" to add events from the catalog.</p>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</bifi-app-form-layout>
+
+<p-dialog
+  header="Add Notification Event"
+  [modal]="true"
+  [visible]="showAddDialog()"
+  (visibleChange)="showAddDialog.set($any($event))"
+  [style]="{ width: '480px' }"
+  [draggable]="false"
+>
+  <div class="flex flex-col gap-4 py-2">
+    <p class="text-sm text-gray-500">
+      Select an event from the catalog to add to your active notifications.
+    </p>
+
+    <div class="flex flex-col gap-2">
+      @for (entry of availableCatalogEntries(); track entry.type) {
+        <div
+          class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all"
+          [ngClass]="selectedNewEventType() === entry.type
+            ? 'border-primary-500 bg-primary-50'
+            : 'border-gray-200 bg-white hover:border-gray-300'"
+          (click)="selectedNewEventType.set(entry.type)"
+        >
+          <div
+            class="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
+            [ngClass]="entry.iconBg"
+          >
+            <i [class]="entry.icon + ' text-base'"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900">{{ entry.label }}</p>
+            <p class="text-xs text-gray-500">{{ entry.description }}</p>
+          </div>
+          @if (selectedNewEventType() === entry.type) {
+            <i class="pi pi-check text-primary-500 flex-shrink-0"></i>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="showAddDialog.set(false)"
+    ></p-button>
+    <p-button
+      label="Add"
+      icon="pi pi-plus"
+      [disabled]="!selectedNewEventType()"
+      (onClick)="confirmAddEvent()"
+    ></p-button>
+  </ng-template>
+</p-dialog>

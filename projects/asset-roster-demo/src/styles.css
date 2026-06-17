@@ -29,6 +29,25 @@ body {
   --toolbar-color: #1a1f3b;
 }
 
+/* CDK drag-drop: table row preview fix */
+.cdk-drag-preview {
+  display: table;
+  width: 100%;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  background: #f3f4f6;
+}
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.cdk-drop-list-dragging tr:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
 /* Dense Data – Global Stylesheet (FIXED) */
 
 /* ─── Body / Container ────────────────────────────────────────────────────── */
@@ -249,4 +268,40 @@ body {
 .p-inputgroup .p-inputgroup-addon {
   padding: var(--dense-input-padding-y) var(--dense-input-padding-x);
   font-size: var(--dense-input-font-size);
+}
+
+/* ─── FileUpload ───────────────────────────────────────────────────────── */
+/* Hide chosen filename in basic-mode uploaders (plain <span>, no class) */
+.p-fileupload-basic-content > span {
+  display: none;
+}
+
+/* ─── InputNumber inside table cells — shrink to column width ───────────── */
+td .p-inputnumber {
+  width: 100%;
+  min-width: 0;
+}
+td .p-inputnumber .p-inputnumber-input {
+  min-width: 0;
+  width: 100%;
+  flex: 1 1 0;
+}
+td .p-inputnumber .p-inputnumber-button {
+  flex-shrink: 0;
+}
+
+/* ─── Resizable column handle ───────────────────────────────────────────── */
+.col-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 1;
+  user-select: none;
+}
+.col-resize-handle:hover {
+  background: rgba(99, 102, 241, 0.35);
 }

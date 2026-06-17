@@ -248,6 +248,8 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
    * @param event - The TableLazyLoadEvent emitted by the table when lazy loaded.
    */
   lazyLoad(event: TableLazyLoadEvent) {
+    if (event.multiSortMeta) this.sort(event.multiSortMeta);
+
     if (this.infiniteScroll()) return;
 
     const state = this.resourceState(); // Obtenemos el estado actual del resource

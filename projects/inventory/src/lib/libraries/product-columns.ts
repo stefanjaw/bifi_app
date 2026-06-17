@@ -29,7 +29,7 @@ export const productColumns: tableColumn<product>[] = [
       return s || '—';
     },
   },
-  { field: 'costPrice', title: 'Cost Price', type: 'currency' },
+  { field: 'costPrice', title: 'Purchase Price', type: 'currency' },
   { field: 'salePrice', title: 'Sale Price', type: 'currency' },
   { field: 'active', title: 'Active', type: 'text' },
 ];

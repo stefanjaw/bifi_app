@@ -14,16 +14,17 @@ import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { DebugManager, SidenavManager, ToolbarManager } from '@avalantec/base-app/core';
+import { DebugManager, DynamicBreadcrumbService, SidenavManager, ToolbarManager } from '@avalantec/base-app/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
+import { GlobalSearch } from '../global-search/global-search';
+import { NotificationPanel } from '../notifications/notification-panel';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { RippleModule } from 'primeng/ripple';
 import { MainMenuManager, ShortcutItem, UserShortcutsService } from '@avalantec/base-app/routing';
-import { PanelMenuModule } from 'primeng/panelmenu';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { filter, take } from 'rxjs';
 
@@ -39,11 +40,12 @@ import { filter, take } from 'rxjs';
     NgxSonnerToaster,
     UserPanel,
     ScrollPanelModule,
-    PanelMenuModule,
     RippleModule,
     HasPermission,
     RouterLink,
     TooltipModule,
+    GlobalSearch,
+    NotificationPanel,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',
@@ -65,6 +67,7 @@ export class Scaffold {
   isOpened = model(this.sidenavManager.opened());
 
   // menu management
+  private dynamicBreadcrumb = inject(DynamicBreadcrumbService);
   private menuManager = inject(MainMenuManager);
   menuItems = this.menuManager.menuItems;
 
@@ -77,14 +80,94 @@ export class Scaffold {
 
   // shortcuts
   userShortcutsService = inject(UserShortcutsService);
+  private messageService = inject(MessageService);
 
   // current route
   currentRoute = signal(this.router.url);
 
+  // module-scoped shortcuts
+  private readonly KNOWN_MODULES = [
+    'purchases', 'inventory', 'sales', 'accounting',
+    'email-marketing', 'tasks', 'pricing',
+    'aduanix', 'asset-roster', 'calendar',
+    'helpdesk', 'projects', 'website',
+  ];
+
+  currentModule = computed(() => {
+    const segment = this.currentRoute().split('/').filter(Boolean)[0] ?? '';
+    return this.KNOWN_MODULES.includes(segment) ? segment : null;
+  });
+
+  filteredShortcuts = computed(() => {
+    const mod = this.currentModule();
+    const all = this.userShortcutsService.shortcuts();
+    if (!mod) return all;
+    return all.filter(s => {
+      const link = (s.routerLink ?? []).join('/').replace(/^\//, '');
+      return link.startsWith(mod + '/') || link === mod;
+    });
+  });
+
   // drag state
   isDragOver = signal(false);
+  isDragRejected = signal(false);
   dragOverIndex = signal<number | null>(null);
   private dragSourceIndex: number | null = null;
+  private draggedItemModule = signal<string | null>(null);
+
+  currentModuleLabel = computed(() => {
+    const mod = this.currentModule();
+    if (!mod) return '';
+    return mod.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  });
+
+  // ─── Breadcrumbs ───────────────────────────────────────────────────────────
+
+  private flatMenu = computed(() => this.flattenMenu(this.menuItems()));
+
+  private readonly SKIP_SEGMENTS = new Set(['edit', 'new', 'create']);
+
+  breadcrumbs = computed<{ label: string; link: string; isLast: boolean }[]>(() => {
+    const url = this.currentRoute().split('?')[0].split('#')[0];
+    const segments = url.split('/').filter(Boolean);
+    if (segments.length === 0 || segments[0] === 'home') return [];
+    const menu = this.flatMenu();
+    const crumbs: { label: string; link: string; isLast: boolean }[] = [];
+    let cumulative = '';
+    const visibleSegments = segments.filter(s => !this.SKIP_SEGMENTS.has(s));
+    segments.forEach(seg => {
+      cumulative += '/' + seg;
+      if (this.SKIP_SEGMENTS.has(seg)) return;
+      const menuMatch = menu.find(m => m.path === cumulative.replace(/^\//, ''));
+      const dynLabel = this.isId(seg) ? this.dynamicBreadcrumb.labels()[seg] : undefined;
+      const label = menuMatch ? menuMatch.label : dynLabel ?? (this.isId(seg) ? 'Details' : this.humanize(seg));
+      crumbs.push({ label, link: cumulative, isLast: seg === visibleSegments[visibleSegments.length - 1] });
+    });
+    return crumbs;
+  });
+
+  private flattenMenu(items: MenuItem[]): { path: string; label: string }[] {
+    const out: { path: string; label: string }[] = [];
+    const walk = (list: MenuItem[]) => {
+      for (const it of list) {
+        const link = Array.isArray(it.routerLink)
+          ? (it.routerLink as string[]).join('/')
+          : (it.routerLink as string);
+        if (link && it.label) out.push({ path: link.replace(/^\//, ''), label: it.label });
+        if (it.items) walk(it.items as MenuItem[]);
+      }
+    };
+    walk(items);
+    return out;
+  }
+
+  private humanize(seg: string): string {
+    return seg.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  private isId(seg: string): boolean {
+    return /^[0-9a-f]{24}$/i.test(seg) || /^\d+$/.test(seg);
+  }
 
   constructor() {
     effect(() => {
@@ -99,6 +182,24 @@ export class Scaffold {
 
     this.router.events.pipe(takeUntilDestroyed(this.destroy$)).subscribe(event => {
       if (event.type === EventType.NavigationEnd) this.currentRoute.set(this.router.url);
+    });
+
+    // Auto-expand sidebar items whose children match the active route
+    effect(() => {
+      const items = this.menuItems();
+      const keysToAdd = new Set<string>();
+      for (const item of items) {
+        if (item.items && this.hasActiveChild(item)) {
+          keysToAdd.add(this.menuKey(item));
+        }
+      }
+      if (keysToAdd.size > 0) {
+        this.expandedMenuKeys.update(current => {
+          const next = new Set(current);
+          keysToAdd.forEach(k => next.add(k));
+          return next;
+        });
+      }
     });
 
     // Load shortcuts once when the user is first available
@@ -131,6 +232,32 @@ export class Scaffold {
     return item.items.some(child => this.isItemActive(child) || this.hasActiveChild(child));
   }
 
+  // ─── Sidebar accordion ─────────────────────────────────────────────────────
+
+  expandedMenuKeys = signal<Set<string>>(new Set());
+
+  private menuKey(item: MenuItem): string {
+    const link = Array.isArray(item.routerLink)
+      ? (item.routerLink as string[]).join('/')
+      : (item.routerLink as string) ?? '';
+    return link || (item.label ?? '');
+  }
+
+  toggleExpanded(item: MenuItem): void {
+    const key = this.menuKey(item);
+    const next = new Set(this.expandedMenuKeys());
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    this.expandedMenuKeys.set(next);
+  }
+
+  isExpanded(item: MenuItem): boolean {
+    return this.expandedMenuKeys().has(this.menuKey(item));
+  }
+
   goHome() {
     this.router.navigate(['home']);
   }
@@ -150,17 +277,22 @@ export class Scaffold {
         resource: item['resource'],
       })
     );
+    const link = ((item['routerLink'] as string[]) ?? []).join('/').replace(/^\//, '');
+    const mod = this.KNOWN_MODULES.find(m => link.startsWith(m + '/') || link === m) ?? null;
+    this.draggedItemModule.set(mod);
   }
 
   // ─── Drag within shortcuts bar (reorder) ───────────────────────────────────
 
-  onShortcutDragStart(event: DragEvent, index: number): void {
+  onShortcutDragStart(event: DragEvent, shortcut: ShortcutItem, filteredIndex: number): void {
     if (!event.dataTransfer) return;
-    this.dragSourceIndex = index;
+    const fullIndex = this.userShortcutsService.shortcuts()
+      .findIndex(s => s.routerLink?.join('/') === shortcut.routerLink?.join('/'));
+    this.dragSourceIndex = fullIndex !== -1 ? fullIndex : filteredIndex;
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData(
       'application/bifi-shortcut',
-      JSON.stringify({ type: 'reorder', index })
+      JSON.stringify({ type: 'reorder', index: this.dragSourceIndex })
     );
   }
 
@@ -174,14 +306,26 @@ export class Scaffold {
 
   onBarDragOver(event: DragEvent): void {
     event.preventDefault();
-    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
-    this.isDragOver.set(true);
+    const currentMod = this.currentModule();
+    const draggedMod = this.draggedItemModule();
+    const rejected = !!currentMod && draggedMod !== null && draggedMod !== currentMod;
+    if (rejected) {
+      this.isDragRejected.set(true);
+      this.isDragOver.set(false);
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+    } else {
+      this.isDragRejected.set(false);
+      this.isDragOver.set(true);
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+    }
   }
 
   onBarDragLeave(event: DragEvent): void {
     const bar = event.currentTarget as HTMLElement;
     if (!bar.contains(event.relatedTarget as Node)) {
       this.isDragOver.set(false);
+      this.isDragRejected.set(false);
+      this.draggedItemModule.set(null);
       this.dragOverIndex.set(null);
     }
   }
@@ -189,11 +333,26 @@ export class Scaffold {
   onBarDrop(event: DragEvent): void {
     event.preventDefault();
     this.isDragOver.set(false);
+    this.isDragRejected.set(false);
+    this.draggedItemModule.set(null);
     const raw = event.dataTransfer?.getData('application/bifi-shortcut');
     if (!raw) return;
     try {
       const data = JSON.parse(raw);
       if (data.type === 'menu-item') {
+        const mod = this.currentModule();
+        if (mod) {
+          const link = (data.routerLink ?? []).join('/').replace(/^\//, '');
+          if (!link.startsWith(mod + '/') && link !== mod) return;
+        }
+        if (this.filteredShortcuts().length >= 6) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Shortcut limit reached',
+            detail: 'You can pin a maximum of 6 shortcuts per section.',
+          });
+          return;
+        }
         this.userShortcutsService.addShortcut({
           label: data.label,
           icon: data.icon,
@@ -201,8 +360,17 @@ export class Scaffold {
           resource: data.resource,
         });
       } else if (data.type === 'reorder' && this.dragSourceIndex !== null) {
-        const targetIndex = this.dragOverIndex() ?? this.userShortcutsService.shortcuts().length;
-        this.userShortcutsService.moveShortcut(this.dragSourceIndex, targetIndex);
+        const filtered = this.filteredShortcuts();
+        const all = this.userShortcutsService.shortcuts();
+        const filteredTargetIdx = this.dragOverIndex() ?? filtered.length;
+        const targetShortcut = filtered[filteredTargetIdx];
+        const fullTargetIndex = targetShortcut
+          ? all.findIndex(s => s.routerLink?.join('/') === targetShortcut.routerLink?.join('/'))
+          : all.length;
+        this.userShortcutsService.moveShortcut(
+          this.dragSourceIndex,
+          fullTargetIndex !== -1 ? fullTargetIndex : all.length
+        );
         this.dragSourceIndex = null;
         this.dragOverIndex.set(null);
       }

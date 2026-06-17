@@ -4,6 +4,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  HostListener,
   inject,
   input,
   signal,
@@ -33,6 +34,17 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-form';
+import { ColWidthManager } from '@avalantec/base-app/core';
+
+const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
+  product: 96,
+  description: 240,
+  account: 180,
+  quantity: 80,
+  unitPrice: 128,
+  taxes: 160,
+  amount: 112,
+};
 
 @Component({
   selector: 'bifi-app-invoice-form',
@@ -117,13 +129,31 @@ export class InvoiceForm {
   canCancel = computed(() => this.isUpdate() && this.invoiceState() !== 'cancel');
   isReadOnly = computed(() => this.isUpdate() && this.invoiceState() !== 'draft');
 
+  private cwm = new ColWidthManager(INVOICE_DEFAULT_WIDTHS, 'lineItems.invoice.colWidths');
+  colWidths = this.cwm.colWidths;
+
+  onResizeStart(event: MouseEvent, colKey: string) {
+    this.cwm.onResizeStart(event, colKey);
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onResizeMove(event: MouseEvent) {
+    this.cwm.onResizeMove(event);
+  }
+
+  @HostListener('document:mouseup')
+  onResizeEnd() {
+    this.cwm.onResizeEnd();
+  }
+
   get lines(): FormGroup[] {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
-    initialValue: this.formService.linesArray.value,
-  });
+  private linesValue = toSignal(
+    this.formService.linesArray.valueChanges,
+    { initialValue: this.formService.linesArray.value },
+  );
 
   untaxedTotal = computed(() =>
     this.linesValue()

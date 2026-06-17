@@ -1,0 +1,103 @@
+<bifi-app-form-layout
+  [title]="isUpdate() ? 'Edit Destination' : 'New Destination'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section title="Destination" id="destination-details" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Label *</bifi-app-form-label>
+            <input pInputText formControlName="label" placeholder="e.g. Opportunities" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Area / Group</bifi-app-form-label>
+            <input pInputText formControlName="group" placeholder="e.g. Sales" />
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Route *</bifi-app-form-label>
+            <input pInputText formControlName="route" placeholder="e.g. /sales/opportunities" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Key *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="key"
+              placeholder="e.g. sales.opportunities"
+              [readOnly]="isSystem()"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Icon</bifi-app-form-label>
+            <input pInputText formControlName="icon" placeholder="e.g. pi pi-list" />
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Permission Resource</bifi-app-form-label>
+            <input pInputText formControlName="resource" placeholder="e.g. sales/opportunities/menu" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Search Phrases" id="destination-phrases" [ordinal]="2">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Phrases</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="keywordsInput"
+            placeholder="Comma-separated, e.g. leads, deals, pipeline"
+          />
+          <small class="text-gray-500">
+            Separate each phrase with a comma. These are what the top-bar search matches against.
+          </small>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field class="mt-6">
+          <bifi-app-form-label>Description</bifi-app-form-label>
+          <textarea
+            pTextarea
+            formControlName="description"
+            rows="2"
+            placeholder="Optional description"
+          ></textarea>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Status" id="destination-status" [ordinal]="3">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Active</bifi-app-form-label>
+          <p-toggleSwitch formControlName="active"></p-toggleSwitch>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+
+    @if (error()) {
+      <p class="text-red-500">Something went wrong: {{ error() }}</p>
+    }
+  </form>
+</bifi-app-form-layout>

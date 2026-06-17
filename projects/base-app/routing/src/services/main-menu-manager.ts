@@ -76,6 +76,12 @@ export class MainMenuManager extends BaseMenuManager {
             resource: 'sequences/menu',
           },
           {
+            icon: 'pi pi-search',
+            routerLink: ['/settings/search-destinations'],
+            label: 'Search',
+            resource: 'search-destinations/menu',
+          },
+          {
             icon: 'pi pi-microchip',
             routerLink: ['/settings/ai-settings'],
             label: 'AI Configuration',
@@ -87,6 +93,12 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Google Drive Configuration',
             resource: 'drive-settings/menu',
           },
+          {
+            icon: 'pi pi-bell',
+            routerLink: ['/settings/notification-settings'],
+            label: 'Notification Events',
+            resource: 'notification-settings/menu',
+          },
         ],
       },
       {
@@ -95,6 +107,7 @@ export class MainMenuManager extends BaseMenuManager {
         label: 'Contacts',
         resource: 'contacts/menu',
         showInMainMenu: true,
+        moduleKey: 'contacts',
       },
     ]);
 

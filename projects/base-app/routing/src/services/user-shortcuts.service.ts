@@ -44,6 +44,12 @@ export class UserShortcutsService {
     this.persist(updated);
   }
 
+  removeShortcutByItem(item: ShortcutItem): void {
+    const key = (item.routerLink ?? []).join('/');
+    const index = this.shortcuts().findIndex(s => (s.routerLink ?? []).join('/') === key);
+    if (index !== -1) this.removeShortcut(index);
+  }
+
   moveShortcut(fromIndex: number, toIndex: number): void {
     const items = [...this.shortcuts()];
     if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;

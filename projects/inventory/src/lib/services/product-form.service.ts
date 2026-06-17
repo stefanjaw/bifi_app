@@ -5,6 +5,7 @@ import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 export interface ProductFormModel {
   name: string;
   sku: string;
+  barcode: string;
   description: string;
   unitOfMeasureId: string;
   productTypeId: string;
@@ -20,6 +21,7 @@ export class ProductFormService extends BaseForm<ProductFormModel> {
     return this.fb.group<ProductFormModel>({
       name: ['', [Validators.required]],
       sku: ['', [Validators.required]],
+      barcode: [''],
       description: [''],
       unitOfMeasureId: [''],
       productTypeId: [''],

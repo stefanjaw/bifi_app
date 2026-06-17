@@ -25,119 +25,126 @@
     }
     @if (!isLoading()) {
       <bifi-app-form-section
-        [title]="contactType() === 'company' ? 'Logo' : 'Photo'"
-        id="contact-photo"
-        [ordinal]="1"
-      >
-        @if (uploadedFile(); as file) {
-          <img
-            [src]="file.url"
-            alt="Contact photo"
-            class="mx-auto asset-photo-thumbnail"
-            role="button"
-            tabindex="0"
-            title="Click to view full size"
-            width="250"
-            height="250"
-          />
-        } @else {
-          <div class="text-gray-500">No photo</div>
-        }
-        <bifi-app-form-field>
-          <bifi-app-form-label>
-            {{ contactType() === 'company' ? 'Logo' : 'Photo' }}
-          </bifi-app-form-label>
-          <bifi-app-form-uploader formArrayName="photo" [inline]="true">
-            <p-fileupload
-              showUploadButton="false"
-              showCancelButton="false"
-              name="photo"
-              [multiple]="false"
-              accept="image/*"
-              [maxFileSize]="5000000"
-              mode="basic"
-              [auto]="false"
-              [chooseLabel]="contactType() === 'company' ? 'Choose logo' : 'Choose photo'"
-              [chooseIcon]="'pi pi-upload'"
-              [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
-            />
-          </bifi-app-form-uploader>
-        </bifi-app-form-field>
-      </bifi-app-form-section>
-
-      <bifi-app-form-section
         title="General information"
         id="contact-general-information"
-        [ordinal]="2"
+        [ordinal]="1"
       >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
 
-            <div class="flex justify-start flex-wrap gap-4 pt-2">
-              <div class="flex items-center">
-                <p-radiobutton
-                  formControlName="type"
-                  value="individual"
-                  inputId="type-individual"
-                  size="large"
-                />
-                <label for="type-individual" class="ml-2">Individual</label>
-              </div>
-              <div class="flex items-center">
-                <p-radiobutton
-                  formControlName="type"
-                  value="company"
-                  inputId="type-company"
-                  size="large"
-                />
-                <label for="type-company" class="ml-2">Company</label>
-              </div>
-            </div>
-
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Parent</bifi-app-form-label>
-            <p-select
-              formControlName="parentId"
-              [options]="parentOptions()"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Select a parent"
-              [filter]="true"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          @if (contactType() === 'individual') {
+          <!-- ── LEFT: Type / Name / Last Name / DBA ── -->
+          <div class="flex flex-col gap-3">
             <bifi-app-form-field>
-              <bifi-app-form-label>Last Name</bifi-app-form-label>
-              <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+              <bifi-app-form-label>Type</bifi-app-form-label>
+              <div class="flex flex-wrap gap-4 pt-2">
+                <div class="flex items-center">
+                  <p-radiobutton
+                    formControlName="type"
+                    value="individual"
+                    inputId="type-individual"
+                    size="large"
+                  />
+                  <label for="type-individual" class="ml-2">Individual</label>
+                </div>
+                <div class="flex items-center">
+                  <p-radiobutton
+                    formControlName="type"
+                    value="company"
+                    inputId="type-company"
+                    size="large"
+                  />
+                  <label for="type-company" class="ml-2">Company</label>
+                </div>
+              </div>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
-          }
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>VAT (Value Added Tax)</bifi-app-form-label>
-            <input pInputText formControlName="vat" type="text" placeholder="e.g GB123456789" />
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>{{ contactType() === 'individual' ? 'First Name' : 'Name' }}</bifi-app-form-label>
+              <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            @if (contactType() === 'individual') {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Last Name</bifi-app-form-label>
+                <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+                <bifi-app-form-error></bifi-app-form-error>
+              </bifi-app-form-field>
+            }
+
+            <bifi-app-plugin-slot name="contacts-form-gi-left"></bifi-app-plugin-slot>
+          </div>
+
+          <!-- ── MIDDLE: Parent / VAT / Tax type ── -->
+          <div class="flex flex-col gap-3">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Parent Contact</bifi-app-form-label>
+              <p-select
+                formControlName="parentId"
+                [options]="parentOptions()"
+                optionLabel="name"
+                optionValue="_id"
+                placeholder="Select a parent"
+                [filter]="true"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>VAT (Value Added Tax)</bifi-app-form-label>
+              <input pInputText formControlName="vat" type="text" placeholder="e.g GB123456789" />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-plugin-slot name="contacts-form-gi-middle"></bifi-app-plugin-slot>
+          </div>
+
+          <!-- ── RIGHT: Logo / Photo ── -->
+          <div class="flex flex-col gap-3">
+            @if (uploadedFile(); as file) {
+              <img
+                [src]="file.url"
+                alt="Contact photo"
+                class="mx-auto asset-photo-thumbnail"
+                role="button"
+                tabindex="0"
+                title="Click to view full size"
+                (click)="openPhotoFullSize()"
+                (keydown.enter)="openPhotoFullSize()"
+                (keydown.space)="openPhotoFullSize(); $event.preventDefault()"
+                width="200"
+                height="200"
+              />
+            } @else {
+              <div class="text-gray-500 text-sm">No photo</div>
+            }
+            <bifi-app-form-field>
+              <bifi-app-form-uploader formArrayName="photo" [inline]="true">
+                <p-fileupload
+                  showUploadButton="false"
+                  showCancelButton="false"
+                  name="photo"
+                  [multiple]="false"
+                  accept="image/*"
+                  [maxFileSize]="5000000"
+                  mode="basic"
+                  [auto]="false"
+                  [chooseLabel]="contactType() === 'company' ? 'Choose logo' : 'Choose photo'"
+                  [chooseIcon]="'pi pi-upload'"
+                  [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+                />
+              </bifi-app-form-uploader>
+            </bifi-app-form-field>
+          </div>
+
         </div>
-        <bifi-app-plugin-slot name="contacts-form-general-information"></bifi-app-plugin-slot>
+	<bifi-app-plugin-slot name="contacts-form-general-information"></bifi-app-plugin-slot>
       </bifi-app-form-section>
 
       <bifi-app-form-section
         title="Contact information"
         id="contact-contacting-information"
-        [ordinal]="3"
+        [ordinal]="2"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
@@ -177,7 +184,7 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="4">
+      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Street Address</bifi-app-form-label>

@@ -7,6 +7,9 @@
     <div>
       <h1 class="text-2xl font-bold">{{ p.name }}</h1>
       <span class="text-gray-500 text-sm">SKU: {{ p.sku }}</span>
+      @if (p.barcode) {
+        <span class="text-gray-500 text-sm ml-4">Barcode: {{ p.barcode }}</span>
+      }
       @if (p.unit) {
         <span class="text-gray-500 text-sm ml-4">Unit: {{ p.unit }}</span>
       }
@@ -33,7 +36,7 @@
       <div class="text-2xl font-bold">{{ totalStock() }}</div>
     </p-card>
     <p-card>
-      <div class="text-sm text-gray-500">Cost Price</div>
+      <div class="text-sm text-gray-500">Purchase Price</div>
       <div class="text-2xl font-bold">{{ p.costPrice | currency }}</div>
     </p-card>
     <p-card>
