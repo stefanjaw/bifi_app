@@ -17,9 +17,10 @@ import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
 import { CrudTaxes } from '@avalantec/base-app/taxes';
+import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
 import { DecimalPipe } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -30,13 +31,17 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TooltipModule } from 'primeng/tooltip';
 import { LineItemsTable } from '../../components/line-items-table/line-items-table';
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
+import { salesOrderStatus } from '../../interfaces/sales-order';
+import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
   imports: [
     DecimalPipe,
+    RouterLink,
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -45,6 +50,7 @@ import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calcula
     TextareaModule,
     DatePickerModule,
     ProgressBarModule,
+    TooltipModule,
     LineItemsTable,
   ],
   templateUrl: './sales-order-detail.html',
@@ -62,6 +68,8 @@ export class SalesOrderDetail {
   private crudStockBalances = inject(CrudStockBalances);
   private crudSalesOrderStages = inject(CrudSalesOrderStages);
   private crudTaxes = inject(CrudTaxes);
+  private crudDiscounts = inject(CrudDiscounts);
+  private dynamicBreadcrumb = inject(DynamicBreadcrumbService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -82,6 +90,7 @@ export class SalesOrderDetail {
   stockResource = this.crudStockBalances.get({});
   stagesResource = this.crudSalesOrderStages.get({});
   taxesResource = this.crudTaxes.get({});
+  discountsResource = this.crudDiscounts.get({});
 
   entry = this.orderResource.value;
 
@@ -101,6 +110,10 @@ export class SalesOrderDetail {
     ((this.taxesResource.value() as any[]) ?? []).filter(
       (t: any) => t?.active === true && t?.taxType === 'sales',
     ),
+  );
+
+  discountOptions = computed(() =>
+    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false),
   );
 
   defaultStageId = computed(() => {
@@ -137,9 +150,11 @@ export class SalesOrderDetail {
       this.currenciesResource.isLoading() ||
       this.productsResource.isLoading() ||
       this.stagesResource.isLoading() ||
-      this.taxesResource.isLoading(),
+      this.taxesResource.isLoading() ||
+      this.discountsResource.isLoading(),
   );
   isSubmitLoading = signal(false);
+  isPdfLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   form = this.formService.form;
@@ -155,10 +170,76 @@ export class SalesOrderDetail {
     const items = (this.lineItemValues() ?? []) as any[];
     const lineTaxIds = this.formService.lineTaxIds();
     const allTaxes = this.taxOptions();
-    return calculateTotalsPerLine(items, lineTaxIds, allTaxes);
+    const allDiscounts = this.discountOptions();
+    const discountedPrices = items.map((item: any) => {
+      const discountId = item?.discountId;
+      const discount = discountId ? allDiscounts.find((d: any) => d._id === discountId) : null;
+      if (!discount) return Number(item?.unitPrice ?? 0);
+      return discount.discountType === 'percentage'
+        ? Number(item.unitPrice ?? 0) * (1 - discount.value / 100)
+        : Math.max(0, Number(item.unitPrice ?? 0) - discount.value);
+    });
+    return calculateTotalsPerLine(items, lineTaxIds, allTaxes, discountedPrices);
+  });
+
+  statusOptions = [
+    { label: 'Draft', value: 'draft' },
+    { label: 'Quote', value: 'quote' },
+    { label: 'Confirmed', value: 'confirmed' },
+    { label: 'Shipped', value: 'shipped' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Cancelled', value: 'cancelled' },
+  ];
+
+  readonly today = new Date().toLocaleDateString('en-CA');
+
+  private readonly STATUS_LABELS: Record<string, string> = {
+    draft: 'Draft',
+    quote: 'Quote',
+    confirmed: 'Confirmed',
+    shipped: 'Shipped',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+  };
+
+  statusLabel = computed(() => this.STATUS_LABELS[this.entry()?.status ?? ''] ?? '');
+
+  statusSteps = computed(() => {
+    const status = this.entry()?.status ?? 'draft';
+    const isCancelled = status === 'cancelled';
+
+    const steps = [
+      { key: 'draft', label: 'Draft' },
+      { key: 'quote', label: 'Quote' },
+      { key: 'confirmed', label: 'Confirmed' },
+      { key: 'shipped', label: 'Shipped' },
+      { key: 'completed', label: 'Completed' },
+    ];
+
+    const activeIndex = isCancelled ? -1 : steps.findIndex(s => s.key === status);
+
+    return steps.map((step, i) => ({
+      ...step,
+      done: !isCancelled && i < activeIndex,
+      active: !isCancelled && i === activeIndex,
+      future: isCancelled || i > activeIndex,
+    }));
   });
 
   constructor() {
+    effect(() => {
+      const id = this.id();
+      const entry = this.entry();
+      if (id && entry?.number) {
+        this.dynamicBreadcrumb.set(id, entry.number);
+      }
+    });
+
+    this.destroy$.onDestroy(() => {
+      const id = this.id();
+      if (id) this.dynamicBreadcrumb.clear(id);
+    });
+
     this.form.controls.amount.disable({ emitEvent: false });
 
     effect(() => {
@@ -188,6 +269,7 @@ export class SalesOrderDetail {
           company: companyId,
           salesperson: salespersonId,
           stageId,
+          status: entry.status ?? 'draft',
           amount: entry.amount,
           currency: currencyId,
           closeDate: new Date(entry.closeDate),
@@ -209,6 +291,10 @@ export class SalesOrderDetail {
                 typeof id === 'object' ? (id?._id?.toString() ?? '') : id?.toString() ?? '',
               ).filter(Boolean)
             : [],
+          discountId:
+            typeof item.discountId === 'object'
+              ? (item.discountId?._id ?? '')
+              : (item.discountId ?? ''),
         }));
         this.formService.initLineItems(mappedLineItems);
         this.formService.resetDirtyState();
@@ -231,13 +317,62 @@ export class SalesOrderDetail {
     this.router.navigate([isUpdate ? '../../' : '../'], { relativeTo: this.route });
   }
 
+  markAsQuote() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'quote')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsConfirmed() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'confirmed')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsShipped() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'shipped')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsCompleted() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'completed')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  cancelOrder() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'cancelled')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  exportPdf() {
+    if (!this.id() || this.isPdfLoading()) return;
+    this.isPdfLoading.set(true);
+    this.crudSalesOrders
+      .openPdf(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => this.isPdfLoading.set(false),
+        error: () => this.isPdfLoading.set(false),
+      });
+  }
+
   handleSubmit(data: FormValueState<SalesOrderFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
-    // amount, subtotal, taxTotal, grandTotal, and lineItems[].total are all
-    // derived on the server — never sent by the frontend.
-    // taxIds per line are sent; the server aggregates them into order-level taxes[].
     const lineTaxIds = this.formService.lineTaxIds();
     const lineItems = (rawValue.lineItems ?? []).map((item: any, i: number) => ({
       productId: item.productId || undefined,
@@ -245,6 +380,7 @@ export class SalesOrderDetail {
       quantity: item.quantity,
       unitPrice: item.unitPrice,
       taxIds: lineTaxIds[i] ?? [],
+      discountId: item.discountId || null,
     }));
 
     const payload: Record<string, any> = {
@@ -253,6 +389,7 @@ export class SalesOrderDetail {
       company: rawValue.company,
       salesperson: rawValue.salesperson || undefined,
       stageId: rawValue.stageId || undefined,
+      status: rawValue.status as salesOrderStatus,
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,
@@ -275,9 +412,9 @@ export class SalesOrderDetail {
         .post({ data: payload })
         .pipe(takeUntilDestroyed(this.destroy$))
         .subscribe({
-          next: () => {
+          next: (newOrder: any) => {
             this.isSubmitLoading.set(false);
-            this.router.navigate(['../'], { relativeTo: this.route });
+            this.router.navigate(['../edit', newOrder._id], { relativeTo: this.route });
           },
           error: () => this.isSubmitLoading.set(false),
         });

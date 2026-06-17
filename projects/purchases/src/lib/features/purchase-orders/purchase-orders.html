@@ -16,22 +16,17 @@
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
-  [infiniteScroll]="true" [columns]="purchaseOrderColumns" [data]="entries">
+  [infiniteScroll]="true"
+  [columns]="purchaseOrderColumns"
+  [data]="entries"
+  [onClickRow]="onClickRow"
+  clickRowPermission="purchases/orders/update:view"
+>
   <ng-template #actions let-element>
-    <p-button
-      severity="info"
-      label="View"
-      icon="pi pi-eye"
-      routerLink="../orders/{{ element._id }}"
-    ></p-button>
-    @if (element.status !== 'cancelled' && element.status !== 'received') {
-      <p-button
-        *bifiAppHasPermission="'purchases/orders:delete:model'"
-        severity="danger"
-        label="Cancel"
-        icon="pi pi-times"
-        (onClick)="cancelOrder(element._id)"
-      ></p-button>
-    }
+    <bifi-app-buttons-actions
+      (deleteClicked)="deleteEntry(element._id)"
+      [showDelete]="element.status === 'cancelled'"
+      resource="purchases/orders"
+    ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

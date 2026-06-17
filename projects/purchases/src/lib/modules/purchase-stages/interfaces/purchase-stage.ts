@@ -5,4 +5,5 @@ export interface purchaseStage {
   color: string;
   order: number;
   active: boolean;
+  isDefault?: boolean;
 }

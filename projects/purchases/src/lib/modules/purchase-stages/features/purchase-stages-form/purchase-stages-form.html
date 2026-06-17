@@ -43,6 +43,16 @@
             <textarea pTextarea formControlName="description" placeholder="Description"></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <div class="flex items-center gap-3">
+              <p-toggleswitch formControlName="isDefault" inputId="isDefault"></p-toggleswitch>
+              <label for="isDefault" class="text-sm font-medium text-gray-700 cursor-pointer">
+                Default for new orders
+              </label>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">When enabled, new Purchase Orders will automatically be assigned to this stage.</p>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
     } @else {

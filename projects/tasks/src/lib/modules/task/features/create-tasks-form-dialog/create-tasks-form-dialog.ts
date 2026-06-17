@@ -25,6 +25,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import dayjs from 'dayjs';
 import { CrudProjects } from '@avalantec/projects';
 import { task } from '../../interfaces/task';
+import { CrudUsers } from '@avalantec/base-app/users';
+import { injectAuthService } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-create-tasks-form-dialog',
@@ -47,6 +49,8 @@ export class CreateTasksFormDialog extends BaseDialog {
   private crudTasks = inject(CrudTasks);
   private crudTaskTypes = inject(CrudTaskTypes);
   private crudProjects = inject(CrudProjects);
+  private crudUsers = inject(CrudUsers);
+  private authService = injectAuthService();
   private destroy$ = inject(DestroyRef);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private toastManager = inject(ToastManager);
@@ -55,11 +59,17 @@ export class CreateTasksFormDialog extends BaseDialog {
   tasks = this.crudTasks.get({ triggerRequest: this.dialogState });
   taskTypes = this.crudTaskTypes.get({ triggerRequest: this.dialogState });
   projects = this.crudProjects.get({ triggerRequest: this.dialogState });
+  usersResource = this.crudUsers.get({ triggerRequest: this.dialogState });
 
   // State
   form = this.formService.form;
+  users = this.usersResource.value;
   isLoading = computed(
-    () => this.tasks.isLoading() || this.taskTypes.isLoading() || this.projects.isLoading()
+    () =>
+      this.tasks.isLoading() ||
+      this.taskTypes.isLoading() ||
+      this.projects.isLoading() ||
+      this.usersResource.isLoading()
   );
   isSubmitLoading = signal(false);
   taskProgress = toSignal(this.form.controls.progress.valueChanges);
@@ -81,6 +91,10 @@ export class CreateTasksFormDialog extends BaseDialog {
 
   override openDialog(data?: CreateTaskFormModel): void {
     this.formService.reset();
+    const currentUserId = (this.authService.user() as any)?._id?.toString?.();
+    if (currentUserId) {
+      this.formService.patchValue({ assigned: currentUserId });
+    }
     if (data) this.formService.patchValue(data);
     super.openDialog();
   }
@@ -100,6 +114,7 @@ export class CreateTasksFormDialog extends BaseDialog {
     if (!rawValue.parentId) delete rawValue.parentId;
     if (!rawValue.progress) delete rawValue.progress;
     if (!rawValue.projectId) delete rawValue.projectId;
+    if (!rawValue.assigned) delete rawValue.assigned;
 
     this.isSubmitLoading.set(true);
 

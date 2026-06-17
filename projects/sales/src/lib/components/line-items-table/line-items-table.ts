@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  HostListener,
   inject,
   input,
 } from '@angular/core';
@@ -14,8 +15,21 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { CdkDragDrop, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { product } from '@avalantec/inventory';
 import { SalesOrderForm } from '../../services/sales-order-form';
+import { ColWidthManager } from '@avalantec/base-app/core';
+
+const DEFAULT_WIDTHS: Record<string, number> = {
+  sku: 96,
+  description: 280,
+  quantity: 80,
+  uom: 72,
+  unitPrice: 128,
+  discount: 128,
+  taxes: 160,
+  total: 112,
+};
 
 @Component({
   selector: 'bifi-app-line-items-table',
@@ -28,6 +42,9 @@ import { SalesOrderForm } from '../../services/sales-order-form';
     SelectModule,
     MultiSelectModule,
     CurrencyPipe,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
   ],
   templateUrl: './line-items-table.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,8 +54,26 @@ export class LineItemsTable {
 
   productOptions = input<product[]>([]);
   taxOptions = input<any[]>([]);
+  discountOptions = input<any[]>([]);
   stockMap = input<Record<string, number>>({});
   readonly = input<boolean>(false);
+
+  private cwm = new ColWidthManager(DEFAULT_WIDTHS, 'lineItems.sales.colWidths');
+  colWidths = this.cwm.colWidths;
+
+  onResizeStart(event: MouseEvent, colKey: string) {
+    this.cwm.onResizeStart(event, colKey);
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onResizeMove(event: MouseEvent) {
+    this.cwm.onResizeMove(event);
+  }
+
+  @HostListener('document:mouseup')
+  onResizeEnd() {
+    this.cwm.onResizeEnd();
+  }
 
   get lineItemsArray() {
     return this.formService.lineItemsArray;
@@ -56,10 +91,10 @@ export class LineItemsTable {
   );
 
   grandTotal = computed(() =>
-    (this.lineItemValues() as any[]).reduce(
-      (sum, item) => sum + ((item?.quantity ?? 0) * (item?.unitPrice ?? 0)),
-      0
-    )
+    (this.lineItemValues() as any[]).reduce((sum, item) => {
+      const discountedPrice = this._applyDiscount(item?.unitPrice ?? 0, item?.discountId);
+      return sum + ((item?.quantity ?? 0) * discountedPrice);
+    }, 0)
   );
 
   addItem() {
@@ -68,6 +103,12 @@ export class LineItemsTable {
 
   removeItem(index: number) {
     this.formService.removeLineItem(index);
+  }
+
+  onDrop(event: CdkDragDrop<any[]>) {
+    if (event.previousIndex !== event.currentIndex) {
+      this.formService.moveLineItem(event.previousIndex, event.currentIndex);
+    }
   }
 
   onProductChange(index: number, productId: string) {
@@ -109,18 +150,37 @@ export class LineItemsTable {
     }, 0);
   }
 
-  getLineTaxPerUnit(index: number): number {
+  getDiscountedUnitPrice(index: number): number {
     const control = this.lineItemsArray.controls[index] as FormGroup;
     const unitPrice = (control?.get('unitPrice')?.value as number) ?? 0;
-    return Number((unitPrice * this.getLineTaxRateSum(index)).toFixed(2));
+    const discountId = control?.get('discountId')?.value as string;
+    return this._applyDiscount(unitPrice, discountId);
+  }
+
+  getDiscount(index: number): any {
+    const control = this.lineItemsArray.controls[index] as FormGroup;
+    const discountId = control?.get('discountId')?.value as string;
+    if (!discountId) return null;
+    return this.discountOptions().find((d: any) => d._id === discountId) ?? null;
+  }
+
+  getDiscountLabel(index: number): string {
+    const discount = this.getDiscount(index);
+    if (!discount) return '—';
+    return discount.name;
+  }
+
+  getLineTaxPerUnit(index: number): number {
+    const discountedPrice = this.getDiscountedUnitPrice(index);
+    return Number((discountedPrice * this.getLineTaxRateSum(index)).toFixed(2));
   }
 
   getLineGrossTotal(index: number): number {
     const control = this.lineItemsArray.controls[index] as FormGroup;
     const qty = (control?.get('quantity')?.value as number) ?? 0;
-    const unitPrice = (control?.get('unitPrice')?.value as number) ?? 0;
+    const discountedPrice = this.getDiscountedUnitPrice(index);
     const taxPerUnit = this.getLineTaxPerUnit(index);
-    return Number((qty * (unitPrice + taxPerUnit)).toFixed(2));
+    return Number((qty * (discountedPrice + taxPerUnit)).toFixed(2));
   }
 
   onQuantityChange(index: number, newQty: number | null) {
@@ -150,6 +210,13 @@ export class LineItemsTable {
       if (name) return name;
     }
     return '—';
+  }
+
+  getProductSku(index: number): string {
+    const productId = (this.lineItemsArray.controls[index] as FormGroup).get('productId')?.value;
+    if (!productId) return '—';
+    const prod = this.productOptions().find(p => p._id === productId);
+    return prod?.sku ?? '—';
   }
 
   getProductName(index: number): string {
@@ -183,5 +250,14 @@ export class LineItemsTable {
         return tax ? `${tax.name} (${tax.percentage}%)` : id;
       })
       .join(', ');
+  }
+
+  private _applyDiscount(unitPrice: number, discountId: string | null | undefined): number {
+    if (!discountId) return unitPrice;
+    const discount = this.discountOptions().find((d: any) => d._id === discountId);
+    if (!discount) return unitPrice;
+    return discount.discountType === 'percentage'
+      ? unitPrice * (1 - discount.value / 100)
+      : Math.max(0, unitPrice - discount.value);
   }
 }

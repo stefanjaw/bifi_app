@@ -28,6 +28,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { SalesPipeline } from '../sales-pipeline/sales-pipeline';
+
+const VIEW_KEY = 'sales.opportunitiesView';
 
 @Component({
   selector: 'bifi-app-opportunities-list',
@@ -35,7 +38,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
+  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions, SalesPipeline],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,9 +50,17 @@ export class OpportunitiesList {
   private messageService = inject(MessageService);
   private destroy$ = inject(DestroyRef);
 
-  // Router
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  viewMode = signal<'list' | 'kanban'>(
+    (localStorage.getItem(VIEW_KEY) as 'list' | 'kanban') ?? 'list'
+  );
+
+  setView(mode: 'list' | 'kanban') {
+    this.viewMode.set(mode);
+    localStorage.setItem(VIEW_KEY, mode);
+  }
 
   stagesResource = this.crudCrmStages.get({});
   stages = computed(() => (this.stagesResource.value() as crmStage[]) ?? []);
@@ -68,6 +79,7 @@ export class OpportunitiesList {
   editOpportunity = (element: crm) => {
     this.router.navigate(['../opportunities/edit', element._id], { relativeTo: this.route });
   };
+
   markWon(event: Event, deal: crm) {
     event.stopPropagation();
     const wonStage = this.wonStage();
@@ -147,7 +159,6 @@ export class OpportunitiesList {
       .put({ _id: deal._id, data: { stage: lostStage._id } as any })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-
         next: () => {
           this.markingId.set(null);
           this.messageService.add({

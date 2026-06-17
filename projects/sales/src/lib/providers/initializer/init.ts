@@ -34,12 +34,6 @@ export function initializeSales() {
             resource: 'sales/opportunities/menu',
           },
           {
-            icon: PrimeIcons.TABLE,
-            routerLink: ['/sales/pipeline'],
-            label: 'Pipeline',
-            resource: 'sales/pipeline/menu',
-          },
-          {
             icon: PrimeIcons.SHOPPING_CART,
             routerLink: ['/sales/orders'],
             label: 'Orders',

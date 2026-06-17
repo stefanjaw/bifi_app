@@ -22,7 +22,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'bifi-app-sales-pipeline',
   host: {
-    class: 'flex flex-col h-full',
+    class: 'block',
   },
   imports: [CurrencyPipe, DatePipe, RouterLink, ProgressBarModule, ButtonModule, ToastModule],
   templateUrl: './sales-pipeline.html',

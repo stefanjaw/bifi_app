@@ -12,6 +12,7 @@ export interface CreateTaskFormModel {
   parentId?: string;
   projectId?: string;
   isMilestone?: boolean;
+  assigned?: string;
 }
 
 @Injectable({
@@ -29,6 +30,7 @@ export class CreateTaskForm extends BaseForm<CreateTaskFormModel> {
       parentId: [''],
       projectId: [''],
       isMilestone: [false],
+      assigned: [''],
     });
   }
 

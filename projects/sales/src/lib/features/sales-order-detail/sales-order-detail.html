@@ -1,21 +1,153 @@
-<bifi-app-form-layout
-  [title]="isUpdate() ? 'Sales Order: ' + (entry()?.number ?? '') : 'New Sales Order'"
-  titlePosition="center"
-  class="block px-4 bg-gray-50 py-4"
->
+<div class="block px-4 bg-gray-50 py-4">
   <form
-    ngProjectAs="div"
     [formGroup]="form"
     bifiAppFormActionsHandler
     (appSubmit)="handleSubmit($event)"
     class="min-h-screen flex flex-col gap-6"
   >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
+    @if (isUpdate() && entry()) {
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+
+        <!-- Compact action strip: Back | [Export PDF] [Save] -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+          <p-button
+            label="Back"
+            icon="pi pi-arrow-left"
+            [text]="true"
+            size="small"
+            type="button"
+            (onClick)="goBack()"
+          ></p-button>
+          <div class="flex items-center gap-2">
+            <p-button
+              [icon]="isPdfLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-file-pdf'"
+              [text]="true"
+              size="small"
+              type="button"
+              [pTooltip]="isPdfLoading() ? 'Generating...' : 'Export PDF'"
+              tooltipPosition="bottom"
+              [disabled]="isPdfLoading()"
+              (onClick)="exportPdf()"
+            ></p-button>
+            @if (form.dirty) {
+              <p-button
+                [label]="isSubmitLoading() ? 'Saving...' : 'Save'"
+                [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
+                size="small"
+                type="submit"
+                [disabled]="isSubmitLoading()"
+              ></p-button>
+            }
+          </div>
+        </div>
+
+        <!-- Missing sequence number warning -->
+        @if (!entry()!.number) {
+          <div class="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-amber-800 text-sm">
+            <i class="pi pi-exclamation-triangle text-amber-500 shrink-0"></i>
+            <span>No order number assigned — configure a sequence under
+              <a routerLink="/settings/sales/configuration" class="underline font-medium hover:text-amber-900">Settings › Sales › Configuration</a>.
+            </span>
+          </div>
+        }
+
+        <!-- Stepper row -->
+        <div class="px-6 py-4 flex items-center gap-6 min-h-[72px]">
+
+          <!-- Left: status badge + SO number -->
+          <div class="flex flex-col gap-0.5 shrink-0 min-w-[120px]">
+            <span
+              class="text-[10px] font-bold tracking-widest uppercase"
+              [class]="entry()!.status === 'cancelled' ? 'text-red-500' : entry()!.status === 'completed' ? 'text-green-600' : 'text-blue-600'"
+            >{{ statusLabel() }}</span>
+            <span class="text-base font-bold text-gray-900 whitespace-nowrap">{{ entry()!.number ?? '—' }}</span>
+          </div>
+
+          <!-- Center: horizontal stepper -->
+          <div class="flex-1 flex items-start min-w-0">
+            @for (step of statusSteps(); track step.key; let last = $last) {
+              <div class="flex flex-col items-center">
+                <div
+                  class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors"
+                  [class]="step.done ? 'bg-blue-600 border-blue-600' : step.active ? 'bg-white border-blue-600 ring-4 ring-blue-50' : 'bg-white border-gray-300'"
+                >
+                  @if (step.done) {
+                    <i class="pi pi-check text-white" style="font-size:10px"></i>
+                  }
+                </div>
+                <span
+                  class="mt-1.5 text-[11px] font-medium text-center whitespace-nowrap"
+                  [class]="step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'"
+                >{{ step.label }}</span>
+                @if (step.active) {
+                  <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
+                }
+              </div>
+              @if (!last) {
+                <div
+                  class="flex-1 h-px mt-3.5 mx-2"
+                  [class]="step.done ? 'bg-blue-600' : 'bg-gray-200'"
+                ></div>
+              }
+            }
+            @if (entry()!.status === 'cancelled') {
+              <div class="w-6 h-px mt-3.5 mx-2 bg-gray-200"></div>
+              <div class="flex flex-col items-center">
+                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400">
+                  <i class="pi pi-times text-red-500" style="font-size:10px"></i>
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">Cancelled</span>
+                <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Right: contextual action button -->
+          <div class="shrink-0 flex items-center gap-2">
+            @switch (entry()!.status) {
+              @case ('draft') {
+                <p-button label="Send Quote" icon="pi pi-send" (onClick)="markAsQuote()"></p-button>
+              }
+              @case ('quote') {
+                <p-button label="Confirm Order" icon="pi pi-check" (onClick)="markAsConfirmed()"></p-button>
+              }
+              @case ('confirmed') {
+                <p-button label="Mark as Shipped" icon="pi pi-truck" (onClick)="markAsShipped()"></p-button>
+              }
+              @case ('shipped') {
+                <p-button label="Mark as Completed" icon="pi pi-check-circle" severity="success" (onClick)="markAsCompleted()"></p-button>
+              }
+            }
+            @if (entry()!.status !== 'cancelled') {
+              <p-button label="Cancel Order" icon="pi pi-times" severity="danger" [outlined]="true" (onClick)="cancelOrder()"></p-button>
+            }
+          </div>
+
+        </div>
+      </div>
+    }
+
+    @if (!isUpdate()) {
+      <div class="flex items-center justify-between">
+        <p-button
+          label="Back"
+          icon="pi pi-arrow-left"
+          [text]="true"
+          size="small"
+          type="button"
+          (onClick)="goBack()"
+        ></p-button>
+        @if (form.dirty) {
+          <p-button
+            [label]="isSubmitLoading() ? 'Saving...' : 'Save'"
+            [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
+            size="small"
+            type="submit"
+            [disabled]="isSubmitLoading()"
+          ></p-button>
+        }
+      </div>
+    }
 
     @if (!isLoading()) {
       <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
@@ -31,7 +163,6 @@
               placeholder="Select an opportunity"
               [filter]="true"
               filterBy="title"
-              [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -73,6 +204,32 @@
               optionValue="_id"
               placeholder="Select a salesperson"
               [filter]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Status</bifi-app-form-label>
+            <p-select
+              formControlName="status"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a status"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Pipeline Stage</bifi-app-form-label>
+            <p-select
+              formControlName="stageId"
+              [options]="stageOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              placeholder="Select a stage"
+              [filter]="true"
+              filterBy="name"
               [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
@@ -105,21 +262,6 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Stage</bifi-app-form-label>
-            <p-select
-              formControlName="stageId"
-              [options]="stageOptions()"
-              optionLabel="name"
-              optionValue="_id"
-              placeholder="Select a stage"
-              [filter]="true"
-              filterBy="name"
-              [showClear]="true"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
             <bifi-app-form-label>Close Date *</bifi-app-form-label>
             <p-datepicker
               formControlName="closeDate"
@@ -136,6 +278,7 @@
         <bifi-app-line-items-table
           [productOptions]="productOptions()"
           [taxOptions]="taxOptions()"
+          [discountOptions]="discountOptions()"
           [stockMap]="stockMap()"
           [readonly]="false"
         ></bifi-app-line-items-table>
@@ -179,4 +322,4 @@
       <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
     }
   </form>
-</bifi-app-form-layout>
+</div>

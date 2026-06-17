@@ -169,6 +169,8 @@ export class UpdateTasksFormDialog extends BaseDialog {
           attachments: parsedAttachments,
           isMilestone: task.isMilestone ?? false,
         });
+        this.formService.form.markAsPristine();
+        this.formService.form.markAsUntouched();
       } else {
         this.formService.reset();
         this.formService.form.markAsPristine();

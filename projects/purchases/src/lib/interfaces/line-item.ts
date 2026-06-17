@@ -5,4 +5,5 @@ export interface lineItem {
   unitPrice: number;
   total: number;
   taxIds?: string[];
+  discountId?: string;
 }

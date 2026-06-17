@@ -16,6 +16,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -30,6 +31,8 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudPurchaseStages } from '../../modules/purchase-stages/services/crud-purchase-stages';
 import { purchaseStage } from '../../modules/purchase-stages/interfaces/purchase-stage';
 import { CrudTaxes } from '@avalantec/base-app/taxes';
+import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
+import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudProducts } from '@avalantec/inventory';
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 
@@ -40,6 +43,7 @@ import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calcula
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
+    TooltipModule,
     SelectModule,
     TextareaModule,
     DatePickerModule,
@@ -57,7 +61,9 @@ export class PurchaseOrderDetail {
   private crudContacts = inject(CrudContacts);
   private crudPurchaseStages = inject(CrudPurchaseStages);
   private crudTaxes = inject(CrudTaxes);
+  private crudDiscounts = inject(CrudDiscounts);
   private crudProducts = inject(CrudProducts);
+  private dynamicBreadcrumb = inject(DynamicBreadcrumbService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -72,6 +78,7 @@ export class PurchaseOrderDetail {
   contactsResource = this.crudContacts.get({});
   stagesResource = this.crudPurchaseStages.get({});
   taxesResource = this.crudTaxes.get({});
+  discountsResource = this.crudDiscounts.get({});
   productsResource = this.crudProducts.get({});
 
   private _selectedContact = signal<contact | null>(null);
@@ -90,10 +97,16 @@ export class PurchaseOrderDetail {
 
   stageOptions = computed(() => (this.stagesResource.value() as purchaseStage[]) ?? []);
 
+  defaultStageId = computed(() => this.stageOptions().find(s => s.isDefault)?._id ?? '');
+
   purchaseTaxOptions = computed(() =>
     ((this.taxesResource.value() as any[]) ?? []).filter(
       (t: any) => t?.active === true && t?.taxType === 'purchase',
     ),
+  );
+
+  discountOptions = computed(() =>
+    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false),
   );
 
   productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
@@ -103,9 +116,11 @@ export class PurchaseOrderDetail {
       this.orderResource.isLoading() ||
       this.contactsResource.isLoading() ||
       this.taxesResource.isLoading() ||
+      this.discountsResource.isLoading() ||
       this.productsResource.isLoading(),
   );
   isSubmitLoading = signal(false);
+  isPdfLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   lineItems = signal<lineItem[]>([]);
@@ -114,20 +129,79 @@ export class PurchaseOrderDetail {
     const items = this.lineItems();
     const lineTaxIds = items.map(item => item.taxIds ?? []);
     const allTaxes = this.purchaseTaxOptions();
-    return calculateTotalsPerLine(items, lineTaxIds, allTaxes);
+    const allDiscounts = this.discountOptions();
+    const discountedPrices = items.map((item: lineItem) => {
+      const discountId = item.discountId;
+      const discount = discountId ? allDiscounts.find((d: any) => d._id === discountId) : null;
+      if (!discount) return Number(item.unitPrice ?? 0);
+      return discount.discountType === 'percentage'
+        ? Number(item.unitPrice ?? 0) * (1 - discount.value / 100)
+        : Math.max(0, Number(item.unitPrice ?? 0) - discount.value);
+    });
+    return calculateTotalsPerLine(items, lineTaxIds, allTaxes, discountedPrices);
   });
 
   form = this.formService.form;
 
   statusOptions = [
     { label: 'Draft', value: 'draft' },
+    { label: 'Confirmed', value: 'confirmed' },
     { label: 'Sent', value: 'sent' },
     { label: 'Partially Received', value: 'partially_received' },
     { label: 'Received', value: 'received' },
     { label: 'Cancelled', value: 'cancelled' },
   ];
 
+  readonly today = new Date().toLocaleDateString('en-CA');
+
+  private readonly STATUS_LABELS: Record<string, string> = {
+    draft: 'Draft',
+    confirmed: 'Confirmed',
+    sent: 'Sent',
+    partially_received: 'Partially Received',
+    received: 'Received',
+    cancelled: 'Cancelled',
+  };
+
+  statusLabel = computed(() => this.STATUS_LABELS[this.entry()?.status ?? ''] ?? '');
+
+  statusSteps = computed(() => {
+    const status = this.entry()?.status ?? 'draft';
+    const isCancelled = status === 'cancelled';
+    const isPartiallyReceived = status === 'partially_received';
+    const normalizedStatus = isPartiallyReceived ? 'received' : status;
+
+    const steps = [
+      { key: 'draft', label: 'Draft' },
+      { key: 'confirmed', label: 'Confirmed' },
+      { key: 'sent', label: 'Sent' },
+      { key: 'received', label: isPartiallyReceived ? 'Partially Received' : 'Received' },
+    ];
+
+    const activeIndex = isCancelled ? -1 : steps.findIndex(s => s.key === normalizedStatus);
+
+    return steps.map((step, i) => ({
+      ...step,
+      done: !isCancelled && i < activeIndex,
+      active: !isCancelled && i === activeIndex,
+      future: isCancelled || i > activeIndex,
+    }));
+  });
+
   constructor() {
+    effect(() => {
+      const id = this.id();
+      const entry = this.entry();
+      if (id && entry?.poNumber) {
+        this.dynamicBreadcrumb.set(id, entry.poNumber);
+      }
+    });
+
+    this.destroy$.onDestroy(() => {
+      const id = this.id();
+      if (id) this.dynamicBreadcrumb.clear(id);
+    });
+
     effect(() => {
       const entry = this.entry();
       if (entry) {
@@ -167,6 +241,10 @@ export class PurchaseOrderDetail {
               unitPrice: item.unitPrice ?? 0,
               total: item.total ?? 0,
               taxIds,
+              discountId:
+                typeof item.discountId === 'object'
+                  ? (item.discountId?._id ?? undefined)
+                  : (item.discountId ?? undefined),
             };
           })
         );
@@ -178,6 +256,10 @@ export class PurchaseOrderDetail {
         const preselected = this.route.snapshot.queryParamMap.get('contactId');
         if (preselected) {
           this.formService.patchValue({ contactId: preselected });
+        }
+        const defStage = this.defaultStageId();
+        if (defStage) {
+          this.formService.patchValue({ stageId: defStage });
         }
       }
     });
@@ -195,6 +277,22 @@ export class PurchaseOrderDetail {
   onLineItemsChange(items: lineItem[]) {
     this.lineItems.set(items);
     this.form.markAsDirty();
+  }
+
+  markAsConfirmed() {
+    if (!this.id()) return;
+    this.crudPurchaseOrders
+      .updateStatus(this.id(), 'confirmed')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsSent() {
+    if (!this.id()) return;
+    this.crudPurchaseOrders
+      .updateStatus(this.id(), 'sent')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
   }
 
   markAsReceived() {
@@ -217,6 +315,28 @@ export class PurchaseOrderDetail {
       });
   }
 
+  cancelOrder() {
+    if (!this.id()) return;
+    this.crudPurchaseOrders
+      .updateStatus(this.id(), 'cancelled')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => this.orderResource.reload(),
+      });
+  }
+
+  exportPdf() {
+    if (!this.id() || this.isPdfLoading()) return;
+    this.isPdfLoading.set(true);
+    this.crudPurchaseOrders
+      .downloadPdf(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => this.isPdfLoading.set(false),
+        error: () => this.isPdfLoading.set(false),
+      });
+  }
+
   handleSubmit(data: FormValueState<PurchaseOrderFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
@@ -226,9 +346,12 @@ export class PurchaseOrderDetail {
       status: rawValue.status as purchaseOrderStatus,
       issueDate: rawValue.issueDate ? new Date(rawValue.issueDate).toISOString() : undefined,
       expectedDeliveryDate: rawValue.expectedDeliveryDate ? new Date(rawValue.expectedDeliveryDate).toISOString() : undefined,
-      lineItems: this.lineItems().map(item => ({ ...item })),
+      lineItems: this.lineItems().map(item => ({
+        ...item,
+        discountId: item.discountId || null,
+      })),
       notes: rawValue.notes,
-      stageId: rawValue.stageId || null,
+      stageId: rawValue.stageId || undefined,
     };
 
     if (this.isUpdate()) {

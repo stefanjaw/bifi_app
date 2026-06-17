@@ -8,6 +8,7 @@ export interface LineItemFormModel {
   quantity: number;
   unitPrice: number;
   total: number;
+  discountId: string;
 }
 
 export interface SalesOrderFormModel {
@@ -16,6 +17,7 @@ export interface SalesOrderFormModel {
   company: string;
   salesperson: string;
   stageId: string;
+  status: string;
   amount: number;
   currency: string;
   closeDate: Date;
@@ -36,6 +38,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       company: ['', [Validators.required]],
       salesperson: [''],
       stageId: [''],
+      status: ['draft'],
       amount: [0],
       currency: ['', [Validators.required]],
       closeDate: [new Date(), [Validators.required]],
@@ -47,6 +50,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
           quantity: [1],
           unitPrice: [0],
           total: [0],
+          discountId: [''],
         },
         formArrayElements: [],
       },
@@ -69,6 +73,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       quantity: [data.quantity ?? 1],
       unitPrice: [data.unitPrice ?? 0],
       total: [data.total ?? 0],
+      discountId: [data.discountId ?? ''],
     });
   }
 
@@ -80,6 +85,20 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
   removeLineItem(index: number) {
     this.form.controls.lineItems.removeAt(index);
     this.lineTaxIds.update(ids => ids.filter((_, i) => i !== index));
+  }
+
+  moveLineItem(from: number, to: number) {
+    const arr = this.form.controls.lineItems;
+    const control = arr.at(from);
+    arr.removeAt(from, { emitEvent: false });
+    arr.insert(to, control, { emitEvent: false });
+    arr.updateValueAndValidity();
+    this.lineTaxIds.update(ids => {
+      const next = [...ids];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved ?? []);
+      return next;
+    });
   }
 
   setLineTaxIds(index: number, taxIds: string[]) {

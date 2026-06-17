@@ -4,6 +4,8 @@ import { crm } from './crm';
 import { lineItem } from './line-item';
 import { salesOrderStage } from '../modules/sales-order-stages';
 
+export type salesOrderStatus = 'draft' | 'quote' | 'confirmed' | 'shipped' | 'completed' | 'cancelled';
+
 export interface appliedTax {
   taxId: string;
   amount: number;
@@ -16,6 +18,7 @@ export interface salesOrder {
   company?: company;
   salesperson?: user;
   stageId?: salesOrderStage;
+  status?: salesOrderStatus;
   amount: number;
   currency?: currency;
   closeDate: string;

@@ -37,10 +37,8 @@ export const SALES_ROUTES: Routes = [
   },
   {
     path: 'pipeline',
-    canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/sales-pipeline/sales-pipeline').then(c => c.SalesPipeline),
-    data: { resource: 'sales/pipeline/list' },
+    redirectTo: 'opportunities',
+    pathMatch: 'full',
   },
   {
     path: 'orders',
