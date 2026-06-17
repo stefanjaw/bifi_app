@@ -95,7 +95,7 @@ export class InvoiceForm {
       this.taxesResource.isLoading() ||
       this.paymentTermsResource.isLoading() ||
       this.discountsResource.isLoading() ||
-      this.productsResource.isLoading(),
+      this.productsResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPosting = signal(false);
@@ -121,15 +121,14 @@ export class InvoiceForm {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(
-    this.formService.linesArray.valueChanges,
-    { initialValue: this.formService.linesArray.value },
-  );
+  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
+    initialValue: this.formService.linesArray.value,
+  });
 
   untaxedTotal = computed(() =>
     this.linesValue()
       .filter((l: any) => !l.lineType || l.lineType === 'product')
-      .reduce((sum: number, l: any) => sum + (l.quantity ?? 1) * (l.unitPrice ?? 0), 0),
+      .reduce((sum: number, l: any) => sum + (l.quantity ?? 1) * (l.unitPrice ?? 0), 0)
   );
 
   taxTotal = computed(() => {
@@ -150,16 +149,14 @@ export class InvoiceForm {
   grandTotal = computed(() => this.untaxedTotal() + this.taxTotal());
 
   jeDebitTotal = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0)
   );
 
   jeCreditTotal = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0)
   );
 
-  jeIsBalanced = computed(() =>
-    Math.abs(this.jeDebitTotal() - this.jeCreditTotal()) < 0.001,
-  );
+  jeIsBalanced = computed(() => Math.abs(this.jeDebitTotal() - this.jeCreditTotal()) < 0.001);
 
   isProductLine(g: FormGroup): boolean {
     return this.formService.isProductLine(g);
@@ -236,6 +233,10 @@ export class InvoiceForm {
     this.isSubmitLoading.set(true);
 
     const val = this.form.getRawValue() as any;
+
+    // in case contactId is empty, delete it
+    if (!val.contactId || val.contactId === '') delete val.contactId;
+
     const lines = (val.lines ?? []).map((v: any) => ({
       lineType: v.lineType || 'product',
       productId: v.productId || undefined,
