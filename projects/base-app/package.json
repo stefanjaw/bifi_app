@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/base-app",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "peerDependencies": {
     "@angular/cdk": "^20.1.0",
     "@angular/common": "^20.1.0",
