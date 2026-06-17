@@ -1,9 +1,12 @@
 import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { FormModule } from '@avalantec/base-app/form';
 import { PLUGIN_CONTEXT } from '@avalantec/base-app/plugin-system';
 import { ToastManager } from '@avalantec/base-app/core';
@@ -27,18 +30,28 @@ import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
     ButtonModule,
     TagModule,
     CommonModule,
+    DialogModule,
+    InputTextModule,
     HaciendaResponseDialogComponent,
   ],
   template: `
     <div class="border-t border-gray-200 mt-4 pt-4">
-      <h3 class="text-sm font-semibold text-gray-700 mb-3">Costa Rica E-Invoice (Factura Electrónica)</h3>
+      <h3 class="text-sm font-semibold text-gray-700 mb-3"
+        >Costa Rica E-Invoice (Factura Electrónica)</h3
+      >
 
       @if (crEinvoiceStatus()) {
         <div class="mb-3 flex items-center gap-2">
           <span class="text-sm text-gray-500">E-Invoice Status:</span>
           <p-tag
             [value]="crEinvoiceStatus()!"
-            [severity]="crEinvoiceStatus() === 'accepted' || crEinvoiceStatus() === 'sent' ? 'success' : crEinvoiceStatus() === 'rejected' || crEinvoiceStatus() === 'failed' ? 'danger' : 'info'"
+            [severity]="
+              crEinvoiceStatus() === 'accepted' || crEinvoiceStatus() === 'sent'
+                ? 'success'
+                : crEinvoiceStatus() === 'rejected' || crEinvoiceStatus() === 'failed'
+                  ? 'danger'
+                  : 'info'
+            "
           ></p-tag>
           @if (crClave()) {
             <span class="text-xs text-gray-400 font-mono">{{ crClave() }}</span>
@@ -153,12 +166,81 @@ import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
             (onClick)="responseDialog.openDialog()"
           ></p-button>
         }
+        @if (canCreateNote()) {
+          <p-button
+            label="Nota de Crédito"
+            icon="pi pi-copy"
+            severity="warn"
+            [loading]="isCreatingNote()"
+            (onClick)="openNoteDialog('NC')"
+          ></p-button>
+          <p-button
+            label="Nota de Débito"
+            icon="pi pi-copy"
+            severity="warn"
+            [loading]="isCreatingNote()"
+            (onClick)="openNoteDialog('ND')"
+          ></p-button>
+        }
       </div>
 
       <bifi-l10n-hacienda-response-dialog
         [responseXml]="crHaciendaResponseXml()"
         #responseDialog
       ></bifi-l10n-hacienda-response-dialog>
+
+      <!-- Note Creation Dialog -->
+      <p-dialog
+        [header]="pendingNoteType() === 'NC' ? 'Crear Nota de Crédito' : 'Crear Nota de Débito'"
+        [(visible)]="noteDialogVisible"
+        [modal]="true"
+        [style]="{ width: '450px' }"
+        [closable]="!isCreatingNote()"
+      >
+        <ng-container [formGroup]="noteForm">
+          <div class="flex flex-col gap-4 pt-2">
+            <bifi-app-form-field>
+              <bifi-app-form-label>Código de Razón</bifi-app-form-label>
+              <p-select
+                appendTo="body"
+                formControlName="codigo"
+                [options]="codigoOptions"
+                optionLabel="label"
+                optionValue="value"
+              ></p-select>
+            </bifi-app-form-field>
+            @if (noteForm.get('codigo')?.value === '99') {
+              <bifi-app-form-field>
+                <bifi-app-form-label>Código de Referencia (OTRO)</bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="codigoReferenciaOTRO"
+                  maxlength="100"
+                  style="width:100%"
+                />
+              </bifi-app-form-field>
+            }
+            <bifi-app-form-field>
+              <bifi-app-form-label>Razón (máx. 180 caracteres)</bifi-app-form-label>
+              <input pInputText formControlName="razon" maxlength="180" style="width:100%" />
+            </bifi-app-form-field>
+          </div>
+        </ng-container>
+        <ng-template pTemplate="footer">
+          <p-button
+            label="Cancelar"
+            severity="secondary"
+            [disabled]="isCreatingNote()"
+            (onClick)="noteDialogVisible = false"
+          ></p-button>
+          <p-button
+            label="Crear Nota"
+            icon="pi pi-check"
+            [loading]="isCreatingNote()"
+            (onClick)="confirmCreateNote()"
+          ></p-button>
+        </ng-template>
+      </p-dialog>
     </div>
   `,
 })
@@ -170,6 +252,7 @@ export class InvoiceCrPluginComponent implements OnInit {
   private crudEinvoiceSettings = inject(CrudCrEinvoiceSettings);
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);
+  private router = inject(Router);
 
   hostForm = this.host.form as FormGroup<any>;
 
@@ -184,6 +267,31 @@ export class InvoiceCrPluginComponent implements OnInit {
 
   isSubmitting = signal(false);
   isPolling = signal(false);
+  isCreatingNote = signal(false);
+
+  noteDialogVisible = false;
+  pendingNoteType = signal<'NC' | 'ND'>('NC');
+
+  codigoOptions = [
+    { label: '01 — Anula Documento de Referencia', value: '01' },
+    { label: '02 — Corrige monto', value: '02' },
+    { label: '04 — Referencia a otro documento', value: '04' },
+    { label: '05 — Sustituye comprobante provisional por contingencia', value: '05' },
+    { label: '06 — Devolución de mercancía', value: '06' },
+    { label: '07 — Sustituye comprobante electrónico', value: '07' },
+    { label: '08 — Factura Endosada', value: '08' },
+    { label: '09 — Nota de crédito financiera', value: '09' },
+    { label: '10 — Nota de débito financiera', value: '10' },
+    { label: '11 — Proveedor No Domiciliado', value: '11' },
+    { label: '12 — Crédito por exoneración posterior a la facturación', value: '12' },
+    { label: '99 — Otros', value: '99' },
+  ];
+
+  noteForm = new FormGroup({
+    codigo: new FormControl('01'),
+    codigoReferenciaOTRO: new FormControl(''),
+    razon: new FormControl(''),
+  });
 
   einvoiceTypeOptions = [
     { label: 'FE - Factura Electrónica', value: 'FE' },
@@ -197,8 +305,7 @@ export class InvoiceCrPluginComponent implements OnInit {
 
   emisorActivityOptions = computed(() => {
     const settings = this.settingsResource.value() as any;
-    const activities: any[] =
-      settings?.emisorCompanyId?.contactId?.crEconomicActivityCodes ?? [];
+    const activities: any[] = settings?.emisorCompanyId?.contactId?.crEconomicActivityCodes ?? [];
     return activities.map((a: any) => ({
       label: a.description ? `${a.code} — ${a.description}` : a.code,
       value: a.code,
@@ -228,6 +335,13 @@ export class InvoiceCrPluginComponent implements OnInit {
     if (!entry) return false;
     const s = entry.crEinvoiceStatus;
     return s === 'sent' || s === 'received';
+  });
+
+  canCreateNote = computed(() => {
+    const entry = this.host.invoiceResource.value() as any;
+    if (!entry) return false;
+    const s = entry.crEinvoiceStatus;
+    return s === 'accepted' || s === 'rejected' || s === 'sent';
   });
 
   crEinvoiceStatus = computed(() => {
@@ -284,8 +398,7 @@ export class InvoiceCrPluginComponent implements OnInit {
         crEinvoiceType: entry.crEinvoiceType ?? 'FE',
         crCondicionVentaId:
           (entry.crCondicionVentaId as any)?._id ?? entry.crCondicionVentaId ?? '',
-        crMedioPagoId:
-          (entry.crMedioPagoId as any)?._id ?? entry.crMedioPagoId ?? '',
+        crMedioPagoId: (entry.crMedioPagoId as any)?._id ?? entry.crMedioPagoId ?? '',
         crPlazoCredito: entry.crPlazoCredito ?? null,
         crCodigoActividadEmisor: entry.crCodigoActividadEmisor ?? '',
         crCodigoActividadReceptor: entry.crCodigoActividadReceptor ?? '',
@@ -332,8 +445,46 @@ export class InvoiceCrPluginComponent implements OnInit {
         },
         error: (err: any) => {
           this.isPolling.set(false);
-          const detail =
-            err?.error?.message ?? err?.message ?? 'Failed to check e-invoice status.';
+          const detail = err?.error?.message ?? err?.message ?? 'Failed to check e-invoice status.';
+          this.toastManager.showError(detail);
+        },
+      });
+  }
+
+  openNoteDialog(type: 'NC' | 'ND') {
+    this.pendingNoteType.set(type);
+    this.noteForm.reset({ codigo: '01', codigoReferenciaOTRO: '', razon: '' });
+    this.noteDialogVisible = true;
+  }
+
+  confirmCreateNote() {
+    if (this.isCreatingNote()) return;
+    const { codigo, codigoReferenciaOTRO, razon } = this.noteForm.value;
+    if (!razon?.trim()) {
+      this.toastManager.showError('Por favor ingrese una razón para la nota.');
+      return;
+    }
+    this.isCreatingNote.set(true);
+    this.crudInvoices
+      .createNote(this.host.id(), {
+        noteType: this.pendingNoteType(),
+        codigo: codigo ?? '01',
+        ...(codigoReferenciaOTRO?.trim()
+          ? { codigoReferenciaOTRO: codigoReferenciaOTRO.trim() }
+          : {}),
+        razon: razon.trim(),
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: (newInvoice: any) => {
+          this.isCreatingNote.set(false);
+          this.noteDialogVisible = false;
+          this.toastManager.showSuccess('Nota creada exitosamente. Redirigiendo...');
+          this.router.navigate(['/accounting/invoices/edit', newInvoice._id]);
+        },
+        error: (err: any) => {
+          this.isCreatingNote.set(false);
+          const detail = err?.error?.message ?? err?.message ?? 'Error creando la nota.';
           this.toastManager.showError(detail);
         },
       });

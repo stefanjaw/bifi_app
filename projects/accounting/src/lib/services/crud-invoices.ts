@@ -35,4 +35,8 @@ export class CrudInvoices extends ApiRequestManager<invoice> {
   pollEinvoiceStatus(invoiceId: string): Observable<any> {
     return this._httpClient.post<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/poll-einvoice-status`, {});
   }
+
+  createNote(invoiceId: string, data: { noteType: 'NC' | 'ND'; codigo: string; codigoReferenciaOTRO?: string; razon: string }): Observable<any> {
+    return this._httpClient.post<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/create-note`, data);
+  }
 }
