@@ -8,8 +8,58 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 
 - **app** (only one): `projects/asset-roster-demo` — serves on `:4200`
 - **libs** (14): `base-app`, `asset-roster`, `l10n_cr_einvoice`, `calendar`, `website`, `helpdesk`, `tasks`, `projects`, `aduanix`, `sales`, `purchases`, `inventory`, `accounting`, `email-marketing`
-- `base-app` is a **multi-entrypoint library** with 25 sub-entrypoints (`core`, `ui`, `auth`, `form`, `routing`, `resource`, `users`, etc.) — each under `projects/base-app/<name>/` with its own `ng-package.json`
+- `base-app` is a **multi-entrypoint library** with 25 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
 - All libs expose via `@avalantec/<name>` path aliases from root `tsconfig.json`
+
+## Base-App Capabilities
+
+`@avalantec/base-app` provides shared infrastructure. **Always check if base-app already provides something before adding new code in feature libs.** Each sub-entrypoint is imported as `@avalantec/base-app/<name>`.
+
+### Framework & Infrastructure
+
+| Entrypoint | Provides | Used by |
+|---|---|---|
+| `core` | `ToastManager`, `ToolbarManager`, `SidenavManager`, `DebugManager`, `DynamicBreadcrumbService`, `ColWidthManager`, `BaseDialog`, `Icon`/`Text`/`DebugMode` directives, `SplitCaps` pipe, `debouncedSignal`, `maybeSignal`, `<signal>` helper types | All projects |
+| `routing` | `MainMenuManager.addItems()`, `MainRoutingManager.addRouting()`, `BaseMenuManager`, `BaseRoutingManager`, `MainMenu` component, `AUTH_ROUTES`/`BASE_APP_ROUTES`/`SETTINGS_ROUTES`, `withLibraryInterceptors`, `UserShortcutsService`, `NotificationCenterService` | All feature libs register via `provide*()` functions |
+| `auth` | Firebase auth, `authGuard`/`noAuthGuard`/`permissionGuard`, `HasPermission` directive, `AuthPage`/`PasswordPage`/`AccessTokenDialog`, `APP_AUTH_SERVICE` token, `provideAuth`, `FirebaseAuthService`, `AuthTokenInterceptor` | All projects (routing, ui, users, resource, etc.) |
+| `form` | `BaseForm<T>`, `TypedFormBuilder`, `FormModule`, `FormValueState`, `ControlsOf`, form components (`FormField`, `FormError`, `FormActions`, `FormSection`, `FormLayout`, `FormCodeEditor`, `FormUploader`, `FormNavigator`, `FormPreview`, etc.), directives (`FormControlExtension`, `FormActionsHandler`, `TranslatedErrors`), `FORM_ERRORS` provider, `ExtendedFormArray`, `dirtyUtils`, `errorStateTracker`, `arrayValidators` | All feature libs |
+| `resource` | `ApiRequestManager` (full CRUD lifecycle), `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `TreeList`, `GanttView`/`TimelineView`/`CalendarView`, `FileResolver`, `FilterManager`, `PaginationManager`, `SortManager`, `ListStateManager`, `InfiniteScrollManager`, `ResourceManager`, `BackendListModels`, `NotificationMessageResolver`, `CrudActivityHistories`, `DynamicComponent` directive, `AppErrorInterceptor`, `NotificationInterceptor`, `tableColumn`, `filter`, `orderBy`, `ApiActionConfig` types | All feature libs |
+| `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
+| `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
+
+### Feature CRUD Modules (Settings)
+
+All loaded lazily via `SETTINGS_ROUTES` in `routing`. They share the same pattern: list + form + CRUD service + BaseForm subclass + column/filter definitions + `XxxRoutes`.
+
+| Entrypoint | Entity | External consumers |
+|---|---|---|
+| `users` | User management + profiles + role selection | `helpdesk`, `sales`, `asset-roster`, `tasks` (all via `CrudUsers`) |
+| `roles` | Role management with policy assignment | Used internally by `users` |
+| `policies` | Policy/RBAC definitions | Used internally by `roles` |
+| `contacts` | Contact management | `sales`, `projects`, `asset-roster`, `accounting`, `aduanix`, `purchases`, `l10n_cr_einvoice` |
+| `companies` | Company management | `sales`, `aduanix`, `l10n_cr_einvoice` |
+| `countries` | Country list | `aduanix`, internally by `companies`/`contacts`/`branch-office` |
+| `currency` | Currencies + exchange rates | `sales`, `accounting`, internally by `companies` |
+| `taxes` | Tax definitions (interfaces + CRUD only, no UI components) | `sales`, `inventory`, `purchases`, `accounting` |
+| `templates` | Code template management | Only internal (settings routes) |
+| `sequences` | Document numbering sequences | `sales`, `accounting`, `purchases` |
+| `search-destinations` | Global search configuration | Only internal (used by `ui.SearchService`) |
+| `reporting` | Report definitions + download | `asset-roster` (via `ReportingDownloadDialog`) |
+| `branch-office` | Branch office management | None externally |
+| `ai-settings` | AI provider configuration | Only internal (settings routes) |
+| `drive-settings` | Drive/file storage configuration | Only internal (settings routes) |
+| `notification-settings` | Notification settings | Only internal (settings routes) |
+| `bug-reporting` | Bug report dialog | Internal (`ui.UserPanel`) |
+
+### Shared Interfaces
+
+| Entrypoint | Interfaces |
+|---|---|
+| `interfaces` | `user`, `contact`, `company`, `country`, `role`, `policy<T,R>`, `template`, `reporting`, `resource`, `policyAction`, `conditionOperator` |
+
+### Key Rule
+
+**Before adding CRUD services, list components, form logic, or settings pages in a feature lib, verify that `@avalantec/base-app` doesn't already provide it.** Re-use the existing CRUD services (`CrudUsers`, `CrudContacts`, `CrudCompanies`, `CrudCountries`, `CrudCurrencies`, `CrudTaxes`, `CrudSequences`, etc.) and base-app UI components (`BaseDialog`, `FormModule`, `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `FileResolver`, reporting download dialog, etc.) rather than re-implementing similar functionality.
 
 ## Commands
 
