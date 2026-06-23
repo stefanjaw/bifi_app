@@ -10,3 +10,5 @@ export * from './features/invoice-cr-plugin/invoice-cr-plugin';
 export * from './modules/condicion-venta';
 export * from './modules/medio-pago';
 export * from './modules/cr-einvoice-settings';
+export * from './features/invoice-import-plugin/invoice-import-plugin';
+export * from './modules/cr-einvoice-settings/services/crud-cr-einvoice';

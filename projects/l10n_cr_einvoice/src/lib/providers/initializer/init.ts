@@ -8,6 +8,7 @@ import { UomCrPluginComponent } from '../../features/uom-cr-plugin/uom-cr-plugin
 import { DiscountCrPluginComponent } from '../../features/discount-cr-plugin/discount-cr-plugin';
 import { TaxCrPluginComponent } from '../../features/tax-cr-plugin/tax-cr-plugin';
 import { InvoiceCrPluginComponent } from '../../features/invoice-cr-plugin/invoice-cr-plugin';
+import { InvoiceImportPluginComponent } from '../../features/invoice-import-plugin/invoice-import-plugin';
 import { CR_EINVOICE_SETTINGS_ROUTES } from '../../modules/cr-einvoice-settings/routes/cr-einvoice-settings.routes';
 import { CONDICION_VENTA_ROUTES } from '../../modules/condicion-venta/routes/condicion-venta.routes';
 import { MEDIO_PAGO_ROUTES } from '../../modules/medio-pago/routes/medio-pago.routes';
@@ -41,6 +42,10 @@ export function initializeL10nCrEinvoice() {
     {
       slot: 'invoice-form-general-information',
       component: InvoiceCrPluginComponent,
+    },
+    {
+      slot: 'invoices-list-actions',
+      component: InvoiceImportPluginComponent,
     },
   ]);
 

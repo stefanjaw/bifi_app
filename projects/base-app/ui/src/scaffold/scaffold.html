@@ -282,7 +282,11 @@
     @if (isExpanded(mainItem)) {
       <div class="ml-3 mt-0.5 flex flex-col gap-0.5">
         @for (child of $any(mainItem.items); track $index) {
-          <ng-container *ngTemplateOutlet="openedMenuItem; context: { item: child }"></ng-container>
+          @if (child.items?.length) {
+            <ng-container *ngTemplateOutlet="openedMenuItemWithChildren; context: { mainItem: child }"></ng-container>
+          } @else {
+            <ng-container *ngTemplateOutlet="openedMenuItem; context: { item: child }"></ng-container>
+          }
         }
       </div>
     }

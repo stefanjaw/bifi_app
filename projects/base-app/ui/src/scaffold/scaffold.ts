@@ -85,26 +85,43 @@ export class Scaffold {
   // current route
   currentRoute = signal(this.router.url);
 
-  // module-scoped shortcuts
-  private readonly KNOWN_MODULES = [
-    'purchases', 'inventory', 'sales', 'accounting',
-    'email-marketing', 'tasks', 'pricing',
-    'aduanix', 'asset-roster', 'calendar',
-    'helpdesk', 'projects', 'website',
-  ];
+  // Active top-level menu item (the sidebar item whose subtree contains the current route)
+  activeParentItem = computed<MenuItem | null>(() => {
+    const route = this.currentRoute();
+    if (!route || route === '/' || route.startsWith('/home')) return null;
+    const items = this.menuItems();
+    return items.find(item => this.isItemActive(item) || this.hasActiveChild(item)) ?? null;
+  });
 
-  currentModule = computed(() => {
-    const segment = this.currentRoute().split('/').filter(Boolean)[0] ?? '';
-    return this.KNOWN_MODULES.includes(segment) ? segment : null;
+  // Set of all descendant routerLinks of the active parent item; null = show all (home)
+  private activeDescendantLinks = computed<Set<string> | null>(() => {
+    const parent = this.activeParentItem();
+    if (!parent) return null;
+    const links = new Set<string>();
+    const toLink = (rl: string | string[] | undefined): string | null => {
+      if (!rl) return null;
+      return (Array.isArray(rl) ? (rl as string[]) : [rl as string]).join('/').replace(/^\//, '');
+    };
+    const walk = (list: MenuItem[]) => {
+      for (const item of list) {
+        const l = toLink(item.routerLink as string | string[]);
+        if (l) links.add(l);
+        if (item.items) walk(item.items as MenuItem[]);
+      }
+    };
+    const parentLink = toLink(parent.routerLink as string | string[]);
+    if (parentLink) links.add(parentLink);
+    if (parent.items) walk(parent.items as MenuItem[]);
+    return links;
   });
 
   filteredShortcuts = computed(() => {
-    const mod = this.currentModule();
     const all = this.userShortcutsService.shortcuts();
-    if (!mod) return all;
+    const links = this.activeDescendantLinks();
+    if (!links) return all;
     return all.filter(s => {
       const link = (s.routerLink ?? []).join('/').replace(/^\//, '');
-      return link.startsWith(mod + '/') || link === mod;
+      return links.has(link);
     });
   });
 
@@ -116,9 +133,7 @@ export class Scaffold {
   private draggedItemModule = signal<string | null>(null);
 
   currentModuleLabel = computed(() => {
-    const mod = this.currentModule();
-    if (!mod) return '';
-    return mod.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return this.activeParentItem()?.label ?? '';
   });
 
   // ─── Breadcrumbs ───────────────────────────────────────────────────────────
@@ -188,11 +203,15 @@ export class Scaffold {
     effect(() => {
       const items = this.menuItems();
       const keysToAdd = new Set<string>();
-      for (const item of items) {
-        if (item.items && this.hasActiveChild(item)) {
-          keysToAdd.add(this.menuKey(item));
+      const walk = (list: MenuItem[]) => {
+        for (const item of list) {
+          if (item.items && this.hasActiveChild(item)) {
+            keysToAdd.add(this.menuKey(item));
+          }
+          if (item.items) walk(item.items as MenuItem[]);
         }
-      }
+      };
+      walk(items);
       if (keysToAdd.size > 0) {
         this.expandedMenuKeys.update(current => {
           const next = new Set(current);
@@ -278,8 +297,7 @@ export class Scaffold {
       })
     );
     const link = ((item['routerLink'] as string[]) ?? []).join('/').replace(/^\//, '');
-    const mod = this.KNOWN_MODULES.find(m => link.startsWith(m + '/') || link === m) ?? null;
-    this.draggedItemModule.set(mod);
+    this.draggedItemModule.set(link || null);
   }
 
   // ─── Drag within shortcuts bar (reorder) ───────────────────────────────────
@@ -306,9 +324,9 @@ export class Scaffold {
 
   onBarDragOver(event: DragEvent): void {
     event.preventDefault();
-    const currentMod = this.currentModule();
-    const draggedMod = this.draggedItemModule();
-    const rejected = !!currentMod && draggedMod !== null && draggedMod !== currentMod;
+    const descendantLinks = this.activeDescendantLinks();
+    const draggedLink = this.draggedItemModule();
+    const rejected = !!descendantLinks && draggedLink !== null && !descendantLinks.has(draggedLink);
     if (rejected) {
       this.isDragRejected.set(true);
       this.isDragOver.set(false);
@@ -340,10 +358,10 @@ export class Scaffold {
     try {
       const data = JSON.parse(raw);
       if (data.type === 'menu-item') {
-        const mod = this.currentModule();
-        if (mod) {
+        const descendantLinks = this.activeDescendantLinks();
+        if (descendantLinks) {
           const link = (data.routerLink ?? []).join('/').replace(/^\//, '');
-          if (!link.startsWith(mod + '/') && link !== mod) return;
+          if (!descendantLinks.has(link)) return;
         }
         if (this.filteredShortcuts().length >= 6) {
           this.messageService.add({
