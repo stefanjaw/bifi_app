@@ -40,7 +40,7 @@ import { emailSettings } from '../../../../interfaces/email-settings';
   templateUrl: './email-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EmailSettingsFormComponent {
+export class EmailSettingsPage {
   private crudSettings = inject(CrudEmailSettings);
   private formService = inject(EmailSettingsForm);
   private destroy$ = inject(DestroyRef);

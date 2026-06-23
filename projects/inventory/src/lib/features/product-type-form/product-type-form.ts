@@ -17,7 +17,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ProductTypeFormService, ProductTypeFormModel } from '../../services/product-type-form.service';
+import { ProductTypeFormService, ProductTypeFormModel } from '../../services/product-type-form';
 
 @Component({
   selector: 'bifi-app-product-type-form',

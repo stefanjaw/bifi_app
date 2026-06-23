@@ -21,7 +21,7 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MovementFormService, MovementFormModel } from '../../services/movement-form.service';
+import { MovementFormService, MovementFormModel } from '../../services/movement-form';
 
 const MOVEMENT_TYPES = [
   { label: 'Stock In (IN)', value: 'IN' },

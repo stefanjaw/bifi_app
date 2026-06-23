@@ -20,7 +20,7 @@ import { SelectModule } from 'primeng/select';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudProjects } from '../../services/crud-projects';
-import { ProjectForm as ProjectFormService, ProjectFormModel } from '../../services/project-form';
+import { ProjectForm, ProjectFormModel } from '../../services/project-form';
 import { CrudProjectStages } from '../../modules/project-stages/services/crud-project-stages';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -44,8 +44,8 @@ import { project } from '../../interfaces/projects';
   templateUrl: './project-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectFormComponent {
-  protected formService = inject(ProjectFormService);
+export class ProjectsForm {
+  protected formService = inject(ProjectForm);
   private crudProjects = inject(CrudProjects);
   private crudProjectStages = inject(CrudProjectStages);
   private crudContacts = inject(CrudContacts);

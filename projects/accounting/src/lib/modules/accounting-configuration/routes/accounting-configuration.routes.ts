@@ -7,7 +7,7 @@ export const ACCOUNTING_CONFIGURATION_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/accounting-settings-form/accounting-settings-form').then(
-        m => m.AccountingSettingsFormComponent
+        m => m.AccountingSettingsPage
       ),
     data: { resource: 'accounting/settings' },
   },

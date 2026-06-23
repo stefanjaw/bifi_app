@@ -19,7 +19,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudSequences } from '../../services/crud-sequences';
-import { SequenceForm as SequenceFormService, SequenceFormModel } from '../../services/sequence-form';
+import { SequenceForm, SequenceFormModel } from '../../services/sequence-form';
 
 @Component({
   selector: 'bifi-app-sequence-form',
@@ -36,8 +36,8 @@ import { SequenceForm as SequenceFormService, SequenceFormModel } from '../../se
   templateUrl: './sequence-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SequenceFormComponent {
-  private formService = inject(SequenceFormService);
+export class SequencesForm {
+  private formService = inject(SequenceForm);
   private crudSequences = inject(CrudSequences);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);

@@ -19,7 +19,7 @@ import { UomForm } from '@avalantec/inventory';
     </ng-container>
   `,
 })
-export class UomCrPluginComponent implements OnInit {
+export class UomCrPlugin implements OnInit {
   host = inject<UomForm>(PLUGIN_CONTEXT);
   hostForm = this.host.form as FormGroup<any>;
 

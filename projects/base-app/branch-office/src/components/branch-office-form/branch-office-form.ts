@@ -19,7 +19,7 @@ import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form.service';
+import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form';
 
 @Component({
   selector: 'bifi-app-branch-office-form',

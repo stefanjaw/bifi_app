@@ -51,7 +51,7 @@ interface ActiveEventRow {
   templateUrl: './notification-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationSettingsFormComponent {
+export class NotificationSettingsForm {
   private crudSettings = inject(CrudNotificationSettings);
   private messageService = inject(MessageService);
 

@@ -9,7 +9,7 @@ import { TagModule } from 'primeng/tag';
   templateUrl: './token-estimator-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TokenEstimatorCardComponent {
+export class TokenEstimatorCard {
   data = input<tokenEstimation | null>(null);
   loading = input(false);
 }

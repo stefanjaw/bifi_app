@@ -7,7 +7,7 @@ export const NOTIFICATION_SETTINGS_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/notification-settings-form/notification-settings-form').then(
-        m => m.NotificationSettingsFormComponent
+        m => m.NotificationSettingsForm
       ),
     data: { resource: 'notification-settings' },
   },

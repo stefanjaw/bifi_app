@@ -24,7 +24,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   templateUrl: './pricing-estimate-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateListComponent {
+export class PricingEstimateList {
   private resourceManager = inject<ResourceManager<pricingEstimate>>(ResourceManager);
   private router = inject(Router);
 

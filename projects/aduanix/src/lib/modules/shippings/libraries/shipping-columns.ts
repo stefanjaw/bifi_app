@@ -1,4 +1,4 @@
-import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { DynamicComponentConfig, tableColumn } from '@avalantec/base-app/resource';
 import { shipping } from '../interfaces/shipping';
 import { Tag } from 'primeng/tag';
 import { getBCDStatusConfig } from '../../bcds';
@@ -37,7 +37,7 @@ export const shippingColumns: tableColumn<shipping>[] = [
         ? { ...bcdStatus, value: `${bcdStatus.value} (${shippingStatus.value})` }
         : shippingStatus;
 
-      const component: DynamicComponent<any> = {
+      const component: DynamicComponentConfig<any> = {
         component: Tag,
         inputs: { ...input, value: input.value },
         outputs: {},

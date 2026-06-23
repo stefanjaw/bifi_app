@@ -19,7 +19,7 @@ import { CrudCrEinvoice } from '../../modules/cr-einvoice-settings/services/crud
 import { CrudInvoices } from '@avalantec/accounting';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
+import { HaciendaResponseDialog } from './hacienda-response-dialog';
 
 @Component({
   selector: 'bifi-l10n-invoice-cr-plugin',
@@ -35,7 +35,7 @@ import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
     CommonModule,
     DialogModule,
     InputTextModule,
-    HaciendaResponseDialogComponent,
+    HaciendaResponseDialog,
   ],
   template: `
     <div class="border-t border-gray-200 mt-4 pt-4">
@@ -453,7 +453,7 @@ import { HaciendaResponseDialogComponent } from './hacienda-response-dialog';
     </div>
   `,
 })
-export class InvoiceCrPluginComponent implements OnInit, OnDestroy {
+export class InvoiceCrPlugin implements OnInit, OnDestroy {
   host = inject<InvoiceForm>(PLUGIN_CONTEXT);
   private crudInvoices = inject(CrudInvoices);
   private crudCrEinvoice = inject(CrudCrEinvoice);

@@ -20,7 +20,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { SearchService } from '@avalantec/base-app/ui';
 import { CrudSearchDestinations } from '../../services/crud-search-destinations';
 import {
-  SearchDestinationForm as SearchDestinationFormService,
+  SearchDestinationForm,
   SearchDestinationFormModel,
 } from '../../services/search-destination-form';
 
@@ -38,8 +38,8 @@ import {
   templateUrl: './search-destination-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchDestinationFormComponent {
-  private formService = inject(SearchDestinationFormService);
+export class SearchDestinationsForm {
+  private formService = inject(SearchDestinationForm);
   private crud = inject(CrudSearchDestinations);
   private searchService = inject(SearchService);
   private destroy$ = inject(DestroyRef);

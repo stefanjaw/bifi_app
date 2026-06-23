@@ -36,7 +36,7 @@ import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
   templateUrl: './ai-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AiSettingsFormComponent {
+export class AiSettingsPage {
   private crudSettings = inject(CrudAiSettings);
   private formService = inject(AiSettingsForm);
   private fb = inject(FormBuilder);

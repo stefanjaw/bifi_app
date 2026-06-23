@@ -32,7 +32,7 @@ import { MailingListForm, MailingListFormModel } from '../../services/mailing-li
   templateUrl: './mailing-list-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MailingListFormComponent {
+export class MailingListsForm {
   private crudLists = inject(CrudMailingLists);
   private formService = inject(MailingListForm);
   private destroy$ = inject(DestroyRef);

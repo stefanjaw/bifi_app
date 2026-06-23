@@ -25,14 +25,14 @@ export const SALES_ROUTES: Routes = [
     path: 'opportunities/new',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+      import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/create' },
   },
   {
     path: 'opportunities/edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+      import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/update' },
   },
   {

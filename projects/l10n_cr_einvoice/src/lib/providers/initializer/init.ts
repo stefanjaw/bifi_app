@@ -2,13 +2,13 @@ import { inject } from '@angular/core';
 import { PluginManager } from '@avalantec/base-app/plugin-system';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
-import { ContactCrPluginComponent } from '../../features/contact-cr-plugin/contact-cr-plugin';
-import { ProductCrPluginComponent } from '../../features/product-cr-plugin/product-cr-plugin';
-import { UomCrPluginComponent } from '../../features/uom-cr-plugin/uom-cr-plugin';
-import { DiscountCrPluginComponent } from '../../features/discount-cr-plugin/discount-cr-plugin';
-import { TaxCrPluginComponent } from '../../features/tax-cr-plugin/tax-cr-plugin';
-import { InvoiceCrPluginComponent } from '../../features/invoice-cr-plugin/invoice-cr-plugin';
-import { InvoiceImportPluginComponent } from '../../features/invoice-import-plugin/invoice-import-plugin';
+import { ContactCrPlugin } from '../../features/contact-cr-plugin/contact-cr-plugin';
+import { ProductCrPlugin } from '../../features/product-cr-plugin/product-cr-plugin';
+import { UomCrPlugin } from '../../features/uom-cr-plugin/uom-cr-plugin';
+import { DiscountCrPlugin } from '../../features/discount-cr-plugin/discount-cr-plugin';
+import { TaxCrPlugin } from '../../features/tax-cr-plugin/tax-cr-plugin';
+import { InvoiceCrPlugin } from '../../features/invoice-cr-plugin/invoice-cr-plugin';
+import { InvoiceImportPlugin } from '../../features/invoice-import-plugin/invoice-import-plugin';
 import { CR_EINVOICE_SETTINGS_ROUTES } from '../../modules/cr-einvoice-settings/routes/cr-einvoice-settings.routes';
 import { CONDICION_VENTA_ROUTES } from '../../modules/condicion-venta/routes/condicion-venta.routes';
 import { MEDIO_PAGO_ROUTES } from '../../modules/medio-pago/routes/medio-pago.routes';
@@ -21,31 +21,31 @@ export function initializeL10nCrEinvoice() {
   pluginManager.register([
     {
       slot: 'contacts-form-general-information',
-      component: ContactCrPluginComponent,
+      component: ContactCrPlugin,
     },
     {
       slot: 'product-form-general-information',
-      component: ProductCrPluginComponent,
+      component: ProductCrPlugin,
     },
     {
       slot: 'uom-form-general-information',
-      component: UomCrPluginComponent,
+      component: UomCrPlugin,
     },
     {
       slot: 'discount-form-general-information',
-      component: DiscountCrPluginComponent,
+      component: DiscountCrPlugin,
     },
     {
       slot: 'tax-form-general-information',
-      component: TaxCrPluginComponent,
+      component: TaxCrPlugin,
     },
     {
       slot: 'invoice-form-general-information',
-      component: InvoiceCrPluginComponent,
+      component: InvoiceCrPlugin,
     },
     {
       slot: 'invoices-list-actions',
-      component: InvoiceImportPluginComponent,
+      component: InvoiceImportPlugin,
     },
   ]);
 

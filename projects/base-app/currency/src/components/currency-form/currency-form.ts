@@ -17,7 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form.service';
+import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form';
 
 @Component({
   selector: 'bifi-app-currency-form',

@@ -10,7 +10,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCrEinvoiceSettings, crEinvoiceSettings } from '../../services/crud-cr-einvoice-settings';
-import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form.service';
+import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 
 @Component({
@@ -19,7 +19,7 @@ import { CrudCompanies } from '@avalantec/base-app/companies';
   templateUrl: './cr-einvoice-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrEinvoiceSettingsFormComponent {
+export class CrEinvoiceSettingsForm {
   private crud = inject(CrudCrEinvoiceSettings);
   private crudCompanies = inject(CrudCompanies);
   private formService = inject(CrEinvoiceSettingsFormService);

@@ -19,7 +19,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form.service';
+import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form';
 
 @Component({
   selector: 'bifi-app-exchange-rate-form',

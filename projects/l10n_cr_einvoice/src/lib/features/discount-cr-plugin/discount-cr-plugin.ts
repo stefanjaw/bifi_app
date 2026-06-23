@@ -19,7 +19,7 @@ import { DiscountForm } from '@avalantec/accounting';
     </ng-container>
   `,
 })
-export class DiscountCrPluginComponent implements OnInit {
+export class DiscountCrPlugin implements OnInit {
   host = inject<DiscountForm>(PLUGIN_CONTEXT);
   hostForm = this.host.form as FormGroup<any>;
 

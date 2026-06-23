@@ -32,7 +32,7 @@ import { ProductForm } from '@avalantec/inventory';
     </ng-container>
   `,
 })
-export class ProductCrPluginComponent implements OnInit {
+export class ProductCrPlugin implements OnInit {
   host = inject<ProductForm>(PLUGIN_CONTEXT);
   hostForm = this.host.form as FormGroup<any>;
 

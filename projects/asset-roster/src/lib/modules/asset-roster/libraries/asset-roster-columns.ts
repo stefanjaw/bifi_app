@@ -1,6 +1,6 @@
 import { assetRoster } from '../interfaces/asset-roster';
 import { assetType } from '../../asset-types';
-import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { DynamicComponentConfig, tableColumn } from '@avalantec/base-app/resource';
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tag } from 'primeng/tag';
 import { Avatar } from 'primeng/avatar';
@@ -34,7 +34,7 @@ export const assetRosterColumns = (
     field: 'photo',
     title: 'PHOTO',
     type: 'text',
-    component: (row: assetRoster): DynamicComponent<any> => ({
+    component: (row: assetRoster): DynamicComponentConfig<any> => ({
       component: Avatar,
       inputs: {
         image:
@@ -145,7 +145,7 @@ export const assetRosterColumns = (
         }
       })();
 
-      const component: DynamicComponent<any> = {
+      const component: DynamicComponentConfig<any> = {
         component: Tag,
         inputs: {
           value: inputs.text,

@@ -9,7 +9,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudMedioPago } from '../../services/crud-medio-pago';
-import { MedioPagoFormService, MedioPagoFormModel } from '../../services/medio-pago-form.service';
+import { MedioPagoFormService, MedioPagoFormModel } from '../../services/medio-pago-form';
 
 @Component({
   selector: 'bifi-l10n-medio-pago-form',

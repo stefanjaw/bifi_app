@@ -32,7 +32,7 @@ import { TaxForm } from '@avalantec/accounting';
     </ng-container>
   `,
 })
-export class TaxCrPluginComponent implements OnInit {
+export class TaxCrPlugin implements OnInit {
   host = inject<TaxForm>(PLUGIN_CONTEXT);
   hostForm = this.host.form as FormGroup<any>;
 

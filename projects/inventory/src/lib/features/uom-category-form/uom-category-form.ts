@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UomCategoryFormService, UomCategoryFormModel } from '../../services/uom-category-form.service';
+import { UomCategoryFormService, UomCategoryFormModel } from '../../services/uom-category-form';
 
 @Component({
   selector: 'bifi-app-uom-category-form',

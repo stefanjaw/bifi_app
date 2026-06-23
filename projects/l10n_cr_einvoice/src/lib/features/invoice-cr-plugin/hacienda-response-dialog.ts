@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './hacienda-response-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HaciendaResponseDialogComponent extends BaseDialog {
+export class HaciendaResponseDialog extends BaseDialog {
   responseXml = input<string | null>(null);
 
   decodedXml = computed(() => {

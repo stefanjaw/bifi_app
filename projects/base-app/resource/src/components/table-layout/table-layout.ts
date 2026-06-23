@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { isPaginated } from '../../libraries/pagination-utils';
-import { DynamicComponentDirective } from '../../directives/dynamic-component';
+import { DynamicComponent } from '../../directives/dynamic-component';
 import { PaginationManager } from '../../services/pagination-manager';
 import { SortManager } from '../../services/sort-manager';
 import { tableColumn } from '../../interfaces/table-column';
@@ -34,7 +34,7 @@ import { InfiniteScroll } from '../../directives/infinite-scroll';
   standalone: true,
   imports: [
     CommonModule,
-    DynamicComponentDirective,
+    DynamicComponent,
     TableModule,
     PaginatorModule,
     Icon,

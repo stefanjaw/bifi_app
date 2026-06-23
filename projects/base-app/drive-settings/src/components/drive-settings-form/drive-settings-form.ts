@@ -34,7 +34,7 @@ import { driveSettings } from '../../interfaces/drive-settings';
   templateUrl: './drive-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DriveSettingsFormComponent {
+export class DriveSettingsPage {
   private crudSettings = inject(CrudDriveSettings);
   private formService = inject(DriveSettingsForm);
   private destroy$ = inject(DestroyRef);

@@ -30,7 +30,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ProductFormService, ProductFormModel } from '../../services/product-form.service';
+import { ProductFormService, ProductFormModel } from '../../services/product-form';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { product } from '../../interfaces/product';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';

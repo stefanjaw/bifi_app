@@ -19,14 +19,14 @@ export const HELPDESK_ROUTES: Routes = [
     canActivate: [permissionGuard],
     data: { resource: 'tickets/create' },
     loadComponent: () =>
-      import('../features/ticket-form/ticket-form').then(c => c.TicketFormComponent),
+      import('../features/ticket-form/ticket-form').then(c => c.TicketsForm),
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     data: { resource: 'tickets/update' },
     loadComponent: () =>
-      import('../features/ticket-form/ticket-form').then(c => c.TicketFormComponent),
+      import('../features/ticket-form/ticket-form').then(c => c.TicketsForm),
   },
   {
     path: 'report',

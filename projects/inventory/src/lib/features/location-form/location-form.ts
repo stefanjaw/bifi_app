@@ -18,7 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LocationFormService, LocationFormModel } from '../../services/location-form.service';
+import { LocationFormService, LocationFormModel } from '../../services/location-form';
 
 @Component({
   selector: 'bifi-app-location-form',

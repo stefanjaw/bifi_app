@@ -35,7 +35,7 @@ import { mailingList } from '../../interfaces/mailing-list';
   templateUrl: './subscriber-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SubscriberFormComponent {
+export class SubscribersForm {
   private crudSubscribers = inject(CrudSubscribers);
   private crudLists = inject(CrudMailingLists);
   private formService = inject(SubscriberForm);

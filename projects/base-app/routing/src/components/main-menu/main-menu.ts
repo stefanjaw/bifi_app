@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MainMenuManager } from '../../services/main-menu-manager';
-import { NotificationCenterService } from '../../services/notification-center.service';
+import { NotificationCenterService } from '../../services/notification-center';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CommonModule } from '@angular/common';
 import { Icon } from '@avalantec/base-app/core';

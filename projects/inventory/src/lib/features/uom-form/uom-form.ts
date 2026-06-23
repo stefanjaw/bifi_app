@@ -18,7 +18,7 @@ import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UomFormService, UomFormModel } from '../../services/uom-form.service';
+import { UomFormService, UomFormModel } from '../../services/uom-form';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 
 @Component({

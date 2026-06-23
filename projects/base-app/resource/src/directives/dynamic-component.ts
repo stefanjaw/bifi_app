@@ -9,13 +9,13 @@ import {
   OutputRef,
   ViewContainerRef,
 } from '@angular/core';
-import { DynamicComponent } from '../interfaces/dynamic-component';
+import { DynamicComponentConfig } from '../interfaces/dynamic-component';
 
 @Directive({
   selector: '[bifiAppDynamicComponent]',
 })
-export class DynamicComponentDirective implements OnInit, OnChanges {
-  component = input.required<DynamicComponent>({
+export class DynamicComponent implements OnInit, OnChanges {
+  component = input.required<DynamicComponentConfig>({
     alias: 'bifiAppDynamicComponent',
   });
 
@@ -37,7 +37,7 @@ export class DynamicComponentDirective implements OnInit, OnChanges {
 
   private createComponent<T extends Record<string, unknown>>(
     vcr: ViewContainerRef,
-    componentData: DynamicComponent<T>
+    componentData: DynamicComponentConfig<T>
   ): ComponentRef<T> {
     // Clear existing content
     vcr.clear();

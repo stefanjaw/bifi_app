@@ -94,7 +94,7 @@ import { CommonModule } from '@angular/common';
     </p-dialog>
   `,
 })
-export class InvoiceImportPluginComponent {
+export class InvoiceImportPlugin {
   private crudCrEinvoice = inject(CrudCrEinvoice);
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);

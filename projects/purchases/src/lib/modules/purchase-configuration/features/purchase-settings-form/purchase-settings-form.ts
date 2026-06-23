@@ -32,7 +32,7 @@ import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
   templateUrl: './purchase-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PurchaseSettingsFormComponent {
+export class PurchaseSettingsPage {
   private crudPurchaseSettings = inject(CrudPurchaseSettings);
   private formService = inject(PurchaseSettingsForm);
   private crudSequences = inject(CrudSequences);

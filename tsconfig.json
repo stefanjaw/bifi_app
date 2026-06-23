@@ -75,11 +75,7 @@
     "projects/base-app/core/index.ts",
     "projects/base-app/form/index.ts",
     "projects/base-app/resource/index.ts",
-    "projects/base-app/settings/src/services",
-    "projects/base-app/settings/index.ts",
-    "projects/base-app/settings/src/modules",
-    "projects/base-app/settings/src/components",
-    "projects/base-app/interfaces/user.ts"
+
   ],
   "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

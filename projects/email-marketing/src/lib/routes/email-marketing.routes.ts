@@ -82,7 +82,7 @@ export const EMAIL_MARKETING_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/mailing-list-form/mailing-list-form').then(
-        m => m.MailingListFormComponent
+        m => m.MailingListsForm
       ),
     data: { resource: 'mailing-lists/create' },
   },
@@ -91,7 +91,7 @@ export const EMAIL_MARKETING_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/mailing-list-form/mailing-list-form').then(
-        m => m.MailingListFormComponent
+        m => m.MailingListsForm
       ),
     data: { resource: 'mailing-lists/update' },
   },
@@ -109,7 +109,7 @@ export const EMAIL_MARKETING_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/subscriber-form/subscriber-form').then(
-        m => m.SubscriberFormComponent
+        m => m.SubscribersForm
       ),
     data: { resource: 'subscribers/create' },
   },
@@ -118,7 +118,7 @@ export const EMAIL_MARKETING_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/subscriber-form/subscriber-form').then(
-        m => m.SubscriberFormComponent
+        m => m.SubscribersForm
       ),
     data: { resource: 'subscribers/update' },
   },
@@ -136,7 +136,7 @@ export const EMAIL_MARKETING_SETTINGS_ROUTES: Routes = [
     loadComponent: () =>
       import(
         '../modules/email-settings/features/email-settings-form/email-settings-form'
-      ).then(m => m.EmailSettingsFormComponent),
+      ).then(m => m.EmailSettingsPage),
     data: { resource: 'email-settings/update' },
   },
 ];

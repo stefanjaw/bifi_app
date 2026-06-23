@@ -9,7 +9,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCondicionVenta } from '../../services/crud-condicion-venta';
-import { CondicionVentaFormService, CondicionVentaFormModel } from '../../services/condicion-venta-form.service';
+import { CondicionVentaFormService, CondicionVentaFormModel } from '../../services/condicion-venta-form';
 
 @Component({
   selector: 'bifi-l10n-condicion-venta-form',

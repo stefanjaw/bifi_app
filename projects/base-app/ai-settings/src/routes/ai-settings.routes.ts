@@ -7,7 +7,7 @@ export const AI_SETTINGS_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/ai-settings-form/ai-settings-form').then(
-        m => m.AiSettingsFormComponent
+        m => m.AiSettingsPage
       ),
     data: { resource: 'ai-settings' },
   },

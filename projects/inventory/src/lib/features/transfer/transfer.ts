@@ -13,7 +13,7 @@ import { CrudProducts } from '../../services/crud-products';
 import { CrudWarehouses } from '../../services/crud-warehouses';
 import { CrudLocations } from '../../services/crud-locations';
 import { CrudStockBalances } from '../../services/crud-stock-balances';
-import { TransferService } from '../../services/transfer.service';
+import { TransferService } from '../../services/transfer';
 import { product } from '../../interfaces/product';
 import { warehouse } from '../../interfaces/warehouse';
 import { location } from '../../interfaces/location';

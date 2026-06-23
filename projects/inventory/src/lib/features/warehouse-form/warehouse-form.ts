@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { WarehouseFormService, WarehouseFormModel } from '../../services/warehouse-form.service';
+import { WarehouseFormService, WarehouseFormModel } from '../../services/warehouse-form';
 
 @Component({
   selector: 'bifi-app-warehouse-form',

@@ -40,7 +40,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: './pricing-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingSettingsFormComponent implements OnDestroy {
+export class PricingSettingsPage implements OnDestroy {
   private crudSettings = inject(CrudPricingSettings);
   private formService = inject(PricingSettingsForm);
   private crudSequences = inject(CrudSequences);

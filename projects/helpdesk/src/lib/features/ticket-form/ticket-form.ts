@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CrudTickets } from '../../services/crud-tickets';
 import { CrudHelpdeskStages } from '../../services/crud-helpdesk-stages';
-import { TicketForm as TicketFormService, TicketFormModel } from '../../services/ticket-form';
+import { TicketForm, TicketFormModel } from '../../services/ticket-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -51,8 +51,8 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TicketFormComponent {
-  protected formService = inject(TicketFormService);
+export class TicketsForm {
+  protected formService = inject(TicketForm);
   private crudTickets = inject(CrudTickets);
   private crudStages = inject(CrudHelpdeskStages);
   private crudUsers = inject(CrudUsers);

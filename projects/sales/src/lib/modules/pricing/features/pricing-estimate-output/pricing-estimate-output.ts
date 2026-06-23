@@ -35,7 +35,7 @@ import { pricingEstimate, pricingEstimateLineItem } from '../../interfaces/prici
   templateUrl: './pricing-estimate-output.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateOutputComponent implements OnInit {
+export class PricingEstimateOutput implements OnInit {
   private route = inject(ActivatedRoute);
   private crudEstimate = inject(CrudPricingEstimate);
   private destroy$ = inject(DestroyRef);

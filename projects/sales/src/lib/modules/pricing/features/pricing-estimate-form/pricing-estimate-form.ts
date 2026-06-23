@@ -19,7 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, EMPTY, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs';
 import { CrudPricingEstimate } from '../../services/crud-pricing-estimate';
 import { tokenEstimation } from '../../interfaces/pricing-estimate';
-import { TokenEstimatorCardComponent } from '../token-estimator-card/token-estimator-card';
+import { TokenEstimatorCard } from '../token-estimator-card/token-estimator-card';
 
 @Component({
   selector: 'bifi-app-pricing-estimate-form',
@@ -32,12 +32,12 @@ import { TokenEstimatorCardComponent } from '../token-estimator-card/token-estim
     CheckboxModule,
     RadioButtonModule,
     ProgressBarModule,
-    TokenEstimatorCardComponent,
+    TokenEstimatorCard,
   ],
   templateUrl: './pricing-estimate-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateFormComponent implements OnInit {
+export class PricingEstimateForm implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private crudEstimate = inject(CrudPricingEstimate);

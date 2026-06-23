@@ -18,14 +18,14 @@ export const SEQUENCE_ROUTES: Routes = [
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../components/sequence-form/sequence-form').then(m => m.SequenceFormComponent),
+      import('../components/sequence-form/sequence-form').then(        m => m.SequencesForm),
     data: { resource: 'sequences/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../components/sequence-form/sequence-form').then(m => m.SequenceFormComponent),
+      import('../components/sequence-form/sequence-form').then(        m => m.SequencesForm),
     data: { resource: 'sequences/update' },
   },
 ];

@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { CrmForm as CrmFormService, CrmFormModel } from '../../services/crm-form';
+import { CrmForm, CrmFormModel } from '../../services/crm-form';
 import { CrudCrm } from '../../services/crud-crm';
 import { CrudCrmStages } from '../../modules/crm-stages';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -41,8 +41,8 @@ import { CrudCurrencies } from '@avalantec/base-app/currency';
   templateUrl: './crm-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrmFormComponent {
-  private formService = inject(CrmFormService);
+export class CrmsForm {
+  private formService = inject(CrmForm);
   private crudCrm = inject(CrudCrm);
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);

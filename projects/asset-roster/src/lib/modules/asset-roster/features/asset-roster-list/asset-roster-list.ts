@@ -25,7 +25,7 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
-import { AssetRosterStatusCardComponent } from '../../ui/asset-roster-status-card/asset-roster-status-card';
+import { AssetRosterStatusCard } from '../../ui/asset-roster-status-card/asset-roster-status-card';
 import { AssetRosterFormDialog } from '../asset-roster-form-dialog/asset-roster-form-dialog';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,7 +45,7 @@ import { AvatarModule } from 'primeng/avatar';
   providers: [provideResourceManager(CrudAssetRoster)],
   imports: [
     RouterLink,
-    AssetRosterStatusCardComponent,
+    AssetRosterStatusCard,
     ButtonModule,
     SearchBar,
     TableLayout,

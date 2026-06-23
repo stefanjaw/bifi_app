@@ -21,7 +21,7 @@ export const SEARCH_DESTINATION_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/search-destination-form/search-destination-form').then(
-        m => m.SearchDestinationFormComponent
+        m => m.SearchDestinationsForm
       ),
     data: { resource: 'search-destinations/create' },
   },
@@ -30,7 +30,7 @@ export const SEARCH_DESTINATION_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/search-destination-form/search-destination-form').then(
-        m => m.SearchDestinationFormComponent
+        m => m.SearchDestinationsForm
       ),
     data: { resource: 'search-destinations/update' },
   },

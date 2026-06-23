@@ -10,7 +10,7 @@ import { statusCardState, statusVariant } from '../../interfaces/asset-roster-st
   templateUrl: './asset-roster-status-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AssetRosterStatusCardComponent {
+export class AssetRosterStatusCard {
   protected assetRosterStatusManager = inject(AssetRosterStatusFilterManager);
 
   variant = input.required<statusVariant>();

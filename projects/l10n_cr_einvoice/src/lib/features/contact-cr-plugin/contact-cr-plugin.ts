@@ -93,7 +93,7 @@ import { CommonModule } from '@angular/common';
     </ng-container>
   `,
 })
-export class ContactCrPluginComponent implements OnInit {
+export class ContactCrPlugin implements OnInit {
   host = inject<ContactsForm>(PLUGIN_CONTEXT);
   hostForm = this.host.form as FormGroup<any>;
   private fb = inject(FormBuilder);
