@@ -14,14 +14,14 @@ export const CONDICION_VENTA_ROUTES: Routes = [
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/condicion-venta-form/condicion-venta-form').then(m => m.CondicionVentaForm),
+      import('../features/condicion-venta-form/condicion-venta-form').then(m => m.CondicionesVentaForm),
     data: { resource: 'cr-einvoice/condicion-venta/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/condicion-venta-form/condicion-venta-form').then(m => m.CondicionVentaForm),
+      import('../features/condicion-venta-form/condicion-venta-form').then(m => m.CondicionesVentaForm),
     data: { resource: 'cr-einvoice/condicion-venta/update' },
   },
 ];

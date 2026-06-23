@@ -22,4 +22,16 @@ export class CrudCrEinvoice extends ApiRequestManager<any> {
   pollAcceptanceStatus(invoiceId: string): Observable<any> {
     return this._httpClient.get<any>(`${this._apiURL}/cr-einvoice/${invoiceId}/poll-acceptance-status`);
   }
+
+  submitEinvoice(invoiceId: string): Observable<any> {
+    return this._httpClient.post<any>(`${this._apiURL}/cr-einvoice/${invoiceId}/submit-einvoice`, {});
+  }
+
+  pollEinvoiceStatus(invoiceId: string): Observable<any> {
+    return this._httpClient.post<any>(`${this._apiURL}/cr-einvoice/${invoiceId}/poll-einvoice-status`, {});
+  }
+
+  createNote(invoiceId: string, data: { noteType: 'NC' | 'ND'; codigo: string; codigoReferenciaOTRO?: string; razon: string }): Observable<any> {
+    return this._httpClient.post<any>(`${this._apiURL}/cr-einvoice/${invoiceId}/create-note`, data);
+  }
 }

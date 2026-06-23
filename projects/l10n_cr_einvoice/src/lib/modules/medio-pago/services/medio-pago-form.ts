@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
-export interface MedioPagoFormModel {
+export interface medioPagoFormModel {
   code: string;
   description: string;
 }
 
 @Injectable({ providedIn: 'root' })
-export class MedioPagoFormService extends BaseForm<MedioPagoFormModel> {
+export class MedioPagoFormService extends BaseForm<medioPagoFormModel> {
   override createForm() {
-    return this.fb.group<MedioPagoFormModel>({
+    return this.fb.group<medioPagoFormModel>({
       code: ['', [Validators.required]],
       description: ['', [Validators.required]],
     });

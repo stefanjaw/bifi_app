@@ -6,7 +6,7 @@ import { PLUGIN_CONTEXT } from '@avalantec/base-app/plugin-system';
 import { DiscountForm } from '@avalantec/accounting';
 
 @Component({
-  selector: 'bifi-l10n-discount-cr-plugin',
+  selector: 'bifi-app-discount-cr-plugin',
   standalone: true,
   imports: [ReactiveFormsModule, FormModule, InputTextModule],
   template: `

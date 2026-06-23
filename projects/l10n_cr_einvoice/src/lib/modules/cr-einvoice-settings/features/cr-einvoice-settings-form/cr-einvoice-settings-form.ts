@@ -10,11 +10,11 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCrEinvoiceSettings, crEinvoiceSettings } from '../../services/crud-cr-einvoice-settings';
-import { CrEinvoiceSettingsFormService, CrEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form';
+import { CrEinvoiceSettingsFormService, crEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 
 @Component({
-  selector: 'bifi-l10n-cr-einvoice-settings-form',
+  selector: 'bifi-app-cr-einvoice-settings-form',
   imports: [ReactiveFormsModule, FormModule, InputTextModule, SelectModule, ButtonModule, ProgressBarModule, FileUpload],
   templateUrl: './cr-einvoice-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,7 +61,7 @@ export class CrEinvoiceSettingsForm {
     });
   }
 
-  protected handleSubmit(state: FormValueState<CrEinvoiceSettingsFormModel>) {
+  protected handleSubmit(state: FormValueState<crEinvoiceSettingsFormModel>) {
     this.isSubmitLoading.set(true);
     this.crud.putSettings(state.rawValue).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => { this.isSubmitLoading.set(false); this.settingsResource.reload(); },

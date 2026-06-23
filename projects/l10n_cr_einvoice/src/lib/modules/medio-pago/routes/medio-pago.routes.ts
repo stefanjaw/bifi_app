@@ -14,14 +14,14 @@ export const MEDIO_PAGO_ROUTES: Routes = [
     path: 'create',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/medio-pago-form/medio-pago-form').then(m => m.MedioPagoForm),
+      import('../features/medio-pago-form/medio-pago-form').then(m => m.MediosPagoForm),
     data: { resource: 'cr-einvoice/medio-pago/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/medio-pago-form/medio-pago-form').then(m => m.MedioPagoForm),
+      import('../features/medio-pago-form/medio-pago-form').then(m => m.MediosPagoForm),
     data: { resource: 'cr-einvoice/medio-pago/update' },
   },
 ];

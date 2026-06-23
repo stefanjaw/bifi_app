@@ -26,7 +26,7 @@ const filters: filter<condicionVenta>[] = [
 ];
 
 @Component({
-  selector: 'bifi-l10n-condicion-venta-list',
+  selector: 'bifi-app-condicion-venta-list',
   providers: [provideResourceManager(CrudCondicionVenta)],
   imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },

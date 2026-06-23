@@ -9,15 +9,15 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCondicionVenta } from '../../services/crud-condicion-venta';
-import { CondicionVentaFormService, CondicionVentaFormModel } from '../../services/condicion-venta-form';
+import { CondicionVentaFormService, condicionVentaFormModel } from '../../services/condicion-venta-form';
 
 @Component({
-  selector: 'bifi-l10n-condicion-venta-form',
+  selector: 'bifi-app-condicion-venta-form',
   imports: [ReactiveFormsModule, FormModule, InputTextModule, ButtonModule, ProgressBarModule],
   templateUrl: './condicion-venta-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CondicionVentaForm {
+export class CondicionesVentaForm {
   private crud = inject(CrudCondicionVenta);
   private formService = inject(CondicionVentaFormService);
   private destroy$ = inject(DestroyRef);
@@ -45,7 +45,7 @@ export class CondicionVentaForm {
     });
   }
 
-  handleSubmit(values: FormValueState<CondicionVentaFormModel>) {
+  handleSubmit(values: FormValueState<condicionVentaFormModel>) {
     this.isSubmitLoading.set(true);
     const action = this.isUpdate()
       ? this.crud.put({ _id: this.id(), data: values.rawValue })

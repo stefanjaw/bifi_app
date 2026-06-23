@@ -15,7 +15,7 @@ import { ContactsForm } from '@avalantec/base-app/contacts';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'bifi-l10n-contact-cr-plugin',
+  selector: 'bifi-app-contact-cr-plugin',
   standalone: true,
   imports: [
     ReactiveFormsModule,

@@ -61,6 +61,60 @@ All loaded lazily via `SETTINGS_ROUTES` in `routing`. They share the same patter
 
 **Before adding CRUD services, list components, form logic, or settings pages in a feature lib, verify that `@avalantec/base-app` doesn't already provide it.** Re-use the existing CRUD services (`CrudUsers`, `CrudContacts`, `CrudCompanies`, `CrudCountries`, `CrudCurrencies`, `CrudTaxes`, `CrudSequences`, etc.) and base-app UI components (`BaseDialog`, `FormModule`, `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `FileResolver`, reporting download dialog, etc.) rather than re-implementing similar functionality.
 
+## l10n_cr_einvoice — Costa Rica E-Invoice Localization Plugin
+
+`@avalantec/l10n_cr_einvoice` provides Costa Rica (Ministerio de Hacienda) electronic invoice integration. Registered via `provideL10nCrEinvoice()` in `app.config.ts`. Hooks into 6 base-app forms via the plugin system and adds 3 CRUD maintenance modules under Settings.
+
+### Plugin System Slots
+
+| Slot | Plugin Component | Host Form (lib) | Fields Added |
+|---|---|---|---|
+| `contacts-form-general-information` | `ContactCrPlugin` | `ContactsForm` (`@avalantec/base-app/contacts`) | `crVatType`, `commercialName`, `crDistrito`, `crEconomicActivityCodes` (FormArray) |
+| `product-form-general-information` | `ProductCrPlugin` | `ProductForm` (`@avalantec/inventory`) | `codigoComercial`, `productKind` |
+| `uom-form-general-information` | `UomCrPlugin` | `UomForm` (`@avalantec/inventory`) | `crUnidadMedida` |
+| `discount-form-general-information` | `DiscountCrPlugin` | `DiscountForm` (`@avalantec/accounting`) | `crNaturalezaDescuento` |
+| `tax-form-general-information` | `TaxCrPlugin` | `TaxForm` (`@avalantec/accounting`) | `crCodigo`, `crCodigoTarifa`, `crTarifa` |
+| `invoice-form-general-information` | `InvoiceCrPlugin` | `InvoiceForm` (`@avalantec/accounting`) | 12 controls: type, condicion/medio pago, reference info, acceptance fields, Hacienda submission/polling |
+| `invoices-list-actions` | `InvoiceImportPlugin` | (standalone — no host form) | Button + dialog to import received invoices from XML |
+
+### CRUD Maintenance Modules (Settings → CR E-Invoice)
+
+All loaded under `/settings/cr-einvoice/`. Follow the same pattern as base-app settings: list + form + CRUD service + BaseForm subclass.
+
+| Module | Routes | Entity | Service | Form Service | Components |
+|---|---|---|---|---|---|
+| `condicion-venta` | `/settings/cr-einvoice/condicion-venta` | Sale conditions | `CrudCondicionVenta` | `CondicionVentaFormService` | `CondicionVentaList`, `CondicionesVentaForm` |
+| `medio-pago` | `/settings/cr-einvoice/medio-pago` | Payment methods | `CrudMedioPago` | `MedioPagoFormService` | `MedioPagoList`, `MediosPagoForm` |
+| `cr-einvoice-settings` | `/settings/cr-einvoice/configuracion` | Hacienda credentials + technical config | `CrudCrEinvoiceSettings` | `CrEinvoiceSettingsFormService` | `CrEinvoiceSettingsForm` (singleton, no list) |
+
+### Key Services
+
+| Service | Endpoint | Key Methods | Used by |
+|---|---|---|---|
+| `CrudCrEinvoice` | `cr-einvoice` | `submitEinvoice`, `pollEinvoiceStatus`, `createNote`, `submitAcceptance`, `pollAcceptanceStatus`, `importReceived` | `InvoiceCrPlugin`, `InvoiceImportPlugin`, any lib needing CR e-invoice operations |
+| `CrudCondicionVenta` | `cr-einvoice/condicion-venta` | Standard CRUD | `InvoiceCrPlugin` (populates dropdown), `CondicionVentaList` |
+| `CrudMedioPago` | `cr-einvoice/medio-pago` | Standard CRUD | `InvoiceCrPlugin` (populates dropdown), `MedioPagoList` |
+| `CrudCrEinvoiceSettings` | `cr-einvoice/settings` | `getSettings`, `putSettings` (FormData) | `InvoiceCrPlugin` (reads emisor config), settings form |
+
+### Shared Interfaces
+
+| Interface | Module |
+|---|---|
+| `condicionVenta` | `crud-condicion-venta` |
+| `condicionVentaFormModel` | `condicion-venta-form` |
+| `medioPago` | `crud-medio-pago` |
+| `medioPagoFormModel` | `medio-pago-form` |
+| `crEinvoiceSettings` | `crud-cr-einvoice-settings` |
+| `crEinvoiceSettingsFormModel` | `cr-einvoice-settings-form` |
+
+### Base-App Dependencies
+
+`@avalantec/base-app/plugin-system` (`PluginManager`, `PLUGIN_CONTEXT`), `@avalantec/base-app/routing` (`MainMenuManager`, `MainRoutingManager`), `@avalantec/base-app/core` (`ToastManager`, `BaseDialog`), `@avalantec/base-app/form` (`BaseForm`, `FormModule`, `FormValueState`), `@avalantec/base-app/resource` (`ApiRequestManager`, `TableLayout`, `SearchBar`, etc.), `@avalantec/base-app/auth` (`permissionGuard`, `HasPermission`), `@avalantec/base-app/contacts` (`ContactsForm`), `@avalantec/base-app/companies` (`CrudCompanies`).
+
+### External Library Dependencies
+
+`@avalantec/accounting` (`InvoiceForm`, `TaxForm`, `DiscountForm`), `@avalantec/inventory` (`ProductForm`, `UomForm`).
+
 ## Commands
 
 ```sh

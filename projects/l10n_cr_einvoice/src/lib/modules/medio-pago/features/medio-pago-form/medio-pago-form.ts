@@ -9,15 +9,15 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudMedioPago } from '../../services/crud-medio-pago';
-import { MedioPagoFormService, MedioPagoFormModel } from '../../services/medio-pago-form';
+import { MedioPagoFormService, medioPagoFormModel } from '../../services/medio-pago-form';
 
 @Component({
-  selector: 'bifi-l10n-medio-pago-form',
+  selector: 'bifi-app-medio-pago-form',
   imports: [ReactiveFormsModule, FormModule, InputTextModule, ButtonModule, ProgressBarModule],
   templateUrl: './medio-pago-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MedioPagoForm {
+export class MediosPagoForm {
   private crud = inject(CrudMedioPago);
   private formService = inject(MedioPagoFormService);
   private destroy$ = inject(DestroyRef);
@@ -45,7 +45,7 @@ export class MedioPagoForm {
     });
   }
 
-  handleSubmit(values: FormValueState<MedioPagoFormModel>) {
+  handleSubmit(values: FormValueState<medioPagoFormModel>) {
     this.isSubmitLoading.set(true);
     const action = this.isUpdate()
       ? this.crud.put({ _id: this.id(), data: values.rawValue })

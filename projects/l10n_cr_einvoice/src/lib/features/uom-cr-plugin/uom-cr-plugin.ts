@@ -6,7 +6,7 @@ import { PLUGIN_CONTEXT } from '@avalantec/base-app/plugin-system';
 import { UomForm } from '@avalantec/inventory';
 
 @Component({
-  selector: 'bifi-l10n-uom-cr-plugin',
+  selector: 'bifi-app-uom-cr-plugin',
   standalone: true,
   imports: [ReactiveFormsModule, FormModule, InputTextModule],
   template: `

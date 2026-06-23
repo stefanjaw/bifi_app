@@ -26,7 +26,7 @@ const filters: filter<medioPago>[] = [
 ];
 
 @Component({
-  selector: 'bifi-l10n-medio-pago-list',
+  selector: 'bifi-app-medio-pago-list',
   providers: [provideResourceManager(CrudMedioPago)],
   imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },

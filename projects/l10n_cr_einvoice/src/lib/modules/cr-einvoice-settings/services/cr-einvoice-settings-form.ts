@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
-export interface CrEinvoiceSettingsFormModel {
+export interface crEinvoiceSettingsFormModel {
   proveedorSistemas: string;
   haciendaUsername: string;
   haciendaPassword: string;
@@ -16,9 +16,9 @@ export interface CrEinvoiceSettingsFormModel {
 }
 
 @Injectable({ providedIn: 'root' })
-export class CrEinvoiceSettingsFormService extends BaseForm<CrEinvoiceSettingsFormModel> {
+export class CrEinvoiceSettingsFormService extends BaseForm<crEinvoiceSettingsFormModel> {
   override createForm() {
-    return this.fb.group<CrEinvoiceSettingsFormModel>({
+    return this.fb.group<crEinvoiceSettingsFormModel>({
       proveedorSistemas: ['', [Validators.required]],
       haciendaUsername: ['', [Validators.required]],
       haciendaPassword: ['', [Validators.required]],

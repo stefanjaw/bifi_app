@@ -7,7 +7,7 @@ import { PLUGIN_CONTEXT } from '@avalantec/base-app/plugin-system';
 import { ProductForm } from '@avalantec/inventory';
 
 @Component({
-  selector: 'bifi-l10n-product-cr-plugin',
+  selector: 'bifi-app-product-cr-plugin',
   standalone: true,
   imports: [ReactiveFormsModule, FormModule, SelectModule, InputTextModule],
   template: `

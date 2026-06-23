@@ -16,13 +16,12 @@ import { CrudCondicionVenta } from '../../modules/condicion-venta/services/crud-
 import { CrudMedioPago } from '../../modules/medio-pago/services/crud-medio-pago';
 import { CrudCrEinvoiceSettings } from '../../modules/cr-einvoice-settings/services/crud-cr-einvoice-settings';
 import { CrudCrEinvoice } from '../../modules/cr-einvoice-settings/services/crud-cr-einvoice';
-import { CrudInvoices } from '@avalantec/accounting';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { HaciendaResponseDialog } from './hacienda-response-dialog';
 
 @Component({
-  selector: 'bifi-l10n-invoice-cr-plugin',
+  selector: 'bifi-app-invoice-cr-plugin',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -388,15 +387,15 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
         </div>
       }
 
-      <bifi-l10n-hacienda-response-dialog
+      <bifi-app-hacienda-response-dialog
         [responseXml]="crHaciendaResponseXml()"
         #responseDialog
-      ></bifi-l10n-hacienda-response-dialog>
+      ></bifi-app-hacienda-response-dialog>
 
-      <bifi-l10n-hacienda-response-dialog
+      <bifi-app-hacienda-response-dialog
         [responseXml]="crAcceptanceHaciendaResponseXml()"
         #acceptanceResponseDialog
-      ></bifi-l10n-hacienda-response-dialog>
+      ></bifi-app-hacienda-response-dialog>
 
       <!-- Note Creation Dialog -->
       <p-dialog
@@ -455,7 +454,6 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
 })
 export class InvoiceCrPlugin implements OnInit, OnDestroy {
   host = inject<InvoiceForm>(PLUGIN_CONTEXT);
-  private crudInvoices = inject(CrudInvoices);
   private crudCrEinvoice = inject(CrudCrEinvoice);
   private crudCondicionVenta = inject(CrudCondicionVenta);
   private crudMedioPago = inject(CrudMedioPago);
@@ -772,7 +770,7 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
   submitToHacienda() {
     if (this.isSubmitting()) return;
     this.isSubmitting.set(true);
-    this.crudInvoices
+    this.crudCrEinvoice
       .submitEinvoice(this.host.id())
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
@@ -797,7 +795,7 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
   checkStatus() {
     if (this.isPolling()) return;
     this.isPolling.set(true);
-    this.crudInvoices
+    this.crudCrEinvoice
       .pollEinvoiceStatus(this.host.id())
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
@@ -870,7 +868,7 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
       return;
     }
     this.isCreatingNote.set(true);
-    this.crudInvoices
+    this.crudCrEinvoice
       .createNote(this.host.id(), {
         noteType: this.pendingNoteType(),
         codigo: codigo ?? '01',

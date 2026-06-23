@@ -7,7 +7,7 @@ import { PLUGIN_CONTEXT } from '@avalantec/base-app/plugin-system';
 import { TaxForm } from '@avalantec/accounting';
 
 @Component({
-  selector: 'bifi-l10n-tax-cr-plugin',
+  selector: 'bifi-app-tax-cr-plugin',
   standalone: true,
   imports: [ReactiveFormsModule, FormModule, InputTextModule, InputNumberModule],
   template: `

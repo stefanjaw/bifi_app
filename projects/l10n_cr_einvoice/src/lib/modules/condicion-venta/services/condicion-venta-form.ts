@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
-export interface CondicionVentaFormModel {
+export interface condicionVentaFormModel {
   code: string;
   description: string;
 }
 
 @Injectable({ providedIn: 'root' })
-export class CondicionVentaFormService extends BaseForm<CondicionVentaFormModel> {
+export class CondicionVentaFormService extends BaseForm<condicionVentaFormModel> {
   override createForm() {
-    return this.fb.group<CondicionVentaFormModel>({
+    return this.fb.group<condicionVentaFormModel>({
       code: ['', [Validators.required]],
       description: ['', [Validators.required]],
     });

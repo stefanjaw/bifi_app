@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'bifi-l10n-invoice-import-plugin',
+  selector: 'bifi-app-invoice-import-plugin',
   standalone: true,
   imports: [ButtonModule, DialogModule, CommonModule],
   template: `

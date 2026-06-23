@@ -4,7 +4,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'bifi-l10n-hacienda-response-dialog',
+  selector: 'bifi-app-hacienda-response-dialog',
   standalone: true,
   imports: [DialogModule, ButtonModule],
   templateUrl: './hacienda-response-dialog.html',
