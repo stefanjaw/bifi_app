@@ -11,8 +11,8 @@ import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { MainMenuManager } from '@avalantec/base-app/routing';
-import { SearchService } from '@avalantec/base-app/ui';
+import { MENU_ITEMS } from '@avalantec/base-app/core';
+import { SearchService } from '@avalantec/base-app/search';
 import {
   provideResourceManager,
   ResourceManager,
@@ -36,7 +36,7 @@ import { searchDestination } from '../../interfaces/search-destination';
 export class SearchDestinationsList {
   private resourceManager = inject<ResourceManager<searchDestination>>(ResourceManager);
   private crud = inject(CrudSearchDestinations);
-  private mainMenu = inject(MainMenuManager);
+  private menuItems = inject(MENU_ITEMS);
   private searchService = inject(SearchService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
@@ -110,7 +110,7 @@ export class SearchDestinationsList {
 
           const seenNewKeys = new Set<string>();
           const newOnes: Record<string, any>[] = [];
-          for (const item of this.flattenMenu(this.mainMenu.menuItems())) {
+          for (const item of this.flattenMenu(this.menuItems())) {
             const normalized = this.normalizeRoute(item.route);
             if (existingRoutes.has(normalized)) continue;
             const key = this.routeToKey(item.route);

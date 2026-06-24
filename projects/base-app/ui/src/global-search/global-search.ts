@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { SearchService } from '../services/search-service';
-import { SearchDestination } from '../interfaces/search-destination';
+import { SearchDestination, SearchService } from '@avalantec/base-app/search';
 
 @Component({
   selector: 'bifi-app-global-search',

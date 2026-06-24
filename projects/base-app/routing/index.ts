@@ -2,6 +2,7 @@ export * from './src/components/main-menu/main-menu';
 export * from './src/libraries/base-menu-manager';
 export * from './src/libraries/base-routing-manager';
 export * from './src/providers/interceptors';
+export * from './src/providers/menu-items';
 export * from './src/routing/auth.routes';
 export * from './src/routing/base-app.routes';
 export * from './src/routing/settings.routes';

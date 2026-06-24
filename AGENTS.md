@@ -8,7 +8,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 
 - **app** (only one): `projects/asset-roster-demo` — serves on `:4200`
 - **libs** (14): `base-app`, `asset-roster`, `l10n_cr_einvoice`, `calendar`, `website`, `helpdesk`, `tasks`, `projects`, `aduanix`, `sales`, `purchases`, `inventory`, `accounting`, `email-marketing`
-- `base-app` is a **multi-entrypoint library** with 25 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
+- `base-app` is a **multi-entrypoint library** with 26 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
 - All libs expose via `@avalantec/<name>` path aliases from root `tsconfig.json`
 
 ## Base-App Capabilities
@@ -26,6 +26,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `resource` | `ApiRequestManager` (full CRUD lifecycle), `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `TreeList`, `GanttView`/`TimelineView`/`CalendarView`, `FileResolver`, `FilterManager`, `PaginationManager`, `SortManager`, `ListStateManager`, `InfiniteScrollManager`, `ResourceManager`, `BackendListModels`, `NotificationMessageResolver`, `CrudActivityHistories`, `DynamicComponent` directive, `AppErrorInterceptor`, `NotificationInterceptor`, `tableColumn`, `filter`, `orderBy`, `ApiActionConfig` types | All feature libs |
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
+| `search` | `SearchService`, `SearchDestination`, `SearchResultGroup` | `ui` (GlobalSearch), `search-destinations` (list/form) |
 
 ### Feature CRUD Modules (Settings)
 
@@ -43,7 +44,7 @@ All loaded lazily via `SETTINGS_ROUTES` in `routing`. They share the same patter
 | `taxes` | Tax definitions (interfaces + CRUD only, no UI components) | `sales`, `inventory`, `purchases`, `accounting` |
 | `templates` | Code template management | Only internal (settings routes) |
 | `sequences` | Document numbering sequences | `sales`, `accounting`, `purchases` |
-| `search-destinations` | Global search configuration | Only internal (used by `ui.SearchService`) |
+| `search-destinations` | Global search configuration | Only internal (used by `@avalantec/base-app/search`) |
 | `reporting` | Report definitions + download | `asset-roster` (via `ReportingDownloadDialog`) |
 | `branch-office` | Branch office management | None externally |
 | `ai-settings` | AI provider configuration | Only internal (settings routes) |

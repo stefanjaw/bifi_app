@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 import { APP_AUTH_SERVICE, provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/users';
-import { withLibraryInterceptors } from '@avalantec/base-app/routing';
+import { provideMenuItems, withLibraryInterceptors } from '@avalantec/base-app/routing';
 import { Noir } from './primeng.preset';
 import { provideAssetRoster } from '@avalantec/asset-roster';
 import { provideWebsite } from '@avalantec/website';
@@ -72,6 +72,7 @@ export const appConfig: ApplicationConfig = {
     provideHelpdesk(),
     provideProjects(),
     provideL10nCrEinvoice(),
+    provideMenuItems(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

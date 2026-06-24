@@ -11,6 +11,7 @@ export * from './src/interfaces/ts-helpers';
 export * from './src/libraries/base-dialog';
 export * from './src/libraries/debounce-signal';
 export * from './src/libraries/library-config-token';
+export * from './src/libraries/menu-items';
 export * from './src/libraries/maybe-signal-await';
 export * from './src/libraries/object-utils';
 export * from './src/pipes/split-caps';

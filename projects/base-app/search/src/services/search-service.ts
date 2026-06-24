@@ -7,15 +7,6 @@ import { injectAuthService } from '@avalantec/base-app/auth';
 import { resource, user } from '@avalantec/base-app/interfaces';
 import { SearchDestination, SearchResultGroup } from '../interfaces/search-destination';
 
-/**
- * App-wide command-palette search over navigable destinations.
- *
- * Loads the active destination list once from the backend and caches it, then
- * does all matching in memory with a small fuzzy matcher (Fuse.js). The dataset
- * is small, so this gives instant, typo-tolerant results with zero per-keystroke
- * network calls and zero dependency on any database search engine — fully
- * portable across MongoDB Atlas and self-hosted MongoDB.
- */
 @Injectable({ providedIn: 'root' })
 export class SearchService {
   private http = inject(HttpClient);
@@ -28,10 +19,6 @@ export class SearchService {
 
   readonly loaded = this._loaded.asReadonly();
 
-  /**
-   * Fetches and caches the active destination list. Idempotent: only hits the
-   * network once unless `force` is passed or a previous attempt failed.
-   */
   async load(force = false): Promise<void> {
     if (this._loading) return;
     if (this._loaded() && !force) return;
@@ -57,25 +44,12 @@ export class SearchService {
       });
       this._loaded.set(true);
     } catch {
-      // Leave as not-loaded so a later focus/shortcut retries the fetch.
     } finally {
       this._loading = false;
     }
   }
 
-  /**
-   * Returns ranked, permission-filtered destinations grouped by area.
-   * Reads the destination + user signals so callers can wrap this in a
-   * `computed()` and get reactive updates when data loads or the user changes.
-   *
-   * An empty query returns no results: the palette only navigates to things the
-   * user has actually searched for, so pressing Enter on an empty input never
-   * routes anywhere.
-   */
   search(query: string): SearchResultGroup[] {
-    // Read these so a `computed()` wrapping search() re-runs when data finishes
-    // loading or the user changes — even on the early-return paths below where
-    // the values aren't otherwise used.
     this._loaded();
     const currentUser = this.auth.user();
     const q = query.trim();
@@ -87,10 +61,6 @@ export class SearchService {
     return this.groupResults(visible);
   }
 
-  /**
-   * Permission filter using the same mechanism the sidebar menu uses
-   * (`resource` + `:menu`). Destinations without a resource are always visible.
-   */
   private canSee(destination: SearchDestination, currentUser: user | null): boolean {
     const res = destination.resource?.trim();
     if (!res) return true;
