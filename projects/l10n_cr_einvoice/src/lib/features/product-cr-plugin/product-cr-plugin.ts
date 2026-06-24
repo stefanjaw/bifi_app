@@ -29,6 +29,17 @@ import { ProductForm } from '@avalantec/inventory';
         ></p-select>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>Partida Arancelaria</bifi-app-form-label>
+        <input
+          pInputText
+          formControlName="crPartidaArancelaria"
+          placeholder="Ej. 847130"
+          maxlength="20"
+        />
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
     </ng-container>
   `,
 })
@@ -45,18 +56,24 @@ export class ProductCrPlugin implements OnInit {
   ngOnInit() {
     this.hostForm.addControl('codigoComercial', new FormControl(''));
     this.hostForm.addControl('productKind', new FormControl(''));
+    this.hostForm.addControl('crPartidaArancelaria', new FormControl(''));
   }
 
   constructor() {
     effect(() => {
       const product = this.host.productResource.value();
       if (!product) {
-        this.hostForm.patchValue({ codigoComercial: '', productKind: '' });
+        this.hostForm.patchValue({
+          codigoComercial: '',
+          productKind: '',
+          crPartidaArancelaria: '',
+        });
         return;
       }
       this.hostForm.patchValue({
         codigoComercial: (product as any)?.codigoComercial ?? '',
         productKind: (product as any)?.productKind ?? '',
+        crPartidaArancelaria: (product as any)?.crPartidaArancelaria ?? '',
       });
     });
   }

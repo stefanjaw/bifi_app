@@ -1,4 +1,15 @@
-import { Component, computed, DestroyRef, effect, inject, Injector, OnDestroy, OnInit, Signal, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injector,
+  OnDestroy,
+  OnInit,
+  Signal,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SelectModule } from 'primeng/select';
@@ -144,12 +155,16 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
               <div class="md:col-span-2 border-t border-amber-200 bg-amber-50 rounded-lg p-3 mt-1">
                 <h4 class="text-sm font-semibold text-amber-800 mb-3">
                   Información de Referencia
-                  <span class="font-normal text-amber-600">(FEC: comprobante físico original; NC/ND: factura que se corrige)</span>
+                  <span class="font-normal text-amber-600"
+                    >(FEC: comprobante físico original; NC/ND: factura que se corrige)</span
+                  >
                 </h4>
                 <ng-container formGroupName="crInformacionReferencia">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <bifi-app-form-field>
-                      <bifi-app-form-label>Tipo de Documento <span class="text-red-500">*</span></bifi-app-form-label>
+                      <bifi-app-form-label
+                        >Tipo de Documento <span class="text-red-500">*</span></bifi-app-form-label
+                      >
                       <p-select
                         formControlName="tipoDocIR"
                         [options]="tipoDocIROptions"
@@ -163,7 +178,10 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
 
                     @if (refForm?.get('tipoDocIR')?.value === '99') {
                       <bifi-app-form-field>
-                        <bifi-app-form-label>Tipo de Documento OTRO <span class="text-red-500">*</span></bifi-app-form-label>
+                        <bifi-app-form-label
+                          >Tipo de Documento OTRO
+                          <span class="text-red-500">*</span></bifi-app-form-label
+                        >
                         <input
                           pInputText
                           formControlName="tipoDocRefOTRO"
@@ -213,7 +231,9 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
 
                     @if (refForm?.get('codigo')?.value === '99') {
                       <bifi-app-form-field>
-                        <bifi-app-form-label>Código OTRO <span class="text-red-500">*</span></bifi-app-form-label>
+                        <bifi-app-form-label
+                          >Código OTRO <span class="text-red-500">*</span></bifi-app-form-label
+                        >
                         <input
                           pInputText
                           formControlName="codigoReferenciaOTRO"
@@ -301,10 +321,13 @@ import { HaciendaResponseDialog } from './hacienda-response-dialog';
               <p-tag
                 [value]="crAcceptanceStatus()!"
                 [severity]="
-                  crAcceptanceStatus() === 'accepted' ? 'success'
-                    : crAcceptanceStatus() === 'rejected' ? 'danger'
-                    : crAcceptanceStatus() === 'sent' ? 'info'
-                    : 'secondary'
+                  crAcceptanceStatus() === 'accepted'
+                    ? 'success'
+                    : crAcceptanceStatus() === 'rejected'
+                      ? 'danger'
+                      : crAcceptanceStatus() === 'sent'
+                        ? 'info'
+                        : 'secondary'
                 "
               ></p-tag>
             }
@@ -534,13 +557,13 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
 
   private buildRefGroup(): FormGroup {
     return new FormGroup({
-      tipoDocIR:            new FormControl(''),
-      tipoDocRefOTRO:       new FormControl(''),
-      numero:               new FormControl(''),
-      fechaEmisionIR:       new FormControl(null),
-      codigo:               new FormControl(''),
+      tipoDocIR: new FormControl(''),
+      tipoDocRefOTRO: new FormControl(''),
+      numero: new FormControl(''),
+      fechaEmisionIR: new FormControl(null),
+      codigo: new FormControl(''),
       codigoReferenciaOTRO: new FormControl(''),
-      razon:                new FormControl(''),
+      razon: new FormControl(''),
     });
   }
 
@@ -668,15 +691,6 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
     if (!this.hostForm.contains('crCodigoActividadReceptor')) {
       this.hostForm.addControl('crCodigoActividadReceptor', new FormControl(null));
     }
-    if (!this.hostForm.contains('crCondicionImpuesto')) {
-      this.hostForm.addControl('crCondicionImpuesto', new FormControl(null));
-    }
-    if (!this.hostForm.contains('crMontoTotalImpuestoAcreditar')) {
-      this.hostForm.addControl('crMontoTotalImpuestoAcreditar', new FormControl(null));
-    }
-    if (!this.hostForm.contains('crMontoTotalGastoAplicable')) {
-      this.hostForm.addControl('crMontoTotalGastoAplicable', new FormControl(null));
-    }
     if (!this.hostForm.contains('crDetalleMensaje')) {
       this.hostForm.addControl('crDetalleMensaje', new FormControl(''));
     }
@@ -704,10 +718,37 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
       }
     };
 
+    const syncAcceptanceControls = (type: string) => {
+      const needed = type === 'MA' || type === 'MAP' || type === 'MR';
+      if (needed) {
+        if (!this.hostForm.contains('crCondicionImpuesto')) {
+          this.hostForm.addControl('crCondicionImpuesto', new FormControl(null));
+        }
+        if (!this.hostForm.contains('crMontoTotalImpuestoAcreditar')) {
+          this.hostForm.addControl('crMontoTotalImpuestoAcreditar', new FormControl(null));
+        }
+        if (!this.hostForm.contains('crMontoTotalGastoAplicable')) {
+          this.hostForm.addControl('crMontoTotalGastoAplicable', new FormControl(null));
+        }
+      } else {
+        if (this.hostForm.contains('crCondicionImpuesto')) {
+          this.hostForm.removeControl('crCondicionImpuesto');
+        }
+        if (this.hostForm.contains('crMontoTotalImpuestoAcreditar')) {
+          this.hostForm.removeControl('crMontoTotalImpuestoAcreditar');
+        }
+        if (this.hostForm.contains('crMontoTotalGastoAplicable')) {
+          this.hostForm.removeControl('crMontoTotalGastoAplicable');
+        }
+      }
+    };
+
     syncRefGroup(typeCtrl.value ?? '');
-    typeCtrl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe((val: string) => syncRefGroup(val ?? ''));
+    syncAcceptanceControls(typeCtrl.value ?? '');
+    typeCtrl.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe((val: string) => {
+      syncRefGroup(val ?? '');
+      syncAcceptanceControls(val ?? '');
+    });
 
     const contactCtrl = this.hostForm.get('contactId');
     if (contactCtrl) {
@@ -720,9 +761,16 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     const controls = [
-      'crEinvoiceType', 'crCondicionVentaId', 'crMedioPagoId', 'crPlazoCredito',
-      'crCodigoActividadEmisor', 'crCodigoActividadReceptor', 'crCondicionImpuesto',
-      'crMontoTotalImpuestoAcreditar', 'crMontoTotalGastoAplicable', 'crDetalleMensaje',
+      'crEinvoiceType',
+      'crCondicionVentaId',
+      'crMedioPagoId',
+      'crPlazoCredito',
+      'crCodigoActividadEmisor',
+      'crCodigoActividadReceptor',
+      'crCondicionImpuesto',
+      'crMontoTotalImpuestoAcreditar',
+      'crMontoTotalGastoAplicable',
+      'crDetalleMensaje',
       'crInformacionReferencia',
     ];
     for (const name of controls) {
@@ -744,23 +792,33 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
         crPlazoCredito: entry.crPlazoCredito ?? null,
         crCodigoActividadEmisor: entry.crCodigoActividadEmisor ?? null,
         crCodigoActividadReceptor: entry.crCodigoActividadReceptor ?? null,
-        crCondicionImpuesto: entry.crCondicionImpuesto ?? null,
-        crMontoTotalImpuestoAcreditar: entry.crMontoTotalImpuestoAcreditar ?? null,
-        crMontoTotalGastoAplicable: entry.crMontoTotalGastoAplicable ?? null,
         crDetalleMensaje: entry.crDetalleMensaje ?? '',
       });
+      if (this.hostForm.contains('crCondicionImpuesto')) {
+        this.hostForm.patchValue({ crCondicionImpuesto: entry.crCondicionImpuesto ?? null });
+      }
+      if (this.hostForm.contains('crMontoTotalImpuestoAcreditar')) {
+        this.hostForm.patchValue({
+          crMontoTotalImpuestoAcreditar: entry.crMontoTotalImpuestoAcreditar ?? null,
+        });
+      }
+      if (this.hostForm.contains('crMontoTotalGastoAplicable')) {
+        this.hostForm.patchValue({
+          crMontoTotalGastoAplicable: entry.crMontoTotalGastoAplicable ?? null,
+        });
+      }
       if (this.hostForm.contains('crInformacionReferencia')) {
         this.hostForm.patchValue({
           crInformacionReferencia: {
-            tipoDocIR:            entry.crInformacionReferencia?.tipoDocIR ?? '',
-            tipoDocRefOTRO:       entry.crInformacionReferencia?.tipoDocRefOTRO ?? '',
-            numero:               entry.crInformacionReferencia?.numero ?? '',
-            fechaEmisionIR:       entry.crInformacionReferencia?.fechaEmisionIR
-                                    ? new Date(entry.crInformacionReferencia.fechaEmisionIR)
-                                    : null,
-            codigo:               entry.crInformacionReferencia?.codigo ?? '',
+            tipoDocIR: entry.crInformacionReferencia?.tipoDocIR ?? '',
+            tipoDocRefOTRO: entry.crInformacionReferencia?.tipoDocRefOTRO ?? '',
+            numero: entry.crInformacionReferencia?.numero ?? '',
+            fechaEmisionIR: entry.crInformacionReferencia?.fechaEmisionIR
+              ? new Date(entry.crInformacionReferencia.fechaEmisionIR)
+              : null,
+            codigo: entry.crInformacionReferencia?.codigo ?? '',
             codigoReferenciaOTRO: entry.crInformacionReferencia?.codigoReferenciaOTRO ?? '',
-            razon:                entry.crInformacionReferencia?.razon ?? '',
+            razon: entry.crInformacionReferencia?.razon ?? '',
           },
         });
       }
@@ -827,8 +885,7 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
         error: (err: any) => {
           this.isSubmittingAcceptance.set(false);
           this.host.invoiceResource.reload();
-          const detail =
-            err?.error?.message ?? err?.message ?? 'Error enviando mensaje receptor.';
+          const detail = err?.error?.message ?? err?.message ?? 'Error enviando mensaje receptor.';
           this.toastManager.showError(detail);
         },
       });
@@ -848,7 +905,8 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.isPollingAcceptance.set(false);
-          const detail = err?.error?.message ?? err?.message ?? 'Error verificando estado de aceptación.';
+          const detail =
+            err?.error?.message ?? err?.message ?? 'Error verificando estado de aceptación.';
           this.toastManager.showError(detail);
         },
       });
@@ -883,7 +941,8 @@ export class InvoiceCrPlugin implements OnInit, OnDestroy {
           this.isCreatingNote.set(false);
           this.noteDialogVisible = false;
           this.toastManager.showSuccess('Nota creada exitosamente. Redirigiendo...');
-          this.router.navigate(['/accounting/invoices/edit', newInvoice._id]);
+          const newId = newInvoice?.data?._id ?? newInvoice?._id;
+          if (newId) this.router.navigate(['/accounting/invoices/edit', newId]);
         },
         error: (err: any) => {
           this.isCreatingNote.set(false);

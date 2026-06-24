@@ -22,6 +22,7 @@ import { CrudDiscounts } from '../../services/crud-discounts';
 import { CrudProducts } from '@avalantec/inventory';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -79,6 +80,7 @@ export class InvoiceForm {
   private crudDiscounts = inject(CrudDiscounts);
   private crudProducts = inject(CrudProducts);
   private router = inject(Router);
+  private location = inject(Location);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
@@ -150,10 +152,9 @@ export class InvoiceForm {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(
-    this.formService.linesArray.valueChanges,
-    { initialValue: this.formService.linesArray.value },
-  );
+  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
+    initialValue: this.formService.linesArray.value,
+  });
 
   untaxedTotal = computed(() =>
     this.linesValue()
@@ -344,6 +345,6 @@ export class InvoiceForm {
   }
 
   goBack() {
-    this.router.navigate(['/accounting/invoices']);
+    this.location.back();
   }
 }

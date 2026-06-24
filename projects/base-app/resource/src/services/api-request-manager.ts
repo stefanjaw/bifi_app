@@ -368,7 +368,7 @@ export class ApiRequestManager<T> {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {
-      if (value === undefined) continue;
+      if (value === undefined || value === null) continue;
       if (isFormUploaderFileArray(value)) {
         value.forEach(file => formData.append(`${key}`, file.file));
       } else if (isFormUploaderFile(value)) {
@@ -379,11 +379,8 @@ export class ApiRequestManager<T> {
         formData.append(key, value ? 'true' : 'false');
       } else if (typeof value === 'object') {
         formData.append(key, JSON.stringify(value));
-      } else if (
-        (fileFields.includes(key) && Array.isArray(value) && value.length === 0) ||
-        value === null
-      ) {
-        formData.append(key, null!);
+      } else if (fileFields.includes(key) && Array.isArray(value) && value.length === 0) {
+        formData.append(key, '');
       } else {
         formData.append(key, value);
       }
