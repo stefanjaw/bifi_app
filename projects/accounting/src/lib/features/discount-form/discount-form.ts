@@ -23,7 +23,16 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
 
 @Component({
   selector: 'bifi-app-discount-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule, PluginSlot],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    InputNumberModule,
+    PluginSlot,
+  ],
   providers: [providePluginContext(DiscountForm)],
   templateUrl: './discount-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,7 +86,10 @@ export class DiscountForm {
       : this.crudDiscounts.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

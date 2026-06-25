@@ -25,7 +25,16 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
 
 @Component({
   selector: 'bifi-app-tax-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule, PluginSlot],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    InputNumberModule,
+    PluginSlot,
+  ],
   providers: [providePluginContext(TaxForm)],
   templateUrl: './tax-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,9 +55,7 @@ export class TaxForm {
   accountsResource = this.crudAccounts.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(
-    () => this.taxResource.isLoading() || this.accountsResource.isLoading(),
-  );
+  isLoading = computed(() => this.taxResource.isLoading() || this.accountsResource.isLoading());
   isSubmitLoading = signal(false);
 
   form = this.formService.form;
@@ -85,7 +92,10 @@ export class TaxForm {
       : this.crudTaxes.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

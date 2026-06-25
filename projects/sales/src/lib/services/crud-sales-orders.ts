@@ -14,10 +14,9 @@ export class CrudSalesOrders extends ApiRequestManager<salesOrder> {
   }
 
   updateStatus(id: string, status: salesOrderStatus): Observable<salesOrder> {
-    return this._httpClient.patch<salesOrder>(
-      `${this._apiURL}/${this.endpoint}/${id}/status`,
-      { status },
-    );
+    return this._httpClient.patch<salesOrder>(`${this._apiURL}/${this.endpoint}/${id}/status`, {
+      status,
+    });
   }
 
   openPdf(id: string): Observable<void> {
@@ -35,7 +34,7 @@ export class CrudSalesOrders extends ApiRequestManager<salesOrder> {
           document.body.removeChild(a);
         }
         setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
-      }),
+      })
     );
   }
 }

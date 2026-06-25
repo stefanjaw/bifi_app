@@ -15,7 +15,9 @@
       (cancelClicked)="goBack()"
       class="mb-4"
       [formChanged]="form.dirty"
-      *bifiAppHasPermission="isUpdate() ? 'inventory/warehouses:update:model' : 'inventory/warehouses:create:model'"
+      *bifiAppHasPermission="
+        isUpdate() ? 'inventory/warehouses:update:model' : 'inventory/warehouses:create:model'
+      "
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {

@@ -21,7 +21,14 @@ import { ProductTypeFormService, ProductTypeFormModel } from '../../services/pro
 
 @Component({
   selector: 'bifi-app-product-type-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, TextareaModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    TextareaModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+  ],
   templateUrl: './product-type-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

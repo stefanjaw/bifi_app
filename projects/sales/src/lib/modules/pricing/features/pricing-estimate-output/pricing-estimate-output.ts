@@ -56,7 +56,7 @@ export class PricingEstimateOutput implements OnInit {
       .getById(id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.estimate.set(data);
           this.loading.set(false);
         },
@@ -67,7 +67,7 @@ export class PricingEstimateOutput implements OnInit {
   }
 
   protected toggleView() {
-    this.isDistributorView.update((v) => !v);
+    this.isDistributorView.update(v => !v);
   }
 
   protected downloadPdf() {
@@ -78,7 +78,7 @@ export class PricingEstimateOutput implements OnInit {
       .getPdf(est._id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (blob) => {
+        next: blob => {
           this.triggerDownload(blob, `estimate-${est.number}.pdf`);
           this.downloadingPdf.set(false);
         },
@@ -94,7 +94,7 @@ export class PricingEstimateOutput implements OnInit {
       .getCsv(est._id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (blob) => {
+        next: blob => {
           this.triggerDownload(blob, `estimate-${est.number}.csv`);
           this.downloadingCsv.set(false);
         },

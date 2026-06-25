@@ -6,10 +6,10 @@
   class="block px-4 bg-gray-50 py-4"
 >
   <div ngProjectAs="div" class="min-h-screen flex flex-col gap-6">
-
     <div class="flex items-center justify-between gap-4">
       <p class="text-sm text-gray-500">
-        Add events from the catalog, toggle each on/off, and choose which roles receive each notification.
+        Add events from the catalog, toggle each on/off, and choose which roles receive each
+        notification.
       </p>
       <div class="flex gap-2 flex-shrink-0">
         <p-button
@@ -20,12 +20,7 @@
           (onClick)="openAddDialog()"
           [disabled]="availableCatalogEntries().length === 0"
         ></p-button>
-        <p-button
-          label="Save"
-          icon="pi pi-save"
-          [loading]="saving()"
-          (onClick)="save()"
-        ></p-button>
+        <p-button label="Save" icon="pi pi-save" [loading]="saving()" (onClick)="save()"></p-button>
       </div>
     </div>
 
@@ -36,8 +31,9 @@
     @if (!loading()) {
       <div class="flex flex-col gap-4">
         @for (event of activeEvents(); track event.type) {
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
-
+          <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4"
+          >
             <div
               class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mt-1"
               [ngClass]="event.iconBg"
@@ -50,8 +46,14 @@
               <p class="text-xs text-gray-500 mt-0.5">{{ event.description }}</p>
 
               <div class="mt-3">
-                <label class="text-xs font-medium text-gray-600 mb-1 block">Notify</label>
+                <label
+                  class="text-xs font-medium text-gray-600 mb-1 block"
+                  [attr.for]="'recipients-' + event.type"
+                >
+                  Notify
+                </label>
                 <p-multiselect
+                  [inputId]="'recipients-' + event.type"
                   [options]="event.recipientOptions"
                   [ngModel]="event.recipients"
                   (ngModelChange)="updateRecipients(event.type, $any($event))"
@@ -88,12 +90,13 @@
                 (onClick)="removeEvent(event.type)"
               ></p-button>
             </div>
-
           </div>
         }
 
         @if (activeEvents().length === 0) {
-          <div class="bg-white rounded-xl border border-dashed border-gray-300 p-10 flex flex-col items-center gap-3 text-center">
+          <div
+            class="bg-white rounded-xl border border-dashed border-gray-300 p-10 flex flex-col items-center gap-3 text-center"
+          >
             <i class="pi pi-bell text-3xl text-gray-300"></i>
             <p class="text-sm font-medium text-gray-500">No notification events configured</p>
             <p class="text-xs text-gray-400">Click "Add Event" to add events from the catalog.</p>
@@ -101,7 +104,6 @@
         }
       </div>
     }
-
   </div>
 </bifi-app-form-layout>
 
@@ -122,10 +124,15 @@
       @for (entry of availableCatalogEntries(); track entry.type) {
         <div
           class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all"
-          [ngClass]="selectedNewEventType() === entry.type
-            ? 'border-primary-500 bg-primary-50'
-            : 'border-gray-200 bg-white hover:border-gray-300'"
+          [ngClass]="
+            selectedNewEventType() === entry.type
+              ? 'border-primary-500 bg-primary-50'
+              : 'border-gray-200 bg-white hover:border-gray-300'
+          "
           (click)="selectedNewEventType.set(entry.type)"
+          (keyup.enter)="selectedNewEventType.set(entry.type)"
+          tabindex="0"
+          role="button"
         >
           <div
             class="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"

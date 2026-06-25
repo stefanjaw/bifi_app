@@ -93,7 +93,7 @@ export class LineItemsTable {
   grandTotal = computed(() =>
     (this.lineItemValues() as any[]).reduce((sum, item) => {
       const discountedPrice = this._applyDiscount(item?.unitPrice ?? 0, item?.discountId);
-      return sum + ((item?.quantity ?? 0) * discountedPrice);
+      return sum + (item?.quantity ?? 0) * discountedPrice;
     }, 0)
   );
 
@@ -146,7 +146,7 @@ export class LineItemsTable {
     const ids = this.getLineTaxIds(index);
     return ids.reduce((sum, id) => {
       const tax = this.taxOptions().find((t: any) => t._id === id);
-      return sum + ((tax?.percentage ?? 0) / 100);
+      return sum + (tax?.percentage ?? 0) / 100;
     }, 0);
   }
 

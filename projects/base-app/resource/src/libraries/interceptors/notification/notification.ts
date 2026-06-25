@@ -1,4 +1,4 @@
-// src/app/core/interceptors/notification.interceptor.ts
+// src/app/core/interceptors/notification.ts
 import {
   HttpEvent,
   HttpEventType,
@@ -47,7 +47,7 @@ export const notificationInterceptor: HttpInterceptorFn = (
       })
     : undefined;
 
-  // Extensión del interceptor anterior (notification.interceptor.ts)
+  // Extensión del interceptor anterior (notification.ts)
   return next(req).pipe(
     tap({
       next: ev => {

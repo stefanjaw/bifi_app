@@ -40,7 +40,7 @@ export class PurchaseStagesList {
 
   goToEditStage = (element: purchaseStage) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deleteStage(id: string) {
     this.crudPurchaseStages
       .delete({ _id: id })

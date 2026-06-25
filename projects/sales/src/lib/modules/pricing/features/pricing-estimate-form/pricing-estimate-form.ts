@@ -69,7 +69,7 @@ export class PricingEstimateForm implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        switchMap((text) => {
+        switchMap(text => {
           if (text.trim().length <= 5) {
             this.tokenData.set(null);
             this.tokenLoading.set(false);
@@ -85,19 +85,21 @@ export class PricingEstimateForm implements OnInit {
         }),
         takeUntilDestroyed(this.destroy$)
       )
-      .subscribe((data) => {
+      .subscribe(data => {
         this.tokenData.set(data);
         this.tokenLoading.set(false);
       });
 
-    this.form.get('requestText')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('requestText')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe((val: string) => {
         this.requestText$.next(val ?? '');
       });
 
-    this.form.get('pricingMethod')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('pricingMethod')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe((method: string) => {
         this.form.patchValue({
           pricingValue: method === 'markup' ? '1.3' : '30',
@@ -129,7 +131,7 @@ export class PricingEstimateForm implements OnInit {
       .generate(payload)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (estimate) => {
+        next: estimate => {
           this.isSubmitting.set(false);
           this.router.navigate(['/pricing/estimates', estimate._id]);
         },

@@ -12,7 +12,7 @@ import {
   CreateCommissioningFormModel,
 } from '../../services/create-commissioning-form';
 import { DialogModule } from 'primeng/dialog';
-import { assetRoster } from '../../../asset-roster/interfaces/asset-roster';
+import { assetRoster } from '../../../asset-roster';
 import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';

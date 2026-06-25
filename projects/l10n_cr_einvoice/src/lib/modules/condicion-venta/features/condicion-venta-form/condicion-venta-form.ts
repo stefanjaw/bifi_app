@@ -1,5 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -9,7 +16,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudCondicionVenta } from '../../services/crud-condicion-venta';
-import { CondicionVentaFormService, condicionVentaFormModel } from '../../services/condicion-venta-form';
+import {
+  CondicionVentaFormService,
+  condicionVentaFormModel,
+} from '../../services/condicion-venta-form';
 
 @Component({
   selector: 'bifi-app-condicion-venta-form',
@@ -52,8 +62,14 @@ export class CondicionesVentaForm {
       : this.crud.post({ data: values.rawValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.formService.reset(); this.goBack(); },
-      error: () => { this.isSubmitLoading.set(false); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.formService.reset();
+        this.goBack();
+      },
+      error: () => {
+        this.isSubmitLoading.set(false);
+      },
     });
   }
 

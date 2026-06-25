@@ -38,7 +38,10 @@ export class WarehouseDetail {
 
   id = input<string>('');
 
-  warehouseResource = this.crudWarehouses.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  warehouseResource = this.crudWarehouses.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   locationsResource = this.crudLocations.get({});
   balancesResource = this.crudStockBalances.get({});
 
@@ -72,7 +75,11 @@ export class WarehouseDetail {
         },
         error: () => {
           this.deactivating.set(null);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not deactivate location.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Could not deactivate location.',
+          });
         },
       });
   }

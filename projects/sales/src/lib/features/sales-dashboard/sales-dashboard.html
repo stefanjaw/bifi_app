@@ -70,7 +70,9 @@
           @for (rep of topSalesReps(); track rep.username; let i = $index) {
             <li class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">
+                <span
+                  class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center"
+                >
                   {{ i + 1 }}
                 </span>
                 <span class="text-gray-700 font-medium">{{ rep.username }}</span>

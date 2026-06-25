@@ -276,7 +276,7 @@ export class ProjectsList {
     const filters = JSON.stringify([
       { field: 'projectId.name', operator: '==', value: project.name, type: 'string' },
     ]);
-    
+
     this.router.navigate(['/tasks/view'], {
       queryParams: { _filters: filters, _view: 'list' },
     });

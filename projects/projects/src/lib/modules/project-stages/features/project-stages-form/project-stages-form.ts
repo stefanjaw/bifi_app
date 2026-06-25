@@ -77,7 +77,7 @@ export class ProjectStagesForm {
     // Ensure description is never null, convert empty string to empty string if needed
     const processedData = {
       ...values.rawValue,
-      description: values.rawValue.description || ''
+      description: values.rawValue.description || '',
     };
 
     const action = this.isUpdate()

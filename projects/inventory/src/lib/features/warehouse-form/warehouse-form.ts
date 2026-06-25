@@ -72,7 +72,9 @@ export class WarehouseForm {
         this.isSubmitLoading.set(false);
         if (isNew) {
           const newId = result?._id ?? result?.data?._id;
-          this.router.navigate(newId ? ['/inventory/warehouses', newId] : ['/inventory/warehouses']);
+          this.router.navigate(
+            newId ? ['/inventory/warehouses', newId] : ['/inventory/warehouses']
+          );
         } else {
           this.router.navigate(['/inventory/warehouses']);
         }

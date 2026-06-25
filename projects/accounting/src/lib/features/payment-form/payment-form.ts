@@ -23,7 +23,15 @@ import { PaymentFormService, PaymentFormModel } from '../../services/payment-for
 
 @Component({
   selector: 'bifi-app-payment-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ProgressBarModule, InputNumberModule, DatePickerModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ProgressBarModule,
+    InputNumberModule,
+    DatePickerModule,
+  ],
   templateUrl: './payment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -44,7 +52,7 @@ export class PaymentForm {
     () =>
       this.journalsResource.isLoading() ||
       this.currenciesResource.isLoading() ||
-      this.contactsResource.isLoading(),
+      this.contactsResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -65,12 +73,19 @@ export class PaymentForm {
       ...rawValue,
       partnerId: rawValue.partnerId || undefined,
       exchangeRate: rawValue.exchangeRate || undefined,
-      paymentDate: rawValue.paymentDate instanceof Date ? rawValue.paymentDate.toISOString() : rawValue.paymentDate,
+      paymentDate:
+        rawValue.paymentDate instanceof Date
+          ? rawValue.paymentDate.toISOString()
+          : rawValue.paymentDate,
     };
-    this.crudPayments.post({ data: payload })
+    this.crudPayments
+      .post({ data: payload })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+        next: () => {
+          this.isSubmitLoading.set(false);
+          this.goBack();
+        },
         error: () => this.isSubmitLoading.set(false),
       });
   }

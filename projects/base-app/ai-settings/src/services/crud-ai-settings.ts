@@ -23,9 +23,6 @@ export class CrudAiSettings extends ApiRequestManager<aiSettings> {
   }
 
   putSettings(data: Record<string, unknown>): Observable<aiSettings | undefined> {
-    return this._httpClient.put<aiSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<aiSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

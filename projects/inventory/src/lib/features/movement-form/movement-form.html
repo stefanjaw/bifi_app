@@ -72,7 +72,12 @@
             @if (selectedWarehouseId() && filteredLocations().length === 0) {
               <small class="text-orange-500">
                 No locations found for this warehouse.
-                <a [routerLink]="['/inventory/warehouses', selectedWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+                <a
+                  [routerLink]="['/inventory/warehouses', selectedWarehouseId()]"
+                  class="underline font-medium"
+                >
+                  Add locations from the warehouse page.
+                </a>
               </small>
             }
           </bifi-app-form-field>
@@ -90,7 +95,12 @@
 
           <bifi-app-form-field class="md:col-span-2">
             <bifi-app-form-label>Notes</bifi-app-form-label>
-            <textarea pTextarea formControlName="notes" rows="2" placeholder="Optional notes"></textarea>
+            <textarea
+              pTextarea
+              formControlName="notes"
+              rows="2"
+              placeholder="Optional notes"
+            ></textarea>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>

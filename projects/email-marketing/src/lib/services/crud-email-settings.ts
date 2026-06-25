@@ -23,10 +23,7 @@ export class CrudEmailSettings extends ApiRequestManager<emailSettings> {
   }
 
   putSettings(data: Record<string, any>): Observable<emailSettings | undefined> {
-    return this._httpClient.put<emailSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<emailSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 
   testConnection(): Observable<{ ok: boolean; message: string }> {

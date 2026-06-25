@@ -41,7 +41,7 @@ export function calculateTotalsPerLine(
   lineItems: LineItemInput[],
   lineTaxIds: string[][],
   allTaxes: TaxOption[],
-  discountedUnitPrices?: number[],
+  discountedUnitPrices?: number[]
 ): TotalsPreview {
   const taxMap = new Map<string, TaxOption>(allTaxes.map(t => [t._id, t]));
 
@@ -54,7 +54,10 @@ export function calculateTotalsPerLine(
   const aggregated = new Map<string, { tax: TaxOption; amount: number }>();
 
   effectiveItems.forEach((item, i) => {
-    const lineBase = calculateLineItemTotal(Number(item.quantity ?? 0), Number(item.unitPrice ?? 0));
+    const lineBase = calculateLineItemTotal(
+      Number(item.quantity ?? 0),
+      Number(item.unitPrice ?? 0)
+    );
     const itemTaxIds = lineTaxIds[i] ?? [];
     for (const taxId of itemTaxIds) {
       const tax = taxMap.get(taxId);

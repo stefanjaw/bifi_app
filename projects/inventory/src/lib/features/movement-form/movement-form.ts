@@ -31,7 +31,17 @@ const MOVEMENT_TYPES = [
 
 @Component({
   selector: 'bifi-app-movement-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, TextareaModule, ProgressBarModule, RouterLink, HasPermission],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    SelectModule,
+    TextareaModule,
+    ProgressBarModule,
+    RouterLink,
+    HasPermission,
+  ],
   templateUrl: './movement-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,10 +64,11 @@ export class MovementForm {
   warehousesResource = this.crudWarehouses.get({});
   locationsResource = this.crudLocations.get({});
 
-  isLoading = computed(() =>
-    this.productsResource.isLoading() ||
-    this.warehousesResource.isLoading() ||
-    this.locationsResource.isLoading()
+  isLoading = computed(
+    () =>
+      this.productsResource.isLoading() ||
+      this.warehousesResource.isLoading() ||
+      this.locationsResource.isLoading()
   );
 
   products = this.productsResource.value;
@@ -65,7 +76,9 @@ export class MovementForm {
   allLocations = this.locationsResource.value;
 
   filteredLocations = computed(() =>
-    (this.allLocations() as location[] ?? []).filter(l => l.warehouseId?._id === this.formService.selectedWarehouseId())
+    ((this.allLocations() as location[]) ?? []).filter(
+      l => l.warehouseId?._id === this.formService.selectedWarehouseId()
+    )
   );
 
   handleSubmit(data: FormValueState<MovementFormModel>) {

@@ -103,17 +103,17 @@ export class SalesOrderDetail {
   stageOptions = computed(() => (this.stagesResource.value() as any[]) ?? []);
 
   currencyOptions = computed(() =>
-    ((this.currenciesResource.value() as any[]) ?? []).filter((c: any) => c?.active !== false),
+    ((this.currenciesResource.value() as any[]) ?? []).filter((c: any) => c?.active !== false)
   );
 
   taxOptions = computed(() =>
     ((this.taxesResource.value() as any[]) ?? []).filter(
-      (t: any) => t?.active === true && t?.taxType === 'sales',
-    ),
+      (t: any) => t?.active === true && t?.taxType === 'sales'
+    )
   );
 
   discountOptions = computed(() =>
-    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false),
+    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false)
   );
 
   defaultStageId = computed(() => {
@@ -151,7 +151,7 @@ export class SalesOrderDetail {
       this.productsResource.isLoading() ||
       this.stagesResource.isLoading() ||
       this.taxesResource.isLoading() ||
-      this.discountsResource.isLoading(),
+      this.discountsResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPdfLoading = signal(false);
@@ -161,9 +161,9 @@ export class SalesOrderDetail {
 
   private lineItemValues = toSignal(
     this.formService.lineItemsArray.valueChanges.pipe(
-      startWith(this.formService.lineItemsArray.value),
+      startWith(this.formService.lineItemsArray.value)
     ),
-    { initialValue: this.formService.lineItemsArray.value },
+    { initialValue: this.formService.lineItemsArray.value }
   );
 
   totalsPreview = computed<TotalsPreview>(() => {
@@ -287,9 +287,11 @@ export class SalesOrderDetail {
           unitPrice: item.unitPrice ?? 0,
           total: item.total ?? 0,
           taxIds: Array.isArray(item.taxIds)
-            ? item.taxIds.map((id: any) =>
-                typeof id === 'object' ? (id?._id?.toString() ?? '') : id?.toString() ?? '',
-              ).filter(Boolean)
+            ? item.taxIds
+                .map((id: any) =>
+                  typeof id === 'object' ? (id?._id?.toString() ?? '') : (id?.toString() ?? '')
+                )
+                .filter(Boolean)
             : [],
           discountId:
             typeof item.discountId === 'object'

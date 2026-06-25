@@ -23,8 +23,7 @@ export const searchDestinationColumns: tableColumn<searchDestination>[] = [
     field: 'keywords',
     title: 'Phrases',
     type: 'text',
-    parseField: (value: any) =>
-      Array.isArray(value) && value.length ? value.join(', ') : '—',
+    parseField: (value: any) => (Array.isArray(value) && value.length ? value.join(', ') : '—'),
   },
   {
     field: 'active',

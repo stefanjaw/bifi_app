@@ -18,10 +18,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudEmailTemplates } from '../../services/crud-email-templates';
-import {
-  EmailTemplateForm,
-  EmailTemplateFormModel,
-} from '../../services/email-template-form';
+import { EmailTemplateForm, EmailTemplateFormModel } from '../../services/email-template-form';
 import { EmailEditor } from '../../components/email-editor/email-editor';
 
 @Component({

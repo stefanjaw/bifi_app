@@ -375,7 +375,9 @@
                                   type="text"
                                   placeholder="Location name"
                                   [value]="newLocationNameForAssignment()"
-                                  (input)="newLocationNameForAssignment.set($any($event.target).value)"
+                                  (input)="
+                                    newLocationNameForAssignment.set($any($event.target).value)
+                                  "
                                 />
                                 <p-select
                                   [options]="facilityOptions()"
@@ -392,7 +394,10 @@
                                   variant="text"
                                   icon="pi pi-plus"
                                   (click)="handleRoomCreationForRow($index)"
-                                  [disabled]="!newLocationNameForAssignment().trim() || !newFacilityIdForAssignment()"
+                                  [disabled]="
+                                    !newLocationNameForAssignment().trim() ||
+                                    !newFacilityIdForAssignment()
+                                  "
                                 ></p-button>
                               </div>
                             }

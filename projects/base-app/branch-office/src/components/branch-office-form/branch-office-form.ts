@@ -23,7 +23,14 @@ import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/b
 
 @Component({
   selector: 'bifi-app-branch-office-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+  ],
   templateUrl: './branch-office-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,7 +58,7 @@ export class BranchOfficeForm {
     () =>
       this.branchOfficeResource.isLoading() ||
       this.companiesResource.isLoading() ||
-      this.countriesResource.isLoading(),
+      this.countriesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 

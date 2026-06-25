@@ -73,8 +73,8 @@ export class NotificationSettingsForm {
   protected availableCatalogEntries = computed<NotificationCatalogEntry[]>(() => {
     const catalog = this.catalogResource.value() ?? [];
     const active = this.activeEvents();
-    const activeTypes = new Set(active.map((e) => e.type));
-    return catalog.filter((c) => !activeTypes.has(c.type));
+    const activeTypes = new Set(active.map(e => e.type));
+    return catalog.filter(c => !activeTypes.has(c.type));
   });
 
   protected selectedNewEventType = signal<string | null>(null);
@@ -87,8 +87,8 @@ export class NotificationSettingsForm {
 
       const apiEvents: NotificationEventConfig[] = raw.events ?? [];
       const rows: ActiveEventRow[] = apiEvents
-        .map((saved) => {
-          const meta = catalog.find((c) => c.type === saved.type);
+        .map(saved => {
+          const meta = catalog.find(c => c.type === saved.type);
           if (!meta) return null;
           return {
             type: saved.type,
@@ -104,7 +104,7 @@ export class NotificationSettingsForm {
         .filter((r): r is ActiveEventRow => r !== null);
 
       if (rows.length === 0) {
-        const defaults: ActiveEventRow[] = catalog.map((meta) => ({
+        const defaults: ActiveEventRow[] = catalog.map(meta => ({
           type: meta.type,
           enabled: true,
           recipients: [...meta.defaultRecipients],
@@ -122,19 +122,15 @@ export class NotificationSettingsForm {
   }
 
   protected toggleEvent(type: string, enabled: boolean): void {
-    this.activeEvents.update((rows) =>
-      rows.map((r) => (r.type === type ? { ...r, enabled } : r))
-    );
+    this.activeEvents.update(rows => rows.map(r => (r.type === type ? { ...r, enabled } : r)));
   }
 
   protected updateRecipients(type: string, recipients: string[]): void {
-    this.activeEvents.update((rows) =>
-      rows.map((r) => (r.type === type ? { ...r, recipients } : r))
-    );
+    this.activeEvents.update(rows => rows.map(r => (r.type === type ? { ...r, recipients } : r)));
   }
 
   protected removeEvent(type: string): void {
-    this.activeEvents.update((rows) => rows.filter((r) => r.type !== type));
+    this.activeEvents.update(rows => rows.filter(r => r.type !== type));
   }
 
   protected openAddDialog(): void {
@@ -146,7 +142,7 @@ export class NotificationSettingsForm {
     const type = this.selectedNewEventType();
     if (!type) return;
     const catalog = this.catalogResource.value() ?? [];
-    const meta = catalog.find((c) => c.type === type);
+    const meta = catalog.find(c => c.type === type);
     if (!meta) return;
     const newRow: ActiveEventRow = {
       type: meta.type,
@@ -158,21 +154,21 @@ export class NotificationSettingsForm {
       iconBg: meta.iconBg,
       recipientOptions: meta.recipientOptions,
     };
-    this.activeEvents.update((rows) => [...rows, newRow]);
+    this.activeEvents.update(rows => [...rows, newRow]);
     this.showAddDialog.set(false);
   }
 
   protected recipientLabels(row: ActiveEventRow): string {
     if (!row.recipients?.length) return 'No recipients';
     return row.recipients
-      .map((id) => row.recipientOptions.find((o) => o.id === id)?.label ?? id)
+      .map(id => row.recipientOptions.find(o => o.id === id)?.label ?? id)
       .join(', ');
   }
 
   protected save(): void {
     this.saving.set(true);
     const payload = {
-      events: this.activeEvents().map((r) => ({
+      events: this.activeEvents().map(r => ({
         type: r.type,
         enabled: r.enabled,
         recipients: r.recipients,

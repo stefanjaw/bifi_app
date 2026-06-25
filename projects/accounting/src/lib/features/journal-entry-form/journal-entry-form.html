@@ -47,7 +47,11 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Date *</bifi-app-form-label>
-            <p-datepicker formControlName="date" placeholder="Select date" [showIcon]="true"></p-datepicker>
+            <p-datepicker
+              formControlName="date"
+              placeholder="Select date"
+              [showIcon]="true"
+            ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -91,38 +95,62 @@
               <div class="col-span-3">
                 <bifi-app-form-field>
                   <bifi-app-form-label>Description</bifi-app-form-label>
-                  <input pInputText [formControl]="$any(line.get('description'))" placeholder="Description" />
+                  <input
+                    pInputText
+                    [formControl]="$any(line.get('description'))"
+                    placeholder="Description"
+                  />
                 </bifi-app-form-field>
               </div>
               <div class="col-span-2">
                 <bifi-app-form-field>
                   <bifi-app-form-label>Debit</bifi-app-form-label>
-                  <p-inputNumber [formControl]="$any(line.get('debit'))" [min]="0" [minFractionDigits]="2"></p-inputNumber>
+                  <p-inputNumber
+                    [formControl]="$any(line.get('debit'))"
+                    [min]="0"
+                    [minFractionDigits]="2"
+                  ></p-inputNumber>
                 </bifi-app-form-field>
               </div>
               <div class="col-span-2">
                 <bifi-app-form-field>
                   <bifi-app-form-label>Credit</bifi-app-form-label>
-                  <p-inputNumber [formControl]="$any(line.get('credit'))" [min]="0" [minFractionDigits]="2"></p-inputNumber>
+                  <p-inputNumber
+                    [formControl]="$any(line.get('credit'))"
+                    [min]="0"
+                    [minFractionDigits]="2"
+                  ></p-inputNumber>
                 </bifi-app-form-field>
               </div>
               <div class="col-span-2">
-                <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeLine($index)"></p-button>
+                <p-button
+                  severity="danger"
+                  icon="pi pi-trash"
+                  label="Remove"
+                  (onClick)="removeLine($index)"
+                ></p-button>
               </div>
             </div>
           }
 
           <div class="grid grid-cols-12 gap-3 items-center border-t pt-3">
             <div class="col-span-3">
-              <p-button severity="secondary" icon="pi pi-plus" label="Add Line" (onClick)="addLine()"></p-button>
+              <p-button
+                severity="secondary"
+                icon="pi pi-plus"
+                label="Add Line"
+                (onClick)="addLine()"
+              ></p-button>
             </div>
             <div class="col-span-3"></div>
             <div class="col-span-2 text-right text-sm font-semibold">
-              {{ totalDebit() | number:'1.2-2' }}
+              {{ totalDebit() | number: '1.2-2' }}
             </div>
-            <div class="col-span-2 text-right text-sm font-semibold"
-              [class.text-red-500]="totalDebit() !== totalCredit()">
-              {{ totalCredit() | number:'1.2-2' }}
+            <div
+              class="col-span-2 text-right text-sm font-semibold"
+              [class.text-red-500]="totalDebit() !== totalCredit()"
+            >
+              {{ totalCredit() | number: '1.2-2' }}
             </div>
             <div class="col-span-2"></div>
           </div>

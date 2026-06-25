@@ -11,7 +11,9 @@
     (dragleave)="onDragLeave()"
     (drop)="onDrop($event, null)"
   >
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 rounded-t-lg bg-gray-100">
+    <div
+      class="flex items-center justify-between px-4 py-3 border-b border-gray-200 rounded-t-lg bg-gray-100"
+    >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-gray-400 inline-block"></span>
         <span class="font-semibold text-gray-700 text-sm">Unassigned</span>
@@ -38,10 +40,10 @@
             ></p-tag>
           </div>
           <div class="text-xs text-gray-500 mb-1">
-            {{ (order.contactId)?.fullName ?? '—' }}
+            {{ order.contactId?.fullName ?? '—' }}
           </div>
           <div class="text-sm font-medium text-gray-700">
-            {{ (order.totalAmount || 0) | currency }}
+            {{ order.totalAmount || 0 | currency }}
           </div>
         </div>
       }
@@ -94,10 +96,10 @@
               ></p-tag>
             </div>
             <div class="text-xs text-gray-500 mb-1">
-              {{ (order.contactId)?.fullName ?? '—' }}
+              {{ order.contactId?.fullName ?? '—' }}
             </div>
             <div class="text-sm font-medium text-gray-700">
-              {{ (order.totalAmount || 0) | currency }}
+              {{ order.totalAmount || 0 | currency }}
             </div>
           </div>
         }

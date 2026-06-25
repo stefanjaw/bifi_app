@@ -154,7 +154,7 @@ export class InfiniteScrollManager {
     // +1 to avoid subpixel rendering issues
     if (scrollHeight <= clientHeight + 1) {
       this._throttledCall(onLoadMore);
-      console.log('should load')
+      console.log('should load');
     }
   }
 

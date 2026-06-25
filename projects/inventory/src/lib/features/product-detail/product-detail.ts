@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudStockBalances } from '../../services/crud-stock-balances';
 import { CrudMovements } from '../../services/crud-movements';
@@ -31,7 +25,10 @@ export class ProductDetail {
 
   id = input<string>('');
 
-  productResource = this.crudProducts.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  productResource = this.crudProducts.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   balancesResource = this.crudStockBalances.get({});
   movementsResource = this.crudMovements.get({});
 
@@ -40,12 +37,12 @@ export class ProductDetail {
 
   stockBalances = computed(() => {
     const all = (this.balancesResource.value() as stockBalance[]) ?? [];
-    return all.filter(b => (b.productId as any)?._id === this.id() || b.productId === this.id() as any);
+    return all.filter(
+      b => (b.productId as any)?._id === this.id() || b.productId === (this.id() as any)
+    );
   });
 
-  totalStock = computed(() =>
-    this.stockBalances().reduce((sum, b) => sum + b.quantity, 0)
-  );
+  totalStock = computed(() => this.stockBalances().reduce((sum, b) => sum + b.quantity, 0));
 
   stockByWarehouse = computed(() => {
     const map = new Map<string, { name: string; quantity: number }>();
@@ -61,7 +58,7 @@ export class ProductDetail {
   recentMovements = computed(() => {
     const all = (this.movementsResource.value() as stockMovement[]) ?? [];
     return all
-      .filter(m => (m.productId as any)?._id === this.id() || m.productId === this.id() as any)
+      .filter(m => (m.productId as any)?._id === this.id() || m.productId === (this.id() as any))
       .slice(0, 20);
   });
 }

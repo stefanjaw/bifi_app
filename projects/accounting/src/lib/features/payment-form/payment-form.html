@@ -1,8 +1,4 @@
-<bifi-app-form-layout
-  title="New Payment"
-  titlePosition="center"
-  class="block px-4 bg-gray-50 py-4"
->
+<bifi-app-form-layout title="New Payment" titlePosition="center" class="block px-4 bg-gray-50 py-4">
   <form
     ngProjectAs="div"
     [formGroup]="form"
@@ -73,13 +69,22 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Amount *</bifi-app-form-label>
-            <p-inputNumber formControlName="amount" [min]="0" [minFractionDigits]="2" placeholder="0.00"></p-inputNumber>
+            <p-inputNumber
+              formControlName="amount"
+              [min]="0"
+              [minFractionDigits]="2"
+              placeholder="0.00"
+            ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Payment Date *</bifi-app-form-label>
-            <p-datepicker formControlName="paymentDate" placeholder="Select date" [showIcon]="true"></p-datepicker>
+            <p-datepicker
+              formControlName="paymentDate"
+              placeholder="Select date"
+              [showIcon]="true"
+            ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -90,7 +95,12 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Exchange Rate</bifi-app-form-label>
-            <p-inputNumber formControlName="exchangeRate" [min]="0" [minFractionDigits]="4" placeholder="1.0000"></p-inputNumber>
+            <p-inputNumber
+              formControlName="exchangeRate"
+              [min]="0"
+              [minFractionDigits]="4"
+              placeholder="1.0000"
+            ></p-inputNumber>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>

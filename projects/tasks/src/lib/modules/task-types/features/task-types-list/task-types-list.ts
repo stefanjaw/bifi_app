@@ -49,5 +49,5 @@ export class TaskTypesList {
 
   gotoEditTaskType = (element: taskType) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

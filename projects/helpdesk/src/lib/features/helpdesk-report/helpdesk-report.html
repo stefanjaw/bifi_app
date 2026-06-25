@@ -1,6 +1,11 @@
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-2xl font-bold">Helpdesk Report</h1>
-  <p-button label="Back to Tickets" icon="pi pi-arrow-left" severity="secondary" [routerLink]="['../list']"></p-button>
+  <p-button
+    label="Back to Tickets"
+    icon="pi pi-arrow-left"
+    severity="secondary"
+    [routerLink]="['../list']"
+  ></p-button>
 </div>
 
 @if (isLoading()) {
@@ -14,15 +19,21 @@
       <div class="grid grid-cols-3 gap-4 text-center mb-4">
         <div>
           <div class="text-xs text-gray-500 uppercase font-medium">Avg</div>
-          <div class="text-xl font-bold text-blue-600">{{ formatMinutes(report()?.resolutionTimeSpan?.avgMinutes) }}</div>
+          <div class="text-xl font-bold text-blue-600">
+            {{ formatMinutes(report()?.resolutionTimeSpan?.avgMinutes) }}
+          </div>
         </div>
         <div>
           <div class="text-xs text-gray-500 uppercase font-medium">Min</div>
-          <div class="text-xl font-bold text-green-600">{{ formatMinutes(report()?.resolutionTimeSpan?.minMinutes) }}</div>
+          <div class="text-xl font-bold text-green-600">
+            {{ formatMinutes(report()?.resolutionTimeSpan?.minMinutes) }}
+          </div>
         </div>
         <div>
           <div class="text-xs text-gray-500 uppercase font-medium">Max</div>
-          <div class="text-xl font-bold text-red-600">{{ formatMinutes(report()?.resolutionTimeSpan?.maxMinutes) }}</div>
+          <div class="text-xl font-bold text-red-600">
+            {{ formatMinutes(report()?.resolutionTimeSpan?.maxMinutes) }}
+          </div>
         </div>
       </div>
       <h3 class="text-sm font-semibold text-gray-600 mb-2">Distribution</h3>
@@ -73,7 +84,9 @@
             <tr>
               <td class="text-sm text-gray-700 truncate max-w-[120px]">{{ row.assigned }}</td>
               <td class="text-right font-medium">{{ row.count }}</td>
-              <td class="text-right text-sm text-gray-600">{{ formatMinutes(row.avgResolutionMinutes) }}</td>
+              <td class="text-right text-sm text-gray-600">
+                {{ formatMinutes(row.avgResolutionMinutes) }}
+              </td>
             </tr>
           </ng-template>
         </p-table>

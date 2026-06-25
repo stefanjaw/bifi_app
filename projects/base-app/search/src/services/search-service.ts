@@ -44,6 +44,7 @@ export class SearchService {
       });
       this._loaded.set(true);
     } catch {
+      /* empty */
     } finally {
       this._loading = false;
     }

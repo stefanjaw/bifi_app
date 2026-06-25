@@ -40,21 +40,27 @@ export const CURRENCY_ROUTES: Routes = [
         path: 'list',
         canActivate: [permissionGuard],
         loadComponent: () =>
-          import('../components/exchange-rates-list/exchange-rates-list').then(m => m.ExchangeRatesList),
+          import('../components/exchange-rates-list/exchange-rates-list').then(
+            m => m.ExchangeRatesList
+          ),
         data: { resource: 'exchange-rates/list' },
       },
       {
         path: 'create',
         canActivate: [permissionGuard],
         loadComponent: () =>
-          import('../components/exchange-rate-form/exchange-rate-form').then(m => m.ExchangeRateForm),
+          import('../components/exchange-rate-form/exchange-rate-form').then(
+            m => m.ExchangeRateForm
+          ),
         data: { resource: 'exchange-rates/create' },
       },
       {
         path: 'edit/:id',
         canActivate: [permissionGuard],
         loadComponent: () =>
-          import('../components/exchange-rate-form/exchange-rate-form').then(m => m.ExchangeRateForm),
+          import('../components/exchange-rate-form/exchange-rate-form').then(
+            m => m.ExchangeRateForm
+          ),
         data: { resource: 'exchange-rates/update' },
       },
     ],

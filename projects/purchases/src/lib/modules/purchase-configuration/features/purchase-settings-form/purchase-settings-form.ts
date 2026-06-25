@@ -15,7 +15,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudPurchaseSettings } from '../../services/crud-purchase-settings';
-import { PurchaseSettingsForm, PurchaseSettingsFormModel } from '../../services/purchase-settings-form';
+import {
+  PurchaseSettingsForm,
+  PurchaseSettingsFormModel,
+} from '../../services/purchase-settings-form';
 import { purchaseSettings } from '../../interfaces/purchase-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
 

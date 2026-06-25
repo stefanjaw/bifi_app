@@ -49,5 +49,5 @@ export class ProjectStagesList {
 
   gotoEditProjectStage = (element: projectStage) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

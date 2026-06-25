@@ -26,9 +26,9 @@ export class CrudCrEinvoiceSettings extends ApiRequestManager<crEinvoiceSettings
   getSettings() {
     return rxResource<crEinvoiceSettings, void>({
       stream: () =>
-        this._httpClient.get<crEinvoiceSettings>(`${this._apiURL}/${this.endpoint}`).pipe(
-          catchError(() => of({} as crEinvoiceSettings))
-        ),
+        this._httpClient
+          .get<crEinvoiceSettings>(`${this._apiURL}/${this.endpoint}`)
+          .pipe(catchError(() => of({} as crEinvoiceSettings))),
     });
   }
 

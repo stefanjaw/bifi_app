@@ -23,7 +23,14 @@ import { JournalFormService, JournalFormModel } from '../../services/journal-for
 
 @Component({
   selector: 'bifi-app-journal-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+  ],
   templateUrl: './journal-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,7 +56,7 @@ export class JournalForm {
     () =>
       this.journalResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -99,7 +106,10 @@ export class JournalForm {
       : this.crudJournals.post({ data: payload });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

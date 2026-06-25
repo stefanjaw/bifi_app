@@ -16,16 +16,13 @@ export class CrudAccountingSettings extends ApiRequestManager<accountingSettings
   getSettings() {
     return rxResource<accountingSettings, void>({
       stream: () =>
-        this._httpClient.get<accountingSettings>(`${this._apiURL}/${this.endpoint}`).pipe(
-          catchError(() => of({} as accountingSettings))
-        ),
+        this._httpClient
+          .get<accountingSettings>(`${this._apiURL}/${this.endpoint}`)
+          .pipe(catchError(() => of({} as accountingSettings))),
     });
   }
 
   putSettings(data: Record<string, any>): Observable<accountingSettings | undefined> {
-    return this._httpClient.put<accountingSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<accountingSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

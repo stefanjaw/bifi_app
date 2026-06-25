@@ -1,5 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -52,8 +59,14 @@ export class MediosPagoForm {
       : this.crud.post({ data: values.rawValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.formService.reset(); this.goBack(); },
-      error: () => { this.isSubmitLoading.set(false); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.formService.reset();
+        this.goBack();
+      },
+      error: () => {
+        this.isSubmitLoading.set(false);
+      },
     });
   }
 

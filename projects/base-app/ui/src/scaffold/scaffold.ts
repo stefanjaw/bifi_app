@@ -14,7 +14,12 @@ import { MenubarModule } from 'primeng/menubar';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { DebugManager, DynamicBreadcrumbService, SidenavManager, ToolbarManager } from '@avalantec/base-app/core';
+import {
+  DebugManager,
+  DynamicBreadcrumbService,
+  SidenavManager,
+  ToolbarManager,
+} from '@avalantec/base-app/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
 import { GlobalSearch } from '../global-search/global-search';
@@ -155,8 +160,14 @@ export class Scaffold {
       if (this.SKIP_SEGMENTS.has(seg)) return;
       const menuMatch = menu.find(m => m.path === cumulative.replace(/^\//, ''));
       const dynLabel = this.isId(seg) ? this.dynamicBreadcrumb.labels()[seg] : undefined;
-      const label = menuMatch ? menuMatch.label : dynLabel ?? (this.isId(seg) ? 'Details' : this.humanize(seg));
-      crumbs.push({ label, link: cumulative, isLast: seg === visibleSegments[visibleSegments.length - 1] });
+      const label = menuMatch
+        ? menuMatch.label
+        : (dynLabel ?? (this.isId(seg) ? 'Details' : this.humanize(seg)));
+      crumbs.push({
+        label,
+        link: cumulative,
+        isLast: seg === visibleSegments[visibleSegments.length - 1],
+      });
     });
     return crumbs;
   });
@@ -177,7 +188,10 @@ export class Scaffold {
   }
 
   private humanize(seg: string): string {
-    return seg.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return seg
+      .split('-')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }
 
   private isId(seg: string): boolean {
@@ -258,7 +272,7 @@ export class Scaffold {
   private menuKey(item: MenuItem): string {
     const link = Array.isArray(item.routerLink)
       ? (item.routerLink as string[]).join('/')
-      : (item.routerLink as string) ?? '';
+      : ((item.routerLink as string) ?? '');
     return link || (item.label ?? '');
   }
 
@@ -304,7 +318,8 @@ export class Scaffold {
 
   onShortcutDragStart(event: DragEvent, shortcut: ShortcutItem, filteredIndex: number): void {
     if (!event.dataTransfer) return;
-    const fullIndex = this.userShortcutsService.shortcuts()
+    const fullIndex = this.userShortcutsService
+      .shortcuts()
       .findIndex(s => s.routerLink?.join('/') === shortcut.routerLink?.join('/'));
     this.dragSourceIndex = fullIndex !== -1 ? fullIndex : filteredIndex;
     event.dataTransfer.effectAllowed = 'move';

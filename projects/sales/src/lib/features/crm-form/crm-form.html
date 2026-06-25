@@ -22,7 +22,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Title</bifi-app-form-label>
-            <input pInputText formControlName="title" type="text" placeholder="e.g. Enterprise License Deal" />
+            <input
+              pInputText
+              formControlName="title"
+              type="text"
+              placeholder="e.g. Enterprise License Deal"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -72,7 +77,12 @@
 
           <bifi-app-form-field class="md:col-span-2">
             <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
-            <input pInputText formControlName="tagsInput" type="text" placeholder="e.g. enterprise, high-priority, renewal" />
+            <input
+              pInputText
+              formControlName="tagsInput"
+              type="text"
+              placeholder="e.g. enterprise, high-priority, renewal"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -140,13 +150,23 @@
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pTextarea formControlName="description" rows="3" placeholder="Enter a description..."></textarea>
+            <textarea
+              pTextarea
+              formControlName="description"
+              rows="3"
+              placeholder="Enter a description..."
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Notes</bifi-app-form-label>
-            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <textarea
+              pTextarea
+              formControlName="notes"
+              rows="4"
+              placeholder="Internal notes..."
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>

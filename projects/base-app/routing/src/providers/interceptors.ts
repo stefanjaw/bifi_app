@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { AUTH_HTTP_INTERCEPTORS } from '@avalantec/base-app/auth';
 import { errorInterceptor, notificationInterceptor } from '@avalantec/base-app/resource';
-import { badgeRefreshInterceptor } from '../interceptors/badge-refresh.interceptor';
+import { badgeRefreshInterceptor } from '../interceptors/badge-refresh';
 
 interface InterceptorsConfig {
   auth?: boolean;

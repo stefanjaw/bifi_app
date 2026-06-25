@@ -46,7 +46,12 @@
             @if (selectedFromWarehouseId() && fromLocations().length === 0) {
               <small class="text-orange-500">
                 No locations found for this warehouse.
-                <a [routerLink]="['/inventory/warehouses', selectedFromWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+                <a
+                  [routerLink]="['/inventory/warehouses', selectedFromWarehouseId()]"
+                  class="underline font-medium"
+                >
+                  Add locations from the warehouse page.
+                </a>
               </small>
             }
           </bifi-app-form-field>
@@ -80,7 +85,12 @@
             @if (selectedToWarehouseId() && toLocations().length === 0) {
               <small class="text-orange-500">
                 No locations found for this warehouse.
-                <a [routerLink]="['/inventory/warehouses', selectedToWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+                <a
+                  [routerLink]="['/inventory/warehouses', selectedToWarehouseId()]"
+                  class="underline font-medium"
+                >
+                  Add locations from the warehouse page.
+                </a>
               </small>
             }
           </bifi-app-form-field>
@@ -90,7 +100,11 @@
       <div class="flex gap-4">
         <bifi-app-form-field class="flex-1">
           <bifi-app-form-label>Quantity *</bifi-app-form-label>
-          <p-inputNumber formControlName="quantity" [min]="1" [max]="availableQuantity() ?? undefined"></p-inputNumber>
+          <p-inputNumber
+            formControlName="quantity"
+            [min]="1"
+            [max]="availableQuantity() ?? undefined"
+          ></p-inputNumber>
           <bifi-app-form-error></bifi-app-form-error>
           @if (availableQuantity() !== null) {
             <small class="text-muted-color">Available: {{ availableQuantity() }}</small>
@@ -105,7 +119,12 @@
 
       <bifi-app-form-field>
         <bifi-app-form-label>Notes</bifi-app-form-label>
-        <textarea pTextarea formControlName="notes" rows="2" placeholder="Optional notes"></textarea>
+        <textarea
+          pTextarea
+          formControlName="notes"
+          rows="2"
+          placeholder="Optional notes"
+        ></textarea>
       </bifi-app-form-field>
 
       <div class="flex gap-3">

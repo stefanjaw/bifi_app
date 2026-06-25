@@ -1,5 +1,6 @@
 import { assetRoster } from '../../../interfaces/asset-roster';
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
@@ -24,6 +25,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './documents-section.html',
 })
 export class DocumentsSection {
+  private destroyRef = inject(DestroyRef);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   private fileResolver = inject(FileResolver);
   private crudAssetRoster = inject(CrudAssetRoster);
@@ -59,6 +61,7 @@ export class DocumentsSection {
 
     this.crudAssetRoster
       .readDocuments(attachments as FormUploaderFile[], this.form.controls.aiquestion.value?.trim())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
           this.aiResponse.set(response);

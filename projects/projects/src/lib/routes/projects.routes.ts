@@ -18,14 +18,12 @@ export const PROJECTS_ROUTES: Routes = [
     path: 'create',
     canActivate: [permissionGuard],
     data: { resource: 'projects/create' },
-    loadComponent: () =>
-      import('../features/project-form/project-form').then(c => c.ProjectsForm),
+    loadComponent: () => import('../features/project-form/project-form').then(c => c.ProjectsForm),
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
     data: { resource: 'projects/update' },
-    loadComponent: () =>
-      import('../features/project-form/project-form').then(c => c.ProjectsForm),
+    loadComponent: () => import('../features/project-form/project-form').then(c => c.ProjectsForm),
   },
 ];

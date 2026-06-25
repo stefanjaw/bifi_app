@@ -27,9 +27,10 @@ export class MainMenu {
   }
 
   getChipCount(item: MenuItem): number {
-    const link = (Array.isArray(item.routerLink)
-      ? (item.routerLink as string[]).join('/')
-      : (item.routerLink as string) ?? ''
+    const link = (
+      Array.isArray(item.routerLink)
+        ? (item.routerLink as string[]).join('/')
+        : ((item.routerLink as string) ?? '')
     ).replace(/^\//, '');
     const segment = link.split('/')[0];
     if (!segment) return 0;

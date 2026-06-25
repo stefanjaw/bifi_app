@@ -66,7 +66,9 @@ export class CompaniesForm implements OnInit {
   currenciesResource = this.crudCurrencies.get({});
 
   company = this.companyResource.value;
-  companies = computed(() => (this.companiesResource.value() ?? []).filter((c: any) => c.type !== 'branch-office'));
+  companies = computed(() =>
+    (this.companiesResource.value() ?? []).filter((c: any) => c.type !== 'branch-office')
+  );
   contacts = this.contactsResource.value;
   countries = this.countriesResource.value;
   currencies = this.currenciesResource.value;
@@ -77,12 +79,12 @@ export class CompaniesForm implements OnInit {
       this.companyResource.isLoading() ||
       this.contactsResource.isLoading() ||
       this.countriesResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.company());
   typeValue = toSignal(
-    this.form.get('type')!.valueChanges.pipe(startWith(this.form.get('type')!.value)),
+    this.form.get('type')!.valueChanges.pipe(startWith(this.form.get('type')!.value))
   );
   isBranchOffice = computed(() => this.typeValue() === 'branch-office');
   error = this.companyResource.error;
@@ -98,8 +100,10 @@ export class CompaniesForm implements OnInit {
           address: company.address,
           countryId: company.countryId?._id,
           contactId: company.contactId?._id,
-          defaultCurrencyId: (company as any).defaultCurrencyId?._id ?? (company as any).defaultCurrencyId ?? '',
-          parentCompany: (company.parentCompany as any)?._id ?? (company.parentCompany as any) ?? '',
+          defaultCurrencyId:
+            (company as any).defaultCurrencyId?._id ?? (company as any).defaultCurrencyId ?? '',
+          parentCompany:
+            (company.parentCompany as any)?._id ?? (company.parentCompany as any) ?? '',
           branchCode: company.branchCode ?? '',
           isDefault: company.isDefault ?? false,
         });
@@ -134,8 +138,8 @@ export class CompaniesForm implements OnInit {
     this.isSubmitLoading.set(true);
 
     const { rawValue } = data;
-    if (!rawValue.defaultCurrencyId) delete (rawValue as any).defaultCurrencyId
-    if (!rawValue.parentCompany) delete (rawValue as any).parentCompany
+    if (!rawValue.defaultCurrencyId) delete (rawValue as any).defaultCurrencyId;
+    if (!rawValue.parentCompany) delete (rawValue as any).parentCompany;
     const action = this.isUpdate()
       ? this.crudCompanies.put({ _id: this.company()?._id || '', data: rawValue })
       : this.crudCompanies.post({ data: rawValue });

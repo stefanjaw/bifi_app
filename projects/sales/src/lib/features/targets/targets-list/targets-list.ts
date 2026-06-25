@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { 
+import {
   ButtonsActions,
-  provideResourceManager, 
-  ResourceManager, 
-  TableLayout 
+  provideResourceManager,
+  ResourceManager,
+  TableLayout,
 } from '@avalantec/base-app/resource';
 import { CrudSalesTargets } from '../../../services/crud-sales-targets';
 import { salesTarget } from '../../../interfaces/sales-target';
@@ -47,5 +47,5 @@ export class TargetsList {
 
   gotoEditTarget = (element: salesTarget) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

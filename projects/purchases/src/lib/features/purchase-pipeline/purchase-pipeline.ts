@@ -56,7 +56,9 @@ export class PurchasePipeline {
     return this.getOrdersByStage(stageId).reduce((sum, o) => sum + (o.totalAmount || 0), 0);
   }
 
-  getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+  getStatusSeverity(
+    status: string
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     const map: Record<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast'> = {
       draft: 'secondary',
       sent: 'info',

@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable, catchError, of } from 'rxjs';
-import { NotificationSettings, NotificationCatalogEntry } from '../interfaces/notification-settings';
+import {
+  NotificationSettings,
+  NotificationCatalogEntry,
+} from '../interfaces/notification-settings';
 
 @Injectable({
   providedIn: 'root',
@@ -32,9 +35,6 @@ export class CrudNotificationSettings extends ApiRequestManager<NotificationSett
   }
 
   putSettings(data: NotificationSettings): Observable<NotificationSettings | undefined> {
-    return this._httpClient.put<NotificationSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<NotificationSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

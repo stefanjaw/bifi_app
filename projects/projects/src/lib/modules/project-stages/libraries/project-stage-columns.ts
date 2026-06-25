@@ -12,8 +12,7 @@ export const projectStageColumns: tableColumn<projectStage>[] = [
     field: 'description',
     title: 'Description',
     type: 'text',
-    parseField: (value: string | null | undefined) =>
-      value && value.trim() ? value : 'Not set',
+    parseField: (value: string | null | undefined) => (value && value.trim() ? value : 'Not set'),
   },
   {
     field: 'isDefault',

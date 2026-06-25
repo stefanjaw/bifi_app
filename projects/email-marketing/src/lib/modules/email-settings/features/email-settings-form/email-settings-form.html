@@ -52,7 +52,12 @@
             </bifi-app-form-field>
             <bifi-app-form-field>
               <bifi-app-form-label>Mailgun Domain</bifi-app-form-label>
-              <input pInputText formControlName="mailgunDomain" type="text" placeholder="mg.example.com" />
+              <input
+                pInputText
+                formControlName="mailgunDomain"
+                type="text"
+                placeholder="mg.example.com"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
             <bifi-app-form-field>
@@ -73,12 +78,22 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             <bifi-app-form-field>
               <bifi-app-form-label>Access Key ID</bifi-app-form-label>
-              <input pInputText formControlName="sesAccessKeyId" type="text" placeholder="AKIA..." />
+              <input
+                pInputText
+                formControlName="sesAccessKeyId"
+                type="text"
+                placeholder="AKIA..."
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
             <bifi-app-form-field>
               <bifi-app-form-label>Secret Access Key</bifi-app-form-label>
-              <input pInputText formControlName="sesSecretAccessKey" type="text" placeholder="••••••••" />
+              <input
+                pInputText
+                formControlName="sesSecretAccessKey"
+                type="text"
+                placeholder="••••••••"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
             <bifi-app-form-field>
@@ -126,17 +141,32 @@
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>From Email</bifi-app-form-label>
-            <input pInputText formControlName="fromEmail" type="email" placeholder="hello@example.com" />
+            <input
+              pInputText
+              formControlName="fromEmail"
+              type="email"
+              placeholder="hello@example.com"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Reply-To</bifi-app-form-label>
-            <input pInputText formControlName="replyTo" type="email" placeholder="support@example.com" />
+            <input
+              pInputText
+              formControlName="replyTo"
+              type="email"
+              placeholder="support@example.com"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Public Base URL (for tracking/unsubscribe)</bifi-app-form-label>
-            <input pInputText formControlName="publicBaseUrl" type="text" placeholder="https://app.example.com" />
+            <input
+              pInputText
+              formControlName="publicBaseUrl"
+              type="text"
+              placeholder="https://app.example.com"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -146,24 +176,46 @@
         <div class="flex flex-col gap-6">
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="trackOpens" [binary]="true" inputId="trackOpens"></p-checkbox>
-              <label for="trackOpens" class="cursor-pointer font-medium text-gray-700">Track email opens</label>
+              <p-checkbox
+                formControlName="trackOpens"
+                [binary]="true"
+                inputId="trackOpens"
+              ></p-checkbox>
+              <label for="trackOpens" class="cursor-pointer font-medium text-gray-700">
+                Track email opens
+              </label>
             </div>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="trackClicks" [binary]="true" inputId="trackClicks"></p-checkbox>
-              <label for="trackClicks" class="cursor-pointer font-medium text-gray-700">Track link clicks</label>
+              <p-checkbox
+                formControlName="trackClicks"
+                [binary]="true"
+                inputId="trackClicks"
+              ></p-checkbox>
+              <label for="trackClicks" class="cursor-pointer font-medium text-gray-700">
+                Track link clicks
+              </label>
             </div>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Footer Text</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="footerText" placeholder="Company address, etc." rows="2"></textarea>
+            <textarea
+              pInputTextarea
+              formControlName="footerText"
+              placeholder="Company address, etc."
+              rows="2"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Unsubscribe Link Text</bifi-app-form-label>
-            <input pInputText formControlName="unsubscribeText" type="text" placeholder="Unsubscribe" />
+            <input
+              pInputText
+              formControlName="unsubscribeText"
+              type="text"
+              placeholder="Unsubscribe"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -173,7 +225,11 @@
         <div class="flex flex-col gap-6">
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="testMode" [binary]="true" inputId="testMode"></p-checkbox>
+              <p-checkbox
+                formControlName="testMode"
+                [binary]="true"
+                inputId="testMode"
+              ></p-checkbox>
               <label for="testMode" class="cursor-pointer font-medium text-gray-700">
                 Enable test mode (redirect all sends to test recipient)
               </label>
@@ -181,7 +237,12 @@
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Test Recipient</bifi-app-form-label>
-            <input pInputText formControlName="testRecipient" type="email" placeholder="test@example.com" />
+            <input
+              pInputText
+              formControlName="testRecipient"
+              type="email"
+              placeholder="test@example.com"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>

@@ -20,7 +20,7 @@ export class Suppliers {
   showAll = signal(false);
   supplierColumns = supplierColumns;
 
-  searchParams = computed(() => this.showAll() ? { showAll: 'true' } : {});
+  searchParams = computed(() => (this.showAll() ? { showAll: 'true' } : {}));
 
   suppliersResource = this.crudSuppliers.getWithPagination({
     searchParams: this.searchParams,

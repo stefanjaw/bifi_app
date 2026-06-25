@@ -35,22 +35,18 @@ export class CrudPricingEstimate extends ApiRequestManager<pricingEstimate> {
   }
 
   getById(id: string): Observable<pricingEstimate> {
-    return this._httpClient.get<pricingEstimate>(
-      `${this._apiURL}/${this.endpoint}/${id}`
-    );
+    return this._httpClient.get<pricingEstimate>(`${this._apiURL}/${this.endpoint}/${id}`);
   }
 
   getPdf(id: string): Observable<Blob> {
-    return this._httpClient.get(
-      `${this._apiURL}/${this.endpoint}/${id}/pdf`,
-      { responseType: 'blob' }
-    );
+    return this._httpClient.get(`${this._apiURL}/${this.endpoint}/${id}/pdf`, {
+      responseType: 'blob',
+    });
   }
 
   getCsv(id: string): Observable<Blob> {
-    return this._httpClient.get(
-      `${this._apiURL}/${this.endpoint}/${id}/csv`,
-      { responseType: 'blob' }
-    );
+    return this._httpClient.get(`${this._apiURL}/${this.endpoint}/${id}/csv`, {
+      responseType: 'blob',
+    });
   }
 }

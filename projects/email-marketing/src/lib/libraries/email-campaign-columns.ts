@@ -23,8 +23,7 @@ export const emailCampaignColumns: tableColumn<emailCampaign>[] = [
     field: 'stats',
     title: 'Recipients',
     type: 'text',
-    parseField: (value: emailCampaign['stats']) =>
-      String(value?.recipients ?? 0),
+    parseField: (value: emailCampaign['stats']) => String(value?.recipients ?? 0),
   },
   {
     field: 'stats',

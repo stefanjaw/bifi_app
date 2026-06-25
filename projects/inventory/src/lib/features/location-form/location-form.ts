@@ -22,7 +22,14 @@ import { LocationFormService, LocationFormModel } from '../../services/location-
 
 @Component({
   selector: 'bifi-app-location-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    SelectModule,
+    ProgressBarModule,
+  ],
   templateUrl: './location-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,11 +45,16 @@ export class LocationForm {
 
   form = this.formService.form;
 
-  locationResource = this.crudLocations.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  locationResource = this.crudLocations.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   warehousesResource = this.crudWarehouses.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(() => this.locationResource.isLoading() || this.warehousesResource.isLoading());
+  isLoading = computed(
+    () => this.locationResource.isLoading() || this.warehousesResource.isLoading()
+  );
   isSubmitLoading = signal(false);
 
   warehouses = this.warehousesResource.value;

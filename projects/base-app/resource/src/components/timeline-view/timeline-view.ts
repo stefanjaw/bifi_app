@@ -88,7 +88,12 @@ export class TimelineView {
     );
 
     if (sorted.length === 0) {
-      return { items: [], months: [], viewBox: `0 0 1000 ${BASE_SVG_HEIGHT}`, svgHeight: BASE_SVG_HEIGHT };
+      return {
+        items: [],
+        months: [],
+        viewBox: `0 0 1000 ${BASE_SVG_HEIGHT}`,
+        svgHeight: BASE_SVG_HEIGHT,
+      };
     }
 
     const timestamps = sorted.map(i => new Date(i.date).getTime());

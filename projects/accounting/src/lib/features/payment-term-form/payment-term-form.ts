@@ -22,7 +22,15 @@ import { PaymentTermFormService, PaymentTermFormModel } from '../../services/pay
 
 @Component({
   selector: 'bifi-app-payment-term-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, ToggleSwitchModule, ProgressBarModule, InputNumberModule, ButtonModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    InputNumberModule,
+    ButtonModule,
+  ],
   templateUrl: './payment-term-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -84,7 +92,10 @@ export class PaymentTermForm {
       : this.crudPaymentTerms.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

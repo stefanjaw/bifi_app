@@ -49,5 +49,5 @@ export class HelpdeskStagesList {
 
   gotoEditHelpdeskStage = (element: helpdeskStage) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

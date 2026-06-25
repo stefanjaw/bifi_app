@@ -100,7 +100,11 @@ export class SalesPipeline {
   markWon(deal: crm) {
     const wonStage = this.wonStage();
     if (!wonStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No won stage', detail: 'Configure a "Won" stage in Deal Stages settings first.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No won stage',
+        detail: 'Configure a "Won" stage in Deal Stages settings first.',
+      });
       return;
     }
     this.actionLoadingId.set(deal._id);
@@ -128,18 +132,30 @@ export class SalesPipeline {
             .subscribe({
               next: () => {
                 this.actionLoadingId.set(null);
-                this.messageService.add({ severity: 'success', summary: 'Deal Won', detail: 'Sales order created.' });
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Deal Won',
+                  detail: 'Sales order created.',
+                });
                 this.allDeals.reload();
               },
               error: () => {
                 this.actionLoadingId.set(null);
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create sales order.' });
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Failed to create sales order.',
+                });
               },
             });
         },
         error: () => {
           this.actionLoadingId.set(null);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to mark as won.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to mark as won.',
+          });
         },
       });
   }
@@ -147,7 +163,11 @@ export class SalesPipeline {
   markLost(deal: crm) {
     const lostStage = this.lostStage();
     if (!lostStage) {
-      this.messageService.add({ severity: 'warn', summary: 'No lost stage', detail: 'Configure a "Lost" stage in Deal Stages settings first.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No lost stage',
+        detail: 'Configure a "Lost" stage in Deal Stages settings first.',
+      });
       return;
     }
     this.actionLoadingId.set(deal._id);
@@ -157,12 +177,20 @@ export class SalesPipeline {
       .subscribe({
         next: () => {
           this.actionLoadingId.set(null);
-          this.messageService.add({ severity: 'info', summary: 'Deal Lost', detail: 'Deal marked as lost.' });
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Deal Lost',
+            detail: 'Deal marked as lost.',
+          });
           this.allDeals.reload();
         },
         error: () => {
           this.actionLoadingId.set(null);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to mark as lost.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to mark as lost.',
+          });
         },
       });
   }

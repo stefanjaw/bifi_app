@@ -17,7 +17,10 @@ export class CrudInvoices extends ApiRequestManager<invoice> {
   }
 
   registerPayment(invoiceId: string, data: any): Observable<any> {
-    return this._httpClient.post<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/register-payment`, data);
+    return this._httpClient.post<any>(
+      `${this._apiURL}/accounting/invoices/${invoiceId}/register-payment`,
+      data
+    );
   }
 
   postInvoice(invoiceId: string): Observable<any> {
@@ -27,5 +30,4 @@ export class CrudInvoices extends ApiRequestManager<invoice> {
   cancelInvoice(invoiceId: string): Observable<any> {
     return this._httpClient.put<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/cancel`, {});
   }
-
 }

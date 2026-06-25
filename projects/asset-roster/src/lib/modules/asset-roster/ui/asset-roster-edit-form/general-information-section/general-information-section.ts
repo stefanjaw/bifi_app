@@ -247,7 +247,9 @@ export class GeneralInformationSection {
         next: created => {
           if (!created) return;
           this.roomsResources.reload();
-          this.form.controls.locationAssignments.at(index).controls.locationId.setValue(created._id);
+          this.form.controls.locationAssignments
+            .at(index)
+            .controls.locationId.setValue(created._id);
           this.newLocationNameForAssignment.set('');
           this.newFacilityIdForAssignment.set(null);
           this.openNewLocationForIndex.set(null);

@@ -38,7 +38,17 @@ const VIEW_KEY = 'sales.opportunitiesView';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, FilterBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions, SalesPipeline],
+  imports: [
+    TableLayout,
+    SearchBar,
+    FilterBar,
+    ButtonModule,
+    RouterLink,
+    ToastModule,
+    HasPermission,
+    ButtonsActions,
+    SalesPipeline,
+  ],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

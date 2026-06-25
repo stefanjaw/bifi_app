@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -27,7 +22,15 @@ import { ToastModule } from 'primeng/toast';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    RouterLink,
+    ToastModule,
+    HasPermission,
+    ButtonsActions,
+  ],
   templateUrl: './warehouses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,5 +55,5 @@ export class WarehousesList {
 
   gotoEditWarehouse = (element: warehouse) => {
     this.router.navigate([`../warehouses/${element._id}/edit`], { relativeTo: this.route });
-  }
+  };
 }

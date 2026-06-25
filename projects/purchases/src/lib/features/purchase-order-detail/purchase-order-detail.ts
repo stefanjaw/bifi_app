@@ -8,7 +8,10 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { PurchaseOrderForm as PurchaseOrderFormService, PurchaseOrderFormModel } from '../../services/purchase-order-form';
+import {
+  PurchaseOrderForm as PurchaseOrderFormService,
+  PurchaseOrderFormModel,
+} from '../../services/purchase-order-form';
 import { CrudPurchaseOrders } from '../../services/crud-purchase-orders';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -101,12 +104,12 @@ export class PurchaseOrderDetail {
 
   purchaseTaxOptions = computed(() =>
     ((this.taxesResource.value() as any[]) ?? []).filter(
-      (t: any) => t?.active === true && t?.taxType === 'purchase',
-    ),
+      (t: any) => t?.active === true && t?.taxType === 'purchase'
+    )
   );
 
   discountOptions = computed(() =>
-    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false),
+    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false)
   );
 
   productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
@@ -117,7 +120,7 @@ export class PurchaseOrderDetail {
       this.contactsResource.isLoading() ||
       this.taxesResource.isLoading() ||
       this.discountsResource.isLoading() ||
-      this.productsResource.isLoading(),
+      this.productsResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPdfLoading = signal(false);
@@ -233,9 +236,10 @@ export class PurchaseOrderDetail {
               })
               .filter(Boolean);
             return {
-              productId: typeof item.productId === 'object'
-                ? (item.productId?._id ?? undefined)
-                : (item.productId ?? undefined),
+              productId:
+                typeof item.productId === 'object'
+                  ? (item.productId?._id ?? undefined)
+                  : (item.productId ?? undefined),
               description: item.description ?? '',
               quantity: item.quantity ?? 1,
               unitPrice: item.unitPrice ?? 0,
@@ -345,7 +349,9 @@ export class PurchaseOrderDetail {
       contactId: rawValue.contactId,
       status: rawValue.status as purchaseOrderStatus,
       issueDate: rawValue.issueDate ? new Date(rawValue.issueDate).toISOString() : undefined,
-      expectedDeliveryDate: rawValue.expectedDeliveryDate ? new Date(rawValue.expectedDeliveryDate).toISOString() : undefined,
+      expectedDeliveryDate: rawValue.expectedDeliveryDate
+        ? new Date(rawValue.expectedDeliveryDate).toISOString()
+        : undefined,
       lineItems: this.lineItems().map(item => ({
         ...item,
         discountId: item.discountId || null,

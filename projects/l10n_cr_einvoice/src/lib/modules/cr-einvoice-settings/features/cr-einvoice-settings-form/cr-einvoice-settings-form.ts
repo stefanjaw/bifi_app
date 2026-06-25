@@ -1,5 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -9,13 +15,27 @@ import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { FileUpload } from 'primeng/fileupload';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CrudCrEinvoiceSettings, crEinvoiceSettings } from '../../services/crud-cr-einvoice-settings';
-import { CrEinvoiceSettingsFormService, crEinvoiceSettingsFormModel } from '../../services/cr-einvoice-settings-form';
+import {
+  CrudCrEinvoiceSettings,
+  crEinvoiceSettings,
+} from '../../services/crud-cr-einvoice-settings';
+import {
+  CrEinvoiceSettingsFormService,
+  crEinvoiceSettingsFormModel,
+} from '../../services/cr-einvoice-settings-form';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 
 @Component({
   selector: 'bifi-app-cr-einvoice-settings-form',
-  imports: [ReactiveFormsModule, FormModule, InputTextModule, SelectModule, ButtonModule, ProgressBarModule, FileUpload],
+  imports: [
+    ReactiveFormsModule,
+    FormModule,
+    InputTextModule,
+    SelectModule,
+    ButtonModule,
+    ProgressBarModule,
+    FileUpload,
+  ],
   templateUrl: './cr-einvoice-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,13 +48,15 @@ export class CrEinvoiceSettingsForm {
   protected form = this.formService.form;
   protected isSubmitLoading = signal(false);
   protected settingsResource = this.crud.getSettings();
-  protected loading = computed(() => this.settingsResource.isLoading() && !this.settingsResource.error());
+  protected loading = computed(
+    () => this.settingsResource.isLoading() && !this.settingsResource.error()
+  );
 
   protected companiesResource = this.crudCompanies.get({});
 
   protected companyOptions = computed(() => {
     const docs = this.companiesResource.value() ?? [];
-    return docs.map((c) => ({ label: c.name, value: c._id }));
+    return docs.map(c => ({ label: c.name, value: c._id }));
   });
 
   protected environmentOptions = [
@@ -63,9 +85,17 @@ export class CrEinvoiceSettingsForm {
 
   protected handleSubmit(state: FormValueState<crEinvoiceSettingsFormModel>) {
     this.isSubmitLoading.set(true);
-    this.crud.putSettings(state.rawValue).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.settingsResource.reload(); },
-      error: () => { this.isSubmitLoading.set(false); },
-    });
+    this.crud
+      .putSettings(state.rawValue)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isSubmitLoading.set(false);
+          this.settingsResource.reload();
+        },
+        error: () => {
+          this.isSubmitLoading.set(false);
+        },
+      });
   }
 }

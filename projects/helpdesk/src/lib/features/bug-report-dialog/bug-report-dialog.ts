@@ -12,7 +12,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { injectAuthService } from '@avalantec/base-app/auth';
 
 @Component({
-  selector: 'bifi-helpdesk-bug-report-dialog',
+  selector: 'bifi-app-helpdesk-bug-report-dialog',
   imports: [
     ReactiveFormsModule,
     DialogModule,

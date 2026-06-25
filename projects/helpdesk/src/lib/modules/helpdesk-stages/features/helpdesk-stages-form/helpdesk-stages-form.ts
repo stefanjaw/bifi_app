@@ -16,7 +16,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { CrudHelpdeskStages } from '../../services/crud-helpdesk-stages';
-import { HelpdeskStageForm, HelpdeskStageFormModel } from '../../../../services/helpdesk-stage-form';
+import {
+  HelpdeskStageForm,
+  HelpdeskStageFormModel,
+} from '../../../../services/helpdesk-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

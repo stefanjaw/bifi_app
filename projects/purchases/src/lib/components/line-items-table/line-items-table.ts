@@ -16,7 +16,13 @@ import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
-import { CdkDragDrop, CdkDropList, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  CdkDropList,
+  CdkDrag,
+  CdkDragHandle,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { ColWidthManager } from '@avalantec/base-app/core';
 
 const DEFAULT_WIDTHS: Record<string, number> = {

@@ -31,17 +31,13 @@ export class CrudEmailCampaigns extends ApiRequestManager<emailCampaign> {
   }
 
   sendNow(id: string): Observable<any> {
-    return this._httpClient.post<any>(
-      `${this._apiURL}/${this.endpoint}/${id}/send-now`,
-      {}
-    );
+    return this._httpClient.post<any>(`${this._apiURL}/${this.endpoint}/${id}/send-now`, {});
   }
 
   schedule(id: string, scheduledAt: string): Observable<emailCampaign> {
-    return this._httpClient.post<emailCampaign>(
-      `${this._apiURL}/${this.endpoint}/${id}/schedule`,
-      { scheduledAt }
-    );
+    return this._httpClient.post<emailCampaign>(`${this._apiURL}/${this.endpoint}/${id}/schedule`, {
+      scheduledAt,
+    });
   }
 
   cancel(id: string): Observable<emailCampaign> {

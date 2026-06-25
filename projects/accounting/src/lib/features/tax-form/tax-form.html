@@ -40,7 +40,13 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Percentage (%) *</bifi-app-form-label>
-            <p-inputNumber formControlName="percentage" [min]="0" [max]="100" suffix="%" placeholder="e.g. 15"></p-inputNumber>
+            <p-inputNumber
+              formControlName="percentage"
+              [min]="0"
+              [max]="100"
+              suffix="%"
+              placeholder="e.g. 15"
+            ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

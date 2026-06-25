@@ -39,7 +39,7 @@ export class PoliciesList {
 
   gotoEditPolicy = (element: policy<string, string>) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deletePolicy(id: string) {
     this.crudPolicies
       .delete({ _id: id })

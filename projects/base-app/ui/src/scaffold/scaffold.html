@@ -12,20 +12,36 @@
           [pTooltip]="isOpened() ? 'Collapse sidebar' : 'Expand sidebar'"
         >
           @if (isOpened()) {
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="18" x="3" y="3" rx="2"/>
-              <path d="M9 3v18"/>
-              <path d="m16 15-3-3 3-3"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M9 3v18" />
+              <path d="m16 15-3-3 3-3" />
             </svg>
           } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="18" x="3" y="3" rx="2"/>
-              <path d="M9 3v18"/>
-              <path d="m14 9 3 3-3 3"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M9 3v18" />
+              <path d="m14 9 3 3-3 3" />
             </svg>
           }
         </p-button>
@@ -119,10 +135,14 @@
     <div id="bifi-app-scaffold-outlet" class="h-full flex-1 overflow-auto flex flex-col">
       <!-- Combined breadcrumbs + shortcuts bar -->
       @if (isLogged() && userConfirmed) {
-        <div class="flex items-stretch px-4 border-b border-surface-200 shrink-0 bg-surface-0 min-h-[42px]">
+        <div
+          class="flex items-stretch px-4 border-b border-surface-200 shrink-0 bg-surface-0 min-h-[42px]"
+        >
           <!-- Left: breadcrumbs -->
           @if (breadcrumbs().length > 0) {
-            <nav class="flex-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 py-1.5 text-sm min-w-0 pr-3">
+            <nav
+              class="flex-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 py-1.5 text-sm min-w-0 pr-3"
+            >
               @for (crumb of breadcrumbs(); track $index) {
                 @if ($index > 0) {
                   <span class="pi pi-angle-right text-surface-300 text-[10px] shrink-0"></span>
@@ -133,7 +153,9 @@
                   <a
                     [routerLink]="crumb.link"
                     class="text-surface-500 hover:text-primary-600 shrink-0"
-                  >{{ crumb.label }}</a>
+                  >
+                    {{ crumb.label }}
+                  </a>
                 }
               }
             </nav>
@@ -152,8 +174,10 @@
             (drop)="onBarDrop($event)"
           >
             @if (isDragRejected()) {
-              <span class="text-xs text-red-500 italic select-none pointer-events-none flex items-center gap-1 shrink-0">
-                <span class="pi pi-ban" style="font-size: 10px;"></span>
+              <span
+                class="text-xs text-red-500 italic select-none pointer-events-none flex items-center gap-1 shrink-0"
+              >
+                <span class="pi pi-ban" style="font-size: 10px"></span>
                 Only {{ currentModuleLabel() }} shortcuts can be pinned here
               </span>
             } @else if (filteredShortcuts().length === 0) {
@@ -273,7 +297,9 @@
         class="flex items-center justify-center w-7 h-7 rounded hover:bg-gray-100 text-surface-500 shrink-0 transition-transform duration-200"
         [class.rotate-180]="isExpanded(mainItem)"
         (click)="toggleExpanded(mainItem)"
-        [attr.aria-label]="isExpanded(mainItem) ? 'Collapse ' + mainItem.label : 'Expand ' + mainItem.label"
+        [attr.aria-label]="
+          isExpanded(mainItem) ? 'Collapse ' + mainItem.label : 'Expand ' + mainItem.label
+        "
       >
         <span class="pi pi-angle-down text-xs"></span>
       </button>
@@ -283,9 +309,13 @@
       <div class="ml-3 mt-0.5 flex flex-col gap-0.5">
         @for (child of $any(mainItem.items); track $index) {
           @if (child.items?.length) {
-            <ng-container *ngTemplateOutlet="openedMenuItemWithChildren; context: { mainItem: child }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="openedMenuItemWithChildren; context: { mainItem: child }"
+            ></ng-container>
           } @else {
-            <ng-container *ngTemplateOutlet="openedMenuItem; context: { item: child }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="openedMenuItem; context: { item: child }"
+            ></ng-container>
           }
         }
       </div>

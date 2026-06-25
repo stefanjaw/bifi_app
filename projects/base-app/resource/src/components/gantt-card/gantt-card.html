@@ -12,7 +12,7 @@
   <div
     class="absolute top-0 left-0 h-full rounded-l-md"
     [class.bg-indigo-400]="!color()"
-    [style.background-color]="color() ? (color() + 'cc') : null"
+    [style.background-color]="color() ? color() + 'cc' : null"
     [style.width.%]="item().progress"
   ></div>
   <span class="relative text-white text-xs font-semibold px-2 truncate">

@@ -14,6 +14,6 @@ export const badgeRefreshInterceptor: HttpInterceptorFn = (req, next) => {
       if (event instanceof HttpResponse && event.status >= 200 && event.status < 300) {
         svc.refresh();
       }
-    }),
+    })
   );
 };

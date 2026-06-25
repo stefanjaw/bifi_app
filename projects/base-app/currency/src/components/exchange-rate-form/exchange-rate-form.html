@@ -48,13 +48,22 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Rate *</bifi-app-form-label>
-            <p-inputNumber formControlName="rate" [minFractionDigits]="2" [maxFractionDigits]="6" [min]="0"></p-inputNumber>
+            <p-inputNumber
+              formControlName="rate"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="6"
+              [min]="0"
+            ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Effective Date *</bifi-app-form-label>
-            <p-datePicker formControlName="effectiveDate" [showIcon]="true" dateFormat="yy-mm-dd"></p-datePicker>
+            <p-datePicker
+              formControlName="effectiveDate"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+            ></p-datePicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
 import { FormModule } from '@avalantec/base-app/form';
 import { RouterLink } from '@angular/router';
@@ -34,7 +28,7 @@ export class CompanyDetail {
 
   company = this.companyResource.value;
   isLoading = computed(
-    () => this.companyResource.isLoading() || this.branchOfficesResource.isLoading(),
+    () => this.companyResource.isLoading() || this.branchOfficesResource.isLoading()
   );
 
   branches = computed(() => {

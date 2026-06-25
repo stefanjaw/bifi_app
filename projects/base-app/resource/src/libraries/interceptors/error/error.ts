@@ -1,4 +1,4 @@
-// src/app/core/interceptors/error.interceptor.ts
+// src/app/core/interceptors/error.ts
 import {
   HttpErrorResponse,
   HttpEvent,

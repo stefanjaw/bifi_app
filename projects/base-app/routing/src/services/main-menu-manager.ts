@@ -1,4 +1,4 @@
-import { Injectable, input, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BaseMenuManager } from '../libraries/base-menu-manager';
 

@@ -1,13 +1,7 @@
 import { mailingList } from './mailing-list';
 import { emailTemplate } from './email-template';
 
-export type campaignStatus =
-  | 'draft'
-  | 'scheduled'
-  | 'sending'
-  | 'sent'
-  | 'cancelled'
-  | 'failed';
+export type campaignStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'cancelled' | 'failed';
 
 export interface campaignStats {
   recipients?: number;

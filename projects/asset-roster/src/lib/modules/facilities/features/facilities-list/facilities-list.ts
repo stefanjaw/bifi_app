@@ -36,12 +36,12 @@ export class FacilitiesList {
   facilities = this.resourceManager.data;
 
   //Router
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   gotoEditFacility = (element: facility) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deleteFacility(id: string) {
     this.crudFacilities
       .delete({ _id: id })

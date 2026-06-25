@@ -64,17 +64,15 @@ interface UpdateAssetRosterFormModel {
 @Injectable({ providedIn: 'root' })
 export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> {
   deviceType = toSignal(
-    this.form.controls.deviceType.valueChanges.pipe(
-      startWith(this.form.controls.deviceType.value),
-    ),
+    this.form.controls.deviceType.valueChanges.pipe(startWith(this.form.controls.deviceType.value))
   );
 
   totalAssigned = toSignal(
     this.form.controls.locationAssignments.valueChanges.pipe(
       startWith(this.form.controls.locationAssignments.value),
-      map(rows => rows.reduce((sum: number, r: any) => sum + (r.assignedQuantity ?? 0), 0)),
+      map(rows => rows.reduce((sum: number, r: any) => sum + (r.assignedQuantity ?? 0), 0))
     ),
-    { initialValue: 0 },
+    { initialValue: 0 }
   );
 
   totalAssignedMin = computed(() => Math.max(1, this.totalAssigned()));

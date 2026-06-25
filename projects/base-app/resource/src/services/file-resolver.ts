@@ -54,7 +54,11 @@ export class FileResolver {
     if (!header) return null;
     const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
     if (utf8Match) {
-      try { return decodeURIComponent(utf8Match[1]); } catch { /* fall through */ }
+      try {
+        return decodeURIComponent(utf8Match[1]);
+      } catch {
+        /* fall through */
+      }
     }
     const match = header.match(/filename="?([^";\n]+)"?/i);
     return match ? match[1].trim() : null;

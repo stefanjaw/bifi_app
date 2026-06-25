@@ -30,39 +30,63 @@
           @if (!readonly()) {
             <th class="p-3 border-b"></th>
           }
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['sku']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['sku']"
+          >
             SKU
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'sku')"></div>
           </th>
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['description']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['description']"
+          >
             Description
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'description')"></div>
           </th>
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['quantity']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['quantity']"
+          >
             Qty
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'quantity')"></div>
           </th>
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['uom']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['uom']"
+          >
             UoM
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'uom')"></div>
           </th>
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['unitPrice']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['unitPrice']"
+          >
             Unit Price
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'unitPrice')"></div>
           </th>
           @if (discountOptions().length > 0) {
-            <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['discount']">
+            <th
+              class="text-left p-3 border-b border-r border-gray-200 relative"
+              [style.width.px]="colWidths()['discount']"
+            >
               Discount
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'discount')"></div>
             </th>
           }
           @if (taxOptions().length > 0) {
-            <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['taxes']">
+            <th
+              class="text-left p-3 border-b border-r border-gray-200 relative"
+              [style.width.px]="colWidths()['taxes']"
+            >
               Taxes
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'taxes')"></div>
             </th>
           }
-          <th class="text-left p-3 border-b border-r border-gray-200 relative" [style.width.px]="colWidths()['total']">
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['total']"
+          >
             Total
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'total')"></div>
           </th>
@@ -74,13 +98,22 @@
       <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
         @if (!readonly()) {
           <tr>
-            <td [colSpan]="6 + (discountOptions().length > 0 ? 1 : 0) + (taxOptions().length > 0 ? 1 : 0) + (!readonly() ? 2 : 0)" class="border-b p-0">
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="border-b p-0"
+            >
               <button
                 type="button"
                 class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
                 (click)="addItem()"
               >
-                <span class="pi pi-plus text-xs"></span> Add Item
+                <span class="pi pi-plus text-xs"></span>
+                Add Item
               </button>
             </td>
           </tr>
@@ -110,7 +143,8 @@
                     <span class="font-mono text-xs">{{ p?.sku }}</span>
                   </ng-template>
                   <ng-template pTemplate="item" let-p>
-                    <span class="font-mono text-xs text-gray-500 mr-2">{{ p.sku }}</span>{{ p.name }}
+                    <span class="font-mono text-xs text-gray-500 mr-2">{{ p.sku }}</span>
+                    {{ p.name }}
                   </ng-template>
                 </p-select>
               } @else {
@@ -188,7 +222,11 @@
                     appendTo="body"
                   >
                     <ng-template pTemplate="item" let-d>
-                      <span>{{ d.name }} ({{ d.discountType === 'percentage' ? d.value + '%' : ('$' + d.value) }})</span>
+                      <span>
+                        {{ d.name }} ({{
+                          d.discountType === 'percentage' ? d.value + '%' : '$' + d.value
+                        }})
+                      </span>
                     </ng-template>
                   </p-select>
                 } @else {
@@ -240,7 +278,15 @@
         }
         @if (lineItemsArray.controls.length === 0) {
           <tr>
-            <td [colSpan]="6 + (discountOptions().length > 0 ? 1 : 0) + (taxOptions().length > 0 ? 1 : 0) + (!readonly() ? 2 : 0)" class="p-4 text-center text-gray-500">
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="p-4 text-center text-gray-500"
+            >
               No items yet.{{ readonly() ? '' : ' Use the button above to add a line.' }}
             </td>
           </tr>
@@ -249,13 +295,22 @@
       @if (!readonly()) {
         <tfoot>
           <tr>
-            <td [colSpan]="6 + (discountOptions().length > 0 ? 1 : 0) + (taxOptions().length > 0 ? 1 : 0) + (!readonly() ? 2 : 0)" class="border-t p-0">
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="border-t p-0"
+            >
               <button
                 type="button"
                 class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
                 (click)="addItem()"
               >
-                <span class="pi pi-plus text-xs"></span> Add Item
+                <span class="pi pi-plus text-xs"></span>
+                Add Item
               </button>
             </td>
           </tr>

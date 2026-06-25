@@ -25,31 +25,58 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>AI Provider</bifi-app-form-label>
-            <input pInputText formControlName="aiProvider" placeholder="google-gems" class="w-full" />
+            <input
+              pInputText
+              formControlName="aiProvider"
+              placeholder="google-gems"
+              class="w-full"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>API Key</bifi-app-form-label>
-            <input pInputText formControlName="apiKey" placeholder="Enter API key" type="password" class="w-full" />
+            <input
+              pInputText
+              formControlName="apiKey"
+              placeholder="Enter API key"
+              type="password"
+              class="w-full"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Model</bifi-app-form-label>
-            <input pInputText formControlName="model" placeholder="gemini-2.5-flash" class="w-full" />
+            <input
+              pInputText
+              formControlName="model"
+              placeholder="gemini-2.5-flash"
+              class="w-full"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Embedding Model</bifi-app-form-label>
-            <input pInputText formControlName="embeddingModel" placeholder="text-embedding-004" class="w-full" />
+            <input
+              pInputText
+              formControlName="embeddingModel"
+              placeholder="text-embedding-004"
+              class="w-full"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <bifi-app-form-label>Max Token Limit</bifi-app-form-label>
-            <input pInputText formControlName="maxTokenLimit" placeholder="10000" type="number" class="w-full" />
+            <input
+              pInputText
+              formControlName="maxTokenLimit"
+              placeholder="10000"
+              type="number"
+              class="w-full"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -79,13 +106,25 @@
               </bifi-app-form-field>
               <bifi-app-form-field>
                 <bifi-app-form-label>Version</bifi-app-form-label>
-                <input pInputText formControlName="version" placeholder="1" type="number" class="w-full" />
+                <input
+                  pInputText
+                  formControlName="version"
+                  placeholder="1"
+                  type="number"
+                  class="w-full"
+                />
               </bifi-app-form-field>
             </div>
             <div [formGroup]="promptForm">
               <bifi-app-form-field>
                 <bifi-app-form-label>Prompt Text</bifi-app-form-label>
-                <textarea pInputTextarea formControlName="prompt" placeholder="Enter prompt template" rows="4" class="w-full"></textarea>
+                <textarea
+                  pInputTextarea
+                  formControlName="prompt"
+                  placeholder="Enter prompt template"
+                  rows="4"
+                  class="w-full"
+                ></textarea>
               </bifi-app-form-field>
             </div>
           </div>

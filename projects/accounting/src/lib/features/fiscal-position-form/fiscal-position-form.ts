@@ -20,11 +20,22 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FiscalPositionFormService, FiscalPositionFormModel } from '../../services/fiscal-position-form';
+import {
+  FiscalPositionFormService,
+  FiscalPositionFormModel,
+} from '../../services/fiscal-position-form';
 
 @Component({
   selector: 'bifi-app-fiscal-position-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, ButtonModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    ButtonModule,
+  ],
   templateUrl: './fiscal-position-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -50,7 +61,7 @@ export class FiscalPositionForm {
     () =>
       this.fiscalPositionResource.isLoading() ||
       this.taxesResource.isLoading() ||
-      this.accountsResource.isLoading(),
+      this.accountsResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -113,7 +124,10 @@ export class FiscalPositionForm {
       : this.crudFiscalPositions.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

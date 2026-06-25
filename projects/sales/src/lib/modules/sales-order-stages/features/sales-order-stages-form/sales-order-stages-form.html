@@ -28,7 +28,11 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Color</bifi-app-form-label>
-            <input type="color" formControlName="color" class="h-10 w-full rounded border border-gray-300 cursor-pointer p-1" />
+            <input
+              type="color"
+              formControlName="color"
+              class="h-10 w-full rounded border border-gray-300 cursor-pointer p-1"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -40,7 +44,11 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="description" placeholder="Description"></textarea>
+            <textarea
+              pInputTextarea
+              formControlName="description"
+              placeholder="Description"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -50,9 +58,15 @@
         <div class="flex flex-col gap-6">
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="isDefault" [binary]="true" inputId="isDefault"></p-checkbox>
+              <p-checkbox
+                formControlName="isDefault"
+                [binary]="true"
+                inputId="isDefault"
+              ></p-checkbox>
               <label for="isDefault" class="cursor-pointer font-medium text-gray-700">
-                Set as <span class="text-indigo-600 font-semibold">default stage</span> for new orders
+                Set as
+                <span class="text-indigo-600 font-semibold">default stage</span>
+                for new orders
               </label>
             </div>
             <bifi-app-form-error></bifi-app-form-error>

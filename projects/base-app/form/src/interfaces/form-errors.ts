@@ -3,14 +3,8 @@
  */
 export interface FormErrorMessages {
   required: string;
-  minlength: (error: {
-    requiredLength: number;
-    actualLength: number;
-  }) => string;
-  maxlength: (error: {
-    requiredLength: number;
-    actualLength: number;
-  }) => string;
+  minlength: (error: { requiredLength: number; actualLength: number }) => string;
+  maxlength: (error: { requiredLength: number; actualLength: number }) => string;
   email: string;
   min: (error: { min: number; actual: number }) => string;
   max: (error: { max: number; actual: number }) => string;

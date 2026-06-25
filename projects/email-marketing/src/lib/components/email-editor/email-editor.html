@@ -1,8 +1,6 @@
 <div class="email-editor-shell">
-
   <!-- Left sidebar: blocks + actions (collapsible) -->
   <aside class="ee-sidebar ee-sidebar-left" [class.ee-sidebar--collapsed]="leftCollapsed()">
-
     <button
       type="button"
       class="ee-collapse-btn"
@@ -13,17 +11,19 @@
     </button>
 
     <div class="ee-sidebar-inner" [hidden]="leftCollapsed()">
-
       <!-- Compact toolbar strip — top of sidebar -->
       <div class="ee-toolbar">
         <button type="button" class="ee-toolbar-btn" (click)="undo()" title="Undo">
-          <i class="pi pi-undo"></i><span>Undo</span>
+          <i class="pi pi-undo"></i>
+          <span>Undo</span>
         </button>
         <button type="button" class="ee-toolbar-btn" (click)="redo()" title="Redo">
-          <i class="pi pi-refresh"></i><span>Redo</span>
+          <i class="pi pi-refresh"></i>
+          <span>Redo</span>
         </button>
         <button type="button" class="ee-toolbar-btn" (click)="openCode()" title="View code">
-          <i class="pi pi-code"></i><span>Code</span>
+          <i class="pi pi-code"></i>
+          <span>Code</span>
         </button>
       </div>
 
@@ -35,7 +35,6 @@
 
   <!-- Center: canvas + device bar -->
   <main class="ee-canvas-area">
-
     <!-- Device switcher bar -->
     <div class="ee-device-bar">
       <button
@@ -75,7 +74,6 @@
 
   <!-- Right sidebar: inspector (collapsible) -->
   <aside class="ee-sidebar ee-sidebar-right" [class.ee-sidebar--collapsed]="rightCollapsed()">
-
     <button
       type="button"
       class="ee-collapse-btn"
@@ -87,9 +85,30 @@
 
     <div class="ee-sidebar-inner ee-sidebar-inner--right" [hidden]="rightCollapsed()">
       <div class="ee-tabs">
-        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'styles'" (click)="setTab('styles')">Styles</button>
-        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'settings'" (click)="setTab('settings')">Settings</button>
-        <button type="button" class="ee-tab" [class.ee-tab-active]="activeTab() === 'layers'" (click)="setTab('layers')">Layers</button>
+        <button
+          type="button"
+          class="ee-tab"
+          [class.ee-tab-active]="activeTab() === 'styles'"
+          (click)="setTab('styles')"
+        >
+          Styles
+        </button>
+        <button
+          type="button"
+          class="ee-tab"
+          [class.ee-tab-active]="activeTab() === 'settings'"
+          (click)="setTab('settings')"
+        >
+          Settings
+        </button>
+        <button
+          type="button"
+          class="ee-tab"
+          [class.ee-tab-active]="activeTab() === 'layers'"
+          (click)="setTab('layers')"
+        >
+          Layers
+        </button>
       </div>
 
       <!-- All manager containers use [hidden] — DOM is NEVER destroyed -->
@@ -122,7 +141,8 @@
           <div class="ee-code-block-head">
             <span>MJML</span>
             <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeMjml())">
-              <i class="pi pi-copy"></i><span>Copy</span>
+              <i class="pi pi-copy"></i>
+              <span>Copy</span>
             </button>
           </div>
           <pre class="ee-code-pre">{{ codeMjml() }}</pre>
@@ -131,7 +151,8 @@
           <div class="ee-code-block-head">
             <span>Compiled HTML</span>
             <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeHtml())">
-              <i class="pi pi-copy"></i><span>Copy</span>
+              <i class="pi pi-copy"></i>
+              <span>Copy</span>
             </button>
           </div>
           <pre class="ee-code-pre">{{ codeHtml() }}</pre>

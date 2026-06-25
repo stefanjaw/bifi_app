@@ -7,7 +7,6 @@
   >
     @if (isUpdate() && entry()) {
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-
         <!-- Compact action strip: Back | [Export PDF] [Save] -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
           <p-button
@@ -43,24 +42,42 @@
 
         <!-- Missing sequence number warning -->
         @if (!entry()!.number) {
-          <div class="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-amber-800 text-sm">
+          <div
+            class="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-amber-800 text-sm"
+          >
             <i class="pi pi-exclamation-triangle text-amber-500 shrink-0"></i>
-            <span>No order number assigned — configure a sequence under
-              <a routerLink="/settings/sales/configuration" class="underline font-medium hover:text-amber-900">Settings › Sales › Configuration</a>.
+            <span>
+              No order number assigned — configure a sequence under
+              <a
+                routerLink="/settings/sales/configuration"
+                class="underline font-medium hover:text-amber-900"
+              >
+                Settings › Sales › Configuration
+              </a>
+              .
             </span>
           </div>
         }
 
         <!-- Stepper row -->
         <div class="px-6 py-4 flex items-center gap-6 min-h-[72px]">
-
           <!-- Left: status badge + SO number -->
           <div class="flex flex-col gap-0.5 shrink-0 min-w-[120px]">
             <span
               class="text-[10px] font-bold tracking-widest uppercase"
-              [class]="entry()!.status === 'cancelled' ? 'text-red-500' : entry()!.status === 'completed' ? 'text-green-600' : 'text-blue-600'"
-            >{{ statusLabel() }}</span>
-            <span class="text-base font-bold text-gray-900 whitespace-nowrap">{{ entry()!.number ?? '—' }}</span>
+              [class]="
+                entry()!.status === 'cancelled'
+                  ? 'text-red-500'
+                  : entry()!.status === 'completed'
+                    ? 'text-green-600'
+                    : 'text-blue-600'
+              "
+            >
+              {{ statusLabel() }}
+            </span>
+            <span class="text-base font-bold text-gray-900 whitespace-nowrap">
+              {{ entry()!.number ?? '—' }}
+            </span>
           </div>
 
           <!-- Center: horizontal stepper -->
@@ -69,16 +86,26 @@
               <div class="flex flex-col items-center">
                 <div
                   class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors"
-                  [class]="step.done ? 'bg-blue-600 border-blue-600' : step.active ? 'bg-white border-blue-600 ring-4 ring-blue-50' : 'bg-white border-gray-300'"
+                  [class]="
+                    step.done
+                      ? 'bg-blue-600 border-blue-600'
+                      : step.active
+                        ? 'bg-white border-blue-600 ring-4 ring-blue-50'
+                        : 'bg-white border-gray-300'
+                  "
                 >
                   @if (step.done) {
-                    <i class="pi pi-check text-white" style="font-size:10px"></i>
+                    <i class="pi pi-check text-white" style="font-size: 10px"></i>
                   }
                 </div>
                 <span
                   class="mt-1.5 text-[11px] font-medium text-center whitespace-nowrap"
-                  [class]="step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'"
-                >{{ step.label }}</span>
+                  [class]="
+                    step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'
+                  "
+                >
+                  {{ step.label }}
+                </span>
                 @if (step.active) {
                   <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
                 }
@@ -93,10 +120,14 @@
             @if (entry()!.status === 'cancelled') {
               <div class="w-6 h-px mt-3.5 mx-2 bg-gray-200"></div>
               <div class="flex flex-col items-center">
-                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400">
-                  <i class="pi pi-times text-red-500" style="font-size:10px"></i>
+                <div
+                  class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400"
+                >
+                  <i class="pi pi-times text-red-500" style="font-size: 10px"></i>
                 </div>
-                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">Cancelled</span>
+                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">
+                  Cancelled
+                </span>
                 <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
               </div>
             }
@@ -109,20 +140,38 @@
                 <p-button label="Send Quote" icon="pi pi-send" (onClick)="markAsQuote()"></p-button>
               }
               @case ('quote') {
-                <p-button label="Confirm Order" icon="pi pi-check" (onClick)="markAsConfirmed()"></p-button>
+                <p-button
+                  label="Confirm Order"
+                  icon="pi pi-check"
+                  (onClick)="markAsConfirmed()"
+                ></p-button>
               }
               @case ('confirmed') {
-                <p-button label="Mark as Shipped" icon="pi pi-truck" (onClick)="markAsShipped()"></p-button>
+                <p-button
+                  label="Mark as Shipped"
+                  icon="pi pi-truck"
+                  (onClick)="markAsShipped()"
+                ></p-button>
               }
               @case ('shipped') {
-                <p-button label="Mark as Completed" icon="pi pi-check-circle" severity="success" (onClick)="markAsCompleted()"></p-button>
+                <p-button
+                  label="Mark as Completed"
+                  icon="pi pi-check-circle"
+                  severity="success"
+                  (onClick)="markAsCompleted()"
+                ></p-button>
               }
             }
             @if (entry()!.status !== 'cancelled') {
-              <p-button label="Cancel Order" icon="pi pi-times" severity="danger" [outlined]="true" (onClick)="cancelOrder()"></p-button>
+              <p-button
+                label="Cancel Order"
+                icon="pi pi-times"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="cancelOrder()"
+              ></p-button>
             }
           </div>
-
         </div>
       </div>
     }
@@ -152,7 +201,6 @@
     @if (!isLoading()) {
       <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <bifi-app-form-field>
             <bifi-app-form-label>Opportunity</bifi-app-form-label>
             <p-select
@@ -311,7 +359,12 @@
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Notes</bifi-app-form-label>
-            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <textarea
+              pTextarea
+              formControlName="notes"
+              rows="4"
+              placeholder="Internal notes..."
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>

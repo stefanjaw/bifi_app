@@ -29,10 +29,9 @@ export class CrudPurchaseOrders extends ApiRequestManager<purchaseOrder> {
   }
 
   updateStatus(id: string, status: purchaseOrderStatus): Observable<purchaseOrder> {
-    return this._httpClient.patch<purchaseOrder>(
-      `${this._apiURL}/${this.endpoint}/${id}/status`,
-      { status }
-    );
+    return this._httpClient.patch<purchaseOrder>(`${this._apiURL}/${this.endpoint}/${id}/status`, {
+      status,
+    });
   }
 
   downloadPdf(id: string): Observable<void> {
@@ -47,7 +46,7 @@ export class CrudPurchaseOrders extends ApiRequestManager<purchaseOrder> {
         a.click();
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(objectUrl), 10000);
-      }),
+      })
     );
   }
 }

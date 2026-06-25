@@ -41,7 +41,12 @@
             <div class="flex gap-4 items-end border rounded p-4">
               <bifi-app-form-field class="flex-1">
                 <bifi-app-form-label>Percentage (%)</bifi-app-form-label>
-                <p-inputNumber [formControl]="$any(line.get('percentage'))" [min]="0" [max]="100" suffix="%"></p-inputNumber>
+                <p-inputNumber
+                  [formControl]="$any(line.get('percentage'))"
+                  [min]="0"
+                  [max]="100"
+                  suffix="%"
+                ></p-inputNumber>
               </bifi-app-form-field>
               <bifi-app-form-field class="flex-1">
                 <bifi-app-form-label>Due Days</bifi-app-form-label>

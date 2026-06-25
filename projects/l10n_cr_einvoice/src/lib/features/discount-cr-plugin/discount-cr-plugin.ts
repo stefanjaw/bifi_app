@@ -13,7 +13,11 @@ import { DiscountForm } from '@avalantec/accounting';
     <ng-container [formGroup]="hostForm">
       <bifi-app-form-field>
         <bifi-app-form-label>CR Naturaleza del Descuento</bifi-app-form-label>
-        <input pInputText formControlName="crNaturalezaDescuento" placeholder="Naturaleza del descuento" />
+        <input
+          pInputText
+          formControlName="crNaturalezaDescuento"
+          placeholder="Naturaleza del descuento"
+        />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
     </ng-container>

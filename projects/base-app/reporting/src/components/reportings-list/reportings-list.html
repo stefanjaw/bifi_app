@@ -15,8 +15,7 @@
   [searchFilters]="reportingFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout
-  [infiniteScroll]="true" [columns]="reportingColumns" [data]="reportings">
+<bifi-app-table-layout [infiniteScroll]="true" [columns]="reportingColumns" [data]="reportings">
   <ng-template #actions let-element>
     <p-button
       severity="secondary"

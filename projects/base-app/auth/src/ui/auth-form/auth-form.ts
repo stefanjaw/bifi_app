@@ -23,7 +23,7 @@ import { RouterLink } from '@angular/router';
     DividerModule,
     FormModule,
     Text,
-    RouterLink
+    RouterLink,
   ],
   providers: [AuthFormService],
   templateUrl: './auth-form.html',

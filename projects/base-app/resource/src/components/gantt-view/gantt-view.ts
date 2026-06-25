@@ -293,8 +293,7 @@ export class GanttView implements OnDestroy {
       const next = new Set(visiting);
       next.add(id);
       const preds = predecessors.get(id) ?? [];
-      const depth =
-        preds.length === 0 ? 0 : Math.max(...preds.map(p => getDepth(p, next))) + 1;
+      const depth = preds.length === 0 ? 0 : Math.max(...preds.map(p => getDepth(p, next))) + 1;
       depthCache.set(id, depth);
       return depth;
     };
@@ -317,9 +316,10 @@ export class GanttView implements OnDestroy {
       const col = depthCache.get(id) ?? 0;
       const selfRight = OVERVIEW_LEFT_PAD + col * OVERVIEW_COL_WIDTH + OVERVIEW_CARD_WIDTH;
       const children = childrenOf.get(id) ?? [];
-      const right = children.length === 0
-        ? selfRight
-        : Math.max(selfRight, ...children.map(c => getSubtreeRight(c)));
+      const right =
+        children.length === 0
+          ? selfRight
+          : Math.max(selfRight, ...children.map(c => getSubtreeRight(c)));
       subtreeRight.set(id, right);
       return right;
     };

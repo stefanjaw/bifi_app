@@ -1,7 +1,7 @@
-import { inject, Injectable } from "@angular/core";
-import { ShippingForm } from "./shipping-form";
-import { CrudShippings } from "./crud-shippings";
-import { shipping } from "../interfaces/shipping";
+import { inject, Injectable } from '@angular/core';
+import { ShippingForm } from './shipping-form';
+import { CrudShippings } from './crud-shippings';
+import { shipping } from '../interfaces/shipping';
 
 @Injectable({ providedIn: 'root' })
 export class InvoiceLinesHSCode {
@@ -11,9 +11,7 @@ export class InvoiceLinesHSCode {
   private applyHSCodesToForm(shipping: shipping) {
     shipping.invoices.forEach((invoice, invoiceIndex) => {
       const formLines =
-        this.form.form.controls.invoices
-          .at(invoiceIndex)
-          .controls.extractedData.controls.lines;
+        this.form.form.controls.invoices.at(invoiceIndex).controls.extractedData.controls.lines;
 
       invoice.pdf.extractedData.lines.forEach((line, lineIndex) => {
         const formLine = formLines.at(lineIndex);

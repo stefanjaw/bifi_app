@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { CrudBCDTaxId } from '../../services/crud-bcd-tax-id';
 import { CrudBCDTaxType } from '../../services/crud-bcd-tax-type';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { BCDFormManager } from '../../../bcds/services/bcd-form-manager';
+import { BCDFormManager } from '../../../bcds';
 
 @Component({
   selector: 'bifi-app-bcd-taxes-form-dialog',

@@ -53,7 +53,9 @@ export class SalesSettingsPage {
     return Array.isArray(data) ? data : [];
   });
 
-  protected loading = computed(() => this.settingsResource.isLoading() && !this.settingsResource.error());
+  protected loading = computed(
+    () => this.settingsResource.isLoading() && !this.settingsResource.error()
+  );
 
   constructor() {
     effect(() => {

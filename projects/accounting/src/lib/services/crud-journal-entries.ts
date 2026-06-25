@@ -13,9 +13,6 @@ export class CrudJournalEntries extends ApiRequestManager<journalEntry> {
   }
 
   postEntry(id: string): Observable<journalEntry | undefined> {
-    return this._httpClient.put<journalEntry | undefined>(
-      `${this.formatFullURL()}/${id}/post`,
-      {},
-    );
+    return this._httpClient.put<journalEntry | undefined>(`${this.formatFullURL()}/${id}/post`, {});
   }
 }

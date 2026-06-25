@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MenuItem } from 'primeng/api';
@@ -151,14 +145,14 @@ export class SearchDestinationsList {
   private flattenMenu(
     items: MenuItem[],
     group = ''
-  ): Array<{ label: string; route: string; icon?: string; group?: string; resource?: string }> {
-    const out: Array<{
+  ): { label: string; route: string; icon?: string; group?: string; resource?: string }[] {
+    const out: {
       label: string;
       route: string;
       icon?: string;
       group?: string;
       resource?: string;
-    }> = [];
+    }[] = [];
 
     for (const item of items ?? []) {
       const route = this.routerLinkToRoute(item.routerLink);
@@ -200,9 +194,6 @@ export class SearchDestinationsList {
   }
 
   private routeToKey(route: string): string {
-    return (route ?? '')
-      .replace(/^\/+/, '')
-      .replace(/\/+$/, '')
-      .replace(/\//g, '.');
+    return (route ?? '').replace(/^\/+/, '').replace(/\/+$/, '').replace(/\//g, '.');
   }
 }

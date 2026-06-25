@@ -25,10 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudEmailCampaigns } from '../../services/crud-email-campaigns';
 import { CrudMailingLists } from '../../services/crud-mailing-lists';
 import { CrudEmailTemplates } from '../../services/crud-email-templates';
-import {
-  EmailCampaignForm,
-  EmailCampaignFormModel,
-} from '../../services/email-campaign-form';
+import { EmailCampaignForm, EmailCampaignFormModel } from '../../services/email-campaign-form';
 import { emailCampaign } from '../../interfaces/email-campaign';
 import { mailingList } from '../../interfaces/mailing-list';
 import { emailTemplate } from '../../interfaces/email-template';

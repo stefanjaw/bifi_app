@@ -29,7 +29,7 @@ export class AssetTypesList {
   private crudAssetType = inject(CrudAssetType);
   private destroy$ = inject(DestroyRef);
 
-    // Router
+  // Router
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -40,7 +40,7 @@ export class AssetTypesList {
 
   gotoEditAssetType = (element: assetType) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 
   deleteAssetType(id: string) {
     this.crudAssetType

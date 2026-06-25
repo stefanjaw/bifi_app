@@ -23,7 +23,9 @@
       }
 
       @if (isUpdate()) {
-        <div class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3">
+        <div
+          class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3"
+        >
           <span class="text-sm text-gray-500 mr-2">Status:</span>
           <span class="font-semibold capitalize">{{ status() }}</span>
           <div class="flex-1"></div>
@@ -62,7 +64,12 @@
         </div>
       }
 
-      <bifi-app-form-section title="Campaign Details" id="campaign-details" [ordinal]="1" [collapsible]="true">
+      <bifi-app-form-section
+        title="Campaign Details"
+        id="campaign-details"
+        [ordinal]="1"
+        [collapsible]="true"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Campaign Name</bifi-app-form-label>
@@ -71,12 +78,22 @@
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Subject Line</bifi-app-form-label>
-            <input pInputText formControlName="subject" type="text" placeholder="What recipients see" />
+            <input
+              pInputText
+              formControlName="subject"
+              type="text"
+              placeholder="What recipients see"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>Preview Text</bifi-app-form-label>
-            <input pInputText formControlName="previewText" type="text" placeholder="Inbox preview snippet" />
+            <input
+              pInputText
+              formControlName="previewText"
+              type="text"
+              placeholder="Inbox preview snippet"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
@@ -98,12 +115,22 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>From Name</bifi-app-form-label>
-            <input pInputText formControlName="fromName" type="text" placeholder="Leave blank for default" />
+            <input
+              pInputText
+              formControlName="fromName"
+              type="text"
+              placeholder="Leave blank for default"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
             <bifi-app-form-label>From Email</bifi-app-form-label>
-            <input pInputText formControlName="fromEmail" type="email" placeholder="Leave blank for default" />
+            <input
+              pInputText
+              formControlName="fromEmail"
+              type="email"
+              placeholder="Leave blank for default"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
@@ -154,7 +181,11 @@
     />
   </div>
   <ng-template pTemplate="footer">
-    <p-button label="Cancel" severity="secondary" (onClick)="testDialogVisible.set(false)"></p-button>
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="testDialogVisible.set(false)"
+    ></p-button>
     <p-button label="Send Test" [loading]="actionLoading()" (onClick)="sendTest()"></p-button>
   </ng-template>
 </p-dialog>
@@ -178,7 +209,11 @@
     ></p-datepicker>
   </div>
   <ng-template pTemplate="footer">
-    <p-button label="Cancel" severity="secondary" (onClick)="scheduleDialogVisible.set(false)"></p-button>
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="scheduleDialogVisible.set(false)"
+    ></p-button>
     <p-button label="Schedule" [loading]="actionLoading()" (onClick)="confirmSchedule()"></p-button>
   </ng-template>
 </p-dialog>

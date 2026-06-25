@@ -7,5 +7,5 @@
  * @returns {(object: any) => T}
  */
 export const castTo = <T>(): ((object: any) => T) => {
-  return (row) => row as T;
+  return row => row as T;
 };

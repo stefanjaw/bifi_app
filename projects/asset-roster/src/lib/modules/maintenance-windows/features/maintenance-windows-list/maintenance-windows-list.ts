@@ -36,10 +36,10 @@ export class MaintenanceWindowsList {
   maintenanceWindowFilters = maintenanceWindowFilters;
 
   maintenanceWindows = this.resourceManager.data;
-  
+
   goToEditMaintenanceWindow = (element: maintenanceWindow) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deleteMaintenanceWindow(id: string) {
     this.crudMaintenanceWindows
       .delete({ _id: id })
@@ -51,4 +51,3 @@ export class MaintenanceWindowsList {
       });
   }
 }
-  

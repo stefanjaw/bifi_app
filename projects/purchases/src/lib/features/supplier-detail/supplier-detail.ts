@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudPurchaseOrders } from '../../services/crud-purchase-orders';
 import { RouterLink } from '@angular/router';
@@ -18,7 +12,15 @@ import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-supplier-detail',
-  imports: [RouterLink, ButtonModule, TagModule, CardModule, ProgressBarModule, CurrencyPipe, DatePipe],
+  imports: [
+    RouterLink,
+    ButtonModule,
+    TagModule,
+    CardModule,
+    ProgressBarModule,
+    CurrencyPipe,
+    DatePipe,
+  ],
   templateUrl: './supplier-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,7 +36,7 @@ export class SupplierDetail {
   });
 
   ordersResource = this.crudPurchaseOrders.get({
-    searchParams: computed(() => this.id() ? { contactId: this.id() } : {}),
+    searchParams: computed(() => (this.id() ? { contactId: this.id() } : {})),
     triggerRequest: computed(() => !!this.id()),
     getInactive: null,
   });

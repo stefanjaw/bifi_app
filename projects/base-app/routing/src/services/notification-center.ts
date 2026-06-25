@@ -50,11 +50,9 @@ export class NotificationCenterService {
 
     // Refresh on every navigation so badges update immediately when the user
     // navigates between pages rather than waiting for the next poll cycle
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(() => {
-        if (this.auth.user()) this.refresh();
-      });
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      if (this.auth.user()) this.refresh();
+    });
   }
 
   private get base(): string {
@@ -73,10 +71,9 @@ export class NotificationCenterService {
           )
         ),
         firstValueFrom(
-          this.http.get<AppNotification[]>(
-            `${this.base}/notifications?limit=20`,
-            { headers: { 'Cache-Control': 'no-cache' } }
-          )
+          this.http.get<AppNotification[]>(`${this.base}/notifications?limit=20`, {
+            headers: { 'Cache-Control': 'no-cache' },
+          })
         ),
       ]);
       this.unreadCount.set(countRes?.total ?? 0);
@@ -89,12 +86,8 @@ export class NotificationCenterService {
 
   async markRead(id: string): Promise<void> {
     try {
-      await firstValueFrom(
-        this.http.patch(`${this.base}/notifications/${id}/read`, {})
-      );
-      this.notifications.update(list =>
-        list.map(n => (n._id === id ? { ...n, read: true } : n))
-      );
+      await firstValueFrom(this.http.patch(`${this.base}/notifications/${id}/read`, {}));
+      this.notifications.update(list => list.map(n => (n._id === id ? { ...n, read: true } : n)));
       this.unreadCount.update(c => Math.max(0, c - 1));
       // Refresh for accurate byModule counts
       await this.refresh();
@@ -105,9 +98,7 @@ export class NotificationCenterService {
 
   async markAllSeen(): Promise<void> {
     try {
-      await firstValueFrom(
-        this.http.patch(`${this.base}/notifications/mark-all-seen`, {})
-      );
+      await firstValueFrom(this.http.patch(`${this.base}/notifications/mark-all-seen`, {}));
       this.notifications.update(list => list.map(n => ({ ...n, seen: true })));
       this.unreadCount.set(0);
       // byModule stays intact — tile badges clear only when records are visited
@@ -118,9 +109,7 @@ export class NotificationCenterService {
 
   async markAllRead(): Promise<void> {
     try {
-      await firstValueFrom(
-        this.http.patch(`${this.base}/notifications/mark-all-read`, {})
-      );
+      await firstValueFrom(this.http.patch(`${this.base}/notifications/mark-all-read`, {}));
       this.notifications.update(list => list.map(n => ({ ...n, read: true, seen: true })));
       this.unreadCount.set(0);
       this.byModule.set({});

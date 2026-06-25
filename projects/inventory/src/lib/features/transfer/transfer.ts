@@ -74,9 +74,10 @@ export class Transfer {
   );
 
   toLocations = computed(() =>
-    this.allLocations().filter(l =>
-      l.warehouseId?._id === this.selectedToWarehouseId() &&
-      l._id !== this.selectedFromLocationId()
+    this.allLocations().filter(
+      l =>
+        l.warehouseId?._id === this.selectedToWarehouseId() &&
+        l._id !== this.selectedFromLocationId()
     )
   );
 
@@ -85,7 +86,7 @@ export class Transfer {
       const p = this.selectedProductId();
       const w = this.selectedFromWarehouseId();
       const l = this.selectedFromLocationId();
-      return (p && w && l) ? { productId: p, warehouseId: w, locationId: l } : {};
+      return p && w && l ? { productId: p, warehouseId: w, locationId: l } : {};
     }),
   });
 
@@ -106,20 +107,23 @@ export class Transfer {
   });
 
   constructor() {
-    this.form.get('productId')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('productId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(pid => this.selectedProductId.set(pid ?? ''));
 
-    this.form.get('fromWarehouseId')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('fromWarehouseId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(wid => {
         this.selectedFromWarehouseId.set(wid ?? '');
         this.form.patchValue({ fromLocationId: '' }, { emitEvent: false });
         this.selectedFromLocationId.set('');
       });
 
-    this.form.get('fromLocationId')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('fromLocationId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(lid => {
         this.selectedFromLocationId.set(lid ?? '');
         const toLocation = this.form.get('toLocationId')!.value;
@@ -128,8 +132,9 @@ export class Transfer {
         }
       });
 
-    this.form.get('toWarehouseId')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('toWarehouseId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(wid => {
         this.selectedToWarehouseId.set(wid ?? '');
         this.form.patchValue({ toLocationId: '' }, { emitEvent: false });

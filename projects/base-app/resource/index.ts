@@ -38,6 +38,6 @@ export * from './src/components/search-bar/search-bar';
 export * from './src/components/table-layout/table-layout';
 export * from './src/components/timeline-view/timeline-item';
 export * from './src/components/timeline-view/timeline-view';
-export * from './src/libraries/interceptors/error/error.interceptor';
+export * from './src/libraries/interceptors/error/error';
 export * from './src/libraries/interceptors/notification/notification.context';
-export * from './src/libraries/interceptors/notification/notification.interceptor';
+export * from './src/libraries/interceptors/notification/notification';

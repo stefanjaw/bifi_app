@@ -21,7 +21,8 @@ import { branchOffice } from '../../interfaces/branch-office';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './branch-offices-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  templateUrl: './branch-offices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchOfficesList {
@@ -49,5 +50,5 @@ export class BranchOfficesList {
 
   gotoEditBranchOffice = (element: branchOffice) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

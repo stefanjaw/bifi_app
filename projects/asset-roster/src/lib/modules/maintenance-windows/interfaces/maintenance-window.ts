@@ -3,12 +3,6 @@ export interface maintenanceWindow {
   name: string;
   daysBefore: number;
   daysAfter: number;
-  recurrency:
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'quarterly'
-    | 'semi-anually'
-    | 'annually';
+  recurrency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'semi-anually' | 'annually';
   active: boolean;
 }

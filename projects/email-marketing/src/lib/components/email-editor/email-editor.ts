@@ -194,8 +194,7 @@ export class EmailEditor implements AfterViewInit, OnDestroy {
         const titles = container.querySelectorAll<HTMLElement>('.gjs-sm-sector-title');
         for (const title of Array.from(titles)) {
           if (title.textContent?.trim() === 'Line') {
-            this.dividerLineSectorEl =
-              title.closest<HTMLElement>('.gjs-sm-sector');
+            this.dividerLineSectorEl = title.closest<HTMLElement>('.gjs-sm-sector');
             break;
           }
         }

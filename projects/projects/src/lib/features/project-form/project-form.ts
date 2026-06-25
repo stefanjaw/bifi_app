@@ -193,7 +193,7 @@ export class ProjectsForm {
     const filters = JSON.stringify([
       { field: 'projectId.name', operator: '==', value: name, type: 'string' },
     ]);
-    
+
     this.router.navigate(['/tasks/view'], {
       queryParams: { _filters: filters, _view: 'list' },
     });

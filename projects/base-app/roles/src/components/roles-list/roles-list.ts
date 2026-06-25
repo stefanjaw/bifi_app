@@ -38,9 +38,9 @@ export class RolesList {
   roles = this.resourceManager.data;
   clickRowPermission = input<permission | undefined>(undefined);
 
-    goToEditRole = (element: role) => {
-      this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-    };
+  goToEditRole = (element: role) => {
+    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  };
   deleteRole(id: string) {
     this.crudRoles
       .delete({ _id: id })

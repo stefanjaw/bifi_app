@@ -11,7 +11,9 @@ export const BRANCH_OFFICE_ROUTES: Routes = [
     path: 'list',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../components/branch-offices-list/branch-offices-list').then(m => m.BranchOfficesList),
+      import('../components/branch-offices-list/branch-offices-list').then(
+        m => m.BranchOfficesList
+      ),
     data: { resource: 'branch-offices/list' },
   },
   {

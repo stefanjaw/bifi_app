@@ -15,10 +15,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudDriveSettings } from '../../services/crud-drive-settings';
-import {
-  DriveSettingsForm,
-  DriveSettingsFormModel,
-} from '../../services/drive-settings-form';
+import { DriveSettingsForm, DriveSettingsFormModel } from '../../services/drive-settings-form';
 import { driveSettings } from '../../interfaces/drive-settings';
 
 @Component({

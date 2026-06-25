@@ -24,15 +24,13 @@ export const SALES_ROUTES: Routes = [
   {
     path: 'opportunities/new',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmsForm),
+    loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/create' },
   },
   {
     path: 'opportunities/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmsForm),
+    loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/update' },
   },
   {
@@ -43,8 +41,7 @@ export const SALES_ROUTES: Routes = [
   {
     path: 'orders',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/orders-list/orders-list').then(c => c.OrdersList),
+    loadComponent: () => import('../features/orders-list/orders-list').then(c => c.OrdersList),
     data: { resource: 'sales/orders/list' },
   },
   {

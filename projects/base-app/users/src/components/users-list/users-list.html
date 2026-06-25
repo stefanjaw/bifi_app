@@ -21,8 +21,7 @@
   [searchFilters]="userFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout
-  [infiniteScroll]="true" [columns]="userColumns" [data]="users">
+<bifi-app-table-layout [infiniteScroll]="true" [columns]="userColumns" [data]="users">
   <ng-template #actions let-row>
     @if (row.active) {
       <p-button

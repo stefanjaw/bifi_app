@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CrudBCDAdditionalInformationType } from '../../services/crud-bcd-additional-information-type';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { BCDFormManager } from '../../../bcds/services/bcd-form-manager';
+import { BCDFormManager } from '../../../bcds';
 
 @Component({
   selector: 'bifi-app-bcd-additional-information-form-dialog',

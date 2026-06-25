@@ -14,23 +14,25 @@
       (appSubmit)="handleSubmit($event)"
     >
       <bifi-app-form-field>
-        <bifi-app-form-label>Task Name <span class="text-red-500 ml-0.5">*</span></bifi-app-form-label>
+        <bifi-app-form-label>
+          Task Name
+          <span class="text-red-500 ml-0.5">*</span>
+        </bifi-app-form-label>
         <input pInputText formControlName="name" type="text" placeholder="e.g, Laser Therapy" />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
         <bifi-app-form-label>Description</bifi-app-form-label>
-        <textarea
-          pInputTextarea
-          formControlName="description"
-          placeholder="Description"
-        ></textarea>
+        <textarea pInputTextarea formControlName="description" placeholder="Description"></textarea>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Type <span class="text-red-500 ml-0.5">*</span></bifi-app-form-label>
+        <bifi-app-form-label>
+          Type
+          <span class="text-red-500 ml-0.5">*</span>
+        </bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="typeId"

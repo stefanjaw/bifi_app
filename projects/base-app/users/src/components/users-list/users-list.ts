@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
-  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -72,5 +71,5 @@ export class UsersList {
 
   gotoEditUser = (element: user) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

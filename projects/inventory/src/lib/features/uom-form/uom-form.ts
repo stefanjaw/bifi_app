@@ -23,7 +23,15 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
 
 @Component({
   selector: 'bifi-app-uom-form',
-  imports: [FormModule, ReactiveFormsModule, ButtonModule, InputText, SelectModule, ProgressBarModule, PluginSlot],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    InputText,
+    SelectModule,
+    ProgressBarModule,
+    PluginSlot,
+  ],
   providers: [providePluginContext(UomForm)],
   templateUrl: './uom-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -22,7 +22,14 @@ import { AccountFormService, AccountFormModel } from '../../services/account-for
 
 @Component({
   selector: 'bifi-app-account-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+  ],
   templateUrl: './account-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,7 +54,7 @@ export class AccountForm {
     () =>
       this.accountResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 

@@ -1,10 +1,6 @@
 import { mailingList } from './mailing-list';
 
-export type subscriberStatus =
-  | 'subscribed'
-  | 'unsubscribed'
-  | 'bounced'
-  | 'complained';
+export type subscriberStatus = 'subscribed' | 'unsubscribed' | 'bounced' | 'complained';
 
 export interface subscriberContactRef {
   _id: string;

@@ -61,11 +61,21 @@
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
-              <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeTaxMapping($index)"></p-button>
+              <p-button
+                severity="danger"
+                icon="pi pi-trash"
+                label="Remove"
+                (onClick)="removeTaxMapping($index)"
+              ></p-button>
             </div>
           }
           <div>
-            <p-button severity="secondary" icon="pi pi-plus" label="Add Tax Mapping" (onClick)="addTaxMapping()"></p-button>
+            <p-button
+              severity="secondary"
+              icon="pi pi-plus"
+              label="Add Tax Mapping"
+              (onClick)="addTaxMapping()"
+            ></p-button>
           </div>
         </div>
       </bifi-app-form-section>
@@ -96,11 +106,21 @@
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
-              <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeAccountMapping($index)"></p-button>
+              <p-button
+                severity="danger"
+                icon="pi pi-trash"
+                label="Remove"
+                (onClick)="removeAccountMapping($index)"
+              ></p-button>
             </div>
           }
           <div>
-            <p-button severity="secondary" icon="pi pi-plus" label="Add Account Mapping" (onClick)="addAccountMapping()"></p-button>
+            <p-button
+              severity="secondary"
+              icon="pi pi-plus"
+              label="Add Account Mapping"
+              (onClick)="addAccountMapping()"
+            ></p-button>
           </div>
         </div>
       </bifi-app-form-section>

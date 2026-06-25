@@ -54,7 +54,7 @@ export class FormTranslation {
    * @returns The translated string corresponding to the key and parameters.
    */
 
-  protected translate(key: string, params?: ParamMap) {
+  protected translate(_key: string, _params?: ParamMap) {
     // const memoKey = params ? `${key}${JSON.stringify(params)}` : key;
 
     // if (!this.memo.has(memoKey)) {

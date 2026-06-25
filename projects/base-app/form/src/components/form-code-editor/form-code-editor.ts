@@ -49,8 +49,9 @@ export class FormCodeEditor implements AfterViewInit {
   rightFormControl = input<FormControl>();
 
   private initialValue: string | undefined = undefined;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onChange = (_value: string) => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onTouched = () => {};
 
   constructor() {

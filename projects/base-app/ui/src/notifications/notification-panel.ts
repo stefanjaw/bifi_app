@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationCenterService, AppNotification } from '@avalantec/base-app/routing';
@@ -60,29 +53,47 @@ export class NotificationPanel {
 
   iconClass(type: string): string {
     switch (type) {
-      case 'invoice_paid':    return 'pi pi-check-circle text-green-600';
-      case 'invoice_posted':  return 'pi pi-send text-indigo-600';
-      case 'po_received':     return 'pi pi-box text-blue-600';
-      case 'po_sent':         return 'pi pi-truck text-orange-600';
-      case 'task_assigned':   return 'pi pi-clipboard text-purple-600';
-      case 'ticket_assigned': return 'pi pi-headphones text-cyan-600';
-      case 'ticket_resolved': return 'pi pi-check text-teal-600';
-      case 'deal_won':        return 'pi pi-trophy text-yellow-600';
-      default:                return 'pi pi-bell text-surface-500';
+      case 'invoice_paid':
+        return 'pi pi-check-circle text-green-600';
+      case 'invoice_posted':
+        return 'pi pi-send text-indigo-600';
+      case 'po_received':
+        return 'pi pi-box text-blue-600';
+      case 'po_sent':
+        return 'pi pi-truck text-orange-600';
+      case 'task_assigned':
+        return 'pi pi-clipboard text-purple-600';
+      case 'ticket_assigned':
+        return 'pi pi-headphones text-cyan-600';
+      case 'ticket_resolved':
+        return 'pi pi-check text-teal-600';
+      case 'deal_won':
+        return 'pi pi-trophy text-yellow-600';
+      default:
+        return 'pi pi-bell text-surface-500';
     }
   }
 
   iconBg(type: string): string {
     switch (type) {
-      case 'invoice_paid':    return 'bg-green-100';
-      case 'invoice_posted':  return 'bg-indigo-100';
-      case 'po_received':     return 'bg-blue-100';
-      case 'po_sent':         return 'bg-orange-100';
-      case 'task_assigned':   return 'bg-purple-100';
-      case 'ticket_assigned': return 'bg-cyan-100';
-      case 'ticket_resolved': return 'bg-teal-100';
-      case 'deal_won':        return 'bg-yellow-100';
-      default:                return 'bg-surface-100';
+      case 'invoice_paid':
+        return 'bg-green-100';
+      case 'invoice_posted':
+        return 'bg-indigo-100';
+      case 'po_received':
+        return 'bg-blue-100';
+      case 'po_sent':
+        return 'bg-orange-100';
+      case 'task_assigned':
+        return 'bg-purple-100';
+      case 'ticket_assigned':
+        return 'bg-cyan-100';
+      case 'ticket_resolved':
+        return 'bg-teal-100';
+      case 'deal_won':
+        return 'bg-yellow-100';
+      default:
+        return 'bg-surface-100';
     }
   }
 

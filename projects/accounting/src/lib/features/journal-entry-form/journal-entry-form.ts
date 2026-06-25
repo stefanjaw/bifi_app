@@ -66,7 +66,7 @@ export class JournalEntryForm {
       this.entryResource.isLoading() ||
       this.journalsResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPostLoading = signal(false);
@@ -83,17 +83,16 @@ export class JournalEntryForm {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(
-    this.formService.linesArray.valueChanges,
-    { initialValue: this.formService.linesArray.value },
-  );
+  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
+    initialValue: this.formService.linesArray.value,
+  });
 
   totalDebit = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0)
   );
 
   totalCredit = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0)
   );
 
   addLine() {
@@ -153,17 +152,26 @@ export class JournalEntryForm {
       : this.crudJournalEntries.post({ data: payload as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }
 
   postEntry() {
     this.isPostLoading.set(true);
-    this.crudJournalEntries.postEntry(this.id()).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isPostLoading.set(false); this.goBack(); },
-      error: () => this.isPostLoading.set(false),
-    });
+    this.crudJournalEntries
+      .postEntry(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isPostLoading.set(false);
+          this.goBack();
+        },
+        error: () => this.isPostLoading.set(false),
+      });
   }
 
   goBack() {

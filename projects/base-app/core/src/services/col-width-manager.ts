@@ -10,13 +10,15 @@ export class ColWidthManager {
 
   constructor(
     private readonly defaults: Record<string, number>,
-    private readonly storageKey: string,
+    private readonly storageKey: string
   ) {
     let initial = { ...defaults };
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) initial = { ...defaults, ...JSON.parse(saved) };
-    } catch {}
+    } catch {
+      /* empty */
+    }
     this.colWidths = signal(initial);
   }
 
@@ -34,7 +36,11 @@ export class ColWidthManager {
     const newWidth = Math.max(60, this._startW + delta);
     this.colWidths.update(w => {
       const next = { ...w, [this._colKey]: newWidth };
-      try { localStorage.setItem(this.storageKey, JSON.stringify(next)); } catch {}
+      try {
+        localStorage.setItem(this.storageKey, JSON.stringify(next));
+      } catch {
+        /* empty */
+      }
       return next;
     });
   }

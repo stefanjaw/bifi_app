@@ -21,7 +21,14 @@ import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-
 
 @Component({
   selector: 'bifi-app-currency-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+  ],
   templateUrl: './currency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

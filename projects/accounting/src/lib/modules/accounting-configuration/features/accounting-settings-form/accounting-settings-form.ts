@@ -15,7 +15,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudAccountingSettings } from '../../services/crud-accounting-settings';
-import { AccountingSettingsForm, AccountingSettingsFormModel } from '../../services/accounting-settings-form';
+import {
+  AccountingSettingsForm,
+  AccountingSettingsFormModel,
+} from '../../services/accounting-settings-form';
 import { accountingSettings } from '../../interfaces/accounting-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
 
@@ -53,7 +56,9 @@ export class AccountingSettingsPage {
     return Array.isArray(data) ? data : [];
   });
 
-  protected loading = computed(() => this.settingsResource.isLoading() && !this.settingsResource.error());
+  protected loading = computed(
+    () => this.settingsResource.isLoading() && !this.settingsResource.error()
+  );
 
   constructor() {
     effect(() => {

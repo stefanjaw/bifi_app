@@ -1,4 +1,8 @@
-<p-dialog [header]="lineIndex >= 0 ? 'Edit invoice line' : 'New invoice line'" [(visible)]="dialogState" [modal]="true">
+<p-dialog
+  [header]="lineIndex >= 0 ? 'Edit invoice line' : 'New invoice line'"
+  [(visible)]="dialogState"
+  [modal]="true"
+>
   <form
     [formGroup]="form()"
     class="flex flex-col gap-6"

@@ -21,7 +21,8 @@ import { company } from '@avalantec/base-app/interfaces';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './companies-list.html',
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  templateUrl: './companies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompaniesList {

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -51,5 +46,5 @@ export class UomsList {
 
   gotoEditUom = (element: uom) => {
     this.router.navigate([`../uoms/${element._id}/edit`], { relativeTo: this.route });
-  }
+  };
 }

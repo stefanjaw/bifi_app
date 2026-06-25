@@ -16,16 +16,13 @@ export class CrudSalesSettings extends ApiRequestManager<salesSettings> {
   getSettings() {
     return rxResource<salesSettings, void>({
       stream: () =>
-        this._httpClient.get<salesSettings>(`${this._apiURL}/${this.endpoint}`).pipe(
-          catchError(() => of({} as salesSettings))
-        ),
+        this._httpClient
+          .get<salesSettings>(`${this._apiURL}/${this.endpoint}`)
+          .pipe(catchError(() => of({} as salesSettings))),
     });
   }
 
   putSettings(data: Record<string, any>): Observable<salesSettings | undefined> {
-    return this._httpClient.put<salesSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<salesSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

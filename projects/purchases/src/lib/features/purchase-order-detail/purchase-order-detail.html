@@ -7,7 +7,6 @@
   >
     @if (isUpdate() && entry()) {
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-
         <!-- Compact action strip: Back + Export PDF + Save -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
           <p-button
@@ -43,14 +42,23 @@
 
         <!-- Stepper row -->
         <div class="px-6 py-4 flex items-center gap-6 min-h-[72px]">
-
           <!-- Left: status badge + PO number -->
           <div class="flex flex-col gap-0.5 shrink-0 min-w-[120px]">
             <span
               class="text-[10px] font-bold tracking-widest uppercase"
-              [class]="entry()!.status === 'cancelled' ? 'text-red-500' : entry()!.status === 'received' ? 'text-green-600' : 'text-blue-600'"
-            >{{ statusLabel() }}</span>
-            <span class="text-base font-bold text-gray-900 whitespace-nowrap">{{ entry()!.poNumber }}</span>
+              [class]="
+                entry()!.status === 'cancelled'
+                  ? 'text-red-500'
+                  : entry()!.status === 'received'
+                    ? 'text-green-600'
+                    : 'text-blue-600'
+              "
+            >
+              {{ statusLabel() }}
+            </span>
+            <span class="text-base font-bold text-gray-900 whitespace-nowrap">
+              {{ entry()!.poNumber }}
+            </span>
           </div>
 
           <!-- Center: horizontal stepper -->
@@ -59,16 +67,26 @@
               <div class="flex flex-col items-center">
                 <div
                   class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors"
-                  [class]="step.done ? 'bg-blue-600 border-blue-600' : step.active ? 'bg-white border-blue-600 ring-4 ring-blue-50' : 'bg-white border-gray-300'"
+                  [class]="
+                    step.done
+                      ? 'bg-blue-600 border-blue-600'
+                      : step.active
+                        ? 'bg-white border-blue-600 ring-4 ring-blue-50'
+                        : 'bg-white border-gray-300'
+                  "
                 >
                   @if (step.done) {
-                    <i class="pi pi-check text-white" style="font-size:10px"></i>
+                    <i class="pi pi-check text-white" style="font-size: 10px"></i>
                   }
                 </div>
                 <span
                   class="mt-1.5 text-[11px] font-medium text-center whitespace-nowrap"
-                  [class]="step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'"
-                >{{ step.label }}</span>
+                  [class]="
+                    step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'
+                  "
+                >
+                  {{ step.label }}
+                </span>
                 @if (step.active) {
                   <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
                 }
@@ -83,10 +101,14 @@
             @if (entry()!.status === 'cancelled') {
               <div class="w-6 h-px mt-3.5 mx-2 bg-gray-200"></div>
               <div class="flex flex-col items-center">
-                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400">
-                  <i class="pi pi-times text-red-500" style="font-size:10px"></i>
+                <div
+                  class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400"
+                >
+                  <i class="pi pi-times text-red-500" style="font-size: 10px"></i>
                 </div>
-                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">Cancelled</span>
+                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">
+                  Cancelled
+                </span>
                 <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
               </div>
             }
@@ -96,26 +118,54 @@
           <div class="shrink-0 flex items-center gap-2">
             @switch (entry()!.status) {
               @case ('draft') {
-                <p-button label="Confirm Order" icon="pi pi-check" (onClick)="markAsConfirmed()"></p-button>
+                <p-button
+                  label="Confirm Order"
+                  icon="pi pi-check"
+                  (onClick)="markAsConfirmed()"
+                ></p-button>
               }
               @case ('confirmed') {
-                <p-button label="Mark as Sent" icon="pi pi-send" (onClick)="markAsSent()"></p-button>
+                <p-button
+                  label="Mark as Sent"
+                  icon="pi pi-send"
+                  (onClick)="markAsSent()"
+                ></p-button>
               }
               @case ('sent') {
                 <div class="flex gap-2">
-                  <p-button label="Mark as Received" icon="pi pi-check" severity="success" (onClick)="markAsReceived()"></p-button>
-                  <p-button label="Partial Receipt" icon="pi pi-circle-fill" severity="warn" (onClick)="markAsPartiallyReceived()"></p-button>
+                  <p-button
+                    label="Mark as Received"
+                    icon="pi pi-check"
+                    severity="success"
+                    (onClick)="markAsReceived()"
+                  ></p-button>
+                  <p-button
+                    label="Partial Receipt"
+                    icon="pi pi-circle-fill"
+                    severity="warn"
+                    (onClick)="markAsPartiallyReceived()"
+                  ></p-button>
                 </div>
               }
               @case ('partially_received') {
-                <p-button label="Mark as Received" icon="pi pi-check" severity="success" (onClick)="markAsReceived()"></p-button>
+                <p-button
+                  label="Mark as Received"
+                  icon="pi pi-check"
+                  severity="success"
+                  (onClick)="markAsReceived()"
+                ></p-button>
               }
             }
             @if (entry()!.status !== 'received' && entry()!.status !== 'cancelled') {
-              <p-button label="Cancel Order" icon="pi pi-times" severity="danger" [outlined]="true" (onClick)="cancelOrder()"></p-button>
+              <p-button
+                label="Cancel Order"
+                icon="pi pi-times"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="cancelOrder()"
+              ></p-button>
             }
           </div>
-
         </div>
       </div>
     }
@@ -232,7 +282,6 @@
 
         <div class="mt-6 flex flex-col items-end gap-4">
           <div class="w-full max-w-sm space-y-3">
-
             <div class="border-t pt-3 space-y-2">
               <div class="flex justify-between text-sm text-gray-600">
                 <span>Subtotal</span>
@@ -255,7 +304,6 @@
                 <span>{{ totalsPreview().grandTotal | number: '1.2-2' }}</span>
               </div>
             </div>
-
           </div>
         </div>
       </bifi-app-form-section>
@@ -264,7 +312,12 @@
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>Notes</bifi-app-form-label>
-            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <textarea
+              pTextarea
+              formControlName="notes"
+              rows="4"
+              placeholder="Internal notes..."
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>

@@ -66,7 +66,8 @@ export const SETTINGS_ROUTES: Routes = [
   {
     path: 'drive-settings',
     canActivate: [authGuard],
-    loadChildren: () => import('@avalantec/base-app/drive-settings').then(m => m.DRIVE_SETTINGS_ROUTES),
+    loadChildren: () =>
+      import('@avalantec/base-app/drive-settings').then(m => m.DRIVE_SETTINGS_ROUTES),
   },
   {
     path: 'notification-settings',

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudTickets } from '../../services/crud-tickets';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -30,6 +31,7 @@ interface ReportData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HelpdeskReport implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private crudTickets = inject(CrudTickets);
 
   isLoading = signal(true);
@@ -37,7 +39,7 @@ export class HelpdeskReport implements OnInit {
   report = signal<ReportData | null>(null);
 
   ngOnInit() {
-    this.crudTickets.getReport<ReportData>().subscribe({
+    this.crudTickets.getReport<ReportData>().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => {
         this.report.set(data);
         this.isLoading.set(false);

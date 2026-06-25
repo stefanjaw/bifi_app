@@ -31,7 +31,9 @@ import { CommonModule } from '@angular/common';
           <label class="block text-sm font-medium text-gray-700 mb-1">
             XML Firmado <span class="text-red-500">*</span>
           </label>
-          <p class="text-xs text-gray-500 mb-2">El archivo XML de la factura firmado electrónicamente.</p>
+          <p class="text-xs text-gray-500 mb-2"
+            >El archivo XML de la factura firmado electrónicamente.</p
+          >
           <input
             type="file"
             accept=".xml"
@@ -60,9 +62,7 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            PDF (opcional)
-          </label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"> PDF (opcional) </label>
           <p class="text-xs text-gray-500 mb-2">El PDF de la factura para referencia.</p>
           <input
             type="file"

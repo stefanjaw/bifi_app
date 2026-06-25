@@ -89,7 +89,12 @@
           @for (c of data().recentCampaigns; track c._id) {
             <tr class="border-b border-gray-100">
               <td class="py-2">
-                <a class="text-blue-600 hover:underline" [routerLink]="['/email-marketing/campaigns/edit', c._id]">{{ c.name }}</a>
+                <a
+                  class="text-blue-600 hover:underline"
+                  [routerLink]="['/email-marketing/campaigns/edit', c._id]"
+                >
+                  {{ c.name }}
+                </a>
               </td>
               <td class="py-2">{{ c.status }}</td>
               <td class="py-2">{{ c.stats?.sent ?? 0 }}</td>

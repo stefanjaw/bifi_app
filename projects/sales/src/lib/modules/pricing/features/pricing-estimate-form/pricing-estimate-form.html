@@ -33,11 +33,7 @@
           <h3 class="text-base font-semibold mb-3">Pricing Controls</h3>
 
           <div class="flex items-center gap-2 mb-4">
-            <p-checkbox
-              formControlName="dutyFree"
-              [binary]="true"
-              inputId="dutyFree"
-            ></p-checkbox>
+            <p-checkbox formControlName="dutyFree" [binary]="true" inputId="dutyFree"></p-checkbox>
             <label for="dutyFree" class="text-sm text-gray-700">
               Duty-Free Client (e.g. hospital, registered importer)
             </label>
@@ -53,7 +49,9 @@
                   inputId="methodMarkup"
                 ></p-radioButton>
                 <div>
-                  <label for="methodMarkup" class="text-sm font-medium text-gray-800">Mark-up Factor</label>
+                  <label for="methodMarkup" class="text-sm font-medium text-gray-800">
+                    Mark-up Factor
+                  </label>
                   <p class="text-xs text-gray-500">Customer price = Landed cost × Factor</p>
                 </div>
               </div>
@@ -64,8 +62,12 @@
                   inputId="methodMargin"
                 ></p-radioButton>
                 <div>
-                  <label for="methodMargin" class="text-sm font-medium text-gray-800">Gross Margin %</label>
-                  <p class="text-xs text-gray-500">Customer price = Landed cost ÷ (1 − margin/100)</p>
+                  <label for="methodMargin" class="text-sm font-medium text-gray-800">
+                    Gross Margin %
+                  </label>
+                  <p class="text-xs text-gray-500">
+                    Customer price = Landed cost ÷ (1 − margin/100)
+                  </p>
                 </div>
               </div>
             </div>

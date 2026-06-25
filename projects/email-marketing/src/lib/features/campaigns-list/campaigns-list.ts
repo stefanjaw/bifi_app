@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -23,14 +18,7 @@ import { emailCampaignFilters } from '../../libraries/email-campaign-filters';
 @Component({
   selector: 'bifi-app-campaigns-list',
   providers: [provideResourceManager(CrudEmailCampaigns)],
-  imports: [
-    TableLayout,
-    ButtonModule,
-    SearchBar,
-    RouterLink,
-    HasPermission,
-    ButtonsActions,
-  ],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

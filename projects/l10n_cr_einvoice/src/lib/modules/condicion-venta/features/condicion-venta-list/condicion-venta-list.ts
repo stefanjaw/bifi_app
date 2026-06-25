@@ -17,7 +17,12 @@ import { CrudCondicionVenta, condicionVenta } from '../../services/crud-condicio
 const columns: tableColumn<condicionVenta>[] = [
   { field: 'code', title: 'Code', type: 'text', sortable: true },
   { field: 'description', title: 'Description', type: 'text' },
-  { field: 'active', title: 'Active', type: 'text', parseField: (v: boolean) => (v ? 'Active' : 'Inactive') },
+  {
+    field: 'active',
+    title: 'Active',
+    type: 'text',
+    parseField: (v: boolean) => (v ? 'Active' : 'Inactive'),
+  },
 ];
 
 const filters: filter<condicionVenta>[] = [
@@ -41,7 +46,10 @@ const filters: filter<condicionVenta>[] = [
         *bifiAppHasPermission="'cr-einvoice/condicion-venta/create:view'"
       ></p-button>
     </div>
-    <bifi-app-search-bar label="Search by code or description" [searchFilters]="filters"></bifi-app-search-bar>
+    <bifi-app-search-bar
+      label="Search by code or description"
+      [searchFilters]="filters"
+    ></bifi-app-search-bar>
     <bifi-app-table-layout
       [infiniteScroll]="true"
       [columns]="columns"
@@ -71,9 +79,14 @@ export class CondicionVentaList {
   data = this.resourceManager.data;
 
   delete(id: string) {
-    this.crud.delete({ _id: id }).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: res => { if (res) this.data.reload(); },
-    });
+    this.crud
+      .delete({ _id: id })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.data.reload();
+        },
+      });
   }
 
   gotoEdit = (element: condicionVenta) => {

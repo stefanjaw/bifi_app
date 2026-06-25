@@ -15,15 +15,11 @@ export class CrudPurchaseSettings extends ApiRequestManager<purchaseSettings> {
 
   getSettings() {
     return rxResource<purchaseSettings, void>({
-      stream: () =>
-        this._httpClient.get<purchaseSettings>(`${this._apiURL}/${this.endpoint}`),
+      stream: () => this._httpClient.get<purchaseSettings>(`${this._apiURL}/${this.endpoint}`),
     });
   }
 
   putSettings(data: Record<string, any>): Observable<purchaseSettings | undefined> {
-    return this._httpClient.put<purchaseSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<purchaseSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

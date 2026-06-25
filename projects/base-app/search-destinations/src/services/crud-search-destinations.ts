@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
-import {
-  searchDestination,
-  searchDestinationSyncResult,
-} from '../interfaces/search-destination';
+import { searchDestination, searchDestinationSyncResult } from '../interfaces/search-destination';
 
 @Injectable({
   providedIn: 'root',
@@ -36,9 +33,7 @@ export class CrudSearchDestinations extends ApiRequestManager<searchDestination>
    * Sent as JSON (NOT FormData) so the array survives transport and the
    * backend's `Array.isArray` guard passes.
    */
-  sync(
-    destinations: Record<string, any>[]
-  ): Observable<searchDestinationSyncResult> {
+  sync(destinations: Record<string, any>[]): Observable<searchDestinationSyncResult> {
     const url = `${this.formatFullURL()}/sync`;
     return this._httpClient.post<searchDestinationSyncResult>(url, {
       destinations,

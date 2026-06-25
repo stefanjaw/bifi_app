@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
 import { BaseForm } from '@avalantec/base-app/form';
 
@@ -16,6 +17,11 @@ export interface MovementFormModel {
 export class MovementFormService extends BaseForm<MovementFormModel> {
   selectedWarehouseId = signal<string>('');
 
+  private warehouseIdChanges = toSignal(
+    this.form.get('warehouseId')!.valueChanges,
+    { initialValue: '' },
+  );
+
   override createForm() {
     return this.fb.group<MovementFormModel>({
       type: ['IN', [Validators.required]],
@@ -30,7 +36,8 @@ export class MovementFormService extends BaseForm<MovementFormModel> {
 
   constructor() {
     super();
-    this.form.get('warehouseId')!.valueChanges.subscribe(wid => {
+    effect(() => {
+      const wid = this.warehouseIdChanges();
       this.selectedWarehouseId.set(wid ?? '');
       this.form.patchValue({ locationId: '' }, { emitEvent: false });
     });

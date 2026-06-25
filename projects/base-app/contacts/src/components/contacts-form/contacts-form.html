@@ -30,7 +30,6 @@
         [ordinal]="1"
       >
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-
           <!-- ── LEFT: Type / Name / Last Name / DBA ── -->
           <div class="flex flex-col gap-3">
             <bifi-app-form-field>
@@ -59,7 +58,9 @@
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ contactType() === 'individual' ? 'First Name' : 'Name' }}</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ contactType() === 'individual' ? 'First Name' : 'Name' }}
+              </bifi-app-form-label>
               <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
@@ -136,9 +137,8 @@
               </bifi-app-form-uploader>
             </bifi-app-form-field>
           </div>
-
         </div>
-	<bifi-app-plugin-slot name="contacts-form-general-information"></bifi-app-plugin-slot>
+        <bifi-app-plugin-slot name="contacts-form-general-information"></bifi-app-plugin-slot>
       </bifi-app-form-section>
 
       <bifi-app-form-section

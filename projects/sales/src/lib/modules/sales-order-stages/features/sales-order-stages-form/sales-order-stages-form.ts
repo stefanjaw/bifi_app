@@ -17,7 +17,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { CrudSalesOrderStages } from '../../services/crud-sales-order-stages';
-import { SalesOrderStageForm, SalesOrderStageFormModel } from '../../services/sales-order-stage-form';
+import {
+  SalesOrderStageForm,
+  SalesOrderStageFormModel,
+} from '../../services/sales-order-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
