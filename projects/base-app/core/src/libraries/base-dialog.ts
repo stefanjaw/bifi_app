@@ -14,10 +14,12 @@ import { Component, model } from '@angular/core';
 export class BaseDialog {
   protected dialogState = model(false);
 
+  /** Opens the dialog by setting the dialog state to true */
   openDialog() {
     this.dialogState.set(true);
   }
 
+  /** Closes the dialog by setting the dialog state to false */
   closeDialog() {
     this.dialogState.set(false);
   }

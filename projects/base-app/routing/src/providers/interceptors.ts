@@ -13,6 +13,11 @@ interface InterceptorsConfig {
   customInterceptors?: HttpInterceptorFn[];
 }
 
+/**
+ * Configures the standard set of HTTP interceptors for the application.
+ * Includes error handling, notification, and badge-refresh interceptors.
+ * Optionally includes the auth token interceptor and custom interceptors.
+ */
 export function withLibraryInterceptors({
   auth = true,
   customInterceptors = [],

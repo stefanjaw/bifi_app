@@ -23,6 +23,15 @@ import { TypedFormArrayExtension } from '../libraries/extensions/extended-form-a
 export class TypedFormBuilder {
   private fb = inject(NonNullableFormBuilder);
 
+  /**
+   * Creates a typed form group from the given control descriptors.
+   * Supports optional sync and async validators at the group level.
+   * Recursively processes nested groups and arrays.
+   *
+   * @param data - The control descriptors for the form group.
+   * @param options - Optional sync and async validators at the group level.
+   * @returns A typed form group.
+   */
   group<T extends FormGroupLike>(
     data: InputControls<T>,
     options?: {
@@ -42,6 +51,11 @@ export class TypedFormBuilder {
     return group;
   }
 
+  /**
+   * Creates a single typed form control with the given initial value
+   *
+   * @param value - The initial value or control configuration.
+   */
   control<T>(value: PermissiveControlConfig<T>) {
     return this.fb.control(value);
   }

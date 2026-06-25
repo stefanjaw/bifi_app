@@ -46,7 +46,10 @@ export class SearchDestinationsList {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
 
-  /** Soft-delete (custom rows only). */
+  /**
+   * Soft-delete (custom rows only).
+   * @param id - The id of the destination to delete
+   */
   deleteDestination(id: string) {
     this.crud
       .delete({ _id: id })
@@ -58,7 +61,11 @@ export class SearchDestinationsList {
       });
   }
 
-  /** Deactivate without deleting (used for protected system rows). */
+  /**
+   * Deactivate without deleting (used for protected system rows).
+   * @param id - The id of the destination to set active/inactive
+   * @param active - Whether the destination should be active
+   */
   setActive(id: string, active: boolean) {
     this.crud
       .put({ _id: id, data: { active } })

@@ -135,12 +135,21 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     );
   }
 
+  /**
+   * Logs out the current user by clearing the session and calling Firebase signOut
+   * @returns True after successful sign-out
+   */
   async logout(): Promise<boolean> {
     this._session.set(null);
     await signOut(this.authClient);
     return Promise.resolve(true);
   }
 
+  /**
+   * Creates a new user account with email and password via Firebase Auth
+   * @param payload - Object containing email and password
+   * @returns True if registration succeeded
+   */
   register(payload: { email: string; password: string }): Promise<boolean> {
     return this.authenticate({
       method: 'register',
@@ -148,6 +157,11 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     });
   }
 
+  /**
+   * Signs in with email and password via Firebase Auth
+   * @param payload - Object containing email and password
+   * @returns True if login succeeded
+   */
   login(payload: { email: string; password: string }): Promise<boolean> {
     return this.authenticate({
       method: 'login',
@@ -155,16 +169,25 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     });
   }
 
+  /**
+   * Signs in with Google OAuth popup via Firebase Auth
+   * @returns True if sign-in succeeded
+   */
   async signWithGoogle(): Promise<boolean> {
     return this.authenticate({
       method: 'google',
     });
   }
 
+  /** Clears any stored authentication error signal */
   clearError() {
     this.error.set(null);
   }
 
+  /**
+   * Sends a Firebase password reset email to the given address
+   * @param email - The email address to send the reset link to
+   */
   async sendResetPasswordEmail(email: string): Promise<void> {
     return await sendPasswordResetEmail(this.authClient, email);
   }
@@ -211,6 +234,10 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
     }
   }
 
+  /**
+   * Returns true if the user is authenticated (session exists and is not null)
+   * @returns Whether the user is authenticated
+   */
   isAuthenticated(): boolean {
     return this._session() !== null && this._session() !== undefined;
   }

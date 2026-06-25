@@ -19,6 +19,10 @@ export class SearchService {
 
   readonly loaded = this._loaded.asReadonly();
 
+  /**
+   * Fetches and indexes all search destinations from the server. Skips if already loaded unless `force` is true.
+   * @param force - If true, forces a reload even if destinations are already loaded
+   */
   async load(force = false): Promise<void> {
     if (this._loading) return;
     if (this._loaded() && !force) return;
@@ -50,6 +54,11 @@ export class SearchService {
     }
   }
 
+  /**
+   * Performs a fuzzy search against the loaded destinations, filtered by the current user's permissions
+   * @param query - The search query string
+   * @returns An array of grouped search results
+   */
   search(query: string): SearchResultGroup[] {
     this._loaded();
     const currentUser = this.auth.user();

@@ -156,6 +156,51 @@ Libs ship as Angular packages via `ng-packagr` (build → `dist/<name>/` → `np
 - **Smart (`features/`) vs dumb (`ui/`) separation**: dumb components only via `input()`/`output()`, no service injection.
 - **PrimeNG** is the mandatory UI component library.
 - **Import from barrel only** — never from internal paths. E.g. `import { X } from '@avalantec/base-app/core'`.
+- **JSDoc is mandatory** for all public methods and exported symbols (see [Documentation section](#documentation-jsdoc) below).
+
+## Documentation (JSDoc)
+
+**Documenting code is mandatory** — every public method, exported function, interface, type, and class must have a JSDoc comment (`/** ... */`) explaining its purpose, parameters, and return value.
+
+### Rules
+
+- **All public/exported functions and methods** must have JSDoc — includes CRUD service methods, utility functions, component lifecycle hooks, and handler methods (`handleSubmit`, `goBack`, `addLine`, etc.)
+- **Private methods with non-trivial logic** should also have JSDoc
+- **Interfaces and types** should have JSDoc if their purpose is not immediately obvious from the name
+- **Keep JSDoc concise** — one line summary is sufficient for simple methods. **Always include `@param` and `@returns`** when the method has parameters or a non-`void` return value
+- **Never add JSDoc to overrides** of Angular lifecycle hooks (`ngOnInit`, `ngOnDestroy`) or `BaseForm.createForm()` unless the override adds non-trivial behavior
+
+### Examples
+
+```ts
+/**
+ * Fetches all payments registered against a specific invoice
+ * @param invoiceId - The invoice ID
+ * @returns Observable of payment records
+ */
+getPayments(invoiceId: string): Observable<any[]> { ... }
+
+/** Logs out the current user by clearing the session and calling Firebase signOut */
+async logout(): Promise<boolean> { ... }
+
+/**
+ * Evaluates whether a given user has a specific permission on a resource.
+ * Checks user role-based policies, matching resource, action, and type.
+ * @param options.user - The user to check permissions for
+ * @param options.resource - The resource being accessed
+ * @param options.action - Optional CRUD action to check
+ * @param options.type - Optional permission type (view/menu/model)
+ * @param options.context - Additional context for condition evaluation
+ * @returns Whether the user has the required permission
+ */
+hasPermission<TModel = unknown>({ user, resource, type, action, context }): boolean { ... }
+```
+
+### Enforcement
+
+- All new code must include JSDoc per these rules
+- When editing existing code, add missing JSDoc to nearby functions if you touch them
+- Run `ng lint` before committing — JSDoc rules are enforced via ESLint where configured
 
 ## ESLint
 

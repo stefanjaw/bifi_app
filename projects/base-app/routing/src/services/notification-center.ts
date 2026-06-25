@@ -60,6 +60,7 @@ export class NotificationCenterService {
     return url.endsWith('/') ? url.slice(0, -1) : url;
   }
 
+  /** Fetches the latest unread count and recent notifications from the server */
   async refresh(): Promise<void> {
     if (!this.auth.user()) return;
     try {
@@ -84,6 +85,11 @@ export class NotificationCenterService {
     }
   }
 
+  /**
+   * Marks a single notification as read by its id
+   * @param id - The notification id
+   * @returns Promise that resolves when the operation completes
+   */
   async markRead(id: string): Promise<void> {
     try {
       await firstValueFrom(this.http.patch(`${this.base}/notifications/${id}/read`, {}));
@@ -96,6 +102,7 @@ export class NotificationCenterService {
     }
   }
 
+  /** Marks all notifications as seen (read indicators persist for tile badges) */
   async markAllSeen(): Promise<void> {
     try {
       await firstValueFrom(this.http.patch(`${this.base}/notifications/mark-all-seen`, {}));
@@ -107,6 +114,7 @@ export class NotificationCenterService {
     }
   }
 
+  /** Marks all notifications as read and seen, clearing all badge counts */
   async markAllRead(): Promise<void> {
     try {
       await firstValueFrom(this.http.patch(`${this.base}/notifications/mark-all-read`, {}));

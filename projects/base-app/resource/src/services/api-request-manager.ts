@@ -273,6 +273,15 @@ export class ApiRequestManager<T> {
     });
   }
 
+  /**
+   * Returns a reactive resource ref that fetches the total record count.
+   * Supports search params, inactive filtering, and optional sub-endpoint.
+   *
+   * @param searchParams - Optional signal of search parameters to filter the count.
+   * @param specificEndpoint - Optional sub-endpoint to append to the base URL.
+   * @param getInactive - Optional signal to include or exclude inactive records.
+   * @returns A resource ref resolving to the total record count.
+   */
   getCount({
     searchParams,
     specificEndpoint = '',

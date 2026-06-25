@@ -12,6 +12,11 @@ export class CrudJournalEntries extends ApiRequestManager<journalEntry> {
     super.endpoint = 'accounting/journal-entries';
   }
 
+  /**
+   * Posts a journal entry, making it final and non-editable
+   * @param id - The journal entry ID
+   * @returns Observable of the posted journal entry
+   */
   postEntry(id: string): Observable<journalEntry | undefined> {
     return this._httpClient.put<journalEntry | undefined>(`${this.formatFullURL()}/${id}/post`, {});
   }

@@ -113,6 +113,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
   /**
    * Clears the line items FormArray and re-populates it from `items`,
    * also restoring the per-line taxIds. Use this when loading an existing order.
+   * @param items - Array of line item data with optional taxIds per line
    */
   initLineItems(items: Array<Partial<LineItemFormModel> & { taxIds?: string[] }>) {
     const arr = this.form.controls.lineItems;

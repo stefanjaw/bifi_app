@@ -13,6 +13,12 @@ export class CrudAssetRoster extends ApiRequestManager<assetRoster> {
     super.endpoint = 'asset-rosters';
   }
 
+  /**
+   * Sends documents and an optional AI question for document analysis
+   * @param files - The document files to analyze
+   * @param question - Optional AI question to ask about the documents
+   * @returns Observable of the document analysis result
+   */
   readDocuments(files: FormUploaderFile[], question?: string): Observable<any> {
     return this.post({
       data: {

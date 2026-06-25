@@ -22,10 +22,12 @@ export interface TotalsPreview {
   grandTotal: number;
 }
 
+/** Multiplies quantity by unit price, rounded to 2 decimal places */
 export function calculateLineItemTotal(quantity: number, unitPrice: number): number {
   return Number((quantity * unitPrice).toFixed(2));
 }
 
+/** Sums the line item totals across an array of line items */
 export function calculateSubtotal(lineItems: LineItemInput[]): number {
   const raw = lineItems.reduce((sum, item) => {
     return sum + calculateLineItemTotal(Number(item.quantity ?? 0), Number(item.unitPrice ?? 0));

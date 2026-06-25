@@ -17,6 +17,7 @@ export class CrudSearchDestinations extends ApiRequestManager<searchDestination>
    * Imperative fetch of every destination (active AND inactive). Used by the
    * "Sync from menu" merge so it can match against existing rows by route and
    * never create duplicates or clobber deactivated rows.
+   * @returns Observable of all search destinations
    */
   getAllDestinations(): Observable<searchDestination[]> {
     const url = this.formatFullURL();
@@ -32,6 +33,8 @@ export class CrudSearchDestinations extends ApiRequestManager<searchDestination>
    * Reconcile a provided list of destinations into the backend collection.
    * Sent as JSON (NOT FormData) so the array survives transport and the
    * backend's `Array.isArray` guard passes.
+   * @param destinations - The list of destinations to sync
+   * @returns Observable of the sync result
    */
   sync(destinations: Record<string, any>[]): Observable<searchDestinationSyncResult> {
     const url = `${this.formatFullURL()}/sync`;

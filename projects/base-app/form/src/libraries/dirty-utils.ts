@@ -88,6 +88,9 @@ export interface FormErrorEntry {
 /**
  * Converts a camelCase string to Title Case with spaces.
  * E.g. "firstName" → "First Name", "roles" → "Roles"
+ *
+ * @param str - The camelCase string to convert.
+ * @returns The string converted to Title Case with spaces.
  */
 function toTitleCase(str: string): string {
   return str

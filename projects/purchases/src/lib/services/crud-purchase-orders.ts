@@ -28,12 +28,23 @@ export class CrudPurchaseOrders extends ApiRequestManager<purchaseOrder> {
     return super.getWithPagination({ ...params, getInactive: null });
   }
 
+  /**
+   * Updates the status of a purchase order (e.g. confirmed, sent, received)
+   * @param id - The purchase order ID
+   * @param status - The new status to set
+   * @returns Observable of the updated purchase order
+   */
   updateStatus(id: string, status: purchaseOrderStatus): Observable<purchaseOrder> {
     return this._httpClient.patch<purchaseOrder>(`${this._apiURL}/${this.endpoint}/${id}/status`, {
       status,
     });
   }
 
+  /**
+   * Downloads the purchase order PDF as a file
+   * @param id - The purchase order ID
+   * @returns Observable that completes after the PDF is downloaded and opened
+   */
   downloadPdf(id: string): Observable<void> {
     const url = `${this._apiURL}/${this.endpoint}/${id}/pdf`;
     return this._httpClient.get(url, { responseType: 'blob' }).pipe(

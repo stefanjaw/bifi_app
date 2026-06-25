@@ -13,6 +13,7 @@ export class CrudSalesSettings extends ApiRequestManager<salesSettings> {
     super.endpoint = 'sales/settings';
   }
 
+  /** Returns a reactive resource ref that fetches the sales settings */
   getSettings() {
     return rxResource<salesSettings, void>({
       stream: () =>
@@ -22,6 +23,11 @@ export class CrudSalesSettings extends ApiRequestManager<salesSettings> {
     });
   }
 
+  /**
+   * Saves updated sales settings to the server
+   * @param data - The sales settings data to save
+   * @returns Observable of the saved sales settings
+   */
   putSettings(data: Record<string, any>): Observable<salesSettings | undefined> {
     return this._httpClient.put<salesSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }

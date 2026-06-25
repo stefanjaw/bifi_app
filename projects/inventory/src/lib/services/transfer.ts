@@ -21,6 +21,10 @@ export class TransferService extends ApiRequestManager<any> {
     super.endpoint = 'inventory/transfers';
   }
 
+  /**
+   * Initiates an inventory transfer between warehouse locations
+   * @param data - The transfer payload including product, source/destination locations, and quantity
+   */
   transfer(data: TransferPayload) {
     return this.post({ data: data as Record<string, any> });
   }

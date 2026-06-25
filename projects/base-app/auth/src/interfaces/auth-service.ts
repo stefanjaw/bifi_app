@@ -39,6 +39,16 @@ export abstract class IAuthService<
 
   private readonly rbacEnable = inject(LIBRARY_CONFIG).rbacEnable;
 
+  /**
+   * Creates a reactive signal that evaluates whether the current user has a given permission.
+   * Accepts signals or static values for resource, action, type, resourceData, and context.
+   * @param options.resource - The resource to check
+   * @param options.action - The action to check (read/create/update/delete)
+   * @param options.type - The permission type (view/menu/model), defaults to 'model'
+   * @param options.resourceData - Optional resource data for condition evaluation
+   * @param options.context - Optional context for condition evaluation
+   * @returns A signal that emits true/false reactively based on user policies
+   */
   createPermissionSignal<TModel = unknown>({
     resource,
     action,
@@ -76,20 +86,39 @@ export abstract class IAuthService<
     });
   }
 
-  //#region Permission utils
+  /**
+   * Checks if a string is a valid CRUD action type
+   * @param action - The string to check
+   * @returns True if the action is read/create/update/delete
+   */
   isPermissionAction(action: string) {
     return ['read', 'create', 'update', 'delete'].includes(action);
   }
 
+  /**
+   * Checks if a string is a valid permission scope type
+   * @param type - The string to check
+   * @returns True if the type is view/menu/model
+   */
   isPermissionType(type: string) {
     return ['view', 'menu', 'model'].includes(type);
   }
 
+  /**
+   * Extracts the resource name from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:read")
+   * @returns The resource name, or undefined if invalid
+   */
   getPermissionResource(permission: permission | undefined): resource | undefined {
     const split = permission?.split(':');
     return split?.[0];
   }
 
+  /**
+   * Extracts the action (read/create/update/delete) from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:read")
+   * @returns The action, or undefined if not a valid action
+   */
   getPermissionAction(permission: permission | undefined): policyAction | undefined {
     const split = permission?.split(':');
 
@@ -99,6 +128,11 @@ export abstract class IAuthService<
     else return undefined;
   }
 
+  /**
+   * Extracts the type (view/menu/model) from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:view" or "resource:model:read")
+   * @returns The permission type, or undefined if not a valid type
+   */
   getPermissionType(permission: permission | undefined): policyType | undefined {
     const split = permission?.split(':');
 
@@ -109,8 +143,20 @@ export abstract class IAuthService<
     else if (segmentB && this.isPermissionType(segmentB)) return segmentB as policyType;
     else return undefined;
   }
-  //#endregion
 
+  /**
+   * Evaluates whether a given user has a specific permission on a resource.
+   * Checks user role-based policies, matching resource, action, and type.
+   * If RBAC is disabled globally, always returns true.
+   * If conditions are defined on the policy, evaluates them against resourceData.
+   * @param options.user - The user to check permissions for
+   * @param options.resource - The resource being accessed
+   * @param options.action - Optional CRUD action to check
+   * @param options.type - Optional permission type (view/menu/model)
+   * @param options.resourceData - Optional resource data for condition evaluation
+   * @param options.context - Additional context for condition evaluation
+   * @returns Whether the user has the required permission
+   */
   hasPermission<TModel = unknown>({
     user,
     resource,

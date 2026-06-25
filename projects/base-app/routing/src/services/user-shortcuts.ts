@@ -18,6 +18,7 @@ export class UserShortcutsService {
 
   shortcuts = signal<ShortcutItem[]>([]);
 
+  /** Loads the current user's shortcuts from the server */
   loadShortcuts(): void {
     this.http.get<{ shortcuts: ShortcutItem[] }>(`${this.apiURL}/user-shortcuts/me`).subscribe({
       next: res => this.shortcuts.set(res?.shortcuts ?? []),
@@ -25,6 +26,10 @@ export class UserShortcutsService {
     });
   }
 
+  /**
+   * Adds a new shortcut. Skips if a shortcut with the same route already exists. Persists to server.
+   * @param item - The shortcut item to add
+   */
   addShortcut(item: ShortcutItem): void {
     const current = this.shortcuts();
     const key = Array.isArray(item.routerLink) ? item.routerLink.join('/') : item.routerLink;
@@ -38,18 +43,31 @@ export class UserShortcutsService {
     this.persist(updated);
   }
 
+  /**
+   * Removes a shortcut by its array index
+   * @param index - The index of the shortcut to remove
+   */
   removeShortcut(index: number): void {
     const updated = this.shortcuts().filter((_, i) => i !== index);
     this.shortcuts.set(updated);
     this.persist(updated);
   }
 
+  /**
+   * Removes a shortcut matching the given item by its routerLink. No-op if not found.
+   * @param item - The shortcut item to remove
+   */
   removeShortcutByItem(item: ShortcutItem): void {
     const key = (item.routerLink ?? []).join('/');
     const index = this.shortcuts().findIndex(s => (s.routerLink ?? []).join('/') === key);
     if (index !== -1) this.removeShortcut(index);
   }
 
+  /**
+   * Moves a shortcut from one index to another. No-op if indices are the same or out of bounds.
+   * @param fromIndex - The current index of the shortcut
+   * @param toIndex - The target index to move the shortcut to
+   */
   moveShortcut(fromIndex: number, toIndex: number): void {
     const items = [...this.shortcuts()];
     if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;

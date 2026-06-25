@@ -133,6 +133,8 @@ export class PoliciesForm implements OnInit {
    * Add a new condition to the form.
    *
    * This will add a new condition to the form with default values.
+   *
+   * @param condition - Optional condition to add. Defaults to undefined.
    */
   addCondition(condition: condition<string> | undefined = undefined) {
     this.formService.createCondition(condition);

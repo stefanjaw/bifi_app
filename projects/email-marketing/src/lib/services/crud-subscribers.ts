@@ -12,6 +12,12 @@ export class CrudSubscribers extends ApiRequestManager<subscriber> {
     super.endpoint = 'subscribers';
   }
 
+  /**
+   * Imports contacts from the global contacts directory as subscribers for a mailing list
+   * @param listId - The mailing list ID to import into
+   * @param contactIds - Optional array of contact IDs to import; imports all if omitted
+   * @returns Observable with imported and skipped counts
+   */
   importFromContacts(
     listId: string,
     contactIds?: string[]
