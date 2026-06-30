@@ -1,0 +1,32 @@
+<h1 class="text-2xl font-bold mb-4">Languages</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add Language"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'languages/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  label="Search by locale or name"
+  [searchFilters]="languageFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="languageColumns"
+  [data]="languages"
+  [onClickRow]="goToEdit"
+  clickRowPermission="languages/update:view"
+>
+  <ng-template #actions let-element>
+    <bifi-app-buttons-actions
+      (editClicked)="goToEdit(element)"
+      (deleteClicked)="deleteLanguage(element._id)"
+      resource="languages"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>

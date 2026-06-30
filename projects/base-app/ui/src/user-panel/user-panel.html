@@ -1,11 +1,11 @@
-<div class="m-0">
-  <p-menu #userMenu [popup]="true" [model]="items"></p-menu>
+<div class="m-0 flex items-center gap-2">
+  <p-menu #userMenu [popup]="true" [model]="items()"></p-menu>
 
   <p-button
     class="p-0 m-0"
     aria-label="user panel"
     variant="text"
-    (click)="userMenu.toggle($event)"
+    (click)="openMenu($event)"
   >
     <p-avatar
       [image]="pictureUrl()"

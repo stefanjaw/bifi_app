@@ -1,26 +1,39 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { ParamMap } from '@angular/router';
 import { FORM_ERROR_TRANSLATIONS } from '../libraries/providers/form-errors';
 
+/** Minimal translation interface required by the form layer. */
+export interface ITranslationApi {
+  translate(key: string, params?: Record<string, any>, scope?: string): string;
+}
+
+/**
+ * Injection token for the translation service.
+ * Provided by @avalantec/base-app/translation's provideTranslationRoot().
+ * Kept here (in form) to avoid a circular dependency between form ↔ translation.
+ */
+export const TRANSLATION_API = new InjectionToken<ITranslationApi>('TRANSLATION_API');
+
+/**
+ * Bridge between the form validation layer and the backend-driven TranslationService.
+ * Falls back to the static FORM_ERROR_TRANSLATIONS map when no backend translation is found.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class FormTranslation {
-  // private translocoService = inject(TranslocoService);
-  private destroyRef = inject(DestroyRef);
+  private translationApi = inject(TRANSLATION_API, { optional: true });
   private defaultTranslations = inject(FORM_ERROR_TRANSLATIONS);
 
-  private memo = new Map<string, any>();
-
-  // constructor() {
-  //   this.translocoService
-  //     .selectTranslation('core')
-  //     .pipe(takeUntilDestroyed(this.destroyRef))
-  //     .subscribe(v => {
-  //       console.log('form validation loaded', v);
-  //     });
-  // }
-
+  /**
+   * Returns the localized error message for a form validation errorKey.
+   * First tries the backend translation under `${prefix}.${errorKey}`;
+   * falls back to the static default map.
+   *
+   * @param prefix - Dot-notation key prefix (default: 'core.form.validation')
+   * @param errorKey - The Angular form validation error name
+   * @param params - Optional parameters passed to the message function
+   */
   getErrorMessage({
     prefix = 'core.form.validation',
     errorKey,
@@ -33,7 +46,6 @@ export class FormTranslation {
     const translation = this.translate(`${prefix}.${errorKey}`, params);
 
     if (!translation) {
-      // Fallback: use default error messages
       const message = this.defaultTranslations[errorKey];
       if (typeof message === 'string') {
         return message;
@@ -46,22 +58,15 @@ export class FormTranslation {
   }
 
   /**
-   * Translates a given key using the TranslocoService, with optional parameters.
-   * Utilizes memoization to cache translations and improve performance.
+   * Translates a dotted key via TranslationService with the 'core' scope.
+   * Returns null if the translation key is returned unchanged (i.e. not found in backend).
    *
-   * @param key - The translation key to be translated.
-   * @param params - An optional object containing parameters to be used in the translation.
-   * @returns The translated string corresponding to the key and parameters.
+   * @param key - The translation key to look up
+   * @param params - Optional parameter map for placeholder substitution
    */
-
-  protected translate(_key: string, _params?: ParamMap) {
-    // const memoKey = params ? `${key}${JSON.stringify(params)}` : key;
-
-    // if (!this.memo.has(memoKey)) {
-    //   this.memo.set(memoKey, this.translocoService.translate(key, params));
-    // }
-
-    // return this.memo.get(memoKey);
-    return null;
+  protected translate(key: string, params?: ParamMap): string | null {
+    if (!this.translationApi) return null;
+    const result = this.translationApi.translate(key, params as any, 'core');
+    return result === key ? null : result;
   }
 }

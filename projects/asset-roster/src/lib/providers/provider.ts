@@ -1,6 +1,8 @@
 import { EnvironmentProviders, provideAppInitializer, Provider } from '@angular/core';
 import { initializeAssetRoster } from './initializer/init';
+import { provideTranslations } from '@avalantec/base-app/translation';
 
+/** Registers the Asset Roster module and pre-fetches its translation scope */
 export function provideAssetRoster(): EnvironmentProviders | Provider {
-  return [provideAppInitializer(initializeAssetRoster)];
+  return [provideAppInitializer(initializeAssetRoster), provideTranslations('asset-roster')];
 }

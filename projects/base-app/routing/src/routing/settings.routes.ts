@@ -76,6 +76,18 @@ export const SETTINGS_ROUTES: Routes = [
       import('@avalantec/base-app/notification-settings').then(m => m.NOTIFICATION_SETTINGS_ROUTES),
   },
   {
+    path: 'translations',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@avalantec/base-app/translation').then(m => m.TRANSLATION_ROUTES),
+  },
+  {
+    path: 'languages',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@avalantec/base-app/translation').then(m => m.LANGUAGE_ROUTES),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },
