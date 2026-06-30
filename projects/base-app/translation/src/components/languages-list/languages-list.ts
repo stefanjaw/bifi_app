@@ -55,4 +55,9 @@ export class LanguagesList {
       next: () => this.languages.reload(),
     });
   }
+
+
+  downloadCsv() {
+    this.crudLanguages.exportCSV();
+  }
 }

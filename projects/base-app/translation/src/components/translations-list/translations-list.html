@@ -8,6 +8,13 @@
     [routerLink]="['../create']"
     *bifiAppHasPermission="'translations/create:view'"
   ></p-button>
+  <p-button
+    label="Export CSV"
+    severity="secondary"
+    icon="pi pi-download"
+    (click)="exportCsv()"
+    *bifiAppHasPermission="'translations/export:read:model'"
+  ></p-button>
 </div>
 
 <bifi-app-search-bar

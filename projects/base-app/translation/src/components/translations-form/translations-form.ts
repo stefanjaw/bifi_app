@@ -12,7 +12,6 @@ import {
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
-import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,7 +28,7 @@ import { TranslationFormModel } from '../../interfaces/translation';
 @Component({
   selector: 'bifi-app-translations-form',
   providers: [provideResourceManager(CrudTranslations)],
-  imports: [FormModule, ReactiveFormsModule, InputText, Button, ProgressBarModule, ToggleSwitchModule],
+  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule, ToggleSwitchModule],
   templateUrl: './translations-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

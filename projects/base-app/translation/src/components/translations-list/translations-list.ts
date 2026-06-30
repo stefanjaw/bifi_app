@@ -55,4 +55,8 @@ export class TranslationsList {
       next: () => this.translations.reload(),
     });
   }
+
+  exportCsv() {
+    this.crudTranslations.exportCSV();
+  }
 }

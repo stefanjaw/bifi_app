@@ -8,6 +8,7 @@ import {
   EnvironmentInjector,
   inject,
   signal,
+  untracked,
   ViewChild,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -82,7 +83,7 @@ export class UserPanel {
     // Apply the user's saved language preference on login/refresh
     effect(() => {
       const savedLocale = this.user()?.language;
-      if (savedLocale && savedLocale !== this.translationService.activeLanguage()) {
+      if (savedLocale && savedLocale !== untracked(() => this.translationService.activeLanguage())) {
         this.translationService.setLanguage(savedLocale);
       }
     });
@@ -148,7 +149,7 @@ export class UserPanel {
       },
       { separator: true },
       {
-        label: 'Language',
+        label: 'Languages',
         disabled: true,
         style: {
           'font-size': '0.7rem',
@@ -159,7 +160,7 @@ export class UserPanel {
       },
       ...langs.map(lang => ({
         label: lang.nativeName,
-        icon: lang.locale === (u?.language ?? active) ? 'pi pi-check' : '',
+        icon: lang.locale === active ? 'pi pi-circle-on' : 'pi pi-circle-off',
         command: () => this.selectLanguage(lang.locale),
       })),
     ];
