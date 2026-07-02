@@ -78,14 +78,12 @@ export const SETTINGS_ROUTES: Routes = [
   {
     path: 'translations',
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('@avalantec/base-app/translation').then(m => m.TRANSLATION_ROUTES),
+    loadChildren: () => import('@avalantec/base-app/translation').then(m => m.TRANSLATION_ROUTES),
   },
   {
     path: 'languages',
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('@avalantec/base-app/translation').then(m => m.LANGUAGE_ROUTES),
+    loadChildren: () => import('@avalantec/base-app/translation').then(m => m.LANGUAGE_ROUTES),
   },
   {
     path: 'profile',

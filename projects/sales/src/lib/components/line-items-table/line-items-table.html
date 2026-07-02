@@ -108,6 +108,7 @@
               class="border-b p-0"
             >
               <button
+                *bifiAppHasPermission="'sales-orders:update:model'"
                 type="button"
                 class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
                 (click)="addItem()"
@@ -266,6 +267,7 @@
             @if (!readonly()) {
               <td class="p-2 border-b">
                 <p-button
+                  *bifiAppHasPermission="'sales-orders:update:model'"
                   icon="pi pi-trash"
                   severity="danger"
                   size="small"
@@ -305,6 +307,7 @@
               class="border-t p-0"
             >
               <button
+                *bifiAppHasPermission="'sales-orders:update:model'"
                 type="button"
                 class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
                 (click)="addItem()"

@@ -109,8 +109,10 @@ export const SALES_ROUTES: Routes = [
       },
       {
         path: 'list',
+        canActivate: [permissionGuard],
         loadComponent: () =>
           import('../features/targets/targets-list/targets-list').then(c => c.TargetsList),
+        data: { resource: 'sales/targets/list' },
       },
       {
         path: 'create',

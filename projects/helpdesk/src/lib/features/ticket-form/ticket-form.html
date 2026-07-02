@@ -171,6 +171,7 @@
                   >
                     <span>{{ getFollowerName(ctrl.value) }}</span>
                     <button
+                      *bifiAppHasPermission="'tickets:update:model'"
                       type="button"
                       class="ml-1 text-gray-500 hover:text-gray-800"
                       (click)="removeFollower($index)"
@@ -250,6 +251,7 @@
 
                 <span>{{ getTaskName(taskId) }}</span>
                 <button
+                  *bifiAppHasPermission="'tickets:update:model'"
                   type="button"
                   class="ml-1 text-blue-500 hover:text-blue-800"
                   (click)="removeTask(taskId)"

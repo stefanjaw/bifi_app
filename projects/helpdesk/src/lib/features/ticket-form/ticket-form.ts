@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
@@ -41,6 +42,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     ReactiveFormsModule,
     InputText,
     ButtonModule,
+    HasPermission,
     SelectModule,
     TextareaModule,
     ProgressBarModule,

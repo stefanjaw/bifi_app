@@ -24,6 +24,7 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { ColWidthManager } from '@avalantec/base-app/core';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 const DEFAULT_WIDTHS: Record<string, number> = {
   sku: 96,
@@ -46,6 +47,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
     MultiSelectModule,
     FormsModule,
     CurrencyPipe,
+    HasPermission,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,

@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
@@ -68,6 +69,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     PopoverModule,
     TasksListView,
     GanttView,
+    HasPermission,
     CreateTasksFormDialog,
     UpdateTasksFormDialog,
     SearchBar,

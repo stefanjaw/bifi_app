@@ -19,6 +19,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/d
 import { product } from '@avalantec/inventory';
 import { SalesOrderForm } from '../../services/sales-order-form';
 import { ColWidthManager } from '@avalantec/base-app/core';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 const DEFAULT_WIDTHS: Record<string, number> = {
   sku: 96,
@@ -42,6 +43,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
     SelectModule,
     MultiSelectModule,
     CurrencyPipe,
+    HasPermission,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
