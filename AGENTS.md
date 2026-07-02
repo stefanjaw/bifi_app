@@ -8,7 +8,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 
 - **app** (only one): `projects/asset-roster-demo` — serves on `:4200`
 - **libs** (14): `base-app`, `asset-roster`, `l10n_cr_einvoice`, `calendar`, `website`, `helpdesk`, `tasks`, `projects`, `aduanix`, `sales`, `purchases`, `inventory`, `accounting`, `email-marketing`
-- `base-app` is a **multi-entrypoint library** with 26 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
+- `base-app` is a **multi-entrypoint library** with 27 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
 - All libs expose via `@avalantec/<name>` path aliases from root `tsconfig.json`
 
 ## Base-App Capabilities
@@ -27,6 +27,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
 | `search` | `SearchService`, `SearchDestination`, `SearchResultGroup` | `ui` (GlobalSearch), `search-destinations` (list/form) |
+| `translation` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
 
 ### Feature CRUD Modules (Settings)
 
@@ -51,16 +52,138 @@ All loaded lazily via `SETTINGS_ROUTES` in `routing`. They share the same patter
 | `drive-settings` | Drive/file storage configuration | Only internal (settings routes) |
 | `notification-settings` | Notification settings | Only internal (settings routes) |
 | `bug-reporting` | Bug report dialog | Internal (`ui.UserPanel`) |
+| `languages` (in `translation`) | Language management (locale, name, nativeName, active) | Internal (Settings → Languages) — `TranslationService` consumes `languageRecord` |
 
 ### Shared Interfaces
 
 | Entrypoint | Interfaces |
 |---|---|
-| `interfaces` | `user`, `contact`, `company`, `country`, `role`, `policy<T,R>`, `template`, `reporting`, `resource`, `policyAction`, `conditionOperator` |
+| `interfaces` | `user` (includes `language?: string`), `contact`, `company`, `country`, `role`, `policy<T,R>`, `template`, `reporting`, `resource`, `policyAction`, `conditionOperator` |
+| `translation` | `languageRecord`, `LanguageFormModel` |
 
 ### Key Rule
 
 **Before adding CRUD services, list components, form logic, or settings pages in a feature lib, verify that `@avalantec/base-app` doesn't already provide it.** Re-use the existing CRUD services (`CrudUsers`, `CrudContacts`, `CrudCompanies`, `CrudCountries`, `CrudCurrencies`, `CrudTaxes`, `CrudSequences`, etc.) and base-app UI components (`BaseDialog`, `FormModule`, `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `FileResolver`, reporting download dialog, etc.) rather than re-implementing similar functionality.
+
+## Permission & Policy System
+
+The app uses a three-layer RBAC/PBAC model: Policy → Role → User.
+
+### Data Model
+
+- **`policy<TResource,TModel>`** — defines a `resource` (e.g. `"asset-rosters"`), `type` (`model`/`menu`/`view`), and optional `conditions[]` for row-level access
+- **`role`** — bundles multiple policies with specific CRUD `actions` per policy (`create`/`read`/`update`/`delete`)
+- **`user`** — has an array of `roles[]`; permission evaluation flattens `user.roles.flatMap(r => r.policies)`
+
+### Permission String Format
+
+```
+resource               → e.g. "asset-rosters"                        (any permission on resource)
+resource:action        → e.g. "asset-rosters:read"                   (action filter)
+resource:type          → e.g. "asset-rosters:view"                   (type filter)
+resource:action:type   → e.g. "asset-rosters:create:model"           (action + type filter)
+```
+
+### Policy Types
+
+| Type | Enforced Backend | Used for |
+|---|---|---|
+| `model` | Yes | CRUD operations on data (form submits, API calls). Always use `resource:action:model` |
+| `menu` | No | Menu/navigation item visibility. Always use `resource/menu` |
+| `view` | No | Page/view-level access. Used by `permissionGuard` and `clickRowPermission`. Always use `resource/view` or `resource/action:view` |
+
+### Route Protection (permissionGuard)
+
+Every route **MUST** include `permissionGuard` in `canActivate` and a `data.resource` property:
+
+```ts
+{
+  path: 'list',
+  loadComponent: () => ...,
+  canActivate: [permissionGuard],
+  data: { resource: 'facilities/list' },
+}
+```
+
+### Resource Naming Convention
+
+| Scope | Pattern | Example |
+|---|---|---|
+| Route (list) | `module/list` | `facilities/list` |
+| Route (create) | `module/create` | `facilities/create` |
+| Route (update) | `module/update` | `facilities/update` |
+| CRUD action | `module:action:model` | `asset-rosters:create:model` |
+| Button/view row | `module/action:view` | `asset-rosters/update:view` |
+| Menu item | `module/menu` | `asset-roster/menu` |
+| Settings sub-menu | `module/settings/menu` | `asset-roster/settings/menu` |
+| Export | `module/export:action:type` | `asset-rosters/export:read:model` |
+| Import | `module/import:action:type` | `asset-rosters/import:create:model` |
+
+### UI Protection (HasPermission Directive)
+
+Use `*bifiAppHasPermission` on any element that needs permission gating:
+
+```html
+<button *bifiAppHasPermission="'asset-rosters:create:model'">Add New Asset</button>
+<div *bifiAppHasPermission="'asset-rosters/update:view'; resourceData: asset; context: { department: 'ops' }">
+  Edit Section
+</div>
+```
+
+The directive is structural (like `*ngIf`). It accepts:
+- **`permission`** (required, positional via `*bifiAppHasPermission="'...'"`) — colon-delimited string
+- **`resourceData`** (optional) — the actual model data for condition evaluation
+- **`context`** (optional) — extra context for template condition resolution (`{{context.*}}`)
+
+### Table Row Click Protection
+
+Pass `clickRowPermission` to `<bifi-app-table-layout>` to gate row navigation:
+
+```html
+<bifi-app-table-layout
+  clickRowPermission="asset-rosters/update:view"
+  ...>
+</bifi-app-table-layout>
+```
+
+### ButtonsActions Component
+
+The `<bifi-app-buttons-actions>` component automatically checks edit/delete permissions. Pass `resource` to enable it:
+
+```html
+<bifi-app-buttons-actions [resource]="'asset-rosters'" [element]="row" />
+```
+
+Built-in permission checks:
+- Edit button: `${resource}/update:view`
+- Delete button: `${resource}:delete:model`
+
+### Menu Registration
+
+When registering menu items via `MainMenuManager.addItems()`, always include a `resource` property:
+
+```ts
+{
+  label: 'Asset Roster',
+  icon: 'pi pi-box',
+  route: '/equipment/list',
+  resource: 'asset-roster/menu',
+}
+```
+
+The Scaffold and MainMenu components automatically apply `*bifiAppHasPermission="resource + ':menu'"` to each item.
+
+### Adding a New Module: Permission Checklist
+
+1. **Create policies** in Settings → Policies (one per resource, or per distinct type per resource)
+2. **Create a role** in Settings → Roles with the policies + CRUD actions
+3. **Assign the role** to users in Settings → Users
+4. **Menu registration** — add `resource: 'module/menu'` to menu items
+5. **Routes** — add `canActivate: [permissionGuard]` + `data: { resource: 'module/...' }` on every route
+6. **Templates** — add `*bifiAppHasPermission` on all action buttons (create, edit, delete, import, export)
+7. **TableLayout** — add `clickRowPermission="module/update:view"` if rows are clickable
+8. **ButtonsActions** — add `resource` prop for built-in edit/delete gating
+9. **Backend** — ensure the corresponding backend route's `BaseRoutes` passes the same resource name to `authorizeMiddleware`
 
 ## l10n_cr_einvoice — Costa Rica E-Invoice Localization Plugin
 
@@ -144,6 +267,8 @@ Docker multi-stage build: `node:22` build stage → `nginx:stable` deploy. The c
 Each feature lib registers itself via a `provide*()` function (e.g. `provideSales()`) that calls `MainMenuManager.addItems()` and `MainRoutingManager.addRouting()` from `@avalantec/base-app/routing`. These are called in the app's `app.config.ts` providers.
 
 Libs ship as Angular packages via `ng-packagr` (build → `dist/<name>/` → `npm pack` → `.tgz`).
+
+Each `provide*()` should also include `provideTranslations('scope')` from `@avalantec/base-app/translation` to pre-fetch translations for that lib's scope at bootstrap. See `projects/tasks/src/lib/providers/provider.ts` for the reference pattern.
 
 ## Code Conventions (from base-app docs)
 
