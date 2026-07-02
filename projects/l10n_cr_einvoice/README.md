@@ -46,13 +46,13 @@ User → EInvoice Form → Backend (build JSON) → Hacienda API
 
 ### Registered Plugins
 
-| Plugin | Slot | Form extended | Fields added |
-|--------|------|---------------|--------------|
-| `ContactCrPluginComponent` | `contacts-form-general-information` | `ContactsForm` | `crVatType`, `commercialName`, `crEconomicActivityCodes[]` |
-| `ProductCrPluginComponent` | `product-form-general-information` | `ProductFormService` | `codigoComercial`, `productKind` |
-| `UomCrPluginComponent` | `uom-form-general-information` | `UomFormService` | `crUnidadMedida` |
-| `DiscountCrPluginComponent` | `discount-form-general-information` | `DiscountFormService` | `crNaturalezaDescuento` |
-| `TaxCrPluginComponent` | `tax-form-general-information` | `TaxFormService` | `crCodigo`, `crCodigoTarifa`, `crTarifa` |
+| Plugin                      | Slot                                | Form extended         | Fields added                                               |
+| --------------------------- | ----------------------------------- | --------------------- | ---------------------------------------------------------- |
+| `ContactCrPluginComponent`  | `contacts-form-general-information` | `ContactsForm`        | `crVatType`, `commercialName`, `crEconomicActivityCodes[]` |
+| `ProductCrPluginComponent`  | `product-form-general-information`  | `ProductFormService`  | `codigoComercial`, `productKind`                           |
+| `UomCrPluginComponent`      | `uom-form-general-information`      | `UomFormService`      | `crUnidadMedida`                                           |
+| `DiscountCrPluginComponent` | `discount-form-general-information` | `DiscountFormService` | `crNaturalezaDescuento`                                    |
+| `TaxCrPluginComponent`      | `tax-form-general-information`      | `TaxFormService`      | `crCodigo`, `crCodigoTarifa`, `crTarifa`                   |
 
 The backend models for Contact, Product, UoM, Tax, and Discount were each extended with these fields — no new backend models were created. The fields live on the existing Mongoose schemas and are persisted transparently alongside the base model fields.
 
@@ -66,11 +66,11 @@ The backend models for Contact, Product, UoM, Tax, and Discount were each extend
 
 Hacienda catalog for sale conditions (Nota 5).
 
-| | |
-|---|---|
-| **Frontend route** | `/settings/cr-einvoice/condicion-venta` (list, create, edit) |
-| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/condicion-venta` |
-| **Fields** | `code` (String — Hacienda code, e.g. `"01"`), `description` (String, e.g. `"Contado"`), `active` (Boolean) |
+|                       |                                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Frontend route**    | `/settings/cr-einvoice/condicion-venta` (list, create, edit)                                               |
+| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/condicion-venta`                                               |
+| **Fields**            | `code` (String — Hacienda code, e.g. `"01"`), `description` (String, e.g. `"Contado"`), `active` (Boolean) |
 
 Seeded codes: `01` Contado, `02` Crédito, `03` Consignación, `04` Apartado, `05` Arrendamiento con opción de compra, `06` Arrendamiento en función financiera, `07` Cobro a favor de un tercero, `08` Servicios prestados al Estado, `09` Pago del servicios prestado al Estado, `10` Venta a crédito a organismos internacionales, `11` Pago a organismos internacionales, `99` Otros.
 
@@ -80,11 +80,11 @@ Seeded codes: `01` Contado, `02` Crédito, `03` Consignación, `04` Apartado, `0
 
 Hacienda catalog for payment methods (Nota 6).
 
-| | |
-|---|---|
-| **Frontend route** | `/settings/cr-einvoice/medio-pago` (list, create, edit) |
-| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/medio-pago` |
-| **Fields** | `code` (String), `description` (String), `active` (Boolean) |
+|                       |                                                             |
+| --------------------- | ----------------------------------------------------------- |
+| **Frontend route**    | `/settings/cr-einvoice/medio-pago` (list, create, edit)     |
+| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/medio-pago`     |
+| **Fields**            | `code` (String), `description` (String), `active` (Boolean) |
 
 ---
 
@@ -92,35 +92,35 @@ Hacienda catalog for payment methods (Nota 6).
 
 One settings document is ever created (upsert pattern — `findOneAndUpdate` with `upsert: true`).
 
-| | |
-|---|---|
-| **Frontend route** | `/settings/cr-einvoice/configuracion` |
+|                       |                                                                  |
+| --------------------- | ---------------------------------------------------------------- |
+| **Frontend route**    | `/settings/cr-einvoice/configuracion`                            |
 | **Backend endpoints** | `GET /api/cr-einvoice/settings`, `PUT /api/cr-einvoice/settings` |
 
 **Fields:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `proveedorSistemas` | String | Software vendor name (appears in Hacienda XML) |
-| `haciendaUsername` | String | ATV portal username |
-| `haciendaPassword` | String | ATV portal password |
-| `certificateBase64` | String | P12 certificate, base64-encoded |
-| `haciendaEnvironment` | `production` \| `sandbox` | Controls which Hacienda API base URL is used |
-| `codigoEstablecimiento` | String (3 chars) | Office/establishment code, default `001` |
-| `codigoPuntoVenta` | String (5 chars) | Point-of-sale terminal code, default `00001` |
-| `economicActivityCode` | String | Emisor's primary CIIU activity code |
+| Field                   | Type                      | Description                                    |
+| ----------------------- | ------------------------- | ---------------------------------------------- |
+| `proveedorSistemas`     | String                    | Software vendor name (appears in Hacienda XML) |
+| `haciendaUsername`      | String                    | ATV portal username                            |
+| `haciendaPassword`      | String                    | ATV portal password                            |
+| `certificateBase64`     | String                    | P12 certificate, base64-encoded                |
+| `haciendaEnvironment`   | `production` \| `sandbox` | Controls which Hacienda API base URL is used   |
+| `codigoEstablecimiento` | String (3 chars)          | Office/establishment code, default `001`       |
+| `codigoPuntoVenta`      | String (5 chars)          | Point-of-sale terminal code, default `00001`   |
+| `economicActivityCode`  | String                    | Emisor's primary CIIU activity code            |
 
 ---
 
 ### EInvoice (Main entity)
 
-| | |
-|---|---|
-| **Frontend routes** | `/cr-einvoice/einvoices` (list), `/cr-einvoice/einvoices/create`, `/cr-einvoice/einvoices/edit/:id` |
-| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/einvoices` |
-| **Submit** | `POST /api/cr-einvoice/einvoices/:id/submit` |
-| **Status poll** | `GET /api/cr-einvoice/einvoices/:id/status` |
-| **Hacienda callback** | `POST /api/cr-einvoice/hacienda-callback` (public — no auth) |
+|                       |                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| **Frontend routes**   | `/cr-einvoice/einvoices` (list), `/cr-einvoice/einvoices/create`, `/cr-einvoice/einvoices/edit/:id` |
+| **Backend endpoints** | `GET / POST / PUT / DELETE /api/cr-einvoice/einvoices`                                              |
+| **Submit**            | `POST /api/cr-einvoice/einvoices/:id/submit`                                                        |
+| **Status poll**       | `GET /api/cr-einvoice/einvoices/:id/status`                                                         |
+| **Hacienda callback** | `POST /api/cr-einvoice/hacienda-callback` (public — no auth)                                        |
 
 **Status lifecycle:**
 
@@ -135,12 +135,12 @@ draft → sent → received → accepted
 
 ### Header fields
 
-| Field | Description |
-|-------|-------------|
-| `Clave` | 50-character structured key — generated automatically on create (see below) |
-| `NumeroConsecutivo` | 20-character structured string — generated automatically on create |
-| `FechaEmision` | ISO 8601 date-time of emission |
-| `einvoiceType` | `FE` \| `ND` \| `NC` \| `TE` \| `FEE` \| `FEC` \| `REP` |
+| Field               | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `Clave`             | 50-character structured key — generated automatically on create (see below) |
+| `NumeroConsecutivo` | 20-character structured string — generated automatically on create          |
+| `FechaEmision`      | ISO 8601 date-time of emission                                              |
+| `einvoiceType`      | `FE` \| `ND` \| `NC` \| `TE` \| `FEE` \| `FEC` \| `REP`                     |
 
 ### Emisor (from company settings + Contact)
 
@@ -152,39 +152,39 @@ Same structure as Emisor, plus `codigoActividadReceptor` — selected from `cont
 
 ### Condicion / Pago
 
-| Field | Description |
-|-------|-------------|
-| `CondicionVentaId` | Reference to CondicionVenta document |
-| `PlazoCredito` | Integer days — only required when `condicionVenta.code = "02"` (Crédito) |
-| `MedioPagoId` | Reference to MedioPago document — stored in `ResumenFactura` per V4.4 change #36 |
+| Field              | Description                                                                      |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `CondicionVentaId` | Reference to CondicionVenta document                                             |
+| `PlazoCredito`     | Integer days — only required when `condicionVenta.code = "02"` (Crédito)         |
+| `MedioPagoId`      | Reference to MedioPago document — stored in `ResumenFactura` per V4.4 change #36 |
 
 ### DetalleServicio (line items array)
 
 Each line item:
 
-| Field | Source |
-|-------|--------|
-| `NumeroLinea` | Auto-incremented index |
-| `PartidaArancelaria` | Optional tariff code |
-| `Codigo` | `product.codigoComercial` or product SKU |
-| `Cantidad` | Line quantity |
-| `UnidadMedida` | `uom.crUnidadMedida` |
-| `Detalle` | Product description |
-| `PrecioUnitario` | Unit price |
-| `MontoTotal` | Quantity × unit price |
-| `SubTotal` | After applying discounts |
-| `IVACobradoFabrica` | Factory-collected VAT (if applicable) |
-| `BaseImponible` | Taxable base |
-| `Impuesto.Codigo` | `tax.crCodigo` |
-| `Impuesto.Tarifa` | `tax.crTarifa` |
-| `Impuesto.CodigoTarifaIVA` | `tax.crCodigoTarifa` |
-| `Impuesto.Monto` | Computed tax amount |
-| `Impuesto.Exoneracion` | Optional exoneration |
-| `ImpuestoNeto` | Net tax after exoneration |
-| `MontoTotalLinea` | Final line total |
-| `Descuento.MontoDescuento` | Discount amount |
-| `Descuento.NaturalezaDescuento` | `discount.crNaturalezaDescuento` |
-| `Descuento.CodigoDescuento` | Discount code |
+| Field                           | Source                                   |
+| ------------------------------- | ---------------------------------------- |
+| `NumeroLinea`                   | Auto-incremented index                   |
+| `PartidaArancelaria`            | Optional tariff code                     |
+| `Codigo`                        | `product.codigoComercial` or product SKU |
+| `Cantidad`                      | Line quantity                            |
+| `UnidadMedida`                  | `uom.crUnidadMedida`                     |
+| `Detalle`                       | Product description                      |
+| `PrecioUnitario`                | Unit price                               |
+| `MontoTotal`                    | Quantity × unit price                    |
+| `SubTotal`                      | After applying discounts                 |
+| `IVACobradoFabrica`             | Factory-collected VAT (if applicable)    |
+| `BaseImponible`                 | Taxable base                             |
+| `Impuesto.Codigo`               | `tax.crCodigo`                           |
+| `Impuesto.Tarifa`               | `tax.crTarifa`                           |
+| `Impuesto.CodigoTarifaIVA`      | `tax.crCodigoTarifa`                     |
+| `Impuesto.Monto`                | Computed tax amount                      |
+| `Impuesto.Exoneracion`          | Optional exoneration                     |
+| `ImpuestoNeto`                  | Net tax after exoneration                |
+| `MontoTotalLinea`               | Final line total                         |
+| `Descuento.MontoDescuento`      | Discount amount                          |
+| `Descuento.NaturalezaDescuento` | `discount.crNaturalezaDescuento`         |
+| `Descuento.CodigoDescuento`     | Discount code                            |
 
 ### ResumenFactura (computed server-side)
 
@@ -207,6 +207,7 @@ Both fields are computed automatically on invoice creation and stored on the doc
 ```
 
 Example:
+
 ```
 00100001010000002294
 │││└────┘└┘└────────┘
@@ -227,6 +228,7 @@ The counter is **per `einvoiceType`** — each type has its own independent auto
 ```
 
 Example:
+
 ```
 50620052600310170237400100001010000002294179304372
 │││└┘└┘└┘└──────────┘└──────────────────┘│└──────┘
@@ -237,11 +239,11 @@ Example:
 
 **Cedula zero-padding rules (Nota 4.1):**
 
-| `crVatType` | Padding |
-|-------------|---------|
-| `01` Física | 3 leading zeros prefix |
-| `02` Jurídica | 2 leading zeros prefix |
-| `03` DIMEX / `04` NITE | Pad to 12 digits |
+| `crVatType`            | Padding                |
+| ---------------------- | ---------------------- |
+| `01` Física            | 3 leading zeros prefix |
+| `02` Jurídica          | 2 leading zeros prefix |
+| `03` DIMEX / `04` NITE | Pad to 12 digits       |
 
 `situacion` = `1` (Normal). `security` = random 8-digit number generated at creation time.
 
@@ -258,10 +260,10 @@ Example:
 
 ### Environments
 
-| Setting value | Base URL |
-|---------------|----------|
-| `production` | `https://api.comprobanteselectronicos.go.cr/recepcion/v1/` |
-| `sandbox` | `https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/` |
+| Setting value | Base URL                                                           |
+| ------------- | ------------------------------------------------------------------ |
+| `production`  | `https://api.comprobanteselectronicos.go.cr/recepcion/v1/`         |
+| `sandbox`     | `https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/` |
 
 ### Submission flow (`POST /api/cr-einvoice/einvoices/:id/submit`)
 
@@ -303,21 +305,21 @@ Calls `GET ${haciendaBaseUrl}recepcion/${Clave}` and returns the raw `indEstado`
 
 Quick-reference from BiFi source fields to Hacienda JSON fields:
 
-| BiFi source | Hacienda JSON field |
-|-------------|---------------------|
-| `contact.crVatType` | `Emisor.Identificacion.Tipo` / `Receptor.Identificacion.Tipo` |
-| `contact.commercialName` | `Emisor.NombreComercial` |
-| `contact.crEconomicActivityCodes[n]` | `CodigoActividadReceptor` (selected per invoice) |
-| `settings.economicActivityCode` | `CodigoActividadEmisor` |
-| `settings.proveedorSistemas` | `ProveedorSistemas` |
-| `product.codigoComercial` (or SKU) | `LineaDetalle.Codigo` |
-| `uom.crUnidadMedida` | `LineaDetalle.UnidadMedida` |
-| `tax.crCodigo` | `LineaDetalle.Impuesto.Codigo` |
-| `tax.crCodigoTarifa` | `LineaDetalle.Impuesto.CodigoTarifaIVA` |
-| `tax.crTarifa` | `LineaDetalle.Impuesto.Tarifa` |
-| `discount.crNaturalezaDescuento` | `LineaDetalle.Descuento.NaturalezaDescuento` |
-| `condicionVenta.code` | `CondicionVenta` |
-| `medioPago.code` | `ResumenFactura.MedioPago` |
+| BiFi source                          | Hacienda JSON field                                           |
+| ------------------------------------ | ------------------------------------------------------------- |
+| `contact.crVatType`                  | `Emisor.Identificacion.Tipo` / `Receptor.Identificacion.Tipo` |
+| `contact.commercialName`             | `Emisor.NombreComercial`                                      |
+| `contact.crEconomicActivityCodes[n]` | `CodigoActividadReceptor` (selected per invoice)              |
+| `settings.economicActivityCode`      | `CodigoActividadEmisor`                                       |
+| `settings.proveedorSistemas`         | `ProveedorSistemas`                                           |
+| `product.codigoComercial` (or SKU)   | `LineaDetalle.Codigo`                                         |
+| `uom.crUnidadMedida`                 | `LineaDetalle.UnidadMedida`                                   |
+| `tax.crCodigo`                       | `LineaDetalle.Impuesto.Codigo`                                |
+| `tax.crCodigoTarifa`                 | `LineaDetalle.Impuesto.CodigoTarifaIVA`                       |
+| `tax.crTarifa`                       | `LineaDetalle.Impuesto.Tarifa`                                |
+| `discount.crNaturalezaDescuento`     | `LineaDetalle.Descuento.NaturalezaDescuento`                  |
+| `condicionVenta.code`                | `CondicionVenta`                                              |
+| `medioPago.code`                     | `ResumenFactura.MedioPago`                                    |
 
 ---
 

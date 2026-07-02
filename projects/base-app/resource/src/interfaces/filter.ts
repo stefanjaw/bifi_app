@@ -4,17 +4,7 @@ export interface filter<T extends Record<string, any> = Record<string, any>> {
   field: deepKeys<T>;
   value?: string | boolean | number;
   operator?:
-    | '=='
-    | '!='
-    | '>'
-    | '<'
-    | '>='
-    | '<='
-    | 'in'
-    | 'not in'
-    | 'like'
-    | 'not like'
-    | 'empty';
+    '==' | '!=' | '>' | '<' | '>=' | '<=' | 'in' | 'not in' | 'like' | 'not like' | 'empty';
   type?: 'string' | 'number' | 'date' | 'boolean';
 }
 

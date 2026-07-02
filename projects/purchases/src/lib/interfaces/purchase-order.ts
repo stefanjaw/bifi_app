@@ -3,12 +3,7 @@ import { lineItem } from './line-item';
 import { purchaseStage } from '../modules/purchase-stages/interfaces/purchase-stage';
 
 export type purchaseOrderStatus =
-  | 'draft'
-  | 'confirmed'
-  | 'sent'
-  | 'partially_received'
-  | 'received'
-  | 'cancelled';
+  'draft' | 'confirmed' | 'sent' | 'partially_received' | 'received' | 'cancelled';
 
 export interface purchaseOrder {
   _id: string;

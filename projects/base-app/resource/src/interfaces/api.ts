@@ -4,12 +4,7 @@ import { Notification } from '../libraries/interceptors/notification/notificatio
  * Supported base request types for generic API actions.
  */
 export type ApiRequestType =
-  | 'get'
-  | 'getAll'
-  | 'getWithPagination'
-  | 'create'
-  | 'update'
-  | 'delete';
+  'get' | 'getAll' | 'getWithPagination' | 'create' | 'update' | 'delete';
 
 export interface ApiActionConfig {
   entityName?: string;

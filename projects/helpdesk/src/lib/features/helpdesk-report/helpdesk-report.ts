@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudTickets } from '../../services/crud-tickets';
 import { RouterLink } from '@angular/router';
@@ -39,16 +46,19 @@ export class HelpdeskReport implements OnInit {
   report = signal<ReportData | null>(null);
 
   ngOnInit() {
-    this.crudTickets.getReport<ReportData>().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => {
-        this.report.set(data);
-        this.isLoading.set(false);
-      },
-      error: err => {
-        this.error.set('Failed to load report data.');
-        this.isLoading.set(false);
-      },
-    });
+    this.crudTickets
+      .getReport<ReportData>()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: data => {
+          this.report.set(data);
+          this.isLoading.set(false);
+        },
+        error: err => {
+          this.error.set('Failed to load report data.');
+          this.isLoading.set(false);
+        },
+      });
   }
 
   formatMinutes(minutes: number | null | undefined): string {

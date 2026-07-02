@@ -58,7 +58,7 @@ export class UserPanel {
     this.buildItems(
       this.user(),
       this.translationService.availableLanguages(),
-      this.translationService.activeLanguage(),
+      this.translationService.activeLanguage()
     )
   );
 
@@ -83,7 +83,10 @@ export class UserPanel {
     // Apply the user's saved language preference on login/refresh
     effect(() => {
       const savedLocale = this.user()?.language;
-      if (savedLocale && savedLocale !== untracked(() => this.translationService.activeLanguage())) {
+      if (
+        savedLocale &&
+        savedLocale !== untracked(() => this.translationService.activeLanguage())
+      ) {
         this.translationService.setLanguage(savedLocale);
       }
     });
@@ -173,8 +176,6 @@ export class UserPanel {
    */
   private selectLanguage(locale: string): void {
     this.translationService.setLanguage(locale);
-    this.http
-      .put(`${this.config.apiURL}/users/me/language`, { language: locale })
-      .subscribe();
+    this.http.put(`${this.config.apiURL}/users/me/language`, { language: locale }).subscribe();
   }
 }

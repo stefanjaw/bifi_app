@@ -17,10 +17,9 @@ export interface MovementFormModel {
 export class MovementFormService extends BaseForm<MovementFormModel> {
   selectedWarehouseId = signal<string>('');
 
-  private warehouseIdChanges = toSignal(
-    this.form.get('warehouseId')!.valueChanges,
-    { initialValue: '' },
-  );
+  private warehouseIdChanges = toSignal(this.form.get('warehouseId')!.valueChanges, {
+    initialValue: '',
+  });
 
   override createForm() {
     return this.fb.group<MovementFormModel>({

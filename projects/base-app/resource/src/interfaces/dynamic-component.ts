@@ -11,9 +11,9 @@ export type ComponentInputs<T> = {
 
 export type ComponentOutputs<T> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [K in keyof T as T[K] extends OutputEmitterRef<infer R>
-    ? K
-    : never]?: T[K] extends OutputEmitterRef<infer R> ? OutputEmitterRef<R>['emit'] : never;
+  [
+    K in keyof T as T[K] extends OutputEmitterRef<infer R> ? K : never
+  ]?: T[K] extends OutputEmitterRef<infer R> ? OutputEmitterRef<R>['emit'] : never;
 };
 
 export type ComponentType = any;

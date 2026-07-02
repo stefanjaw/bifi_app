@@ -56,7 +56,6 @@ export class LanguagesList {
     });
   }
 
-
   downloadCsv() {
     this.crudLanguages.exportCSV();
   }

@@ -71,7 +71,9 @@
   cursor: pointer;
   font-size: 0.75rem;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .ee-collapse-btn:hover {
@@ -130,7 +132,9 @@
   border: none;
   border-right: 1px solid #e2e8f0;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .ee-toolbar-btn:last-child {
@@ -161,7 +165,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .ee-btn:hover {
@@ -219,7 +226,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .ee-device-btn:hover {
@@ -246,7 +256,9 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.08),
+    0 8px 24px rgba(15, 23, 42, 0.06);
   overflow: hidden;
   position: relative;
 }
@@ -358,7 +370,9 @@
   box-shadow: none;
   cursor: grab;
   text-align: left;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 }
 
 :host ::ng-deep .gjs-block:hover {
