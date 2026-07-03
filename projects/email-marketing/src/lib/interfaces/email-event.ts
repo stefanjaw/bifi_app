@@ -1,5 +1,12 @@
 export type emailEventType =
-  'sent' | 'delivered' | 'open' | 'click' | 'bounce' | 'complaint' | 'unsubscribe' | 'failed';
+  | 'sent'
+  | 'delivered'
+  | 'open'
+  | 'click'
+  | 'bounce'
+  | 'complaint'
+  | 'unsubscribe'
+  | 'failed';
 
 export interface emailEvent {
   _id: string;

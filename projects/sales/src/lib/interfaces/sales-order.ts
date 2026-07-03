@@ -5,7 +5,12 @@ import { lineItem } from './line-item';
 import { salesOrderStage } from '../modules/sales-order-stages';
 
 export type salesOrderStatus =
-  'draft' | 'quote' | 'confirmed' | 'shipped' | 'completed' | 'cancelled';
+  | 'draft'
+  | 'quote'
+  | 'confirmed'
+  | 'shipped'
+  | 'completed'
+  | 'cancelled';
 
 export interface appliedTax {
   taxId: string;
