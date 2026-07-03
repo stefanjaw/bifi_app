@@ -27,6 +27,7 @@
               tooltipPosition="bottom"
               [disabled]="isPdfLoading()"
               (onClick)="exportPdf()"
+              *bifiAppHasPermission="'purchases/orders/export:read:model'"
             ></p-button>
             @if (form.dirty) {
               <p-button
@@ -35,6 +36,7 @@
                 size="small"
                 type="submit"
                 [disabled]="isSubmitLoading()"
+                *bifiAppHasPermission="'purchases/orders:update:model'"
               ></p-button>
             }
           </div>
@@ -122,6 +124,7 @@
                   label="Confirm Order"
                   icon="pi pi-check"
                   (onClick)="markAsConfirmed()"
+                  *bifiAppHasPermission="'purchases/orders:update:model'"
                 ></p-button>
               }
               @case ('confirmed') {
@@ -129,6 +132,7 @@
                   label="Mark as Sent"
                   icon="pi pi-send"
                   (onClick)="markAsSent()"
+                  *bifiAppHasPermission="'purchases/orders:update:model'"
                 ></p-button>
               }
               @case ('sent') {
@@ -138,12 +142,14 @@
                     icon="pi pi-check"
                     severity="success"
                     (onClick)="markAsReceived()"
+                    *bifiAppHasPermission="'purchases/orders:update:model'"
                   ></p-button>
                   <p-button
                     label="Partial Receipt"
                     icon="pi pi-circle-fill"
                     severity="warn"
                     (onClick)="markAsPartiallyReceived()"
+                    *bifiAppHasPermission="'purchases/orders:update:model'"
                   ></p-button>
                 </div>
               }
@@ -153,6 +159,7 @@
                   icon="pi pi-check"
                   severity="success"
                   (onClick)="markAsReceived()"
+                  *bifiAppHasPermission="'purchases/orders:update:model'"
                 ></p-button>
               }
             }
@@ -163,6 +170,7 @@
                 severity="danger"
                 [outlined]="true"
                 (onClick)="cancelOrder()"
+                *bifiAppHasPermission="'purchases/orders:update:model'"
               ></p-button>
             }
           </div>
@@ -187,6 +195,7 @@
             size="small"
             type="submit"
             [disabled]="isSubmitLoading()"
+            *bifiAppHasPermission="'purchases/orders:create:model'"
           ></p-button>
         }
       </div>

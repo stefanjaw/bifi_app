@@ -9,13 +9,19 @@
   ></p-button>
 </div>
 
-<bifi-app-table-layout [infiniteScroll]="true" [columns]="supplierColumns" [data]="entries">
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="supplierColumns"
+  [data]="entries"
+  clickRowPermission="purchases/suppliers/read:view"
+>
   <ng-template #actions let-element>
     <p-button
       severity="info"
       label="View"
       icon="pi pi-eye"
       routerLink="../suppliers/{{ element._id }}"
+      *bifiAppHasPermission="'purchases/suppliers/read:view'"
     ></p-button>
   </ng-template>
 </bifi-app-table-layout>

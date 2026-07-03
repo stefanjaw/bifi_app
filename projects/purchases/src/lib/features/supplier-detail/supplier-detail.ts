@@ -7,6 +7,7 @@ import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { purchaseOrder } from '../../interfaces/purchase-order';
 import { contact } from '@avalantec/base-app/interfaces';
 
@@ -20,6 +21,7 @@ import { contact } from '@avalantec/base-app/interfaces';
     ProgressBarModule,
     CurrencyPipe,
     DatePipe,
+    HasPermission,
   ],
   templateUrl: './supplier-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

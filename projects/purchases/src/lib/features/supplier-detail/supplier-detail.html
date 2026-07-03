@@ -60,6 +60,7 @@
           severity="secondary"
           [routerLink]="['../../orders/new']"
           [queryParams]="{ contactId: id() }"
+          *bifiAppHasPermission="'purchases/orders/create:view'"
         ></p-button>
       </div>
 
@@ -94,6 +95,7 @@
                       severity="info"
                       size="small"
                       routerLink="../../orders/{{ order._id }}"
+                      *bifiAppHasPermission="'purchases/orders/update:view'"
                     ></p-button>
                   </td>
                 </tr>

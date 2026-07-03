@@ -4,13 +4,14 @@ import { CrudSuppliers } from '../../services/crud-suppliers';
 import { supplierColumns } from '../../libraries/supplier-columns';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-suppliers',
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, RouterLink],
+  imports: [TableLayout, ButtonModule, RouterLink, HasPermission],
   templateUrl: './suppliers.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

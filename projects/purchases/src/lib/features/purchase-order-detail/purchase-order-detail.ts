@@ -37,6 +37,7 @@ import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
 import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudProducts } from '@avalantec/inventory';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 
 @Component({
@@ -54,6 +55,7 @@ import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calcula
     TagModule,
     LineItemsTable,
     SelectContactDialog,
+    HasPermission,
   ],
   templateUrl: './purchase-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
+import { injectAuthService } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-purchase-pipeline',
@@ -29,6 +30,7 @@ export class PurchasePipeline {
   private crudPurchaseOrders = inject(CrudPurchaseOrders);
   private crudPurchaseStages = inject(CrudPurchaseStages);
   private router = inject(Router);
+  private auth = injectAuthService();
   private destroy$ = inject(DestroyRef);
 
   ordersResource = this.crudPurchaseOrders.get({ getInactive: null });
@@ -123,6 +125,16 @@ export class PurchasePipeline {
   }
 
   navigateToOrder(order: purchaseOrder) {
-    this.router.navigate(['/purchases/orders', order._id]);
+    const user = this.auth.user();
+    if (!user) return;
+    const hasPermission = this.auth.hasPermission({
+      user,
+      resource: 'purchases/orders/read' as any,
+      type: 'view',
+      context: {},
+    });
+    if (hasPermission) {
+      this.router.navigate(['/purchases/orders', order._id]);
+    }
   }
 }
