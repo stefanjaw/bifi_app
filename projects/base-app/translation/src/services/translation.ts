@@ -1,5 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { languageRecord } from '../interfaces/language';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 
@@ -39,43 +41,61 @@ export class TranslationService {
   }
 
   /**
-   * Changes the active locale, clears the translation cache, and reloads
-   * all previously-loaded scopes for the new locale.
+   * Changes the active locale by pre-loading all cached scopes for the new locale
+   * before switching. Prevents a flash of raw untranslated keys.
    * @param locale - The locale code to activate (e.g. "es")
    */
   setLanguage(locale: string): void {
+    if (locale === this.activeLanguage()) return;
     const previousScopes = this.getCachedScopes(this.activeLanguage());
-    this.cache.clear();
-    this.loadingScopes.clear();
-    this.activeLanguage.set(locale);
-    for (const scope of previousScopes) {
-      this.loadScope(scope);
+    if (previousScopes.length === 0) {
+      this.activeLanguage.set(locale);
+      return;
     }
+    const requests = previousScopes
+      .map(scope => this.loadScope(scope, locale))
+      .filter((r): r is Observable<Record<string, string>> => !!r);
+
+    if (requests.length === 0) {
+      this.activeLanguage.set(locale);
+      return;
+    }
+
+    forkJoin(requests).subscribe({
+      complete: () => this.activeLanguage.set(locale),
+    });
   }
 
   /**
-   * Lazily fetches translations for a given scope and the active locale.
+   * Lazily fetches translations for a given scope and locale (defaults to active locale).
    * No-ops if the scope is already cached or currently loading.
-   * @param scope - The translation scope identifier (e.g. "sales", "core")
+   * Returns the Observable for callers that need to wait for completion (e.g. setLanguage).
+   * @param scope - The translation scope identifier (e.g. "sales", "base-app/contacts")
+   * @param locale - Optional locale override; defaults to activeLanguage()
+   * @returns The HTTP Observable, or void if already cached/loading
    */
-  loadScope(scope: string): void {
-    const locale = this.activeLanguage();
-    const cacheKey = `${locale}/${scope}`;
+  loadScope(scope: string, locale?: string): Observable<Record<string, string>> | void {
+    const targetLocale = locale ?? this.activeLanguage();
+    const cacheKey = `${targetLocale}/${scope}`;
     if (this.cache.has(cacheKey) || this.loadingScopes.has(cacheKey)) return;
     this.loadingScopes.add(cacheKey);
-    this.http
+    const request$ = this.http
       .get<Record<string, string>>(`${this.config.apiURL}/translations/scope`, {
-        params: { locale, scope },
+        params: { locale: targetLocale, scope },
       })
-      .subscribe({
-        next: data => {
-          this.cache.set(cacheKey, data);
-          this.loadingScopes.delete(cacheKey);
-        },
-        error: () => {
-          this.loadingScopes.delete(cacheKey);
-        },
-      });
+      .pipe(
+        tap({
+          next: data => {
+            this.cache.set(cacheKey, data);
+            this.loadingScopes.delete(cacheKey);
+          },
+          error: () => {
+            this.loadingScopes.delete(cacheKey);
+          },
+        })
+      );
+    request$.subscribe();
+    return request$;
   }
 
   /**
