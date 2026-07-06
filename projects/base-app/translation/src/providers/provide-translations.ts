@@ -1,14 +1,11 @@
 import { APP_INITIALIZER, inject, Provider } from '@angular/core';
 import { TranslationService } from '../services/translation';
-import { MainMenuManager } from '@avalantec/base-app/routing';
-import { PrimeIcons } from 'primeng/api';
 import { TRANSLATION_API } from '@avalantec/base-app/form';
 
 /**
  * Root-level providers for the translation system.
  * Register once in app.config.ts providers.
- * Bootstraps language list loading and registers the Settings menu entries
- * for Translations and Languages management pages.
+ * Bootstraps language list loading.
  *
  * @returns Array of Angular providers
  */
@@ -45,36 +42,10 @@ export function provideTranslationRoot(): Provider[] {
       provide: APP_INITIALIZER,
       useFactory: () => {
         const translationService = inject(TranslationService);
-        const menuManager = inject(MainMenuManager);
 
         return () => {
           translationService.loadLanguages();
-          BASE_APP_SCOPES.forEach(scope => translationService.loadScope(scope));
-
-          menuManager.addItems([
-            {
-              item: {
-                icon: PrimeIcons.LANGUAGE,
-                label: 'Translations',
-                resource: 'translations/settings/menu',
-                items: [
-                  {
-                    icon: PrimeIcons.GLOBE,
-                    routerLink: ['/settings/translations'],
-                    label: 'Translation Keys',
-                    resource: 'translations/list/menu',
-                  },
-                  {
-                    icon: PrimeIcons.FLAG,
-                    routerLink: ['/settings/languages'],
-                    label: 'Languages',
-                    resource: 'languages/list/menu',
-                  },
-                ],
-              },
-              childOf: 'settings',
-            },
-          ]);
+          BASE_APP_SCOPES.forEach(scope => translationService.loadScope(scope)?.subscribe());
         };
       },
       multi: true,

@@ -99,6 +99,18 @@ export class MainMenuManager extends BaseMenuManager {
             label: 'Notification Events',
             resource: 'notification-settings/menu',
           },
+          {
+            icon: 'pi pi-language',
+            routerLink: ['/settings/translations'],
+            label: 'Translation Keys',
+            resource: 'translations/list/menu',
+          },
+          {
+            icon: 'pi pi-flag',
+            routerLink: ['/settings/languages'],
+            label: 'Languages',
+            resource: 'languages/list/menu',
+          },
         ],
       },
       {

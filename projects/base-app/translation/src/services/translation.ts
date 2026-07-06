@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { languageRecord } from '../interfaces/language';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 
@@ -89,12 +89,12 @@ export class TranslationService {
             this.cache.set(cacheKey, data);
             this.loadingScopes.delete(cacheKey);
           },
-          error: () => {
-            this.loadingScopes.delete(cacheKey);
-          },
+        }),
+        catchError(() => {
+          this.loadingScopes.delete(cacheKey);
+          return of({});
         })
       );
-    request$.subscribe();
     return request$;
   }
 
