@@ -18,6 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudAiSettings } from '../../services/crud-ai-settings';
 import { AiSettingsForm, AiSettingsFormModel } from '../../services/ai-settings-form';
 import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-ai-settings-form',
@@ -29,6 +30,7 @@ import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
     TextareaModule,
     InputNumberModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './ai-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
