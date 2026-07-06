@@ -10,8 +10,8 @@
     (focus)="onFocus()"
     (blur)="onBlur()"
     (keydown)="onKeydown($event)"
-    placeholder="Search…"
-    aria-label="Global search"
+    [placeholder]="'search.placeholder' | translate: {} : 'base-app/ui'"
+    [attr.aria-label]="'search.ariaLabel' | translate: {} : 'base-app/ui'"
     autocomplete="off"
     class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-surface-300 bg-surface-0 text-surface-700 placeholder:text-surface-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-colors shadow-sm"
   />
@@ -24,16 +24,10 @@
       @if (!hasQuery()) {
         <div class="px-3 py-2 text-xs text-surface-400 flex items-center gap-1.5">
           <span class="pi pi-info-circle text-[10px]"></span>
-          Type to search pages — press
-          <kbd
-            class="px-1 py-0.5 rounded border border-surface-300 bg-surface-50 text-[10px] font-medium"
-          >
-            Ctrl K
-          </kbd>
-          anytime
+          {{ 'search.hint' | translate: {} : 'base-app/ui' }}
         </div>
       } @else if (flatItems().length === 0) {
-        <div class="px-3 py-3 text-sm text-surface-500">No results for “{{ query() }}”</div>
+        <div class="px-3 py-3 text-sm text-surface-500">{{ 'search.noResults' | translate: { query: query() } : 'base-app/ui' }}</div>
       } @else {
         @for (group of displayGroups(); track group.group) {
           <div

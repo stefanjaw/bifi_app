@@ -1,17 +1,19 @@
 import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
 import { NotificationCenterService, AppNotification } from '@avalantec/base-app/routing';
 
 @Component({
   selector: 'bifi-app-notification-panel',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './notification-panel.html',
 })
 export class NotificationPanel {
   protected notificationService = inject(NotificationCenterService);
   private router = inject(Router);
   private elRef = inject(ElementRef);
+  private translationService = inject(TranslationService);
 
   open = signal(false);
 
@@ -100,12 +102,12 @@ export class NotificationPanel {
   relativeTime(dateStr: string): string {
     const diff = Date.now() - new Date(dateStr).getTime();
     const secs = Math.floor(diff / 1000);
-    if (secs < 60) return 'just now';
+    if (secs < 60) return this.translationService.translate('time.justNow', {}, 'base-app/ui');
     const mins = Math.floor(secs / 60);
-    if (mins < 60) return `${mins}m ago`;
+    if (mins < 60) return this.translationService.translate('time.minutesAgo', { count: mins }, 'base-app/ui');
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
+    if (hours < 24) return this.translationService.translate('time.hoursAgo', { count: hours }, 'base-app/ui');
     const days = Math.floor(hours / 24);
-    return `${days}d ago`;
+    return this.translationService.translate('time.daysAgo', { count: days }, 'base-app/ui');
   }
 }

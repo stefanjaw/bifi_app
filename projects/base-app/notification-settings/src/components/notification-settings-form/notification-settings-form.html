@@ -1,26 +1,25 @@
 <p-toast></p-toast>
 
 <bifi-app-form-layout
-  title="Notification Events"
+  [title]="'pageTitle' | translate: {} : 'base-app/notification-settings'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
   <div ngProjectAs="div" class="min-h-screen flex flex-col gap-6">
     <div class="flex items-center justify-between gap-4">
       <p class="text-sm text-gray-500">
-        Add events from the catalog, toggle each on/off, and choose which roles receive each
-        notification.
+        {{ 'pageDescription' | translate: {} : 'base-app/notification-settings' }}
       </p>
       <div class="flex gap-2 flex-shrink-0">
         <p-button
-          label="Add Event"
+          [label]="'addEvent' | translate: {} : 'base-app/notification-settings'"
           icon="pi pi-plus"
           severity="secondary"
           [outlined]="true"
           (onClick)="openAddDialog()"
           [disabled]="availableCatalogEntries().length === 0"
         ></p-button>
-        <p-button label="Save" icon="pi pi-save" [loading]="saving()" (onClick)="save()"></p-button>
+        <p-button [label]="'save' | translate: {} : 'base-app/notification-settings'" icon="pi pi-save" [loading]="saving()" (onClick)="save()"></p-button>
       </div>
     </div>
 
@@ -50,7 +49,7 @@
                   class="text-xs font-medium text-gray-600 mb-1 block"
                   [attr.for]="'recipients-' + event.type"
                 >
-                  Notify
+                  {{ 'notifyLabel' | translate: {} : 'base-app/notification-settings' }}
                 </label>
                 <p-multiselect
                   [inputId]="'recipients-' + event.type"
@@ -59,7 +58,7 @@
                   (ngModelChange)="updateRecipients(event.type, $any($event))"
                   optionLabel="label"
                   optionValue="id"
-                  placeholder="Select recipients"
+                  [placeholder]="'selectRecipients' | translate: {} : 'base-app/notification-settings'"
                   styleClass="w-full text-sm"
                   [showClear]="false"
                 ></p-multiselect>
@@ -75,7 +74,7 @@
                 class="text-xs font-medium"
                 [ngClass]="event.enabled ? 'text-green-600' : 'text-gray-400'"
               >
-                {{ event.enabled ? 'Enabled' : 'Disabled' }}
+                {{ event.enabled ? ('enabled' | translate: {} : 'base-app/notification-settings') : ('disabled' | translate: {} : 'base-app/notification-settings') }}
               </span>
             </div>
 
@@ -85,7 +84,7 @@
                 severity="danger"
                 [text]="true"
                 size="small"
-                pTooltip="Remove event"
+                [pTooltip]="'removeEvent' | translate: {} : 'base-app/notification-settings'"
                 tooltipPosition="left"
                 (onClick)="removeEvent(event.type)"
               ></p-button>
@@ -98,8 +97,8 @@
             class="bg-white rounded-xl border border-dashed border-gray-300 p-10 flex flex-col items-center gap-3 text-center"
           >
             <i class="pi pi-bell text-3xl text-gray-300"></i>
-            <p class="text-sm font-medium text-gray-500">No notification events configured</p>
-            <p class="text-xs text-gray-400">Click "Add Event" to add events from the catalog.</p>
+            <p class="text-sm font-medium text-gray-500">{{ 'emptyState.title' | translate: {} : 'base-app/notification-settings' }}</p>
+            <p class="text-xs text-gray-400">{{ 'emptyState.description' | translate: {} : 'base-app/notification-settings' }}</p>
           </div>
         }
       </div>
@@ -108,7 +107,7 @@
 </bifi-app-form-layout>
 
 <p-dialog
-  header="Add Notification Event"
+  [header]="'addDialog.header' | translate: {} : 'base-app/notification-settings'"
   [modal]="true"
   [visible]="showAddDialog()"
   (visibleChange)="showAddDialog.set($any($event))"
@@ -117,7 +116,7 @@
 >
   <div class="flex flex-col gap-4 py-2">
     <p class="text-sm text-gray-500">
-      Select an event from the catalog to add to your active notifications.
+      {{ 'addDialog.description' | translate: {} : 'base-app/notification-settings' }}
     </p>
 
     <div class="flex flex-col gap-2">
@@ -154,13 +153,13 @@
 
   <ng-template pTemplate="footer">
     <p-button
-      label="Cancel"
+      [label]="'addDialog.cancel' | translate: {} : 'base-app/notification-settings'"
       severity="secondary"
       [outlined]="true"
       (onClick)="showAddDialog.set(false)"
     ></p-button>
     <p-button
-      label="Add"
+      [label]="'addDialog.add' | translate: {} : 'base-app/notification-settings'"
       icon="pi pi-plus"
       [disabled]="!selectedNewEventType()"
       (onClick)="confirmAddEvent()"

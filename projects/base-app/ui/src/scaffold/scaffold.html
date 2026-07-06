@@ -9,7 +9,7 @@
           (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
           variant="text"
           severity="contrast"
-          [pTooltip]="isOpened() ? 'Collapse sidebar' : 'Expand sidebar'"
+          [pTooltip]="(isOpened() ? 'sidebar.collapse' : 'sidebar.expand') | translate: {} : 'base-app/ui'"
         >
           @if (isOpened()) {
             <svg
@@ -62,10 +62,10 @@
     <ng-template #end>
       @if (debugManager.debugEnable()) {
         <small class="text-red-500 font-bold me-3">
-          Debug is enabled
+          {{ 'debug.enabled' | translate: {} : 'base-app/ui' }}
           <p-button
             size="small"
-            label="Desactivate"
+            [label]="'debug.deactivate' | translate: {} : 'base-app/ui'"
             variant="text"
             severity="danger"
             (onClick)="debugManager.toggleDebug()"
@@ -178,11 +178,11 @@
                 class="text-xs text-red-500 italic select-none pointer-events-none flex items-center gap-1 shrink-0"
               >
                 <span class="pi pi-ban" style="font-size: 10px"></span>
-                Only {{ currentModuleLabel() }} shortcuts can be pinned here
+                {{ 'shortcuts.onlyModulePinned' | translate: { module: currentModuleLabel() } : 'base-app/ui' }}
               </span>
             } @else if (filteredShortcuts().length === 0) {
               <span class="text-xs text-surface-400 italic select-none pointer-events-none">
-                Drag items from the sidebar to pin shortcuts here
+                {{ 'shortcuts.dragHint' | translate: {} : 'base-app/ui' }}
               </span>
             }
             @for (shortcut of filteredShortcuts(); track $index) {
@@ -216,7 +216,7 @@
                   class="absolute right-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center w-4 h-4 rounded-full hover:bg-surface-200 text-surface-400 hover:text-surface-700"
                   (click)="userShortcutsService.removeShortcutByItem(shortcut)"
                   type="button"
-                  [pTooltip]="'Remove shortcut'"
+                  [pTooltip]="'shortcuts.remove' | translate: {} : 'base-app/ui'"
                 >
                   <span class="pi pi-times text-[9px]"></span>
                 </button>
@@ -298,7 +298,7 @@
         [class.rotate-180]="isExpanded(mainItem)"
         (click)="toggleExpanded(mainItem)"
         [attr.aria-label]="
-          isExpanded(mainItem) ? 'Collapse ' + mainItem.label : 'Expand ' + mainItem.label
+          (isExpanded(mainItem) ? 'sidebar.collapse' : 'sidebar.expand') | translate: { label: mainItem.label } : 'base-app/ui'
         "
       >
         <span class="pi pi-angle-down text-xs"></span>

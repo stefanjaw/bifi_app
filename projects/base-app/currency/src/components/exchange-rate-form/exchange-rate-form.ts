@@ -20,6 +20,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-exchange-rate-form',
@@ -31,6 +32,7 @@ import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/e
     ToggleSwitchModule,
     DatePickerModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './exchange-rate-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

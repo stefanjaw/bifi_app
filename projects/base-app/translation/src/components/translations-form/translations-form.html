@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Translation"
+  [title]="(isUpdate() ? 'translations.form.pageTitle.update' : 'translations.form.pageTitle.create') | translate: {} : 'base-app/translation'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,41 +18,41 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General Information" id="form-general" [ordinal]="1">
+      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/translation'" id="form-general" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Locale</bifi-app-form-label>
-            <input pInputText formControlName="locale" type="text" placeholder="e.g. en, es, fr" />
+            <bifi-app-form-label>{{ 'translations.form.locale' | translate: {} : 'base-app/translation' }}</bifi-app-form-label>
+            <input pInputText formControlName="locale" type="text" [placeholder]="'translations.form.localePlaceholder' | translate: {} : 'base-app/translation'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Scope</bifi-app-form-label>
-            <input pInputText formControlName="scope" type="text" placeholder="e.g. sales, core" />
+            <bifi-app-form-label>{{ 'translations.form.scope' | translate: {} : 'base-app/translation' }}</bifi-app-form-label>
+            <input pInputText formControlName="scope" type="text" [placeholder]="'translations.form.scopePlaceholder' | translate: {} : 'base-app/translation'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Key</bifi-app-form-label>
-            <input pInputText formControlName="key" type="text" placeholder="e.g. deal.amount" />
+            <bifi-app-form-label>{{ 'translations.form.key' | translate: {} : 'base-app/translation' }}</bifi-app-form-label>
+            <input pInputText formControlName="key" type="text" [placeholder]="'translations.form.keyPlaceholder' | translate: {} : 'base-app/translation'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Value</bifi-app-form-label>
-            <input pInputText formControlName="value" type="text" placeholder="Translated text" />
+            <bifi-app-form-label>{{ 'translations.form.value' | translate: {} : 'base-app/translation' }}</bifi-app-form-label>
+            <input pInputText formControlName="value" type="text" [placeholder]="'translations.form.valuePlaceholder' | translate: {} : 'base-app/translation'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Active</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.status.active' | translate: {} : 'base-app/translation' }}</bifi-app-form-label>
             <p-toggleswitch formControlName="active"></p-toggleswitch>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/translation' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

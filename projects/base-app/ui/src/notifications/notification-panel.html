@@ -4,7 +4,7 @@
     type="button"
     class="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-surface-100 transition-colors text-surface-700"
     (click)="togglePanel()"
-    [attr.aria-label]="'Notifications'"
+    [attr.aria-label]="'notifications.title' | translate: {} : 'base-app/ui'"
     #bellBtn
   >
     <span class="pi pi-bell text-xl"></span>
@@ -25,14 +25,14 @@
     >
       <!-- Header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-surface-100">
-        <span class="text-sm font-semibold text-surface-800">Notifications</span>
+        <span class="text-sm font-semibold text-surface-800">{{ 'notifications.title' | translate: {} : 'base-app/ui' }}</span>
         @if (hasUnread) {
           <button
             type="button"
             class="text-xs text-primary-600 hover:text-primary-800 font-medium"
             (click)="markAllRead()"
           >
-            Mark all as read
+            {{ 'notifications.markAllRead' | translate: {} : 'base-app/ui' }}
           </button>
         }
       </div>
@@ -42,7 +42,7 @@
         @if (notificationService.notifications().length === 0) {
           <div class="flex flex-col items-center justify-center py-10 text-surface-400">
             <span class="pi pi-bell text-3xl mb-2"></span>
-            <span class="text-sm">No new notifications</span>
+            <span class="text-sm">{{ 'notifications.empty' | translate: {} : 'base-app/ui' }}</span>
           </div>
         } @else {
           @for (n of notificationService.notifications(); track n._id) {

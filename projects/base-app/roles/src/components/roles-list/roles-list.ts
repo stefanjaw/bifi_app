@@ -12,13 +12,14 @@ import { roleColumns } from '../../libraries/role-columns';
 import { roleFilters } from '../../libraries/role-filters';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission, permission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { role } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-roles-list',
   providers: [provideResourceManager(CrudRoles)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions, TranslatePipe],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

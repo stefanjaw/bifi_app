@@ -18,6 +18,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-currency-form',
@@ -28,6 +29,7 @@ import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-
     InputNumberModule,
     ToggleSwitchModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './currency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

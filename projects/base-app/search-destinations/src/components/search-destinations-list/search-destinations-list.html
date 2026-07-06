@@ -1,37 +1,36 @@
-<h1 class="text-2xl font-bold mb-4">Search</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/search-destinations' }}</h1>
 
 <p class="text-gray-500 mb-4">
-  Manage which phrases route to each destination. Add your team's vocabulary so the top-bar search
-  finds the right page.
+  {{ 'pageDescription' | translate: {} : 'base-app/search-destinations' }}
 </p>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Destination"
+    [label]="'addNew' | translate: {} : 'base-app/search-destinations'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
     *bifiAppHasPermission="'search-destinations/create:view'"
   ></p-button>
   <p-button
-    label="Sync from menu"
+    [label]="'syncFromMenu' | translate: {} : 'base-app/search-destinations'"
     severity="secondary"
     icon="pi pi-sync"
     [loading]="syncing()"
     (onClick)="syncFromMenu()"
-    pTooltip="Discover newly added app destinations without changing existing phrases"
+    [pTooltip]="'syncFromMenuTooltip' | translate: {} : 'base-app/search-destinations'"
     tooltipPosition="top"
     *bifiAppHasPermission="'search-destinations/update:view'"
   ></p-button>
   <p-button
-    [label]="showInactiveStatus() ? 'Show Active' : 'Show Inactive'"
+    [label]="(showInactiveStatus() ? 'showActive' : 'showInactive') | translate: {} : 'base-app/search-destinations'"
     severity="info"
     [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
     (onClick)="toggleInactiveRecords()"
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by label or phrase"></bifi-app-search-bar>
+<bifi-app-search-bar [label]="'searchPlaceholder' | translate: {} : 'base-app/search-destinations'"></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
@@ -44,7 +43,7 @@
     @if (row.active) {
       <p-button
         severity="secondary"
-        label="Edit"
+        [label]="'edit' | translate: {} : 'base-app/search-destinations'"
         icon="pi pi-pencil"
         [routerLink]="['../edit', row._id]"
         *bifiAppHasPermission="'search-destinations/update:view'"
@@ -52,17 +51,17 @@
       @if (row.isSystem) {
         <p-button
           severity="warn"
-          label="Deactivate"
+          [label]="'deactivate' | translate: {} : 'base-app/search-destinations'"
           icon="pi pi-ban"
           (onClick)="setActive(row._id, false)"
-          pTooltip="System destination — protected from deletion"
+          [pTooltip]="'systemTooltip' | translate: {} : 'base-app/search-destinations'"
           tooltipPosition="top"
           *bifiAppHasPermission="'search-destinations/update:view'"
         ></p-button>
       } @else {
         <p-button
           severity="danger"
-          label="Delete"
+          [label]="'delete' | translate: {} : 'base-app/search-destinations'"
           icon="pi pi-trash"
           (onClick)="deleteDestination(row._id)"
           *bifiAppHasPermission="'search-destinations:delete:model'"
@@ -71,7 +70,7 @@
     } @else {
       <p-button
         severity="secondary"
-        label="Reactivate"
+        [label]="'reactivate' | translate: {} : 'base-app/search-destinations'"
         icon="pi pi-eye"
         (onClick)="setActive(row._id, true)"
         *bifiAppHasPermission="'search-destinations/update:view'"

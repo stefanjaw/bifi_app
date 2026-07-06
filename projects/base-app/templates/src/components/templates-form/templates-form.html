@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Template"
+  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/templates'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,60 +18,60 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
+      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/templates'" id="form-general" [ordinal]="1">
         <p-button
           icon="pi pi-code"
           (click)="accessTokenDialog.openDialog()"
-          label="Get Access Token"
+          [label]="'form.generalInfo.getAccessToken' | translate: {} : 'base-app/templates'"
         ></p-button>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.generalInfo.name' | translate: {} : 'base-app/templates' }}</bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
               type="text"
-              placeholder="e.g Landing page view"
+              [placeholder]="'form.generalInfo.namePlaceholder' | translate: {} : 'base-app/templates'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Directory</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.generalInfo.directory' | translate: {} : 'base-app/templates' }}</bifi-app-form-label>
             <input
               pInputText
               formControlName="directory"
               type="text"
-              placeholder="e.g ./website/.."
+              [placeholder]="'form.generalInfo.directoryPlaceholder' | translate: {} : 'base-app/templates'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Filename</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.generalInfo.filename' | translate: {} : 'base-app/templates' }}</bifi-app-form-label>
             <input
               pInputText
               formControlName="filename"
               type="text"
-              placeholder="e.g landing-page.html"
+              [placeholder]="'form.generalInfo.filenamePlaceholder' | translate: {} : 'base-app/templates'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>MIME Type</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.generalInfo.mimeType' | translate: {} : 'base-app/templates' }}</bifi-app-form-label>
             <p-select filter formControlName="mimeType" [options]="mimeTypeOptions"></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Template Editor" id="template-editor" [ordinal]="2">
+      <bifi-app-form-section [title]="'form.editor.title' | translate: {} : 'base-app/templates'" id="template-editor" [ordinal]="2">
         <bifi-app-form-field>
           <p class="flex flex-row items-center justify-between">
-            <span>Orignal Code</span>
-            <span>Custom Code</span>
+            <span>{{ 'form.editor.originalCode' | translate: {} : 'base-app/templates' }}</span>
+            <span>{{ 'form.editor.customCode' | translate: {} : 'base-app/templates' }}</span>
           </p>
           <bifi-app-form-code-editor
             [diffMode]="true"
@@ -83,7 +83,7 @@
         </bifi-app-form-field>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/templates' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

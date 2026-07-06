@@ -1,15 +1,15 @@
-<h1 class="text-2xl font-bold mb-4">Languages</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'languages.pageTitle' | translate: {} : 'base-app/translation' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add Language"
+    [label]="'languages.addNew' | translate: {} : 'base-app/translation'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
     *bifiAppHasPermission="'languages/create:view'"
   ></p-button>
   <p-button
-    label="Download CSV"
+    [label]="'languages.downloadCsv' | translate: {} : 'base-app/translation'"
     severity="secondary"
     icon="pi pi-download"
     (click)="downloadCsv()"
@@ -18,7 +18,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by locale or name"
+  [label]="'languages.searchPlaceholder' | translate: {} : 'base-app/translation'"
   [searchFilters]="languageFilters"
 ></bifi-app-search-bar>
 

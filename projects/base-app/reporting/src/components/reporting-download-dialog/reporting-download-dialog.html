@@ -1,15 +1,15 @@
 <p-dialog
-  header="Select Reporting"
+  [header]="'downloadDialog.header' | translate: {} : 'base-app/reporting'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
 >
   @if (isLoading()) {
-    <p>Loading...</p>
+    <p>{{ 'downloadDialog.loading' | translate: {} : 'base-app/reporting' }}</p>
   } @else {
     <div class="flex flex-col gap-6">
       <bifi-app-form-field>
-        <bifi-app-form-label>Reporting</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'downloadDialog.reportingLabel' | translate: {} : 'base-app/reporting' }}</bifi-app-form-label>
         <p-select
           appendTo="body"
           [(ngModel)]="selectedReporting"
@@ -22,7 +22,7 @@
       </bifi-app-form-field>
 
       <p-button
-        label="Download"
+        [label]="'downloadDialog.download' | translate: {} : 'base-app/reporting'"
         [icon]="isReportDownloadLoading() ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
         (onClick)="downloadReport()"
         [disabled]="isReportDownloadLoading() || !selectedReporting()"

@@ -10,11 +10,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 import { SearchDestination, SearchService } from '@avalantec/base-app/search';
 
 @Component({
   selector: 'bifi-app-global-search',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './global-search.html',
   styleUrl: './global-search.css',
 })

@@ -17,6 +17,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 import { SearchService } from '@avalantec/base-app/search';
 import { CrudSearchDestinations } from '../../services/crud-search-destinations';
 import {
@@ -33,6 +34,7 @@ import {
     ToggleSwitchModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
     ButtonModule,
   ],
   templateUrl: './search-destination-form.html',

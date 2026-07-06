@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Policy"
+  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/policies'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,36 +18,36 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="form-general" [ordinal]="1">
+      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/policies'" id="form-general" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g Asset READ" />
+            <bifi-app-form-label>{{ 'form.generalInfo.name' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" [placeholder]="'form.generalInfo.namePlaceholder' | translate: {} : 'base-app/policies'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Resource</bifi-app-form-label>
-            <input pInputText formControlName="resource" type="text" placeholder="e.g assets" />
+            <bifi-app-form-label>{{ 'form.generalInfo.resource' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
+            <input pInputText formControlName="resource" type="text" [placeholder]="'form.generalInfo.resourcePlaceholder' | translate: {} : 'base-app/policies'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.generalInfo.type' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
             <div class="flex flex-wrap gap-4 mt-2">
               <div class="flex items-center">
                 <p-radiobutton formControlName="type" value="model" inputId="type-model" />
-                <label for="type-model" class="ml-2">Model</label>
+                <label for="type-model" class="ml-2">{{ 'form.generalInfo.type.model' | translate: {} : 'base-app/policies' }}</label>
               </div>
 
               <div class="flex items-center">
                 <p-radiobutton formControlName="type" value="view" inputId="type-view" />
-                <label for="type-view" class="ml-2">View</label>
+                <label for="type-view" class="ml-2">{{ 'form.generalInfo.type.view' | translate: {} : 'base-app/policies' }}</label>
               </div>
 
               <div class="flex items-center">
                 <p-radiobutton formControlName="type" value="menu" inputId="type-menu" />
-                <label for="type-menu" class="ml-2">Menu</label>
+                <label for="type-menu" class="ml-2">{{ 'form.generalInfo.type.menu' | translate: {} : 'base-app/policies' }}</label>
               </div>
             </div>
             <bifi-app-form-error></bifi-app-form-error>
@@ -55,9 +55,9 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Conditions" id="form-conditions" [ordinal]="2">
+      <bifi-app-form-section [title]="'form.conditions.title' | translate: {} : 'base-app/policies'" id="form-conditions" [ordinal]="2">
         <p-button
-          label="Add Condition"
+          [label]="'form.conditions.add' | translate: {} : 'base-app/policies'"
           icon="pi pi-plus"
           severity="secondary"
           (onClick)="addCondition()"
@@ -67,20 +67,20 @@
         <div formArrayName="conditions" class="flex flex-col gap-4 w-full">
           @for (control of form.controls.conditions.controls; track control; let i = $index) {
             <bifi-app-form-section
-              [title]="`${i + 1}. Condition`"
+              [title]="(i + 1) + '. ' + ('form.conditions.conditionLabel' | translate: {} : 'base-app/policies')"
               [formGroupName]="i"
               [ordinal]="i + 1"
               [id]="`condition-${i}`"
             >
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <bifi-app-form-field>
-                  <bifi-app-form-label>Key</bifi-app-form-label>
+                  <bifi-app-form-label>{{ 'form.conditions.key' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
                   <input pInputText formControlName="key" type="text" />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
 
                 <bifi-app-form-field>
-                  <bifi-app-form-label>Condition</bifi-app-form-label>
+                  <bifi-app-form-label>{{ 'form.conditions.operator' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
                   <p-select
                     formControlName="operator"
                     [options]="conditionOperatorOptions"
@@ -92,7 +92,7 @@
                 </bifi-app-form-field>
 
                 <bifi-app-form-field>
-                  <bifi-app-form-label>Value</bifi-app-form-label>
+                  <bifi-app-form-label>{{ 'form.conditions.value' | translate: {} : 'base-app/policies' }}</bifi-app-form-label>
                   <input pInputText formControlName="value" type="text" />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
@@ -112,7 +112,7 @@
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/policies' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

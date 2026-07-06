@@ -9,12 +9,14 @@ import {
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormModule } from '@avalantec/base-app/form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { CrudNotificationSettings } from '../../services/crud-notification-settings';
 import {
@@ -40,12 +42,14 @@ interface ActiveEventRow {
     NgClass,
     FormsModule,
     FormModule,
+    TranslatePipe,
     ButtonModule,
     ToggleSwitchModule,
     ProgressBarModule,
     ToastModule,
     DialogModule,
     MultiSelectModule,
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './notification-settings-form.html',
@@ -54,6 +58,7 @@ interface ActiveEventRow {
 export class NotificationSettingsForm {
   private crudSettings = inject(CrudNotificationSettings);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
 
   protected saving = signal(false);
   protected settingsResource = this.crudSettings.getSettings();
@@ -179,16 +184,16 @@ export class NotificationSettingsForm {
         this.saving.set(false);
         this.messageService.add({
           severity: 'success',
-          summary: 'Saved',
-          detail: 'Notification settings updated.',
+          summary: this.translationService.translate('toast.saved', {}, 'base-app/notification-settings'),
+          detail: this.translationService.translate('toast.savedDetail', {}, 'base-app/notification-settings'),
         });
       },
       error: () => {
         this.saving.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save notification settings.',
+          summary: this.translationService.translate('toast.error', {}, 'base-app/notification-settings'),
+          detail: this.translationService.translate('toast.errorDetail', {}, 'base-app/notification-settings'),
         });
       },
     });

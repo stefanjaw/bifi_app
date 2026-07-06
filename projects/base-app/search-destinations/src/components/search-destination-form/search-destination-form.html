@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Destination' : 'New Destination'"
+  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/search-destinations'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,79 +18,79 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Destination" id="destination-details" [ordinal]="1">
+      <bifi-app-form-section [title]="'form.destination.title' | translate: {} : 'base-app/search-destinations'" id="destination-details" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Label *</bifi-app-form-label>
-            <input pInputText formControlName="label" placeholder="e.g. Opportunities" />
+            <bifi-app-form-label>{{ 'form.destination.label' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
+            <input pInputText formControlName="label" [placeholder]="'form.destination.labelPlaceholder' | translate: {} : 'base-app/search-destinations'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Area / Group</bifi-app-form-label>
-            <input pInputText formControlName="group" placeholder="e.g. Sales" />
+            <bifi-app-form-label>{{ 'form.destination.group' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
+            <input pInputText formControlName="group" [placeholder]="'form.destination.groupPlaceholder' | translate: {} : 'base-app/search-destinations'" />
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Route *</bifi-app-form-label>
-            <input pInputText formControlName="route" placeholder="e.g. /sales/opportunities" />
+            <bifi-app-form-label>{{ 'form.destination.route' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
+            <input pInputText formControlName="route" [placeholder]="'form.destination.routePlaceholder' | translate: {} : 'base-app/search-destinations'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Key *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.destination.key' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
             <input
               pInputText
               formControlName="key"
-              placeholder="e.g. sales.opportunities"
+              [placeholder]="'form.destination.keyPlaceholder' | translate: {} : 'base-app/search-destinations'"
               [readOnly]="isSystem()"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Icon</bifi-app-form-label>
-            <input pInputText formControlName="icon" placeholder="e.g. pi pi-list" />
+            <bifi-app-form-label>{{ 'form.destination.icon' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
+            <input pInputText formControlName="icon" [placeholder]="'form.destination.iconPlaceholder' | translate: {} : 'base-app/search-destinations'" />
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Permission Resource</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'form.destination.resource' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
             <input
               pInputText
               formControlName="resource"
-              placeholder="e.g. sales/opportunities/menu"
+              [placeholder]="'form.destination.resourcePlaceholder' | translate: {} : 'base-app/search-destinations'"
             />
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Search Phrases" id="destination-phrases" [ordinal]="2">
+      <bifi-app-form-section [title]="'form.phrases.title' | translate: {} : 'base-app/search-destinations'" id="destination-phrases" [ordinal]="2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Phrases</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'form.phrases.phrasesLabel' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
           <input
             pInputText
             formControlName="keywordsInput"
-            placeholder="Comma-separated, e.g. leads, deals, pipeline"
+            [placeholder]="'form.phrases.phrasesPlaceholder' | translate: {} : 'base-app/search-destinations'"
           />
           <small class="text-gray-500">
-            Separate each phrase with a comma. These are what the top-bar search matches against.
+            {{ 'form.phrases.phrasesHint' | translate: {} : 'base-app/search-destinations' }}
           </small>
         </bifi-app-form-field>
 
         <bifi-app-form-field class="mt-6">
-          <bifi-app-form-label>Description</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'form.phrases.descriptionLabel' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
           <textarea
             pTextarea
             formControlName="description"
             rows="2"
-            placeholder="Optional description"
+            [placeholder]="'form.phrases.descriptionPlaceholder' | translate: {} : 'base-app/search-destinations'"
           ></textarea>
         </bifi-app-form-field>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Status" id="destination-status" [ordinal]="3">
+      <bifi-app-form-section [title]="'form.status.title' | translate: {} : 'base-app/search-destinations'" id="destination-status" [ordinal]="3">
         <bifi-app-form-field>
-          <bifi-app-form-label>Active</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'form.status.active' | translate: {} : 'base-app/search-destinations' }}</bifi-app-form-label>
           <p-toggleSwitch formControlName="active"></p-toggleSwitch>
         </bifi-app-form-field>
       </bifi-app-form-section>
@@ -101,7 +101,7 @@
     }
 
     @if (error()) {
-      <p class="text-red-500">Something went wrong: {{ error() }}</p>
+      <p class="text-red-500">{{ 'error.somethingWentWrong' | translate: {} : 'base-app/search-destinations' }} {{ error() }}</p>
     }
   </form>
 </bifi-app-form-layout>

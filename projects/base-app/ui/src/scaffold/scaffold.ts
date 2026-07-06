@@ -26,6 +26,7 @@ import { GlobalSearch } from '../global-search/global-search';
 import { NotificationPanel } from '../notifications/notification-panel';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { RippleModule } from 'primeng/ripple';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
 import { MainMenuManager, ShortcutItem, UserShortcutsService } from '@avalantec/base-app/routing';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -49,6 +50,7 @@ import { filter, take } from 'rxjs';
     HasPermission,
     RouterLink,
     TooltipModule,
+    TranslatePipe,
     GlobalSearch,
     NotificationPanel,
   ],
@@ -86,6 +88,7 @@ export class Scaffold {
   // shortcuts
   userShortcutsService = inject(UserShortcutsService);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
 
   // current route
   currentRoute = signal(this.router.url);
@@ -381,8 +384,8 @@ export class Scaffold {
         if (this.filteredShortcuts().length >= 6) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Shortcut limit reached',
-            detail: 'You can pin a maximum of 6 shortcuts per section.',
+            summary: this.translationService.translate('shortcuts.limitSummary', {}, 'base-app/ui'),
+            detail: this.translationService.translate('shortcuts.limitDetail', {}, 'base-app/ui'),
           });
           return;
         }

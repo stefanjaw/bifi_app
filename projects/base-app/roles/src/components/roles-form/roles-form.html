@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Role"
+  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/roles'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,11 +18,11 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/roles'" id="general-info" [ordinal]="1">
         <section class="w-full grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Role name" />
+            <bifi-app-form-label>{{ 'form.generalInfo.name' | translate: {} : 'base-app/roles' }}</bifi-app-form-label>
+            <input pInputText formControlName="name" type="text" [placeholder]="'form.generalInfo.namePlaceholder' | translate: {} : 'base-app/roles'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -34,9 +34,9 @@
         </section>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Policies" id="policies" [ordinal]="2">
+      <bifi-app-form-section [title]="'form.policies.title' | translate: {} : 'base-app/roles'" id="policies" [ordinal]="2">
         <p-button
-          label="Add New Policy"
+          [label]="'form.policies.addNew' | translate: {} : 'base-app/roles'"
           severity="secondary"
           icon="pi pi-plus"
           (onClick)="selectPolicyDialog.openDialog()"
@@ -45,20 +45,20 @@
 
         <p-tabs value="0" formArrayName="policies">
           <p-tablist>
-            <p-tab value="0">Models</p-tab>
-            <p-tab value="1">Menus</p-tab>
-            <p-tab value="2">Views</p-tab>
+            <p-tab value="0">{{ 'form.policies.tab.models' | translate: {} : 'base-app/roles' }}</p-tab>
+            <p-tab value="1">{{ 'form.policies.tab.menus' | translate: {} : 'base-app/roles' }}</p-tab>
+            <p-tab value="2">{{ 'form.policies.tab.views' | translate: {} : 'base-app/roles' }}</p-tab>
           </p-tablist>
           <p-tabpanels>
             <p-tabpanel value="0">
               <table class="w-full mb-4 mt-4 table p-4! shadow-xl rounded-2xl">
                 <thead>
                   <tr class="font-bold">
-                    <th class="text-start ps-2">Policy</th>
-                    <th>Read</th>
-                    <th>Create</th>
-                    <th>Update</th>
-                    <th>Delete</th>
+                    <th class="text-start ps-2">{{ 'form.policies.table.policy' | translate: {} : 'base-app/roles' }}</th>
+                    <th>{{ 'form.policies.table.read' | translate: {} : 'base-app/roles' }}</th>
+                    <th>{{ 'form.policies.table.create' | translate: {} : 'base-app/roles' }}</th>
+                    <th>{{ 'form.policies.table.update' | translate: {} : 'base-app/roles' }}</th>
+                    <th>{{ 'form.policies.table.delete' | translate: {} : 'base-app/roles' }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -70,7 +70,7 @@
                       <tr [formGroup]="group" class="border-b-2 border-primary-100">
                         <td class="ps-2">
                           <span class="w-auto overflow-hidden overflow-ellipsis">
-                            {{ policy?.name || 'No name provided' }}
+                            {{ policy?.name || ('form.policies.noName' | translate: {} : 'base-app/roles') }}
                           </span>
                         </td>
                         <td>
@@ -111,7 +111,7 @@
               <table class="w-full mb-4 mt-4 table p-4! shadow-xl rounded-2xl">
                 <thead>
                   <tr class="font-bold">
-                    <th class="text-start ps-2">Policy</th>
+                    <th class="text-start ps-2">{{ 'form.policies.table.policy' | translate: {} : 'base-app/roles' }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -123,7 +123,7 @@
                       <tr [formGroup]="group" class="border-b-2 border-primary-100">
                         <td class="ps-2">
                           <span class="w-auto overflow-hidden overflow-ellipsis">
-                            {{ policy?.name || 'No name provided' }}
+                            {{ policy?.name || ('form.policies.noName' | translate: {} : 'base-app/roles') }}
                           </span>
                         </td>
                         <td>
@@ -144,7 +144,7 @@
               <table class="w-full mb-4 mt-4 table p-4! shadow-xl rounded-2xl">
                 <thead>
                   <tr class="font-bold">
-                    <th class="text-start ps-2">Policy</th>
+                    <th class="text-start ps-2">{{ 'form.policies.table.policy' | translate: {} : 'base-app/roles' }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -156,7 +156,7 @@
                       <tr [formGroup]="group" class="border-b-2 border-primary-100">
                         <td class="ps-2">
                           <span class="w-auto overflow-hidden overflow-ellipsis">
-                            {{ policy?.name || 'No name provided' }}
+                            {{ policy?.name || ('form.policies.noName' | translate: {} : 'base-app/roles') }}
                           </span>
                         </td>
                         <td>
@@ -178,7 +178,7 @@
         <bifi-app-form-error formArrayName="policies"></bifi-app-form-error>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/roles' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

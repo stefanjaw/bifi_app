@@ -20,6 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 import { BackendListModels } from '@avalantec/base-app/resource';
 import { SelectModule } from 'primeng/select';
 
@@ -29,6 +30,7 @@ import { SelectModule } from 'primeng/select';
     ReactiveFormsModule,
     FormModule,
     FormCodeEditor,
+    TranslatePipe,
     InputTextModule,
     ProgressBarModule,
     ButtonModule,

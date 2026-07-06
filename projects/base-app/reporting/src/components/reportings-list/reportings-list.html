@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Reporting Templates</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/reporting' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Reporting Template"
+    [label]="'addNew' | translate: {} : 'base-app/reporting'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by model or title"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/reporting'"
   [searchFilters]="reportingFilters"
 ></bifi-app-search-bar>
 
@@ -19,7 +19,7 @@
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
-      label="Edit"
+      [label]="'edit' | translate: {} : 'base-app/reporting'"
       icon="pi pi-pencil"
       (onClick)="goToEdit(element._id)"
       *bifiAppHasPermission="'reporting/update:view'"
@@ -27,7 +27,7 @@
     <p-button
       *bifiAppHasPermission="'reporting:delete:model'"
       severity="danger"
-      label="Delete"
+      [label]="'delete' | translate: {} : 'base-app/reporting'"
       (onClick)="deleteReporting(element._id)"
       icon="pi pi-trash"
     ></p-button>

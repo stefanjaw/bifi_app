@@ -18,6 +18,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 import { CrudSequences } from '../../services/crud-sequences';
 import { SequenceForm, SequenceFormModel } from '../../services/sequence-form';
 
@@ -32,6 +33,7 @@ import { SequenceForm, SequenceFormModel } from '../../services/sequence-form';
     ProgressBarModule,
     TextareaModule,
     ButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './sequence-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

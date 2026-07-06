@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Exchange Rate' : 'New Exchange Rate'"
+  [title]="(isUpdate() ? 'exchangeRate.form.pageTitle.update' : 'exchangeRate.form.pageTitle.create') | translate: {} : 'base-app/currency'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,36 +18,36 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Exchange Rate Details" id="exchange-rate-details" [ordinal]="1">
+      <bifi-app-form-section [title]="'exchangeRate.form.details.title' | translate: {} : 'base-app/currency'" id="exchange-rate-details" [ordinal]="1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>From Currency *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'exchangeRate.form.details.fromCurrency' | translate: {} : 'base-app/currency' }}</bifi-app-form-label>
             <p-select
               formControlName="fromCurrencyId"
               [options]="currencies() || []"
               optionLabel="code"
               optionValue="_id"
-              placeholder="Select currency"
+              [placeholder]="'exchangeRate.form.details.selectCurrency' | translate: {} : 'base-app/currency'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>To Currency *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'exchangeRate.form.details.toCurrency' | translate: {} : 'base-app/currency' }}</bifi-app-form-label>
             <p-select
               formControlName="toCurrencyId"
               [options]="currencies() || []"
               optionLabel="code"
               optionValue="_id"
-              placeholder="Select currency"
+              [placeholder]="'exchangeRate.form.details.selectCurrency' | translate: {} : 'base-app/currency'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Rate *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'exchangeRate.form.details.rate' | translate: {} : 'base-app/currency' }}</bifi-app-form-label>
             <p-inputNumber
               formControlName="rate"
               [minFractionDigits]="2"
@@ -58,7 +58,7 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Effective Date *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'exchangeRate.form.details.effectiveDate' | translate: {} : 'base-app/currency' }}</bifi-app-form-label>
             <p-datePicker
               formControlName="effectiveDate"
               [showIcon]="true"
@@ -68,7 +68,7 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Active</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'exchangeRate.form.details.active' | translate: {} : 'base-app/currency' }}</bifi-app-form-label>
             <p-toggleSwitch formControlName="active"></p-toggleSwitch>
           </bifi-app-form-field>
         </div>

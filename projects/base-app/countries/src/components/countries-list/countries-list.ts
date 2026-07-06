@@ -15,6 +15,7 @@ import { countryFilters } from '../../libraries/countries-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { country } from '@avalantec/base-app/interfaces';
 import { DebugMode } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-countries-list',
@@ -27,6 +28,7 @@ import { DebugMode } from '@avalantec/base-app/core';
     HasPermission,
     DebugMode,
     ButtonsActions,
+    TranslatePipe,
   ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',

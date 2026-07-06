@@ -21,12 +21,12 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { Menu, MenuModule } from 'primeng/menu';
 import { BugReportDialog } from '@avalantec/base-app/bug-reporting';
-import { TranslationService, languageRecord } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService, languageRecord } from '@avalantec/base-app/translation';
 import { user } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-user-panel',
-  imports: [ButtonModule, AvatarModule, MenuModule],
+  imports: [ButtonModule, AvatarModule, MenuModule, TranslatePipe],
   templateUrl: './user-panel.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -117,18 +117,18 @@ export class UserPanel {
   ): MenuItem[] {
     return [
       {
-        label: u?.email || 'Email not set',
+        label: u?.email || this.translationService.translate('userPanel.emailNotSet', {}, 'base-app/ui'),
         disabled: true,
         style: { 'font-weight': 'bold', opacity: '0.8' },
       },
       { separator: true },
       {
-        label: 'Profile',
+        label: this.translationService.translate('userPanel.profile', {}, 'base-app/ui'),
         icon: 'pi pi-user',
         command: () => this.router.navigate(['settings', 'profile']),
       },
       {
-        label: 'Report a Bug',
+        label: this.translationService.translate('userPanel.reportBug', {}, 'base-app/ui'),
         icon: 'pi pi-exclamation-circle',
         command: () => {
           if (!this.bugReportDialogRef) {
@@ -143,7 +143,7 @@ export class UserPanel {
       },
       { separator: true },
       {
-        label: 'Log-Out',
+        label: this.translationService.translate('userPanel.logOut', {}, 'base-app/ui'),
         icon: 'pi pi-sign-out',
         command: () => {
           this.authService.logout();
@@ -152,7 +152,7 @@ export class UserPanel {
       },
       { separator: true },
       {
-        label: 'Languages',
+        label: this.translationService.translate('userPanel.languages', {}, 'base-app/ui'),
         disabled: true,
         style: {
           'font-size': '0.7rem',

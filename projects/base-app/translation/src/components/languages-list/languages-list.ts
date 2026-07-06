@@ -9,6 +9,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '../../pipes/translate';
 import { CrudLanguages } from '../../services/crud-languages';
 import { languageColumns } from '../../libraries/language-columns';
 import { languageFilters } from '../../libraries/language-filters';
@@ -21,7 +22,7 @@ import { languageRecord } from '../../interfaces/language';
 @Component({
   selector: 'bifi-app-languages-list',
   providers: [provideResourceManager(CrudLanguages)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions, TranslatePipe],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

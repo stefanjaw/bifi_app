@@ -1,7 +1,7 @@
 <div class="m-0 flex items-center gap-2">
   <p-menu #userMenu [popup]="true" [model]="items()"></p-menu>
 
-  <p-button class="p-0 m-0" aria-label="user panel" variant="text" (click)="openMenu($event)">
+  <p-button class="p-0 m-0" [attr.aria-label]="'userPanel.ariaLabel' | translate: {} : 'base-app/ui'" variant="text" (click)="openMenu($event)">
     <p-avatar
       [image]="pictureUrl()"
       [icon]="!pictureUrl() ? 'pi pi-user' : undefined"
