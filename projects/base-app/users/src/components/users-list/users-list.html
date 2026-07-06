@@ -1,15 +1,15 @@
-<h1 class="text-2xl font-bold mb-4">Users</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/users' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New User"
+    [label]="'addNew' | translate: {} : 'base-app/users'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
     *bifiAppHasPermission="'users/create:view'"
   ></p-button>
   <p-button
-    [label]="showInactiveStatus() ? 'Show Active' : 'Show Inactive'"
+    [label]="(showInactiveStatus() ? 'showInactive' : 'showActive') | translate: {} : 'base-app/users'"
     severity="info"
     [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
     (onClick)="toggleInactiveRecords()"
@@ -17,7 +17,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by username, email, role or provider"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/users'"
   [searchFilters]="userFilters"
 ></bifi-app-search-bar>
 
@@ -26,7 +26,7 @@
     @if (row.active) {
       <p-button
         severity="secondary"
-        label="Edit"
+        [label]="'edit' | translate: {} : 'base-app/users'"
         icon="pi pi-pencil"
         [routerLink]="['../edit/', row._id]"
         *bifiAppHasPermission="'users/update:view'"
@@ -34,19 +34,19 @@
       <p-button
         *bifiAppHasPermission="'users:delete:model'"
         severity="danger"
-        label="Inactivate"
+        [label]="'inactivate' | translate: {} : 'base-app/users'"
         (onClick)="deleteUser(row._id)"
         icon="pi pi-trash"
         [disabled]="isUserSameAsLoggedInUser(row)"
         [tooltipDisabled]="!isUserSameAsLoggedInUser(row)"
-        pTooltip="You cannot inactivate yourself!"
+        [pTooltip]="'cannotInactivateSelf' | translate: {} : 'base-app/users'"
         tooltipPosition="top"
       ></p-button>
     } @else {
       <p-button
         *bifiAppHasPermission="'users:update:model'"
         severity="secondary"
-        label="Reactivate"
+        [label]="'reactivate' | translate: {} : 'base-app/users'"
         (onClick)="reactiveUser(row._id)"
         icon="pi pi-eye"
       ></p-button>

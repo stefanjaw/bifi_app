@@ -1,11 +1,11 @@
 <p-dialog
-  header="Select Role"
+  [header]="'selectRole.title' | translate: {} : 'base-app/users'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md"
 >
   <bifi-app-form-field class="mb-8 min-h-40">
-    <bifi-app-form-label>Role</bifi-app-form-label>
+    <bifi-app-form-label>{{ 'selectRole.role' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
     <p-select
       appendTo="body"
       [formControl]="role"
@@ -22,7 +22,7 @@
     [formDisabled]="!role.valid || !role.value"
     (submitClicked)="handleSubmit()"
     (cancelClicked)="closeDialog()"
-    cancelLabel="Cancel"
+    [cancelLabel]="'selectRole.cancel' | translate: {} : 'base-app/users'"
     [formChanged]="true"
   ></bifi-app-form-actions>
 </p-dialog>

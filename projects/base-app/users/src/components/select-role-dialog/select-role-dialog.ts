@@ -6,10 +6,11 @@ import { SelectModule } from 'primeng/select';
 import { FormModule } from '@avalantec/base-app/form';
 import { CrudRoles } from '@avalantec/base-app/roles';
 import { role } from '@avalantec/base-app/interfaces';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-select-role-dialog',
-  imports: [ReactiveFormsModule, DialogModule, SelectModule, FormModule],
+  imports: [ReactiveFormsModule, DialogModule, SelectModule, FormModule, TranslatePipe],
   templateUrl: './select-role-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

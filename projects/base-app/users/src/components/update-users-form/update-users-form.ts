@@ -23,6 +23,7 @@ import { SelectModule } from 'primeng/select';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { roleColumns } from '@avalantec/base-app/roles';
 import { role } from '@avalantec/base-app/interfaces';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-update-users-form',
@@ -36,6 +37,7 @@ import { role } from '@avalantec/base-app/interfaces';
     ButtonModule,
     TableLayout,
     SelectModule,
+    TranslatePipe,
   ],
   templateUrl: './update-users-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
