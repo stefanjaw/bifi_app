@@ -21,7 +21,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { Menu, MenuModule } from 'primeng/menu';
 import { BugReportDialog } from '@avalantec/base-app/bug-reporting';
-import { TranslatePipe, TranslationService, languageRecord } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService, languageRecord } from '@avalantec/base-app/i18n';
 import { user } from '@avalantec/base-app/interfaces';
 
 @Component({
@@ -117,7 +117,8 @@ export class UserPanel {
   ): MenuItem[] {
     return [
       {
-        label: u?.email || this.translationService.translate('userPanel.emailNotSet', {}, 'base-app/ui'),
+        label:
+          u?.email || this.translationService.translate('userPanel.emailNotSet', {}, 'base-app/ui'),
         disabled: true,
         style: { 'font-weight': 'bold', opacity: '0.8' },
       },

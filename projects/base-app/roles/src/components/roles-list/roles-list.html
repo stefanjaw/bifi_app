@@ -10,7 +10,10 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar [label]="'searchPlaceholder' | translate: {} : 'base-app/roles'" [searchFilters]="roleFilters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/roles'"
+  [searchFilters]="roleFilters"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"

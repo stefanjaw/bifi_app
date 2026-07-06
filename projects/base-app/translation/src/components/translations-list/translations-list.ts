@@ -9,7 +9,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '../../pipes/translate';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudTranslations } from '../../services/crud-translations';
 import { translationColumns } from '../../libraries/translation-columns';
 import { translationFilters } from '../../libraries/translation-filters';
@@ -22,7 +22,15 @@ import { translationRecord } from '../../interfaces/translation';
 @Component({
   selector: 'bifi-app-translations-list',
   providers: [provideResourceManager(CrudTranslations)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions, TranslatePipe],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

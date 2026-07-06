@@ -14,6 +14,3 @@ export * from './src/services/crud-translations';
 export * from './src/services/crud-languages';
 export * from './src/services/translation-form';
 export * from './src/services/language-form';
-export * from './src/services/translation';
-export * from './src/pipes/translate';
-export * from './src/providers/provide-translations';

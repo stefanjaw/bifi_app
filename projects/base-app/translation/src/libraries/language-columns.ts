@@ -1,5 +1,5 @@
 import { tableColumn } from '@avalantec/base-app/resource';
-import { languageRecord } from '../interfaces/language';
+import { languageRecord } from '@avalantec/base-app/i18n';
 
 /** Table column definitions for the Languages list */
 export const languageColumns: tableColumn<languageRecord>[] = [

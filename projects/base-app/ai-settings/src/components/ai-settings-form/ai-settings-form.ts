@@ -18,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudAiSettings } from '../../services/crud-ai-settings';
 import { AiSettingsForm, AiSettingsFormModel } from '../../services/ai-settings-form';
 import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-ai-settings-form',

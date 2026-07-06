@@ -11,7 +11,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { contact } from '@avalantec/base-app/interfaces';

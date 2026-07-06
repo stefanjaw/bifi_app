@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CountryForm, CountryFormModel } from '../../services/country-form';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-countries-form',

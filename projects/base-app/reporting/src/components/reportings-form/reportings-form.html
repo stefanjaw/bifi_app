@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/reporting'"
+  [title]="
+    (isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create')
+      | translate: {} : 'base-app/reporting'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,23 +21,42 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/reporting'" id="form-general" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.generalInfo.title' | translate: {} : 'base-app/reporting'"
+        id="form-general"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.titleLabel' | translate: {} : 'base-app/reporting' }}</bifi-app-form-label>
-            <input pInputText formControlName="title" type="text" [placeholder]="'form.generalInfo.titlePlaceholder' | translate: {} : 'base-app/reporting'" />
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.titleLabel' | translate: {} : 'base-app/reporting' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="title"
+              type="text"
+              [placeholder]="
+                'form.generalInfo.titlePlaceholder' | translate: {} : 'base-app/reporting'
+              "
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.model' | translate: {} : 'base-app/reporting' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.model' | translate: {} : 'base-app/reporting' }}
+            </bifi-app-form-label>
             <p-select filter formControlName="model" [options]="modelsList()"></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section [title]="'form.templateEditor.title' | translate: {} : 'base-app/reporting'" id="template-editor" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.templateEditor.title' | translate: {} : 'base-app/reporting'"
+        id="template-editor"
+        [ordinal]="2"
+      >
         @if (isUpdate()) {
           <div class="mb-4">
             <p-button

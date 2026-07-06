@@ -11,13 +11,22 @@
     (appSubmit)="handleSubmit($event)"
   >
     <bifi-app-form-field>
-      <bifi-app-form-label>{{ 'subject' | translate: {} : 'base-app/bug-reporting' }}</bifi-app-form-label>
-      <input pInputText formControlName="name" type="text" [placeholder]="'subjectPlaceholder' | translate: {} : 'base-app/bug-reporting'" />
+      <bifi-app-form-label>
+        {{ 'subject' | translate: {} : 'base-app/bug-reporting' }}
+      </bifi-app-form-label>
+      <input
+        pInputText
+        formControlName="name"
+        type="text"
+        [placeholder]="'subjectPlaceholder' | translate: {} : 'base-app/bug-reporting'"
+      />
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>{{ 'description' | translate: {} : 'base-app/bug-reporting' }}</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'description' | translate: {} : 'base-app/bug-reporting' }}
+      </bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="description"

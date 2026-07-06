@@ -9,7 +9,9 @@
           (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
           variant="text"
           severity="contrast"
-          [pTooltip]="(isOpened() ? 'sidebar.collapse' : 'sidebar.expand') | translate: {} : 'base-app/ui'"
+          [pTooltip]="
+            (isOpened() ? 'sidebar.collapse' : 'sidebar.expand') | translate: {} : 'base-app/ui'
+          "
         >
           @if (isOpened()) {
             <svg
@@ -178,7 +180,10 @@
                 class="text-xs text-red-500 italic select-none pointer-events-none flex items-center gap-1 shrink-0"
               >
                 <span class="pi pi-ban" style="font-size: 10px"></span>
-                {{ 'shortcuts.onlyModulePinned' | translate: { module: currentModuleLabel() } : 'base-app/ui' }}
+                {{
+                  'shortcuts.onlyModulePinned'
+                    | translate: { module: currentModuleLabel() } : 'base-app/ui'
+                }}
               </span>
             } @else if (filteredShortcuts().length === 0) {
               <span class="text-xs text-surface-400 italic select-none pointer-events-none">
@@ -298,7 +303,8 @@
         [class.rotate-180]="isExpanded(mainItem)"
         (click)="toggleExpanded(mainItem)"
         [attr.aria-label]="
-          (isExpanded(mainItem) ? 'sidebar.collapse' : 'sidebar.expand') | translate: { label: mainItem.label } : 'base-app/ui'
+          (isExpanded(mainItem) ? 'sidebar.collapse' : 'sidebar.expand')
+            | translate: { label: mainItem.label } : 'base-app/ui'
         "
       >
         <span class="pi pi-angle-down text-xs"></span>

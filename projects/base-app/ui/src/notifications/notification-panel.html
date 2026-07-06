@@ -25,7 +25,9 @@
     >
       <!-- Header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-surface-100">
-        <span class="text-sm font-semibold text-surface-800">{{ 'notifications.title' | translate: {} : 'base-app/ui' }}</span>
+        <span class="text-sm font-semibold text-surface-800">
+          {{ 'notifications.title' | translate: {} : 'base-app/ui' }}
+        </span>
         @if (hasUnread) {
           <button
             type="button"

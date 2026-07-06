@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { MENU_ITEMS } from '@avalantec/base-app/core';
 import { SearchService } from '@avalantec/base-app/search';
 import {
@@ -24,7 +24,15 @@ import { searchDestination } from '../../interfaces/search-destination';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, TooltipModule, SearchBar, HasPermission, RouterLink, TranslatePipe],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    TooltipModule,
+    SearchBar,
+    HasPermission,
+    RouterLink,
+    TranslatePipe,
+  ],
   templateUrl: './search-destinations-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

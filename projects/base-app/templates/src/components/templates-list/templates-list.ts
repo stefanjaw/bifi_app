@@ -10,7 +10,7 @@ import { CrudTemplates } from '../../services/crud-templates';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { template } from '@avalantec/base-app/interfaces';
 import { templateFilters } from '../../libraries/template-filters';
 import { templateColumns } from '../../libraries/template-columns';
@@ -19,7 +19,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-templates-list',
   providers: [provideResourceManager(CrudTemplates)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions, TranslatePipe],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

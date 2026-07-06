@@ -17,7 +17,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { provideResourceManager } from '@avalantec/base-app/resource';
-import { TranslatePipe } from '../../pipes/translate';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudLanguages } from '../../services/crud-languages';
 import { LanguageForm } from '../../services/language-form';
 import { LanguageFormModel } from '../../interfaces/language';
@@ -29,7 +29,14 @@ import { LanguageFormModel } from '../../interfaces/language';
 @Component({
   selector: 'bifi-app-languages-form',
   providers: [provideResourceManager(CrudLanguages)],
-  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule, ToggleSwitchModule, TranslatePipe],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    ProgressBarModule,
+    ToggleSwitchModule,
+    TranslatePipe,
+  ],
   templateUrl: './languages-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

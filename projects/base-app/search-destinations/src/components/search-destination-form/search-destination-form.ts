@@ -17,7 +17,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { SearchService } from '@avalantec/base-app/search';
 import { CrudSearchDestinations } from '../../services/crud-search-destinations';
 import {

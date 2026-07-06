@@ -9,7 +9,7 @@ import { CrudReporting } from '../../services/crud-reporting';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { reporting } from '@avalantec/base-app/interfaces';
 import { reportingColumns } from '../../libraries/reporting-columns';
 import { reportingFilters } from '../../libraries/reporting-filters';

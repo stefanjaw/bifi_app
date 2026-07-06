@@ -6,11 +6,19 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-company-detail',
-  imports: [FormModule, RouterLink, ButtonModule, TableModule, TagModule, ProgressBarModule, TranslatePipe],
+  imports: [
+    FormModule,
+    RouterLink,
+    ButtonModule,
+    TableModule,
+    TagModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './company-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

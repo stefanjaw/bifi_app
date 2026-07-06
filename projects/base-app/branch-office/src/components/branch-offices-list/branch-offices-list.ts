@@ -14,7 +14,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { branchOffice } from '../../interfaces/branch-office';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-branch-offices-list',
@@ -22,7 +22,15 @@ import { TranslatePipe } from '@avalantec/base-app/translation';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions, TranslatePipe],
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   templateUrl: './branch-offices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

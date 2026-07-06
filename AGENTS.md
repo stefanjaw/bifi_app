@@ -8,7 +8,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 
 - **app** (only one): `projects/asset-roster-demo` — serves on `:4200`
 - **libs** (14): `base-app`, `asset-roster`, `l10n_cr_einvoice`, `calendar`, `website`, `helpdesk`, `tasks`, `projects`, `aduanix`, `sales`, `purchases`, `inventory`, `accounting`, `email-marketing`
-- `base-app` is a **multi-entrypoint library** with 27 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
+- `base-app` is a **multi-entrypoint library** with 28 sub-entrypoints — each under `projects/base-app/<name>/` with its own `ng-package.json`
 - All libs expose via `@avalantec/<name>` path aliases from root `tsconfig.json`
 
 ## Base-App Capabilities
@@ -27,7 +27,8 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
 | `search` | `SearchService`, `SearchDestination`, `SearchResultGroup` | `ui` (GlobalSearch), `search-destinations` (list/form) |
-| `translation` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
+| `i18n` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
+| `translation` | `CrudTranslations`, `CrudLanguages`, `TranslationForm`, `LanguageForm`, `TranslationsList`, `TranslationsForm`, `LanguagesList`, `LanguagesForm`, `TRANSLATION_ROUTES`, `LANGUAGE_ROUTES`, translation/language columns & filters, `LanguageFormModel` | Only internal (Settings → Translation Keys / Languages) |
 
 ### Feature CRUD Modules (Settings)
 
@@ -59,7 +60,8 @@ All loaded lazily via `SETTINGS_ROUTES` in `routing`. They share the same patter
 | Entrypoint | Interfaces |
 |---|---|
 | `interfaces` | `user` (includes `language?: string`), `contact`, `company`, `country`, `role`, `policy<T,R>`, `template`, `reporting`, `resource`, `policyAction`, `conditionOperator` |
-| `translation` | `languageRecord`, `LanguageFormModel` |
+| `i18n` | `languageRecord` |
+| `translation` | `LanguageFormModel` |
 
 ### Key Rule
 
@@ -268,7 +270,7 @@ Each feature lib registers itself via a `provide*()` function (e.g. `provideSale
 
 Libs ship as Angular packages via `ng-packagr` (build → `dist/<name>/` → `npm pack` → `.tgz`).
 
-Each `provide*()` should also include `provideTranslations('scope')` from `@avalantec/base-app/translation` to pre-fetch translations for that lib's scope at bootstrap. See `projects/tasks/src/lib/providers/provider.ts` for the reference pattern.
+Each `provide*()` should also include `provideTranslations('scope')` from `@avalantec/base-app/i18n` to pre-fetch translations for that lib's scope at bootstrap. See `projects/tasks/src/lib/providers/provider.ts` for the reference pattern.
 
 ## Code Conventions (from base-app docs)
 

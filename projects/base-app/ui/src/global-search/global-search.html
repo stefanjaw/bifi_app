@@ -27,7 +27,9 @@
           {{ 'search.hint' | translate: {} : 'base-app/ui' }}
         </div>
       } @else if (flatItems().length === 0) {
-        <div class="px-3 py-3 text-sm text-surface-500">{{ 'search.noResults' | translate: { query: query() } : 'base-app/ui' }}</div>
+        <div class="px-3 py-3 text-sm text-surface-500">
+          {{ 'search.noResults' | translate: { query: query() } : 'base-app/ui' }}
+        </div>
       } @else {
         @for (group of displayGroups(); track group.group) {
           <div

@@ -6,7 +6,7 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RoleForm } from '../../../services/role-form';
 import { CrudPolicies } from '@avalantec/base-app/policies';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { policy } from '@avalantec/base-app/interfaces';
 
 @Component({

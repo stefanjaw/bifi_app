@@ -24,25 +24,37 @@
     }
 
     @if (!isLoading() && company()) {
-      <bifi-app-form-section [title]="'detail.companyInformation' | translate: {} : 'base-app/companies'" id="company-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'detail.companyInformation' | translate: {} : 'base-app/companies'"
+        id="company-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-500">{{ 'detail.name' | translate: {} : 'base-app/companies' }}</span>
+            <span class="text-sm font-medium text-gray-500">
+              {{ 'detail.name' | translate: {} : 'base-app/companies' }}
+            </span>
             <span class="text-base text-gray-900">{{ company()!.name }}</span>
           </div>
 
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-500">{{ 'detail.country' | translate: {} : 'base-app/companies' }}</span>
+            <span class="text-sm font-medium text-gray-500">
+              {{ 'detail.country' | translate: {} : 'base-app/companies' }}
+            </span>
             <span class="text-base text-gray-900">{{ company()!.countryId?.name || '-' }}</span>
           </div>
 
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-500">{{ 'detail.address' | translate: {} : 'base-app/companies' }}</span>
+            <span class="text-sm font-medium text-gray-500">
+              {{ 'detail.address' | translate: {} : 'base-app/companies' }}
+            </span>
             <span class="text-base text-gray-900">{{ company()!.address }}</span>
           </div>
 
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-500">{{ 'detail.contact' | translate: {} : 'base-app/companies' }}</span>
+            <span class="text-sm font-medium text-gray-500">
+              {{ 'detail.contact' | translate: {} : 'base-app/companies' }}
+            </span>
             <span class="text-base text-gray-900">
               {{ company()!.contactId?.name || '-' }} {{ company()!.contactId?.lastName || '-' }}
             </span>
@@ -50,9 +62,15 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section [title]="'branchOffices.title' | translate: {} : 'base-app/companies'" id="branch-offices" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'branchOffices.title' | translate: {} : 'base-app/companies'"
+        id="branch-offices"
+        [ordinal]="2"
+      >
         @if (branches().length === 0) {
-          <p class="text-gray-500 text-sm">{{ 'branchOffices.empty' | translate: {} : 'base-app/companies' }}</p>
+          <p class="text-gray-500 text-sm">
+            {{ 'branchOffices.empty' | translate: {} : 'base-app/companies' }}
+          </p>
         } @else {
           <p-table
             [value]="branches()"
@@ -78,13 +96,21 @@
                 <td>
                   <p-tag
                     [severity]="branch.isDefault ? 'success' : 'secondary'"
-                    [value]="branch.isDefault ? ('yes' | translate: {} : 'base-app/companies') : ('no' | translate: {} : 'base-app/companies')"
+                    [value]="
+                      branch.isDefault
+                        ? ('yes' | translate: {} : 'base-app/companies')
+                        : ('no' | translate: {} : 'base-app/companies')
+                    "
                   ></p-tag>
                 </td>
                 <td>
                   <p-tag
                     [severity]="branch.active ? 'success' : 'danger'"
-                    [value]="branch.active ? ('active' | translate: {} : 'base-app/companies') : ('inactive' | translate: {} : 'base-app/companies')"
+                    [value]="
+                      branch.active
+                        ? ('active' | translate: {} : 'base-app/companies')
+                        : ('inactive' | translate: {} : 'base-app/companies')
+                    "
                   ></p-tag>
                 </td>
               </tr>

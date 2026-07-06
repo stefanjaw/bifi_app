@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestManager } from '@avalantec/base-app/resource';
-import { languageRecord } from '../interfaces/language';
+import { languageRecord } from '@avalantec/base-app/i18n';
 
 /**
  * CRUD service for Language records.

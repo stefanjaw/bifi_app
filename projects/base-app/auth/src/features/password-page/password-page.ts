@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { ToastManager } from '@avalantec/base-app/core';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-password-page',

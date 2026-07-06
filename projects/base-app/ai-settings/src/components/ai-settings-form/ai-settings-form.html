@@ -17,25 +17,35 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section [title]="'general.title' | translate: {} : 'base-app/ai-settings'" id="ai-provider" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'general.title' | translate: {} : 'base-app/ai-settings'"
+        id="ai-provider"
+        [ordinal]="1"
+      >
         <p class="text-sm text-gray-500 mb-4">
           {{ 'general.description' | translate: {} : 'base-app/ai-settings' }}
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'general.aiProvider' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'general.aiProvider' | translate: {} : 'base-app/ai-settings' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="aiProvider"
-              [placeholder]="'general.aiProviderPlaceholder' | translate: {} : 'base-app/ai-settings'"
+              [placeholder]="
+                'general.aiProviderPlaceholder' | translate: {} : 'base-app/ai-settings'
+              "
               class="w-full"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'general.apiKey' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'general.apiKey' | translate: {} : 'base-app/ai-settings' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="apiKey"
@@ -47,7 +57,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'general.model' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'general.model' | translate: {} : 'base-app/ai-settings' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="model"
@@ -58,22 +70,30 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'general.embeddingModel' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'general.embeddingModel' | translate: {} : 'base-app/ai-settings' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="embeddingModel"
-              [placeholder]="'general.embeddingModelPlaceholder' | translate: {} : 'base-app/ai-settings'"
+              [placeholder]="
+                'general.embeddingModelPlaceholder' | translate: {} : 'base-app/ai-settings'
+              "
               class="w-full"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'general.maxTokenLimit' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'general.maxTokenLimit' | translate: {} : 'base-app/ai-settings' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="maxTokenLimit"
-              [placeholder]="'general.maxTokenLimitPlaceholder' | translate: {} : 'base-app/ai-settings'"
+              [placeholder]="
+                'general.maxTokenLimitPlaceholder' | translate: {} : 'base-app/ai-settings'
+              "
               type="number"
               class="w-full"
             />
@@ -82,7 +102,11 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section [title]="'prompts.title' | translate: {} : 'base-app/ai-settings'" id="prompt-versions" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'prompts.title' | translate: {} : 'base-app/ai-settings'"
+        id="prompt-versions"
+        [ordinal]="2"
+      >
         <p class="text-sm text-gray-500 mb-4">
           {{ 'prompts.description' | translate: {} : 'base-app/ai-settings' }}
         </p>
@@ -90,7 +114,11 @@
         @for (promptForm of promptForms(); track $index) {
           <div class="border rounded-lg p-4 mb-4 bg-white">
             <div class="flex justify-between items-center mb-3">
-              <span class="font-medium text-sm text-gray-700">{{ 'prompts.promptLabel' | translate: { index: $index + 1 } : 'base-app/ai-settings' }}</span>
+              <span class="font-medium text-sm text-gray-700">
+                {{
+                  'prompts.promptLabel' | translate: { index: $index + 1 } : 'base-app/ai-settings'
+                }}
+              </span>
               <p-button
                 icon="pi pi-trash"
                 severity="danger"
@@ -101,15 +129,26 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3" [formGroup]="promptForm">
               <bifi-app-form-field>
-                <bifi-app-form-label>{{ 'prompts.name' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
-                <input pInputText formControlName="name" [placeholder]="'prompts.namePlaceholder' | translate: {} : 'base-app/ai-settings'" class="w-full" />
+                <bifi-app-form-label>
+                  {{ 'prompts.name' | translate: {} : 'base-app/ai-settings' }}
+                </bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="name"
+                  [placeholder]="'prompts.namePlaceholder' | translate: {} : 'base-app/ai-settings'"
+                  class="w-full"
+                />
               </bifi-app-form-field>
               <bifi-app-form-field>
-                <bifi-app-form-label>{{ 'prompts.version' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'prompts.version' | translate: {} : 'base-app/ai-settings' }}
+                </bifi-app-form-label>
                 <input
                   pInputText
                   formControlName="version"
-                  [placeholder]="'prompts.versionPlaceholder' | translate: {} : 'base-app/ai-settings'"
+                  [placeholder]="
+                    'prompts.versionPlaceholder' | translate: {} : 'base-app/ai-settings'
+                  "
                   type="number"
                   class="w-full"
                 />
@@ -117,11 +156,15 @@
             </div>
             <div [formGroup]="promptForm">
               <bifi-app-form-field>
-                <bifi-app-form-label>{{ 'prompts.promptText' | translate: {} : 'base-app/ai-settings' }}</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'prompts.promptText' | translate: {} : 'base-app/ai-settings' }}
+                </bifi-app-form-label>
                 <textarea
                   pInputTextarea
                   formControlName="prompt"
-                  [placeholder]="'prompts.promptTextPlaceholder' | translate: {} : 'base-app/ai-settings'"
+                  [placeholder]="
+                    'prompts.promptTextPlaceholder' | translate: {} : 'base-app/ai-settings'
+                  "
                   rows="4"
                   class="w-full"
                 ></textarea>

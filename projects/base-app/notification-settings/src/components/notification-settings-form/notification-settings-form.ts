@@ -9,7 +9,7 @@ import {
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormModule } from '@avalantec/base-app/form';
-import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -184,16 +184,32 @@ export class NotificationSettingsForm {
         this.saving.set(false);
         this.messageService.add({
           severity: 'success',
-          summary: this.translationService.translate('toast.saved', {}, 'base-app/notification-settings'),
-          detail: this.translationService.translate('toast.savedDetail', {}, 'base-app/notification-settings'),
+          summary: this.translationService.translate(
+            'toast.saved',
+            {},
+            'base-app/notification-settings'
+          ),
+          detail: this.translationService.translate(
+            'toast.savedDetail',
+            {},
+            'base-app/notification-settings'
+          ),
         });
       },
       error: () => {
         this.saving.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: this.translationService.translate('toast.error', {}, 'base-app/notification-settings'),
-          detail: this.translationService.translate('toast.errorDetail', {}, 'base-app/notification-settings'),
+          summary: this.translationService.translate(
+            'toast.error',
+            {},
+            'base-app/notification-settings'
+          ),
+          detail: this.translationService.translate(
+            'toast.errorDetail',
+            {},
+            'base-app/notification-settings'
+          ),
         });
       },
     });

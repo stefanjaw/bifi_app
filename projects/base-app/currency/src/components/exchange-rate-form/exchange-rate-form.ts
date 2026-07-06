@@ -20,7 +20,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-exchange-rate-form',

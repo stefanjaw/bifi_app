@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { TextareaModule } from 'primeng/textarea';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-access-token-dialog',

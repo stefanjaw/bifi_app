@@ -26,7 +26,7 @@ import { GlobalSearch } from '../global-search/global-search';
 import { NotificationPanel } from '../notifications/notification-panel';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { RippleModule } from 'primeng/ripple';
-import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { MainMenuManager, ShortcutItem, UserShortcutsService } from '@avalantec/base-app/routing';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';

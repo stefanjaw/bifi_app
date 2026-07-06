@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="(isUpdate() ? ('form.pageTitle.update' | translate: {} : 'base-app/companies') : ('form.pageTitle.create' | translate: {} : 'base-app/companies'))"
+  [title]="
+    isUpdate()
+      ? ('form.pageTitle.update' | translate: {} : 'base-app/companies')
+      : ('form.pageTitle.create' | translate: {} : 'base-app/companies')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,10 +22,16 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section [title]="'form.generalInfo.title' | translate: {} : 'base-app/companies'" id="form-general" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.generalInfo.title' | translate: {} : 'base-app/companies'"
+        id="form-general"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.type' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.type' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="type"
               [options]="typeOptions()"
@@ -33,35 +43,59 @@
 
           @if (isBranchOffice()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ 'form.generalInfo.parentCompany' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.parentCompany' | translate: {} : 'base-app/companies' }}
+              </bifi-app-form-label>
               <p-select
                 formControlName="parentCompany"
                 [options]="companies()"
                 optionLabel="name"
                 optionValue="_id"
                 [filter]="true"
-                [placeholder]="'form.generalInfo.parentCompanyPlaceholder' | translate: {} : 'base-app/companies'"
+                [placeholder]="
+                  'form.generalInfo.parentCompanyPlaceholder' | translate: {} : 'base-app/companies'
+                "
               ></p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           }
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.name' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" [placeholder]="'form.generalInfo.namePlaceholder' | translate: {} : 'base-app/companies'" />
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.name' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="
+                'form.generalInfo.namePlaceholder' | translate: {} : 'base-app/companies'
+              "
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (isBranchOffice()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ 'form.generalInfo.branchCode' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
-              <input pInputText formControlName="branchCode" type="text" [placeholder]="'form.generalInfo.branchCodePlaceholder' | translate: {} : 'base-app/companies'" />
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.branchCode' | translate: {} : 'base-app/companies' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="branchCode"
+                type="text"
+                [placeholder]="
+                  'form.generalInfo.branchCodePlaceholder' | translate: {} : 'base-app/companies'
+                "
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           }
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.country' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.country' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="countryId"
               [options]="countries()"
@@ -73,18 +107,24 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.address' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.address' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="address"
               type="text"
-              [placeholder]="'form.generalInfo.addressPlaceholder' | translate: {} : 'base-app/companies'"
+              [placeholder]="
+                'form.generalInfo.addressPlaceholder' | translate: {} : 'base-app/companies'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.relatedToContact' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.relatedToContact' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contacts()"
@@ -96,20 +136,26 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.generalInfo.defaultCurrency' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.defaultCurrency' | translate: {} : 'base-app/companies' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="defaultCurrencyId"
               [options]="currencies()"
               optionLabel="name"
               optionValue="_id"
               [filter]="true"
-              [placeholder]="'form.generalInfo.defaultCurrencyPlaceholder' | translate: {} : 'base-app/companies'"
+              [placeholder]="
+                'form.generalInfo.defaultCurrencyPlaceholder' | translate: {} : 'base-app/companies'
+              "
             ></p-select>
           </bifi-app-form-field>
 
           @if (isBranchOffice()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ 'form.generalInfo.setAsDefaultBranch' | translate: {} : 'base-app/companies' }}</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.setAsDefaultBranch' | translate: {} : 'base-app/companies' }}
+              </bifi-app-form-label>
               <p-toggle-switch formControlName="isDefault"></p-toggle-switch>
             </bifi-app-form-field>
           }

@@ -10,7 +10,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudSequences } from '../../services/crud-sequences';
 import { sequenceColumns } from '../../libraries/sequence-columns';
 import { sequence } from '../../interfaces/sequence';
@@ -21,7 +21,15 @@ import { sequence } from '../../interfaces/sequence';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink, ButtonsActions, TranslatePipe],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   templateUrl: './sequences-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

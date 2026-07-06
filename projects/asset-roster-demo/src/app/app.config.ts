@@ -29,7 +29,7 @@ import { provideHelpdesk } from '@avalantec/helpdesk';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
 import { provideL10nCrEinvoice } from '@avalantec/l10n_cr_einvoice';
-import { provideTranslationRoot } from '@avalantec/base-app/translation';
+import { provideTranslationRoot } from '@avalantec/base-app/i18n';
 
 export const appConfig: ApplicationConfig = {
   providers: [

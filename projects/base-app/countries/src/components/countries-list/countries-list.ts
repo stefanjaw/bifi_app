@@ -15,7 +15,7 @@ import { countryFilters } from '../../libraries/countries-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { country } from '@avalantec/base-app/interfaces';
 import { DebugMode } from '@avalantec/base-app/core';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-countries-list',

@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { NotificationCenterService, AppNotification } from '@avalantec/base-app/routing';
 
 @Component({
@@ -104,9 +104,11 @@ export class NotificationPanel {
     const secs = Math.floor(diff / 1000);
     if (secs < 60) return this.translationService.translate('time.justNow', {}, 'base-app/ui');
     const mins = Math.floor(secs / 60);
-    if (mins < 60) return this.translationService.translate('time.minutesAgo', { count: mins }, 'base-app/ui');
+    if (mins < 60)
+      return this.translationService.translate('time.minutesAgo', { count: mins }, 'base-app/ui');
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return this.translationService.translate('time.hoursAgo', { count: hours }, 'base-app/ui');
+    if (hours < 24)
+      return this.translationService.translate('time.hoursAgo', { count: hours }, 'base-app/ui');
     const days = Math.floor(hours / 24);
     return this.translationService.translate('time.daysAgo', { count: days }, 'base-app/ui');
   }

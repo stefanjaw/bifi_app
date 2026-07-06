@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  [title]="(isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : 'base-app/sequences'"
+  [title]="
+    (isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create')
+      | translate: {} : 'base-app/sequences'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,53 +21,93 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section [title]="'form.details.title' | translate: {} : 'base-app/sequences'" id="sequence-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.details.title' | translate: {} : 'base-app/sequences'"
+        id="sequence-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.details.name' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
-            <input pInputText formControlName="name" [placeholder]="'form.details.namePlaceholder' | translate: {} : 'base-app/sequences'" />
+            <bifi-app-form-label>
+              {{ 'form.details.name' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'form.details.namePlaceholder' | translate: {} : 'base-app/sequences'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.details.description' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.details.description' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <textarea
               pTextarea
               formControlName="description"
               rows="1"
-              [placeholder]="'form.details.descriptionPlaceholder' | translate: {} : 'base-app/sequences'"
+              [placeholder]="
+                'form.details.descriptionPlaceholder' | translate: {} : 'base-app/sequences'
+              "
             ></textarea>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section [title]="'form.numbering.title' | translate: {} : 'base-app/sequences'" id="sequence-numbering" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.numbering.title' | translate: {} : 'base-app/sequences'"
+        id="sequence-numbering"
+        [ordinal]="2"
+      >
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.prefix' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
-            <input pInputText formControlName="prefix" [placeholder]="'form.numbering.prefixPlaceholder' | translate: {} : 'base-app/sequences'" />
+            <bifi-app-form-label>
+              {{ 'form.numbering.prefix' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="prefix"
+              [placeholder]="
+                'form.numbering.prefixPlaceholder' | translate: {} : 'base-app/sequences'
+              "
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.suffix' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
-            <input pInputText formControlName="suffix" [placeholder]="'form.numbering.suffixPlaceholder' | translate: {} : 'base-app/sequences'" />
+            <bifi-app-form-label>
+              {{ 'form.numbering.suffix' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="suffix"
+              [placeholder]="
+                'form.numbering.suffixPlaceholder' | translate: {} : 'base-app/sequences'
+              "
+            />
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.nextNumber' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.numbering.nextNumber' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <p-inputNumber formControlName="number" [min]="0"></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.step' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.numbering.step' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <p-inputNumber formControlName="step" [min]="1"></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.paddingSize' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.numbering.paddingSize' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <p-inputNumber formControlName="size" [min]="1"></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -72,20 +115,30 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.noGap' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.numbering.noGap' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <p-toggleSwitch formControlName="nogap"></p-toggleSwitch>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'form.numbering.active' | translate: {} : 'base-app/sequences' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.numbering.active' | translate: {} : 'base-app/sequences' }}
+            </bifi-app-form-label>
             <p-toggleSwitch formControlName="active"></p-toggleSwitch>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section [title]="'form.preview.title' | translate: {} : 'base-app/sequences'" id="sequence-preview" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'form.preview.title' | translate: {} : 'base-app/sequences'"
+        id="sequence-preview"
+        [ordinal]="3"
+      >
         <div class="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200">
-          <span class="text-gray-500 text-sm">{{ 'form.preview.nextGeneratedNumber' | translate: {} : 'base-app/sequences' }}</span>
+          <span class="text-gray-500 text-sm">
+            {{ 'form.preview.nextGeneratedNumber' | translate: {} : 'base-app/sequences' }}
+          </span>
           <span class="text-xl font-mono font-semibold text-primary">{{ previewNumber() }}</span>
         </div>
       </bifi-app-form-section>
@@ -96,7 +149,9 @@
     }
 
     @if (error()) {
-      <p class="text-red-500">{{ 'error.somethingWentWrong' | translate: {} : 'base-app/sequences' }} {{ error() }}</p>
+      <p class="text-red-500">
+        {{ 'error.somethingWentWrong' | translate: {} : 'base-app/sequences' }} {{ error() }}
+      </p>
     }
   </form>
 </bifi-app-form-layout>

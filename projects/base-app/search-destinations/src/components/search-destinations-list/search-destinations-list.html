@@ -1,4 +1,6 @@
-<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/search-destinations' }}</h1>
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'pageTitle' | translate: {} : 'base-app/search-destinations' }}
+</h1>
 
 <p class="text-gray-500 mb-4">
   {{ 'pageDescription' | translate: {} : 'base-app/search-destinations' }}
@@ -23,14 +25,19 @@
     *bifiAppHasPermission="'search-destinations/update:view'"
   ></p-button>
   <p-button
-    [label]="(showInactiveStatus() ? 'showActive' : 'showInactive') | translate: {} : 'base-app/search-destinations'"
+    [label]="
+      (showInactiveStatus() ? 'showActive' : 'showInactive')
+        | translate: {} : 'base-app/search-destinations'
+    "
     severity="info"
     [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
     (onClick)="toggleInactiveRecords()"
   ></p-button>
 </div>
 
-<bifi-app-search-bar [label]="'searchPlaceholder' | translate: {} : 'base-app/search-destinations'"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/search-destinations'"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"

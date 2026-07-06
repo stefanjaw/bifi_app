@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { FormModule } from '@avalantec/base-app/form';
-import { TranslatePipe } from '@avalantec/base-app/translation';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { contact } from '@avalantec/base-app/interfaces';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';

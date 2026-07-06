@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
-import { TranslatePipe, TranslationService } from '@avalantec/base-app/translation';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -73,11 +73,26 @@ export class PoliciesForm implements OnInit {
    */
   constructor() {
     this.conditionOperatorOptions = [
-      { label: this.translationService.translate('operator.equal', {}, 'base-app/policies'), value: '==' },
-      { label: this.translationService.translate('operator.notEqual', {}, 'base-app/policies'), value: '!=' },
-      { label: this.translationService.translate('operator.moreThan', {}, 'base-app/policies'), value: '>' },
-      { label: this.translationService.translate('operator.lessThan', {}, 'base-app/policies'), value: '<' },
-      { label: this.translationService.translate('operator.in', {}, 'base-app/policies'), value: 'in' },
+      {
+        label: this.translationService.translate('operator.equal', {}, 'base-app/policies'),
+        value: '==',
+      },
+      {
+        label: this.translationService.translate('operator.notEqual', {}, 'base-app/policies'),
+        value: '!=',
+      },
+      {
+        label: this.translationService.translate('operator.moreThan', {}, 'base-app/policies'),
+        value: '>',
+      },
+      {
+        label: this.translationService.translate('operator.lessThan', {}, 'base-app/policies'),
+        value: '<',
+      },
+      {
+        label: this.translationService.translate('operator.in', {}, 'base-app/policies'),
+        value: 'in',
+      },
     ];
     effect(() => {
       const policy = this.policy();
