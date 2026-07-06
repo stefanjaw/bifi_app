@@ -11,6 +11,7 @@ import { authFormState } from '../../interfaces/auth-form-state';
 import { FormModule } from '@avalantec/base-app/form';
 import { Text } from '@avalantec/base-app/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-auth-form',
@@ -24,6 +25,7 @@ import { RouterLink } from '@angular/router';
     FormModule,
     Text,
     RouterLink,
+    TranslatePipe,
   ],
   providers: [AuthFormService],
   templateUrl: './auth-form.html',

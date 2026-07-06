@@ -24,6 +24,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-companies-form',
@@ -35,6 +36,7 @@ import { CrudCurrencies } from '@avalantec/base-app/currency';
     ButtonModule,
     ProgressBarModule,
     ToggleSwitchModule,
+    TranslatePipe,
   ],
   templateUrl: './companies-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

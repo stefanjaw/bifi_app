@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Contact"
+  [title]="
+    isUpdate()
+      ? ('form.pageTitle.update' | translate: {} : 'base-app/contacts')
+      : ('form.pageTitle.create' | translate: {} : 'base-app/contacts')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -19,13 +23,13 @@
 
     @if (isUpdate()) {
       <div class="flex gap-4 items-center">
-        <p>Display Name:</p>
+        <p>{{ 'form.displayName' | translate: {} : 'base-app/contacts' }}</p>
         <p-tag severity="info">{{ contact()?.displayName }}</p-tag>
       </div>
     }
     @if (!isLoading()) {
       <bifi-app-form-section
-        title="General information"
+        [title]="'form.generalInfo.title' | translate: {} : 'base-app/contacts'"
         id="contact-general-information"
         [ordinal]="1"
       >
@@ -33,7 +37,9 @@
           <!-- ── LEFT: Type / Name / Last Name / DBA ── -->
           <div class="flex flex-col gap-3">
             <bifi-app-form-field>
-              <bifi-app-form-label>Type</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.type' | translate: {} : 'base-app/contacts' }}
+              </bifi-app-form-label>
               <div class="flex flex-wrap gap-4 pt-2">
                 <div class="flex items-center">
                   <p-radiobutton
@@ -42,7 +48,9 @@
                     inputId="type-individual"
                     size="large"
                   />
-                  <label for="type-individual" class="ml-2">Individual</label>
+                  <label for="type-individual" class="ml-2">
+                    {{ 'form.generalInfo.individual' | translate: {} : 'base-app/contacts' }}
+                  </label>
                 </div>
                 <div class="flex items-center">
                   <p-radiobutton
@@ -51,7 +59,9 @@
                     inputId="type-company"
                     size="large"
                   />
-                  <label for="type-company" class="ml-2">Company</label>
+                  <label for="type-company" class="ml-2">
+                    {{ 'form.generalInfo.company' | translate: {} : 'base-app/contacts' }}
+                  </label>
                 </div>
               </div>
               <bifi-app-form-error></bifi-app-form-error>
@@ -59,16 +69,36 @@
 
             <bifi-app-form-field>
               <bifi-app-form-label>
-                {{ contactType() === 'individual' ? 'First Name' : 'Name' }}
+                {{
+                  contactType() === 'individual'
+                    ? ('form.generalInfo.firstName' | translate: {} : 'base-app/contacts')
+                    : ('form.generalInfo.name' | translate: {} : 'base-app/contacts')
+                }}
               </bifi-app-form-label>
-              <input pInputText formControlName="name" type="text" placeholder="e.g Mark" />
+              <input
+                pInputText
+                formControlName="name"
+                type="text"
+                [placeholder]="
+                  'form.generalInfo.firstNamePlaceholder' | translate: {} : 'base-app/contacts'
+                "
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
 
             @if (contactType() === 'individual') {
               <bifi-app-form-field>
-                <bifi-app-form-label>Last Name</bifi-app-form-label>
-                <input pInputText formControlName="lastName" type="text" placeholder="e.g Smith" />
+                <bifi-app-form-label>
+                  {{ 'form.generalInfo.lastName' | translate: {} : 'base-app/contacts' }}
+                </bifi-app-form-label>
+                <input
+                  pInputText
+                  formControlName="lastName"
+                  type="text"
+                  [placeholder]="
+                    'form.generalInfo.lastNamePlaceholder' | translate: {} : 'base-app/contacts'
+                  "
+                />
                 <bifi-app-form-error></bifi-app-form-error>
               </bifi-app-form-field>
             }
@@ -79,21 +109,34 @@
           <!-- ── MIDDLE: Parent / VAT / Tax type ── -->
           <div class="flex flex-col gap-3">
             <bifi-app-form-field>
-              <bifi-app-form-label>Parent Contact</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.parentContact' | translate: {} : 'base-app/contacts' }}
+              </bifi-app-form-label>
               <p-select
                 formControlName="parentId"
                 [options]="parentOptions()"
                 optionLabel="name"
                 optionValue="_id"
-                placeholder="Select a parent"
+                [placeholder]="
+                  'form.generalInfo.parentContactPlaceholder' | translate: {} : 'base-app/contacts'
+                "
                 [filter]="true"
               ></p-select>
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>VAT (Value Added Tax)</bifi-app-form-label>
-              <input pInputText formControlName="vat" type="text" placeholder="e.g GB123456789" />
+              <bifi-app-form-label>
+                {{ 'form.generalInfo.vat' | translate: {} : 'base-app/contacts' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="vat"
+                type="text"
+                [placeholder]="
+                  'form.generalInfo.vatPlaceholder' | translate: {} : 'base-app/contacts'
+                "
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
 
@@ -105,11 +148,11 @@
             @if (uploadedFile(); as file) {
               <img
                 [src]="file.url"
-                alt="Contact photo"
+                [alt]="'form.generalInfo.photoAlt' | translate: {} : 'base-app/contacts'"
                 class="mx-auto asset-photo-thumbnail"
                 role="button"
                 tabindex="0"
-                title="Click to view full size"
+                [title]="'form.generalInfo.photoTitle' | translate: {} : 'base-app/contacts'"
                 (click)="openPhotoFullSize()"
                 (keydown.enter)="openPhotoFullSize()"
                 (keydown.space)="openPhotoFullSize(); $event.preventDefault()"
@@ -117,7 +160,9 @@
                 height="200"
               />
             } @else {
-              <div class="text-gray-500 text-sm">No photo</div>
+              <div class="text-gray-500 text-sm">
+                {{ 'form.generalInfo.noPhoto' | translate: {} : 'base-app/contacts' }}
+              </div>
             }
             <bifi-app-form-field>
               <bifi-app-form-uploader formArrayName="photo" [inline]="true">
@@ -130,7 +175,11 @@
                   [maxFileSize]="5000000"
                   mode="basic"
                   [auto]="false"
-                  [chooseLabel]="contactType() === 'company' ? 'Choose logo' : 'Choose photo'"
+                  [chooseLabel]="
+                    contactType() === 'company'
+                      ? ('form.generalInfo.chooseLogo' | translate: {} : 'base-app/contacts')
+                      : ('form.generalInfo.choosePhoto' | translate: {} : 'base-app/contacts')
+                  "
                   [chooseIcon]="'pi pi-upload'"
                   [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
                 />
@@ -142,41 +191,53 @@
       </bifi-app-form-section>
 
       <bifi-app-form-section
-        title="Contact information"
+        [title]="'form.contactInfo.title' | translate: {} : 'base-app/contacts'"
         id="contact-contacting-information"
         [ordinal]="2"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Email</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.contactInfo.email' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="email"
               type="text"
-              placeholder="e.g 0tE1a@example.com"
+              [placeholder]="
+                'form.contactInfo.emailPlaceholder' | translate: {} : 'base-app/contacts'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Phone Number</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.contactInfo.phoneNumber' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="phoneNumber"
               type="text"
-              placeholder="e.g +1 123 456 7890"
+              [placeholder]="
+                'form.contactInfo.phoneNumberPlaceholder' | translate: {} : 'base-app/contacts'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (contactType() === 'company') {
             <bifi-app-form-field>
-              <bifi-app-form-label>Website</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.contactInfo.website' | translate: {} : 'base-app/contacts' }}
+              </bifi-app-form-label>
               <input
                 pInputText
                 formControlName="website"
                 type="text"
-                placeholder="e.g www.website.com"
+                [placeholder]="
+                  'form.contactInfo.websitePlaceholder' | translate: {} : 'base-app/contacts'
+                "
               />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
@@ -184,57 +245,96 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Address" id="contact-address-information" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'form.address.title' | translate: {} : 'base-app/contacts'"
+        id="contact-address-information"
+        [ordinal]="3"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Street Address</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.address.streetAddress' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="streetAddress"
               type="text"
-              placeholder="e.g 123 Main St"
+              [placeholder]="
+                'form.address.streetAddressPlaceholder' | translate: {} : 'base-app/contacts'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Street Address 2</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.address.streetAddress2' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="streetAddress2"
               type="text"
-              placeholder="e.g Apt 4B"
+              [placeholder]="
+                'form.address.streetAddress2Placeholder' | translate: {} : 'base-app/contacts'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>City</bifi-app-form-label>
-            <input pInputText formControlName="city" type="text" placeholder="e.g New York" />
+            <bifi-app-form-label>
+              {{ 'form.address.city' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="city"
+              type="text"
+              [placeholder]="'form.address.cityPlaceholder' | translate: {} : 'base-app/contacts'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>State/Province/Parish</bifi-app-form-label>
-            <input pInputText formControlName="state" type="text" placeholder="e.g NY" />
+            <bifi-app-form-label>
+              {{ 'form.address.state' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="state"
+              type="text"
+              [placeholder]="'form.address.statePlaceholder' | translate: {} : 'base-app/contacts'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Postal Code</bifi-app-form-label>
-            <input pInputText formControlName="zipCode" type="text" placeholder="e.g 10001" />
+            <bifi-app-form-label>
+              {{ 'form.address.postalCode' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="zipCode"
+              type="text"
+              [placeholder]="
+                'form.address.postalCodePlaceholder' | translate: {} : 'base-app/contacts'
+              "
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Country</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.address.country' | translate: {} : 'base-app/contacts' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="countryId"
               [options]="countryOptions()"
               optionLabel="name"
               optionValue="_id"
               [filter]="true"
-              placeholder="Select a country"
+              [placeholder]="
+                'form.address.countryPlaceholder' | translate: {} : 'base-app/contacts'
+              "
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -243,12 +343,12 @@
 
       @if (contactType() === 'company') {
         <bifi-app-form-section
-          title="Child Contacts"
+          [title]="'form.childContacts.title' | translate: {} : 'base-app/contacts'"
           id="contact-children-information"
           [ordinal]="4"
         >
           <p-button
-            label="Add New Child Contact"
+            [label]="'form.childContacts.addNew' | translate: {} : 'base-app/contacts'"
             severity="secondary"
             icon="pi pi-plus"
             (onClick)="selectChildContactDialog.openDialog()"
@@ -261,7 +361,7 @@
                 <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
                 <p-button
                   severity="danger"
-                  label="Remove"
+                  [label]="'form.childContacts.remove' | translate: {} : 'base-app/contacts'"
                   icon="pi pi-trash"
                   (click)="handleContactRemove(row._id)"
                 ></p-button>
@@ -273,7 +373,7 @@
 
       <bifi-app-plugin-slot name="contact-form-plugin"></bifi-app-plugin-slot>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/contacts' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
     }

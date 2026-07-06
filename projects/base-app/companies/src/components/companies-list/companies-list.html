@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Companies</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/companies' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Company"
+    [label]="'addNew' | translate: {} : 'base-app/companies'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, related contact, country and address"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/companies'"
   [searchFilters]="companyFilters"
 ></bifi-app-search-bar>
 
@@ -25,7 +25,7 @@
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
-      label="View"
+      [label]="'view' | translate: {} : 'base-app/companies'"
       icon="pi pi-eye"
       routerLink="../detail/{{ element._id }}"
       (onClick)="$event.stopPropagation(); $event.preventDefault()"

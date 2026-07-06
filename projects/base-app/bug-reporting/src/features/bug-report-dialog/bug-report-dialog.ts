@@ -10,6 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
 import { injectAuthService } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-bug-report-dialog',
@@ -20,6 +21,7 @@ import { injectAuthService } from '@avalantec/base-app/auth';
     TextareaModule,
     FormModule,
     FileUploadModule,
+    TranslatePipe,
   ],
   templateUrl: './bug-report-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -32,6 +32,7 @@ import { contact } from '@avalantec/base-app/interfaces';
 import { TagModule } from 'primeng/tag';
 import { FileUpload } from 'primeng/fileupload';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-contacts-form',
@@ -49,6 +50,7 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
     TagModule,
     FileUpload,
     PluginSlot,
+    TranslatePipe,
   ],
   providers: [providePluginContext(ContactsForm)],
   templateUrl: './contacts-form.html',

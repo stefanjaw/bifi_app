@@ -14,6 +14,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { company } from '@avalantec/base-app/interfaces';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-companies-list',
@@ -21,7 +22,7 @@ import { company } from '@avalantec/base-app/interfaces';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions, TranslatePipe],
   templateUrl: './companies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

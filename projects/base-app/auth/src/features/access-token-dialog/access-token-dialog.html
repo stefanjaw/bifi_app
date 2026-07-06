@@ -1,5 +1,5 @@
 <p-dialog
-  header="Copy Access Token"
+  [header]="'accessToken.title' | translate: {} : 'base-app/auth'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-md"
@@ -10,7 +10,7 @@
     <p-button
       icon="pi pi-copy"
       variant="text"
-      label="Copy to clipboard"
+      [label]="'accessToken.copyToClipboard' | translate: {} : 'base-app/auth'"
       [cdkCopyToClipboard]="token() || ''"
       (cdkCopyToClipboardCopied)="showTokenCopiedToast()"
     ></p-button>

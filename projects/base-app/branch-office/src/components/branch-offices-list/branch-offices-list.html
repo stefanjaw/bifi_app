@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Branch Offices</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/branch-office' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Branch Office"
+    [label]="'addNew' | translate: {} : 'base-app/branch-office'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, code, address or company"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/branch-office'"
   [searchFilters]="branchOfficeFilters"
 ></bifi-app-search-bar>
 

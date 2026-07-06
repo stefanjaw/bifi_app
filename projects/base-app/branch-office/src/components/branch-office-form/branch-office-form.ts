@@ -20,6 +20,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-branch-office-form',
@@ -30,6 +31,7 @@ import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/b
     SelectModule,
     ToggleSwitchModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './branch-office-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

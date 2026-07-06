@@ -1,14 +1,14 @@
-<h1 class="text-2xl font-bold mb-4">Contacts</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/contacts' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Go Back"
+    [label]="'goBack' | translate: {} : 'base-app/contacts'"
     severity="secondary"
     icon="pi pi-arrow-left"
     [routerLink]="'/home'"
   ></p-button>
   <p-button
-    label="Add New Contact"
+    [label]="'addNew' | translate: {} : 'base-app/contacts'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -17,7 +17,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, last name, phone number, parent, email, country, state, city, zip code or address"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/contacts'"
   [searchFilters]="contactFilters"
 ></bifi-app-search-bar>
 

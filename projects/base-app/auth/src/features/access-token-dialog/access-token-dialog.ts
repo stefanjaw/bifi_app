@@ -6,10 +6,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BaseDialog, ToastManager } from '@avalantec/base-app/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslatePipe } from '@avalantec/base-app/translation';
 
 @Component({
   selector: 'bifi-app-access-token-dialog',
-  imports: [ButtonModule, DialogModule, ClipboardModule, TextareaModule],
+  imports: [ButtonModule, DialogModule, ClipboardModule, TextareaModule, TranslatePipe],
   templateUrl: './access-token-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
