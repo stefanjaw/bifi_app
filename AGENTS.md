@@ -378,6 +378,33 @@ All column `title` values use key-style format (lowercase camelCase, matching ex
 2. Add `[scope]` to `<bifi-app-table-layout>` with the module's scope
 3. Add en/es entries to the corresponding translations catalog file
 
+### Menu i18n
+
+Menu item labels translate the same way — `label` doubles as the translation key, and each item carries an explicit per-item `scope` field.
+
+**How it works:**
+
+- `label` values use the same key-style convention as column titles (e.g. `'home'`, `'settings'`, `'companies'`, `'aiConfiguration'`).
+- Every menu item object includes a `scope` field (e.g. `scope: 'base-app/routing'`, `scope: 'base-app/users'`).
+- `MainMenu` component renders labels through `TranslatePipe`: `{{ item.label | translate : {} : item['scope'] }}`.
+- `Scaffold` (sidebar) does the same for all template bindings, plus uses `TranslationService.translate()` for TypeScript-based label lookups (breadcrumbs, `currentModuleLabel`, drag-and-drop data).
+- The `MainMenuManager.title` signal also uses a translation key (`'welcomeTitle'`) translated with scope `'base-app/routing'`.
+
+**When registering menu items in `MainMenuManager` or feature lib `provide*()` functions:**
+
+1. Set `label` to a key-convention string
+2. Add `scope: '<scope>'` matching the scope convention (e.g. `'base-app/users'`, `'sales'`, `'helpdesk'`)
+3. Add en/es entries to the translations catalog file
+
+**Scope Convention:**
+
+| Menu item location | Scope pattern | Example |
+|---|---|---|
+| Base-app routing (Home, Settings, title) | `base-app/routing` | `scope: 'base-app/routing'` |
+| Base-app settings modules (Companies, Users, etc.) | `base-app/<module>` | `scope: 'base-app/companies'` |
+| Base-app modules (Contacts) | `base-app/<module>` | `scope: 'base-app/contacts'` |
+| Feature libs (Sales, Helpdesk, etc.) | `<lib-name>` | `scope: 'sales'` |
+
 ## Documentation (JSDoc)
 
 **Documenting code is mandatory** — every public method, exported function, interface, type, and class must have a JSDoc comment (`/** ... */`) explaining its purpose, parameters, and return value.

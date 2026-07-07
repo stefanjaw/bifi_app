@@ -5,11 +5,12 @@ import { NotificationCenterService } from '../../services/notification-center';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { CommonModule } from '@angular/common';
 import { Icon } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'bifi-app-main-menu',
-  imports: [RouterLink, HasPermission, CommonModule, Icon],
+  imports: [RouterLink, HasPermission, CommonModule, Icon, TranslatePipe],
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.css',
 })

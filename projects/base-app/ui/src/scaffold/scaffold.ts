@@ -141,7 +141,10 @@ export class Scaffold {
   private draggedItemModule = signal<string | null>(null);
 
   currentModuleLabel = computed(() => {
-    return this.activeParentItem()?.label ?? '';
+    const item = this.activeParentItem();
+    return item
+      ? this.translationService.translate(item.label ?? '', {}, item['scope'] as string)
+      : '';
   });
 
   // ─── Breadcrumbs ───────────────────────────────────────────────────────────
@@ -164,7 +167,7 @@ export class Scaffold {
       const menuMatch = menu.find(m => m.path === cumulative.replace(/^\//, ''));
       const dynLabel = this.isId(seg) ? this.dynamicBreadcrumb.labels()[seg] : undefined;
       const label = menuMatch
-        ? menuMatch.label
+        ? this.translationService.translate(menuMatch.label, {}, menuMatch.scope)
         : (dynLabel ?? (this.isId(seg) ? 'Details' : this.humanize(seg)));
       crumbs.push({
         label,
@@ -175,14 +178,19 @@ export class Scaffold {
     return crumbs;
   });
 
-  private flattenMenu(items: MenuItem[]): { path: string; label: string }[] {
-    const out: { path: string; label: string }[] = [];
+  private flattenMenu(items: MenuItem[]): { path: string; label: string; scope: string }[] {
+    const out: { path: string; label: string; scope: string }[] = [];
     const walk = (list: MenuItem[]) => {
       for (const it of list) {
         const link = Array.isArray(it.routerLink)
           ? (it.routerLink as string[]).join('/')
           : (it.routerLink as string);
-        if (link && it.label) out.push({ path: link.replace(/^\//, ''), label: it.label });
+        if (link && it.label)
+          out.push({
+            path: link.replace(/^\//, ''),
+            label: it.label,
+            scope: it['scope'] as string,
+          });
         if (it.items) walk(it.items as MenuItem[]);
       }
     };
@@ -307,7 +315,11 @@ export class Scaffold {
       'application/bifi-shortcut',
       JSON.stringify({
         type: 'menu-item',
-        label: item['label'],
+        label: this.translationService.translate(
+          item['label'] as string,
+          {},
+          item['scope'] as string
+        ),
         icon: item['icon'],
         routerLink: item['routerLink'],
         resource: item['resource'],

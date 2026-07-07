@@ -1,6 +1,6 @@
 <section id="main-menu-container" class="p-8">
   <h1 class="text-2xl font-bold text-primary-500 mb-6">
-    {{ mainMenuTitle() }}
+    {{ mainMenuTitle() | translate: {} : 'base-app/routing' }}
   </h1>
   <div id="main-menu-options-container">
     @for (item of menuItems(); track $index) {
@@ -15,7 +15,7 @@
           >
             <span [bifiAppIcon]="'lg'" [class]="item.icon"></span>
             <span class="w-full overflow-ellipsis text-nowrap overflow-hidden text-center">
-              {{ item.label }}
+              {{ item.label ?? '' | translate: {} : item['scope'] }}
             </span>
             @let chip = getChipCount(item);
             @if (chip > 0) {
