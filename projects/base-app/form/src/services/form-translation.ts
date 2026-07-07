@@ -1,18 +1,7 @@
-import { inject, Injectable, InjectionToken } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ParamMap } from '@angular/router';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import { FORM_ERROR_TRANSLATIONS } from '../libraries/providers/form-errors';
-
-/** Minimal translation interface required by the form layer. */
-export interface ITranslationApi {
-  translate(key: string, params?: Record<string, any>, scope?: string): string;
-}
-
-/**
- * Injection token for the translation service.
- * Provided by @avalantec/base-app/translation's provideTranslationRoot().
- * Kept here (in form) to avoid a circular dependency between form ↔ translation.
- */
-export const TRANSLATION_API = new InjectionToken<ITranslationApi>('TRANSLATION_API');
 
 /**
  * Bridge between the form validation layer and the backend-driven TranslationService.
@@ -22,7 +11,7 @@ export const TRANSLATION_API = new InjectionToken<ITranslationApi>('TRANSLATION_
   providedIn: 'root',
 })
 export class FormTranslation {
-  private translationApi = inject(TRANSLATION_API, { optional: true });
+  private translationService = inject(TranslationService);
   private defaultTranslations = inject(FORM_ERROR_TRANSLATIONS);
 
   /**
@@ -65,8 +54,7 @@ export class FormTranslation {
    * @param params - Optional parameter map for placeholder substitution
    */
   protected translate(key: string, params?: ParamMap): string | null {
-    if (!this.translationApi) return null;
-    const result = this.translationApi.translate(key, params as any, 'core');
+    const result = this.translationService.translate(key, params as any, 'core');
     return result === key ? null : result;
   }
 }

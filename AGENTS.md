@@ -27,7 +27,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
 | `search` | `SearchService`, `SearchDestination`, `SearchResultGroup` | `ui` (GlobalSearch), `search-destinations` (list/form) |
-| `i18n` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` — see [i18n section](#i18n-internationalization) for usage patterns | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
+| `i18n` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` — see [i18n section](#i18n-internationalization) for usage patterns | All feature libs (via `provideTranslations`), `form` (imports `TranslationService` directly) |
 | `translation` | `CrudTranslations`, `CrudLanguages`, `TranslationForm`, `LanguageForm`, `TranslationsList`, `TranslationsForm`, `LanguagesList`, `LanguagesForm`, `TRANSLATION_ROUTES`, `LANGUAGE_ROUTES`, translation/language columns & filters, `LanguageFormModel` | Only internal (Settings → Translation Keys / Languages) |
 
 ### Feature CRUD Modules (Settings)
@@ -407,14 +407,14 @@ Menu item labels translate the same way — `label` doubles as the translation k
 
 ### Form Component i18n
 
-Shared form components (`@avalantec/base-app/form`) also use key-convention labels with a `scope` input.
+Shared form components (`@avalantec/base-app/form`) use `TranslatePipe` from `@avalantec/base-app/i18n` directly (no bridge token — `form` depends on `i18n` like any other consumer).
 
 **How it works:**
 
 - Each component exposes a `scope` input (default `'base-app/form'`) so consumers can override if needed.
 - Hardcoded fallback strings are replaced with translation keys (`'goBack'`, `'save'`, `'saving'`, `'format'`, `'notSet'`).
 - Templates use `TranslatePipe` with the component's `scope()` signal.
-- Form validation error messages are handled separately via `FormTranslation` + `TRANSLATION_API` token with scope `'core'` — the static `FORM_ERROR_TRANSLATIONS` map serves as a final fallback when no backend translation is found.
+- Form validation errors use `FormTranslation`, which injects `TranslationService` from `@avalantec/base-app/i18n` directly with the hardcoded scope `'core'`. The static `FORM_ERROR_TRANSLATIONS` map serves as a final fallback.
 
 **Components with translated labels:**
 
@@ -428,7 +428,7 @@ Shared form components (`@avalantec/base-app/form`) also use key-convention labe
 
 1. Change the hardcoded string to a key-convention value
 2. Add `scope = input('base-app/form')` to the component
-3. Import `TranslatePipe` and render `{{ 'key' | translate : {} : scope() }}`
+3. Import `TranslatePipe` from `@avalantec/base-app/i18n` and render `{{ 'key' | translate : {} : scope() }}`
 4. Add en/es entries to `base-app-form-translations.json`
 
 ## Documentation (JSDoc)

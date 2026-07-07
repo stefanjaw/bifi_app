@@ -1,6 +1,5 @@
 import { APP_INITIALIZER, inject, Provider } from '@angular/core';
 import { TranslationService } from '../services/translation';
-import { TRANSLATION_API } from '@avalantec/base-app/form';
 
 /**
  * Root-level providers for the translation system.
@@ -37,7 +36,6 @@ const BASE_APP_SCOPES = [
 export function provideTranslationRoot(): Provider[] {
   return [
     TranslationService,
-    { provide: TRANSLATION_API, useExisting: TranslationService },
     {
       provide: APP_INITIALIZER,
       useFactory: () => {
