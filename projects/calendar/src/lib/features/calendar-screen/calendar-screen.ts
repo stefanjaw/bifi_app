@@ -3,6 +3,7 @@ import { CalendarEvent, CalendarView } from '@avalantec/base-app/resource';
 import { CrudTasks } from '@avalantec/tasks';
 import { CrudTickets } from '@avalantec/helpdesk';
 import { CrudProjects } from '@avalantec/projects';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import dayjs from 'dayjs';
 
 @Component({
@@ -15,6 +16,7 @@ export class CalendarScreen {
   private crudTasks = inject(CrudTasks);
   private crudTickets = inject(CrudTickets);
   private crudProjects = inject(CrudProjects);
+  private translationService = inject(TranslationService);
 
   private tasksResource = this.crudTasks.get({});
   private ticketsResource = this.crudTickets.get({});
@@ -35,7 +37,7 @@ export class CalendarScreen {
         : new Date(start.getTime() + 3600000);
       events.push({
         id: task._id,
-        title: `(Task) ${task.name}`,
+        title: `${this.translationService.translate('eventPrefix.task', {}, 'calendar')} ${task.name}`,
         start,
         end,
         color: 'blue',
@@ -49,7 +51,7 @@ export class CalendarScreen {
         : new Date(start.getTime() + 3600000);
       events.push({
         id: ticket._id,
-        title: `(Ticket) ${ticket.name}`,
+        title: `${this.translationService.translate('eventPrefix.ticket', {}, 'calendar')} ${ticket.name}`,
         start,
         end,
         color: 'pink',
@@ -63,7 +65,7 @@ export class CalendarScreen {
         : new Date(start.getTime() + 3600000);
       events.push({
         id: project._id,
-        title: `(Project) ${project.name}`,
+        title: `${this.translationService.translate('eventPrefix.project', {}, 'calendar')} ${project.name}`,
         start,
         end,
         color: 'green',
