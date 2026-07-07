@@ -7,7 +7,7 @@
       [disabled]="isSubmitting()"
       (click)="cancelClicked.emit()"
       variant="outlined"
-      [label]="cancelLabel()"
+      [label]="cancelLabel() | translate: {} : scope()"
       icon="pi pi-arrow-left"
     ></p-button>
   }
@@ -16,7 +16,11 @@
       type="submit"
       (onClick)="submitClicked.emit()"
       [icon]="isSubmitting() ? 'pi pi-spinner' : 'pi pi-cloud-upload'"
-      [label]="isSubmitting() ? 'Saving...' : saveLabel() || 'Save'"
+      [label]="
+        isSubmitting()
+          ? ('saving' | translate: {} : scope())
+          : (saveLabel() || 'save' | translate: {} : scope())
+      "
       [disabled]="isSubmitting() || formDisabled()"
     ></p-button>
   }

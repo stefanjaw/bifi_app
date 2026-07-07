@@ -1,4 +1,9 @@
-<p-button type="button" icon="pi pi-code" label="Format" (onClick)="formatCode()"></p-button>
+<p-button
+  type="button"
+  icon="pi pi-code"
+  [label]="'format' | translate: {} : scope()"
+  (onClick)="formatCode()"
+></p-button>
 
 <div class="h-[550px] w-full rounded overflow-auto overflow-x-auto mt-4">
   @if (!diffMode()) {

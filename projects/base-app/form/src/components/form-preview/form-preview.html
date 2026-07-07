@@ -8,12 +8,12 @@
             $implicit: formattedValue(),
             control: control(),
             variant: variant,
-            fallback: 'Not set',
+            fallback: 'notSet' | translate: {} : scope(),
           }
         "
       ></ng-container>
     } @else {
-      <span>{{ formattedValue() || 'Not set' }}</span>
+      <span>{{ formattedValue() || ('notSet' | translate: {} : scope()) }}</span>
     }
   </bifi-app-form-preview-container>
 }

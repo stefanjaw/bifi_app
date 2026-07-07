@@ -13,13 +13,14 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { startWith } from 'rxjs';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { FormPreviewContainer } from './form-preview-container/form-preview-container';
 import { previewValueType, previewVariant } from './form-preview.model';
 import { FormFieldContext } from '../../services/form-field-context';
 
 @Component({
   selector: 'bifi-app-form-preview',
-  imports: [CommonModule, FormPreviewContainer],
+  imports: [CommonModule, FormPreviewContainer, TranslatePipe],
   templateUrl: './form-preview.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,6 +31,7 @@ export class FormPreview {
 
   variant = input<previewVariant>('text');
   valueType = input<previewValueType>('text');
+  scope = input('base-app/form');
 
   previewTemplate = contentChild('preview', {
     read: TemplateRef,

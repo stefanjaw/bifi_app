@@ -18,6 +18,7 @@ import type { Diagnostic } from '@codemirror/lint';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { formCodeEditorLanguages } from '../../interfaces/form-code-editor-languages';
 import { ButtonModule } from 'primeng/button';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { FormCodeFormatter } from '../../services/form-code-formatter';
 
 @Component({
@@ -29,7 +30,7 @@ import { FormCodeFormatter } from '../../services/form-code-formatter';
       multi: true,
     },
   ],
-  imports: [ButtonModule],
+  imports: [ButtonModule, TranslatePipe],
   templateUrl: './form-code-editor.html',
   styleUrl: './form-code-editor.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,6 +46,7 @@ export class FormCodeEditor implements AfterViewInit {
 
   language = input<formCodeEditorLanguages | undefined>('text/html');
   diffMode = input<boolean>(false);
+  scope = input('base-app/form');
   leftFormControl = input<FormControl>();
   rightFormControl = input<FormControl>();
 

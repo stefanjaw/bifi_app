@@ -405,6 +405,32 @@ Menu item labels translate the same way — `label` doubles as the translation k
 | Base-app modules (Contacts) | `base-app/<module>` | `scope: 'base-app/contacts'` |
 | Feature libs (Sales, Helpdesk, etc.) | `<lib-name>` | `scope: 'sales'` |
 
+### Form Component i18n
+
+Shared form components (`@avalantec/base-app/form`) also use key-convention labels with a `scope` input.
+
+**How it works:**
+
+- Each component exposes a `scope` input (default `'base-app/form'`) so consumers can override if needed.
+- Hardcoded fallback strings are replaced with translation keys (`'goBack'`, `'save'`, `'saving'`, `'format'`, `'notSet'`).
+- Templates use `TranslatePipe` with the component's `scope()` signal.
+- Form validation error messages are handled separately via `FormTranslation` + `TRANSLATION_API` token with scope `'core'` — the static `FORM_ERROR_TRANSLATIONS` map serves as a final fallback when no backend translation is found.
+
+**Components with translated labels:**
+
+| Component | Keys | Default scope |
+|---|---|---|
+| `FormActions` | `goBack`, `save`, `saving` | `base-app/form` |
+| `FormCodeEditor` | `format` | `base-app/form` |
+| `FormPreview` | `notSet` | `base-app/form` |
+
+**When adding a new form component with hardcoded text:**
+
+1. Change the hardcoded string to a key-convention value
+2. Add `scope = input('base-app/form')` to the component
+3. Import `TranslatePipe` and render `{{ 'key' | translate : {} : scope() }}`
+4. Add en/es entries to `base-app-form-translations.json`
+
 ## Documentation (JSDoc)
 
 **Documenting code is mandatory** — every public method, exported function, interface, type, and class must have a JSDoc comment (`/** ... */`) explaining its purpose, parameters, and return value.
