@@ -332,23 +332,57 @@ Both are from `@avalantec/base-app/i18n`.
 
 ### Translations Catalog
 
-Translation entries are stored in `Catalog/translations/` as JSON arrays. Each file follows the naming convention `base-app-<module>-translations.json`. Each entry:
+Translation entries live in `Catalog/translations/` as JSON arrays.
 
-```json
-{
-  "_id": { "$oid": "..." },
-  "locale": "en",
-  "scope": "base-app/users",
-  "key": "pageTitle",
-  "value": "Users",
-  "active": true,
-  "createdAt": { "$date": "..." },
-  "updatedAt": { "$date": "..." },
-  "__v": 0
-}
+**File naming** — two patterns:
+
+| Pattern | Examples |
+|---|---|
+| `base-app-<module>-translations.json` | `base-app-users-translations.json`, `base-app-resource-translations.json` |
+| `<lib-name>-translations.json` | `asset-roster-translations.json`, `website-translations.json` |
+
+Most files serve one scope (1:1 with the module). Two files are **cross-cutting** and contain entries for multiple scopes:
+- `base-app-columns-filters-translations.json` — column headers and filter labels
+- `base-app-menu-translations.json` — sidebar/navigation labels
+
+**Entry structure:**
+
+| Field | Required | Description |
+|---|---|---|
+| `locale` | yes | `"en"` or `"es"` |
+| `scope` | yes | Module namespace — `"base-app/users"`, `"sales"`, `"asset-roster"` |
+| `key` | yes | Translation key — see conventions below |
+| `value` | yes | Translated text, may contain `{{param}}` substitution |
+| `active` | yes | Always `true` |
+| `createdAt` / `updatedAt` | yes | ISO timestamps in `{ "$date": "..." }` format |
+| `__v` | yes | `0` |
+| `_id` | DB-managed only | `{ "$oid": "..." }` — **omit** for standalone lib files (loaded as static JSON rather than via MongoDB) |
+
+**Key naming** — three styles, all lowercase start:
+
+```
+# Flat
+pageTitle, home, save, addNew
+
+# Dot-notation groups (max 3 levels)
+filter.selectField, form.generalInfo.name, notification.create.success
+
+# camelCase compound
+cannotInactivateSelf, searchPlaceholder
 ```
 
-Both `"en"` and `"es"` locale entries are included per key.
+**Parameter substitution** uses `{{param}}` syntax in `value`:
+
+```json
+{ "key": "notification.create.success", "value": "The {{ element }} was created successfully!" }
+```
+
+**Locale strategy:** Every key must have **exactly two entries** — one with `"locale": "en"`, one with `"locale": "es"` — placed consecutively (en first). The key count is always even.
+
+**When adding translations for a new lib:**
+1. Create `Catalog/translations/<lib-name>-translations.json`
+2. Add en/es pair for each key using the conventions above
+3. Reference filename in the `provideTranslations('scope')` call in your lib's provider
 
 ### Column & Filter i18n
 
@@ -484,35 +518,6 @@ hasPermission<TModel = unknown>({ user, resource, type, action, context }): bool
 ## Tests
 
 Karma + Jasmine. `ng test <project>` runs tests for a specific project. Spec files use `*.spec.ts` pattern.
-
-## Asset-Roster i18n
-
-The `asset-roster` feature module has been fully internationalized. Scope: `'asset-roster'`.
-
-### Translation Catalog
-
-`Catalog/translations/asset-roster-translations.json` — 242 unique keys with en/es entries.
-
-### State
-
-| Component | Status | What was done |
-|---|---|---|
-| `init.ts` | **Done** | All 6 menu items: `label` → key convention, added `scope: 'asset-roster'` |
-| Column files (5) | **Done** | All `title` values → camelCase keys (`type`, `model`, `serialNumber`, etc.) |
-| Status card | **Done** | `title` values → keys; added `TranslatePipe` to TS + HTML |
-| List HTML files (5) | **Done** | Headings, button labels, search labels translated; `[scope]` added to `<bifi-app-table-layout>` and `<bifi-app-search-bar>` |
-| Form dialogs (8) | **Done** | All headers, labels, placeholders, form-action labels translated |
-| Edit form | **Done** | All buttons, tab headers, headings translated; `TranslatePipe` added to TS |
-| Form pages (4) | **Done** | All section titles, labels, placeholders, error text translated |
-| Section components | **Done** | `general-information-section`: fully translated; `TranslatePipe` added |
-| Remaining sections (7) | **Pending** | `financial-information`, `maintenance-service`, `notes`, `commissioning-lifecycle`, `documents`, `activity-history`, `status-banner` — strings cataloged in translations JSON, but `TranslatePipe` imports and pipe usage in HTML not yet applied |
-
-### Convention
-
-- All translatable strings use `{{ 'key' | translate : {} : 'asset-roster' }}` in templates
-- Labels use `[label]="'key' | translate : {} : 'asset-roster'"` for PrimeNG button components
-- Placeholders use `[placeholder]="'key' | translate : {} : 'asset-roster'"`
-- `cancelLabel` and `saveLabel` on `<bifi-app-form-actions>` use property binding syntax with pipe
 
 ## Reference Docs
 
