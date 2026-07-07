@@ -21,6 +21,7 @@
   [data]="sequences"
   [onClickRow]="goToEditSequence"
   clickRowPermission="sequences/update:view"
+  [scope]="'base-app/sequences'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

@@ -27,6 +27,7 @@
   [data]="contacts"
   [onClickRow]="goToEditContact"
   clickRowPermission="contacts/update:view"
+  [scope]="'base-app/contacts'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

@@ -4,24 +4,24 @@ import { currency } from '../interfaces/currency';
 export const currencyColumns: tableColumn<currency>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'code',
-    title: 'Code',
+    title: 'code',
     type: 'text',
     sortable: true,
   },
   {
     field: 'symbol',
-    title: 'Symbol',
+    title: 'symbol',
     type: 'text',
   },
   {
     field: 'decimalPrecision',
-    title: 'Decimals',
+    title: 'decimals',
     type: 'number',
   },
 ];

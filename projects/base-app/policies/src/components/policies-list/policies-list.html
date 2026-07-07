@@ -21,6 +21,7 @@
   [data]="policies"
   [onClickRow]="gotoEditPolicy"
   clickRowPermission="policies/update:view"
+  [scope]="'base-app/policies'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

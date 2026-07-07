@@ -23,6 +23,7 @@
   [data]="branchOffices"
   [onClickRow]="gotoEditBranchOffice"
   clickRowPermission="branch-offices/update:view"
+  [scope]="'base-app/branch-office'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

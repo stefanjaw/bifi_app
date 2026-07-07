@@ -29,6 +29,7 @@
   [data]="exchangeRates"
   [onClickRow]="goToEditExchangeRate"
   clickRowPermission="exchange-rates/update:view"
+  [scope]="'base-app/currency'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

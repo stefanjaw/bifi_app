@@ -39,13 +39,13 @@
           @if (column.sortable) {
             <th [pSortableColumn]="column.field">
               <div class="flex items-center gap-2 whitespace-nowrap">
-                {{ column.title }}
+                {{ column.title | translate: {} : scope() }}
                 <p-sortIcon [field]="column.field"></p-sortIcon>
               </div>
             </th>
           } @else {
             <th class="whitespace-nowrap">
-              {{ column.title }}
+              {{ column.title | translate: {} : scope() }}
             </th>
           }
         }

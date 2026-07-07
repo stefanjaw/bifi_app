@@ -4,13 +4,13 @@ import { tableColumn } from '@avalantec/base-app/resource';
 export const roleColumns: tableColumn<role>[] = [
   {
     field: 'name',
-    title: 'Role Name',
+    title: 'roleName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'policies',
-    title: 'Total Policies',
+    title: 'totalPolicies',
     parseField: (value: role['policies']) => `${value.length} Policies`,
     type: 'text',
   },

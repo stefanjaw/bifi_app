@@ -45,6 +45,7 @@
   [data]="destinations"
   [onClickRow]="goToEdit"
   clickRowPermission="search-destinations/update:view"
+  [scope]="'base-app/search-destinations'"
 >
   <ng-template #actions let-row>
     @if (row.active) {

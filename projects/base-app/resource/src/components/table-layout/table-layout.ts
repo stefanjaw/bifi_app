@@ -63,6 +63,7 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   columns = input<tableColumn<T>[]>([]);
   onClickRow = input<(row: T) => void>();
   infiniteScroll = input<boolean>(false);
+  scope = input<string | undefined>(undefined);
 
   // this is the permission that will be used to determine if the user has permission to click a row
   clickRowPermission = input<permission | undefined>(undefined);

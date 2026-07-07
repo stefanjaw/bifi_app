@@ -27,7 +27,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
 | `search` | `SearchService`, `SearchDestination`, `SearchResultGroup` | `ui` (GlobalSearch), `search-destinations` (list/form) |
-| `i18n` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
+| `i18n` | `TranslationService` (signal-based i18n, lazy per-scope loading, `{{param}}` substitution, language switching), `TranslatePipe`, `provideTranslationRoot()`, `provideTranslations(scope)` — see [i18n section](#i18n-internationalization) for usage patterns | All feature libs (via `provideTranslations`), `form` (via `TRANSLATION_API` token) |
 | `translation` | `CrudTranslations`, `CrudLanguages`, `TranslationForm`, `LanguageForm`, `TranslationsList`, `TranslationsForm`, `LanguagesList`, `LanguagesForm`, `TRANSLATION_ROUTES`, `LANGUAGE_ROUTES`, translation/language columns & filters, `LanguageFormModel` | Only internal (Settings → Translation Keys / Languages) |
 
 ### Feature CRUD Modules (Settings)
@@ -270,7 +270,7 @@ Each feature lib registers itself via a `provide*()` function (e.g. `provideSale
 
 Libs ship as Angular packages via `ng-packagr` (build → `dist/<name>/` → `npm pack` → `.tgz`).
 
-Each `provide*()` should also include `provideTranslations('scope')` from `@avalantec/base-app/i18n` to pre-fetch translations for that lib's scope at bootstrap. See `projects/tasks/src/lib/providers/provider.ts` for the reference pattern.
+Each `provide*()` should also include `provideTranslations('scope')` from `@avalantec/base-app/i18n` to pre-fetch translations for that lib's scope at bootstrap — see [i18n section](#i18n-internationalization). Reference pattern: `projects/tasks/src/lib/providers/provider.ts`.
 
 ## Code Conventions (from base-app docs)
 
@@ -284,6 +284,99 @@ Each `provide*()` should also include `provideTranslations('scope')` from `@aval
 - **PrimeNG** is the mandatory UI component library.
 - **Import from barrel only** — never from internal paths. E.g. `import { X } from '@avalantec/base-app/core'`.
 - **JSDoc is mandatory** for all public methods and exported symbols (see [Documentation section](#documentation-jsdoc) below).
+
+## i18n (Internationalization)
+
+### TranslatePipe — Template Usage
+
+```html
+{{ 'key' | translate : params : 'scope' }}
+```
+
+- **`key`** — the translation key (e.g. `'pageTitle'`, `'createForm.username'`, `'table.totalRecords'`)
+- **`params`** — optional `{{param}}` substitution object (e.g. `{ name: 'John' }`)
+- **`scope`** — **always passed explicitly**, never auto-resolved from injector/route. Determines which translation set to query.
+
+Examples from the codebase:
+
+```html
+{{ 'pageTitle' | translate: {} : 'base-app/users' }}
+{{ 'table.totalRecords' | translate: {} : 'base-app/resource' }}
+{{ 'filter.selectField' | translate: {} : 'base-app/resource' }}
+```
+
+### TranslationService — TypeScript Usage
+
+```ts
+private translationService = inject(TranslationService);
+
+// Returns the translated string for the given key
+const label = this.translationService.translate('key', params, 'scope');
+```
+
+### Scope Convention
+
+| Where | Scope format | Example |
+|---|---|---|
+| Base-app settings modules | `base-app/<module>` | `base-app/users`, `base-app/roles`, `base-app/resource` |
+| Feature libs (outside base-app) | `<lib-name>` | `sales`, `helpdesk`, `tasks`, `projects` |
+
+The `TranslationService.translate()` method falls back to returning the raw key if no translation is found for the given scope + locale.
+
+### Pre-loading Translations
+
+- **`provideTranslationRoot()`** — called once at bootstrap; pre-fetches all 24 `BASE_APP_SCOPES` for base-app modules.
+- **`provideTranslations('scope')`** — called per feature lib to pre-fetch its own scope at bootstrap. Every `provide*()` function should include this (see `projects/tasks/src/lib/providers/provider.ts` for the reference pattern).
+
+Both are from `@avalantec/base-app/i18n`.
+
+### Translations Catalog
+
+Translation entries are stored in `Catalog/translations/` as JSON arrays. Each file follows the naming convention `base-app-<module>-translations.json`. Each entry:
+
+```json
+{
+  "_id": { "$oid": "..." },
+  "locale": "en",
+  "scope": "base-app/users",
+  "key": "pageTitle",
+  "value": "Users",
+  "active": true,
+  "createdAt": { "$date": "..." },
+  "updatedAt": { "$date": "..." },
+  "__v": 0
+}
+```
+
+Both `"en"` and `"es"` locale entries are included per key.
+
+### Column & Filter i18n
+
+Column titles and filter labels are translated **centrally** in `TableLayout` and `FilterBar` — not at the source in each module's library file.
+
+**How it works:**
+
+- `tableColumn.title` and `filterFieldConfig.label` are treated as **translation keys** (e.g. `'username'`, `'email'`, `'signedInWith'`), not display strings.
+- `TableLayout` has a `scope` input. In the template, `{{ column.title }}` is rendered as `{{ column.title | translate : {} : scope() }}`.
+- `FilterBar` also has a `scope` input. Labels in `fieldOptions()` and `activeChips()` are passed through `TranslationService.translate(label, {}, scope())`.
+- Every `<bifi-app-table-layout>` usage must pass `[scope]` with the consumer module's scope (e.g. `[scope]="'base-app/users'"`).
+
+**Column title convention:**
+
+All column `title` values use key-style format (lowercase camelCase, matching existing keys like `pageTitle`, `createForm.name`):
+
+| Before | After |
+|---|---|
+| `'Username'` | `'username'` |
+| `'Signed in with'` | `'signedInWith'` |
+| `'Total Policies'` | `'totalPolicies'` |
+| `'Percentage (%)'` | `'percentage'` |
+
+**When adding a new module:**
+
+1. Set column `title` values to key convention (do NOT add a `translationKey` field — `title`/`label` IS the key)
+2. Add `[scope]` to `<bifi-app-table-layout>` with the module's scope
+3. Add en/es entries to the corresponding translations catalog file
 
 ## Documentation (JSDoc)
 

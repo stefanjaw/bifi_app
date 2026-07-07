@@ -5,13 +5,13 @@ import { Tag } from 'primeng/tag';
 export const templateColumns: tableColumn<template>[] = [
   {
     field: 'name',
-    title: 'Template',
+    title: 'template',
     type: 'text',
     sortable: true,
   },
   {
     field: 'codeOriginal',
-    title: 'Original Code',
+    title: 'originalCode',
     type: 'text',
     component: (value: template) => {
       return {
@@ -25,7 +25,7 @@ export const templateColumns: tableColumn<template>[] = [
   },
   {
     field: 'codeCustom',
-    title: 'Custom Code',
+    title: 'customCode',
     type: 'text',
     component: (value: template) => {
       return {
@@ -39,13 +39,13 @@ export const templateColumns: tableColumn<template>[] = [
   },
   {
     field: 'directory',
-    title: 'Directory',
+    title: 'directory',
     type: 'text',
     sortable: true,
   },
   {
     field: 'filename',
-    title: 'Filename',
+    title: 'filename',
     type: 'text',
     sortable: true,
   },

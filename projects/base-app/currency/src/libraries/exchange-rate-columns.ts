@@ -4,23 +4,23 @@ import { exchangeRate } from '../interfaces/exchange-rate';
 export const exchangeRateColumns: tableColumn<exchangeRate>[] = [
   {
     field: 'fromCurrencyId.code',
-    title: 'From',
+    title: 'from',
     type: 'text',
   },
   {
     field: 'toCurrencyId.code',
-    title: 'To',
+    title: 'to',
     type: 'text',
   },
   {
     field: 'rate',
-    title: 'Rate',
+    title: 'rate',
     type: 'number',
     sortable: true,
   },
   {
     field: 'effectiveDate',
-    title: 'Effective Date',
+    title: 'effectiveDate',
     type: 'date',
     sortable: true,
   },

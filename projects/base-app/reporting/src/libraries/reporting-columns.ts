@@ -5,19 +5,19 @@ import { Tag } from 'primeng/tag';
 export const reportingColumns: tableColumn<reporting>[] = [
   {
     field: 'title',
-    title: 'Template',
+    title: 'report',
     type: 'text',
     sortable: true,
   },
   {
     field: 'model',
-    title: 'Model',
+    title: 'model',
     type: 'text',
     sortable: true,
   },
   {
     field: 'template',
-    title: 'Template',
+    title: 'templateFile',
     type: 'text',
     component: (value: reporting) => {
       return {

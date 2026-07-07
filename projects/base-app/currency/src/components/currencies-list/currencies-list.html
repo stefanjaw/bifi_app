@@ -27,6 +27,7 @@
   [data]="currencies"
   [onClickRow]="goToEditCurrency"
   clickRowPermission="currencies/update:view"
+  [scope]="'base-app/currency'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

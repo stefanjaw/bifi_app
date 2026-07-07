@@ -4,25 +4,25 @@ import { tableColumn } from '@avalantec/base-app/resource';
 export const userColumns: tableColumn<user>[] = [
   {
     field: 'username',
-    title: 'Username',
+    title: 'username',
     type: 'text',
     sortable: true,
   },
   {
     field: 'email',
-    title: 'Email',
+    title: 'email',
     type: 'text',
     sortable: true,
   },
   {
     field: 'provider',
-    title: 'Signed in with',
+    title: 'signedInWith',
     type: 'text',
     sortable: true,
   },
   {
     field: 'contactId.name',
-    title: 'Contact Name',
+    title: 'contactName',
     type: 'text',
   },
 ];

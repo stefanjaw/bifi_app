@@ -4,30 +4,30 @@ import { searchDestination } from '../interfaces/search-destination';
 export const searchDestinationColumns: tableColumn<searchDestination>[] = [
   {
     field: 'label',
-    title: 'Label',
+    title: 'label',
     type: 'text',
     sortable: true,
   },
   {
     field: 'group',
-    title: 'Area',
+    title: 'area',
     type: 'text',
     sortable: true,
   },
   {
     field: 'route',
-    title: 'Route',
+    title: 'route',
     type: 'text',
   },
   {
     field: 'keywords',
-    title: 'Phrases',
+    title: 'phrases',
     type: 'text',
     parseField: (value: any) => (Array.isArray(value) && value.length ? value.join(', ') : '—'),
   },
   {
     field: 'active',
-    title: 'Active',
+    title: 'active',
     type: 'text',
   },
 ];

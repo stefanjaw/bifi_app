@@ -356,7 +356,7 @@
           ></p-button>
 
           <div class="max-w-[90vw]">
-            <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()">
+            <bifi-app-table-layout [columns]="contactCols" [data]="childIdsData()" [scope]="'base-app/contacts'">
               <ng-template #actions let-row>
                 <!-- <p-button severity="secondary" label="Edit" icon="pi pi-pencil"></p-button> -->
                 <p-button

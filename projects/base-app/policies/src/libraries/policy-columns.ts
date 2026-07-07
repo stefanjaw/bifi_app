@@ -4,20 +4,20 @@ import { tableColumn } from '@avalantec/base-app/resource';
 export const policyColumns: tableColumn<policy<any, any>>[] = [
   {
     field: 'name',
-    title: 'Policy Name',
+    title: 'policyName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'resource',
-    title: 'Resource',
+    title: 'resource',
     type: 'text',
     sortable: true,
   },
-  { field: 'type', title: 'Type', type: 'text', sortable: true },
+  { field: 'type', title: 'type', type: 'text', sortable: true },
   {
     field: 'conditions',
-    title: 'Total Conditions',
+    title: 'totalConditions',
     type: 'text',
     parseField: (value: policy<string, string>['conditions']) => `${value.length} conditions`,
   },

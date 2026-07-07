@@ -30,6 +30,7 @@
   [data]="translations"
   [onClickRow]="goToEdit"
   clickRowPermission="translations/update:view"
+  [scope]="'base-app/translation'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

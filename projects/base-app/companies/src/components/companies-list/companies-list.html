@@ -21,6 +21,7 @@
   [data]="companies"
   [onClickRow]="goToEditCompany"
   clickRowPermission="companies/update:view"
+  [scope]="'base-app/companies'"
 >
   <ng-template #actions let-element>
     <p-button

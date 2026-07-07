@@ -29,6 +29,7 @@
   [data]="countries"
   [onClickRow]="goToEditCountry"
   clickRowPermission="countries/update:view"
+  [scope]="'base-app/countries'"
 >
   <ng-template #actions let-row>
     <bifi-app-buttons-actions

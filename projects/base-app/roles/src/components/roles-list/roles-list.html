@@ -21,6 +21,7 @@
   [data]="roles"
   [onClickRow]="goToEditRole"
   clickRowPermission="roles/update:view"
+  [scope]="'base-app/roles'"
 >
   <ng-template #actions let-row>
     <bifi-app-buttons-actions

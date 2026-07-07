@@ -21,6 +21,7 @@
   [data]="reportings"
   [onClickRow]="gotoEditTemplate"
   clickRowPermission="templates/update:view"
+  [scope]="'base-app/templates'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

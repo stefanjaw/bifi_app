@@ -87,12 +87,13 @@ export class FilterBar implements OnDestroy {
   private translationService = inject(TranslationService);
 
   filterFields = input<filterFieldConfig<any>[]>([]);
+  scope = input<string | undefined>(undefined);
 
   rows = signal<FilterRow[]>([]);
 
   fieldOptions = computed(() =>
     this.filterFields().map(f => ({
-      label: f.label,
+      label: this.translationService.translate(f.label, {}, this.scope()),
       value: f.field as string,
     }))
   );
@@ -137,7 +138,7 @@ export class FilterBar implements OnDestroy {
 
         return {
           id: r.id,
-          fieldLabel: fieldConfig?.label ?? r.field ?? '',
+          fieldLabel: fieldConfig ? this.translationService.translate(fieldConfig.label, {}, this.scope()) : r.field ?? '',
           operatorLabel: opEntry?.label ?? r.operator ?? '',
           valueText,
         };
