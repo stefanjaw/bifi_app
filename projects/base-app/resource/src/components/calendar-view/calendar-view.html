@@ -50,7 +50,7 @@
           (click)="previousPeriod()"
           class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
         >
-          <span class="sr-only">Previous</span>
+          <span class="sr-only">{{ 'calendar.previous' | translate: {} : 'base-app/resource' }}</span>
           <svg
             class="h-5 w-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -66,13 +66,13 @@
           (click)="goToToday()"
           class="px-3 py-1.5 text-sm font-semibold rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
         >
-          Today
+          {{ 'calendar.today' | translate: {} : 'base-app/resource' }}
         </button>
         <button
           (click)="nextPeriod()"
           class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
         >
-          <span class="sr-only">Next</span>
+          <span class="sr-only">{{ 'calendar.next' | translate: {} : 'base-app/resource' }}</span>
           <svg
             class="h-5 w-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -283,7 +283,7 @@
                   </div>
                 }
                 @if (getEventsForDay(day.date).length === 0 && !isDragging()) {
-                  <p class="text-center text-xs text-gray-400 dark:text-gray-500 py-4">No events</p>
+                  <p class="text-center text-xs text-gray-400 dark:text-gray-500 py-4">{{ 'calendar.noEvents' | translate: {} : 'base-app/resource' }}</p>
                 }
               </div>
             </div>
@@ -469,7 +469,7 @@
             }
             @if (listEvents().length === 0) {
               <p class="text-center text-gray-500 dark:text-gray-400 py-8">
-                No events in {{ headerTitle() }}.
+                {{ 'calendar.noEventsIn' | translate: { title: headerTitle() } : 'base-app/resource' }}
               </p>
             }
           </div>

@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CalendarDay, CalendarEvent, CalendarViewMode } from '../../interfaces/calendar';
 import { CalendarEventCard } from '../calendar-event-card/calendar-event-card';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -22,7 +23,7 @@ dayjs.extend(isSameOrAfter);
 
 @Component({
   selector: 'bifi-app-calendar-view',
-  imports: [CommonModule, CalendarEventCard],
+  imports: [CommonModule, CalendarEventCard, TranslatePipe],
   templateUrl: './calendar-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

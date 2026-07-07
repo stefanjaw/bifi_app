@@ -28,6 +28,7 @@ import { pagination } from '../../interfaces/pagination';
 import { injectAuthService, permission } from '@avalantec/base-app/auth';
 import { ButtonModule } from 'primeng/button';
 import { InfiniteScroll } from '../../directives/infinite-scroll';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -41,6 +42,7 @@ import { InfiniteScroll } from '../../directives/infinite-scroll';
     Text,
     ButtonModule,
     InfiniteScroll,
+    TranslatePipe,
   ],
   templateUrl: './table-layout.html',
   host: { class: 'shadow-xl/30 w-full' },

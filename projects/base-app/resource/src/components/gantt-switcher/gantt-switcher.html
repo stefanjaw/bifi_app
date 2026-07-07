@@ -4,34 +4,34 @@
     [class]="mode() === 'Day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
     class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
   >
-    Day
+    {{ 'ganttSwitcher.day' | translate: {} : 'base-app/resource' }}
   </button>
   <button
     (click)="mode.set('Week')"
     [class]="mode() === 'Week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
     class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
   >
-    Week
+    {{ 'ganttSwitcher.week' | translate: {} : 'base-app/resource' }}
   </button>
   <button
     (click)="mode.set('Month')"
     [class]="mode() === 'Month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
     class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
   >
-    Month
+    {{ 'ganttSwitcher.month' | translate: {} : 'base-app/resource' }}
   </button>
   <button
     (click)="mode.set('Year')"
     [class]="mode() === 'Year' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
     class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
   >
-    Year
+    {{ 'ganttSwitcher.year' | translate: {} : 'base-app/resource' }}
   </button>
   <button
     (click)="mode.set('Overview')"
     [class]="mode() === 'Overview' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
     class="px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
   >
-    Overview
+    {{ 'ganttSwitcher.overview' | translate: {} : 'base-app/resource' }}
   </button>
 </div>

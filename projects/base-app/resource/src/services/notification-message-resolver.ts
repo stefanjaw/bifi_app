@@ -1,29 +1,27 @@
-import { Injectable } from '@angular/core';
-import {
-  Notification,
-  TranslateKey,
-} from '../libraries/interceptors/notification/notification.context';
+import { inject, Injectable } from '@angular/core';
+import { Notification, TranslateKey } from '../libraries/interceptors/notification/notification.context';
+import { TranslationService } from '@avalantec/base-app/i18n';
 
 const defaultMessages = {
   POST: {
-    success: 'The {{ element }} was created successfully!',
-    error: 'Error creating the {{ element }}. {{ message }}',
-    loading: 'Creating {{ element }}...',
+    success: 'notification.create.success',
+    error: 'notification.create.error',
+    loading: 'notification.create.loading',
   },
   PUT: {
-    success: 'The {{ element }} was updated successfully!',
-    error: 'Error updating the {{ element }}. {{ message }}',
-    loading: 'Updating {{ element }}...',
+    success: 'notification.update.success',
+    error: 'notification.update.error',
+    loading: 'notification.update.loading',
   },
   DELETE: {
-    success: 'The {{ element }} was deleted successfully!',
-    error: 'Error deleting the {{ element }}. {{ message }}',
-    loading: 'Deleting {{ element }}...',
+    success: 'notification.delete.success',
+    error: 'notification.delete.error',
+    loading: 'notification.delete.loading',
   },
   PATCH: {
-    success: 'The {{ element }} was updated successfully!',
-    error: 'Error updating the {{ element }}. {{ message }}',
-    loading: 'Updating {{ element }}...',
+    success: 'notification.update.success',
+    error: 'notification.update.error',
+    loading: 'notification.update.loading',
   },
 };
 
@@ -31,6 +29,8 @@ const defaultMessages = {
   providedIn: 'root',
 })
 export class NotificationMessageResolver {
+  private translationService = inject(TranslationService);
+
   resolveMessages({
     config,
     elementName,
@@ -44,40 +44,22 @@ export class NotificationMessageResolver {
     let error: string | undefined = undefined;
     let loading: string | undefined = undefined;
 
-    if (config instanceof TranslateKey) {
-      // const data = transloco.translateObject(config.key, config.params, config.scope);
-      // console.log('translated object notifications', data);
-      // if (typeof data === 'object') {
-      //   if (data.success) success = data.success;
-      //   if (data.error) error = data.error;
-      //   if (data.loading) loading = data.loading;
-      // } else {
-      //   console.log('Could not find translation for key', config);
-      // }
-    } else {
-      if (config?.successMessage) success = config.successMessage;
+    if (config && !(config instanceof TranslateKey)) {
+      if (config.successMessage) success = config.successMessage;
 
-      if (config?.errorMessage) error = config.errorMessage;
+      if (config.errorMessage) error = config.errorMessage;
 
-      if (config?.loadingMessage) loading = config.loadingMessage;
+      if (config.loadingMessage) loading = config.loadingMessage;
     }
 
     if (method in defaultMessages) {
+      const keys = defaultMessages[method as keyof typeof defaultMessages];
       if (!success)
-        success = defaultMessages[method as keyof typeof defaultMessages].success.replace(
-          '{{ element }}',
-          elementName
-        );
+        success = this.translationService.translate(keys.success, { element: elementName }, 'base-app/resource');
       if (!error)
-        error = defaultMessages[method as keyof typeof defaultMessages].error.replace(
-          '{{ element }}',
-          elementName
-        );
+        error = this.translationService.translate(keys.error, { element: elementName, message: '{{ message }}' }, 'base-app/resource');
       if (!loading)
-        loading = defaultMessages[method as keyof typeof defaultMessages].loading.replace(
-          '{{ element }}',
-          elementName
-        );
+        loading = this.translationService.translate(keys.loading, { element: elementName }, 'base-app/resource');
     }
 
     return { success, error, loading };

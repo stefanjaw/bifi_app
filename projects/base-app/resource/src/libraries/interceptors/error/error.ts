@@ -6,7 +6,9 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { appError } from '@avalantec/base-app/core';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -41,9 +43,10 @@ export const errorInterceptor: HttpInterceptorFn = (
           message: parsedErrorMessage || error.message,
         };
       } else {
+        const translationService = inject(TranslationService);
         processedError = {
           status: 0,
-          message: 'An unexpected error occurred',
+          message: translationService.translate('interceptor.unexpectedError', {}, 'base-app/resource'),
         };
       }
 

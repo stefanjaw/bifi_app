@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TimelineItem } from './timeline-item';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 const AXIS_LEFT = 45;
 const AXIS_RIGHT = 955;
@@ -73,7 +74,7 @@ interface TimelineLayout {
 
 @Component({
   selector: 'bifi-app-timeline-view',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './timeline-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

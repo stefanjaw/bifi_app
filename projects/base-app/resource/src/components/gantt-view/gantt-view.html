@@ -28,7 +28,7 @@
           >
             @if (viewMode() !== 'Overview') {
               <p-button
-                title="Scroll to Task"
+                [title]="'gantt.scrollToTask' | translate: {} : 'base-app/resource'"
                 size="small"
                 severity="secondary"
                 icon="pi pi-arrow-right"
@@ -37,7 +37,7 @@
               ></p-button>
             }
             <p-button
-              title="Add Subtask"
+              [title]="'gantt.addSubtask' | translate: {} : 'base-app/resource'"
               size="small"
               severity="secondary"
               icon="pi pi-plus"
@@ -45,7 +45,7 @@
               (onClick)="addSubitem.emit(item.id); $event.stopPropagation()"
             ></p-button>
             <p-button
-              title="Edit"
+              [title]="'gantt.edit' | translate: {} : 'base-app/resource'"
               size="small"
               severity="secondary"
               icon="pi pi-pencil"
@@ -53,7 +53,7 @@
               (onClick)="itemClick.emit(item.id); $event.stopPropagation()"
             ></p-button>
             <p-button
-              title="Delete"
+              [title]="'gantt.delete' | translate: {} : 'base-app/resource'"
               size="small"
               severity="danger"
               icon="pi pi-trash"
@@ -187,9 +187,9 @@
                     class="absolute left-1/2 -translate-x-1/2 -translate-y-full bg-red-500 text-white text-[8px] leading-none font-bold px-1 py-px rounded-sm whitespace-nowrap"
                   >
                     @if (viewMode() === 'Day') {
-                      NOW
+                      {{ 'gantt.now' | translate: {} : 'base-app/resource' }}
                     } @else {
-                      TODAY
+                      {{ 'gantt.today' | translate: {} : 'base-app/resource' }}
                     }
                   </div>
                 </div>

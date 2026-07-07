@@ -21,6 +21,7 @@ import { TreeList } from '../tree-list/tree-list';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import minMax from 'dayjs/plugin/minMax';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -43,7 +44,7 @@ const OVERVIEW_LEFT_PAD = 16;
 
 @Component({
   selector: 'bifi-app-gantt-view',
-  imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule, TreeList],
+  imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule, TreeList, TranslatePipe],
   templateUrl: './gantt-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,23 +1,23 @@
 <p-dialog
-  header="Confirmation"
+  [header]="'confirmDialog.header' | translate: {} : 'base-app/resource'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
   (click)="$event.stopPropagation()"
 >
   <div class="confirmation-message">
-    <p>Are you sure you want to proceed to delete this item of {{ resource() }}?</p>
+    <p>{{ 'confirmDialog.message' | translate: { resource: resource() } : 'base-app/resource' }}</p>
   </div>
 
   <div class="flex justify-end gap-2 mt-4">
     <p-button
-      label="Cancel"
+      [label]="'confirmDialog.cancel' | translate: {} : 'base-app/resource'"
       severity="secondary"
       icon="pi pi-times"
       (click)="closeDialog()"
     ></p-button>
     <p-button
-      label="Confirm"
+      [label]="'confirmDialog.confirm' | translate: {} : 'base-app/resource'"
       severity="danger"
       icon="pi pi-check"
       (click)="this.confirmClicked.emit()"

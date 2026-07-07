@@ -1,7 +1,7 @@
 <div class="w-full overflow-x-auto">
   @if (layout().items.length === 0) {
     <div class="flex items-center justify-center h-32 text-gray-400 text-sm">
-      No timeline items to display.
+      {{ 'timeline.empty' | translate: {} : 'base-app/resource' }}
     </div>
   } @else {
     <svg

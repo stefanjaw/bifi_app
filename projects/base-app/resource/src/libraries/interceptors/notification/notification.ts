@@ -10,6 +10,7 @@ import { Observable, tap } from 'rxjs';
 import { HTTP_NOTIFICATION_CONFIG_TOKEN } from './notification.context';
 import { inject } from '@angular/core';
 import { ToastManager } from '@avalantec/base-app/core';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import { NotificationMessageResolver } from '../../../services/notification-message-resolver';
 
 export const notificationInterceptor: HttpInterceptorFn = (
@@ -19,6 +20,7 @@ export const notificationInterceptor: HttpInterceptorFn = (
   const config = req.context.get(HTTP_NOTIFICATION_CONFIG_TOKEN);
   const toastService = inject(ToastManager);
   const notificationMessageResolver = inject(NotificationMessageResolver);
+  const translationService = inject(TranslationService);
 
   // Maneja la solicitud si es POST, PUT, DELETE o PATCH, o si recibe una configuración
   const canHandleRequest =
@@ -77,7 +79,7 @@ export const notificationInterceptor: HttpInterceptorFn = (
         } else if (err?.message) {
           backendMessage = err.message;
         } else {
-          backendMessage = 'An error occurred';
+          backendMessage = translationService.translate('interceptor.errorFallback', {}, 'base-app/resource');
         }
 
         const message = errorMessage?.replace('{{ message }}', backendMessage) || backendMessage;

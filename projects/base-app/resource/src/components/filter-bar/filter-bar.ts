@@ -18,6 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 interface FilterRow {
   id: string;
@@ -73,6 +74,7 @@ const OPERATORS_BY_TYPE: Record<string, { label: string; value: filter['operator
     DatePickerModule,
     CheckboxModule,
     ButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './filter-bar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,6 +84,7 @@ export class FilterBar implements OnDestroy {
 
   private filterManager = inject(FilterManager);
   private listStateManager = inject(ListStateManager);
+  private translationService = inject(TranslationService);
 
   filterFields = input<filterFieldConfig<any>[]>([]);
 
@@ -121,13 +124,14 @@ export class FilterBar implements OnDestroy {
         if (r.operator !== 'empty') {
           if (r.value instanceof Date) {
             valueText = r.value.toLocaleDateString();
-            if (r.operator === 'in' && r.type === 'boolean') {
-              valueText = 'True & False';
-            } else if (typeof r.value === 'boolean') {
-              valueText = r.value ? 'Yes' : 'No';
-            } else {
-              valueText = String(r.value ?? '');
-            }
+          } else if (r.operator === 'in' && r.type === 'boolean') {
+            valueText = this.translationService.translate('filter.chip.trueFalse', {}, 'base-app/resource');
+          } else if (typeof r.value === 'boolean') {
+            valueText = r.value
+              ? this.translationService.translate('filter.chip.yes', {}, 'base-app/resource')
+              : this.translationService.translate('filter.chip.no', {}, 'base-app/resource');
+          } else {
+            valueText = String(r.value ?? '');
           }
         }
 
@@ -140,9 +144,31 @@ export class FilterBar implements OnDestroy {
       });
   });
 
+  private operatorTranslationKeys: Record<string, string> = {
+    'Contains': 'filter.operators.contains',
+    'Does not contain': 'filter.operators.doesNotContain',
+    'Equals': 'filter.operators.equals',
+    'Not equals': 'filter.operators.notEquals',
+    'Greater than': 'filter.operators.greaterThan',
+    'Less than': 'filter.operators.lessThan',
+    'Greater or equal': 'filter.operators.greaterOrEqual',
+    'Less or equal': 'filter.operators.lessOrEqual',
+    'On': 'filter.operators.on',
+    'After': 'filter.operators.after',
+    'Before': 'filter.operators.before',
+    'After or on': 'filter.operators.afterOrOn',
+    'Before or on': 'filter.operators.beforeOrOn',
+    'Not on': 'filter.operators.notOn',
+    'Is': 'filter.operators.is',
+    'Both': 'filter.operators.both',
+  };
+
   operatorsFor(type: string | null) {
     if (!type) return [];
-    return OPERATORS_BY_TYPE[type] ?? [];
+    return (OPERATORS_BY_TYPE[type] ?? []).map(op => ({
+      ...op,
+      label: this.translationService.translate(this.operatorTranslationKeys[op.label] || op.label, {}, 'base-app/resource') || op.label,
+    }));
   }
 
   constructor() {
