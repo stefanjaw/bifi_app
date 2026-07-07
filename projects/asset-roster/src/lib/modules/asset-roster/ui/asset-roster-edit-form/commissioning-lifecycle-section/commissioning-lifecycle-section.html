@@ -1,6 +1,6 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
   <bifi-app-form-section
-    title="Commissioning & Lifecycle"
+    [title]="'commissioningAndLifecycle' | translate: {} : 'asset-roster'"
     id="commissioning-lifecycle"
     [ordinal]="4"
   >
@@ -9,14 +9,18 @@
     @if (!assetCommissioning || assetCommissioning.outcome === 'fail') {
       <p-button
         (onClick)="handleOpencommissionDialog()"
-        [label]="!assetCommissioning ? 'Commission' : 'Re-attempt Commission'"
+        [label]="
+          !assetCommissioning
+            ? ('commission' | translate: {} : 'asset-roster')
+            : ('reAttemptCommission' | translate: {} : 'asset-roster')
+        "
         [severity]="!assetCommissioning ? 'success' : 'warn'"
         class="w-full"
         size="small"
       />
     } @else {
       <p-button
-        label="Decommission"
+        [label]="'decommission' | translate: {} : 'asset-roster'"
         severity="danger"
         class="w-full"
         (onClick)="handleOpenDecommissionDialog()"

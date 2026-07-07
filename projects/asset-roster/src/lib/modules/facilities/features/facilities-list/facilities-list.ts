@@ -14,11 +14,20 @@ import { facility } from '../../interfaces/facility';
 import { facilityColumns } from '../../libraries/facility-columns';
 import { facilityFilters } from '../../libraries/facility-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-facilities-list',
   providers: [provideResourceManager(CrudFacilities)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

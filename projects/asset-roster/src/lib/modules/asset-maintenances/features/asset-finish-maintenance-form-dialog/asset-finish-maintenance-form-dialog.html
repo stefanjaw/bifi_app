@@ -1,9 +1,7 @@
 <p-dialog
   [header]="
-    'Complete ' +
-    (maintenanceType() === 'service' ? 'Service' : 'PM') +
-    ' for ' +
-    assetRoster()?.productModel
+    (maintenanceType() === 'service' ? 'completeService' : 'completePm')
+      | translate: {} : 'asset-roster'
   "
   [(visible)]="dialogState"
   [modal]="true"
@@ -16,23 +14,26 @@
     (appSubmit)="handleSubmit($event)"
   >
     <p [bifiAppText]="'small'" class="font-bold!">
-      Comfirm completion of {{ assetMaintenace()?.name }} initiated on:
+      {{ 'confirmCompletionOf' | translate: {} : 'asset-roster' }} {{ assetMaintenace()?.name }}
+      {{ 'initiatedOn' | translate: {} : 'asset-roster' }}:
       {{ assetMaintenace()?.dateStart | date }}
     </p>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Notes</bifi-app-form-label>
+      <bifi-app-form-label>{{ 'notes' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="notes"
         type="text"
-        placeholder="Eg. No issues"
+        [placeholder]="'egNoIssues' | translate: {} : 'asset-roster'"
       ></textarea>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Service Cost (Optional)</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'serviceCostOptional' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <p-inputnumber
         formControlName="cost"
         mode="currency"
@@ -60,8 +61,11 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      saveLabel="Confirm {{ maintenanceType() === 'service' ? 'Service' : 'PM' }} Done"
-      cancelLabel="Cancel"
+      [saveLabel]="
+        (maintenanceType() === 'service' ? 'confirmServiceDone' : 'confirmPmDone')
+          | translate: {} : 'asset-roster'
+      "
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

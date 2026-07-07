@@ -11,6 +11,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { MessageModule } from 'primeng/message';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-documents-section',
@@ -21,6 +22,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     TextareaModule,
     MessageModule,
     ReactiveFormsModule,
+    TranslatePipe,
   ],
   templateUrl: './documents-section.html',
 })

@@ -5,19 +5,19 @@ import { room } from '../interfaces/room';
 export const facilityColumns: tableColumn<facility>[] = [
   {
     field: 'name',
-    title: 'Facility name',
+    title: 'facilityName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'contactId.name',
-    title: 'Related to contact',
+    title: 'relatedToContact',
     type: 'text',
     sortable: true,
   },
   {
     field: 'rooms',
-    title: 'Rooms',
+    title: 'rooms',
     type: 'text',
     parseField: (value: room[]) => value.map(room => room.name).join(', ') || 'No rooms',
   },

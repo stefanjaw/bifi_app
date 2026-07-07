@@ -21,6 +21,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectModule } from 'primeng/select';
 import { roomColumns } from '../../libraries/room-columns';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-facilities-form',
@@ -32,6 +33,7 @@ import { roomColumns } from '../../libraries/room-columns';
     ProgressBarModule,
     SelectModule,
     TableLayout,
+    TranslatePipe,
   ],
   templateUrl: './facilities-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

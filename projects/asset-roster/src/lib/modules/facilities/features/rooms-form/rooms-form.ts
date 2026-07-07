@@ -20,6 +20,7 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SelectModule } from 'primeng/select';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-rooms-form',
@@ -31,6 +32,7 @@ import { SelectModule } from 'primeng/select';
     ButtonModule,
     ProgressBarModule,
     SelectModule,
+    TranslatePipe,
   ],
   templateUrl: './rooms-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

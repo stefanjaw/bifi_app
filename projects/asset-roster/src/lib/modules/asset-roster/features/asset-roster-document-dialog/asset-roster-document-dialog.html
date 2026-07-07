@@ -1,5 +1,5 @@
 <p-dialog
-  header="Add New Document"
+  [header]="'addNewDocument' | translate: {} : 'asset-roster'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -11,7 +11,9 @@
     (appSubmit)="handleSubmit($event)"
   >
     <bifi-app-form-field>
-      <bifi-app-form-label>Document Desciptor</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'documentDescriptor' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <p-select
         appendTo="body"
         (onChange)="handleDescriptorChange($event.value)"
@@ -22,12 +24,14 @@
 
     @if (isOther()) {
       <bifi-app-form-field>
-        <bifi-app-form-label>Description for "Other"</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'descriptionForOther' | translate: {} : 'asset-roster' }}
+        </bifi-app-form-label>
         <input
           pInputText
           formControlName="descriptor"
           type="text"
-          placeholder="e.g, Warranty Card, Calibration Certificate"
+          [placeholder]="'egWarrantyCard' | translate: {} : 'asset-roster'"
         />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
@@ -48,7 +52,7 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      cancelLabel="Cancel"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

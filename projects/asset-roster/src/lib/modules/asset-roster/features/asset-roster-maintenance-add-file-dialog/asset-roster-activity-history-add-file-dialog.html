@@ -26,8 +26,8 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      saveLabel="Add File"
-      cancelLabel="Cancel"
+      [saveLabel]="'addFile' | translate: {} : 'asset-roster'"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

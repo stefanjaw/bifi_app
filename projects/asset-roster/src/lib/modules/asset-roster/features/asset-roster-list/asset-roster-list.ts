@@ -37,6 +37,7 @@ import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/ass
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { AvatarModule } from 'primeng/avatar';
 
 @Component({
@@ -59,6 +60,7 @@ import { AvatarModule } from 'primeng/avatar';
     SelectButtonModule,
     AvatarModule,
     InfiniteScroll,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

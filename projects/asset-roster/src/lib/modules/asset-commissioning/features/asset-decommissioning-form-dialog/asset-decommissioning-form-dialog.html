@@ -1,5 +1,5 @@
 <p-dialog
-  header="Decommission Asset"
+  [header]="'decommissionAsset' | translate: {} : 'asset-roster'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -11,7 +11,7 @@
     (appSubmit)="handleSubmit($event)"
   >
     <p [bifiAppText]="'small'">
-      Are you sure you want to decommission this asset? This action cannot be easily undone.
+      {{ 'decommissionConfirm' | translate: {} : 'asset-roster' }}
     </p>
     <p [bifiAppText]="'small'" class="font-bold!">
       {{ assetRoster()?.assetTypeIds?.[0]?.name || 'No type' }} -
@@ -19,12 +19,14 @@
     </p>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Reason for Decommissioning</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'reasonForDecommissioning' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="details"
         type="text"
-        placeholder="Enter details"
+        [placeholder]="'enterDetails' | translate: {} : 'asset-roster'"
       ></textarea>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
@@ -32,8 +34,8 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      saveLabel="Confirm"
-      cancelLabel="Cancel"
+      [saveLabel]="'confirm' | translate: {} : 'asset-roster'"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

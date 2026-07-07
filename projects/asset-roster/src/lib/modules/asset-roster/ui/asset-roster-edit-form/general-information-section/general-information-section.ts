@@ -17,6 +17,7 @@ import { assetType } from '../../../../asset-types';
 import { contact } from '@avalantec/base-app/interfaces';
 import { CrudFacilities, CrudRooms, room } from '../../../../facilities';
 import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
@@ -40,6 +41,7 @@ import { map, startWith } from 'rxjs';
     TagModule,
     ToggleSwitchModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './general-information-section.html',
 })

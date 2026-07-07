@@ -3,6 +3,7 @@ import { Component, computed, inject, input, model, signal } from '@angular/core
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormModule } from '@avalantec/base-app/form';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -29,6 +30,7 @@ import { assetRoster } from '../../../interfaces/asset-roster';
     SelectModule,
     FormModule,
     MessageModule,
+    TranslatePipe,
   ],
   templateUrl: './notes-section.html',
 })

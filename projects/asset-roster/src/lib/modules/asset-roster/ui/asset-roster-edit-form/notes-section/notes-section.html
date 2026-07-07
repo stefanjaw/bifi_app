@@ -1,19 +1,25 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-  <bifi-app-form-section title="Equipment Notes" id="notes" [ordinal]="2">
+  <bifi-app-form-section
+    [title]="'equipmentNotes' | translate: {} : 'asset-roster'"
+    id="notes"
+    [ordinal]="2"
+  >
     <form [formGroup]="form" class="flex flex-col gap-4">
       <!-- Input area -->
       @if (isEditMode()) {
         <div class="flex items-end gap-3">
           <div class="flex-1">
             <bifi-app-form-field>
-              <bifi-app-form-label>Add Note</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'addNote' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
 
               <textarea
                 pInputTextarea
                 [(ngModel)]="remarkTextModel"
                 [ngModelOptions]="{ standalone: true }"
                 rows="1"
-                placeholder="Enter a note..."
+                [placeholder]="'enterNote' | translate: {} : 'asset-roster'"
                 class="w-full"
               ></textarea>
 
@@ -24,7 +30,7 @@
           <p-button
             type="button"
             icon="pi pi-plus"
-            label="Add Note"
+            [label]="'addNote' | translate: {} : 'asset-roster'"
             severity="secondary"
             (click)="addNote()"
           ></p-button>
@@ -45,7 +51,7 @@
 
             <div class="w-full flex justify-end">
               <span class="text-xs text-gray-500 text-right">
-                Created by
+                {{ 'createdBy' | translate: {} : 'asset-roster' }}
                 <span class="font-medium text-gray-700">
                   {{ getUserName(latest.value.createdBy) }}
                 </span>
@@ -67,7 +73,7 @@
 
                 <div class="w-full flex justify-end">
                   <span class="text-xs text-gray-500 text-right">
-                    Created by
+                    {{ 'createdBy' | translate: {} : 'asset-roster' }}
                     <span class="font-medium text-gray-700">
                       {{ getUserName(control.value.createdBy) }}
                     </span>
@@ -84,7 +90,11 @@
       @if (sortedNotes().length > 1) {
         <div class="flex justify-left mt-2">
           <p-button
-            [label]="showAllNotes() ? 'Hide previous notes' : 'Show previous notes'"
+            [label]="
+              showAllNotes()
+                ? ('hidePreviousNotes' | translate: {} : 'asset-roster')
+                : ('showPreviousNotes' | translate: {} : 'asset-roster')
+            "
             [icon]="showAllNotes() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
             variant="text"
             (onClick)="showAllNotes.set(!showAllNotes())"

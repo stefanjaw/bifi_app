@@ -4,25 +4,25 @@ import { room } from '../interfaces/room';
 export const roomColumns: tableColumn<room>[] = [
   {
     field: 'name',
-    title: 'Facility Name',
+    title: 'facilityName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'code',
-    title: 'Code',
+    title: 'code',
     type: 'text',
     sortable: true,
   },
   {
     field: 'address',
-    title: 'Address',
+    title: 'address',
     type: 'number',
     sortable: true,
   },
   {
     field: 'facilityId.name',
-    title: 'Facility',
+    title: 'facility',
     type: 'text',
     sortable: true,
   },

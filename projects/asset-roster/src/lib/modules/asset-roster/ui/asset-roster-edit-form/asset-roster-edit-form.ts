@@ -1,5 +1,6 @@
 import { HasPermission } from '@avalantec/base-app/auth';
 import { Component, inject, input } from '@angular/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
 import { DocumentsSection } from './documents-section/documents-section';
@@ -48,6 +49,7 @@ import { StatusBannerSection } from './status-banner-section/status-banner-secti
     FormModule,
     HasPermission,
     StatusBannerSection,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-edit-form.html',
   styleUrl: './asset-roster-edit-form.css',

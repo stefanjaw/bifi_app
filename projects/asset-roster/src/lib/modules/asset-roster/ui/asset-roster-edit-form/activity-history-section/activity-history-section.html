@@ -1,13 +1,19 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-  <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="5">
+  <bifi-app-form-section
+    [title]="'activityHistory' | translate: {} : 'asset-roster'"
+    id="activity-history"
+    [ordinal]="5"
+  >
     @if (activityHistory().length === 0) {
-      <div class="text-sm text-gray-500 italic">No maintenance or service history recorded.</div>
+      <div class="text-sm text-gray-500 italic">
+        {{ 'noHistoryRecorded' | translate: {} : 'asset-roster' }}
+      </div>
     } @else {
       <!--Export Csv-->
       <div class="flex justify-end mb-4">
         <p-button
           severity="success"
-          label="Export CSV"
+          [label]="'exportCsv' | translate: {} : 'asset-roster'"
           (onClick)="exportCSV()"
           *bifiAppHasPermission="'activity-history/export:read:model'"
           icon="pi pi-download"
@@ -26,17 +32,17 @@
                   @let maintenance = history.modelId;
 
                   <p class="text-sm text-gray-600">
-                    Initiated:
+                    {{ 'initiated' | translate: {} : 'asset-roster' }}
                     {{ maintenance.dateStart | date: 'MM/dd/yyyy h:mm a' }}
                   </p>
 
                   <p class="text-sm text-gray-600">
-                    Finished:
+                    {{ 'finished' | translate: {} : 'asset-roster' }}
                     {{ maintenance.dateEnd | date: 'MM/dd/yyyy h:mm a' }}
                   </p>
 
                   <p class="text-sm text-gray-600">
-                    Cost:
+                    {{ 'cost' | translate: {} : 'asset-roster' }}
                     @if (maintenance.cost !== null) {
                       {{ maintenance.cost | currency: 'USD' }}
                     } @else {
@@ -46,19 +52,20 @@
                 }
 
                 <p class="text-sm text-gray-600">
-                  Logged By: {{ history.userId?.username || 'No User' }}
+                  {{ 'loggedBy' | translate: {} : 'asset-roster' }}
+                  {{ history.userId?.username || ('noUser' | translate: {} : 'asset-roster') }}
                 </p>
               </div>
             </div>
 
             <div class="mt-4">
               <p class="text-sm text-gray-600">
-                Performed:
+                {{ 'performed' | translate: {} : 'asset-roster' }}
                 {{ history.performDate | date: 'MM/dd/yyyy' }}
               </p>
 
               <p class="text-sm text-gray-600">
-                Details:
+                {{ 'details' | translate: {} : 'asset-roster' }}
                 {{ history.details }}
               </p>
             </div>
@@ -74,7 +81,7 @@
                 @let attachment = history.modelId.attachments[0];
 
                 <p-button
-                  [label]="'View: ' + attachment.name"
+                  [label]="('view' | translate: {} : 'asset-roster') + ': ' + attachment.name"
                   severity="primary"
                   icon="pi pi-file"
                   variant="text"
@@ -85,7 +92,7 @@
                 !isNotValidForAttachmentAdding(history.modelId)
               ) {
                 <p-button
-                  label="Add Attachment"
+                  [label]="'addAttachment' | translate: {} : 'asset-roster'"
                   severity="primary"
                   icon="pi pi-plus"
                   variant="text"
@@ -94,7 +101,9 @@
                   "
                 ></p-button>
               } @else {
-                <div class="text-sm text-gray-500 italic">No attachment available.</div>
+                <div class="text-sm text-gray-500 italic">
+                  {{ 'noAttachmentAvailable' | translate: {} : 'asset-roster' }}
+                </div>
               }
             </div>
           </ng-template>

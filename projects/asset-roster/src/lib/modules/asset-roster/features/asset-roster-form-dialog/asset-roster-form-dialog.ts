@@ -25,6 +25,7 @@ import {
 } from '../../services/create-asset-roster-form';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -40,6 +41,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     TextareaModule,
     ToggleSwitchModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,6 +11,7 @@ import { assetRoster } from '../../../interfaces/asset-roster';
 import { Tag, TagModule } from 'primeng/tag';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { AssetRosterMaintenanceContext } from 'projects/asset-roster/src/public-api';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-activity-history-section',
@@ -22,6 +23,7 @@ import { AssetRosterMaintenanceContext } from 'projects/asset-roster/src/public-
     Button,
     HasPermission,
     AssetRosterActiviyHistoryAddFileDialog,
+    TranslatePipe,
   ],
   templateUrl: './activity-history-section.html',
 })

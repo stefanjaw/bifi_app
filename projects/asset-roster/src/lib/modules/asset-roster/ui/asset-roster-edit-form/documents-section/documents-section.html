@@ -1,17 +1,29 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-  <bifi-app-form-section title="Documents" id="documents" [ordinal]="2">
+  <bifi-app-form-section
+    [title]="'documents' | translate: {} : 'asset-roster'"
+    id="documents"
+    [ordinal]="2"
+  >
     <section class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div></div>
         @if (isEditMode()) {
-          <p-button label="Add Document" icon="pi pi-plus" (onClick)="handleAddDocument()" />
+          <p-button
+            [label]="'addDocument' | translate: {} : 'asset-roster'"
+            icon="pi pi-plus"
+            (onClick)="handleAddDocument()"
+          />
         }
       </div>
 
       @if (isEditMode()) {
-        <div class="text-sm text-gray-500 italic">Click "Add Document" to upload.</div>
+        <div class="text-sm text-gray-500 italic">
+          {{ 'clickAddDocumentToUpload' | translate: {} : 'asset-roster' }}
+        </div>
       } @else {
-        <div class="text-sm text-gray-500 italic">No documents uploaded.</div>
+        <div class="text-sm text-gray-500 italic">
+          {{ 'noDocumentsUploaded' | translate: {} : 'asset-roster' }}
+        </div>
       }
 
       <div class="flex flex-col gap-2 mt-4">
@@ -22,7 +34,7 @@
 
             <div class="flex items-center gap-2">
               <p-button
-                label="View"
+                [label]="'view' | translate: {} : 'asset-roster'"
                 severity="secondary"
                 icon="pi pi-file"
                 (onClick)="downloadFile(document)"
@@ -44,12 +56,14 @@
         <div class="md:col-span-2">
           <form [formGroup]="form">
             <bifi-app-form-field previewVariant="italic">
-              <bifi-app-form-label>AI Assistant</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'aiAssistant' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <textarea
                 pInputTextarea
                 rows="4"
                 formControlName="aiquestion"
-                placeholder="Ask any questions about the document..."
+                [placeholder]="'askQuestionsAboutDocument' | translate: {} : 'asset-roster'"
                 class="w-full"
               ></textarea>
 
@@ -58,7 +72,7 @@
           </form>
         </div>
         <p-button
-          label="Ask Gemini"
+          [label]="'askGemini' | translate: {} : 'asset-roster'"
           severity="info"
           icon="pi pi-send"
           (click)="submitAskGenai()"
@@ -67,7 +81,7 @@
           <p-message severity="info" [closable]="false" class="w-full">
             <div class="flex items-center gap-2">
               <div>
-                <div class="font-medium">AI Assistant:</div>
+                <div class="font-medium">{{ 'aiAssistant' | translate: {} : 'asset-roster' }}:</div>
                 <div class="font-medium">{{ aiResponse() }}</div>
               </div>
             </div>

@@ -3,7 +3,7 @@
  -->
 
 <p-dialog
-  header="Perform Service"
+  [header]="'performService' | translate: {} : 'asset-roster'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -20,7 +20,9 @@
     </p>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Type of Service</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'typeOfService' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <div class="flex flex-wrap md:flex-nowrap gap-4">
         <div
           class="flex items-center w-full md:w-50 shadow p-3 rounded-md"
@@ -32,7 +34,9 @@
             formControlName="name"
             inputId="calibration"
           />
-          <label for="calibration" [bifiAppText]="'small'" class="ml-2">Calibration</label>
+          <label for="calibration" [bifiAppText]="'small'" class="ml-2">
+            {{ 'calibration' | translate: {} : 'asset-roster' }}
+          </label>
         </div>
 
         <div
@@ -45,7 +49,9 @@
             formControlName="name"
             inputId="verification"
           />
-          <label for="verification" [bifiAppText]="'small'" class="ml-2">Verification</label>
+          <label for="verification" [bifiAppText]="'small'" class="ml-2">
+            {{ 'verification' | translate: {} : 'asset-roster' }}
+          </label>
         </div>
       </div>
       <div class="flex flex-wrap md:flex-nowrap gap-4">
@@ -60,7 +66,7 @@
             inputId="unscheduled-maintenance"
           />
           <label for="unscheduled-maintenance" [bifiAppText]="'small'" class="ml-2">
-            Unscheduled Maintenance
+            {{ 'unscheduledMaintenance' | translate: {} : 'asset-roster' }}
           </label>
         </div>
 
@@ -69,19 +75,23 @@
           (click)="repair.select($event)"
         >
           <p-radiobutton #repair value="repair" formControlName="name" inputId="repair" />
-          <label for="repair" [bifiAppText]="'small'" class="ml-2">Repair</label>
+          <label for="repair" [bifiAppText]="'small'" class="ml-2">
+            {{ 'repair' | translate: {} : 'asset-roster' }}
+          </label>
         </div>
       </div>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Service Details / Reason</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'serviceDetailsReason' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="description"
         type="text"
-        placeholder="Describe the service or reason for repair"
+        [placeholder]="'describeServiceReason' | translate: {} : 'asset-roster'"
       ></textarea>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
@@ -89,7 +99,7 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      cancelLabel="Cancel"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

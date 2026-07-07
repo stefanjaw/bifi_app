@@ -14,10 +14,19 @@ import { assetType } from '../../interfaces/asset-type';
 import { assetTypeColumns } from '../../libraries/asset-type-columns';
 import { assetTypeFilters } from '../../libraries/asset-type-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 @Component({
   selector: 'bifi-app-asset-types-list',
   providers: [provideResourceManager(CrudAssetType)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

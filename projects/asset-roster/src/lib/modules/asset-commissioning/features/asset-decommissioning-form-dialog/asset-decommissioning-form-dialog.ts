@@ -18,10 +18,11 @@ import {
   UpdateDecommissioningFormModel,
 } from '../../services/update-decommissioning-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-decommissioning-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, Text, Textarea, FormModule],
+  imports: [DialogModule, ReactiveFormsModule, Text, Textarea, FormModule, TranslatePipe],
   templateUrl: './asset-decommissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

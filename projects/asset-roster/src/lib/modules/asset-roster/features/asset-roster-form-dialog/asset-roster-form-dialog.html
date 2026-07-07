@@ -1,11 +1,11 @@
 <p-dialog
-  header="Add New Medical Asset"
+  [header]="'addNewMedicalAsset' | translate: {} : 'asset-roster'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
 >
   @if (isLoading()) {
-    <p>Loading...</p>
+    <p>{{ 'loading' | translate: {} : 'asset-roster' }}</p>
   } @else {
     <form
       [formGroup]="form"
@@ -15,7 +15,9 @@
     >
       <!-- Device Type -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-surface-700">Device Type</label>
+        <label class="text-sm font-medium text-surface-700">
+          {{ 'deviceType' | translate: {} : 'asset-roster' }}
+        </label>
         <div class="flex flex-wrap gap-6 pt-1">
           <div class="flex items-center gap-2">
             <p-radiobutton
@@ -23,7 +25,9 @@
               value="serialized"
               inputId="dt-serialized"
             />
-            <label for="dt-serialized" class="cursor-pointer">Serialized</label>
+            <label for="dt-serialized" class="cursor-pointer">
+              {{ 'serialized' | translate: {} : 'asset-roster' }}
+            </label>
           </div>
           <div class="flex items-center gap-2">
             <p-radiobutton
@@ -31,18 +35,24 @@
               value="non-serialized"
               inputId="dt-non-serialized"
             />
-            <label for="dt-non-serialized" class="cursor-pointer">Non-Serialized</label>
+            <label for="dt-non-serialized" class="cursor-pointer">
+              {{ 'nonSerialized' | translate: {} : 'asset-roster' }}
+            </label>
           </div>
           <div class="flex items-center gap-2">
             <p-radiobutton formControlName="deviceType" value="software" inputId="dt-software" />
-            <label for="dt-software" class="cursor-pointer">Software</label>
+            <label for="dt-software" class="cursor-pointer">
+              {{ 'software' | translate: {} : 'asset-roster' }}
+            </label>
           </div>
         </div>
       </div>
 
       <!-- Type of Asset -->
       <bifi-app-form-field>
-        <bifi-app-form-label>Type of Equipment</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'typeOfEquipment' | translate: {} : 'asset-roster' }}
+        </bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="assetTypeIds"
@@ -56,24 +66,28 @@
 
       @if (isCreatingNewAssetType()) {
         <bifi-app-form-field formGroupName="createdType">
-          <bifi-app-form-label>New Asset Type Name</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'newAssetTypeName' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
           <input
             pInputText
             formControlName="name"
             type="text"
-            placeholder="e.g Laser Therapy Unity"
+            [placeholder]="'egLaserTherapyUnity' | translate: {} : 'asset-roster'"
           />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field formGroupName="createdType">
-          <bifi-app-form-label>New Asset Type Description</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'newAssetTypeDescription' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="description"
             rows="3"
             type="text"
-            placeholder="e.g For therapeutic laser treatments"
+            [placeholder]="'egTherapeuticLaser' | translate: {} : 'asset-roster'"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -81,7 +95,7 @@
 
       <!-- Make -->
       <bifi-app-form-field>
-        <bifi-app-form-label>Make</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'make' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="makeIds"
@@ -95,8 +109,15 @@
 
       @if (isCreatingNewMake()) {
         <bifi-app-form-field formGroupName="createdMake">
-          <bifi-app-form-label>Other OEM Name</bifi-app-form-label>
-          <input pInputText formControlName="oemName" type="text" placeholder="Enter OEM name" />
+          <bifi-app-form-label>
+            {{ 'otherOemName' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="oemName"
+            type="text"
+            [placeholder]="'enterOemName' | translate: {} : 'asset-roster'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       }
@@ -104,19 +125,26 @@
       <!-- Serialized-only fields -->
       @if (deviceType() === 'serialized') {
         <bifi-app-form-field>
-          <bifi-app-form-label>Model</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'model' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
           <input
             pInputText
             formControlName="productModel"
             type="text"
-            placeholder="e.g, Optima XR220amx"
+            [placeholder]="'egOptimaXr220amx' | translate: {} : 'asset-roster'"
           />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Serial Number</bifi-app-form-label>
-          <input pInputText formControlName="serialNumber" type="text" placeholder="e.g, SN00X" />
+          <bifi-app-form-label>
+            {{ 'serialNumber' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="serialNumber"
+            type="text"
+            [placeholder]="'egSn00x' | translate: {} : 'asset-roster'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       }
@@ -124,19 +152,27 @@
       <!-- Non-Serialized fields -->
       @if (deviceType() === 'non-serialized') {
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'description' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="description"
             rows="3"
-            placeholder="Describe the asset"
+            [placeholder]="'describeAsset' | translate: {} : 'asset-roster'"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Quantity (Optional)</bifi-app-form-label>
-          <p-inputnumber formControlName="quantity" [min]="1" placeholder="e.g, 10"></p-inputnumber>
+          <bifi-app-form-label>
+            {{ 'quantityOptional' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
+          <p-inputnumber
+            formControlName="quantity"
+            [min]="1"
+            [placeholder]="'eg10' | translate: {} : 'asset-roster'"
+          ></p-inputnumber>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       }
@@ -144,12 +180,14 @@
       <!-- Software fields -->
       @if (deviceType() === 'software') {
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'description' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="description"
             rows="3"
-            placeholder="Describe the software"
+            [placeholder]="'describeSoftware' | translate: {} : 'asset-roster'"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -158,10 +196,14 @@
           formGroupName="softwareConfiguration"
           class="flex flex-col gap-4 border border-surface-200 rounded-md p-4"
         >
-          <p class="font-semibold text-sm text-surface-700 mb-1">Software Configuration</p>
+          <p class="font-semibold text-sm text-surface-700 mb-1">
+            {{ 'softwareConfiguration' | translate: {} : 'asset-roster' }}
+          </p>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Regulatory Classification</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'regulatoryClassification' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-select
               appendTo="body"
               formControlName="regulatoryClassification"
@@ -174,13 +216,22 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Version</bifi-app-form-label>
-            <input pInputText formControlName="version" type="text" placeholder="e.g, 2.1.0" />
+            <bifi-app-form-label>
+              {{ 'version' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="version"
+              type="text"
+              [placeholder]="'eg210' | translate: {} : 'asset-roster'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>License Type</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'licenseType' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-select
               appendTo="body"
               formControlName="licenseType"
@@ -193,7 +244,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Parent Asset ID (Optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'parentAssetIdOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-select
               appendTo="body"
               formControlName="parentAssetId"
@@ -208,18 +261,22 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>UDI-DI (Optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'udiDiOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="udiDi"
               type="text"
-              placeholder="Unique Device Identifier"
+              [placeholder]="'uniqueDeviceIdentifier' | translate: {} : 'asset-roster'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>FDA / MDR Class (Optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'fdaMdrClassOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-select
               appendTo="body"
               formControlName="fdaMdrClass"
@@ -233,21 +290,32 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>License Key (Optional)</bifi-app-form-label>
-            <input pInputText formControlName="licenseKey" type="text" placeholder="License key" />
+            <bifi-app-form-label>
+              {{ 'licenseKeyOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="licenseKey"
+              type="text"
+              [placeholder]="'licenseKey' | translate: {} : 'asset-roster'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <div class="flex items-center gap-3">
             <p-toggle-switch formControlName="preventAutoUpdate"></p-toggle-switch>
-            <label class="text-sm text-surface-700">Do not patch (Prevent Auto-Update)</label>
+            <label class="text-sm text-surface-700">
+              {{ 'doNotPatch' | translate: {} : 'asset-roster' }}
+            </label>
           </div>
         </div>
       }
 
       <!-- Date Acquired (always visible) -->
       <bifi-app-form-field>
-        <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'dateAcquired' | translate: {} : 'asset-roster' }}
+        </bifi-app-form-label>
         <p-datepicker formControlName="acquiredDate" [showIcon]="true"></p-datepicker>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
@@ -255,7 +323,7 @@
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

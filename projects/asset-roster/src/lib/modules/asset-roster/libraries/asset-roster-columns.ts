@@ -32,7 +32,7 @@ export const assetRosterColumns = (
   //photo
   {
     field: 'photo',
-    title: 'PHOTO',
+    title: 'photo',
     type: 'text',
     component: (row: assetRoster): DynamicComponentConfig<any> => ({
       component: Avatar,
@@ -59,30 +59,30 @@ export const assetRosterColumns = (
   {
     field: 'assetTypeIds',
     parseField: (value: assetType[]) => value[0]?.name || 'Not set',
-    title: 'TYPE',
+    title: 'type',
     type: 'text',
   },
   {
     field: 'makeIds',
     parseField: (value: contact[]) => value[0]?.name || 'Not set',
-    title: 'MAKE',
+    title: 'make',
     type: 'text',
   },
   {
     field: 'productModel',
     sortable: true,
-    title: 'MODEL',
+    title: 'model',
     type: 'text',
   },
   {
     field: 'serialNumber',
     sortable: true,
-    title: 'SERIAL NUMBER',
+    title: 'serialNumber',
     type: 'text',
   },
   {
     field: 'locationId.name',
-    title: 'LOCATION',
+    title: 'location',
     parseField: value => value?.name || 'Not set',
 
     type: 'text',
@@ -90,19 +90,19 @@ export const assetRosterColumns = (
   {
     field: 'vendorIds',
     parseField: (value: contact[]) => value[0]?.name || 'Not set',
-    title: 'VENDOR',
+    title: 'vendor',
     type: 'text',
   },
   {
     field: 'acquiredDate',
     sortable: true,
-    title: 'ACQUIRED DATE',
+    title: 'acquiredDate',
     type: 'date',
   },
   {
     field: 'maintenanceDate',
     sortable: true,
-    title: 'NEXT PM DUE',
+    title: 'nextPmDue',
     type: 'date',
   },
   {
@@ -156,7 +156,7 @@ export const assetRosterColumns = (
 
       return component;
     },
-    title: 'STATUS',
+    title: 'status',
     type: 'text',
   },
 ];

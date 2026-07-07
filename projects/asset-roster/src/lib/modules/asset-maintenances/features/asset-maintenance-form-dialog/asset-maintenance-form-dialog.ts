@@ -19,10 +19,19 @@ import { Textarea } from 'primeng/textarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-maintenance-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, Text, Textarea, RadioButtonModule, FormModule],
+  imports: [
+    DialogModule,
+    ReactiveFormsModule,
+    Text,
+    Textarea,
+    RadioButtonModule,
+    FormModule,
+    TranslatePipe,
+  ],
   templateUrl: './asset-maintenance-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

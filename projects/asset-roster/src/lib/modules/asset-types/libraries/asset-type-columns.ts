@@ -4,13 +4,13 @@ import { assetType } from '../interfaces/asset-type';
 export const assetTypeColumns: tableColumn<assetType>[] = [
   {
     field: 'name',
-    title: 'Asset Type Name',
+    title: 'assetTypeName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'description',
-    title: 'Description',
+    title: 'description',
     type: 'text',
     sortable: true,
   },

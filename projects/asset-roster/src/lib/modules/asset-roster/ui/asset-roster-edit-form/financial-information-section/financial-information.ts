@@ -16,6 +16,7 @@ import { assetType } from '../../../../asset-types';
 import { CrudAssetMaintenances } from '../../../../asset-maintenances';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 interface DepreciationResults {
   currentBookValue: number;
@@ -38,6 +39,7 @@ interface DepreciationResults {
     FormModule,
     ChartModule,
     TagModule,
+    TranslatePipe,
   ],
   templateUrl: './financial-information.html',
 })
@@ -49,6 +51,7 @@ export class FinancialInformation {
   form = this.formService.form;
   private filterManager = inject(FilterManager);
   private crudAssetMaintenances = inject(CrudAssetMaintenances);
+  private translationService = inject(TranslationService);
 
   private serviceMaintenanceQuery = computed(() => {
     const id = this.assetRoster()?._id;
@@ -88,10 +91,16 @@ export class FinancialInformation {
     getInactive: null,
   });
 
-  depreciationMethodOptions = [
-    { label: 'Straight Line', value: 'straight-line' },
-    { label: 'Accelerated (Declining Balance)', value: 'accelerated-declining-balance' },
-  ];
+  depreciationMethodOptions = computed(() => [
+    {
+      label: this.translationService.translate('straightLine', {}, 'asset-roster'),
+      value: 'straight-line',
+    },
+    {
+      label: this.translationService.translate('acceleratedDecliningBalance', {}, 'asset-roster'),
+      value: 'accelerated-declining-balance',
+    },
+  ]);
 
   tcoRanges = ['1W', '1M', '3M', '6M', 'YTD', '1Y', 'All'];
   selectedTcoRange = signal<string>('1Y');
@@ -275,7 +284,7 @@ export class FinancialInformation {
 
     if (showService) {
       datasets.push({
-        label: 'Service Cost',
+        label: this.translationService.translate('serviceCost', {}, 'asset-roster'),
         data: sumByMonth(serviceEvents),
         backgroundColor: isLine ? 'rgba(249,115,22,0.2)' : 'rgba(249,115,22,0.6)',
         borderColor: 'rgba(249,115,22,1)',
@@ -286,7 +295,7 @@ export class FinancialInformation {
 
     if (showPm) {
       datasets.push({
-        label: 'PM Cost',
+        label: this.translationService.translate('pmCost', {}, 'asset-roster'),
         data: sumByMonth(pmEvents),
         backgroundColor: isLine ? 'rgba(34,197,94,0.2)' : 'rgba(34,197,94,0.6)',
         borderColor: 'rgba(34,197,94,1)',

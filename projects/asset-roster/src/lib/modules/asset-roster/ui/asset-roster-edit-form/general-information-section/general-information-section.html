@@ -1,7 +1,7 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
   <bifi-app-form-section
     [formGroup]="formService.form"
-    title="General Information"
+    [title]="'generalInformation' | translate: {} : 'asset-roster'"
     id="general-info"
     [ordinal]="1"
   >
@@ -13,7 +13,7 @@
           @if (deviceType() === 'serialized' || !deviceType()) {
             <bifi-app-form-field previewVariant="tag">
               <bifi-app-form-label>
-                Serial Number
+                {{ 'serialNumber' | translate: {} : 'asset-roster' }}
                 <p-tag
                   [value]="deviceTypeLabel()"
                   severity="info"
@@ -35,7 +35,7 @@
           <div>
             <bifi-app-form-field>
               <bifi-app-form-label>
-                Type
+                {{ 'type' | translate: {} : 'asset-roster' }}
                 @if (deviceType() === 'non-serialized' || deviceType() === 'software') {
                   <p-tag
                     [value]="deviceTypeLabel()"
@@ -64,7 +64,9 @@
           <!-- Make -->
           <div>
             <bifi-app-form-field>
-              <bifi-app-form-label>Make</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'make' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
                   {{ assetRoster()?.makeIds?.[0]?.name || fallback }}
@@ -86,7 +88,9 @@
           @if (deviceType() === 'serialized' || !deviceType()) {
             <div>
               <bifi-app-form-field>
-                <bifi-app-form-label>Model</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'model' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <input
                   pInputText
                   formControlName="productModel"
@@ -102,7 +106,9 @@
           @if (deviceType() === 'non-serialized' || deviceType() === 'software') {
             <div class="md:col-span-2">
               <bifi-app-form-field>
-                <bifi-app-form-label>Description</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'description' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <textarea
                   pInputTextarea
                   formControlName="description"
@@ -119,7 +125,9 @@
           @if (deviceType() === 'non-serialized') {
             <div>
               <bifi-app-form-field>
-                <bifi-app-form-label>Quantity</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'quantity' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-inputnumber
                   formControlName="quantity"
                   [min]="formService.totalAssignedMin()"
@@ -133,7 +141,9 @@
           <!-- Date Acquired -->
           <div>
             <bifi-app-form-field previewVariant="text" previewValueType="date">
-              <bifi-app-form-label>Date Acquired</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'dateAcquired' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <p-date-picker
                 formControlName="acquiredDate"
                 [showIcon]="true"
@@ -148,7 +158,9 @@
           @if (deviceType() !== 'software') {
             <div>
               <bifi-app-form-field previewVariant="italic">
-                <bifi-app-form-label>Condition (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'conditionOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-select
                   formControlName="condition"
                   [options]="['excellent', 'good', 'fair', 'poor']"
@@ -161,7 +173,9 @@
           <!-- Vendor -->
           <div>
             <bifi-app-form-field previewVariant="italic">
-              <bifi-app-form-label>Vendor</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'vendor' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <bifi-app-form-preview>
                 <ng-template #preview let-typeId let-fallback>
                   {{ assetRoster()?.vendorIds?.[0]?.name || fallback }}
@@ -282,7 +296,9 @@
           @if (deviceType() !== 'software') {
             <div>
               <bifi-app-form-field previewVariant="italic" previewValueType="date">
-                <bifi-app-form-label>Warranty Expiration Date (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'warrantyExpirationDateOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-date-picker
                   formControlName="warrantyDate"
                   [showIcon]="true"
@@ -296,7 +312,9 @@
           @if (deviceType() === 'software') {
             <div>
               <bifi-app-form-field previewVariant="italic" previewValueType="date">
-                <bifi-app-form-label>Support End Date (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'supportEndDateOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-date-picker
                   formControlName="supportEndDate"
                   [showIcon]="true"
@@ -349,7 +367,9 @@
                   <div [formGroupName]="$index" class="grid grid-cols-2 gap-4 items-end">
                     <div>
                       <bifi-app-form-field>
-                        <bifi-app-form-label>Location</bifi-app-form-label>
+                        <bifi-app-form-label>
+                          {{ 'location' | translate: {} : 'asset-roster' }}
+                        </bifi-app-form-label>
                         <p-select
                           formControlName="locationId"
                           [options]="getAvailableRoomOptions($index)"

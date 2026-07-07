@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Facility"
+  [title]="(isUpdate() ? 'updateFacility' : 'createFacility') | translate: {} : 'asset-roster'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,16 +18,27 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'generalInformation' | translate: {} : 'asset-roster'"
+        id="general-info"
+        [ordinal]="1"
+      >
         <section class="w-full grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field class="mb-3">
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Name" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'name' | translate: {} : 'asset-roster'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Responsible contact</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'responsibleContact' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contacts()"
@@ -38,14 +49,19 @@
           </bifi-app-form-field>
         </section>
       </bifi-app-form-section>
-      <bifi-app-form-section title="Rooms Preview" id="rooms" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'roomsPreview' | translate: {} : 'asset-roster'"
+        id="rooms"
+        [ordinal]="2"
+      >
         <bifi-app-table-layout
+          [scope]="'asset-roster'"
           [columns]="roomColumns"
           [data]="facility()?.rooms || []"
         ></bifi-app-table-layout>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'somethingWentWrong' | translate: {} : 'asset-roster' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

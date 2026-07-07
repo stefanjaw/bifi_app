@@ -485,6 +485,35 @@ hasPermission<TModel = unknown>({ user, resource, type, action, context }): bool
 
 Karma + Jasmine. `ng test <project>` runs tests for a specific project. Spec files use `*.spec.ts` pattern.
 
+## Asset-Roster i18n
+
+The `asset-roster` feature module has been fully internationalized. Scope: `'asset-roster'`.
+
+### Translation Catalog
+
+`Catalog/translations/asset-roster-translations.json` — 242 unique keys with en/es entries.
+
+### State
+
+| Component | Status | What was done |
+|---|---|---|
+| `init.ts` | **Done** | All 6 menu items: `label` → key convention, added `scope: 'asset-roster'` |
+| Column files (5) | **Done** | All `title` values → camelCase keys (`type`, `model`, `serialNumber`, etc.) |
+| Status card | **Done** | `title` values → keys; added `TranslatePipe` to TS + HTML |
+| List HTML files (5) | **Done** | Headings, button labels, search labels translated; `[scope]` added to `<bifi-app-table-layout>` and `<bifi-app-search-bar>` |
+| Form dialogs (8) | **Done** | All headers, labels, placeholders, form-action labels translated |
+| Edit form | **Done** | All buttons, tab headers, headings translated; `TranslatePipe` added to TS |
+| Form pages (4) | **Done** | All section titles, labels, placeholders, error text translated |
+| Section components | **Done** | `general-information-section`: fully translated; `TranslatePipe` added |
+| Remaining sections (7) | **Pending** | `financial-information`, `maintenance-service`, `notes`, `commissioning-lifecycle`, `documents`, `activity-history`, `status-banner` — strings cataloged in translations JSON, but `TranslatePipe` imports and pipe usage in HTML not yet applied |
+
+### Convention
+
+- All translatable strings use `{{ 'key' | translate : {} : 'asset-roster' }}` in templates
+- Labels use `[label]="'key' | translate : {} : 'asset-roster'"` for PrimeNG button components
+- Placeholders use `[placeholder]="'key' | translate : {} : 'asset-roster'"`
+- `cancelLabel` and `saveLabel` on `<bifi-app-form-actions>` use property binding syntax with pipe
+
 ## Reference Docs
 
 - `projects/base-app/README.md` — full architecture guide (DI, Signals, naming, structure)

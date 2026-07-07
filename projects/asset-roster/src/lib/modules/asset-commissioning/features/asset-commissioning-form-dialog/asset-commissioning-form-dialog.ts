@@ -21,6 +21,7 @@ import { CrudAssetCommissioning } from '../../services/crud-asset-commissioning'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FileUploadModule } from 'primeng/fileupload';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-commissioning-form-dialog',
@@ -32,6 +33,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
     Textarea,
     FileUploadModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './asset-commissioning-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

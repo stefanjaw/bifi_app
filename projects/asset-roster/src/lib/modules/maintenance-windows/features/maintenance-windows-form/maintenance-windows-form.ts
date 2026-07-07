@@ -21,6 +21,7 @@ import {
 } from '../../services/maintenance-window-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-maintenance-windows-form',
@@ -31,6 +32,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     SelectModule,
+    TranslatePipe,
   ],
   templateUrl: './maintenance-windows-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,6 +13,7 @@ import { maintenanceWindow } from '../../../../maintenance-windows';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { preventiveMaintenanceStatus } from './maintenance-status.model';
 import { FormModule } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-maintenance-service-section',
@@ -25,6 +26,7 @@ import { FormModule } from '@avalantec/base-app/form';
     DatePickerModule,
     ButtonModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './maintenance-service-section.html',
 })

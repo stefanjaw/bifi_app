@@ -19,7 +19,9 @@
           type="button"
           aria-label="Previous asset"
         />
-        <h1 class="text-xl font-semibold text-gray-900">Asset Details</h1>
+        <h1 class="text-xl font-semibold text-gray-900">
+          {{ 'assetDetails' | translate: {} : 'asset-roster' }}
+        </h1>
         @if (totalAssets() > 0 && currentIndex() >= 0) {
           <span class="text-sm text-gray-500">{{ currentIndex() + 1 }} of {{ totalAssets() }}</span>
         }
@@ -37,17 +39,26 @@
 
       <div class="flex items-center space-x-3">
         @if (isDirty()) {
-          <p-button label="Cancel" severity="secondary" (onClick)="handleCancel()" type="button" />
+          <p-button
+            [label]="'cancel' | translate: {} : 'asset-roster'"
+            severity="secondary"
+            (onClick)="handleCancel()"
+            type="button"
+          />
           <p-button
             [icon]="isSubmitLoading() ? 'pi pi-spinner' : 'pi pi-check'"
-            [label]="isSubmitLoading() ? 'Saving...' : 'Save Changes'"
+            [label]="
+              isSubmitLoading()
+                ? ('saving' | translate: {} : 'asset-roster')
+                : ('saveChanges' | translate: {} : 'asset-roster')
+            "
             severity="success"
             type="submit"
             *bifiAppHasPermission="'asset-rosters:update:model'"
           />
         }
         <p-button
-          label="Back to Dashboard"
+          [label]="'backToDashboard' | translate: {} : 'asset-roster'"
           icon="pi pi-arrow-left"
           severity="info"
           [outlined]="true"
@@ -69,10 +80,14 @@
     <div class="px-6 pt-2 bg-gray-100">
       <p-tablist>
         <p-tab value="0">
-          <span class="p-tabheader-title">Info & Maintenance</span>
+          <span class="p-tabheader-title">
+            {{ 'infoMaintenance' | translate: {} : 'asset-roster' }}
+          </span>
         </p-tab>
         <p-tab value="1">
-          <span class="p-tabheader-title">Lifecycle & TCO</span>
+          <span class="p-tabheader-title">
+            {{ 'lifecycleTco' | translate: {} : 'asset-roster' }}
+          </span>
         </p-tab>
       </p-tablist>
     </div>

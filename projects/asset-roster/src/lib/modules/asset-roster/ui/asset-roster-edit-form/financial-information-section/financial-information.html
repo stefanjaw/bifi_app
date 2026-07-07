@@ -2,7 +2,7 @@
   <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
     <bifi-app-form-section
       [formGroup]="formService.form"
-      title="Financial Information &amp; Lifecycle"
+      [title]="'financialInformationLifecycle' | translate: {} : 'asset-roster'"
       id="financial-lifecycle"
       [ordinal]="1"
     >
@@ -10,7 +10,9 @@
         <!-- Commissioned Date -->
         <div>
           <bifi-app-form-field previewVariant="italic" previewValueType="date">
-            <bifi-app-form-label>Commissioned Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'commissionedDate' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-date-picker
               formControlName="commissionedDate"
               [showIcon]="true"
@@ -24,13 +26,15 @@
         <!-- Price Paid -->
         <div>
           <bifi-app-form-field previewVariant="italic" previewValueType="currency">
-            <bifi-app-form-label>Price Paid (Optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'pricePaidOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-inputnumber
               formControlName="acquiredPrice"
               mode="currency"
               currency="USD"
               locale="en-US"
-              placeholder="e.g., 5000.00"
+              [placeholder]="'egPrice' | translate: {} : 'asset-roster'"
               class="w-full"
             ></p-inputnumber>
             <bifi-app-form-error></bifi-app-form-error>
@@ -39,13 +43,15 @@
 
         <div>
           <bifi-app-form-field previewVariant="italic" previewValueType="currency">
-            <bifi-app-form-label>Current Price (Optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'currentPriceOptional' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-inputnumber
               formControlName="currentPrice"
               mode="currency"
               currency="USD"
               locale="en-US"
-              placeholder="e.g., 5000.00"
+              [placeholder]="'egPrice' | translate: {} : 'asset-roster'"
               class="w-full"
             ></p-inputnumber>
             <bifi-app-form-error></bifi-app-form-error>
@@ -59,7 +65,9 @@
             previewValueType="currency"
             [isPreviewMode]="false"
           >
-            <bifi-app-form-label>Current Value (est.)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'currentValueEst' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             @if (isEditMode()) {
               <div class="flex flex-col gap-1">
                 @if (depreciationResults().valid) {
@@ -67,10 +75,12 @@
                     {{ depreciationResults().currentBookValue | currency: 'USD' }}
                   </span>
                 } @else {
-                  <span class="text-sm text-surface-400 italic">Not set</span>
+                  <span class="text-sm text-surface-400 italic">
+                    {{ 'notSet' | translate: {} : 'asset-roster' }}
+                  </span>
                 }
                 <span class="text-xs text-surface-400">
-                  Calculated from depreciation parameters below.
+                  {{ 'calculatedFromDepreciation' | translate: {} : 'asset-roster' }}
                 </span>
               </div>
             } @else {
@@ -79,7 +89,9 @@
                   {{ depreciationResults().currentBookValue | currency: 'USD' }}
                 </span>
               } @else {
-                <span class="italic text-sm text-surface-400">Not set</span>
+                <span class="italic text-sm text-surface-400">
+                  {{ 'notSet' | translate: {} : 'asset-roster' }}
+                </span>
               }
             }
             <bifi-app-form-error></bifi-app-form-error>
@@ -89,12 +101,14 @@
         <!-- Estimated Economic Life -->
         <div>
           <bifi-app-form-field previewVariant="text">
-            <bifi-app-form-label>Estimated Economic Life, Years</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'estimatedEconomicLifeYears' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             <p-inputnumber
               formControlName="estimatedEconomicLifeYears"
               [min]="1"
               [max]="100"
-              placeholder="e.g., 10"
+              [placeholder]="'egYears' | translate: {} : 'asset-roster'"
               class="w-full"
             ></p-inputnumber>
             <bifi-app-form-error></bifi-app-form-error>
@@ -104,7 +118,9 @@
         <!-- Remaining Economic Life (Calculated) -->
         <div>
           <bifi-app-form-field previewVariant="text" [isPreviewMode]="false">
-            <bifi-app-form-label>Remaining Economic Life, Years</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'remainingEconomicLifeYears' | translate: {} : 'asset-roster' }}
+            </bifi-app-form-label>
             @if (isEditMode()) {
               <div class="flex flex-col gap-1">
                 @if (depreciationResults().valid) {
@@ -112,10 +128,12 @@
                     {{ depreciationResults().remainingYears | number: '1.1-1' }} yrs
                   </span>
                 } @else {
-                  <span class="text-sm text-surface-400 italic">Not set</span>
+                  <span class="text-sm text-surface-400 italic">
+                    {{ 'notSet' | translate: {} : 'asset-roster' }}
+                  </span>
                 }
                 <span class="text-xs text-surface-400">
-                  Calculated based on Estimated Economic Life.
+                  {{ 'calculatedBasedOnEconomicLife' | translate: {} : 'asset-roster' }}
                 </span>
               </div>
             } @else {
@@ -124,7 +142,9 @@
                   {{ depreciationResults().remainingYears | number: '1.1-1' }} yrs
                 </span>
               } @else {
-                <span class="italic text-sm text-surface-400">Not set</span>
+                <span class="italic text-sm text-surface-400">
+                  {{ 'notSet' | translate: {} : 'asset-roster' }}
+                </span>
               }
             }
             <bifi-app-form-error></bifi-app-form-error>
@@ -138,7 +158,7 @@
   <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
     <bifi-app-form-section
       [formGroup]="formService.form"
-      title="Depreciation Calculator"
+      [title]="'depreciationCalculator' | translate: {} : 'asset-roster'"
       id="depreciation-calculator"
       [ordinal]="2"
     >
@@ -147,13 +167,15 @@
           <!-- Depreciation Method -->
           <div class="md:col-span-2">
             <bifi-app-form-field previewVariant="text">
-              <bifi-app-form-label>Depreciation Method</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'depreciationMethod' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <p-select
                 formControlName="depreciationMethod"
-                [options]="depreciationMethodOptions"
+                [options]="depreciationMethodOptions()"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Select method"
+                [placeholder]="'selectMethod' | translate: {} : 'asset-roster'"
                 class="w-full"
               ></p-select>
               <bifi-app-form-error></bifi-app-form-error>
@@ -163,14 +185,16 @@
           <!-- Salvage Value -->
           <div>
             <bifi-app-form-field previewVariant="italic" previewValueType="currency">
-              <bifi-app-form-label>Salvage Value (USD)</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'salvageValueUsd' | translate: {} : 'asset-roster' }}
+              </bifi-app-form-label>
               <p-inputnumber
                 formControlName="salvageValue"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
                 [min]="0"
-                placeholder="0"
+                [placeholder]="'zeroPlaceholder' | translate: {} : 'asset-roster'"
                 class="w-full"
               ></p-inputnumber>
               <bifi-app-form-error></bifi-app-form-error>
@@ -181,12 +205,14 @@
           @if (isAccelerated()) {
             <div>
               <bifi-app-form-field previewVariant="text">
-                <bifi-app-form-label>Acceleration Factor (%)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'accelerationFactor' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-inputnumber
                   formControlName="accelerationFactor"
                   [min]="100"
                   [max]="400"
-                  placeholder="200"
+                  [placeholder]="'accelerationFactorPlaceholder' | translate: {} : 'asset-roster'"
                   class="w-full"
                 ></p-inputnumber>
                 <bifi-app-form-error></bifi-app-form-error>
@@ -197,23 +223,31 @@
 
         <!-- Results Panel -->
         <div class="border border-gray-200 bg-gray-50 rounded-lg p-4">
-          <p class="text-sm font-semibold text-gray-700 mb-3">Results</p>
+          <p class="text-sm font-semibold text-gray-700 mb-3">
+            {{ 'results' | translate: {} : 'asset-roster' }}
+          </p>
           @if (depreciationResults().valid) {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="flex flex-col gap-1">
-                <span class="text-xs text-surface-400">Current Book Value</span>
+                <span class="text-xs text-surface-400">
+                  {{ 'currentBookValue' | translate: {} : 'asset-roster' }}
+                </span>
                 <span class="text-sm font-semibold text-surface-800">
                   {{ depreciationResults().currentBookValue | currency: 'USD' }}
                 </span>
               </div>
               <div class="flex flex-col gap-1">
-                <span class="text-xs text-surface-400">Annual Depreciation</span>
+                <span class="text-xs text-surface-400">
+                  {{ 'annualDepreciation' | translate: {} : 'asset-roster' }}
+                </span>
                 <span class="text-sm font-semibold text-surface-800">
                   {{ depreciationResults().annualDepreciation | currency: 'USD' }}
                 </span>
               </div>
               <div class="flex flex-col gap-1">
-                <span class="text-xs text-surface-400">Accumulated Depreciation</span>
+                <span class="text-xs text-surface-400">
+                  {{ 'accumulatedDepreciation' | translate: {} : 'asset-roster' }}
+                </span>
                 <span class="text-sm font-semibold text-surface-800">
                   {{ depreciationResults().accumulatedDepreciation | currency: 'USD' }}
                 </span>
@@ -221,7 +255,7 @@
             </div>
           } @else {
             <p class="text-sm text-surface-400 italic">
-              Please ensure 'Price Paid' and 'Estimated Economic Life' are set to calculate.
+              {{ 'ensurePriceAndLifeSet' | translate: {} : 'asset-roster' }}
             </p>
           }
         </div>
@@ -234,11 +268,10 @@
     <h3
       class="text-base font-semibold text-gray-900 border-l-[3px] border-[#c8a026] pl-2.5 leading-tight"
     >
-      Total Cost of Ownership
+      {{ 'totalCostOfOwnership' | translate: {} : 'asset-roster' }}
     </h3>
     <p class="text-sm text-gray-500">
-      Total maintenance spend including services and preventive maintenance events with recorded
-      costs.
+      {{ 'totalMaintenanceSpendDescription' | translate: {} : 'asset-roster' }}
     </p>
 
     <!-- Range buttons + dataset toggles -->
@@ -260,7 +293,7 @@
 
       <!-- Service toggle -->
       <p-button
-        label="Service"
+        [label]="'service' | translate: {} : 'asset-roster'"
         size="small"
         type="button"
         [outlined]="!showServiceCost()"
@@ -270,7 +303,7 @@
 
       <!-- PM toggle -->
       <p-button
-        label="PM"
+        [label]="'pm' | translate: {} : 'asset-roster'"
         size="small"
         type="button"
         [outlined]="!showPmCost()"
@@ -283,7 +316,7 @@
 
       <!-- Chart type: Bar -->
       <p-button
-        label="Bar"
+        [label]="'bar' | translate: {} : 'asset-roster'"
         size="small"
         type="button"
         [outlined]="chartType() !== 'bar'"
@@ -293,7 +326,7 @@
 
       <!-- Chart type: Line -->
       <p-button
-        label="Line"
+        [label]="'line' | translate: {} : 'asset-roster'"
         size="small"
         type="button"
         [outlined]="chartType() !== 'line'"
@@ -304,7 +337,7 @@
       <!-- Stacked toggle (bar mode only) -->
       @if (chartType() === 'bar') {
         <p-button
-          label="Stacked"
+          [label]="'stacked' | translate: {} : 'asset-roster'"
           size="small"
           type="button"
           [outlined]="!stackedBars()"
@@ -327,7 +360,9 @@
       <div
         class="border border-gray-200 bg-gray-50 rounded-lg px-4 py-3 flex items-center justify-between"
       >
-        <span class="text-sm text-gray-500">Total Maintenance Spend (selected period)</span>
+        <span class="text-sm text-gray-500">
+          {{ 'totalMaintenanceSpendPeriod' | translate: {} : 'asset-roster' }}
+        </span>
         <span class="text-sm font-semibold text-gray-900">
           {{ totalMaintenanceCost() | currency: 'USD' }}
         </span>
@@ -335,8 +370,10 @@
     } @else {
       <div class="flex flex-col items-center justify-center py-10 gap-3 text-surface-400">
         <i class="pi pi-file text-4xl"></i>
-        <p class="text-sm font-medium">Maintenance Cost Over Time</p>
-        <p class="text-xs">No maintenance cost data available for the selected period.</p>
+        <p class="text-sm font-medium">
+          {{ 'maintenanceCostOverTime' | translate: {} : 'asset-roster' }}
+        </p>
+        <p class="text-xs">{{ 'noMaintenanceCostData' | translate: {} : 'asset-roster' }}</p>
       </div>
     }
   </div>
