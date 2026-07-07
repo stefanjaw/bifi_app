@@ -1,7 +1,10 @@
 @let isConfirmed = user().confirmed;
 
 <bifi-app-form-layout
-  [title]="(isConfirmed ? 'profile.pageTitle' : 'profile.finishRegistration') | translate: {} : 'base-app/users'"
+  [title]="
+    (isConfirmed ? 'profile.pageTitle' : 'profile.finishRegistration')
+      | translate: {} : 'base-app/users'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,7 +24,11 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section [title]="'profile.sectionTitle' | translate: {} : 'base-app/users'" id="general-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'profile.sectionTitle' | translate: {} : 'base-app/users'"
+        id="general-info"
+        [ordinal]="1"
+      >
         <div class="mb-6">
           <img [src]="pictureUrl()" alt="User Photo" class="w-32 h-32 rounded-full" />
         </div>
@@ -62,8 +69,15 @@
           ></p-button> -->
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'profile.username' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
-            <input pInputText formControlName="username" type="text" [placeholder]="'profile.username' | translate: {} : 'base-app/users'" />
+            <bifi-app-form-label>
+              {{ 'profile.username' | translate: {} : 'base-app/users' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="username"
+              type="text"
+              [placeholder]="'profile.username' | translate: {} : 'base-app/users'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <!-- <bifi-app-form-field>
@@ -74,27 +88,42 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>
-              {{ (type() === 'individual' ? 'profile.firstName' : 'profile.companyName') | translate: {} : 'base-app/users' }}
+              {{
+                (type() === 'individual' ? 'profile.firstName' : 'profile.companyName')
+                  | translate: {} : 'base-app/users'
+              }}
             </bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
               type="text"
-              [placeholder]="(type() === 'individual' ? 'profile.firstName' : 'profile.companyName') | translate: {} : 'base-app/users'"
+              [placeholder]="
+                (type() === 'individual' ? 'profile.firstName' : 'profile.companyName')
+                  | translate: {} : 'base-app/users'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (type() === 'individual') {
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ 'profile.lastName' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
-              <input pInputText formControlName="lastName" type="text" [placeholder]="'profile.lastName' | translate: {} : 'base-app/users'" />
+              <bifi-app-form-label>
+                {{ 'profile.lastName' | translate: {} : 'base-app/users' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="lastName"
+                type="text"
+                [placeholder]="'profile.lastName' | translate: {} : 'base-app/users'"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           }
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'profile.phoneNumber' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'profile.phoneNumber' | translate: {} : 'base-app/users' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="phoneNumber"
@@ -105,7 +134,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>{{ 'profile.contactEmail' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'profile.contactEmail' | translate: {} : 'base-app/users' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="contactEmail"
@@ -117,8 +148,15 @@
 
           @if (type() === 'company') {
             <bifi-app-form-field>
-              <bifi-app-form-label>{{ 'profile.website' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
-              <input pInputText formControlName="website" type="text" [placeholder]="'profile.website' | translate: {} : 'base-app/users'" />
+              <bifi-app-form-label>
+                {{ 'profile.website' | translate: {} : 'base-app/users' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="website"
+                type="text"
+                [placeholder]="'profile.website' | translate: {} : 'base-app/users'"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
           }

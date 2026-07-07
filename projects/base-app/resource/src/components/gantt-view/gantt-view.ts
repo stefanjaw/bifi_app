@@ -44,7 +44,15 @@ const OVERVIEW_LEFT_PAD = 16;
 
 @Component({
   selector: 'bifi-app-gantt-view',
-  imports: [ButtonModule, CommonModule, GanttCard, GanttSwitcher, TooltipModule, TreeList, TranslatePipe],
+  imports: [
+    ButtonModule,
+    CommonModule,
+    GanttCard,
+    GanttSwitcher,
+    TooltipModule,
+    TreeList,
+    TranslatePipe,
+  ],
   templateUrl: './gantt-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

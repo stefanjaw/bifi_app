@@ -19,7 +19,15 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
 @Component({
   selector: 'bifi-app-users-list',
   providers: [provideResourceManager(CrudUsers)],
-  imports: [TableLayout, ButtonModule, TooltipModule, SearchBar, RouterLink, HasPermission, TranslatePipe],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    TooltipModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

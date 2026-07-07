@@ -46,7 +46,11 @@ export const errorInterceptor: HttpInterceptorFn = (
         const translationService = inject(TranslationService);
         processedError = {
           status: 0,
-          message: translationService.translate('interceptor.unexpectedError', {}, 'base-app/resource'),
+          message: translationService.translate(
+            'interceptor.unexpectedError',
+            {},
+            'base-app/resource'
+          ),
         };
       }
 

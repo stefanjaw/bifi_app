@@ -126,7 +126,11 @@ export class FilterBar implements OnDestroy {
           if (r.value instanceof Date) {
             valueText = r.value.toLocaleDateString();
           } else if (r.operator === 'in' && r.type === 'boolean') {
-            valueText = this.translationService.translate('filter.chip.trueFalse', {}, 'base-app/resource');
+            valueText = this.translationService.translate(
+              'filter.chip.trueFalse',
+              {},
+              'base-app/resource'
+            );
           } else if (typeof r.value === 'boolean') {
             valueText = r.value
               ? this.translationService.translate('filter.chip.yes', {}, 'base-app/resource')
@@ -138,7 +142,9 @@ export class FilterBar implements OnDestroy {
 
         return {
           id: r.id,
-          fieldLabel: fieldConfig ? this.translationService.translate(fieldConfig.label, {}, this.scope()) : r.field ?? '',
+          fieldLabel: fieldConfig
+            ? this.translationService.translate(fieldConfig.label, {}, this.scope())
+            : (r.field ?? ''),
           operatorLabel: opEntry?.label ?? r.operator ?? '',
           valueText,
         };
@@ -146,29 +152,34 @@ export class FilterBar implements OnDestroy {
   });
 
   private operatorTranslationKeys: Record<string, string> = {
-    'Contains': 'filter.operators.contains',
+    Contains: 'filter.operators.contains',
     'Does not contain': 'filter.operators.doesNotContain',
-    'Equals': 'filter.operators.equals',
+    Equals: 'filter.operators.equals',
     'Not equals': 'filter.operators.notEquals',
     'Greater than': 'filter.operators.greaterThan',
     'Less than': 'filter.operators.lessThan',
     'Greater or equal': 'filter.operators.greaterOrEqual',
     'Less or equal': 'filter.operators.lessOrEqual',
-    'On': 'filter.operators.on',
-    'After': 'filter.operators.after',
-    'Before': 'filter.operators.before',
+    On: 'filter.operators.on',
+    After: 'filter.operators.after',
+    Before: 'filter.operators.before',
     'After or on': 'filter.operators.afterOrOn',
     'Before or on': 'filter.operators.beforeOrOn',
     'Not on': 'filter.operators.notOn',
-    'Is': 'filter.operators.is',
-    'Both': 'filter.operators.both',
+    Is: 'filter.operators.is',
+    Both: 'filter.operators.both',
   };
 
   operatorsFor(type: string | null) {
     if (!type) return [];
     return (OPERATORS_BY_TYPE[type] ?? []).map(op => ({
       ...op,
-      label: this.translationService.translate(this.operatorTranslationKeys[op.label] || op.label, {}, 'base-app/resource') || op.label,
+      label:
+        this.translationService.translate(
+          this.operatorTranslationKeys[op.label] || op.label,
+          {},
+          'base-app/resource'
+        ) || op.label,
     }));
   }
 

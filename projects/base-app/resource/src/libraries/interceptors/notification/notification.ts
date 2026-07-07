@@ -79,7 +79,11 @@ export const notificationInterceptor: HttpInterceptorFn = (
         } else if (err?.message) {
           backendMessage = err.message;
         } else {
-          backendMessage = translationService.translate('interceptor.errorFallback', {}, 'base-app/resource');
+          backendMessage = translationService.translate(
+            'interceptor.errorFallback',
+            {},
+            'base-app/resource'
+          );
         }
 
         const message = errorMessage?.replace('{{ message }}', backendMessage) || backendMessage;

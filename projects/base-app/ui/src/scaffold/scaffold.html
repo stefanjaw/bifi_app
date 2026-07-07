@@ -251,7 +251,7 @@
     [ngClass]="{
       'bg-primary-100! border-b-2 border-b-primary-400': isItemActive(item),
     }"
-    [pTooltip]="item.label | translate : {} : item['scope']"
+    [pTooltip]="item.label | translate: {} : item['scope']"
     draggable="true"
     (dragstart)="onMenuItemDragStart($event, item)"
   >
@@ -272,7 +272,7 @@
     (dragstart)="onMenuItemDragStart($event, item)"
   >
     <span [class]="item.icon"></span>
-    <span class="ml-2">{{ item.label | translate : {} : item['scope'] }}</span>
+    <span class="ml-2">{{ item.label | translate: {} : item['scope'] }}</span>
   </a>
 </ng-template>
 
@@ -295,7 +295,7 @@
         (dragstart)="onMenuItemDragStart($event, mainItem)"
       >
         <span [class]="mainItem.icon"></span>
-        <span class="ml-2 truncate">{{ mainItem.label | translate : {} : mainItem['scope'] }}</span>
+        <span class="ml-2 truncate">{{ mainItem.label | translate: {} : mainItem['scope'] }}</span>
       </a>
       <button
         type="button"
@@ -304,7 +304,9 @@
         (click)="toggleExpanded(mainItem)"
         [attr.aria-label]="
           (isExpanded(mainItem) ? 'sidebar.collapse' : 'sidebar.expand')
-            | translate: { label: mainItem.label | translate : {} : mainItem['scope'] } : 'base-app/ui'
+            | translate
+              : { label: mainItem.label | translate: {} : mainItem['scope'] }
+              : 'base-app/ui'
         "
       >
         <span class="pi pi-angle-down text-xs"></span>

@@ -5,7 +5,9 @@
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md"
 >
   <bifi-app-form-field class="mb-8 min-h-40">
-    <bifi-app-form-label>{{ 'selectRole.role' | translate: {} : 'base-app/users' }}</bifi-app-form-label>
+    <bifi-app-form-label>
+      {{ 'selectRole.role' | translate: {} : 'base-app/users' }}
+    </bifi-app-form-label>
     <p-select
       appendTo="body"
       [formControl]="role"

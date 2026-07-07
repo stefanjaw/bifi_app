@@ -59,7 +59,9 @@
               [binary]="true"
             ></p-checkbox>
           } @else if (row.operator === 'in') {
-            <span class="text-sm italic text-gray-500">{{ 'filter.includeBoth' | translate: {} : 'base-app/resource' }}</span>
+            <span class="text-sm italic text-gray-500">
+              {{ 'filter.includeBoth' | translate: {} : 'base-app/resource' }}
+            </span>
           }
         }
       }

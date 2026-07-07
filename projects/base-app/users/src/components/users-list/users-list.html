@@ -9,7 +9,9 @@
     *bifiAppHasPermission="'users/create:view'"
   ></p-button>
   <p-button
-    [label]="(showInactiveStatus() ? 'showInactive' : 'showActive') | translate: {} : 'base-app/users'"
+    [label]="
+      (showInactiveStatus() ? 'showInactive' : 'showActive') | translate: {} : 'base-app/users'
+    "
     severity="info"
     [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
     (onClick)="toggleInactiveRecords()"
@@ -21,7 +23,12 @@
   [searchFilters]="userFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [infiniteScroll]="true" [columns]="userColumns" [data]="users" [scope]="'base-app/users'">
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="userColumns"
+  [data]="users"
+  [scope]="'base-app/users'"
+>
   <ng-template #actions let-row>
     @if (row.active) {
       <p-button

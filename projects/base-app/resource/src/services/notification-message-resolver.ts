@@ -1,5 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Notification, TranslateKey } from '../libraries/interceptors/notification/notification.context';
+import {
+  Notification,
+  TranslateKey,
+} from '../libraries/interceptors/notification/notification.context';
 import { TranslationService } from '@avalantec/base-app/i18n';
 
 const defaultMessages = {
@@ -55,11 +58,23 @@ export class NotificationMessageResolver {
     if (method in defaultMessages) {
       const keys = defaultMessages[method as keyof typeof defaultMessages];
       if (!success)
-        success = this.translationService.translate(keys.success, { element: elementName }, 'base-app/resource');
+        success = this.translationService.translate(
+          keys.success,
+          { element: elementName },
+          'base-app/resource'
+        );
       if (!error)
-        error = this.translationService.translate(keys.error, { element: elementName, message: '{{ message }}' }, 'base-app/resource');
+        error = this.translationService.translate(
+          keys.error,
+          { element: elementName, message: '{{ message }}' },
+          'base-app/resource'
+        );
       if (!loading)
-        loading = this.translationService.translate(keys.loading, { element: elementName }, 'base-app/resource');
+        loading = this.translationService.translate(
+          keys.loading,
+          { element: elementName },
+          'base-app/resource'
+        );
     }
 
     return { success, error, loading };

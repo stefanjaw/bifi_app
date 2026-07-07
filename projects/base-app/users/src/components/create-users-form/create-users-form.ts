@@ -97,7 +97,9 @@ export class CreateUsersForm implements OnInit {
           },
         });
     } catch (error) {
-      this.toastManager.showError(this.translationService.translate('createForm.error', {}, 'base-app/users'));
+      this.toastManager.showError(
+        this.translationService.translate('createForm.error', {}, 'base-app/users')
+      );
       console.error('Error creating user:', error);
     } finally {
       if (this.isSubmitLoading()) this.isSubmitLoading.set(false);
