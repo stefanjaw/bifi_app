@@ -100,7 +100,7 @@
           "
           class="px-3 py-1 text-sm font-semibold rounded-md transition-colors capitalize"
         >
-          {{ v }}
+          {{ 'calendar.view.' + v | translate: {} : 'base-app/resource' }}
         </button>
       }
     </div>
@@ -111,7 +111,7 @@
     @switch (view()) {
       @case ('month') {
         <div class="grid grid-cols-7">
-          @for (dayName of weekdays; track dayName) {
+          @for (dayName of weekdays(); track dayName) {
             <div class="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 py-2">
               {{ dayName }}
             </div>
@@ -214,7 +214,7 @@
             <div class="p-2">
               <div class="text-center mb-2">
                 <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                  {{ day.date | date: 'EEE' }}
+                  {{ day.date | localeDate: { weekday: 'short' } }}
                 </p>
                 <p
                   class="text-lg font-bold"
@@ -435,8 +435,8 @@
               <div
                 class="grid grid-cols-7 text-center text-xs gap-1 text-gray-500 dark:text-gray-400"
               >
-                @for (dayName of ['S', 'M', 'T', 'W', 'T', 'F', 'S']; track dayName) {
-                  <div>{{ dayName }}</div>
+                @for (initial of yearWeekdays(); track $index) {
+                  <div>{{ initial }}</div>
                 }
               </div>
               @let firstDay = getFirstDayOfMonth(monthIndex);

@@ -47,6 +47,7 @@ export class TranslationService {
    */
   setLanguage(locale: string): void {
     if (locale === this.activeLanguage()) return;
+
     const previousScopes = this.getCachedScopes(this.activeLanguage());
     if (previousScopes.length === 0) {
       this.activeLanguage.set(locale);

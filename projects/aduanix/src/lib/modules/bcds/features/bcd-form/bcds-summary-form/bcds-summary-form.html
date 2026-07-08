@@ -126,7 +126,7 @@
         <span>
           {{
             form.controls.declarant.value.date
-              ? (form.controls.declarant.value.date | date: 'mediumDate')
+              ? (form.controls.declarant.value.date | localeDate: { dateStyle: 'medium' })
               : '—'
           }}
         </span>

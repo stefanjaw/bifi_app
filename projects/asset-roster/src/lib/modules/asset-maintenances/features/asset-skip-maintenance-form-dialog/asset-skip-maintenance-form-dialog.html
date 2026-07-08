@@ -12,7 +12,7 @@
   >
     <p [bifiAppText]="'small'" class="font-bold!">
       {{ 'confirmSkipPm' | translate: {} : 'asset-roster' }}
-      {{ assetRoster()?.maintenanceDate | date }}
+      {{ assetRoster()?.maintenanceDate | localeDate: { dateStyle: 'medium' } }}
     </p>
 
     <bifi-app-form-field>

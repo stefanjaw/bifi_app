@@ -185,7 +185,9 @@
               <p class="text-xs text-gray-500">Catalog Last Indexed</p>
               <p class="text-sm">
                 {{
-                  status.catalogLastIndexed ? (status.catalogLastIndexed | date: 'short') : 'Never'
+                  status.catalogLastIndexed
+                    ? (status.catalogLastIndexed | localeDate: { dateStyle: 'short' })
+                    : 'Never'
                 }}
               </p>
             </div>
@@ -193,7 +195,9 @@
               <p class="text-xs text-gray-500">Freight Last Indexed</p>
               <p class="text-sm">
                 {{
-                  status.freightLastIndexed ? (status.freightLastIndexed | date: 'short') : 'Never'
+                  status.freightLastIndexed
+                    ? (status.freightLastIndexed | localeDate: { dateStyle: 'short' })
+                    : 'Never'
                 }}
               </p>
             </div>

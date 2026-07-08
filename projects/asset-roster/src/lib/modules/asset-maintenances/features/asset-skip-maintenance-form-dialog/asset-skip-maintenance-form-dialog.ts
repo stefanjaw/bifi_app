@@ -18,7 +18,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { TextareaModule } from 'primeng/textarea';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-skip-maintenance-form-dialog',
@@ -29,6 +29,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     TextareaModule,
     CommonModule,
     Text,
+    LocaleDatePipe,
     TranslatePipe,
   ],
   templateUrl: './asset-skip-maintenance-form-dialog.html',

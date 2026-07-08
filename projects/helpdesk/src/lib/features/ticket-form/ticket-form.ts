@@ -24,7 +24,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
-import { DatePipe } from '@angular/common';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 import {
   activityHistory,
   CrudActivityHistories,
@@ -46,7 +46,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     SelectModule,
     TextareaModule,
     ProgressBarModule,
-    DatePipe,
+    LocaleDatePipe,
     DatePickerModule,
     ToggleSwitchModule,
   ],

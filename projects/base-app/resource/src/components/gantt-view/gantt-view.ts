@@ -21,7 +21,7 @@ import { TreeList } from '../tree-list/tree-list';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import minMax from 'dayjs/plugin/minMax';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -83,6 +83,7 @@ export class GanttView implements OnDestroy {
   panOffsetDays = signal(0);
   isDragging = signal(false);
 
+  private translationService = inject(TranslationService);
   private ngZone = inject(NgZone);
   private dragStartX = 0;
   private dragBaseOffset = 0;
@@ -516,13 +517,41 @@ export class GanttView implements OnDestroy {
   }
 
   formatDateHeader(date: dayjs.Dayjs): string {
+    const locale = this.translationService.activeLanguage();
     switch (this.viewMode()) {
       case 'Week':
-        return date.format('ddd MMM D');
+        return new Intl.DateTimeFormat(locale, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }).format(date.toDate());
       case 'Month':
         return String(date.date());
       case 'Year':
-        return date.format('MMM');
+        return new Intl.DateTimeFormat(locale, { month: 'short' }).format(date.toDate());
+      default:
+        return '';
+    }
+  }
+
+  formatGridUnitHeader(index: number): string {
+    const date = this.gridUnits()[index];
+    if (!date) return '';
+    const locale = this.translationService.activeLanguage();
+    switch (this.viewMode()) {
+      case 'Day':
+        return new Intl.DateTimeFormat(locale, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }).format(date.toDate());
+      case 'Week':
+      case 'Month':
+        return new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric' }).format(
+          date.toDate()
+        );
+      case 'Year':
+        return String(date.year());
       default:
         return '';
     }

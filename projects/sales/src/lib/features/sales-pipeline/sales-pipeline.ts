@@ -11,8 +11,9 @@ import { CrudCrmStages } from '../../modules/crm-stages/services/crud-crm-stages
 import { crmStage } from '../../modules/crm-stages/interfaces/crm-stage';
 import { crm } from '../../interfaces/crm';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
@@ -24,7 +25,7 @@ import { RouterLink } from '@angular/router';
   host: {
     class: 'block',
   },
-  imports: [CurrencyPipe, DatePipe, RouterLink, ProgressBarModule, ButtonModule, ToastModule],
+  imports: [CurrencyPipe, LocaleDatePipe, RouterLink, ProgressBarModule, ButtonModule, ToastModule],
   templateUrl: './sales-pipeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

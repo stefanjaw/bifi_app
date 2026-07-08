@@ -28,7 +28,7 @@ import { pagination } from '../../interfaces/pagination';
 import { injectAuthService, permission } from '@avalantec/base-app/auth';
 import { ButtonModule } from 'primeng/button';
 import { InfiniteScroll } from '../../directives/infinite-scroll';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-table-layout',
@@ -42,6 +42,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     Text,
     ButtonModule,
     InfiniteScroll,
+    LocaleDatePipe,
     TranslatePipe,
   ],
   templateUrl: './table-layout.html',

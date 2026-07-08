@@ -16,7 +16,7 @@
     <p [bifiAppText]="'small'" class="font-bold!">
       {{ 'confirmCompletionOf' | translate: {} : 'asset-roster' }} {{ assetMaintenace()?.name }}
       {{ 'initiatedOn' | translate: {} : 'asset-roster' }}:
-      {{ assetMaintenace()?.dateStart | date }}
+      {{ assetMaintenace()?.dateStart | localeDate: { dateStyle: 'medium' } }}
     </p>
 
     <bifi-app-form-field>

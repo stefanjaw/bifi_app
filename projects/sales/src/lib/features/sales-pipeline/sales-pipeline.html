@@ -49,7 +49,7 @@
               </span>
               @if (deal.expectedCloseDate) {
                 <span class="text-xs text-gray-400">
-                  {{ deal.expectedCloseDate | date: 'MMM d' }}
+                  {{ deal.expectedCloseDate | localeDate: { month: 'short', day: 'numeric' } }}
                 </span>
               }
             </div>

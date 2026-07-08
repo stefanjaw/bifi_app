@@ -56,7 +56,7 @@
                   {{ getUserName(latest.value.createdBy) }}
                 </span>
                 ,
-                {{ latest.value.performDate | date: 'medium' }}
+                {{ latest.value.performDate | localeDate: { dateStyle: 'medium' } }}
               </span>
             </div>
           </div>
@@ -78,7 +78,7 @@
                       {{ getUserName(control.value.createdBy) }}
                     </span>
                     ,
-                    {{ control.value.performDate | date: 'medium' }}
+                    {{ control.value.performDate | localeDate: { dateStyle: 'medium' } }}
                   </span>
                 </div>
               </div>

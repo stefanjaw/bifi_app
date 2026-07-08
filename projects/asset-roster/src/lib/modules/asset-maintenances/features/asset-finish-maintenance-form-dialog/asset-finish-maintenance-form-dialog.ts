@@ -23,7 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-finish-maintenance-form-dialog',
@@ -36,6 +36,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     FormModule,
     TextareaModule,
     InputNumberModule,
+    LocaleDatePipe,
     TranslatePipe,
   ],
   templateUrl: './asset-finish-maintenance-form-dialog.html',

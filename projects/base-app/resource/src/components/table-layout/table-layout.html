@@ -108,7 +108,9 @@
             } @else {
               @if (column.type === 'date') {
                 {{
-                  value ? (value | date) : ('table.notSet' | translate: {} : 'base-app/resource')
+                  value
+                    ? (value | localeDate: { dateStyle: 'medium' })
+                    : ('table.notSet' | translate: {} : 'base-app/resource')
                 }}
               } @else if (column.type === 'currency') {
                 {{

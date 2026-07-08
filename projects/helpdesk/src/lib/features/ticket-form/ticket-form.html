@@ -310,7 +310,7 @@
             @for (activity of activityHistories(); track activity._id) {
               <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
                 <div class="text-xs text-gray-500">
-                  {{ activity.performDate | date: 'medium' }}
+                  {{ activity.performDate | localeDate: { dateStyle: 'medium' } }}
                   @if (activity.userId) {
                     —
                     <span class="font-medium">

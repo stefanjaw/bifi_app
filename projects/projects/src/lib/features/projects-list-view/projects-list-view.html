@@ -29,10 +29,10 @@
           {{ project.contactName ?? '—' }}
         </div>
         <div class="col-span-2 px-2 truncate">
-          {{ project.start | date: 'MMM d, yy' }}
+          {{ project.start | localeDate: { month: 'short', day: 'numeric', year: '2-digit' } }}
         </div>
         <div class="col-span-2 px-2 truncate">
-          {{ project.end | date: 'MMM d, yy' }}
+          {{ project.end | localeDate: { month: 'short', day: 'numeric', year: '2-digit' } }}
         </div>
         <div class="col-span-1 px-2 truncate">
           {{ project.stage?.name ?? '—' }}

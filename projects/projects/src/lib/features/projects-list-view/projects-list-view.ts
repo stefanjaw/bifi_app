@@ -5,10 +5,19 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-projects-list-view',
-  imports: [CommonModule, ButtonModule, TooltipModule, ButtonsActions, HasPermission, TreeList],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    TooltipModule,
+    ButtonsActions,
+    HasPermission,
+    TreeList,
+    LocaleDatePipe,
+  ],
   templateUrl: './projects-list-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

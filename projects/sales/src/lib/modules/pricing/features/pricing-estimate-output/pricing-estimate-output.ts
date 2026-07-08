@@ -8,7 +8,8 @@ import {
   computed,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DecimalPipe, DatePipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TableModule } from 'primeng/table';
@@ -23,8 +24,8 @@ import { pricingEstimate, pricingEstimateLineItem } from '../../interfaces/prici
   selector: 'bifi-app-pricing-estimate-output',
   imports: [
     DecimalPipe,
-    DatePipe,
     CurrencyPipe,
+    LocaleDatePipe,
     ButtonModule,
     ToggleSwitchModule,
     TableModule,

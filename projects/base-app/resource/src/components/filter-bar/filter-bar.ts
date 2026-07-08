@@ -124,7 +124,7 @@ export class FilterBar implements OnDestroy {
         // Only show the value if the operator is not "empty"
         if (r.operator !== 'empty') {
           if (r.value instanceof Date) {
-            valueText = r.value.toLocaleDateString();
+            valueText = r.value.toLocaleDateString(this.translationService.activeLanguage());
           } else if (r.operator === 'in' && r.type === 'boolean') {
             valueText = this.translationService.translate(
               'filter.chip.trueFalse',

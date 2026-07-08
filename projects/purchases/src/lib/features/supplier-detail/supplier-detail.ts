@@ -6,8 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 import { purchaseOrder } from '../../interfaces/purchase-order';
 import { contact } from '@avalantec/base-app/interfaces';
 
@@ -20,7 +21,7 @@ import { contact } from '@avalantec/base-app/interfaces';
     CardModule,
     ProgressBarModule,
     CurrencyPipe,
-    DatePipe,
+    LocaleDatePipe,
     HasPermission,
   ],
   templateUrl: './supplier-detail.html',

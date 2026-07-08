@@ -8,7 +8,8 @@
       <div>
         <h1 class="text-2xl font-bold">{{ est.number }}</h1>
         <p class="text-sm text-gray-500">
-          {{ est.date | date: 'medium' }} &bull; Prepared by {{ est.preparedBy }}
+          {{ est.date | localeDate: { dateStyle: 'medium' } }} &bull; Prepared by
+          {{ est.preparedBy }}
         </p>
       </div>
 

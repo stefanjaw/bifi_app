@@ -87,7 +87,9 @@
                     ></p-tag>
                   </td>
                   <td class="p-3 border-b">{{ order.totalAmount | currency }}</td>
-                  <td class="p-3 border-b">{{ order.issueDate | date: 'shortDate' }}</td>
+                  <td class="p-3 border-b">
+                    {{ order.issueDate | localeDate: { dateStyle: 'short' } }}
+                  </td>
                   <td class="p-3 border-b">
                     <p-button
                       label="View"

@@ -31,10 +31,10 @@
           {{ task.projectName ?? '—' }}
         </div>
         <div class="col-span-2 px-2 truncate">
-          {{ task.start | date: 'MMM d, yy' }}
+          {{ task.start | localeDate: { month: 'short', day: 'numeric', year: '2-digit' } }}
         </div>
         <div class="col-span-2 px-2 truncate">
-          {{ task.end | date: 'MMM d, yy' }}
+          {{ task.end | localeDate: { month: 'short', day: 'numeric', year: '2-digit' } }}
         </div>
         <div class="col-span-1 px-2 truncate">
           {{ task.stage?.name ?? '—' }}

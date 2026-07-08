@@ -103,20 +103,21 @@
               } @else if (status === 'available') {
                 <div class="text-sm text-green-500">
                   {{ 'pmDueOn' | translate: {} : 'asset-roster' }}
-                  {{ assetRoster()?.maintenanceDate | date }}. ({{
+                  {{ assetRoster()?.maintenanceDate | localeDate: { dateStyle: 'medium' } }}. ({{
                     'windowLabel' | translate: {} : 'asset-roster'
-                  }}: {{ assetRoster()?.minMaintenanceDate | date }} -
-                  {{ assetRoster()?.maxMaintenanceDate | date }}).
+                  }}:
+                  {{ assetRoster()?.minMaintenanceDate | localeDate: { dateStyle: 'medium' } }} -
+                  {{ assetRoster()?.maxMaintenanceDate | localeDate: { dateStyle: 'medium' } }}).
                 </div>
               } @else if (status === 'in-progress') {
                 <div class="text-sm text-blue-500">
                   {{ 'pmInProgressInitiatedOn' | translate: {} : 'asset-roster' }}
-                  {{ currPM()?.dateStart | date }}.
+                  {{ currPM()?.dateStart | localeDate: { dateStyle: 'medium' } }}.
                 </div>
               } @else if (status === 'finished') {
                 <div class="text-sm">
                   {{ 'nextScheduledPm' | translate: {} : 'asset-roster' }}
-                  {{ assetRoster()?.maintenanceDate | date }}
+                  {{ assetRoster()?.maintenanceDate | localeDate: { dateStyle: 'medium' } }}
                 </div>
               }
             </div>
@@ -171,7 +172,7 @@
             <p class="mb-4">
               {{ 'serviceInProgress' | translate: {} : 'asset-roster' }}
               {{
-                `${(currService()?.dateStart | date)} (${(currService()?.name?.replace('-', ' ') | titlecase)})`
+                `${(currService()?.dateStart | localeDate: { dateStyle: 'medium' })} (${(currService()?.name?.replace('-', ' ') | titlecase)})`
               }}
             </p>
             <p-button

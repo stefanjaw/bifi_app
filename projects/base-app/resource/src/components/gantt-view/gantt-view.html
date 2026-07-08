@@ -150,32 +150,25 @@
           <!-- Timeline Header -->
           <div class="sticky top-0 z-20 bg-gray-100">
             <div class="relative h-3">
-              @if (viewMode() === 'Month') {
+              @if (viewMode() === 'Month' || viewMode() === 'Week') {
                 <span
                   class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
                 >
-                  {{ gridUnits()[0].format('MMM YYYY') }}
+                  {{ formatGridUnitHeader(0) }}
                 </span>
               }
               @if (viewMode() === 'Year') {
                 <span
                   class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
                 >
-                  {{ gridUnits()[0].format('YYYY') }}
-                </span>
-              }
-              @if (viewMode() === 'Week') {
-                <span
-                  class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
-                >
-                  {{ gridUnits()[0].format('MMM YYYY') }}
+                  {{ formatGridUnitHeader(0) }}
                 </span>
               }
               @if (viewMode() === 'Day') {
                 <span
                   class="absolute left-1 bottom-0 text-[9px] font-semibold text-gray-500 select-none pointer-events-none uppercase leading-none"
                 >
-                  {{ gridUnits()[0].format('ddd MMM D') | titlecase }}
+                  {{ formatGridUnitHeader(0) | titlecase }}
                 </span>
               }
               @if (todayOffset() >= 0) {
