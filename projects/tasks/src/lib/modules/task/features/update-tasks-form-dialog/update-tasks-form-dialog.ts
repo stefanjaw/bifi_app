@@ -29,6 +29,7 @@ import dayjs from 'dayjs';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { ButtonModule } from 'primeng/button';
 import { CrudProjects } from '@avalantec/projects';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-update-tasks-form-dialog',
@@ -43,6 +44,7 @@ import { CrudProjects } from '@avalantec/projects';
     SliderModule,
     CheckboxModule,
     ButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './update-tasks-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +61,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
   private filterManager = inject(FilterManager);
   private fileResolver = inject(FileResolver);
   private toastManager = inject(ToastManager);
+  private translationService = inject(TranslationService);
 
   // Resources
   _id = toSignal(this.taskMaintenanceContext.openUpdateTaskDialog$) as Signal<string>;
@@ -112,12 +115,12 @@ export class UpdateTasksFormDialog extends BaseDialog {
   taskTypes = this.taskTypesResource.value;
   users = this.usersResource.value;
 
-  priorityOptions = [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-    { label: 'Urgent', value: 'urgent' },
-  ];
+  priorityOptions = computed(() => [
+    { label: this.translationService.translate('priority.low', {}, 'tasks'), value: 'low' },
+    { label: this.translationService.translate('priority.medium', {}, 'tasks'), value: 'medium' },
+    { label: this.translationService.translate('priority.high', {}, 'tasks'), value: 'high' },
+    { label: this.translationService.translate('priority.urgent', {}, 'tasks'), value: 'urgent' },
+  ]);
 
   // State
   form = this.formService.form;
@@ -193,7 +196,9 @@ export class UpdateTasksFormDialog extends BaseDialog {
       const plannedEndDate = dayjs(rawValue.plannedEndDate as Date | undefined);
 
       if (plannedEndDate.isBefore(plannedStartDate)) {
-        this.toastManager.showError('Planned start date must be before planned end date');
+        this.toastManager.showError(
+          this.translationService.translate('updateTask.error.dateOrder', {}, 'tasks')
+        );
         return;
       }
     }

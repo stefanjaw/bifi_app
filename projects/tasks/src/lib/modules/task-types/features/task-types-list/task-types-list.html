@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Task Types</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'taskTypes.title' | translate: {} : 'tasks' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Type"
+    [label]="'taskTypes.addNew' | translate: {} : 'tasks'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -10,12 +10,16 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by name" [searchFilters]="filters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'taskTypes.searchPlaceholder' | translate: {} : 'tasks'"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
   [columns]="columns"
   [data]="types"
+  [scope]="'tasks'"
   [onClickRow]="gotoEditTaskType"
   clickRowPermission="task-types/update:view"
 >

@@ -23,6 +23,7 @@ import { TasksMaintenanceContext } from '../../services/tasks-maintenance-contex
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
@@ -76,6 +77,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     FilterBar,
     TimelineView,
     CalendarView,
+    TranslatePipe,
   ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },

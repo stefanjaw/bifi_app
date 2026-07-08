@@ -27,6 +27,7 @@ import { CrudProjects } from '@avalantec/projects';
 import { task } from '../../interfaces/task';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { injectAuthService } from '@avalantec/base-app/auth';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-create-tasks-form-dialog',
@@ -40,6 +41,7 @@ import { injectAuthService } from '@avalantec/base-app/auth';
     SliderModule,
     TextareaModule,
     CheckboxModule,
+    TranslatePipe,
   ],
   templateUrl: './create-tasks-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +56,7 @@ export class CreateTasksFormDialog extends BaseDialog {
   private destroy$ = inject(DestroyRef);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private toastManager = inject(ToastManager);
+  private translationService = inject(TranslationService);
 
   // Data
   tasks = this.crudTasks.get({ triggerRequest: this.dialogState });
@@ -107,7 +110,9 @@ export class CreateTasksFormDialog extends BaseDialog {
     const plannedEndDate = dayjs(rawValue.plannedEndDate);
 
     if (plannedEndDate.isBefore(plannedStartDate)) {
-      this.toastManager.showError('Planned start date must be before planned end date');
+      this.toastManager.showError(
+        this.translationService.translate('createTask.error.dateOrder', {}, 'tasks')
+      );
       return;
     }
 

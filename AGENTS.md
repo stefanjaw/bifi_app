@@ -465,6 +465,88 @@ Shared form components (`@avalantec/base-app/form`) use `TranslatePipe` from `@a
 3. Import `TranslatePipe` from `@avalantec/base-app/i18n` and render `{{ 'key' | translate : {} : scope() }}`
 4. Add en/es entries to `base-app-form-translations.json`
 
+### Pipes Must Be Imported in Every Component
+
+Any component whose template uses `TranslatePipe` (`| translate`) or `LocaleDatePipe` (`| localeDate`) **must** import the pipe in its `imports` array. The Angular compiler will not resolve pipes from parent modules or ancestor components — standalone components require explicit imports.
+
+```ts
+// Always add to the component's imports array:
+imports: [
+  // ... other imports
+  TranslatePipe,   // if using | translate in the template
+  LocaleDatePipe,  // if using | localeDate in the template
+],
+```
+
+Missing a pipe import will produce: `NG8004: No pipe found with name 'translate'` or `NG8004: No pipe found with name 'localeDate'`.
+
+### LocaleDatePipe — Date Formatting
+
+**`LocaleDatePipe`** from `@avalantec/base-app/i18n` formats dates using the browser's native `Intl.DateTimeFormat` API. It uses the current locale from `TranslationService.activeLanguage()` — no locale data files need to be imported.
+
+**Template Usage:**
+
+```html
+{{ value | localeDate : options }}
+```
+
+- **`options`** — an `Intl.DateTimeFormatOptions` object (e.g. `{ dateStyle: 'medium' }`, `{ month: 'short', day: 'numeric' }`)
+- The pipe is **impure** — re-evaluates when the locale signal changes
+- **Never use `| date`** — always use `| localeDate` so date formatting is locale-aware
+
+**Common format mappings from the old `| date` pipe:**
+
+| Old `| date:format` | New `| localeDate : options` |
+|---|---|
+| `\| date` (default) | `\| localeDate : { dateStyle: 'medium' }` |
+| `\| date : 'short'` | `\| localeDate : { dateStyle: 'short' }` |
+| `\| date : 'medium'` | `\| localeDate : { dateStyle: 'medium' }` |
+| `\| date : 'shortDate'` | `\| localeDate : { dateStyle: 'short' }` |
+| `\| date : 'mediumDate'` | `\| localeDate : { dateStyle: 'medium' }` |
+| `\| date : 'fullDate'` | `\| localeDate : { dateStyle: 'full' }` |
+| `\| date : 'shortTime'` | `\| localeDate : { timeStyle: 'short' }` |
+| `\| date : 'mediumTime'` | `\| localeDate : { timeStyle: 'medium' }` |
+| `\| date : 'MMM'` | `\| localeDate : { month: 'short' }` |
+| `\| date : 'EEE'` | `\| localeDate : { weekday: 'short' }` |
+| `\| date : 'MMM d, yy'` | `\| localeDate : { month: 'short', day: 'numeric', year: '2-digit' }` |
+| `\| date : 'MM/dd/yyyy'` | `\| localeDate : { year: 'numeric', month: '2-digit', day: '2-digit' }` |
+
+**Import:**
+
+```ts
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+```
+
+```ts
+imports: [CommonModule, LocaleDatePipe, /* ... */],
+```
+
+**TypeScript Usage (no pipe needed — use `Intl.DateTimeFormat` directly):**
+
+```ts
+const locale = this.translationService.activeLanguage();
+const fmt = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+return fmt.format(date);
+```
+
+**How it works under the hood:**
+
+```ts
+// projects/base-app/i18n/src/pipes/locale-date.ts
+@Pipe({ name: 'localeDate', pure: false })
+export class LocaleDatePipe implements PipeTransform {
+  private translationService = inject(TranslationService);
+
+  transform(value: string | number | Date | null | undefined, options?: Intl.DateTimeFormatOptions): string | null {
+    if (value == null || value === '') return null;
+    const locale = this.translationService.activeLanguage();
+    return new Intl.DateTimeFormat(locale, options).format(new Date(value));
+  }
+}
+```
+
+The browser's `Intl.DateTimeFormat` is built-in — no locale data files, no dynamic imports, no per-locale bundling. It supports every locale the browser does, automatically.
+
 ## Documentation (JSDoc)
 
 **Documenting code is mandatory** — every public method, exported function, interface, type, and class must have a JSDoc comment (`/** ... */`) explaining its purpose, parameters, and return value.

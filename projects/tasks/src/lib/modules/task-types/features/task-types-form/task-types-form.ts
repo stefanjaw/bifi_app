@@ -18,6 +18,7 @@ import { CrudTaskTypes } from '../../services/crud-task-types';
 import { TaskTypeForm, TaskTypeFormModel } from '../../services/task-type-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-task-types-form',
@@ -28,6 +29,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
   ],
   templateUrl: './task-types-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

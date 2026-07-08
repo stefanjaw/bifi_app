@@ -1,12 +1,18 @@
 <header class="shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
-    <h1 class="text-2xl font-bold text-gray-800">Tasks Timeline</h1>
+    <h1 class="text-2xl font-bold text-gray-800">
+      {{ 'tasks.timeline' | translate: {} : 'tasks' }}
+    </h1>
   </div>
   <div class="flex items-center space-x-2">
     @if (viewState() === 'gantt' || viewState() === 'list') {
       <p-button
-        [title]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
-        [label]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
+        [title]="
+          (ganttAnyExpanded() ? 'tasks.collapseAll' : 'tasks.expandAll') | translate: {} : 'tasks'
+        "
+        [label]="
+          (ganttAnyExpanded() ? 'tasks.collapseAll' : 'tasks.expandAll') | translate: {} : 'tasks'
+        "
         size="small"
         severity="secondary"
         [icon]="ganttAnyExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
@@ -16,14 +22,16 @@
     }
     <p-button
       *bifiAppHasPermission="'tasks:create:model'"
-      label="Add Task"
+      [label]="'tasks.addTask' | translate: {} : 'tasks'"
       severity="secondary"
       icon="pi pi-plus"
       (onClick)="createTasksFormDialog.openDialog()"
     ></p-button>
 
     <div class="flex items-center space-x-3">
-      <span class="text-sm font-medium text-gray-600">View:</span>
+      <span class="text-sm font-medium text-gray-600">
+        {{ 'tasks.view' | translate: {} : 'tasks' }}
+      </span>
 
       <div class="flex items-center rounded-md bg-gray-200 p-0.5">
         <button
@@ -43,7 +51,7 @@
             <rect x="3" y="5" width="7" height="2" rx="1" />
             <rect x="1" y="9" width="6" height="2" rx="1" />
           </svg>
-          Gantt
+          {{ 'tasks.gantt' | translate: {} : 'tasks' }}
         </button>
         <button
           (click)="viewState.set('list')"
@@ -51,7 +59,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-list text-xs"></i>
-          List
+          {{ 'tasks.list' | translate: {} : 'tasks' }}
         </button>
         <button
           (click)="viewState.set('timeline')"
@@ -61,7 +69,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-calendar text-xs"></i>
-          Timeline
+          {{ 'tasks.timelineView' | translate: {} : 'tasks' }}
         </button>
         <button
           (click)="viewState.set('calendar')"
@@ -71,7 +79,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-th-large text-xs"></i>
-          Calendar
+          {{ 'tasks.calendar' | translate: {} : 'tasks' }}
         </button>
       </div>
     </div>
@@ -82,7 +90,7 @@
 <div class="shrink-0 py-2 flex items-center gap-2">
   <bifi-app-search-bar
     class="flex-1 min-w-0"
-    label="Search by name, priority, stage, assigned user, project or type"
+    [label]="'tasks.searchPlaceholder' | translate: {} : 'tasks'"
     [searchFilters]="taskFilters"
   >
     @for (chip of activeChips(); track chip.id) {
@@ -113,7 +121,7 @@
     [outlined]="true"
     size="small"
     (onClick)="filterPopover.toggle($event)"
-    ariaLabel="Open filters"
+    [ariaLabel]="'tasks.openFilters' | translate: {} : 'tasks'"
   />
 </div>
 
@@ -121,9 +129,9 @@
   <div class="flex flex-col gap-3 p-1 min-w-80">
     <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
       <i class="pi pi-filter text-indigo-500"></i>
-      <span>Filters</span>
+      <span>{{ 'tasks.filters' | translate: {} : 'tasks' }}</span>
     </div>
-    <bifi-app-filter-bar [filterFields]="taskFilterFields"></bifi-app-filter-bar>
+    <bifi-app-filter-bar [scope]="'tasks'" [filterFields]="taskFilterFields"></bifi-app-filter-bar>
   </div>
 </p-popover>
 
@@ -152,7 +160,7 @@
 @if (viewState() === 'gantt') {
   <!-- Gantt View -->
   <bifi-app-gantt-view
-    title="Tasks"
+    [title]="'tasks.ganttTitle' | translate: {} : 'tasks'"
     [flat]="ganttFlat()"
     [map]="ganttMap()"
     [dependencies]="ganttDependencies()"

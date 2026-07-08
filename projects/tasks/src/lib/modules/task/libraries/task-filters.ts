@@ -33,15 +33,15 @@ export const taskFilters: filter<task>[] = [
 ];
 
 export const taskFilterFields: filterFieldConfig<task>[] = [
-  { field: 'name', label: 'Name', type: 'string' },
-  { field: 'priority', label: 'Priority', type: 'string' },
-  { field: 'stage.name', label: 'Stage', type: 'string' },
-  { field: 'assigned.username', label: 'Assigned user by username', type: 'string' },
-  { field: 'assigned.email', label: 'Assigned user by email', type: 'string' },
-  { field: 'projectId.name', label: 'Project', type: 'string' },
-  { field: 'typeId.name', label: 'Type', type: 'string' },
-  { field: 'plannedStartDate', label: 'Start date', type: 'date' },
-  { field: 'plannedEndDate', label: 'End date', type: 'date' },
-  { field: 'progress', label: 'Progress', type: 'number' },
-  { field: 'active', label: 'Active', type: 'boolean' },
+  { field: 'name', label: 'filters.name', type: 'string' },
+  { field: 'priority', label: 'filters.priority', type: 'string' },
+  { field: 'stage.name', label: 'filters.stage', type: 'string' },
+  { field: 'assigned.username', label: 'filters.assignedUserByUsername', type: 'string' },
+  { field: 'assigned.email', label: 'filters.assignedUserByEmail', type: 'string' },
+  { field: 'projectId.name', label: 'filters.project', type: 'string' },
+  { field: 'typeId.name', label: 'filters.type', type: 'string' },
+  { field: 'plannedStartDate', label: 'filters.startDate', type: 'date' },
+  { field: 'plannedEndDate', label: 'filters.endDate', type: 'date' },
+  { field: 'progress', label: 'filters.progress', type: 'number' },
+  { field: 'active', label: 'filters.active', type: 'boolean' },
 ];
