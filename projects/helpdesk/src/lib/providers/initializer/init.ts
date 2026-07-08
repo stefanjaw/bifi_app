@@ -13,7 +13,8 @@ export function initializeHelpdesk() {
       item: {
         icon: PrimeIcons.INBOX,
         routerLink: ['/helpdesk'],
-        label: 'Helpdesk',
+        label: 'menu.helpdesk',
+        scope: 'helpdesk',
         resource: 'helpdesk/menu',
         showInMainMenu: true,
       },
@@ -21,13 +22,15 @@ export function initializeHelpdesk() {
     {
       item: {
         icon: PrimeIcons.COG,
-        label: 'Helpdesk',
+        label: 'menu.helpdesk',
+        scope: 'helpdesk',
         resource: 'helpdesk/settings/menu',
         items: [
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/helpdesk/helpdesk-stages'],
-            label: 'Ticket Stages',
+            label: 'menu.ticketStages',
+            scope: 'helpdesk',
             resource: 'helpdesk-stages/menu',
           },
         ],

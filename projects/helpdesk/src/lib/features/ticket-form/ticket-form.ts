@@ -24,7 +24,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import {
   activityHistory,
   CrudActivityHistories,
@@ -47,6 +47,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     TextareaModule,
     ProgressBarModule,
     LocaleDatePipe,
+    TranslatePipe,
     DatePickerModule,
     ToggleSwitchModule,
   ],
@@ -64,6 +65,7 @@ export class TicketsForm {
   private route = inject(ActivatedRoute);
   private fileResolver = inject(FileResolver);
   private crudActivityHistories = inject(CrudActivityHistories);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -116,23 +118,32 @@ export class TicketsForm {
     return this.formService.followersArray;
   }
 
-  priorityOptions = [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-    { label: 'Urgent', value: 'urgent' },
-  ];
+  priorityOptions = computed(() => [
+    { label: this.translationService.translate('priority.low', {}, 'helpdesk'), value: 'low' },
+    {
+      label: this.translationService.translate('priority.medium', {}, 'helpdesk'),
+      value: 'medium',
+    },
+    { label: this.translationService.translate('priority.high', {}, 'helpdesk'), value: 'high' },
+    {
+      label: this.translationService.translate('priority.urgent', {}, 'helpdesk'),
+      value: 'urgent',
+    },
+  ]);
 
-  typeOptions = [
-    { label: 'Helpdesk', value: 'helpdesk' },
-    { label: 'Task', value: 'task' },
-  ];
+  typeOptions = computed(() => [
+    {
+      label: this.translationService.translate('type.helpdesk', {}, 'helpdesk'),
+      value: 'helpdesk',
+    },
+    { label: this.translationService.translate('type.task', {}, 'helpdesk'), value: 'task' },
+  ]);
 
-  timeOptions = [
-    { label: 'min', value: 'minutes' },
-    { label: 'hrs', value: 'hours' },
-    { label: 'days', value: 'days' },
-  ];
+  timeOptions = computed(() => [
+    { label: this.translationService.translate('time.min', {}, 'helpdesk'), value: 'minutes' },
+    { label: this.translationService.translate('time.hrs', {}, 'helpdesk'), value: 'hours' },
+    { label: this.translationService.translate('time.days', {}, 'helpdesk'), value: 'days' },
+  ]);
 
   constructor() {
     effect(() => {
@@ -285,24 +296,6 @@ export class TicketsForm {
   }
 
   activityFieldLabel(field: string): string {
-    const labels: Record<string, string> = {
-      name: 'Subject',
-      description: 'Description',
-      internalNotes: 'Internal Notes',
-      priority: 'Priority',
-      type: 'Type',
-      stage: 'Stage',
-      assigned: 'Assigned',
-      followers: 'Followers',
-      tags: 'Tags',
-      taskIds: 'Linked Tasks',
-      category: 'Category',
-      appModule: 'Module',
-      active: 'Active',
-      dateStart: 'Start Date',
-      dateEnd: 'End Date',
-      duration: 'Duration',
-    };
-    return labels[field] ?? field;
+    return this.translationService.translate('activityField.' + field, {}, 'helpdesk');
   }
 }

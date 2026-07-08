@@ -7,6 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { CrudTickets } from '../../services/crud-tickets';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -30,7 +31,7 @@ interface ReportData {
 
 @Component({
   selector: 'bifi-app-helpdesk-report',
-  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule],
+  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule, TranslatePipe],
   host: {
     class: 'flex flex-col gap-6 p-6 ms-4 me-4',
   },
@@ -38,6 +39,7 @@ interface ReportData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HelpdeskReport implements OnInit {
+  private translationService = inject(TranslationService);
   private destroyRef = inject(DestroyRef);
   private crudTickets = inject(CrudTickets);
 
@@ -55,7 +57,7 @@ export class HelpdeskReport implements OnInit {
           this.isLoading.set(false);
         },
         error: err => {
-          this.error.set('Failed to load report data.');
+          this.error.set(this.translationService.translate('report.error', {}, 'helpdesk'));
           this.isLoading.set(false);
         },
       });

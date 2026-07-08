@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-bold">Helpdesk Report</h1>
+  <h1 class="text-2xl font-bold">{{ 'report.title' | translate: {} : 'helpdesk' }}</h1>
   <p-button
-    label="Back to Tickets"
+    [label]="'report.backToTickets' | translate: {} : 'helpdesk'"
     icon="pi pi-arrow-left"
     severity="secondary"
     [routerLink]="['../list']"
@@ -9,34 +9,44 @@
 </div>
 
 @if (isLoading()) {
-  <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+  <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
 } @else if (error()) {
   <div class="text-red-600 p-4 bg-red-50 rounded">{{ error() }}</div>
 } @else {
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="bg-white rounded-lg shadow p-6 flex flex-col gap-2">
-      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">Resolution Time</h2>
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+        {{ 'report.resolutionTime' | translate: {} : 'helpdesk' }}
+      </h2>
       <div class="grid grid-cols-3 gap-4 text-center mb-4">
         <div>
-          <div class="text-xs text-gray-500 uppercase font-medium">Avg</div>
+          <div class="text-xs text-gray-500 uppercase font-medium">
+            {{ 'report.avg' | translate: {} : 'helpdesk' }}
+          </div>
           <div class="text-xl font-bold text-blue-600">
             {{ formatMinutes(report()?.resolutionTimeSpan?.avgMinutes) }}
           </div>
         </div>
         <div>
-          <div class="text-xs text-gray-500 uppercase font-medium">Min</div>
+          <div class="text-xs text-gray-500 uppercase font-medium">
+            {{ 'report.min' | translate: {} : 'helpdesk' }}
+          </div>
           <div class="text-xl font-bold text-green-600">
             {{ formatMinutes(report()?.resolutionTimeSpan?.minMinutes) }}
           </div>
         </div>
         <div>
-          <div class="text-xs text-gray-500 uppercase font-medium">Max</div>
+          <div class="text-xs text-gray-500 uppercase font-medium">
+            {{ 'report.max' | translate: {} : 'helpdesk' }}
+          </div>
           <div class="text-xl font-bold text-red-600">
             {{ formatMinutes(report()?.resolutionTimeSpan?.maxMinutes) }}
           </div>
         </div>
       </div>
-      <h3 class="text-sm font-semibold text-gray-600 mb-2">Distribution</h3>
+      <h3 class="text-sm font-semibold text-gray-600 mb-2">
+        {{ 'report.distribution' | translate: {} : 'helpdesk' }}
+      </h3>
       @for (bucket of report()?.resolutionTimeSpan?.buckets; track bucket.label) {
         <div class="flex items-center gap-2 text-sm">
           <span class="w-20 text-gray-600 shrink-0">{{ bucket.label }}</span>
@@ -52,9 +62,11 @@
     </div>
 
     <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">Tickets by Stage</h2>
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">
+        {{ 'report.ticketsByStage' | translate: {} : 'helpdesk' }}
+      </h2>
       @if ((report()?.byStage ?? []).length === 0) {
-        <p class="text-gray-400 text-sm">No data available.</p>
+        <p class="text-gray-400 text-sm">{{ 'report.noData' | translate: {} : 'helpdesk' }}</p>
       } @else {
         <div class="flex flex-col gap-3">
           @for (item of report()?.byStage; track item.stage) {
@@ -68,21 +80,23 @@
     </div>
 
     <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">Performance by Agent</h2>
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">
+        {{ 'report.performanceByAgent' | translate: {} : 'helpdesk' }}
+      </h2>
       @if ((report()?.byAssigned ?? []).length === 0) {
-        <p class="text-gray-400 text-sm">No data available.</p>
+        <p class="text-gray-400 text-sm">{{ 'report.noData' | translate: {} : 'helpdesk' }}</p>
       } @else {
         <p-table [value]="report()?.byAssigned ?? []" styleClass="p-datatable-sm">
           <ng-template #header>
             <tr>
-              <th>Agent</th>
-              <th class="text-right">Tickets</th>
-              <th class="text-right">Avg Resolution</th>
+              <th>{{ 'columns.agent' | translate: {} : 'helpdesk' }}</th>
+              <th class="text-right">{{ 'columns.tickets' | translate: {} : 'helpdesk' }}</th>
+              <th class="text-right">{{ 'columns.avgResolution' | translate: {} : 'helpdesk' }}</th>
             </tr>
           </ng-template>
           <ng-template #body let-row>
             <tr>
-              <td class="text-sm text-gray-700 truncate max-w-[120px]">{{ row.assigned }}</td>
+              <td class="text-sm text-gray-700 truncate max-w-30">{{ row.assigned }}</td>
               <td class="text-right font-medium">{{ row.count }}</td>
               <td class="text-right text-sm text-gray-600">
                 {{ formatMinutes(row.avgResolutionMinutes) }}

@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Ticket Stage"
+  title="{{
+    (isUpdate() ? 'ticketStages.form.titleUpdate' : 'ticketStages.form.titleCreate')
+      | translate: {} : 'helpdesk'
+  }}"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,20 +21,33 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Stage Information" id="stage-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'ticketStages.form.stageInformation' | translate: {} : 'helpdesk'"
+        id="stage-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g. Open" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'helpdesk' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'ticketStages.form.namePlaceholder' | translate: {} : 'helpdesk'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <textarea
               pInputTextarea
               formControlName="description"
-              placeholder="Description"
+              [placeholder]="
+                'ticketStages.form.descriptionPlaceholder' | translate: {} : 'helpdesk'
+              "
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -44,8 +60,10 @@
                 inputId="isDefault"
               ></p-checkbox>
               <label for="isDefault" class="cursor-pointer font-medium text-gray-700">
-                Set as
-                <span class="text-blue-600 font-semibold">Default Stage</span>
+                {{ 'ticketStages.form.setAs' | translate: {} : 'helpdesk' }}
+                <span class="text-blue-600 font-semibold">
+                  {{ 'ticketStages.form.defaultStage' | translate: {} : 'helpdesk' }}
+                </span>
               </label>
             </div>
             <bifi-app-form-error></bifi-app-form-error>
@@ -53,7 +71,10 @@
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>
+        {{ 'ticketStages.form.error.somethingWentWrong' | translate: {} : 'helpdesk' }}
+        {{ error() }}
+      </p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }
