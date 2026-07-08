@@ -22,12 +22,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MovementFormService, MovementFormModel } from '../../services/movement-form';
-
-const MOVEMENT_TYPES = [
-  { label: 'Stock In (IN)', value: 'IN' },
-  { label: 'Stock Out (OUT)', value: 'OUT' },
-  { label: 'Adjustment', value: 'ADJUSTMENT' },
-];
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-movement-form',
@@ -41,6 +36,7 @@ const MOVEMENT_TYPES = [
     ProgressBarModule,
     RouterLink,
     HasPermission,
+    TranslatePipe,
   ],
   templateUrl: './movement-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,13 +48,22 @@ export class MovementForm {
   private crudWarehouses = inject(CrudWarehouses);
   private crudLocations = inject(CrudLocations);
   private router = inject(Router);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   form = this.formService.form;
   selectedWarehouseId = this.formService.selectedWarehouseId;
 
   isSubmitLoading = signal(false);
-  movementTypes = MOVEMENT_TYPES;
+
+  movementTypes = computed(() => [
+    { label: this.translationService.translate('stockIn', {}, 'inventory'), value: 'IN' },
+    { label: this.translationService.translate('stockOut', {}, 'inventory'), value: 'OUT' },
+    {
+      label: this.translationService.translate('adjustment', {}, 'inventory'),
+      value: 'ADJUSTMENT',
+    },
+  ]);
 
   productsResource = this.crudProducts.get({});
   warehousesResource = this.crudWarehouses.get({});

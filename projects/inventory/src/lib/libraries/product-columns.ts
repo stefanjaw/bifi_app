@@ -2,11 +2,11 @@ import { tableColumn } from '@avalantec/base-app/resource';
 import { product } from '../interfaces/product';
 
 export const productColumns: tableColumn<product>[] = [
-  { field: 'name', title: 'Name', type: 'text' },
-  { field: 'sku', title: 'SKU', type: 'text' },
+  { field: 'name', title: 'name', type: 'text' },
+  { field: 'sku', title: 'sku', type: 'text' },
   {
     field: 'productTypeId' as any,
-    title: 'Type',
+    title: 'type',
     type: 'text',
     parseField: (value: any) => {
       if (value && typeof value === 'object') return (value.name ?? '').toString().trim() || '—';
@@ -15,7 +15,7 @@ export const productColumns: tableColumn<product>[] = [
   },
   {
     field: 'unitOfMeasureId.symbol',
-    title: 'UoM',
+    title: 'uom',
     type: 'text',
     parseField: (value: any) => {
       if (value && typeof value === 'object') {
@@ -29,7 +29,7 @@ export const productColumns: tableColumn<product>[] = [
       return s || '—';
     },
   },
-  { field: 'costPrice', title: 'Purchase Price', type: 'currency' },
-  { field: 'salePrice', title: 'Sale Price', type: 'currency' },
-  { field: 'active', title: 'Active', type: 'text' },
+  { field: 'costPrice', title: 'purchasePrice', type: 'currency' },
+  { field: 'salePrice', title: 'salePrice', type: 'currency' },
+  { field: 'active', title: 'active', type: 'text' },
 ];

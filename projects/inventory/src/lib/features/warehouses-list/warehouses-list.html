@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Warehouses</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'warehouses' | translate: {} : 'inventory' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Warehouse"
+    [label]="'newWarehouse' | translate: {} : 'inventory'"
     severity="secondary"
     icon="pi pi-plus"
     routerLink="/inventory/warehouses/new"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name or code"
+  [label]="'searchByNameOrCode' | translate: {} : 'inventory'"
   [searchFilters]="warehouseFilters"
 ></bifi-app-search-bar>
 
@@ -21,11 +21,12 @@
   [data]="entries"
   [onClickRow]="gotoEditWarehouse"
   clickRowPermission="inventory/warehouses/update:view"
+  [scope]="'inventory'"
 >
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
-      label="View"
+      [label]="'view' | translate: {} : 'inventory'"
       icon="pi pi-eye"
       size="small"
       routerLink="/inventory/warehouses/{{ element._id }}"

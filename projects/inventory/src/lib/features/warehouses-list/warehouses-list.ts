@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastModule } from 'primeng/toast';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-warehouses-list',
@@ -30,6 +31,7 @@ import { ToastModule } from 'primeng/toast';
     ToastModule,
     HasPermission,
     ButtonsActions,
+    TranslatePipe,
   ],
   templateUrl: './warehouses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

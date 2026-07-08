@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Product Type' : 'New Product Type'"
+  [title]="(isUpdate() ? 'editProductType' : 'newProductType') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,30 +18,36 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Product Type Information" id="product-type-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'productTypeInformation' | translate: {} : 'inventory'"
+        id="product-type-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
-              placeholder="e.g. Raw Material, Finished Good, Service"
+              [placeholder]="'productTypeNamePlaceholder' | translate: {} : 'inventory'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <textarea
               pTextarea
               formControlName="description"
               rows="3"
-              placeholder="Optional description"
+              [placeholder]="'optionalDescription' | translate: {} : 'inventory'"
             ></textarea>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Active</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'active' | translate: {} : 'inventory' }}</bifi-app-form-label>
             <p-toggleSwitch formControlName="active"></p-toggleSwitch>
           </bifi-app-form-field>
         </div>

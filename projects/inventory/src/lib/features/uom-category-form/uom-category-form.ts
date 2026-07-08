@@ -16,10 +16,11 @@ import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UomCategoryFormService, UomCategoryFormModel } from '../../services/uom-category-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-uom-category-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule],
+  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule, TranslatePipe],
   templateUrl: './uom-category-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

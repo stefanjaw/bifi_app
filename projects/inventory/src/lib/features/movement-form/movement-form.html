@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="New Stock Movement"
+  [title]="'newStockMovement' | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -19,28 +19,36 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Movement Details" id="movement-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'movementDetails' | translate: {} : 'inventory'"
+        id="movement-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Movement Type *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'movementType' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="type"
-              [options]="movementTypes"
+              [options]="movementTypes()"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select type"
+              [placeholder]="'selectType' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Product *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'product' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="productId"
               [options]="products() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select product"
+              [placeholder]="'selectProduct' | translate: {} : 'inventory'"
               [filter]="true"
               filterBy="name,sku"
             ></p-select>
@@ -48,58 +56,74 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'warehouse' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="warehouseId"
               [options]="warehouses() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select warehouse"
+              [placeholder]="'selectWarehouse' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Location *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'location' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="locationId"
               [options]="filteredLocations()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select location (choose warehouse first)"
+              [placeholder]="'selectLocationFirst' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
             @if (selectedWarehouseId() && filteredLocations().length === 0) {
               <small class="text-orange-500">
-                No locations found for this warehouse.
+                {{ 'noLocationsForWarehouse' | translate: {} : 'inventory' }}
                 <a
                   [routerLink]="['/inventory/warehouses', selectedWarehouseId()]"
                   class="underline font-medium"
                 >
-                  Add locations from the warehouse page.
+                  {{ 'addLocationsFromWarehouse' | translate: {} : 'inventory' }}
                 </a>
               </small>
             }
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Quantity *</bifi-app-form-label>
-            <p-inputNumber formControlName="quantity" [min]="1" placeholder="1"></p-inputNumber>
+            <bifi-app-form-label>
+              {{ 'quantity' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
+            <p-inputNumber
+              formControlName="quantity"
+              [min]="1"
+              [placeholder]="'quantityPlaceholder' | translate: {} : 'inventory'"
+            ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Reference</bifi-app-form-label>
-            <input pInputText formControlName="reference" placeholder="PO number, order ID, etc." />
+            <bifi-app-form-label>
+              {{ 'reference' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="reference"
+              [placeholder]="'referencePlaceholder' | translate: {} : 'inventory'"
+            />
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Notes</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'notes' | translate: {} : 'inventory' }}</bifi-app-form-label>
             <textarea
               pTextarea
               formControlName="notes"
               rows="2"
-              placeholder="Optional notes"
+              [placeholder]="'optionalNotes' | translate: {} : 'inventory'"
             ></textarea>
           </bifi-app-form-field>
         </div>

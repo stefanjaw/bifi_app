@@ -25,6 +25,7 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-transfer',
@@ -40,6 +41,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     SelectModule,
     TextareaModule,
     RouterLink,
+    TranslatePipe,
   ],
   templateUrl: './transfer.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

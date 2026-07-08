@@ -18,6 +18,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductTypeFormService, ProductTypeFormModel } from '../../services/product-type-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-product-type-form',
@@ -28,6 +29,7 @@ import { ProductTypeFormService, ProductTypeFormModel } from '../../services/pro
     TextareaModule,
     ToggleSwitchModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './product-type-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

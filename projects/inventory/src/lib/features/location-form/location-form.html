@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Location' : 'New Location'"
+  [title]="(isUpdate() ? 'editLocation' : 'newLocation') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,38 +18,54 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Location Information" id="location-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'locationInformation' | translate: {} : 'inventory'"
+        id="location-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'warehouse' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="warehouseId"
               [options]="warehouses() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select warehouse"
+              [placeholder]="'selectWarehouse' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. Shelf A1" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'locationNamePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Code *</bifi-app-form-label>
-            <input pInputText formControlName="code" placeholder="e.g. A1-01" />
+            <bifi-app-form-label>{{ 'code' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="code"
+              [placeholder]="'locationCodePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Capacity</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'capacity' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="capacity"
               [min]="0"
-              placeholder="0 = unlimited"
+              [placeholder]="'unlimitedCapacity' | translate: {} : 'inventory'"
             ></p-inputNumber>
           </bifi-app-form-field>
         </div>

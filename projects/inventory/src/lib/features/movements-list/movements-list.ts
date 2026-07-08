@@ -13,6 +13,7 @@ import { movementColumns } from '../../libraries/movement-columns';
 import { movementFilters } from '../../libraries/movement-filters';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-movements-list',
@@ -20,7 +21,7 @@ import { RouterLink } from '@angular/router';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, TranslatePipe],
   templateUrl: './movements-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

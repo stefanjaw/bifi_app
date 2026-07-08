@@ -34,6 +34,7 @@ import { ProductFormService, ProductFormModel } from '../../services/product-for
 import { FileResolver } from '@avalantec/base-app/resource';
 import { product } from '../../interfaces/product';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-product-form',
@@ -52,6 +53,7 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
     FileUpload,
     HasPermission,
     PluginSlot,
+    TranslatePipe,
   ],
   providers: [providePluginContext(ProductForm)],
   templateUrl: './product-form.html',

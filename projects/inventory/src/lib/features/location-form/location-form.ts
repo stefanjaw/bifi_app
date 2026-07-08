@@ -19,6 +19,7 @@ import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocationFormService, LocationFormModel } from '../../services/location-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-location-form',
@@ -29,6 +30,7 @@ import { LocationFormService, LocationFormModel } from '../../services/location-
     InputNumberModule,
     SelectModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './location-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

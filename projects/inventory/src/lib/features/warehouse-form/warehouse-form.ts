@@ -17,10 +17,18 @@ import { InputText } from 'primeng/inputtext';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WarehouseFormService, WarehouseFormModel } from '../../services/warehouse-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-warehouse-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, ProgressBarModule, HasPermission],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    ProgressBarModule,
+    HasPermission,
+    TranslatePipe,
+  ],
   templateUrl: './warehouse-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

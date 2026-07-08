@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit UoM Category' : 'New UoM Category'"
+  [title]="(isUpdate() ? 'editUomCategory' : 'newUomCategory') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,11 +18,19 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Category Information" id="uom-category-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'categoryInformation' | translate: {} : 'inventory'"
+        id="uom-category-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. Weight, Volume, Count" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'categoryNamePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>

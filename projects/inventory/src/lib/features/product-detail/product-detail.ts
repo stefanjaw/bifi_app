@@ -8,13 +8,14 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-product-detail',
   host: {
     class: 'flex flex-col gap-4 p-6 ms-4 me-4',
   },
-  imports: [ButtonModule, RouterLink, CurrencyPipe, CardModule],
+  imports: [ButtonModule, RouterLink, CurrencyPipe, CardModule, TranslatePipe],
   templateUrl: './product-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,6 +23,7 @@ export class ProductDetail {
   private crudProducts = inject(CrudProducts);
   private crudStockBalances = inject(CrudStockBalances);
   private crudMovements = inject(CrudMovements);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -48,7 +50,9 @@ export class ProductDetail {
     const map = new Map<string, { name: string; quantity: number }>();
     for (const b of this.stockBalances()) {
       const wid = (b.warehouseId as any)?._id ?? '';
-      const wname = (b.warehouseId as any)?.name ?? 'Unknown';
+      const wname =
+        (b.warehouseId as any)?.name ??
+        this.translationService.translate('unknown', {}, 'inventory');
       const prev = map.get(wid) ?? { name: wname, quantity: 0 };
       map.set(wid, { name: wname, quantity: prev.quantity + b.quantity });
     }

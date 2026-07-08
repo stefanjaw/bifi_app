@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Warehouse' : 'New Warehouse'"
+  [title]="(isUpdate() ? 'editWarehouse' : 'newWarehouse') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,23 +21,39 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Warehouse Information" id="warehouse-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'warehouseInformation' | translate: {} : 'inventory'"
+        id="warehouse-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="Warehouse name" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'warehouseNamePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Code *</bifi-app-form-label>
-            <input pInputText formControlName="code" placeholder="e.g. WH-01" />
+            <bifi-app-form-label>{{ 'code' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="code"
+              [placeholder]="'codePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Address</bifi-app-form-label>
-            <input pInputText formControlName="address" placeholder="Full address" />
+            <bifi-app-form-label>{{ 'address' | translate: {} : 'inventory' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="address"
+              [placeholder]="'addressPlaceholder' | translate: {} : 'inventory'"
+            />
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>

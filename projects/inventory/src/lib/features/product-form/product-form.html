@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Product' : 'New Product'"
+  [title]="(isUpdate() ? 'editProduct' : 'newProduct') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,57 +21,83 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Product Information" id="product-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'productInformation' | translate: {} : 'inventory'"
+        id="product-info"
+        [ordinal]="1"
+      >
         <div class="flex flex-col md:flex-row gap-8">
           <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
             <bifi-app-form-field>
-              <bifi-app-form-label>Name *</bifi-app-form-label>
-              <input pInputText formControlName="name" placeholder="Product name" />
+              <bifi-app-form-label>
+                {{ 'name' | translate: {} : 'inventory' }} *
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="name"
+                [placeholder]="'productNamePlaceholder' | translate: {} : 'inventory'"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>SKU *</bifi-app-form-label>
-              <input pInputText formControlName="sku" placeholder="Unique product code" />
+              <bifi-app-form-label>{{ 'sku' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sku"
+                [placeholder]="'skuPlaceholder' | translate: {} : 'inventory'"
+              />
               <bifi-app-form-error></bifi-app-form-error>
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>Barcode</bifi-app-form-label>
-              <input pInputText formControlName="barcode" placeholder="e.g. 012345678905" />
+              <bifi-app-form-label>
+                {{ 'barcode' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="barcode"
+                [placeholder]="'barcodePlaceholder' | translate: {} : 'inventory'"
+              />
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'unitOfMeasure' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
               <p-select
                 formControlName="unitOfMeasureId"
                 [options]="uoms() || []"
                 optionLabel="name"
                 optionValue="_id"
-                placeholder="Select a unit of measure"
+                [placeholder]="'selectUnitOfMeasure' | translate: {} : 'inventory'"
                 [showClear]="true"
               ></p-select>
             </bifi-app-form-field>
 
             <bifi-app-form-field>
-              <bifi-app-form-label>Product Type</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'productType' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
               <p-select
                 formControlName="productTypeId"
                 [options]="productTypes()"
                 optionLabel="name"
                 optionValue="_id"
-                placeholder="Select a product type"
+                [placeholder]="'selectProductType' | translate: {} : 'inventory'"
                 [showClear]="true"
               ></p-select>
             </bifi-app-form-field>
 
             <bifi-app-form-field class="md:col-span-2">
-              <bifi-app-form-label>Description</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
               <textarea
                 pTextarea
                 formControlName="description"
                 rows="3"
-                placeholder="Optional description"
+                [placeholder]="'optionalDescription' | translate: {} : 'inventory'"
               ></textarea>
             </bifi-app-form-field>
           </div>
@@ -89,11 +115,13 @@
                 height="250"
               />
             } @else {
-              <div class="text-gray-500">No photo</div>
+              <div class="text-gray-500">{{ 'noPhoto' | translate: {} : 'inventory' }}</div>
             }
 
             <bifi-app-form-field>
-              <bifi-app-form-label>Product Image</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'productImage' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
               <bifi-app-form-uploader formArrayName="photo" [inline]="true">
                 <p-fileupload
                   showUploadButton="false"
@@ -104,7 +132,7 @@
                   [maxFileSize]="5000000"
                   mode="basic"
                   [auto]="false"
-                  chooseLabel="Choose image"
+                  [chooseLabel]="'chooseImage' | translate: {} : 'inventory'"
                   chooseIcon="pi pi-upload"
                   [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
                 />
@@ -114,10 +142,16 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Pricing" id="product-pricing" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'pricing' | translate: {} : 'inventory'"
+        id="product-pricing"
+        [ordinal]="2"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Purchase Price</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'purchasePrice' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="costPrice"
               [min]="0"
@@ -127,7 +161,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Sale Price</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'salePrice' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="salePrice"
               [min]="0"
@@ -137,7 +173,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Sale Taxes</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'defaultSaleTaxes' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <p-multiselect
               [ngModel]="defaultSaleTaxIds()"
               (ngModelChange)="onSaleTaxesChange($event)"
@@ -145,7 +183,7 @@
               [options]="saleTaxOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select default sale taxes"
+              [placeholder]="'selectDefaultSaleTaxes' | translate: {} : 'inventory'"
               [filter]="true"
               filterBy="name"
               [showClear]="true"
@@ -156,12 +194,14 @@
               </ng-template>
             </p-multiselect>
             <small class="text-gray-500">
-              Pre-filled on Sales Orders when this product is added.
+              {{ 'saleTaxesHelpText' | translate: {} : 'inventory' }}
             </small>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Purchase Taxes</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'defaultPurchaseTaxes' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
             <p-multiselect
               [ngModel]="defaultPurchaseTaxIds()"
               (ngModelChange)="onPurchaseTaxesChange($event)"
@@ -169,7 +209,7 @@
               [options]="purchaseTaxOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select default purchase taxes"
+              [placeholder]="'selectDefaultPurchaseTaxes' | translate: {} : 'inventory'"
               [filter]="true"
               filterBy="name"
               [showClear]="true"
@@ -180,7 +220,7 @@
               </ng-template>
             </p-multiselect>
             <small class="text-gray-500">
-              Pre-filled on Purchase Orders when this product is added.
+              {{ 'purchaseTaxesHelpText' | translate: {} : 'inventory' }}
             </small>
           </bifi-app-form-field>
         </div>
@@ -188,9 +228,15 @@
 
       <bifi-app-plugin-slot name="product-form-general-information"></bifi-app-plugin-slot>
 
-      <bifi-app-form-section title="Documents" id="product-documents" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'documents' | translate: {} : 'inventory'"
+        id="product-documents"
+        [ordinal]="3"
+      >
         <bifi-app-form-field>
-          <bifi-app-form-label>Attachments</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'attachments' | translate: {} : 'inventory' }}
+          </bifi-app-form-label>
           <bifi-app-form-uploader formArrayName="attachments">
             <p-fileupload
               showUploadButton="false"
@@ -201,7 +247,7 @@
               [maxFileSize]="20000000"
               mode="basic"
               [auto]="false"
-              chooseLabel="Choose documents"
+              [chooseLabel]="'chooseDocuments' | translate: {} : 'inventory'"
               chooseIcon="pi pi-paperclip"
               [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
             />

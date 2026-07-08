@@ -14,6 +14,7 @@ import { uomCategoryFilters } from '../../libraries/uom-category-filters';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-uom-categories-list',
@@ -21,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, TranslatePipe],
   templateUrl: './uom-categories-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
