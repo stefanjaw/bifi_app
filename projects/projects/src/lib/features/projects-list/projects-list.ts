@@ -36,6 +36,7 @@ import {
   TimelineView,
 } from '@avalantec/base-app/resource';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudProjects } from '../../services/crud-projects';
 import { projectColumns } from '../../libraries/project-columns';
 import { project } from '../../interfaces/projects';
@@ -75,6 +76,7 @@ const PROJECTS_VIEW_QUERY_KEY = '_view';
     GanttView,
     ProjectsListView,
     CalendarView,
+    TranslatePipe,
   ],
   templateUrl: './projects-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

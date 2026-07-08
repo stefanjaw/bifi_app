@@ -2,13 +2,15 @@
   <div
     class="sticky top-0 bg-gray-50 z-10 grid grid-cols-14 h-12 items-center border-y border-gray-200 font-semibold text-gray-700 text-sm px-2"
   >
-    <div class="col-span-4">Project Name</div>
-    <div class="col-span-2">Contact</div>
-    <div class="col-span-2">Start Date</div>
-    <div class="col-span-2">End Date</div>
-    <div class="col-span-1">Stage</div>
-    <div class="col-span-1">Priority</div>
-    <div class="col-span-2 text-center">Actions</div>
+    <div class="col-span-4">{{ 'projectList.projectName' | translate: {} : 'projects' }}</div>
+    <div class="col-span-2">{{ 'projectList.contact' | translate: {} : 'projects' }}</div>
+    <div class="col-span-2">{{ 'projectList.startDate' | translate: {} : 'projects' }}</div>
+    <div class="col-span-2">{{ 'projectList.endDate' | translate: {} : 'projects' }}</div>
+    <div class="col-span-1">{{ 'projectList.stage' | translate: {} : 'projects' }}</div>
+    <div class="col-span-1">{{ 'projectList.priority' | translate: {} : 'projects' }}</div>
+    <div class="col-span-2 text-center">
+      {{ 'projectList.actions' | translate: {} : 'projects' }}
+    </div>
   </div>
   <div class="border-x border-b border-gray-200">
     <bifi-app-tree-list
@@ -47,13 +49,13 @@
             severity="secondary"
             size="small"
             [text]="true"
-            pTooltip="View Tasks"
+            [pTooltip]="'projectList.viewTasks' | translate: {} : 'projects'"
             tooltipPosition="top"
             (onClick)="viewTasks.emit(project.id); $event.stopPropagation()"
           ></p-button>
           <p-button
             *bifiAppHasPermission="'projects/create:view'"
-            title="Add Sub-project"
+            [title]="'projectList.addSubproject' | translate: {} : 'projects'"
             size="small"
             severity="secondary"
             icon="pi pi-plus"

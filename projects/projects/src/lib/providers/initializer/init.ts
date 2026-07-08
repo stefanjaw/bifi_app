@@ -13,7 +13,8 @@ export function initializeProjects() {
       item: {
         icon: PrimeIcons.FOLDER,
         routerLink: ['/projects'],
-        label: 'Projects',
+        label: 'menu.projects',
+        scope: 'projects',
         resource: 'projects/menu',
         showInMainMenu: true,
       },
@@ -21,13 +22,15 @@ export function initializeProjects() {
     {
       item: {
         icon: PrimeIcons.COG,
-        label: 'Projects',
+        label: 'menu.projects',
+        scope: 'projects',
         resource: 'projects/settings/menu',
         items: [
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/projects/project-stages'],
-            label: 'Project Stages',
+            label: 'menu.projectStages',
+            scope: 'projects',
             resource: 'project-stages/menu',
           },
         ],

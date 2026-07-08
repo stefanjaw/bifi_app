@@ -19,6 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { CrudProjects } from '../../services/crud-projects';
 import { ProjectForm, ProjectFormModel } from '../../services/project-form';
 import { CrudProjectStages } from '../../modules/project-stages/services/crud-project-stages';
@@ -40,6 +41,7 @@ import { project } from '../../interfaces/projects';
     SelectModule,
     HasPermission,
     DatePickerModule,
+    TranslatePipe,
   ],
   templateUrl: './project-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +55,7 @@ export class ProjectsForm {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -94,12 +97,18 @@ export class ProjectsForm {
     return Array.isArray(all) ? all.filter(p => p._id !== currentId) : [];
   });
 
-  priorityOptions = [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-    { label: 'Urgent', value: 'urgent' },
-  ];
+  priorityOptions = computed(() => [
+    { label: this.translationService.translate('priority.low', {}, 'projects'), value: 'low' },
+    {
+      label: this.translationService.translate('priority.medium', {}, 'projects'),
+      value: 'medium',
+    },
+    { label: this.translationService.translate('priority.high', {}, 'projects'), value: 'high' },
+    {
+      label: this.translationService.translate('priority.urgent', {}, 'projects'),
+      value: 'urgent',
+    },
+  ]);
 
   constructor() {
     this._restoreParentIdFromQuery();
@@ -165,7 +174,9 @@ export class ProjectsForm {
     };
 
     if (dayjs(payload.dateEnd).isBefore(dayjs(payload.dateStart))) {
-      this.toastManager.showError('Start date must be before end date');
+      this.toastManager.showError(
+        this.translationService.translate('projectForm.error.dateOrder', {}, 'projects')
+      );
       return;
     }
 

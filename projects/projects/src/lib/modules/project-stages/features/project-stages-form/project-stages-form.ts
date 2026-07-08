@@ -15,6 +15,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { CrudProjectStages } from '../../services/crud-project-stages';
 import { ProjectStageForm, ProjectStageFormModel } from '../../services/project-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,6 +31,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
   ],
   templateUrl: './project-stages-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +42,7 @@ export class ProjectStagesForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
