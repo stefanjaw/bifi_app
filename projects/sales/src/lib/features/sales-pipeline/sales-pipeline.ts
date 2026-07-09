@@ -13,7 +13,7 @@ import { crm } from '../../interfaces/crm';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { CurrencyPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
@@ -25,7 +25,15 @@ import { RouterLink } from '@angular/router';
   host: {
     class: 'block',
   },
-  imports: [CurrencyPipe, LocaleDatePipe, RouterLink, ProgressBarModule, ButtonModule, ToastModule],
+  imports: [
+    CurrencyPipe,
+    LocaleDatePipe,
+    TranslatePipe,
+    RouterLink,
+    ProgressBarModule,
+    ButtonModule,
+    ToastModule,
+  ],
   templateUrl: './sales-pipeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,6 +42,7 @@ export class SalesPipeline {
   private crudCrmStages = inject(CrudCrmStages);
   private crudSalesOrders = inject(CrudSalesOrders);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   allDeals = this.crudCrm.get({});
@@ -103,8 +112,8 @@ export class SalesPipeline {
     if (!wonStage) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No won stage',
-        detail: 'Configure a "Won" stage in Deal Stages settings first.',
+        summary: this.translationService.translate('sales.toast.noWonStage', {}, 'sales'),
+        detail: this.translationService.translate('sales.toast.noWonStageDetail', {}, 'sales'),
       });
       return;
     }
@@ -135,8 +144,12 @@ export class SalesPipeline {
                 this.actionLoadingId.set(null);
                 this.messageService.add({
                   severity: 'success',
-                  summary: 'Deal Won',
-                  detail: 'Sales order created.',
+                  summary: this.translationService.translate('sales.toast.dealWon', {}, 'sales'),
+                  detail: this.translationService.translate(
+                    'sales.toast.dealWonDetailPipeline',
+                    {},
+                    'sales'
+                  ),
                 });
                 this.allDeals.reload();
               },
@@ -144,8 +157,12 @@ export class SalesPipeline {
                 this.actionLoadingId.set(null);
                 this.messageService.add({
                   severity: 'error',
-                  summary: 'Error',
-                  detail: 'Failed to create sales order.',
+                  summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+                  detail: this.translationService.translate(
+                    'sales.toast.createOrderFailed',
+                    {},
+                    'sales'
+                  ),
                 });
               },
             });
@@ -154,8 +171,8 @@ export class SalesPipeline {
           this.actionLoadingId.set(null);
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to mark as won.',
+            summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.markWonFailed', {}, 'sales'),
           });
         },
       });
@@ -166,8 +183,8 @@ export class SalesPipeline {
     if (!lostStage) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No lost stage',
-        detail: 'Configure a "Lost" stage in Deal Stages settings first.',
+        summary: this.translationService.translate('sales.toast.noLostStage', {}, 'sales'),
+        detail: this.translationService.translate('sales.toast.noLostStageDetail', {}, 'sales'),
       });
       return;
     }
@@ -180,8 +197,8 @@ export class SalesPipeline {
           this.actionLoadingId.set(null);
           this.messageService.add({
             severity: 'info',
-            summary: 'Deal Lost',
-            detail: 'Deal marked as lost.',
+            summary: this.translationService.translate('sales.toast.dealLost', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.dealLostDetail', {}, 'sales'),
           });
           this.allDeals.reload();
         },
@@ -189,8 +206,8 @@ export class SalesPipeline {
           this.actionLoadingId.set(null);
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to mark as lost.',
+            summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.markLostFailed', {}, 'sales'),
           });
         },
       });

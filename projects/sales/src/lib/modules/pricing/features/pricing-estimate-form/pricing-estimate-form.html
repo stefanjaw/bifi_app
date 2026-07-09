@@ -1,25 +1,31 @@
 <div class="p-6 ms-4 me-4">
-  <h1 class="text-2xl font-bold mb-6">New Estimate Request</h1>
+  <h1 class="text-2xl font-bold mb-6">
+    {{ 'sales.pricing.newEstimateTitle' | translate: {} : 'sales' }}
+  </h1>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
       <form [formGroup]="form" (ngSubmit)="onGenerate()" class="flex flex-col gap-6">
         <div class="bg-white border rounded-lg p-5">
-          <h3 class="text-base font-semibold mb-3">Product Request</h3>
+          <h3 class="text-base font-semibold mb-3">
+            {{ 'sales.pricing.productRequest' | translate: {} : 'sales' }}
+          </h3>
           <textarea
             pInputTextarea
             formControlName="requestText"
             rows="8"
             class="w-full"
-            placeholder="e.g. 10x Siemens 6ES7 214-1AG40 from Germany, 5x ABB ACS580 drives from Sweden"
+            [placeholder]="'sales.pricing.requestPlaceholder' | translate: {} : 'sales'"
           ></textarea>
           <p class="text-xs text-gray-500 mt-1">
-            Include product names, part numbers if known, quantities, and origin city/country.
+            {{ 'sales.pricing.requestHelp' | translate: {} : 'sales' }}
           </p>
         </div>
 
         <div class="bg-white border rounded-lg p-5">
-          <h3 class="text-base font-semibold mb-3">Shipping Method</h3>
+          <h3 class="text-base font-semibold mb-3">
+            {{ 'sales.pricing.shippingMethod' | translate: {} : 'sales' }}
+          </h3>
           <p-select
             formControlName="shippingMethod"
             [options]="shippingOptions"
@@ -30,17 +36,21 @@
         </div>
 
         <div class="bg-white border rounded-lg p-5">
-          <h3 class="text-base font-semibold mb-3">Pricing Controls</h3>
+          <h3 class="text-base font-semibold mb-3">
+            {{ 'sales.pricing.pricingControls' | translate: {} : 'sales' }}
+          </h3>
 
           <div class="flex items-center gap-2 mb-4">
             <p-checkbox formControlName="dutyFree" [binary]="true" inputId="dutyFree"></p-checkbox>
             <label for="dutyFree" class="text-sm text-gray-700">
-              Duty-Free Client (e.g. hospital, registered importer)
+              {{ 'sales.pricing.dutyFreeLabel' | translate: {} : 'sales' }}
             </label>
           </div>
 
           <div class="mb-4">
-            <label class="text-sm font-medium text-gray-700 mb-2 block">Pricing Method</label>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">
+              {{ 'sales.pricing.pricingMethod' | translate: {} : 'sales' }}
+            </label>
             <div class="flex flex-col gap-3">
               <div class="flex items-start gap-2">
                 <p-radioButton
@@ -50,9 +60,11 @@
                 ></p-radioButton>
                 <div>
                   <label for="methodMarkup" class="text-sm font-medium text-gray-800">
-                    Mark-up Factor
+                    {{ 'sales.pricing.markupFactor' | translate: {} : 'sales' }}
                   </label>
-                  <p class="text-xs text-gray-500">Customer price = Landed cost × Factor</p>
+                  <p class="text-xs text-gray-500">
+                    {{ 'sales.pricing.markupFormula' | translate: {} : 'sales' }}
+                  </p>
                 </div>
               </div>
               <div class="flex items-start gap-2">
@@ -63,10 +75,10 @@
                 ></p-radioButton>
                 <div>
                   <label for="methodMargin" class="text-sm font-medium text-gray-800">
-                    Gross Margin %
+                    {{ 'sales.pricing.grossMargin' | translate: {} : 'sales' }}
                   </label>
                   <p class="text-xs text-gray-500">
-                    Customer price = Landed cost ÷ (1 − margin/100)
+                    {{ 'sales.pricing.marginFormula' | translate: {} : 'sales' }}
                   </p>
                 </div>
               </div>
@@ -75,7 +87,11 @@
 
           <div class="max-w-xs">
             <label class="text-sm font-medium text-gray-700 mb-1 block">
-              {{ form.get('pricingMethod')?.value === 'markup' ? 'Markup Factor' : 'Margin %' }}
+              {{
+                form.get('pricingMethod')?.value === 'markup'
+                  ? ('sales.pricing.markupFactorLabel' | translate: {} : 'sales')
+                  : ('sales.pricing.marginPercentLabel' | translate: {} : 'sales')
+              }}
             </label>
             <input
               pInputText
@@ -88,13 +104,15 @@
         </div>
 
         <div class="bg-white border rounded-lg p-5">
-          <h3 class="text-base font-semibold mb-3">Special Instructions / Notes (optional)</h3>
+          <h3 class="text-base font-semibold mb-3">
+            {{ 'sales.pricing.specialInstructions' | translate: {} : 'sales' }}
+          </h3>
           <textarea
             pInputTextarea
             formControlName="specialInstructions"
             rows="3"
             class="w-full"
-            placeholder="Any additional instructions for this estimate"
+            [placeholder]="'sales.pricing.instructionsPlaceholder' | translate: {} : 'sales'"
           ></textarea>
         </div>
 
@@ -103,7 +121,7 @@
         }
 
         <p-button
-          label="Generate Estimate"
+          [label]="'sales.pricing.generateEstimate' | translate: {} : 'sales'"
           icon="pi pi-bolt"
           [loading]="isSubmitting()"
           [disabled]="form.invalid || isSubmitting()"

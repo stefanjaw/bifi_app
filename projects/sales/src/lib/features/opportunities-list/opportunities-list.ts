@@ -28,6 +28,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { SalesPipeline } from '../sales-pipeline/sales-pipeline';
 
 const VIEW_KEY = 'sales.opportunitiesView';
@@ -48,6 +49,7 @@ const VIEW_KEY = 'sales.opportunitiesView';
     HasPermission,
     ButtonsActions,
     SalesPipeline,
+    TranslatePipe,
   ],
   templateUrl: './opportunities-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +60,7 @@ export class OpportunitiesList {
   private crudCrmStages = inject(CrudCrmStages);
   private crudSalesOrders = inject(CrudSalesOrders);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   private router = inject(Router);
@@ -96,8 +99,8 @@ export class OpportunitiesList {
     if (!wonStage) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No won stage',
-        detail: 'Configure a "Won" stage in Deal Stages settings first.',
+        summary: this.translationService.translate('sales.toast.noWonStage', {}, 'sales'),
+        detail: this.translationService.translate('sales.toast.noWonStageDetail', {}, 'sales'),
       });
       return;
     }
@@ -127,8 +130,12 @@ export class OpportunitiesList {
                 this.markingId.set(null);
                 this.messageService.add({
                   severity: 'success',
-                  summary: 'Deal Won',
-                  detail: 'Deal marked as won and sales order created.',
+                  summary: this.translationService.translate('sales.toast.dealWon', {}, 'sales'),
+                  detail: this.translationService.translate(
+                    'sales.toast.dealWonDetail',
+                    {},
+                    'sales'
+                  ),
                 });
                 this.entries.reload();
               },
@@ -136,8 +143,12 @@ export class OpportunitiesList {
                 this.markingId.set(null);
                 this.messageService.add({
                   severity: 'error',
-                  summary: 'Error',
-                  detail: 'Failed to create sales order.',
+                  summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+                  detail: this.translationService.translate(
+                    'sales.toast.createOrderFailed',
+                    {},
+                    'sales'
+                  ),
                 });
               },
             });
@@ -145,8 +156,8 @@ export class OpportunitiesList {
         error: () => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update stage.',
+            summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.updateStageFailed', {}, 'sales'),
           });
           this.markingId.set(null);
         },
@@ -159,8 +170,8 @@ export class OpportunitiesList {
     if (!lostStage) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No lost stage',
-        detail: 'Configure a "Lost" stage in Deal Stages settings first.',
+        summary: this.translationService.translate('sales.toast.noLostStage', {}, 'sales'),
+        detail: this.translationService.translate('sales.toast.noLostStageDetail', {}, 'sales'),
       });
       return;
     }
@@ -173,8 +184,8 @@ export class OpportunitiesList {
           this.markingId.set(null);
           this.messageService.add({
             severity: 'info',
-            summary: 'Deal Lost',
-            detail: 'Deal marked as lost.',
+            summary: this.translationService.translate('sales.toast.dealLost', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.dealLostDetail', {}, 'sales'),
           });
           this.entries.reload();
         },
@@ -182,8 +193,8 @@ export class OpportunitiesList {
           this.markingId.set(null);
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update stage.',
+            summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+            detail: this.translationService.translate('sales.toast.updateStageFailed', {}, 'sales'),
           });
         },
       });

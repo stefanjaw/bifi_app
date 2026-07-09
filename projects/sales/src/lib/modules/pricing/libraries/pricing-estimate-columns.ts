@@ -4,34 +4,34 @@ import { pricingEstimate } from '../interfaces/pricing-estimate';
 export const pricingEstimateColumns: tableColumn<pricingEstimate>[] = [
   {
     field: 'number',
-    title: 'Estimate #',
+    title: 'sales.columns.estimateNumber',
     type: 'text',
   },
   {
     field: 'date',
-    title: 'Date',
+    title: 'sales.columns.date',
     type: 'date',
     sortable: true,
   },
   {
     field: 'requestText',
-    title: 'Request Summary',
+    title: 'sales.columns.requestSummary',
     type: 'text',
   },
   {
     field: 'totalCustomer',
-    title: 'Total Customer',
+    title: 'sales.columns.totalCustomer',
     type: 'currency',
     sortable: true,
   },
   {
     field: 'preparedBy',
-    title: 'Prepared By',
+    title: 'sales.columns.preparedBy',
     type: 'text',
   },
   {
     field: 'status',
-    title: 'Status',
+    title: 'sales.columns.status',
     type: 'text',
   },
 ];

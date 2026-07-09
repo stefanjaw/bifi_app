@@ -20,7 +20,7 @@ import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
 import { DecimalPipe } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -36,12 +36,12 @@ import { LineItemsTable } from '../../components/line-items-table/line-items-tab
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
 import { salesOrderStatus } from '../../interfaces/sales-order';
 import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
   imports: [
     DecimalPipe,
-    RouterLink,
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -52,6 +52,7 @@ import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
     ProgressBarModule,
     TooltipModule,
     LineItemsTable,
+    TranslatePipe,
   ],
   templateUrl: './sales-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +71,7 @@ export class SalesOrderDetail {
   private crudTaxes = inject(CrudTaxes);
   private crudDiscounts = inject(CrudDiscounts);
   private dynamicBreadcrumb = inject(DynamicBreadcrumbService);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -182,38 +184,62 @@ export class SalesOrderDetail {
     return calculateTotalsPerLine(items, lineTaxIds, allTaxes, discountedPrices);
   });
 
-  statusOptions = [
-    { label: 'Draft', value: 'draft' },
-    { label: 'Quote', value: 'quote' },
-    { label: 'Confirmed', value: 'confirmed' },
-    { label: 'Shipped', value: 'shipped' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' },
-  ];
+  statusOptions = computed(() => [
+    {
+      label: this.translationService.translate('sales.orderStatus.draft', {}, 'sales'),
+      value: 'draft',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.quote', {}, 'sales'),
+      value: 'quote',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.confirmed', {}, 'sales'),
+      value: 'confirmed',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.shipped', {}, 'sales'),
+      value: 'shipped',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.completed', {}, 'sales'),
+      value: 'completed',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.cancelled', {}, 'sales'),
+      value: 'cancelled',
+    },
+  ]);
 
-  readonly today = new Date().toLocaleDateString('en-CA');
+  activeLanguage = this.translationService.activeLanguage;
 
-  private readonly STATUS_LABELS: Record<string, string> = {
-    draft: 'Draft',
-    quote: 'Quote',
-    confirmed: 'Confirmed',
-    shipped: 'Shipped',
-    completed: 'Completed',
-    cancelled: 'Cancelled',
-  };
+  readonly today = computed(() => {
+    const locale = this.activeLanguage();
+    return new Date().toLocaleDateString(locale);
+  });
 
-  statusLabel = computed(() => this.STATUS_LABELS[this.entry()?.status ?? ''] ?? '');
+  private statusLabels = computed<Record<string, string>>(() => ({
+    draft: this.translationService.translate('sales.orderStatus.draft', {}, 'sales'),
+    quote: this.translationService.translate('sales.orderStatus.quote', {}, 'sales'),
+    confirmed: this.translationService.translate('sales.orderStatus.confirmed', {}, 'sales'),
+    shipped: this.translationService.translate('sales.orderStatus.shipped', {}, 'sales'),
+    completed: this.translationService.translate('sales.orderStatus.completed', {}, 'sales'),
+    cancelled: this.translationService.translate('sales.orderStatus.cancelled', {}, 'sales'),
+  }));
+
+  statusLabel = computed(() => this.statusLabels()[this.entry()?.status ?? ''] ?? '');
 
   statusSteps = computed(() => {
     const status = this.entry()?.status ?? 'draft';
     const isCancelled = status === 'cancelled';
+    const labels = this.statusLabels();
 
     const steps = [
-      { key: 'draft', label: 'Draft' },
-      { key: 'quote', label: 'Quote' },
-      { key: 'confirmed', label: 'Confirmed' },
-      { key: 'shipped', label: 'Shipped' },
-      { key: 'completed', label: 'Completed' },
+      { key: 'draft', label: labels['draft'] },
+      { key: 'quote', label: labels['quote'] },
+      { key: 'confirmed', label: labels['confirmed'] },
+      { key: 'shipped', label: labels['shipped'] },
+      { key: 'completed', label: labels['completed'] },
     ];
 
     const activeIndex = isCancelled ? -1 : steps.findIndex(s => s.key === status);

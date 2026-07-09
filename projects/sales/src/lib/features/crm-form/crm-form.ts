@@ -25,6 +25,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-crm-form',
@@ -37,6 +38,7 @@ import { CrudCurrencies } from '@avalantec/base-app/currency';
     SelectModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './crm-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

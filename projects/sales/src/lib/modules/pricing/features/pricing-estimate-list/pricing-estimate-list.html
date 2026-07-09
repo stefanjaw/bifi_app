@@ -1,8 +1,10 @@
-<h1 class="text-2xl font-bold mb-4">Pricing History</h1>
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'sales.pricing.historyTitle' | translate: {} : 'sales' }}
+</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Estimate"
+    [label]="'sales.pricing.newEstimate' | translate: {} : 'sales'"
     severity="secondary"
     icon="pi pi-plus"
     (onClick)="navigateToNew()"
@@ -11,7 +13,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by estimate number or preparer"
+  [label]="'sales.pricing.searchPlaceholder' | translate: {} : 'sales'"
   [searchFilters]="filters"
 ></bifi-app-search-bar>
 
@@ -20,5 +22,6 @@
   [columns]="columns"
   [data]="entries"
   [onClickRow]="onClickRow"
+  [scope]="'sales'"
   clickRowPermission="pricing-estimates/read:view"
 ></bifi-app-table-layout>

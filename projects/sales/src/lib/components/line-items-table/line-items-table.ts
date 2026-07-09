@@ -20,6 +20,7 @@ import { product } from '@avalantec/inventory';
 import { SalesOrderForm } from '../../services/sales-order-form';
 import { ColWidthManager } from '@avalantec/base-app/core';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 const DEFAULT_WIDTHS: Record<string, number> = {
   sku: 96,
@@ -47,6 +48,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
+    TranslatePipe,
   ],
   templateUrl: './line-items-table.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

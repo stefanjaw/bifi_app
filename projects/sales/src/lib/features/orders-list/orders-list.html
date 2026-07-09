@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Sales Orders</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'sales.orders.title' | translate: {} : 'sales' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Order"
+    [label]="'sales.orders.new' | translate: {} : 'sales'"
     severity="secondary"
     icon="pi pi-plus"
     (onClick)="navigateToNew()"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by deal, company or contact"
+  [label]="'sales.orders.searchPlaceholder' | translate: {} : 'sales'"
   [searchFilters]="salesOrderFilters"
 ></bifi-app-search-bar>
 
@@ -19,6 +19,7 @@
   [infiniteScroll]="true"
   [columns]="salesOrderColumns"
   [data]="entries"
+  [scope]="'sales'"
   [onClickRow]="onClickRow"
   clickRowPermission="sales/orders/update:view"
 >

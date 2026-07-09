@@ -23,7 +23,7 @@ import {
 } from '../../services/pricing-settings-form';
 import { pricingSettings, PricingFolder, IndexingStatus } from '../../interfaces/pricing-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-pricing-settings-form',
@@ -36,6 +36,7 @@ import { LocaleDatePipe } from '@avalantec/base-app/i18n';
     InputTextModule,
     ProgressBarModule,
     LocaleDatePipe,
+    TranslatePipe,
   ],
   templateUrl: './pricing-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

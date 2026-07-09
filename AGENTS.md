@@ -341,9 +341,10 @@ Translation entries live in `Catalog/translations/` as JSON arrays.
 | `base-app-<module>-translations.json` | `base-app-users-translations.json`, `base-app-resource-translations.json` |
 | `<lib-name>-translations.json` | `asset-roster-translations.json`, `website-translations.json` |
 
-Most files serve one scope (1:1 with the module). Two files are **cross-cutting** and contain entries for multiple scopes:
+Most files serve one scope (1:1 with the module). One file is **cross-cutting** and contains entries for multiple scopes:
 - `base-app-columns-filters-translations.json` — column headers and filter labels
-- `base-app-menu-translations.json` — sidebar/navigation labels
+
+**Note:** Menu/navigation labels were previously in `base-app-menu-translations.json` but have been distributed to their respective scope-specific files (e.g. `base-app-routing-translations.json` for `home`, `settings`, `welcomeTitle`; `base-app-companies-translations.json` for `companies`, etc.).
 
 **Entry structure:**
 

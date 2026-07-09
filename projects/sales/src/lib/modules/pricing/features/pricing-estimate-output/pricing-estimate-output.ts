@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DecimalPipe, CurrencyPipe } from '@angular/common';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TableModule } from 'primeng/table';
@@ -26,6 +26,7 @@ import { pricingEstimate, pricingEstimateLineItem } from '../../interfaces/prici
     DecimalPipe,
     CurrencyPipe,
     LocaleDatePipe,
+    TranslatePipe,
     ButtonModule,
     ToggleSwitchModule,
     TableModule,

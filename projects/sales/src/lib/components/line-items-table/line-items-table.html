@@ -1,6 +1,8 @@
 <div class="flex flex-col gap-4">
   <div class="flex items-center justify-between">
-    <h3 class="text-lg font-semibold">Order Items</h3>
+    <h3 class="text-lg font-semibold">
+      {{ 'sales.lineItems.orderItems' | translate: {} : 'sales' }}
+    </h3>
   </div>
 
   <div class="overflow-x-auto">
@@ -34,35 +36,35 @@
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['sku']"
           >
-            SKU
+            {{ 'sales.lineItems.sku' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'sku')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['description']"
           >
-            Description
+            {{ 'sales.lineItems.description' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'description')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['quantity']"
           >
-            Qty
+            {{ 'sales.lineItems.qty' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'quantity')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['uom']"
           >
-            UoM
+            {{ 'sales.lineItems.uom' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'uom')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['unitPrice']"
           >
-            Unit Price
+            {{ 'sales.lineItems.unitPrice' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'unitPrice')"></div>
           </th>
           @if (discountOptions().length > 0) {
@@ -70,7 +72,7 @@
               class="text-left p-3 border-b border-r border-gray-200 relative"
               [style.width.px]="colWidths()['discount']"
             >
-              Discount
+              {{ 'sales.lineItems.discount' | translate: {} : 'sales' }}
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'discount')"></div>
             </th>
           }
@@ -79,7 +81,7 @@
               class="text-left p-3 border-b border-r border-gray-200 relative"
               [style.width.px]="colWidths()['taxes']"
             >
-              Taxes
+              {{ 'sales.lineItems.taxes' | translate: {} : 'sales' }}
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'taxes')"></div>
             </th>
           }
@@ -87,7 +89,7 @@
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['total']"
           >
-            Total
+            {{ 'sales.lineItems.total' | translate: {} : 'sales' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'total')"></div>
           </th>
           @if (!readonly()) {
@@ -114,7 +116,7 @@
                 (click)="addItem()"
               >
                 <span class="pi pi-plus text-xs"></span>
-                Add Item
+                {{ 'sales.lineItems.addItem' | translate: {} : 'sales' }}
               </button>
             </td>
           </tr>
@@ -133,7 +135,7 @@
                   [options]="productOptions()"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select"
+                  [placeholder]="'sales.lineItems.select' | translate: {} : 'sales'"
                   [filter]="true"
                   filterBy="name,sku"
                   styleClass="w-full"
@@ -157,7 +159,7 @@
                 <input
                   pInputText
                   formControlName="description"
-                  placeholder="Description"
+                  [placeholder]="'sales.lineItems.description' | translate: {} : 'sales'"
                   class="w-full"
                 />
               } @else {
@@ -182,9 +184,12 @@
                       isOverStock($index) ? 'block mt-1 text-amber-500' : 'block mt-1 text-gray-400'
                     "
                   >
-                    Available: {{ getAvailableStock($index) }}
+                    {{
+                      'sales.lineItems.available'
+                        | translate: { stock: getAvailableStock($index) } : 'sales'
+                    }}
                     @if (isOverStock($index)) {
-                      &mdash; Exceeds available stock
+                      {{ 'sales.lineItems.exceedsStock' | translate: {} : 'sales' }}
                     }
                   </small>
                 }
@@ -245,7 +250,7 @@
                     [options]="taxOptions()"
                     optionLabel="name"
                     optionValue="_id"
-                    placeholder="Taxes (optional)"
+                    [placeholder]="'sales.lineItems.taxesOptional' | translate: {} : 'sales'"
                     [filter]="true"
                     filterBy="name"
                     display="chip"
@@ -289,7 +294,8 @@
               "
               class="p-4 text-center text-gray-500"
             >
-              No items yet.{{ readonly() ? '' : ' Use the button above to add a line.' }}
+              {{ 'sales.lineItems.noItems' | translate: {} : 'sales'
+              }}{{ readonly() ? '' : ' ' + ('sales.lineItems.addLine' | translate: {} : 'sales') }}
             </td>
           </tr>
         }
@@ -313,7 +319,7 @@
                 (click)="addItem()"
               >
                 <span class="pi pi-plus text-xs"></span>
-                Add Item
+                {{ 'sales.lineItems.addItem' | translate: {} : 'sales' }}
               </button>
             </td>
           </tr>

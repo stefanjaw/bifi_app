@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="Pricing Configuration"
+  [title]="'sales.pricing.settingsTitle' | translate: {} : 'sales'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -17,20 +17,26 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Document Sequences" id="document-sequences" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'sales.section.documentSequences' | translate: {} : 'sales'"
+        id="document-sequences"
+        [ordinal]="1"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Select which sequence is used to generate estimate numbers (e.g. EST-2025-0001).
+          {{ 'sales.pricing.estimateSequenceDescription' | translate: {} : 'sales' }}
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Estimate Sequence</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.estimateSequence' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="estimateSequence"
               [options]="sequenceOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a sequence"
+              [placeholder]="'sales.pricing.selectSequence' | translate: {} : 'sales'"
               [showClear]="true"
               class="w-full"
             ></p-select>
@@ -39,14 +45,20 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Pricing Defaults" id="pricing-defaults" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'sales.section.pricingDefaults' | translate: {} : 'sales'"
+        id="pricing-defaults"
+        [ordinal]="2"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Configure default values for new pricing estimates.
+          {{ 'sales.pricing.pricingDefaultsDescription' | translate: {} : 'sales' }}
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Pricing Method</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.defaultPricingMethod' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="defaultPricingMethod"
               [options]="pricingMethodOptions"
@@ -58,7 +70,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Shipping Method</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.defaultShippingMethod' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="defaultShippingMethod"
               [options]="shippingMethodOptions"
@@ -70,7 +84,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Wharfage / Bank Fee %</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.wharfageFee' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="defaultWharfageBankFeePct"
@@ -82,7 +98,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Markup Factor</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.defaultMarkupFactor' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="defaultMarkupFactor"
@@ -95,7 +113,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Margin %</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.pricing.defaultMargin' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="defaultMargin"
@@ -108,11 +128,13 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Drive Folder Mappings" id="folder-mappings" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'sales.section.driveFolderMappings' | translate: {} : 'sales'"
+        id="folder-mappings"
+        [ordinal]="3"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Map Google Drive folders to their data type. Pricing folders contain product catalogs,
-          freight folders contain shipping rates, and the config folder stores generated master
-          CSVs.
+          {{ 'sales.pricing.folderMappingDescription' | translate: {} : 'sales' }}
         </p>
 
         <div class="flex flex-col gap-3 mb-4">
@@ -133,7 +155,7 @@
                 [ngModel]="folder.folderId"
                 (ngModelChange)="updateFolderId($index, $event)"
                 [ngModelOptions]="{ standalone: true }"
-                placeholder="Google Drive Folder ID"
+                [placeholder]="'sales.pricing.folderIdPlaceholder' | translate: {} : 'sales'"
                 class="flex-1"
               />
 
@@ -142,7 +164,7 @@
                 [ngModel]="folder.label"
                 (ngModelChange)="updateFolderLabel($index, $event)"
                 [ngModelOptions]="{ standalone: true }"
-                placeholder="Label (optional)"
+                [placeholder]="'sales.pricing.labelPlaceholder' | translate: {} : 'sales'"
                 class="w-40"
               />
 
@@ -157,7 +179,7 @@
         </div>
 
         <p-button
-          label="Add Folder"
+          [label]="'sales.pricing.addFolder' | translate: {} : 'sales'"
           icon="pi pi-plus"
           severity="secondary"
           [outlined]="true"
@@ -165,39 +187,50 @@
         ></p-button>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Indexing" id="indexing" [ordinal]="4">
+      <bifi-app-form-section
+        [title]="'sales.section.indexing' | translate: {} : 'sales'"
+        id="indexing"
+        [ordinal]="4"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Index files from your mapped Google Drive folders into the local cache. Incremental
-          indexing only processes files modified since the last run.
+          {{ 'sales.pricing.indexingDescription' | translate: {} : 'sales' }}
         </p>
 
         @if (indexingStatus(); as status) {
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div class="bg-white rounded-lg border p-3">
-              <p class="text-xs text-gray-500">Catalog Records</p>
+              <p class="text-xs text-gray-500">
+                {{ 'sales.pricing.catalogRecords' | translate: {} : 'sales' }}
+              </p>
               <p class="text-lg font-semibold">{{ status.catalogRecords }}</p>
             </div>
             <div class="bg-white rounded-lg border p-3">
-              <p class="text-xs text-gray-500">Freight Records</p>
+              <p class="text-xs text-gray-500">
+                {{ 'sales.pricing.freightRecords' | translate: {} : 'sales' }}
+              </p>
               <p class="text-lg font-semibold">{{ status.freightRecords }}</p>
             </div>
             <div class="bg-white rounded-lg border p-3">
-              <p class="text-xs text-gray-500">Catalog Last Indexed</p>
+              <p class="text-xs text-gray-500">
+                {{ 'sales.pricing.catalogLastIndexed' | translate: {} : 'sales' }}
+              </p>
               <p class="text-sm">
                 {{
                   status.catalogLastIndexed
                     ? (status.catalogLastIndexed | localeDate: { dateStyle: 'short' })
-                    : 'Never'
+                    : ('sales.pricing.never' | translate: {} : 'sales')
                 }}
               </p>
             </div>
             <div class="bg-white rounded-lg border p-3">
-              <p class="text-xs text-gray-500">Freight Last Indexed</p>
+              <p class="text-xs text-gray-500">
+                {{ 'sales.pricing.freightLastIndexed' | translate: {} : 'sales' }}
+              </p>
               <p class="text-sm">
                 {{
                   status.freightLastIndexed
                     ? (status.freightLastIndexed | localeDate: { dateStyle: 'short' })
-                    : 'Never'
+                    : ('sales.pricing.never' | translate: {} : 'sales')
                 }}
               </p>
             </div>
@@ -212,13 +245,13 @@
 
         <div class="flex gap-3 flex-wrap">
           <p-button
-            label="Index All"
+            [label]="'sales.pricing.indexAll' | translate: {} : 'sales'"
             icon="pi pi-sync"
             (onClick)="triggerIndex('all')"
             [loading]="isIndexingLoading()"
           ></p-button>
           <p-button
-            label="Index Pricing Only"
+            [label]="'sales.pricing.indexPricingOnly' | translate: {} : 'sales'"
             icon="pi pi-file"
             severity="secondary"
             [outlined]="true"
@@ -226,7 +259,7 @@
             [loading]="isIndexingLoading()"
           ></p-button>
           <p-button
-            label="Index Freight Only"
+            [label]="'sales.pricing.indexFreightOnly' | translate: {} : 'sales'"
             icon="pi pi-truck"
             severity="secondary"
             [outlined]="true"
@@ -234,7 +267,7 @@
             [loading]="isIndexingLoading()"
           ></p-button>
           <p-button
-            label="Force Full Reindex"
+            [label]="'sales.pricing.forceFullReindex' | translate: {} : 'sales'"
             icon="pi pi-refresh"
             severity="warn"
             [outlined]="true"

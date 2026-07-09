@@ -17,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudSalesSettings } from '../../services/crud-sales-settings';
 import { SalesSettingsForm, SalesSettingsFormModel } from '../../services/sales-settings-form';
 import { salesSettings } from '../../interfaces/sales-settings';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
 
 @Component({
@@ -28,6 +29,7 @@ import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
     ButtonModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './sales-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

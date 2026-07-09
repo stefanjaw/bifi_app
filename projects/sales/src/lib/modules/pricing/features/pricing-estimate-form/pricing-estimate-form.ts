@@ -20,6 +20,7 @@ import { Subject, EMPTY, debounceTime, distinctUntilChanged, switchMap, catchErr
 import { CrudPricingEstimate } from '../../services/crud-pricing-estimate';
 import { tokenEstimation } from '../../interfaces/pricing-estimate';
 import { TokenEstimatorCard } from '../token-estimator-card/token-estimator-card';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-pricing-estimate-form',
@@ -33,6 +34,7 @@ import { TokenEstimatorCard } from '../token-estimator-card/token-estimator-card
     RadioButtonModule,
     ProgressBarModule,
     TokenEstimatorCard,
+    TranslatePipe,
   ],
   templateUrl: './pricing-estimate-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
