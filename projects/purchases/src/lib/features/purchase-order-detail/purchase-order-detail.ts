@@ -39,6 +39,7 @@ import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudProducts } from '@avalantec/inventory';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-order-detail',
@@ -56,6 +57,8 @@ import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calcula
     LineItemsTable,
     SelectContactDialog,
     HasPermission,
+    TranslatePipe,
+    LocaleDatePipe,
   ],
   templateUrl: './purchase-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +75,7 @@ export class PurchaseOrderDetail {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -149,26 +153,32 @@ export class PurchaseOrderDetail {
   form = this.formService.form;
 
   statusOptions = [
-    { label: 'Draft', value: 'draft' },
-    { label: 'Confirmed', value: 'confirmed' },
-    { label: 'Sent', value: 'sent' },
-    { label: 'Partially Received', value: 'partially_received' },
-    { label: 'Received', value: 'received' },
-    { label: 'Cancelled', value: 'cancelled' },
+    { label: this.translationService.translate('status.draft', {}, 'purchases'), value: 'draft' },
+    {
+      label: this.translationService.translate('status.confirmed', {}, 'purchases'),
+      value: 'confirmed',
+    },
+    { label: this.translationService.translate('status.sent', {}, 'purchases'), value: 'sent' },
+    {
+      label: this.translationService.translate('status.partiallyReceived', {}, 'purchases'),
+      value: 'partially_received',
+    },
+    {
+      label: this.translationService.translate('status.received', {}, 'purchases'),
+      value: 'received',
+    },
+    {
+      label: this.translationService.translate('status.cancelled', {}, 'purchases'),
+      value: 'cancelled',
+    },
   ];
 
-  readonly today = new Date().toLocaleDateString('en-CA');
+  readonly today = new Date();
 
-  private readonly STATUS_LABELS: Record<string, string> = {
-    draft: 'Draft',
-    confirmed: 'Confirmed',
-    sent: 'Sent',
-    partially_received: 'Partially Received',
-    received: 'Received',
-    cancelled: 'Cancelled',
-  };
-
-  statusLabel = computed(() => this.STATUS_LABELS[this.entry()?.status ?? ''] ?? '');
+  statusLabel = computed(() => {
+    const status = this.entry()?.status ?? '';
+    return status ? this.translationService.translate('status.' + status, {}, 'purchases') : '';
+  });
 
   statusSteps = computed(() => {
     const status = this.entry()?.status ?? 'draft';
@@ -177,10 +187,20 @@ export class PurchaseOrderDetail {
     const normalizedStatus = isPartiallyReceived ? 'received' : status;
 
     const steps = [
-      { key: 'draft', label: 'Draft' },
-      { key: 'confirmed', label: 'Confirmed' },
-      { key: 'sent', label: 'Sent' },
-      { key: 'received', label: isPartiallyReceived ? 'Partially Received' : 'Received' },
+      { key: 'draft', label: this.translationService.translate('status.draft', {}, 'purchases') },
+      {
+        key: 'confirmed',
+        label: this.translationService.translate('status.confirmed', {}, 'purchases'),
+      },
+      { key: 'sent', label: this.translationService.translate('status.sent', {}, 'purchases') },
+      {
+        key: 'received',
+        label: this.translationService.translate(
+          isPartiallyReceived ? 'status.partiallyReceived' : 'status.received',
+          {},
+          'purchases'
+        ),
+      },
     ];
 
     const activeIndex = isCancelled ? -1 : steps.findIndex(s => s.key === normalizedStatus);

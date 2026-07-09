@@ -10,7 +10,7 @@
         <!-- Compact action strip: Back + Export PDF + Save -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
           <p-button
-            label="Back"
+            [label]="'buttons.back' | translate: {} : 'purchases'"
             icon="pi pi-arrow-left"
             [text]="true"
             size="small"
@@ -23,7 +23,7 @@
               [text]="true"
               size="small"
               type="button"
-              pTooltip="Export as PDF"
+              [pTooltip]="'buttons.exportPdf' | translate: {} : 'purchases'"
               tooltipPosition="bottom"
               [disabled]="isPdfLoading()"
               (onClick)="exportPdf()"
@@ -31,7 +31,10 @@
             ></p-button>
             @if (form.dirty) {
               <p-button
-                [label]="isSubmitLoading() ? 'Saving...' : 'Save'"
+                [label]="
+                  (isSubmitLoading() ? 'buttons.saving' : 'buttons.save')
+                    | translate: {} : 'purchases'
+                "
                 [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
                 size="small"
                 type="submit"
@@ -90,7 +93,9 @@
                   {{ step.label }}
                 </span>
                 @if (step.active) {
-                  <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
+                  <span class="text-[10px] text-gray-400 mt-0.5">
+                    {{ today | localeDate: { dateStyle: 'short' } }}
+                  </span>
                 }
               </div>
               @if (!last) {
@@ -109,9 +114,11 @@
                   <i class="pi pi-times text-red-500" style="font-size: 10px"></i>
                 </div>
                 <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">
-                  Cancelled
+                  {{ 'status.cancelled' | translate: {} : 'purchases' }}
                 </span>
-                <span class="text-[10px] text-gray-400 mt-0.5">{{ today }}</span>
+                <span class="text-[10px] text-gray-400 mt-0.5">
+                  {{ today | localeDate: { dateStyle: 'short' } }}
+                </span>
               </div>
             }
           </div>
@@ -121,7 +128,7 @@
             @switch (entry()!.status) {
               @case ('draft') {
                 <p-button
-                  label="Confirm Order"
+                  [label]="'buttons.confirmOrder' | translate: {} : 'purchases'"
                   icon="pi pi-check"
                   (onClick)="markAsConfirmed()"
                   *bifiAppHasPermission="'purchases/orders:update:model'"
@@ -129,7 +136,7 @@
               }
               @case ('confirmed') {
                 <p-button
-                  label="Mark as Sent"
+                  [label]="'buttons.markAsSent' | translate: {} : 'purchases'"
                   icon="pi pi-send"
                   (onClick)="markAsSent()"
                   *bifiAppHasPermission="'purchases/orders:update:model'"
@@ -138,14 +145,14 @@
               @case ('sent') {
                 <div class="flex gap-2">
                   <p-button
-                    label="Mark as Received"
+                    [label]="'buttons.markAsReceived' | translate: {} : 'purchases'"
                     icon="pi pi-check"
                     severity="success"
                     (onClick)="markAsReceived()"
                     *bifiAppHasPermission="'purchases/orders:update:model'"
                   ></p-button>
                   <p-button
-                    label="Partial Receipt"
+                    [label]="'buttons.partialReceipt' | translate: {} : 'purchases'"
                     icon="pi pi-circle-fill"
                     severity="warn"
                     (onClick)="markAsPartiallyReceived()"
@@ -155,7 +162,7 @@
               }
               @case ('partially_received') {
                 <p-button
-                  label="Mark as Received"
+                  [label]="'buttons.markAsReceived' | translate: {} : 'purchases'"
                   icon="pi pi-check"
                   severity="success"
                   (onClick)="markAsReceived()"
@@ -165,7 +172,7 @@
             }
             @if (entry()!.status !== 'received' && entry()!.status !== 'cancelled') {
               <p-button
-                label="Cancel Order"
+                [label]="'buttons.cancelOrder' | translate: {} : 'purchases'"
                 icon="pi pi-times"
                 severity="danger"
                 [outlined]="true"
@@ -181,7 +188,7 @@
     @if (!isUpdate()) {
       <div class="flex items-center justify-between">
         <p-button
-          label="Back"
+          [label]="'buttons.back' | translate: {} : 'purchases'"
           icon="pi pi-arrow-left"
           [text]="true"
           size="small"
@@ -190,7 +197,9 @@
         ></p-button>
         @if (form.dirty) {
           <p-button
-            [label]="isSubmitLoading() ? 'Saving...' : 'Save'"
+            [label]="
+              (isSubmitLoading() ? 'buttons.saving' : 'buttons.save') | translate: {} : 'purchases'
+            "
             [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
             size="small"
             type="submit"
@@ -202,23 +211,29 @@
     }
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.generalInfo' | translate: {} : 'purchases'"
+        id="order-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Supplier *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.supplier' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contactOptions()"
               optionLabel="fullName"
               optionValue="_id"
-              placeholder="Select a supplier"
+              [placeholder]="'placeholders.selectSupplier' | translate: {} : 'purchases'"
               [filter]="true"
               filterBy="fullName,email,phoneNumber"
             >
               <ng-template #footer>
                 <div class="p-2 border-t border-gray-200">
                   <p-button
-                    label="Show More"
+                    [label]="'buttons.showMore' | translate: {} : 'purchases'"
                     icon="pi pi-search"
                     [text]="true"
                     size="small"
@@ -232,47 +247,55 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Status</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.status' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="status"
               [options]="statusOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select a status"
+              [placeholder]="'placeholders.selectStatus' | translate: {} : 'purchases'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Pipeline Stage</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.pipelineStage' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="stageId"
               [options]="stageOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="None"
+              [placeholder]="'placeholders.none' | translate: {} : 'purchases'"
               [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Issue Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.issueDate' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="issueDate"
               dateFormat="mm/dd/yy"
-              placeholder="Select date"
+              [placeholder]="'placeholders.selectDate' | translate: {} : 'purchases'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Expected Delivery Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.generalInfo.expectedDelivery' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="expectedDeliveryDate"
               dateFormat="mm/dd/yy"
-              placeholder="Select date"
+              [placeholder]="'placeholders.selectDate' | translate: {} : 'purchases'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
@@ -280,7 +303,11 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.orderItems' | translate: {} : 'purchases'"
+        id="order-items"
+        [ordinal]="2"
+      >
         <bifi-app-line-items-table
           [items]="lineItems()"
           (itemsChange)="onLineItemsChange($event)"
@@ -293,7 +320,7 @@
           <div class="w-full max-w-sm space-y-3">
             <div class="border-t pt-3 space-y-2">
               <div class="flex justify-between text-sm text-gray-600">
-                <span>Subtotal</span>
+                <span>{{ 'form.orderItems.subtotal' | translate: {} : 'purchases' }}</span>
                 <span class="font-medium">{{ totalsPreview().subtotal | number: '1.2-2' }}</span>
               </div>
               @for (appliedTax of totalsPreview().appliedTaxes; track appliedTax.taxId) {
@@ -304,12 +331,12 @@
               }
               @if (totalsPreview().taxTotal > 0) {
                 <div class="flex justify-between text-sm text-gray-500 border-t pt-1">
-                  <span>Tax Total</span>
+                  <span>{{ 'form.orderItems.taxTotal' | translate: {} : 'purchases' }}</span>
                   <span>{{ totalsPreview().taxTotal | number: '1.2-2' }}</span>
                 </div>
               }
               <div class="flex justify-between font-semibold text-base border-t pt-1">
-                <span>Grand Total</span>
+                <span>{{ 'form.orderItems.grandTotal' | translate: {} : 'purchases' }}</span>
                 <span>{{ totalsPreview().grandTotal | number: '1.2-2' }}</span>
               </div>
             </div>
@@ -317,15 +344,21 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'form.notes' | translate: {} : 'purchases'"
+        id="order-notes"
+        [ordinal]="3"
+      >
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Notes</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.notes' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <textarea
               pTextarea
               formControlName="notes"
               rows="4"
-              placeholder="Internal notes..."
+              [placeholder]="'placeholders.notes' | translate: {} : 'purchases'"
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>

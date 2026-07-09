@@ -14,27 +14,31 @@ export function initializePurchases() {
       item: {
         icon: PrimeIcons.SHOPPING_CART,
         routerLink: ['/purchases'],
-        label: 'Purchases',
+        label: 'nav.purchases',
         resource: 'purchases/menu',
+        scope: 'purchases',
         showInMainMenu: true,
         items: [
           {
             icon: PrimeIcons.USERS,
             routerLink: ['/purchases/suppliers'],
-            label: 'Suppliers',
+            label: 'nav.suppliers',
             resource: 'purchases/suppliers/menu',
+            scope: 'purchases',
           },
           {
             icon: PrimeIcons.FILE_EDIT,
             routerLink: ['/purchases/orders'],
-            label: 'Purchase Orders',
+            label: 'nav.purchaseOrders',
             resource: 'purchases/orders/menu',
+            scope: 'purchases',
           },
           {
             icon: PrimeIcons.TH_LARGE,
             routerLink: ['/purchases/pipeline'],
-            label: 'Pipeline',
+            label: 'nav.pipeline',
             resource: 'purchases/pipeline/menu',
+            scope: 'purchases',
           },
         ],
       },
@@ -42,20 +46,23 @@ export function initializePurchases() {
     {
       item: {
         icon: PrimeIcons.COG,
-        label: 'Purchases',
+        label: 'nav.purchases',
         resource: 'purchases/settings/menu',
+        scope: 'purchases',
         items: [
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/purchases/purchase-stages'],
-            label: 'Purchase Stages',
+            label: 'nav.purchaseStages',
             resource: 'purchase-stages/menu',
+            scope: 'purchases',
           },
           {
             icon: PrimeIcons.COG,
             routerLink: ['/settings/purchases/configuration'],
-            label: 'Configuration',
+            label: 'nav.configuration',
             resource: 'purchases/configuration/menu',
+            scope: 'purchases',
           },
         ],
       },

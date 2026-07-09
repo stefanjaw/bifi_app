@@ -21,6 +21,7 @@ import {
 } from '../../services/purchase-settings-form';
 import { purchaseSettings } from '../../interfaces/purchase-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-settings-form',
@@ -31,6 +32,7 @@ import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
     ButtonModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './purchase-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

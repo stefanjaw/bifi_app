@@ -16,13 +16,14 @@ import { CurrencyPipe } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 import { injectAuthService } from '@avalantec/base-app/auth';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-pipeline',
   host: {
     class: 'flex flex-col h-full',
   },
-  imports: [CurrencyPipe, ProgressBarModule, TagModule],
+  imports: [CurrencyPipe, ProgressBarModule, TagModule, TranslatePipe],
   templateUrl: './purchase-pipeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,6 +33,7 @@ export class PurchasePipeline {
   private router = inject(Router);
   private auth = injectAuthService();
   private destroy$ = inject(DestroyRef);
+  private translationService = inject(TranslationService);
 
   ordersResource = this.crudPurchaseOrders.get({ getInactive: null });
   stagesResource = this.crudPurchaseStages.get({});
@@ -72,14 +74,7 @@ export class PurchasePipeline {
   }
 
   getStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      draft: 'Draft',
-      sent: 'Sent',
-      partially_received: 'Partial',
-      received: 'Received',
-      cancelled: 'Cancelled',
-    };
-    return map[status] ?? status;
+    return this.translationService.translate('status.' + status, {}, 'purchases');
   }
 
   onDragStart(event: DragEvent, order: purchaseOrder) {

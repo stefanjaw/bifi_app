@@ -1,11 +1,13 @@
 <p-dialog
-  header="Select Contact"
+  [header]="'selectContact.title' | translate: {} : 'purchases'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-lg"
 >
   <bifi-app-form-field class="mb-8 min-h-40">
-    <bifi-app-form-label>Contact</bifi-app-form-label>
+    <bifi-app-form-label>
+      {{ 'selectContact.contact' | translate: {} : 'purchases' }}
+    </bifi-app-form-label>
     <p-select
       appendTo="body"
       [formControl]="contact"
@@ -14,7 +16,7 @@
       optionValue="_id"
       [filter]="true"
       filterBy="fullName,email,phoneNumber"
-      placeholder="Search by name, email or phone..."
+      [placeholder]="'selectContact.placeholder' | translate: {} : 'purchases'"
     ></p-select>
     <bifi-app-form-error></bifi-app-form-error>
   </bifi-app-form-field>
@@ -24,8 +26,8 @@
     [formDisabled]="!contact.value"
     (submitClicked)="handleSubmit()"
     (cancelClicked)="closeDialog()"
-    cancelLabel="Cancel"
-    saveLabel="Select"
+    [cancelLabel]="'buttons.cancel' | translate: {} : 'purchases'"
+    [saveLabel]="'buttons.select' | translate: {} : 'purchases'"
     [formChanged]="true"
   ></bifi-app-form-actions>
 </p-dialog>

@@ -8,7 +8,7 @@ import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CurrencyPipe } from '@angular/common';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { purchaseOrder } from '../../interfaces/purchase-order';
 import { contact } from '@avalantec/base-app/interfaces';
 
@@ -22,6 +22,7 @@ import { contact } from '@avalantec/base-app/interfaces';
     ProgressBarModule,
     CurrencyPipe,
     LocaleDatePipe,
+    TranslatePipe,
     HasPermission,
   ],
   templateUrl: './supplier-detail.html',
@@ -30,6 +31,7 @@ import { contact } from '@avalantec/base-app/interfaces';
 export class SupplierDetail {
   private crudContacts = inject(CrudContacts);
   private crudPurchaseOrders = inject(CrudPurchaseOrders);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -76,13 +78,6 @@ export class SupplierDetail {
   }
 
   getStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      draft: 'Draft',
-      sent: 'Sent',
-      partially_received: 'Partially Received',
-      received: 'Received',
-      cancelled: 'Cancelled',
-    };
-    return map[status] ?? status;
+    return this.translationService.translate('status.' + status, {}, 'purchases');
   }
 }

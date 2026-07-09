@@ -1,8 +1,11 @@
-<h1 class="text-2xl font-bold mb-4">Suppliers</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle.suppliers' | translate: {} : 'purchases' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    [label]="showAll() ? 'Show Suppliers Only' : 'Show All Contacts'"
+    [label]="
+      (showAll() ? 'buttons.showSuppliersOnly' : 'buttons.showAllContacts')
+        | translate: {} : 'purchases'
+    "
     [icon]="showAll() ? 'pi pi-filter' : 'pi pi-users'"
     severity="secondary"
     (onClick)="toggleShowAll()"
@@ -10,6 +13,7 @@
 </div>
 
 <bifi-app-table-layout
+  [scope]="'purchases'"
   [infiniteScroll]="true"
   [columns]="supplierColumns"
   [data]="entries"
@@ -18,7 +22,7 @@
   <ng-template #actions let-element>
     <p-button
       severity="info"
-      label="View"
+      [label]="'buttons.view' | translate: {} : 'purchases'"
       icon="pi pi-eye"
       routerLink="../suppliers/{{ element._id }}"
       *bifiAppHasPermission="'purchases/suppliers/read:view'"

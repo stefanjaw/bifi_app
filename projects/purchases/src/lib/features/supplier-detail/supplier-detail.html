@@ -9,30 +9,38 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <p-card header="Contact Information">
+      <p-card [header]="'supplierDetail.contactInfo' | translate: {} : 'purchases'">
         <div class="flex flex-col gap-2 text-sm">
           @if (supplier()!.email) {
             <div>
-              <span class="font-semibold">Email:</span>
+              <span class="font-semibold">
+                {{ 'supplierDetail.email' | translate: {} : 'purchases' }}
+              </span>
               {{ supplier()!.email }}
             </div>
           }
           @if (supplier()!.phoneNumber) {
             <div>
-              <span class="font-semibold">Phone:</span>
+              <span class="font-semibold">
+                {{ 'supplierDetail.phone' | translate: {} : 'purchases' }}
+              </span>
               {{ supplier()!.phoneNumber }}
             </div>
           }
           @if (supplier()!.type) {
             <div>
-              <span class="font-semibold">Type:</span>
+              <span class="font-semibold">
+                {{ 'supplierDetail.type' | translate: {} : 'purchases' }}
+              </span>
               <span class="capitalize ml-1">{{ supplier()!.type }}</span>
             </div>
           }
           <div>
-            <span class="font-semibold">Status:</span>
+            <span class="font-semibold">
+              {{ 'supplierDetail.status' | translate: {} : 'purchases' }}
+            </span>
             <p-tag
-              [value]="supplier()!.active ? 'Active' : 'Inactive'"
+              [value]="(supplier()!.active ? 'active' : 'inactive') | translate: {} : 'purchases'"
               [severity]="supplier()!.active ? 'success' : 'danger'"
               class="ml-2"
             ></p-tag>
@@ -40,22 +48,28 @@
         </div>
       </p-card>
 
-      <p-card header="Total Spent">
+      <p-card [header]="'supplierDetail.totalSpent' | translate: {} : 'purchases'">
         <p class="text-3xl font-bold text-green-600">{{ totalSpent() | currency }}</p>
-        <p class="text-sm text-gray-500 mt-2">On received orders</p>
+        <p class="text-sm text-gray-500 mt-2">
+          {{ 'supplierDetail.onReceivedOrders' | translate: {} : 'purchases' }}
+        </p>
       </p-card>
 
-      <p-card header="Outstanding Balance">
+      <p-card [header]="'supplierDetail.outstandingBalance' | translate: {} : 'purchases'">
         <p class="text-3xl font-bold text-orange-500">{{ outstandingBalance() | currency }}</p>
-        <p class="text-sm text-gray-500 mt-2">On active orders</p>
+        <p class="text-sm text-gray-500 mt-2">
+          {{ 'supplierDetail.onActiveOrders' | translate: {} : 'purchases' }}
+        </p>
       </p-card>
     </div>
 
     <div>
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Purchase Orders</h2>
+        <h2 class="text-xl font-semibold">
+          {{ 'supplierDetail.purchaseOrders' | translate: {} : 'purchases' }}
+        </h2>
         <p-button
-          label="New Order"
+          [label]="'buttons.newOrder' | translate: {} : 'purchases'"
           icon="pi pi-plus"
           severity="secondary"
           [routerLink]="['../../orders/new']"
@@ -69,11 +83,17 @@
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-gray-100">
-                <th class="text-left p-3 border-b">Order #</th>
-                <th class="text-left p-3 border-b">Status</th>
-                <th class="text-left p-3 border-b">Total</th>
-                <th class="text-left p-3 border-b">Issue Date</th>
-                <th class="text-left p-3 border-b">Actions</th>
+                <th class="text-left p-3 border-b">
+                  {{ 'orderNumber' | translate: {} : 'purchases' }}
+                </th>
+                <th class="text-left p-3 border-b">{{ 'status' | translate: {} : 'purchases' }}</th>
+                <th class="text-left p-3 border-b">{{ 'total' | translate: {} : 'purchases' }}</th>
+                <th class="text-left p-3 border-b">
+                  {{ 'issueDate' | translate: {} : 'purchases' }}
+                </th>
+                <th class="text-left p-3 border-b">
+                  {{ 'actions' | translate: {} : 'purchases' }}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -92,7 +112,7 @@
                   </td>
                   <td class="p-3 border-b">
                     <p-button
-                      label="View"
+                      [label]="'buttons.view' | translate: {} : 'purchases'"
                       icon="pi pi-eye"
                       severity="info"
                       size="small"
@@ -106,7 +126,9 @@
           </table>
         </div>
       } @else {
-        <p class="text-gray-500 text-center py-8">No purchase orders found for this supplier.</p>
+        <p class="text-gray-500 text-center py-8">
+          {{ 'supplierDetail.noOrders' | translate: {} : 'purchases' }}
+        </p>
       }
     </div>
   </div>

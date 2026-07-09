@@ -16,7 +16,9 @@
     >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-gray-400 inline-block"></span>
-        <span class="font-semibold text-gray-700 text-sm">Unassigned</span>
+        <span class="font-semibold text-gray-700 text-sm">
+          {{ 'pipeline.unassigned' | translate: {} : 'purchases' }}
+        </span>
         <span class="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">
           {{ getOrdersByStage(null).length }}
         </span>
@@ -48,7 +50,9 @@
         </div>
       }
       @if (getOrdersByStage(null).length === 0) {
-        <div class="text-center text-gray-400 text-xs py-4">No orders</div>
+        <div class="text-center text-gray-400 text-xs py-4">
+          {{ 'pipeline.noOrders' | translate: {} : 'purchases' }}
+        </div>
       }
     </div>
   </div>
@@ -104,7 +108,9 @@
           </div>
         }
         @if (getOrdersByStage(stage._id).length === 0) {
-          <div class="text-center text-gray-400 text-xs py-4">No orders</div>
+          <div class="text-center text-gray-400 text-xs py-4">
+            {{ 'pipeline.noOrders' | translate: {} : 'purchases' }}
+          </div>
         }
       </div>
     </div>

@@ -4,36 +4,36 @@ import { purchaseOrder } from '../interfaces/purchase-order';
 export const purchaseOrderColumns: tableColumn<purchaseOrder>[] = [
   {
     field: 'poNumber',
-    title: 'Order #',
+    title: 'orderNumber',
     type: 'text',
     sortable: true,
   },
   {
     field: 'contactId.fullName',
-    title: 'Supplier',
+    title: 'supplier',
     type: 'text',
   },
   {
     field: 'status',
-    title: 'Status',
+    title: 'status',
     type: 'text',
     sortable: true,
   },
   {
     field: 'totalAmount',
-    title: 'Total',
+    title: 'total',
     type: 'number',
     sortable: true,
   },
   {
     field: 'issueDate',
-    title: 'Issue Date',
+    title: 'issueDate',
     type: 'date',
     sortable: true,
   },
   {
     field: 'expectedDeliveryDate',
-    title: 'Expected Delivery',
+    title: 'expectedDelivery',
     type: 'date',
     sortable: true,
   },

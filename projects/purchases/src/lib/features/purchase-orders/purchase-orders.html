@@ -1,8 +1,10 @@
-<h1 class="text-2xl font-bold mb-4">Purchase Orders</h1>
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'pageTitle.purchaseOrders' | translate: {} : 'purchases' }}
+</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Order"
+    [label]="'buttons.newOrder' | translate: {} : 'purchases'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../orders/new']"
@@ -11,11 +13,12 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by order number, supplier or status"
+  [label]="'search.byOrderNumber' | translate: {} : 'purchases'"
   [searchFilters]="purchaseOrderFilters"
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [scope]="'purchases'"
   [infiniteScroll]="true"
   [columns]="purchaseOrderColumns"
   [data]="entries"

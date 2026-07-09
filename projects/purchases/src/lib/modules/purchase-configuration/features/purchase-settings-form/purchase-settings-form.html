@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="Purchases Configuration"
+  [title]="'pageTitle.purchaseConfiguration' | translate: {} : 'purchases'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -17,20 +17,26 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Document Sequences" id="document-sequences" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.docSequences' | translate: {} : 'purchases'"
+        id="document-sequences"
+        [ordinal]="1"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Select which sequence is used to generate document numbers for purchase orders.
+          {{ 'settings.docSequencesDesc' | translate: {} : 'purchases' }}
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Purchase Order Sequence</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'settings.purchaseOrderSequence' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="purchaseSequence"
               [options]="sequenceOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a sequence"
+              [placeholder]="'placeholders.selectSequence' | translate: {} : 'purchases'"
               [showClear]="true"
               class="w-full"
             ></p-select>
@@ -39,13 +45,19 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Additional Information" id="additional-info" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.additionalInfo' | translate: {} : 'purchases'"
+        id="additional-info"
+        [ordinal]="2"
+      >
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'placeholders.description' | translate: {} : 'purchases' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="description"
-            placeholder="Notes about this configuration"
+            [placeholder]="'placeholders.notesAboutConfig' | translate: {} : 'purchases'"
             rows="3"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>

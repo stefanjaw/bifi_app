@@ -1,5 +1,7 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Purchase Stage"
+  [title]="
+    (isUpdate() ? 'form.title.updateStage' : 'form.title.createStage') | translate: {} : 'purchases'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,16 +20,25 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Stage Information" id="stage-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.stageInfo' | translate: {} : 'purchases'"
+        id="stage-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g. In Review" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'purchases' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'placeholders.e.g.inReview' | translate: {} : 'purchases'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Color</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'color' | translate: {} : 'purchases' }}</bifi-app-form-label>
             <input
               type="color"
               formControlName="color"
@@ -37,14 +48,20 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Order</bifi-app-form-label>
-            <p-inputnumber formControlName="order" [min]="0" placeholder="0" />
+            <bifi-app-form-label>{{ 'order' | translate: {} : 'purchases' }}</bifi-app-form-label>
+            <p-inputnumber formControlName="order" [min]="0" [placeholder]="'0'" />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pTextarea formControlName="description" placeholder="Description"></textarea>
+            <bifi-app-form-label>
+              {{ 'placeholders.description' | translate: {} : 'purchases' }}
+            </bifi-app-form-label>
+            <textarea
+              pTextarea
+              formControlName="description"
+              [placeholder]="'placeholders.description' | translate: {} : 'purchases'"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -52,11 +69,11 @@
             <div class="flex items-center gap-3">
               <p-toggleswitch formControlName="isDefault" inputId="isDefault"></p-toggleswitch>
               <label for="isDefault" class="text-sm font-medium text-gray-700 cursor-pointer">
-                Default for new orders
+                {{ 'settings.defaultStage' | translate: {} : 'purchases' }}
               </label>
             </div>
             <p class="text-xs text-gray-500 mt-1">
-              When enabled, new Purchase Orders will automatically be assigned to this stage.
+              {{ 'settings.defaultStageDesc' | translate: {} : 'purchases' }}
             </p>
           </bifi-app-form-field>
         </div>

@@ -4,19 +4,19 @@ import { purchaseStage } from '../interfaces/purchase-stage';
 export const purchaseStageColumns: tableColumn<purchaseStage>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'color',
-    title: 'Color',
+    title: 'color',
     type: 'text',
     parseField: (value: string) => value ?? '—',
   },
   {
     field: 'order',
-    title: 'Order',
+    title: 'order',
     type: 'number',
     sortable: true,
   },

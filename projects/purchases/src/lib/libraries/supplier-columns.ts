@@ -4,23 +4,23 @@ import { supplier } from '../interfaces/supplier';
 export const supplierColumns: tableColumn<supplier>[] = [
   {
     field: 'fullName',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'email',
-    title: 'Email',
+    title: 'email',
     type: 'text',
   },
   {
     field: 'phoneNumber',
-    title: 'Phone',
+    title: 'phone',
     type: 'text',
   },
   {
     field: 'type',
-    title: 'Type',
+    title: 'type',
     type: 'text',
   },
 ];

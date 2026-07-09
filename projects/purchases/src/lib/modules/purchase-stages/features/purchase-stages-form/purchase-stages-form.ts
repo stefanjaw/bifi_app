@@ -20,6 +20,7 @@ import { CrudPurchaseStages } from '../../services/crud-purchase-stages';
 import { PurchaseStageForm, PurchaseStageFormModel } from '../../services/purchase-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-stages-form',
@@ -32,6 +33,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ProgressBarModule,
     TextareaModule,
     ToggleSwitchModule,
+    TranslatePipe,
   ],
   templateUrl: './purchase-stages-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,8 @@
 <div class="flex flex-col gap-4">
   <div class="flex items-center justify-between">
-    <h3 class="text-lg font-semibold">Order Items</h3>
+    <h3 class="text-lg font-semibold">
+      {{ 'lineItems.description' | translate: {} : 'purchases' }}
+    </h3>
   </div>
 
   <div class="overflow-x-auto">
@@ -37,7 +39,7 @@
               class="text-left p-3 border-b border-r border-gray-200 relative"
               [style.width.px]="colWidths()['sku']"
             >
-              SKU
+              {{ 'lineItems.sku' | translate: {} : 'purchases' }}
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'sku')"></div>
             </th>
           }
@@ -45,28 +47,28 @@
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['description']"
           >
-            Description
+            {{ 'lineItems.description' | translate: {} : 'purchases' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'description')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['quantity']"
           >
-            Qty
+            {{ 'lineItems.qty' | translate: {} : 'purchases' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'quantity')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['uom']"
           >
-            UoM
+            {{ 'lineItems.uom' | translate: {} : 'purchases' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'uom')"></div>
           </th>
           <th
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['unitPrice']"
           >
-            Unit Price
+            {{ 'lineItems.unitPrice' | translate: {} : 'purchases' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'unitPrice')"></div>
           </th>
           @if (discountOptions().length > 0) {
@@ -74,7 +76,7 @@
               class="text-left p-3 border-b border-r border-gray-200 relative"
               [style.width.px]="colWidths()['discount']"
             >
-              Discount
+              {{ 'lineItems.discount' | translate: {} : 'purchases' }}
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'discount')"></div>
             </th>
           }
@@ -83,7 +85,7 @@
               class="text-left p-3 border-b border-r border-gray-200 relative"
               [style.width.px]="colWidths()['taxes']"
             >
-              Taxes
+              {{ 'lineItems.taxes' | translate: {} : 'purchases' }}
               <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'taxes')"></div>
             </th>
           }
@@ -91,7 +93,7 @@
             class="text-left p-3 border-b border-r border-gray-200 relative"
             [style.width.px]="colWidths()['total']"
           >
-            Total
+            {{ 'lineItems.total' | translate: {} : 'purchases' }}
             <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'total')"></div>
           </th>
           @if (!readonly()) {
@@ -119,7 +121,7 @@
                 (click)="addItem()"
               >
                 <span class="pi pi-plus text-xs"></span>
-                Add Item
+                {{ 'lineItems.addItem' | translate: {} : 'purchases' }}
               </button>
             </td>
           </tr>
@@ -140,7 +142,7 @@
                     [options]="productOptions()"
                     optionLabel="name"
                     optionValue="_id"
-                    placeholder="Select"
+                    [placeholder]="'buttons.select' | translate: {} : 'purchases'"
                     [filter]="true"
                     filterBy="name,sku"
                     styleClass="w-full"
@@ -165,7 +167,7 @@
                   pInputText
                   [value]="item.description"
                   (input)="updateItem($index, 'description', $any($event.target).value)"
-                  placeholder="Item description"
+                  [placeholder]="'placeholders.itemDescription' | translate: {} : 'purchases'"
                   class="w-full"
                 />
               } @else {
@@ -243,7 +245,7 @@
                     [options]="taxOptions()"
                     optionLabel="name"
                     optionValue="_id"
-                    placeholder="Taxes (optional)"
+                    [placeholder]="'lineItems.taxesOptional' | translate: {} : 'purchases'"
                     [filter]="true"
                     filterBy="name"
                     display="chip"
@@ -288,7 +290,10 @@
               "
               class="p-4 text-center text-gray-500"
             >
-              No items yet.{{ readonly() ? '' : ' Use the button above to add a line.' }}
+              {{ 'lineItems.noItems' | translate: {} : 'purchases' }}
+              @if (!readonly()) {
+                {{ 'lineItems.addLineHint' | translate: {} : 'purchases' }}
+              }
             </td>
           </tr>
         }
@@ -313,7 +318,7 @@
                 (click)="addItem()"
               >
                 <span class="pi pi-plus text-xs"></span>
-                Add Item
+                {{ 'lineItems.addItem' | translate: {} : 'purchases' }}
               </button>
             </td>
           </tr>
