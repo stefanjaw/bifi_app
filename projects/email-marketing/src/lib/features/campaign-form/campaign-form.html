@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Edit' : 'Create' }} Campaign"
+  [title]="
+    isUpdate()
+      ? ('form.editCampaign' | translate: {} : 'email-marketing')
+      : ('form.createCampaign' | translate: {} : 'email-marketing')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -26,7 +30,9 @@
         <div
           class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3"
         >
-          <span class="text-sm text-gray-500 mr-2">Status:</span>
+          <span class="text-sm text-gray-500 mr-2">
+            {{ 'form.label.status' | translate: {} : 'email-marketing' }}:
+          </span>
           <span class="font-semibold capitalize">{{ status() }}</span>
           <div class="flex-1"></div>
           <p-button
@@ -65,45 +71,60 @@
       }
 
       <bifi-app-form-section
-        title="Campaign Details"
+        [title]="'form.section.campaignDetails' | translate: {} : 'email-marketing'"
         id="campaign-details"
         [ordinal]="1"
         [collapsible]="true"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Campaign Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Internal name" />
+            <bifi-app-form-label>
+              {{ 'form.label.campaignName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'form.placeholder.internalName' | translate: {} : 'email-marketing'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Subject Line</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.subjectLine' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="subject"
               type="text"
-              placeholder="What recipients see"
+              [placeholder]="
+                'form.placeholder.whatRecipientsSee' | translate: {} : 'email-marketing'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Preview Text</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.previewText' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="previewText"
               type="text"
-              placeholder="Inbox preview snippet"
+              [placeholder]="'form.placeholder.inboxPreview' | translate: {} : 'email-marketing'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Mailing Lists</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.mailingLists' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <p-multiselect
               formControlName="listIds"
               [options]="listOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select lists"
+              [placeholder]="'form.placeholder.selectLists' | translate: {} : 'email-marketing'"
               class="w-full"
             ></p-multiselect>
             <bifi-app-form-error></bifi-app-form-error>
@@ -111,45 +132,71 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Sender" id="sender" [ordinal]="2" [collapsible]="true">
+      <bifi-app-form-section
+        [title]="'form.section.sender' | translate: {} : 'email-marketing'"
+        id="sender"
+        [ordinal]="2"
+        [collapsible]="true"
+      >
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>From Name</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.fromName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="fromName"
               type="text"
-              placeholder="Leave blank for default"
+              [placeholder]="
+                'form.placeholder.leaveBlankDefault' | translate: {} : 'email-marketing'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>From Email</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.fromEmail' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="fromEmail"
               type="email"
-              placeholder="Leave blank for default"
+              [placeholder]="
+                'form.placeholder.leaveBlankDefault' | translate: {} : 'email-marketing'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Reply-To</bifi-app-form-label>
-            <input pInputText formControlName="replyTo" type="email" placeholder="Optional" />
+            <bifi-app-form-label>
+              {{ 'form.label.replyTo' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="replyTo"
+              type="email"
+              [placeholder]="'form.placeholder.optional' | translate: {} : 'email-marketing'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Content" id="content" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'form.section.content' | translate: {} : 'email-marketing'"
+        id="content"
+        [ordinal]="3"
+      >
         <bifi-app-form-field class="mb-4 block max-w-md">
-          <bifi-app-form-label>Start from Template (optional)</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'form.label.startFromTemplate' | translate: {} : 'email-marketing' }}
+          </bifi-app-form-label>
           <p-select
             formControlName="templateId"
             [options]="templateOptions()"
             optionLabel="name"
             optionValue="_id"
-            placeholder="Select a template"
+            [placeholder]="'form.placeholder.selectTemplate' | translate: {} : 'email-marketing'"
             [showClear]="true"
             (onChange)="onTemplateChange($event.value)"
             class="w-full"
@@ -164,20 +211,22 @@
 </bifi-app-form-layout>
 
 <p-dialog
-  header="Send Test Email"
+  [header]="'dialog.sendTestEmail' | translate: {} : 'email-marketing'"
   [visible]="testDialogVisible()"
   (visibleChange)="testDialogVisible.set($event)"
   [modal]="true"
   [style]="{ width: '28rem' }"
 >
   <div class="flex flex-col gap-3">
-    <label class="text-sm font-medium text-gray-700">Recipient email</label>
+    <label class="text-sm font-medium text-gray-700">
+      {{ 'dialog.recipientEmail' | translate: {} : 'email-marketing' }}
+    </label>
     <input
       pInputText
       type="email"
       [value]="testEmail()"
       (input)="testEmail.set($any($event.target).value)"
-      placeholder="you@example.com"
+      [placeholder]="'form.placeholder.testEmail' | translate: {} : 'email-marketing'"
     />
   </div>
   <ng-template pTemplate="footer">
@@ -191,14 +240,16 @@
 </p-dialog>
 
 <p-dialog
-  header="Schedule Campaign"
+  [header]="'dialog.scheduleCampaign' | translate: {} : 'email-marketing'"
   [visible]="scheduleDialogVisible()"
   (visibleChange)="scheduleDialogVisible.set($event)"
   [modal]="true"
   [style]="{ width: '28rem' }"
 >
   <div class="flex flex-col gap-3">
-    <label class="text-sm font-medium text-gray-700">Send at</label>
+    <label class="text-sm font-medium text-gray-700">
+      {{ 'dialog.sendAt' | translate: {} : 'email-marketing' }}
+    </label>
     <p-datepicker
       [showTime]="true"
       [ngModel]="scheduleDate()"

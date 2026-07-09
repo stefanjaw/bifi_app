@@ -8,6 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +29,7 @@ import { MailingListForm, MailingListFormModel } from '../../services/mailing-li
     TextareaModule,
     ButtonModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './mailing-list-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

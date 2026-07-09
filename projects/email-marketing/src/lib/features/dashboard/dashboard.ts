@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -8,7 +9,7 @@ import { emailDashboard } from '../../interfaces/email-event';
 
 @Component({
   selector: 'bifi-app-email-dashboard',
-  imports: [RouterLink, ButtonModule, CardModule, ProgressBarModule],
+  imports: [RouterLink, ButtonModule, CardModule, ProgressBarModule, TranslatePipe],
   host: {
     class: 'block p-6',
   },
@@ -23,20 +24,19 @@ export class EmailDashboard {
 
   protected data = computed<emailDashboard>(() => {
     const value = this.dashboardResource.value();
-    return (
-      value ?? {
-        totals: { campaigns: 0, subscribers: 0, lists: 0, templates: 0 },
-        aggregateStats: {
-          sent: 0,
-          delivered: 0,
-          opened: 0,
-          clicked: 0,
-          bounced: 0,
-          unsubscribed: 0,
-        },
-        recentCampaigns: [],
-      }
-    );
+    if (value?.totals) return value;
+    return {
+      totals: { campaigns: 0, subscribers: 0, lists: 0, templates: 0 },
+      aggregateStats: {
+        sent: 0,
+        delivered: 0,
+        opened: 0,
+        clicked: 0,
+        bounced: 0,
+        unsubscribed: 0,
+      },
+      recentCampaigns: [],
+    };
   });
 
   protected openRate = computed(() => {

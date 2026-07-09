@@ -18,9 +18,22 @@ export class CrudEmailCampaigns extends ApiRequestManager<emailCampaign> {
   getDashboard() {
     return rxResource<emailDashboard, void>({
       stream: () =>
-        this._httpClient
-          .get<emailDashboard>(`${this._apiURL}/${this.endpoint}/dashboard`)
-          .pipe(catchError(() => of({} as emailDashboard))),
+        this._httpClient.get<emailDashboard>(`${this._apiURL}/${this.endpoint}/dashboard`).pipe(
+          catchError(() =>
+            of({
+              totals: { campaigns: 0, subscribers: 0, lists: 0, templates: 0 },
+              aggregateStats: {
+                sent: 0,
+                delivered: 0,
+                opened: 0,
+                clicked: 0,
+                bounced: 0,
+                unsubscribed: 0,
+              },
+              recentCampaigns: [],
+            })
+          )
+        ),
     });
   }
 

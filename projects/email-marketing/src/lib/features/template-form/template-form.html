@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Template"
+  [title]="
+    isUpdate()
+      ? ('form.editTemplate' | translate: {} : 'email-marketing')
+      : ('form.createTemplate' | translate: {} : 'email-marketing')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,42 +22,60 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Template Information" id="template-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.section.templateInformation' | translate: {} : 'email-marketing'"
+        id="template-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'name' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
               type="text"
-              placeholder="e.g. Monthly Newsletter"
+              [placeholder]="'form.placeholder.templateName' | translate: {} : 'email-marketing'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Category</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'category' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="category"
               type="text"
-              placeholder="e.g. Newsletter"
+              [placeholder]="
+                'form.placeholder.templateCategory' | translate: {} : 'email-marketing'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="description"
               type="text"
-              placeholder="Short description"
+              [placeholder]="
+                'form.placeholder.shortDescription' | translate: {} : 'email-marketing'
+              "
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Design" id="design" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.section.design' | translate: {} : 'email-marketing'"
+        id="design"
+        [ordinal]="2"
+      >
         <bifi-app-email-editor #editor [designJson]="designJson()"></bifi-app-email-editor>
       </bifi-app-form-section>
     } @else {

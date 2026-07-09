@@ -20,6 +20,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MessageModule } from 'primeng/message';
 import { DialogModule } from 'primeng/dialog';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudEmailCampaigns } from '../../services/crud-email-campaigns';
@@ -47,6 +48,7 @@ import { EmailEditor } from '../../components/email-editor/email-editor';
     MessageModule,
     DialogModule,
     EmailEditor,
+    TranslatePipe,
   ],
   templateUrl: './campaign-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +61,7 @@ export class CampaignForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -208,7 +211,13 @@ export class CampaignForm {
                 this.actionLoading.set(false);
                 this.actionMessage.set({
                   ok: false,
-                  message: err?.error?.message ?? 'Failed to send test',
+                  message:
+                    err?.error?.message ??
+                    this.translationService.translate(
+                      'notification.testSendFailed',
+                      {},
+                      'email-marketing'
+                    ),
                 });
               },
             });
@@ -231,14 +240,27 @@ export class CampaignForm {
             .subscribe({
               next: () => {
                 this.actionLoading.set(false);
-                this.actionMessage.set({ ok: true, message: 'Campaign is being sent.' });
+                this.actionMessage.set({
+                  ok: true,
+                  message: this.translationService.translate(
+                    'notification.campaignSending',
+                    {},
+                    'email-marketing'
+                  ),
+                });
                 this.campaignResource.reload();
               },
               error: err => {
                 this.actionLoading.set(false);
                 this.actionMessage.set({
                   ok: false,
-                  message: err?.error?.message ?? 'Failed to send campaign',
+                  message:
+                    err?.error?.message ??
+                    this.translationService.translate(
+                      'notification.campaignSendFailed',
+                      {},
+                      'email-marketing'
+                    ),
                 });
               },
             });
@@ -267,14 +289,27 @@ export class CampaignForm {
               next: () => {
                 this.actionLoading.set(false);
                 this.scheduleDialogVisible.set(false);
-                this.actionMessage.set({ ok: true, message: 'Campaign scheduled.' });
+                this.actionMessage.set({
+                  ok: true,
+                  message: this.translationService.translate(
+                    'notification.campaignScheduled',
+                    {},
+                    'email-marketing'
+                  ),
+                });
                 this.campaignResource.reload();
               },
               error: err => {
                 this.actionLoading.set(false);
                 this.actionMessage.set({
                   ok: false,
-                  message: err?.error?.message ?? 'Failed to schedule campaign',
+                  message:
+                    err?.error?.message ??
+                    this.translationService.translate(
+                      'notification.campaignScheduleFailed',
+                      {},
+                      'email-marketing'
+                    ),
                 });
               },
             });
@@ -292,14 +327,27 @@ export class CampaignForm {
       .subscribe({
         next: () => {
           this.actionLoading.set(false);
-          this.actionMessage.set({ ok: true, message: 'Campaign cancelled.' });
+          this.actionMessage.set({
+            ok: true,
+            message: this.translationService.translate(
+              'notification.campaignCancelled',
+              {},
+              'email-marketing'
+            ),
+          });
           this.campaignResource.reload();
         },
         error: err => {
           this.actionLoading.set(false);
           this.actionMessage.set({
             ok: false,
-            message: err?.error?.message ?? 'Failed to cancel campaign',
+            message:
+              err?.error?.message ??
+              this.translationService.translate(
+                'notification.campaignCancelFailed',
+                {},
+                'email-marketing'
+              ),
           });
         },
       });

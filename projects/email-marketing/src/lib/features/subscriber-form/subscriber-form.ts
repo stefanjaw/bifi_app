@@ -8,6 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
@@ -17,6 +18,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudSubscribers } from '../../services/crud-subscribers';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import { CrudMailingLists } from '../../services/crud-mailing-lists';
 import { SubscriberForm, SubscriberFormModel } from '../../services/subscriber-form';
 import { subscriber } from '../../interfaces/subscriber';
@@ -31,6 +33,7 @@ import { mailingList } from '../../interfaces/mailing-list';
     SelectModule,
     ButtonModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './subscriber-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +42,7 @@ export class SubscribersForm {
   private crudSubscribers = inject(CrudSubscribers);
   private crudLists = inject(CrudMailingLists);
   private formService = inject(SubscriberForm);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -61,10 +65,22 @@ export class SubscribersForm {
   });
 
   statusOptions = [
-    { label: 'Subscribed', value: 'subscribed' },
-    { label: 'Unsubscribed', value: 'unsubscribed' },
-    { label: 'Bounced', value: 'bounced' },
-    { label: 'Complained', value: 'complained' },
+    {
+      label: this.translationService.translate('status.subscribed', {}, 'email-marketing'),
+      value: 'subscribed',
+    },
+    {
+      label: this.translationService.translate('status.unsubscribed', {}, 'email-marketing'),
+      value: 'unsubscribed',
+    },
+    {
+      label: this.translationService.translate('status.bounced', {}, 'email-marketing'),
+      value: 'bounced',
+    },
+    {
+      label: this.translationService.translate('status.complained', {}, 'email-marketing'),
+      value: 'complained',
+    },
   ];
 
   form = this.formService.form;

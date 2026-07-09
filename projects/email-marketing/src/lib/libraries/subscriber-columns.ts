@@ -5,25 +5,25 @@ import { mailingList } from '../interfaces/mailing-list';
 export const subscriberColumns: tableColumn<subscriber>[] = [
   {
     field: 'email',
-    title: 'Email',
+    title: 'email',
     type: 'text',
     sortable: true,
   },
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
   },
   {
     field: 'listId',
-    title: 'List',
+    title: 'list',
     type: 'text',
     parseField: (value: string | mailingList) =>
       typeof value === 'object' && value ? (value as mailingList).name : '',
   },
   {
     field: 'status',
-    title: 'Status',
+    title: 'status',
     type: 'text',
     sortable: true,
   },

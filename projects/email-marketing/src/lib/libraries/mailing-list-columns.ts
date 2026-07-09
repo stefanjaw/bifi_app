@@ -4,18 +4,18 @@ import { mailingList } from '../interfaces/mailing-list';
 export const mailingListColumns: tableColumn<mailingList>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'description',
-    title: 'Description',
+    title: 'description',
     type: 'text',
   },
   {
     field: 'subscriberCount',
-    title: 'Subscribers',
+    title: 'subscribers',
     type: 'number',
     sortable: true,
   },

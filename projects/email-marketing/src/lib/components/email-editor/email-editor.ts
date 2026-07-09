@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   OnDestroy,
   effect,
   input,
@@ -11,6 +12,7 @@ import {
 } from '@angular/core';
 import grapesjs, { Editor } from 'grapesjs';
 import grapesjsMjml from 'grapesjs-mjml';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import grapesjsRte from 'grapesjs-rte-extensions';
 
 export interface EmailEditorOutput {
@@ -45,12 +47,14 @@ const DEFAULT_MJML = `<mjml>
 
 @Component({
   selector: 'bifi-app-email-editor',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './email-editor.html',
   styleUrl: './email-editor.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailEditor implements AfterViewInit, OnDestroy {
+  private translationService = inject(TranslationService);
+
   private gjsContainer = viewChild.required<ElementRef<HTMLDivElement>>('gjs');
   private blocksContainer = viewChild.required<ElementRef<HTMLDivElement>>('blocks');
   private stylesContainer = viewChild.required<ElementRef<HTMLDivElement>>('styles');
@@ -157,12 +161,12 @@ export class EmailEditor implements AfterViewInit, OnDestroy {
 
   private extendDividerStyles(editor: Editor): void {
     editor.StyleManager.addSector('mj-divider-line', {
-      name: 'Line',
+      name: this.translationService.translate('editor.line', {}, 'email-marketing'),
       open: true,
       properties: [
         {
           type: 'integer',
-          label: 'Thickness',
+          label: this.translationService.translate('editor.thickness', {}, 'email-marketing'),
           property: 'border-width',
           units: ['px'],
           default: '4',
@@ -170,19 +174,28 @@ export class EmailEditor implements AfterViewInit, OnDestroy {
         } as any,
         {
           type: 'color',
-          label: 'Color',
+          label: this.translationService.translate('editor.color', {}, 'email-marketing'),
           property: 'border-color',
           default: '#000000',
         } as any,
         {
           type: 'select',
-          label: 'Style',
+          label: this.translationService.translate('editor.style', {}, 'email-marketing'),
           property: 'border-style',
           default: 'solid',
           options: [
-            { id: 'solid', label: 'Solid' },
-            { id: 'dashed', label: 'Dashed' },
-            { id: 'dotted', label: 'Dotted' },
+            {
+              id: 'solid',
+              label: this.translationService.translate('editor.solid', {}, 'email-marketing'),
+            },
+            {
+              id: 'dashed',
+              label: this.translationService.translate('editor.dashed', {}, 'email-marketing'),
+            },
+            {
+              id: 'dotted',
+              label: this.translationService.translate('editor.dotted', {}, 'email-marketing'),
+            },
           ],
         } as any,
       ],
@@ -193,7 +206,10 @@ export class EmailEditor implements AfterViewInit, OnDestroy {
         const container = this.stylesContainer().nativeElement;
         const titles = container.querySelectorAll<HTMLElement>('.gjs-sm-sector-title');
         for (const title of Array.from(titles)) {
-          if (title.textContent?.trim() === 'Line') {
+          if (
+            title.textContent?.trim() ===
+            this.translationService.translate('editor.line', {}, 'email-marketing')
+          ) {
             this.dividerLineSectorEl = title.closest<HTMLElement>('.gjs-sm-sector');
             break;
           }

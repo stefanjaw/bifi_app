@@ -1,13 +1,15 @@
 <div class="flex items-center justify-between mb-6">
-  <h1 class="text-2xl font-bold">Email Marketing</h1>
+  <h1 class="text-2xl font-bold">
+    {{ 'pageTitle.dashboard' | translate: {} : 'email-marketing' }}
+  </h1>
   <div class="flex gap-2">
     <p-button
-      label="New Campaign"
+      [label]="'buttons.newCampaign' | translate: {} : 'email-marketing'"
       icon="pi pi-plus"
       [routerLink]="['/email-marketing/campaigns/create']"
     ></p-button>
     <p-button
-      label="Templates"
+      [label]="'buttons.templates' | translate: {} : 'email-marketing'"
       icon="pi pi-palette"
       severity="secondary"
       [routerLink]="['/email-marketing/templates']"
@@ -20,55 +22,77 @@
 } @else {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Campaigns</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.campaigns' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-3xl font-bold mt-1">{{ data().totals.campaigns }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Subscribers</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.subscribers' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-3xl font-bold mt-1">{{ data().totals.subscribers }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Mailing Lists</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.mailingLists' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-3xl font-bold mt-1">{{ data().totals.lists }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Templates</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.templates' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-3xl font-bold mt-1">{{ data().totals.templates }}</div>
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Sent</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.sent' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ data().aggregateStats.sent }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Delivered</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.delivered' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ data().aggregateStats.delivered }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Opened</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.opened' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ data().aggregateStats.opened }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Clicked</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.clicked' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ data().aggregateStats.clicked }}</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Open Rate</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.openRate' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ openRate() }}%</div>
     </div>
     <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="text-sm text-gray-500">Click Rate</div>
+      <div class="text-sm text-gray-500">
+        {{ 'dashboard.stats.clickRate' | translate: {} : 'email-marketing' }}
+      </div>
       <div class="text-2xl font-semibold mt-1">{{ clickRate() }}%</div>
     </div>
   </div>
 
   <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-semibold">Recent Campaigns</h2>
+      <h2 class="text-lg font-semibold">
+        {{ 'dashboard.recentCampaigns' | translate: {} : 'email-marketing' }}
+      </h2>
       <p-button
-        label="View all"
+        [label]="'buttons.viewAll' | translate: {} : 'email-marketing'"
         severity="secondary"
         [text]="true"
         [routerLink]="['/email-marketing/campaigns']"
@@ -78,11 +102,11 @@
       <table class="w-full text-sm">
         <thead>
           <tr class="text-left text-gray-500 border-b border-gray-200">
-            <th class="py-2">Name</th>
-            <th class="py-2">Status</th>
-            <th class="py-2">Sent</th>
-            <th class="py-2">Opened</th>
-            <th class="py-2">Clicked</th>
+            <th class="py-2">{{ 'name' | translate: {} : 'email-marketing' }}</th>
+            <th class="py-2">{{ 'status' | translate: {} : 'email-marketing' }}</th>
+            <th class="py-2">{{ 'sent' | translate: {} : 'email-marketing' }}</th>
+            <th class="py-2">{{ 'opened' | translate: {} : 'email-marketing' }}</th>
+            <th class="py-2">{{ 'clicked' | translate: {} : 'email-marketing' }}</th>
           </tr>
         </thead>
         <tbody>
@@ -105,7 +129,7 @@
         </tbody>
       </table>
     } @else {
-      <p class="text-gray-500">No campaigns yet. Create your first campaign to get started.</p>
+      <p class="text-gray-500">{{ 'dashboard.empty' | translate: {} : 'email-marketing' }}</p>
     }
   </div>
 }

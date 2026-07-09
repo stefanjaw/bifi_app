@@ -5,7 +5,11 @@
       type="button"
       class="ee-collapse-btn"
       (click)="toggleLeft()"
-      [title]="leftCollapsed() ? 'Expand panel' : 'Collapse panel'"
+      [title]="
+        leftCollapsed()
+          ? ('editor.expandPanel' | translate: {} : 'email-marketing')
+          : ('editor.collapsePanel' | translate: {} : 'email-marketing')
+      "
     >
       <i [class]="leftCollapsed() ? 'pi pi-chevron-right' : 'pi pi-chevron-left'"></i>
     </button>
@@ -13,21 +17,38 @@
     <div class="ee-sidebar-inner" [hidden]="leftCollapsed()">
       <!-- Compact toolbar strip — top of sidebar -->
       <div class="ee-toolbar">
-        <button type="button" class="ee-toolbar-btn" (click)="undo()" title="Undo">
+        <button
+          type="button"
+          class="ee-toolbar-btn"
+          (click)="undo()"
+          [title]="'editor.undo' | translate: {} : 'email-marketing'"
+        >
           <i class="pi pi-undo"></i>
-          <span>Undo</span>
+          <span>{{ 'editor.undo' | translate: {} : 'email-marketing' }}</span>
         </button>
-        <button type="button" class="ee-toolbar-btn" (click)="redo()" title="Redo">
+        <button
+          type="button"
+          class="ee-toolbar-btn"
+          (click)="redo()"
+          [title]="'editor.redo' | translate: {} : 'email-marketing'"
+        >
           <i class="pi pi-refresh"></i>
-          <span>Redo</span>
+          <span>{{ 'editor.redo' | translate: {} : 'email-marketing' }}</span>
         </button>
-        <button type="button" class="ee-toolbar-btn" (click)="openCode()" title="View code">
+        <button
+          type="button"
+          class="ee-toolbar-btn"
+          (click)="openCode()"
+          [title]="'editor.viewCode' | translate: {} : 'email-marketing'"
+        >
           <i class="pi pi-code"></i>
-          <span>Code</span>
+          <span>{{ 'editor.code' | translate: {} : 'email-marketing' }}</span>
         </button>
       </div>
 
-      <div class="ee-panel-title">Components</div>
+      <div class="ee-panel-title">
+        {{ 'editor.components' | translate: {} : 'email-marketing' }}
+      </div>
       <!-- Block manager mounts here — must always be in the DOM -->
       <div #blocks class="ee-blocks"></div>
     </div>
@@ -45,7 +66,7 @@
         title="Desktop preview"
       >
         <i class="pi pi-desktop"></i>
-        <span>Desktop</span>
+        <span>{{ 'editor.desktop' | translate: {} : 'email-marketing' }}</span>
       </button>
       <button
         type="button"
@@ -55,7 +76,7 @@
         title="Tablet preview (768 px)"
       >
         <i class="pi pi-tablet"></i>
-        <span>Tablet</span>
+        <span>{{ 'editor.tablet' | translate: {} : 'email-marketing' }}</span>
       </button>
       <button
         type="button"
@@ -65,7 +86,7 @@
         title="Mobile preview (375 px)"
       >
         <i class="pi pi-mobile"></i>
-        <span>Mobile</span>
+        <span>{{ 'editor.mobile' | translate: {} : 'email-marketing' }}</span>
       </button>
     </div>
 
@@ -131,28 +152,33 @@
   <div class="ee-code-overlay" (click)="closeCode()">
     <div class="ee-code-dialog" (click)="$event.stopPropagation()">
       <div class="ee-code-header">
-        <span>Email code</span>
-        <button type="button" class="ee-code-close" (click)="closeCode()" title="Close">
+        <span>{{ 'editor.emailCode' | translate: {} : 'email-marketing' }}</span>
+        <button
+          type="button"
+          class="ee-code-close"
+          (click)="closeCode()"
+          [title]="'editor.close' | translate: {} : 'email-marketing'"
+        >
           <i class="pi pi-times"></i>
         </button>
       </div>
       <div class="ee-code-body">
         <div class="ee-code-block">
           <div class="ee-code-block-head">
-            <span>MJML</span>
+            <span>{{ 'editor.mjml' | translate: {} : 'email-marketing' }}</span>
             <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeMjml())">
               <i class="pi pi-copy"></i>
-              <span>Copy</span>
+              <span>{{ 'editor.copy' | translate: {} : 'email-marketing' }}</span>
             </button>
           </div>
           <pre class="ee-code-pre">{{ codeMjml() }}</pre>
         </div>
         <div class="ee-code-block">
           <div class="ee-code-block-head">
-            <span>Compiled HTML</span>
+            <span>{{ 'editor.compiledHtml' | translate: {} : 'email-marketing' }}</span>
             <button type="button" class="ee-btn ee-btn-sm" (click)="copy(codeHtml())">
               <i class="pi pi-copy"></i>
-              <span>Copy</span>
+              <span>{{ 'editor.copy' | translate: {} : 'email-marketing' }}</span>
             </button>
           </div>
           <pre class="ee-code-pre">{{ codeHtml() }}</pre>

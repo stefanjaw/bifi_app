@@ -7,6 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
@@ -36,11 +37,13 @@ import { emailSettings } from '../../../../interfaces/email-settings';
     ButtonModule,
     ProgressBarModule,
     MessageModule,
+    TranslatePipe,
   ],
   templateUrl: './email-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailSettingsPage {
+  private translationService = inject(TranslationService);
   private crudSettings = inject(CrudEmailSettings);
   private formService = inject(EmailSettingsForm);
   private destroy$ = inject(DestroyRef);
@@ -51,15 +54,33 @@ export class EmailSettingsPage {
   protected testResult = signal<{ ok: boolean; message: string } | null>(null);
 
   protected providerOptions = [
-    { label: 'Resend', value: 'resend' },
-    { label: 'Mailgun', value: 'mailgun' },
-    { label: 'Amazon SES', value: 'ses' },
-    { label: 'SendGrid', value: 'sendgrid' },
+    {
+      label: this.translationService.translate('provider.resend', {}, 'email-marketing'),
+      value: 'resend',
+    },
+    {
+      label: this.translationService.translate('provider.mailgun', {}, 'email-marketing'),
+      value: 'mailgun',
+    },
+    {
+      label: this.translationService.translate('provider.amazonSes', {}, 'email-marketing'),
+      value: 'ses',
+    },
+    {
+      label: this.translationService.translate('provider.sendgrid', {}, 'email-marketing'),
+      value: 'sendgrid',
+    },
   ];
 
   protected mailgunRegionOptions = [
-    { label: 'US', value: 'us' },
-    { label: 'EU', value: 'eu' },
+    {
+      label: this.translationService.translate('provider.regionUs', {}, 'email-marketing'),
+      value: 'us',
+    },
+    {
+      label: this.translationService.translate('provider.regionEu', {}, 'email-marketing'),
+      value: 'eu',
+    },
   ];
 
   protected settingsResource = this.crudSettings.getSettings();
@@ -148,7 +169,13 @@ export class EmailSettingsPage {
           this.testLoading.set(false);
           this.testResult.set({
             ok: false,
-            message: err?.error?.message ?? 'Connection test failed',
+            message:
+              err?.error?.message ??
+              this.translationService.translate(
+                'notification.connectionTestFailed',
+                {},
+                'email-marketing'
+              ),
           });
         },
       });

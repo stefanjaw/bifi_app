@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Mailing List"
+  [title]="
+    isUpdate()
+      ? ('form.editList' | translate: {} : 'email-marketing')
+      : ('form.createList' | translate: {} : 'email-marketing')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,25 +22,33 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="List Information" id="list-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.section.listInformation' | translate: {} : 'email-marketing'"
+        id="list-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.campaignName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
               type="text"
-              placeholder="e.g. Newsletter Subscribers"
+              [placeholder]="'form.placeholder.listName' | translate: {} : 'email-marketing'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <textarea
               pInputTextarea
               formControlName="description"
-              placeholder="Description"
+              [placeholder]="'form.placeholder.description' | translate: {} : 'email-marketing'"
               rows="3"
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>

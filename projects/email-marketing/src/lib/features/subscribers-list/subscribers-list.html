@@ -1,5 +1,5 @@
 <p-button
-  label="Dashboard"
+  [label]="'buttons.dashboard' | translate: {} : 'email-marketing'"
   severity="secondary"
   variant="text"
   icon="pi pi-arrow-left"
@@ -7,11 +7,13 @@
   class="mb-1"
 ></p-button>
 
-<h1 class="text-2xl font-bold mb-4">Subscribers</h1>
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'pageTitle.subscribers' | translate: {} : 'email-marketing' }}
+</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Subscriber"
+    [label]="'buttons.newSubscriber' | translate: {} : 'email-marketing'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['create']"
@@ -19,9 +21,13 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by email" [searchFilters]="filters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'search.byEmail' | translate: {} : 'email-marketing'"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
+  [scope]="'email-marketing'"
   [infiniteScroll]="true"
   [columns]="columns"
   [data]="subscribers"

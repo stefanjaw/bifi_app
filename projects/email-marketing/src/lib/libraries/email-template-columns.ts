@@ -4,19 +4,19 @@ import { emailTemplate } from '../interfaces/email-template';
 export const emailTemplateColumns: tableColumn<emailTemplate>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'category',
-    title: 'Category',
+    title: 'category',
     type: 'text',
     sortable: true,
   },
   {
     field: 'description',
-    title: 'Description',
+    title: 'description',
     type: 'text',
   },
 ];

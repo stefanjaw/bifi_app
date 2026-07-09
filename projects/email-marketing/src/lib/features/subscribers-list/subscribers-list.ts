@@ -6,6 +6,7 @@ import {
   SearchBar,
   TableLayout,
 } from '@avalantec/base-app/resource';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
@@ -18,7 +19,15 @@ import { subscriberFilters } from '../../libraries/subscriber-filters';
 @Component({
   selector: 'bifi-app-subscribers-list',
   providers: [provideResourceManager(CrudSubscribers)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

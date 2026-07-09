@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Subscriber"
+  [title]="
+    isUpdate()
+      ? ('form.editSubscriber' | translate: {} : 'email-marketing')
+      : ('form.createSubscriber' | translate: {} : 'email-marketing')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,53 +22,77 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Subscriber Information" id="subscriber-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.section.subscriberInformation' | translate: {} : 'email-marketing'"
+        id="subscriber-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Email</bifi-app-form-label>
-            <input pInputText formControlName="email" type="email" placeholder="name@example.com" />
+            <bifi-app-form-label>
+              {{ 'email' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="email"
+              type="email"
+              [placeholder]="'form.placeholder.email' | translate: {} : 'email-marketing'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Full name" />
+            <bifi-app-form-label>
+              {{ 'name' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'form.placeholder.fullName' | translate: {} : 'email-marketing'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Mailing List</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.mailingLists' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="listId"
               [options]="listOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a list"
+              [placeholder]="'form.placeholder.selectList' | translate: {} : 'email-marketing'"
               class="w-full"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Status</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.status' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="status"
               [options]="statusOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select status"
+              [placeholder]="'form.placeholder.selectStatus' | translate: {} : 'email-marketing'"
               class="w-full"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.tags' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="tagsInput"
               type="text"
-              placeholder="vip, newsletter"
+              [placeholder]="'form.placeholder.tags' | translate: {} : 'email-marketing'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>

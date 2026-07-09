@@ -9,6 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { ButtonModule } from 'primeng/button';
@@ -31,6 +32,7 @@ import { EmailEditor } from '../../components/email-editor/email-editor';
     ButtonModule,
     ProgressBarModule,
     EmailEditor,
+    TranslatePipe,
   ],
   templateUrl: './template-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
