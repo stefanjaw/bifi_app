@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import {
   FileResolver,
   provideResourceManager,
@@ -27,8 +20,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
 import { bcd, CrudBCD, ebcdSchema, getBCDFileTypeConfig, getBCDStatusConfig } from '../../../bcds';
-import { getInvoiceStatusTagConfig, getShippingStatusConfig } from '../../libraries/shipping-utils';
-import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
+import { getInvoiceStatusTagConfig } from '../../libraries/shipping-utils';
+import { TranslatePipe, t } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-shippings-list',
@@ -58,38 +51,10 @@ export class ShippingsList {
   private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
   protected fileResolver = inject(FileResolver);
-  private translationService = inject(TranslationService);
 
   shippingFilters = shippingFilters;
 
-  shippingColumns = computed(() =>
-    shippingColumns.map(col => {
-      if (col.field === 'status') {
-        const originalComponent = col.component!;
-        return {
-          ...col,
-          component: (value: shipping) => {
-            const bcdStatus = value.bcds?.length
-              ? getBCDStatusConfig(value.bcds[value.bcds.length - 1].status)
-              : undefined;
-            const shippingStatus = getShippingStatusConfig(value.status);
-            const displayValue = bcdStatus
-              ? `${this.translationService.translate(bcdStatus.value, {}, 'aduanix')} (${this.translationService.translate(shippingStatus.value, {}, 'aduanix')})`
-              : this.translationService.translate(shippingStatus.value, {}, 'aduanix');
-            return {
-              component: Tag,
-              inputs: {
-                value: displayValue,
-                severity: bcdStatus?.severity || shippingStatus.severity,
-              },
-              outputs: {},
-            };
-          },
-        };
-      }
-      return col;
-    })
-  );
+  shippingColumns = shippingColumns;
 
   shippings = this.resourceManager.data;
   isUploadFTPLoading = signal(false);
@@ -179,7 +144,7 @@ export class ShippingsList {
   getBCDName(bcd: bcd) {
     return (
       bcd.ebcds.find(ebcd => ebcd.type === 'SENT_CSV')?.file.name ||
-      this.translationService.translate('fallback.notUploaded', {}, 'aduanix')
+      t('fallback.notUploaded', {}, 'aduanix')
     );
   }
 }

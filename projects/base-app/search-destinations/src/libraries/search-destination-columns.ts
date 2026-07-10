@@ -1,3 +1,4 @@
+import { t } from '@avalantec/base-app/i18n';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { searchDestination } from '../interfaces/search-destination';
 
@@ -23,7 +24,10 @@ export const searchDestinationColumns: tableColumn<searchDestination>[] = [
     field: 'keywords',
     title: 'phrases',
     type: 'text',
-    parseField: (value: any) => (Array.isArray(value) && value.length ? value.join(', ') : '—'),
+    parseField: (value: any) =>
+      Array.isArray(value) && value.length
+        ? value.join(', ')
+        : t('status.fallback.dash', {}, 'base-app/search-destinations'),
   },
   {
     field: 'active',

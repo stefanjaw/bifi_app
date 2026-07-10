@@ -77,18 +77,20 @@ export class SearchService {
 
     const indexed = this._rawDestinations.map(d => ({
       ...d,
-      _searchLabel: d.scope
-        ? this.translationService.translate(d.label, {}, d.scope)
-        : d.label,
-      _searchGroup: d.group && d.scope
-        ? (() => {
-            const t = this.translationService.translate(d.group!, {}, d.scope);
-            return t !== d.group ? t : this.translationService.translate(d.group!, {}, 'base-app/routing');
-          })()
-        : (d.group ?? ''),
-      _searchDescription: d.description && d.scope
-        ? this.translationService.translate(d.description, {}, d.scope)
-        : (d.description ?? ''),
+      _searchLabel: d.scope ? this.translationService.translate(d.label, {}, d.scope) : d.label,
+      _searchGroup:
+        d.group && d.scope
+          ? (() => {
+              const t = this.translationService.translate(d.group!, {}, d.scope);
+              return t !== d.group
+                ? t
+                : this.translationService.translate(d.group!, {}, 'base-app/routing');
+            })()
+          : (d.group ?? ''),
+      _searchDescription:
+        d.description && d.scope
+          ? this.translationService.translate(d.description, {}, d.scope)
+          : (d.description ?? ''),
     }));
 
     const fuse = new Fuse(indexed, {

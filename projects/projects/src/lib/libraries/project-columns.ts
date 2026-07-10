@@ -1,3 +1,4 @@
+import { t } from '@avalantec/base-app/i18n';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { project } from '../interfaces/projects';
 
@@ -22,7 +23,8 @@ export const projectColumns: tableColumn<project>[] = [
   {
     field: 'description',
     title: 'columns.description',
-    parseField: (value: string | null | undefined) => (value && value.trim() ? value : 'Not set'),
+    parseField: (value: string | null | undefined) =>
+      value && value.trim() ? value : t('status.fallback.notSet', {}, 'projects'),
     type: 'text',
   },
   {

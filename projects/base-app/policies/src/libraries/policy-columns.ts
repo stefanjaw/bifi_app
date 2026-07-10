@@ -1,3 +1,4 @@
+import { t } from '@avalantec/base-app/i18n';
 import { policy } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
 
@@ -19,6 +20,7 @@ export const policyColumns: tableColumn<policy<any, any>>[] = [
     field: 'conditions',
     title: 'totalConditions',
     type: 'text',
-    parseField: (value: policy<string, string>['conditions']) => `${value.length} conditions`,
+    parseField: (value: policy<string, string>['conditions']) =>
+      t('conditions.count', { count: value.length }, 'base-app/policies'),
   },
 ];
