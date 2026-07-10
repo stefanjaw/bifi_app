@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, inject, Provider } from '@angular/core';
-import { TranslationService } from '../services/translation';
+import { TranslationService, provideT } from '../services/translation';
 
 /**
  * Root-level providers for the translation system.
@@ -36,6 +36,7 @@ const BASE_APP_SCOPES = [
 export function provideTranslationRoot(): Provider[] {
   return [
     TranslationService,
+    provideT(),
     {
       provide: APP_INITIALIZER,
       useFactory: () => {

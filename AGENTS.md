@@ -314,6 +314,36 @@ private translationService = inject(TranslationService);
 const label = this.translationService.translate('key', params, 'scope');
 ```
 
+### Global `t()` Function — TypeScript Usage Without DI
+
+The `t()` function is the TypeScript equivalent of `| translate`, usable **anywhere** without injecting `TranslationService`:
+
+```ts
+import { t } from '@avalantec/base-app/i18n';
+
+// Inside static callbacks (column files, filters, etc.):
+const label = t('assetRoster.status.active', {}, 'asset-roster');
+const fallback = t('fallback.notSet', {}, 'asset-roster');
+```
+
+**Parameters** (same as `TranslationService.translate()` and `| translate` pipe):
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `key` | `string` | yes | Translation key |
+| `params` | `Record<string, any>` | no | `{{param}}` substitution map |
+| `scope` | `string` | no | Scope identifier |
+
+**When to use:**
+
+| Context | Use | Example |
+|---|---|---|
+| Templates | `\| translate` pipe | `{{ 'key' \| translate : {} : 'scope' }}` |
+| Components / Services | `TranslationService.translate()` | `inject(TranslationService).translate('key', {}, 'scope')` |
+| Static callbacks (column `parseField`, `component`, filter files, etc.) | `t()` | `t('key', {}, 'scope')` |
+
+**Prefer `TranslationService.translate()` in components/services that already inject `TranslationService`.** Only use `t()` when you cannot access DI (static column/filter files, module-level callbacks). The `t()` function is wired globally by `provideTranslationRoot()` at bootstrap — no additional providers needed in feature libs.
+
 ### Scope Convention
 
 | Where | Scope format | Example |

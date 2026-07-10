@@ -1,9 +1,47 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, Provider, APP_INITIALIZER } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { languageRecord } from '../interfaces/language';
 import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
+
+let _ts: TranslationService | null = null;
+
+/**
+ * Wires the TranslationService into the global `t()` function.
+ * Called once at bootstrap via `provideT()`.
+ */
+export function setT(ts: TranslationService): void {
+  _ts = ts;
+}
+
+/**
+ * Global translate utility — the TypeScript equivalent of `| translate`.
+ * No DI required. Falls back to the raw key if not bootstrapped yet.
+ *
+ * @param key - The translation key
+ * @param params - Optional `{{param}}` substitution map
+ * @param scope - Translation scope (e.g. `'asset-roster'`, `'base-app/users'`)
+ * @returns The translated string, or the raw key as fallback
+ */
+export function t(key: string, params?: Record<string, any>, scope?: string): string {
+  return _ts?.translate(key, params, scope) ?? key;
+}
+
+/**
+ * Provider that injects TranslationService into the global `t()` function.
+ * Added inside `provideTranslationRoot()` so all apps get it automatically.
+ */
+export function provideT(): Provider {
+  return {
+    provide: APP_INITIALIZER,
+    useFactory: () => {
+      setT(inject(TranslationService));
+      return () => {};
+    },
+    multi: true,
+  };
+}
 
 /**
  * Signal-based translation service for the backend-driven i18n system.
