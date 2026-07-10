@@ -24,6 +24,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { JournalEntryFormService, JournalEntryFormModel } from '../../services/journal-entry-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-journal-entry-form',
@@ -37,6 +38,7 @@ import { JournalEntryFormService, JournalEntryFormModel } from '../../services/j
     ButtonModule,
     DatePickerModule,
     DecimalPipe,
+    TranslatePipe,
   ],
   templateUrl: './journal-entry-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +51,7 @@ export class JournalEntryForm {
   private crudCurrencies = inject(CrudCurrencies);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -134,11 +137,11 @@ export class JournalEntryForm {
     const totalDebit = lines.reduce((s: number, l: any) => s + (l.debit ?? 0), 0);
     const totalCredit = lines.reduce((s: number, l: any) => s + (l.credit ?? 0), 0);
     if (Math.abs(totalDebit - totalCredit) > 0.0001) {
-      alert('Total debits must equal total credits.');
+      alert(this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting'));
       return;
     }
     if (lines.length < 2) {
-      alert('At least 2 lines are required.');
+      alert(this.translationService.translate('validation.minLinesRequired', {}, 'accounting'));
       return;
     }
 

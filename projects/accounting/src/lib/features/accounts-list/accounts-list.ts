@@ -13,12 +13,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { accountColumns } from '../../libraries/account-columns';
 import { accountFilters } from '../../libraries/account-filters';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-accounts-list',
   providers: [provideResourceManager(CrudAccounts)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions, TranslatePipe],
   templateUrl: './accounts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

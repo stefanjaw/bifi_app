@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Discount' : 'New Discount'"
+  [title]="
+    isUpdate()
+      ? ('form.editDiscount' | translate: {} : 'accounting')
+      : ('form.newDiscount' | translate: {} : 'accounting')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,35 +22,55 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Discount Details" id="discount-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.discountDetails' | translate: {} : 'accounting'"
+        id="discount-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. Summer Sale 10%" />
+            <bifi-app-form-label>
+              {{ 'form.label.name' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'placeholders.e.g.summerSale10' | translate: {} : 'accounting'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Discount Type *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.discountType' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="discountType"
               [options]="discountTypeOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select type"
+              [placeholder]="'placeholders.selectType' | translate: {} : 'accounting'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Value *</bifi-app-form-label>
-            <p-inputNumber formControlName="value" [min]="0" placeholder="e.g. 10"></p-inputNumber>
+            <bifi-app-form-label>
+              {{ 'form.label.value' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
+            <p-inputNumber
+              formControlName="value"
+              [min]="0"
+              [placeholder]="'placeholders.e.g.10' | translate: {} : 'accounting'"
+            ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (isUpdate()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>Active</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.label.active' | translate: {} : 'accounting' }}
+              </bifi-app-form-label>
               <p-toggleSwitch formControlName="active"></p-toggleSwitch>
             </bifi-app-form-field>
           }

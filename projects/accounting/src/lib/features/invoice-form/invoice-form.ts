@@ -36,6 +36,7 @@ import { DecimalPipe } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-form';
 import { ColWidthManager } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
   product: 96,
@@ -63,6 +64,7 @@ const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
     TabsModule,
     DecimalPipe,
     TagModule,
+    TranslatePipe,
   ],
   templateUrl: './invoice-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -20,6 +20,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DiscountFormService, DiscountFormModel } from '../../services/discount-form';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-discount-form',
@@ -32,6 +33,7 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
     ProgressBarModule,
     InputNumberModule,
     PluginSlot,
+    TranslatePipe,
   ],
   providers: [providePluginContext(DiscountForm)],
   templateUrl: './discount-form.html',
@@ -56,9 +58,17 @@ export class DiscountForm {
 
   form = this.formService.form;
 
+  private translationService = inject(TranslationService);
+
   discountTypeOptions = [
-    { label: 'Percentage', value: 'percentage' },
-    { label: 'Fixed Amount', value: 'fixed' },
+    {
+      label: this.translationService.translate('options.percentage', {}, 'accounting'),
+      value: 'percentage',
+    },
+    {
+      label: this.translationService.translate('options.fixedAmount', {}, 'accounting'),
+      value: 'fixed',
+    },
   ];
 
   constructor() {

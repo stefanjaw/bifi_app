@@ -24,6 +24,7 @@ import {
   FiscalPositionFormService,
   FiscalPositionFormModel,
 } from '../../services/fiscal-position-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-fiscal-position-form',
@@ -35,6 +36,7 @@ import {
     ToggleSwitchModule,
     ProgressBarModule,
     ButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './fiscal-position-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

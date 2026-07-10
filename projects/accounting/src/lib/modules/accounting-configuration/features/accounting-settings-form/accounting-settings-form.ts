@@ -21,6 +21,7 @@ import {
 } from '../../services/accounting-settings-form';
 import { accountingSettings } from '../../interfaces/accounting-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-accounting-settings-form',
@@ -31,6 +32,7 @@ import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
     ButtonModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './accounting-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

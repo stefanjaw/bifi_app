@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Invoice' : 'New Invoice'"
+  [title]="
+    isUpdate()
+      ? ('form.editInvoice' | translate: {} : 'accounting')
+      : ('form.newInvoice' | translate: {} : 'accounting')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -20,7 +24,9 @@
     @if (isUpdate()) {
       <div class="flex items-center gap-4 px-2">
         <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-500">Number:</span>
+          <span class="text-sm text-gray-500">
+            {{ 'form.label.number' | translate: {} : 'accounting' }}
+          </span>
           <span class="font-semibold text-gray-800">{{ invoiceNumber() || '—' }}</span>
         </div>
         <p-tag
@@ -35,7 +41,7 @@
         ></p-tag>
         @if (canPost()) {
           <p-button
-            label="Post Invoice"
+            [label]="'buttons.postInvoice' | translate: {} : 'accounting'"
             icon="pi pi-check"
             severity="success"
             [loading]="isPosting()"
@@ -44,7 +50,7 @@
         }
         @if (canCancel()) {
           <p-button
-            label="Cancel Invoice"
+            [label]="'buttons.cancelInvoice' | translate: {} : 'accounting'"
             icon="pi pi-times"
             severity="danger"
             [loading]="isCancelling()"
@@ -55,16 +61,22 @@
     }
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Invoice Header" id="invoice-header" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.invoiceHeader' | translate: {} : 'accounting'"
+        id="invoice-header"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Contact</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.contact' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contacts() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select contact"
+              [placeholder]="'placeholders.selectContact' | translate: {} : 'accounting'"
               [filter]="true"
               [showClear]="true"
             ></p-select>
@@ -72,13 +84,15 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Payment Term</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.paymentTerm' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="paymentTermId"
               [options]="paymentTerms() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select payment term"
+              [placeholder]="'placeholders.selectPaymentTerm' | translate: {} : 'accounting'"
               [filter]="true"
               [showClear]="true"
               (onChange)="onPaymentTermChange($event.value)"
@@ -87,54 +101,68 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Invoice Date *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.invoiceDate' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="invoiceDate"
-              placeholder="Select date"
+              [placeholder]="'placeholders.selectDate' | translate: {} : 'accounting'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Due Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.dueDate' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="dueDate"
-              placeholder="Select due date"
+              [placeholder]="'placeholders.selectDueDate' | translate: {} : 'accounting'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Journal *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.journal' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="journalId"
               [options]="journals() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select journal"
+              [placeholder]="'placeholders.selectJournal' | translate: {} : 'accounting'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Currency *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.currency' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="currencyId"
               [options]="currencies() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select currency"
+              [placeholder]="'placeholders.selectCurrency' | translate: {} : 'accounting'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Payment Reference</bifi-app-form-label>
-            <input pInputText formControlName="paymentReference" placeholder="e.g. PO-2026-001" />
+            <bifi-app-form-label>
+              {{ 'form.label.paymentReference' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="paymentReference"
+              [placeholder]="'placeholders.e.g.REF-001' | translate: {} : 'accounting'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -144,9 +172,9 @@
 
       <p-tabs value="0">
         <p-tablist>
-          <p-tab value="0">Invoice Lines</p-tab>
+          <p-tab value="0">{{ 'form.invoiceLines' | translate: {} : 'accounting' }}</p-tab>
           @if (isUpdate()) {
-            <p-tab value="1">Journal Items</p-tab>
+            <p-tab value="1">{{ 'form.journalItems' | translate: {} : 'accounting' }}</p-tab>
           }
         </p-tablist>
         <p-tabpanels>
@@ -173,49 +201,49 @@
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'product')"
                       >
-                        Product
+                        {{ 'form.label.product' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'description')"
                       >
-                        Description
+                        {{ 'form.label.description' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'account')"
                       >
-                        Account
+                        {{ 'form.label.account' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'quantity')"
                       >
-                        Qty
+                        {{ 'form.label.qty' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'unitPrice')"
                       >
-                        Unit Price
+                        {{ 'form.label.unitPrice' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'taxes')"
                       >
-                        Taxes
+                        {{ 'form.label.taxes' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th
                         class="px-2 py-2 text-left font-semibold border-r border-gray-200 relative"
                         (mousedown)="onResizeStart($event, 'amount')"
                       >
-                        Amount
+                        {{ 'form.label.total' | translate: {} : 'accounting' }}
                         <div class="col-resize-handle"></div>
                       </th>
                       <th class="px-2 py-2 text-center font-semibold"></th>
@@ -231,7 +259,7 @@
                               [options]="products() || []"
                               optionLabel="name"
                               optionValue="_id"
-                              placeholder="SKU"
+                              [placeholder]="'form.label.sku' | translate: {} : 'accounting'"
                               [filter]="true"
                               appendTo="body"
                               styleClass="w-full"
@@ -246,7 +274,9 @@
                             <input
                               pInputText
                               [formControl]="$any(line.get('description'))"
-                              placeholder="Description"
+                              [placeholder]="
+                                'placeholders.description' | translate: {} : 'accounting'
+                              "
                               class="w-full min-w-0"
                             />
                           </td>
@@ -256,7 +286,9 @@
                               [options]="accounts() || []"
                               optionLabel="name"
                               optionValue="_id"
-                              placeholder="Account"
+                              [placeholder]="
+                                'placeholders.selectAccount' | translate: {} : 'accounting'
+                              "
                               [filter]="true"
                               styleClass="w-full"
                               appendTo="body"
@@ -267,7 +299,7 @@
                               [formControl]="$any(line.get('quantity'))"
                               [min]="0"
                               [minFractionDigits]="2"
-                              placeholder="1"
+                              [placeholder]="'placeholders.1' | translate: {} : 'accounting'"
                               [showButtons]="true"
                               buttonLayout="horizontal"
                               decrementButtonIcon="pi pi-minus"
@@ -280,7 +312,7 @@
                               [formControl]="$any(line.get('unitPrice'))"
                               [min]="0"
                               [minFractionDigits]="2"
-                              placeholder="0.00"
+                              [placeholder]="'placeholders.0.00' | translate: {} : 'accounting'"
                               [showButtons]="true"
                               buttonLayout="horizontal"
                               decrementButtonIcon="pi pi-minus"
@@ -294,7 +326,7 @@
                               [options]="taxes() || []"
                               optionLabel="name"
                               optionValue="_id"
-                              placeholder="Taxes"
+                              [placeholder]="'form.label.taxes' | translate: {} : 'accounting'"
                               styleClass="w-full"
                               appendTo="body"
                             ></p-multiselect>
@@ -325,7 +357,7 @@
 
               <div>
                 <p-button
-                  label="Add Line"
+                  [label]="'buttons.addLine' | translate: {} : 'accounting'"
                   icon="pi pi-plus"
                   severity="secondary"
                   (onClick)="addLine()"
@@ -334,15 +366,21 @@
 
               <div class="mt-4 flex flex-col items-end gap-1 text-sm">
                 <div class="flex gap-4">
-                  <span class="text-gray-500">Untaxed Amount:</span>
+                  <span class="text-gray-500">
+                    {{ 'totals.untaxedAmount' | translate: {} : 'accounting' }}
+                  </span>
                   <span class="font-semibold">{{ untaxedTotal() | number: '1.2-2' }}</span>
                 </div>
                 <div class="flex gap-4">
-                  <span class="text-gray-500">Taxes:</span>
+                  <span class="text-gray-500">
+                    {{ 'totals.taxes' | translate: {} : 'accounting' }}
+                  </span>
                   <span class="font-semibold">{{ taxTotal() | number: '1.2-2' }}</span>
                 </div>
                 <div class="flex gap-4 border-t pt-2">
-                  <span class="text-gray-700 font-semibold">Total:</span>
+                  <span class="text-gray-700 font-semibold">
+                    {{ 'totals.total' | translate: {} : 'accounting' }}
+                  </span>
                   <span class="font-bold text-base">{{ grandTotal() | number: '1.2-2' }}</span>
                 </div>
               </div>
@@ -362,11 +400,21 @@
                     <div
                       class="grid grid-cols-12 gap-2 px-1 text-xs text-gray-500 font-semibold uppercase"
                     >
-                      <div class="col-span-1">Type</div>
-                      <div class="col-span-4">Account</div>
-                      <div class="col-span-3">Label</div>
-                      <div class="col-span-2 text-right">Debit</div>
-                      <div class="col-span-2 text-right">Credit</div>
+                      <div class="col-span-1">
+                        {{ 'form.label.type' | translate: {} : 'accounting' }}
+                      </div>
+                      <div class="col-span-4">
+                        {{ 'form.label.account' | translate: {} : 'accounting' }}
+                      </div>
+                      <div class="col-span-3">
+                        {{ 'form.label.description' | translate: {} : 'accounting' }}
+                      </div>
+                      <div class="col-span-2 text-right">
+                        {{ 'form.label.debit' | translate: {} : 'accounting' }}
+                      </div>
+                      <div class="col-span-2 text-right">
+                        {{ 'form.label.credit' | translate: {} : 'accounting' }}
+                      </div>
                     </div>
 
                     @for (line of lines; track $index) {
@@ -405,7 +453,9 @@
                             <input
                               pInputText
                               [formControl]="$any(line.get('description'))"
-                              placeholder="Label"
+                              [placeholder]="
+                                'placeholders.description' | translate: {} : 'accounting'
+                              "
                               class="w-full"
                             />
                           </bifi-app-form-field>
@@ -416,7 +466,7 @@
                               [formControl]="$any(line.get('debit'))"
                               [min]="0"
                               [minFractionDigits]="2"
-                              placeholder="0.00"
+                              [placeholder]="'placeholders.0.00' | translate: {} : 'accounting'"
                             ></p-inputNumber>
                           </bifi-app-form-field>
                         </div>
@@ -437,7 +487,9 @@
                       <div class="col-span-8 flex items-center">
                         <span [class]="jeIsBalanced() ? 'text-green-600' : 'text-red-600'">
                           {{
-                            jeIsBalanced() ? 'Balanced' : 'Unbalanced — debits must equal credits'
+                            jeIsBalanced()
+                              ? ('balance.balanced' | translate: {} : 'accounting')
+                              : ('balance.unbalanced' | translate: {} : 'accounting')
                           }}
                         </span>
                       </div>

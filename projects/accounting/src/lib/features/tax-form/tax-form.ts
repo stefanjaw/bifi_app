@@ -22,6 +22,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TaxFormService, TaxFormModel } from '../../services/tax-form';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-tax-form',
@@ -34,6 +35,7 @@ import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-sys
     ProgressBarModule,
     InputNumberModule,
     PluginSlot,
+    TranslatePipe,
   ],
   providers: [providePluginContext(TaxForm)],
   templateUrl: './tax-form.html',
@@ -61,9 +63,14 @@ export class TaxForm {
   form = this.formService.form;
   accounts = this.accountsResource.value;
 
+  private translationService = inject(TranslationService);
+
   taxTypeOptions = [
-    { label: 'Sales', value: 'sales' },
-    { label: 'Purchase', value: 'purchase' },
+    { label: this.translationService.translate('options.sales', {}, 'accounting'), value: 'sales' },
+    {
+      label: this.translationService.translate('options.purchase', {}, 'accounting'),
+      value: 'purchase',
+    },
   ];
 
   constructor() {

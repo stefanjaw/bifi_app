@@ -1,4 +1,8 @@
-<bifi-app-form-layout title="New Payment" titlePosition="center" class="block px-4 bg-gray-50 py-4">
+<bifi-app-form-layout
+  [title]="'form.newPayment' | translate: {} : 'accounting'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
   <form
     ngProjectAs="div"
     [formGroup]="form"
@@ -14,92 +18,116 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Payment Details" id="payment-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.paymentDetails' | translate: {} : 'accounting'"
+        id="payment-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Payment Type *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.paymentType' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="paymentType"
               [options]="paymentTypeOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select type"
+              [placeholder]="'placeholders.selectType' | translate: {} : 'accounting'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Partner</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.partner' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="partnerId"
               [options]="contacts() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select partner"
+              [placeholder]="'placeholders.selectPartner' | translate: {} : 'accounting'"
               [filter]="true"
               [showClear]="true"
             ></p-select>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Journal *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.journal' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="journalId"
               [options]="journals() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select journal"
+              [placeholder]="'placeholders.selectJournal' | translate: {} : 'accounting'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Currency *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.currency' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="currencyId"
               [options]="currencies() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select currency"
+              [placeholder]="'placeholders.selectCurrency' | translate: {} : 'accounting'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Amount *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.amount' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="amount"
               [min]="0"
               [minFractionDigits]="2"
-              placeholder="0.00"
+              [placeholder]="'placeholders.0.00' | translate: {} : 'accounting'"
             ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Payment Date *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.paymentDate' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="paymentDate"
-              placeholder="Select date"
+              [placeholder]="'placeholders.selectDate' | translate: {} : 'accounting'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Reference</bifi-app-form-label>
-            <input pInputText formControlName="reference" placeholder="e.g. REF-001" />
+            <bifi-app-form-label>
+              {{ 'form.label.reference' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="reference"
+              [placeholder]="'placeholders.e.g.REF-001' | translate: {} : 'accounting'"
+            />
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Exchange Rate</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.exchangeRate' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="exchangeRate"
               [min]="0"
               [minFractionDigits]="4"
-              placeholder="1.0000"
+              [placeholder]="'placeholders.1.0000' | translate: {} : 'accounting'"
             ></p-inputNumber>
           </bifi-app-form-field>
         </div>

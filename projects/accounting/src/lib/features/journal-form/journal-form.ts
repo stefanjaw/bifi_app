@@ -20,6 +20,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { JournalFormService, JournalFormModel } from '../../services/journal-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-journal-form',
@@ -30,6 +31,7 @@ import { JournalFormService, JournalFormModel } from '../../services/journal-for
     SelectModule,
     ToggleSwitchModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './journal-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,12 +66,20 @@ export class JournalForm {
   accounts = this.accountsResource.value;
   currencies = this.currenciesResource.value;
 
+  private translationService = inject(TranslationService);
+
   journalTypeOptions = [
-    { label: 'Sales', value: 'sales' },
-    { label: 'Purchase', value: 'purchase' },
-    { label: 'Cash', value: 'cash' },
-    { label: 'Bank', value: 'bank' },
-    { label: 'General', value: 'general' },
+    { label: this.translationService.translate('options.sales', {}, 'accounting'), value: 'sales' },
+    {
+      label: this.translationService.translate('options.purchase', {}, 'accounting'),
+      value: 'purchase',
+    },
+    { label: this.translationService.translate('options.cash', {}, 'accounting'), value: 'cash' },
+    { label: this.translationService.translate('options.bank', {}, 'accounting'), value: 'bank' },
+    {
+      label: this.translationService.translate('options.general', {}, 'accounting'),
+      value: 'general',
+    },
   ];
 
   constructor() {

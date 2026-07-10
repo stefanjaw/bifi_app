@@ -19,6 +19,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaymentTermFormService, PaymentTermFormModel } from '../../services/payment-term-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-payment-term-form',
@@ -30,6 +31,7 @@ import { PaymentTermFormService, PaymentTermFormModel } from '../../services/pay
     ProgressBarModule,
     InputNumberModule,
     ButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './payment-term-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

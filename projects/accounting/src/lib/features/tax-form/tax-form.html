@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Tax' : 'New Tax'"
+  [title]="
+    isUpdate()
+      ? ('form.editTax' | translate: {} : 'accounting')
+      : ('form.newTax' | translate: {} : 'accounting')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,46 +22,62 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Tax Details" id="tax-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.taxDetails' | translate: {} : 'accounting'"
+        id="tax-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. VAT 15%" />
+            <bifi-app-form-label>
+              {{ 'form.label.name' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'placeholders.e.g.VAT-15' | translate: {} : 'accounting'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Tax Type *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.taxType' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="taxType"
               [options]="taxTypeOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select type"
+              [placeholder]="'placeholders.selectType' | translate: {} : 'accounting'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Percentage (%) *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.percentage' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-inputNumber
               formControlName="percentage"
               [min]="0"
               [max]="100"
               suffix="%"
-              placeholder="e.g. 15"
+              [placeholder]="'placeholders.e.g.15' | translate: {} : 'accounting'"
             ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Account *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.label.account' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="accountId"
               [options]="accounts() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select account"
+              [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
               [filter]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
@@ -65,7 +85,9 @@
 
           @if (isUpdate()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>Active</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.label.active' | translate: {} : 'accounting' }}
+              </bifi-app-form-label>
               <p-toggleSwitch formControlName="active"></p-toggleSwitch>
             </bifi-app-form-field>
           }
