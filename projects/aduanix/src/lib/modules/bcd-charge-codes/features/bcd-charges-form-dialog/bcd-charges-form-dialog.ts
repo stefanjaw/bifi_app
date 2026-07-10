@@ -8,6 +8,7 @@ import { BaseDialog } from '@avalantec/base-app/core';
 import { BCDFormManager } from '../../../bcds';
 import { CrudBCDChargeCode } from '../../services/crud-bcd-charge-code';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-bcd-charges-form-dialog',
@@ -18,6 +19,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputTextModule,
     SelectModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './bcd-charges-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

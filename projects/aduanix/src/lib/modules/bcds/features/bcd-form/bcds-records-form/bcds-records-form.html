@@ -1,8 +1,12 @@
 @if (!loading()) {
   <section [formGroup]="form">
-    <bifi-app-form-section title="15. RECORDS" id="records-info" [ordinal]="1">
+    <bifi-app-form-section
+      [title]="'formSection.records' | translate: {} : 'aduanix'"
+      id="records-info"
+      [ordinal]="1"
+    >
       <p-button
-        label="Add Record"
+        [label]="'button.addRecord' | translate: {} : 'aduanix'"
         icon="pi pi-plus"
         variant="text"
         (onClick)="formManager.addRecord()"
@@ -15,7 +19,9 @@
             <p-accordion-panel [value]="$index">
               <p-accordion-header>
                 <div class="flex flex-row items-center gap-4">
-                  <span>Record NO. {{ $index + 1 }}</span>
+                  <span>
+                    {{ 'label.recordNumber' | translate: { number: $index + 1 } : 'aduanix' }}
+                  </span>
                   <p-button
                     type="button"
                     icon="pi pi-trash"
@@ -33,7 +39,9 @@
                 >
                   <div class="border-[0.1px] border-gray-200 w-full flex flex-col gap-4 p-7">
                     <bifi-app-form-field>
-                      <bifi-app-form-label>16. CPC</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.cpc' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <p-select
                         appendTo="body"
                         formControlName="cpc"
@@ -50,7 +58,9 @@
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>17. Country of Origin</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.countryOfOrigin' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <p-select
                         appendTo="body"
                         formControlName="origin"
@@ -63,16 +73,20 @@
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>18. Tariff No.</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.tariffNo' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <bifi-app-tariff-picker
                         formControlName="tariff"
-                        placeholder="Search tariff code or description"
+                        [placeholder]="'placeholder.searchTariff' | translate: {} : 'aduanix'"
                       ></bifi-app-tariff-picker>
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>19. Description</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.description' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <textarea
                         pInputTextarea
                         formControlName="description"
@@ -83,25 +97,33 @@
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>20. Quantity / Units 1</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.quantityUnits1' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <input type="number" formControlName="quantity" pInputText />
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>21. Quantity / Units 2</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.quantityUnits2' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <input type="number" formControlName="quantityTwo" pInputText />
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>22. Supplementary Code</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.supplementaryCode' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <input type="text" formControlName="supplementaryCode" pInputText />
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
 
                     <bifi-app-form-field>
-                      <bifi-app-form-label>23. Currency</bifi-app-form-label>
+                      <bifi-app-form-label>
+                        {{ 'label.currency' | translate: {} : 'aduanix' }}
+                      </bifi-app-form-label>
                       <input type="text" formControlName="currency" pInputText />
                       <bifi-app-form-error></bifi-app-form-error>
                     </bifi-app-form-field>
@@ -110,38 +132,46 @@
                   <div class="border-[0.1px] border-gray-200">
                     <div class="w-full flex flex-col gap-4 p-7">
                       <bifi-app-form-field>
-                        <bifi-app-form-label>24. Exchange Rate</bifi-app-form-label>
+                        <bifi-app-form-label>
+                          {{ 'label.exchangeRate' | translate: {} : 'aduanix' }}
+                        </bifi-app-form-label>
                         <input type="number" formControlName="exchangeRate" pInputText />
                         <bifi-app-form-error></bifi-app-form-error>
                       </bifi-app-form-field>
 
                       <bifi-app-form-field>
-                        <bifi-app-form-label>24.1. Lines Subtotal</bifi-app-form-label>
+                        <bifi-app-form-label>
+                          {{ 'label.linesSubtotal' | translate: {} : 'aduanix' }}
+                        </bifi-app-form-label>
                         <input type="number" formControlName="linesSubtotal" pInputText />
                         <bifi-app-form-error></bifi-app-form-error>
                       </bifi-app-form-field>
 
                       <bifi-app-form-field>
-                        <bifi-app-form-label>25. BD$ Value (read only)</bifi-app-form-label>
+                        <bifi-app-form-label>
+                          {{ 'label.bdaValue' | translate: {} : 'aduanix' }}
+                        </bifi-app-form-label>
                         <input readonly type="number" formControlName="bdaValue" pInputText />
                         <bifi-app-form-error></bifi-app-form-error>
                       </bifi-app-form-field>
 
                       <bifi-app-form-field>
-                        <bifi-app-form-label>25.1. Total Due (read only)</bifi-app-form-label>
+                        <bifi-app-form-label>
+                          {{ 'label.totalDue' | translate: {} : 'aduanix' }}
+                        </bifi-app-form-label>
                         <input readonly type="number" formControlName="totalDue" pInputText />
                         <bifi-app-form-error></bifi-app-form-error>
                       </bifi-app-form-field>
                     </div>
 
                     <bifi-app-form-section
-                      title="26. CHARGES / DEDUCTIONS"
+                      [title]="'formSection.recordCharges' | translate: {} : 'aduanix'"
                       id="charges-deductions-info"
                     >
                       <div formArrayName="charges">
                         <p-button
                           class="mb-4"
-                          label="Add charge"
+                          [label]="'button.addCharge' | translate: {} : 'aduanix'"
                           variant="text"
                           icon="pi pi-plus"
                           (onClick)="formManager.addCharge(i)"
@@ -152,9 +182,9 @@
                         >
                           <ng-template pTemplate="header">
                             <tr>
-                              <th>Charges / Deductions</th>
-                              <th>%</th>
-                              <th>Amount</th>
+                              <th>{{ 'column.chargeCode' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.percentage' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.amount' | translate: {} : 'aduanix' }}</th>
                               <th></th>
                             </tr>
                           </ng-template>
@@ -199,11 +229,14 @@
                       </div>
                     </bifi-app-form-section>
 
-                    <bifi-app-form-section title="27. TAXES" id="taxes-info">
+                    <bifi-app-form-section
+                      [title]="'formSection.taxes' | translate: {} : 'aduanix'"
+                      id="taxes-info"
+                    >
                       <div formArrayName="tax">
                         <p-button
                           class="mb-4"
-                          label="Add New Tax"
+                          [label]="'button.addNewTax' | translate: {} : 'aduanix'"
                           variant="text"
                           icon="pi pi-plus"
                           (onClick)="formManager.addTax(i)"
@@ -214,11 +247,11 @@
                         >
                           <ng-template pTemplate="header">
                             <tr>
-                              <th>Tax Type</th>
-                              <th>Tax ID</th>
-                              <th>Value for Tax</th>
-                              <th>Tax Rate</th>
-                              <th>Tax Amount</th>
+                              <th>{{ 'column.taxType' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.taxId' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.valueForTax' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.taxRate' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.taxAmount' | translate: {} : 'aduanix' }}</th>
                               <th></th>
                             </tr>
                           </ng-template>
@@ -289,14 +322,14 @@
                   <!-- ADDITIONAL INFORMATION -->
                   <div class="col-span-full w-full">
                     <bifi-app-form-section
-                      title="28. ADDITIONAL INFORMATION"
+                      [title]="'formSection.recordAdditionalInfo' | translate: {} : 'aduanix'"
                       id="additional-information-info"
                       [ordinal]="5"
                     >
                       <div class="w-full" formArrayName="additionalInformation">
                         <p-button
                           class="mb-4"
-                          label="Add Additional Information"
+                          [label]="'button.addAdditionalInformation' | translate: {} : 'aduanix'"
                           variant="text"
                           icon="pi pi-plus"
                           (onClick)="formManager.addAdditionalInformation(i)"
@@ -310,8 +343,8 @@
                         >
                           <ng-template pTemplate="header">
                             <tr>
-                              <th>Type</th>
-                              <th>Description</th>
+                              <th>{{ 'column.type' | translate: {} : 'aduanix' }}</th>
+                              <th>{{ 'column.description' | translate: {} : 'aduanix' }}</th>
                               <th></th>
                             </tr>
                           </ng-template>

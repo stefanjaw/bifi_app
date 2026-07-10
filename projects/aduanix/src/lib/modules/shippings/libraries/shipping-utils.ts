@@ -17,27 +17,27 @@ export function getShippingStatusConfig(status: shipping['status']): {
   switch (status) {
     case 'PDF_PROCESSED':
       return {
-        value: 'PDF Processed',
+        value: 'status.shipping.pdfProcessed',
         severity: 'success',
       };
     case 'ERROR':
       return {
-        value: 'Error',
+        value: 'status.shipping.error',
         severity: 'danger',
       };
     case 'UPLOADING':
       return {
-        value: 'Uploading',
+        value: 'status.shipping.uploading',
         severity: 'info',
       };
     case 'BCD_SENT':
       return {
-        value: 'BCD Sent',
+        value: 'status.shipping.bcdSent',
         severity: 'success',
       };
     default: {
       return {
-        value: 'Unknown',
+        value: 'status.shipping.unknown',
         severity: 'warn',
       };
     }
@@ -61,22 +61,22 @@ export function getInvoiceStatusTagConfig(status: invoice['status']): {
     case 'PROCESSING_PDF':
       return {
         severity: 'warn',
-        value: 'Processing PDF',
+        value: 'status.invoice.processingPdf',
       };
     case 'ERROR_JSON':
       return {
         severity: 'danger',
-        value: 'Error JSON',
+        value: 'status.invoice.errorJson',
       };
     case 'DATA_PROCESSED':
       return {
         severity: 'success',
-        value: 'Data Processed',
+        value: 'status.invoice.dataProcessed',
       };
     case 'COMPLETE':
       return {
         severity: 'success',
-        value: 'Complete',
+        value: 'status.invoice.complete',
       };
   }
 }

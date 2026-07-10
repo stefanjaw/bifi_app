@@ -1,10 +1,16 @@
 <section [formGroup]="form" class="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
   <div class="col-span-full">
     <!-- General Section -->
-    <bifi-app-form-section title="General Section" id="general-info" [ordinal]="1">
+    <bifi-app-form-section
+      [title]="'formSection.generalSection' | translate: {} : 'aduanix'"
+      id="general-info"
+      [ordinal]="1"
+    >
       <div class="w-full grid gap-3 sm:grid-cols-2 mt-4">
         <bifi-app-form-field>
-          <bifi-app-form-label>BCD Type</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.bcdType' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="type"
@@ -16,7 +22,9 @@
         </bifi-app-form-field>
         <div class="w-full" formGroupName="declarant">
           <bifi-app-form-field>
-            <bifi-app-form-label>Declarant</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'label.declarant' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
             <input type="text" formControlName="name" pInputText />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -25,28 +33,38 @@
     </bifi-app-form-section>
 
     <!-- Declarant Section -->
-    <bifi-app-form-section title="Declarant Section" id="declarant-info" [ordinal]="2">
+    <bifi-app-form-section
+      [title]="'formSection.declarantSection' | translate: {} : 'aduanix'"
+      id="declarant-info"
+      [ordinal]="2"
+    >
       <div formGroupName="declarant" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
         <bifi-app-form-field>
-          <bifi-app-form-label>ID Number</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.idNumber' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="companyId" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Capacity</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.capacity' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="capacity" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Date</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'label.date' | translate: {} : 'aduanix' }}</bifi-app-form-label>
           <p-datepicker fluid formControlName="date" [showIcon]="true"></p-datepicker>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Trader Reference</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.traderReference' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="traderReference" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -56,11 +74,17 @@
 
   <div class="border-[0.1px] border-gray-200">
     <!-- 1. SUPPLIER -->
-    <bifi-app-form-section title="1. SUPPLIER" id="supplier-info" [ordinal]="3">
+    <bifi-app-form-section
+      [title]="'formSection.supplier' | translate: {} : 'aduanix'"
+      id="supplier-info"
+      [ordinal]="3"
+    >
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <div formGroupName="supplier">
           <bifi-app-form-field>
-            <bifi-app-form-label>a. Name</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'label.supplierName' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contactOptions()"
@@ -75,11 +99,17 @@
     </bifi-app-form-section>
 
     <!-- 2. IMPORTER -->
-    <bifi-app-form-section title="2. IMPORTER" id="importer-info" [ordinal]="4">
+    <bifi-app-form-section
+      [title]="'formSection.importer' | translate: {} : 'aduanix'"
+      id="importer-info"
+      [ordinal]="4"
+    >
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <div formGroupName="importer">
           <bifi-app-form-field>
-            <bifi-app-form-label>a. Name</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'label.importerName' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contactOptions()"
@@ -94,7 +124,11 @@
     </bifi-app-form-section>
 
     <!-- 3. TRANSPORT -->
-    <bifi-app-form-section title="3. TRANSPORT DETAILS" id="transport-details-info" [ordinal]="5">
+    <bifi-app-form-section
+      [title]="'formSection.transportDetails' | translate: {} : 'aduanix'"
+      id="transport-details-info"
+      [ordinal]="5"
+    >
       <div formGroupName="transport" class="w-full grid gap-3 sm:grid-cols-2">
         <div class="col-span-full flex flex-wrap gap-4">
           <div class="flex items-center">
@@ -103,17 +137,23 @@
               inputId="transport-type-aircraft"
               formControlName="type"
             />
-            <label for="transport-type-aircraft" class="ml-2">Aircraft</label>
+            <label for="transport-type-aircraft" class="ml-2">
+              {{ 'label.aircraft' | translate: {} : 'aduanix' }}
+            </label>
           </div>
 
           <div class="flex items-center">
             <p-radioButton value="vessel" inputId="transport-type-vessel" formControlName="type" />
-            <label for="transport-type-vessel" class="ml-2">Vessel</label>
+            <label for="transport-type-vessel" class="ml-2">
+              {{ 'label.vessel' | translate: {} : 'aduanix' }}
+            </label>
           </div>
         </div>
 
         <bifi-app-form-field>
-          <bifi-app-form-field>a. Vessel / Aircraft.</bifi-app-form-field>
+          <bifi-app-form-label>
+            {{ 'label.vesselAircraft' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             formControlName="aircraftOrVessel"
             [options]="bcdTransportOptions()"
@@ -125,13 +165,17 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>b. Flight / Voyage No.</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.flightVoyageNo' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="flightOrVoyage" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>c. Port of Arrival</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.portOfArrival' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="port"
@@ -143,7 +187,9 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>d. Arrival / Departure Date</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.arrivalDepartureDate' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-datepicker fluid formControlName="arrivalDate" [showIcon]="true"></p-datepicker>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -151,19 +197,32 @@
     </bifi-app-form-section>
 
     <!-- 4. MANIFEST -->
-    <bifi-app-form-section title="4. MANIFEST DETAILS" id="manifest-info" [ordinal]="6">
+    <bifi-app-form-section
+      [title]="'formSection.manifestDetails' | translate: {} : 'aduanix'"
+      id="manifest-info"
+      [ordinal]="6"
+    >
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- Manifest number -->
         <bifi-app-form-field>
-          <bifi-app-form-label>Manifest No.</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.manifestNo' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="manifest" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <!-- BILL OF LADING  -->
         <bifi-app-form-field>
-          <bifi-app-form-label>a. Master Bill of Lading / AWB No.</bifi-app-form-label>
-          <input type="text" formControlName="masterBOLAWB" pInputText placeholder="AWB #" />
+          <bifi-app-form-label>
+            {{ 'label.masterBillLading' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
+          <input
+            type="text"
+            formControlName="masterBOLAWB"
+            pInputText
+            [placeholder]="'placeholder.awbNumber' | translate: {} : 'aduanix'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
@@ -171,11 +230,13 @@
         <div formArrayName="houseBOLAWBs">
           <bifi-app-form-field class="h-full flex flex-col">
             <div class="flex items-center gap-2">
-              <bifi-app-form-label>b. House Bill of Lading / AWB No.</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'label.houseBillLading' | translate: {} : 'aduanix' }}
+              </bifi-app-form-label>
               <p-button
                 type="button"
                 icon="pi pi-plus"
-                label="Add House"
+                [label]="'button.addHouse' | translate: {} : 'aduanix'"
                 text
                 class="text-sm"
                 (click)="formManager.addHouseBOLAWB('')"
@@ -201,11 +262,13 @@
         <div formArrayName="containerIds">
           <bifi-app-form-field class="h-full flex flex-col">
             <div class="flex items-center gap-2">
-              <bifi-app-form-label>c. Container ID No.</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'label.containerIdNo' | translate: {} : 'aduanix' }}
+              </bifi-app-form-label>
               <p-button
                 type="button"
                 icon="pi pi-plus"
-                label="Add Container"
+                [label]="'button.addContainer' | translate: {} : 'aduanix'"
                 text
                 class="text-sm"
                 (click)="formManager.addContainer('')"
@@ -231,11 +294,17 @@
     </bifi-app-form-section>
 
     <!-- 5. COUNTRY -->
-    <bifi-app-form-section title="5. COUNTRY" id="country-info" [ordinal]="7">
+    <bifi-app-form-section
+      [title]="'formSection.country' | translate: {} : 'aduanix'"
+      id="country-info"
+      [ordinal]="7"
+    >
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- DIRECT SHIPMENT COUNTRY -->
         <bifi-app-form-field>
-          <bifi-app-form-label>a. Country of Direct Shipment</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.countryDirectShipment' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="directShipmentCountry"
@@ -249,7 +318,9 @@
 
         <!-- ORIGINAL SHIPMENT COUNTRY -->
         <bifi-app-form-field>
-          <bifi-app-form-label>b. Country of Original Shipment</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.countryOriginalShipment' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="originalShipmentCountry"
@@ -265,14 +336,16 @@
 
     <!-- 6. WAREHOUSE IDENTIFICATION -->
     <bifi-app-form-section
-      title="6. WAREHOUSE IDENTIFICATION"
+      [title]="'formSection.warehouseIdentification' | translate: {} : 'aduanix'"
       id="warehouse-identification-info"
       [ordinal]="8"
     >
       <div class="w-full grid gap-3 sm:grid-cols-2">
         <!-- Warehouse ID -->
         <bifi-app-form-field>
-          <bifi-app-form-label>Warehouse ID</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.warehouseId' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="warehouseId" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -283,14 +356,14 @@
   <div class="border-[0.1px] border-gray-200">
     <!-- 7. ADDITIONAL INFORMATION -->
     <bifi-app-form-section
-      title="7. ADDITIONAL INFORMATION"
+      [title]="'formSection.additionalInformation' | translate: {} : 'aduanix'"
       id="general-additional-information-info"
       [ordinal]="9"
     >
       <div class="w-full" formArrayName="additionalInformation">
         <p-button
           class="mb-4"
-          label="Add Information"
+          [label]="'button.addInformation' | translate: {} : 'aduanix'"
           variant="text"
           icon="pi pi-plus"
           (onClick)="formManager.addAdditionalInformation()"
@@ -298,8 +371,8 @@
         <p-table [value]="form.controls.additionalInformation.controls" class="w-inherit!">
           <ng-template pTemplate="header">
             <tr>
-              <th>Type</th>
-              <th>Value</th>
+              <th>{{ 'column.type' | translate: {} : 'aduanix' }}</th>
+              <th>{{ 'column.value' | translate: {} : 'aduanix' }}</th>
               <th></th>
             </tr>
           </ng-template>
@@ -320,7 +393,12 @@
               </td>
               <td>
                 <bifi-app-form-field>
-                  <input pInputText formControlName="value" type="text" placeholder="Value" />
+                  <input
+                    pInputText
+                    formControlName="value"
+                    type="text"
+                    [placeholder]="'placeholder.value' | translate: {} : 'aduanix'"
+                  />
                   <bifi-app-form-error></bifi-app-form-error>
                 </bifi-app-form-field>
               </td>
@@ -339,7 +417,11 @@
     </bifi-app-form-section>
 
     <!-- 8. METHOD OF PAYMENT -->
-    <bifi-app-form-section title="8. METHOD OF PAYMENT" id="method-of-payment-info" [ordinal]="10">
+    <bifi-app-form-section
+      [title]="'formSection.methodOfPayment' | translate: {} : 'aduanix'"
+      id="method-of-payment-info"
+      [ordinal]="10"
+    >
       <!-- Payment Account Array field similar to containers -->
       <div formArrayName="paymentAccounts">
         <bifi-app-form-field class="h-full flex flex-col">
@@ -347,7 +429,7 @@
             <p-button
               type="button"
               icon="pi pi-plus"
-              label="Add Payment Account"
+              [label]="'button.addPaymentAccount' | translate: {} : 'aduanix'"
               text
               class="text-sm"
               (click)="formManager.addPaymentAccount()"
@@ -372,41 +454,51 @@
       <div formGroupName="ogd" class="w-full grid gap-3 sm:grid-cols-2 mt-4">
         <!-- OGD Number -->
         <bifi-app-form-field>
-          <bifi-app-form-label>a. OGD Payment Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ogdPaymentCode' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="paymentCode" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <!-- Cost Code -->
         <bifi-app-form-field>
-          <bifi-app-form-label>b. OGD Cost Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ogdCostCode' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="costCode" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <!-- OGD Object Code -->
         <bifi-app-form-field>
-          <bifi-app-form-label>c. OGD Object Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ogdObjectCode' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input type="text" formControlName="objectCode" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <!-- OGD subsidiary Code -->
         <bifi-app-form-field>
-          <bifi-app-form-label>d. OGD Subsidiary Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ogdSubsidiaryCode' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input formControlName="subsidiaryCode" pInputText />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <!-- OGD Explanation textArea-->
         <bifi-app-form-field class="col-span-full">
-          <bifi-app-form-label>e. OGD Explanation</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ogdExplanation' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="explanation"
             rows="4"
             cols="30"
-            placeholder="Explanation"
+            [placeholder]="'placeholder.explanation' | translate: {} : 'aduanix'"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -414,11 +506,15 @@
     </bifi-app-form-section>
 
     <!-- 9 CHARGES -->
-    <bifi-app-form-section title="9. CHARGES / DEDUCTIONS" id="general-charge-info" [ordinal]="11">
+    <bifi-app-form-section
+      [title]="'formSection.chargesDeductions' | translate: {} : 'aduanix'"
+      id="general-charge-info"
+      [ordinal]="11"
+    >
       <div class="w-full" formArrayName="charges">
         <p-button
           class="mb-4"
-          label="Add charge"
+          [label]="'button.addCharge' | translate: {} : 'aduanix'"
           variant="text"
           icon="pi pi-plus"
           (onClick)="formManager.addCharge()"
@@ -426,9 +522,9 @@
         <p-table [value]="form.controls.charges.controls" class="w-inherit!">
           <ng-template pTemplate="header">
             <tr>
-              <th>Charges / Deductions</th>
-              <th>%</th>
-              <th>Amount</th>
+              <th>{{ 'column.chargeCode' | translate: {} : 'aduanix' }}</th>
+              <th>{{ 'column.percentage' | translate: {} : 'aduanix' }}</th>
+              <th>{{ 'column.amount' | translate: {} : 'aduanix' }}</th>
               <th></th>
             </tr>
           </ng-template>
@@ -476,11 +572,13 @@
     <!-- OTHER FIELDS -->
     <div class="w-full grid gap-4 sm:grid-cols-2 p-7">
       <bifi-app-form-field>
-        <bifi-app-form-label>10. VALUATION METHOD</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'label.valuationMethod' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="valuationMethod"
-          [options]="valuationMethodTypeOptions"
+          [options]="valuationMethodTypeOptions()"
           optionLabel="label"
           optionValue="value"
           [filter]="true"
@@ -489,25 +587,38 @@
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>11. NO OF PACKAGES</bifi-app-form-label>
-        <input pInputText type="number" formControlName="packagesCount" placeholder="# Packages" />
+        <bifi-app-form-label>
+          {{ 'label.noOfPackages' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
+        <input
+          pInputText
+          type="number"
+          formControlName="packagesCount"
+          [placeholder]="'placeholder.packages' | translate: {} : 'aduanix'"
+        />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>12. TOTAL NO OF RECORDS (READ ONLY)</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'label.totalNoOfRecords' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <input readonly pInputText type="number" formControlName="recordsCount" />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>13. TOTAL INVOICE AMOUNT (READ ONLY)</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'label.totalInvoiceAmount' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <input readonly pInputText type="number" formControlName="invoiceAmount" />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>14. TOTAL PAYABLE AMOUNT (READ ONLY)</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'label.totalPayableAmount' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <input readonly pInputText type="number" formControlName="payableAmount" />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>

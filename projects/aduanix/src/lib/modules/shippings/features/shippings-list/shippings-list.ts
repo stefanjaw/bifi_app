@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FileResolver,
   provideResourceManager,
@@ -11,7 +18,6 @@ import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { RouterLink } from '@angular/router';
 import { invoice, shipping } from '../../interfaces/shipping';
-// import { shippingColumns } from '../../libraries/shipping-columns';
 import { shippingFilters } from '../../libraries/shipping-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TableModule } from 'primeng/table';
@@ -21,8 +27,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { ShippingFileFormDialog } from '../shipping-file-form-dialog/shipping-file-form-dialog';
 import { Tag } from 'primeng/tag';
 import { bcd, CrudBCD, ebcdSchema, getBCDFileTypeConfig, getBCDStatusConfig } from '../../../bcds';
-import { getInvoiceStatusTagConfig } from '../../libraries/shipping-utils';
-// import { BCDFormManager } from '@avalantec/aduanix/modules/bcds/services/bcd-form-manager';
+import { getInvoiceStatusTagConfig, getShippingStatusConfig } from '../../libraries/shipping-utils';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-shippings-list',
@@ -41,6 +47,7 @@ import { getInvoiceStatusTagConfig } from '../../libraries/shipping-utils';
     AccordionModule,
     ShippingFileFormDialog,
     Tag,
+    TranslatePipe,
   ],
   templateUrl: './shippings-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,9 +58,38 @@ export class ShippingsList {
   private crudBCD = inject(CrudBCD);
   private destroy$ = inject(DestroyRef);
   protected fileResolver = inject(FileResolver);
+  private translationService = inject(TranslationService);
 
-  shippingColumns = shippingColumns;
   shippingFilters = shippingFilters;
+
+  shippingColumns = computed(() =>
+    shippingColumns.map(col => {
+      if (col.field === 'status') {
+        const originalComponent = col.component!;
+        return {
+          ...col,
+          component: (value: shipping) => {
+            const bcdStatus = value.bcds?.length
+              ? getBCDStatusConfig(value.bcds[value.bcds.length - 1].status)
+              : undefined;
+            const shippingStatus = getShippingStatusConfig(value.status);
+            const displayValue = bcdStatus
+              ? `${this.translationService.translate(bcdStatus.value, {}, 'aduanix')} (${this.translationService.translate(shippingStatus.value, {}, 'aduanix')})`
+              : this.translationService.translate(shippingStatus.value, {}, 'aduanix');
+            return {
+              component: Tag,
+              inputs: {
+                value: displayValue,
+                severity: bcdStatus?.severity || shippingStatus.severity,
+              },
+              outputs: {},
+            };
+          },
+        };
+      }
+      return col;
+    })
+  );
 
   shippings = this.resourceManager.data;
   isUploadFTPLoading = signal(false);
@@ -141,6 +177,9 @@ export class ShippingsList {
    * @returns {string} - The name of the first SENT_CSV EBCD document in the given BCD.
    */
   getBCDName(bcd: bcd) {
-    return bcd.ebcds.find(ebcd => ebcd.type === 'SENT_CSV')?.file.name || 'Not uploaded';
+    return (
+      bcd.ebcds.find(ebcd => ebcd.type === 'SENT_CSV')?.file.name ||
+      this.translationService.translate('fallback.notUploaded', {}, 'aduanix')
+    );
   }
 }

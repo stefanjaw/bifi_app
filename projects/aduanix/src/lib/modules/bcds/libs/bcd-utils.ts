@@ -17,27 +17,27 @@ export function getBCDStatusConfig(status: bcd['status']): {
   switch (status) {
     case 'DRAFT':
       return {
-        value: 'Draft',
+        value: 'status.bcd.draft',
         severity: 'info',
       };
     case 'FAILED':
       return {
-        value: 'Failed',
+        value: 'status.bcd.failed',
         severity: 'danger',
       };
     case 'PENDING_QUERY':
       return {
-        value: 'Pending Query',
+        value: 'status.bcd.pendingQuery',
         severity: 'warn',
       };
     case 'PENDING_RESPONSE':
       return {
-        value: 'Pending Response',
+        value: 'status.bcd.pendingResponse',
         severity: 'warn',
       };
     case 'SUBMITTED':
       return {
-        value: 'Submitted',
+        value: 'status.bcd.submitted',
         severity: 'success',
       };
   }
@@ -59,42 +59,42 @@ export function getBCDFileTypeConfig(type: ebcdSchema['type']): {
   switch (type) {
     case 'FILE_ERROR_CSV':
       return {
-        value: 'File Error CSV',
+        value: 'status.ebcd.fileErrorCsv',
         severity: 'danger',
       };
     case 'FORMAT_ERROR_PDF':
       return {
-        value: 'Format Error PDF',
+        value: 'status.ebcd.formatErrorPdf',
         severity: 'danger',
       };
     case 'FORMAT_ERROR_TXT':
       return {
-        value: 'Format Error TXT',
+        value: 'status.ebcd.formatErrorTxt',
         severity: 'danger',
       };
     case 'RECEIPT_TXT':
       return {
-        value: 'Receipt TXT',
+        value: 'status.ebcd.receiptTxt',
         severity: 'success',
       };
     case 'RELEASE_CSV':
       return {
-        value: 'Release CSV',
+        value: 'status.ebcd.releaseCsv',
         severity: 'success',
       };
     case 'RELEASE_PDF':
       return {
-        value: 'Release PDF',
+        value: 'status.ebcd.releasePdf',
         severity: 'success',
       };
     case 'RELEASE_TXT':
       return {
-        value: 'Release TXT',
+        value: 'status.ebcd.releaseTxt',
         severity: 'success',
       };
     case 'SENT_CSV':
       return {
-        value: 'Sent CSV',
+        value: 'status.ebcd.sentCsv',
         severity: 'success',
       };
   }

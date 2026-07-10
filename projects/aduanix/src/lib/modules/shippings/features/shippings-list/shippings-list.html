@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Shipments</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle.shipments' | translate: {} : 'aduanix' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Shipment"
+    [label]="'button.addNewShipment' | translate: {} : 'aduanix'"
     severity="secondary"
     icon="pi pi-plus"
     *bifiAppHasPermission="'shippings:create:model'"
@@ -10,7 +10,11 @@
   ></p-button>
 
   <p-button
-    [label]="isUploadFTPLoading() ? 'Updating...' : 'Update from FTP'"
+    [label]="
+      isUploadFTPLoading()
+        ? ('button.updating' | translate: {} : 'aduanix')
+        : ('button.updateFtp' | translate: {} : 'aduanix')
+    "
     [disabled]="isUploadFTPLoading()"
     severity="secondary"
     icon="pi pi-refresh"
@@ -20,15 +24,20 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search invoice name and status"
+  [label]="'placeholder.searchInvoices' | translate: {} : 'aduanix'"
   [searchFilters]="shippingFilters"
 ></bifi-app-search-bar>
 
-<bifi-app-table-layout [infiniteScroll]="true" [columns]="shippingColumns" [data]="shippings">
+<bifi-app-table-layout
+  [scope]="'aduanix'"
+  [infiniteScroll]="true"
+  [columns]="shippingColumns()"
+  [data]="shippings"
+>
   <ng-template #actions let-row>
     <p-button
       severity="secondary"
-      label="Review & approve"
+      [label]="'button.reviewApprove' | translate: {} : 'aduanix'"
       icon="pi pi-pencil"
       variant="text"
       [routerLink]="['../edit/', row._id]"
@@ -37,7 +46,7 @@
     <p-button
       *bifiAppHasPermission="'shippings:delete:model'"
       severity="danger"
-      label="Delete"
+      [label]="'button.delete' | translate: {} : 'aduanix'"
       variant="text"
       (onClick)="deleteShipping(row._id)"
       icon="pi pi-trash"
@@ -45,7 +54,7 @@
 
     <p-button
       severity="secondary"
-      label="Add BCD"
+      [label]="'button.addBcd' | translate: {} : 'aduanix'"
       icon="pi pi-plus"
       variant="text"
       [routerLink]="['../bcd/create', row._id]"
@@ -60,7 +69,7 @@
           <p-accordion-header>
             <span>
               <i class="pi pi-receipt"></i>
-              Invoices
+              {{ 'formSection.accordionInvoices' | translate: {} : 'aduanix' }}
             </span>
           </p-accordion-header>
           <p-accordion-content>
@@ -69,9 +78,17 @@
                 @let tagConfig = getInvoiceStatusTagConfig(invoice?.status);
 
                 <div class="flex flex-row items-center justify-between ps-6 pe-4">
-                  <span>{{ invoice?.pdf?.file?.name || 'No name provided' }}</span>
+                  <span>
+                    {{
+                      invoice?.pdf?.file?.name ||
+                        ('fallback.noNameProvided' | translate: {} : 'aduanix')
+                    }}
+                  </span>
                   <div class="flex items-center justify-end flex-1 pe-5">
-                    <p-tag [value]="tagConfig.value" [severity]="tagConfig.severity"></p-tag>
+                    <p-tag
+                      [value]="tagConfig.value | translate: {} : 'aduanix'"
+                      [severity]="tagConfig.severity"
+                    ></p-tag>
                     @if (invoice?.pdf?.file?.fileId) {
                       <p-button
                         severity="secondary"
@@ -96,12 +113,12 @@
           <p-accordion-header>
             <span>
               <i class="pi pi-box"></i>
-              BOLs
+              {{ 'formSection.accordionBols' | translate: {} : 'aduanix' }}
             </span>
           </p-accordion-header>
           <p-accordion-content>
             <p-button
-              label="Upload BOL"
+              [label]="'button.uploadBol' | translate: {} : 'aduanix'"
               severity="secondary"
               icon="pi pi-upload"
               [variant]="'text'"
@@ -113,7 +130,7 @@
           <p-accordion-header>
             <span>
               <i class="pi pi-file"></i>
-              BCDs
+              {{ 'formSection.accordionBcds' | translate: {} : 'aduanix' }}
             </span>
           </p-accordion-header>
           <p-accordion-content>
@@ -136,11 +153,13 @@
                       </span>
                     </div>
                     <div class="flex items-center justify-end flex-1 pe-5">
-                      <p-tag [value]="bcdConfig.value" [severity]="bcdConfig.severity"></p-tag>
+                      <p-tag
+                        [value]="bcdConfig.value | translate: {} : 'aduanix'"
+                        [severity]="bcdConfig.severity"
+                      ></p-tag>
                     </div>
                   </p-accordion-header>
                   <p-accordion-content>
-                    <!-- BCD Details Here -->
                     <div class="flex flex-col gap-4">
                       @for (ebcds of bcd.ebcds; track $index) {
                         @let ebcdsConfig = getBCDFileTypeConfig(ebcds.type);
@@ -149,7 +168,7 @@
                           <span>{{ ebcds?.file?.name }}</span>
                           <div class="flex items-center justify-end flex-1 pe-5">
                             <p-tag
-                              [value]="ebcdsConfig.value"
+                              [value]="ebcdsConfig.value | translate: {} : 'aduanix'"
                               [severity]="ebcdsConfig.severity"
                             ></p-tag>
                             <p-button

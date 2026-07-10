@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="Edit Shipment"
+  [title]="'pageTitle.editShipment' | translate: {} : 'aduanix'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,16 +18,29 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'formSection.generalInformation' | translate: {} : 'aduanix'"
+        id="general-info"
+        [ordinal]="1"
+      >
         <section class="w-full grid gap-3 sm:grid-cols-2">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Name" />
+            <bifi-app-form-label>
+              {{ 'label.name' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'placeholder.name' | translate: {} : 'aduanix'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Origin</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'label.origin' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="origin"
               [options]="countries()"
@@ -39,7 +52,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Destination</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'label.destination' | translate: {} : 'aduanix' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="destination"
               [options]="countries()"
@@ -53,7 +68,7 @@
       </bifi-app-form-section>
 
       <bifi-app-form-section
-        title="Invoices"
+        [title]="'formSection.invoices' | translate: {} : 'aduanix'"
         id="invoice-details"
         [ordinal]="2"
         formArrayName="invoices"
@@ -71,7 +86,7 @@
         <section class="flex flex-col gap-4">
           @for (invoiceControl of form.controls.invoices.controls; track $index; let i = $index) {
             <bifi-app-form-section
-              [title]="'Invoice #' + (i + 1)"
+              [title]="'formSection.invoiceNumber' | translate: { number: i + 1 } : 'aduanix'"
               [id]="'invoice-details-' + (i + 1)"
               [formGroupName]="i"
             >
@@ -81,46 +96,61 @@
               <section [formGroup]="extractedDataControl" class="w-full">
                 <div class="grid gap-3 sm:grid-cols-4" formGroupName="header">
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Invoice Number</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'placeholder.invoiceNumber' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <input
                       pInputText
                       formControlName="invoiceNumber"
                       type="text"
-                      placeholder="Invoice Number"
+                      [placeholder]="'placeholder.invoiceNumber' | translate: {} : 'aduanix'"
                     />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Currency</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'column.currency' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <input
                       pInputText
                       formControlName="currency"
                       type="text"
-                      placeholder="Invoice Currency"
+                      [placeholder]="'placeholder.invoiceCurrency' | translate: {} : 'aduanix'"
                     />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Invoice Total</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'placeholder.invoiceTotal' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <input
                       pInputText
                       formControlName="total"
                       type="number"
-                      placeholder="Invoice Total"
+                      [placeholder]="'placeholder.invoiceTotal' | translate: {} : 'aduanix'"
                     />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Address</bifi-app-form-label>
-                    <input pInputText formControlName="address" type="text" placeholder="Address" />
+                    <bifi-app-form-label>
+                      {{ 'placeholder.address' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
+                    <input
+                      pInputText
+                      formControlName="address"
+                      type="text"
+                      [placeholder]="'placeholder.address' | translate: {} : 'aduanix'"
+                    />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Origin Country</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'label.originCountry' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <p-select
                       formControlName="countryId"
                       [options]="countries()"
@@ -132,7 +162,9 @@
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Company</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'label.company' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <p-select
                       formControlName="companyId"
                       [options]="companies()"
@@ -144,18 +176,22 @@
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Company Email</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'label.companyEmail' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <input
                       pInputText
                       formControlName="email"
                       type="text"
-                      placeholder="company@email.com"
+                      [placeholder]="'placeholder.companyEmail' | translate: {} : 'aduanix'"
                     />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
 
                   <bifi-app-form-field>
-                    <bifi-app-form-label>Phone</bifi-app-form-label>
+                    <bifi-app-form-label>
+                      {{ 'label.phone' | translate: {} : 'aduanix' }}
+                    </bifi-app-form-label>
                     <input pInputText formControlName="phone" type="text" />
                     <bifi-app-form-error></bifi-app-form-error>
                   </bifi-app-form-field>
@@ -163,7 +199,7 @@
 
                 <div class="flex gap-2 mb-4 mt-4">
                   <p-button
-                    label="Add Line"
+                    [label]="'button.addLine' | translate: {} : 'aduanix'"
                     severity="secondary"
                     icon="pi pi-plus"
                     type="button"
@@ -172,7 +208,7 @@
                   ></p-button>
                   @if (viewMode === 'hsCode') {
                     <p-button
-                      label="Update HS Codes"
+                      [label]="'button.updateHsCodes' | translate: {} : 'aduanix'"
                       severity="info"
                       icon="pi pi-refresh"
                       type="button"
@@ -181,7 +217,7 @@
                     ></p-button>
                   } @else {
                     <p-button
-                      label="Update Tariff"
+                      [label]="'button.updateTariff' | translate: {} : 'aduanix'"
                       severity="info"
                       icon="pi pi-refresh"
                       type="button"
@@ -206,30 +242,30 @@
                             binary="true"
                           ></p-checkbox>
                         </th>
-                        <th>Line Number</th>
-                        <th>Description</th>
-                        <th>Customs Classification</th>
+                        <th>{{ 'column.lineNumber' | translate: {} : 'aduanix' }}</th>
+                        <th>{{ 'column.description' | translate: {} : 'aduanix' }}</th>
+                        <th>{{ 'column.customsClassification' | translate: {} : 'aduanix' }}</th>
                         @if (viewMode === 'hsCode') {
-                          <th>Currency</th>
-                          <th>Unit Price</th>
-                          <th>Quantity</th>
-                          <th>Subtotal</th>
-                          <th>HS Code</th>
-                          <th>Customs Chapter</th>
-                          <th>Customs Heading</th>
-                          <th>Customs Subheading</th>
+                          <th>{{ 'column.currency' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.unitPrice' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.quantity' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.subtotal' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.hsCode' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.customsChapter' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.customsHeading' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.customsSubheading' | translate: {} : 'aduanix' }}</th>
                         } @else {
-                          <th>Code</th>
-                          <th>Chapter</th>
-                          <th>Heading</th>
-                          <th>Subheading</th>
-                          <th>User Description</th>
-                          <th>Description</th>
-                          <th>Rate of Duty</th>
-                          <th>Unit of Measurement</th>
-                          <th>Tax</th>
+                          <th>{{ 'column.code' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.chapter' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.heading' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.subheading' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.userDescription' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.description' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.rateOfDuty' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.unitOfMeasurement' | translate: {} : 'aduanix' }}</th>
+                          <th>{{ 'column.tax' | translate: {} : 'aduanix' }}</th>
                         }
-                        <th>Actions</th>
+                        <th>{{ 'column.actions' | translate: {} : 'aduanix' }}</th>
                       </tr>
                     </ng-template>
                     <ng-template #body let-line let-j="rowIndex">
@@ -392,7 +428,7 @@
         </section>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'message.somethingWentWrong' | translate: {} : 'aduanix' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

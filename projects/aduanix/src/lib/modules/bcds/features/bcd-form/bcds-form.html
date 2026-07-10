@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Update BCD' : `Create BCD for ${shipping()?.name}`"
+  [title]="
+    isUpdate()
+      ? ('pageTitle.updateBcd' | translate: {} : 'aduanix')
+      : ('pageTitle.createBcd' | translate: { name: shipping()?.name } : 'aduanix')
+  "
   titlePosition="left"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,19 +25,25 @@
 
       @if (isUpdate() && !isUploaded()) {
         <p [bifiAppText]="'small'" class="text-orange-400">
-          Once BCD is uploaded, it cannot be modified
+          {{ 'message.bcdUploadedWarning' | translate: {} : 'aduanix' }}
         </p>
         <p-button
-          [label]="isFtpSubmitLoading() ? 'Uploading...' : 'Upload FTP'"
+          [label]="
+            isFtpSubmitLoading()
+              ? ('button.uploading' | translate: {} : 'aduanix')
+              : ('button.uploadFtp' | translate: {} : 'aduanix')
+          "
           icon="pi pi-upload"
           (click)="uploadFtp()"
           [disabled]="isFtpSubmitLoading()"
           [type]="'button'"
         ></p-button>
       } @else if (isUpdate() && isUploaded()) {
-        <p [bifiAppText]="'small'" class="text-green-400">BCD already uploaded</p>
+        <p [bifiAppText]="'small'" class="text-green-400">
+          {{ 'message.bcdAlreadyUploaded' | translate: {} : 'aduanix' }}
+        </p>
         <p-button
-          label="Download FTP"
+          [label]="'button.downloadFtp' | translate: {} : 'aduanix'"
           icon="pi pi-download"
           [type]="'button'"
           (onClick)="downloadFtp()"
@@ -43,13 +53,13 @@
       <p-tabs value="0">
         <p-tablist>
           <p-tab value="0">
-            <span class="p-tabheader-title">General</span>
+            <span class="p-tabheader-title">{{ 'tab.general' | translate: {} : 'aduanix' }}</span>
           </p-tab>
           <p-tab value="1">
-            <span class="p-tabheader-title">Records</span>
+            <span class="p-tabheader-title">{{ 'tab.records' | translate: {} : 'aduanix' }}</span>
           </p-tab>
           <p-tab value="2">
-            <span class="p-tabheader-title">Summary</span>
+            <span class="p-tabheader-title">{{ 'tab.summary' | translate: {} : 'aduanix' }}</span>
           </p-tab>
         </p-tablist>
         <p-tabpanels>

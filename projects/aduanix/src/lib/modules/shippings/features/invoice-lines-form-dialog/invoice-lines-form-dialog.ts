@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-invoice-lines-form-dialog',
@@ -27,6 +28,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     SelectModule,
     InputTextModule,
     TextareaModule,
+    TranslatePipe,
   ],
   templateUrl: './invoice-lines-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

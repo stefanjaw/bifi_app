@@ -5,11 +5,18 @@ import { BcdForm } from '../../../services/bcd-form';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
 import { DecimalPipe } from '@angular/common';
 import { FormModule } from '@avalantec/base-app/form';
-import { LocaleDatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-bcds-summary-form',
-  imports: [ReactiveFormsModule, FormModule, TableModule, DecimalPipe, LocaleDatePipe],
+  imports: [
+    ReactiveFormsModule,
+    FormModule,
+    TableModule,
+    DecimalPipe,
+    LocaleDatePipe,
+    TranslatePipe,
+  ],
   templateUrl: './bcds-summary-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -14,10 +14,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FileUploadModule } from 'primeng/fileupload';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-shipping-file-form-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, FormModule, Text],
+  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, FormModule, Text, TranslatePipe],
   templateUrl: './shipping-file-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

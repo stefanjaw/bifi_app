@@ -9,6 +9,7 @@ import { CrudBCDTaxId } from '../../services/crud-bcd-tax-id';
 import { CrudBCDTaxType } from '../../services/crud-bcd-tax-type';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { BCDFormManager } from '../../../bcds';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-bcd-taxes-form-dialog',
@@ -19,6 +20,7 @@ import { BCDFormManager } from '../../../bcds';
     InputTextModule,
     SelectModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './bcd-taxes-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

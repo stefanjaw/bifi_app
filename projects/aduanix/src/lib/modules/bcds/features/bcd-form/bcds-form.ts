@@ -23,6 +23,7 @@ import { BcdsSummaryForm } from './bcds-summary-form/bcds-summary-form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Text, ToastManager } from '@avalantec/base-app/core';
 import { FileResolver } from '@avalantec/base-app/resource';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { BcdForm } from '../../services/bcd-form';
 import { bcdFormModel } from '../../interfaces/bcd-form';
 import { bcd } from '../../interfaces/bcd';
@@ -40,6 +41,7 @@ import { bcd } from '../../interfaces/bcd';
     BcdsRecordsForm,
     BcdsSummaryForm,
     Text,
+    TranslatePipe,
   ],
   templateUrl: './bcds-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +56,7 @@ export class BcdsForm {
   private route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
   private fileResolver = inject(FileResolver);
+  private translationService = inject(TranslationService);
 
   id = input.required<string>();
   shippingId = input.required<string>();
@@ -295,17 +298,23 @@ export class BcdsForm {
     delete (payload as any).transport.type;
 
     if (!payload.charges || payload.charges.length === 0) {
-      this.toastManager.showError('Charges are required');
+      this.toastManager.showError(
+        this.translationService.translate('toast.chargesRequired', {}, 'aduanix')
+      );
       return;
     }
 
     if (!payload.containerIds || payload.containerIds.length === 0) {
-      this.toastManager.showError('Container IDs are required');
+      this.toastManager.showError(
+        this.translationService.translate('toast.containerIdsRequired', {}, 'aduanix')
+      );
       return;
     }
 
     if (!payload.records || payload.records.length === 0) {
-      this.toastManager.showError('Records are required');
+      this.toastManager.showError(
+        this.translationService.translate('toast.recordsRequired', {}, 'aduanix')
+      );
       return;
     }
 

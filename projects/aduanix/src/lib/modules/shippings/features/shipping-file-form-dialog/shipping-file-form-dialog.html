@@ -1,7 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <p-dialog
-  header="Create Shipment"
+  [header]="'dialogHeader.createShipment' | translate: {} : 'aduanix'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -12,7 +12,9 @@
     bifiAppFormActionsHandler
     (appSubmit)="handleSubmit($event)"
   >
-    <p [bifiAppText]="'paragraph'">Choose supplier invoice & submit to create your shipment</p>
+    <p [bifiAppText]="'paragraph'">
+      {{ 'message.chooseSupplierInvoice' | translate: {} : 'aduanix' }}
+    </p>
 
     <bifi-app-form-uploader formArrayName="files">
       <p-fileUpload
@@ -31,9 +33,15 @@
             (click)="fu.choose()"
           >
             <i class="pi pi-file-pdf text-4xl text-indigo-500"></i>
-            <p class="text-base font-medium">Drag and drop file here</p>
-            <p class="text-sm text-gray-500">or click to upload</p>
-            <span class="text-xs text-gray-400">Only PDF files are allowed</span>
+            <p class="text-base font-medium">
+              {{ 'message.dragDropFile' | translate: {} : 'aduanix' }}
+            </p>
+            <p class="text-sm text-gray-500">
+              {{ 'message.orClickToUpload' | translate: {} : 'aduanix' }}
+            </p>
+            <span class="text-xs text-gray-400">
+              {{ 'message.onlyPdfAllowed' | translate: {} : 'aduanix' }}
+            </span>
           </div>
         </ng-template>
 
@@ -42,7 +50,9 @@
             @for (file of files; track $index) {
               <div class="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
                 <i class="pi pi-check-circle text-green-500 text-xl"></i>
-                <span class="text-sm text-green-700">{{ file.name }} uploaded</span>
+                <span class="text-sm text-green-700">
+                  {{ file.name }} {{ 'message.uploaded' | translate: {} : 'aduanix' }}
+                </span>
               </div>
             }
           }
@@ -53,7 +63,7 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      cancelLabel="Cancel"
+      [cancelLabel]="'button.cancel' | translate: {} : 'aduanix'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

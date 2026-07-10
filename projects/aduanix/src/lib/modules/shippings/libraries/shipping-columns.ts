@@ -7,19 +7,19 @@ import { getShippingStatusConfig } from './shipping-utils';
 export const shippingColumns: tableColumn<shipping>[] = [
   {
     field: 'name',
-    title: 'Shipment',
+    title: 'column.shipment',
     type: 'text',
     sortable: true,
   },
   {
     field: 'createdAt',
-    title: 'Date',
+    title: 'column.date',
     type: 'date',
     sortable: true,
   },
   {
     field: 'status',
-    title: 'Status',
+    title: 'column.status',
     type: 'text',
     sortable: true,
     component: (value: shipping) => {

@@ -19,7 +19,8 @@
       }
       @if (tariff.rateOfDuty != null) {
         <span class="text-xs text-color-secondary">
-          Duty: {{ tariff.rateOfDuty * 100 | number: '1.0-2' }}%
+          {{ 'autocomplete.duty' | translate: {} : 'aduanix' }}
+          {{ tariff.rateOfDuty * 100 | number: '1.0-2' }}%
         </span>
       }
     </div>

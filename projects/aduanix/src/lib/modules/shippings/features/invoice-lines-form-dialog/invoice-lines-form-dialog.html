@@ -1,5 +1,9 @@
 <p-dialog
-  [header]="lineIndex >= 0 ? 'Edit invoice line' : 'New invoice line'"
+  [header]="
+    lineIndex >= 0
+      ? ('dialogHeader.editInvoiceLine' | translate: {} : 'aduanix')
+      : ('dialogHeader.newInvoiceLine' | translate: {} : 'aduanix')
+  "
   [(visible)]="dialogState"
   [modal]="true"
 >
@@ -12,18 +16,22 @@
     @if (!loading() && form()) {
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Line Number</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'column.lineNumber' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input
             pInputText
             formControlName="lineNumber"
             type="text"
-            placeholder="Invoice line number"
+            [placeholder]="'placeholder.invoiceLineNumber' | translate: {} : 'aduanix'"
           />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Origin Country</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.originCountry' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="countryId"
@@ -36,25 +44,34 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Quantity</bifi-app-form-label>
-          <input pInputText formControlName="quantity" type="number" placeholder="Quantity" />
+          <bifi-app-form-label>
+            {{ 'column.quantity' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="quantity"
+            type="number"
+            [placeholder]="'placeholder.quantity' | translate: {} : 'aduanix'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Currency</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'column.currency' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input pInputText formControlName="currency" type="text" placeholder="" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Price (In currency)</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'label.price' | translate: {} : 'aduanix' }}</bifi-app-form-label>
           <input pInputText formControlName="price" type="number" placeholder="" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Total (In currency)</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'label.total' | translate: {} : 'aduanix' }}</bifi-app-form-label>
           <input
             pInputText
             formControlName="subtotal"
@@ -67,13 +84,17 @@
       </section>
 
       <bifi-app-form-field class="col-span-full">
-        <bifi-app-form-label>Description</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'column.description' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <textarea pInputTextarea formControlName="description" rows="3" type="text"></textarea>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field class="col-span-full">
-        <bifi-app-form-label>Customs Classification</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'column.customsClassification' | translate: {} : 'aduanix' }}
+        </bifi-app-form-label>
         <textarea
           pInputTextarea
           formControlName="customsClassification"
@@ -85,7 +106,7 @@
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'button.cancel' | translate: {} : 'aduanix'"
         [formChanged]="form().dirty"
       ></bifi-app-form-actions>
     }

@@ -17,10 +17,11 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CrudCustomsTariffs } from '../../services/crud-customs-tariffs';
 import { customsTariff } from '../../interfaces/customs-tariff';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-tariff-picker',
-  imports: [FormsModule, AutoCompleteModule, DecimalPipe],
+  imports: [FormsModule, AutoCompleteModule, DecimalPipe, TranslatePipe],
   templateUrl: './tariff-picker.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
