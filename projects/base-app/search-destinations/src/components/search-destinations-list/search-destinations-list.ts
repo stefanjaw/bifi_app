@@ -116,6 +116,7 @@ export class SearchDestinationsList {
               keywords: d.keywords ?? [],
               description: d.description ?? '',
               resource: d.resource ?? '',
+              scope: d.scope ?? '',
             }));
 
           const seenNewKeys = new Set<string>();
@@ -134,6 +135,7 @@ export class SearchDestinationsList {
               group: item.group ?? '',
               keywords: [],
               resource: item.resource ?? '',
+              scope: item.scope ?? '',
             });
           }
 
@@ -161,13 +163,21 @@ export class SearchDestinationsList {
   private flattenMenu(
     items: MenuItem[],
     group = ''
-  ): { label: string; route: string; icon?: string; group?: string; resource?: string }[] {
+  ): {
+    label: string;
+    route: string;
+    icon?: string;
+    group?: string;
+    resource?: string;
+    scope?: string;
+  }[] {
     const out: {
       label: string;
       route: string;
       icon?: string;
       group?: string;
       resource?: string;
+      scope?: string;
     }[] = [];
 
     for (const item of items ?? []) {
@@ -181,6 +191,7 @@ export class SearchDestinationsList {
           icon: item.icon,
           group: group || itemGroup,
           resource: (item as Record<string, any>)['resource'],
+          scope: (item as Record<string, any>)['scope'] as string | undefined,
         });
       }
 

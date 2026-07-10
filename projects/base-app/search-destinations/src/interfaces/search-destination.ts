@@ -8,6 +8,7 @@ export interface searchDestination {
   keywords?: string[];
   description?: string;
   resource?: string;
+  scope?: string;
   active: boolean;
   isSystem?: boolean;
 }
