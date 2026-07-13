@@ -645,3 +645,80 @@ Karma + Jasmine. `ng test <project>` runs tests for a specific project. Spec fil
 - `projects/base-app/README.md` — full architecture guide (DI, Signals, naming, structure)
 - `projects/base-app/CORE.md` — core module deep-dive (directives, services)
 - `projects/base-app/FORMS-README.MD` — form architecture (`BaseForm<T>`, `TypedFormBuilder`)
+
+## Versioning & Publishing
+
+### Version Bump Policy
+
+After adding translations support (i18n), all 14 libraries were bumped from
+their individual `0.0.x` versions to a unified **`0.1.0`** to reflect the
+coordinated release. All inter-library `peerDependencies` were updated to
+`^0.1.0` accordingly.
+
+### Build Order
+
+Libraries must be built in topological order based on their peer dependency
+graph. Each layer must complete before the next begins; libraries within the
+same layer can build in parallel.
+
+| Layer | Libraries | Depends on |
+|-------|-----------|------------|
+| 0 | `base-app` | _(none — foundation)_ |
+| 1 | `projects`, `inventory`, `asset-roster`, `website`, `aduanix`, `email-marketing` | base-app |
+| 2 | `tasks`, `sales`, `purchases`, `accounting` | base-app + Layer 1 |
+| 3 | `helpdesk`, `l10n_cr_einvoice` | base-app + Layer 2 |
+| 4 | `calendar` | all previous layers |
+
+**Execution:**
+
+```sh
+# Layer 0
+ng build base-app
+
+# Layer 1 (parallel)
+ng build projects inventory asset-roster website aduanix email-marketing
+
+# Layer 2 (parallel)
+ng build tasks sales purchases accounting
+
+# Layer 3 (parallel)
+ng build helpdesk l10n_cr_einvoice
+
+# Layer 4
+ng build calendar
+```
+
+### Pack & Publish
+
+After building, each library's output in `dist/<name>/` must be packed into a
+`.tgz` and published to the private npm registry. **Publish in the same
+topological order as the build** so dependents can resolve the new version.
+
+```sh
+# Full release pipeline
+ng build base-app
+(cd dist/base-app && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+
+ng build projects inventory asset-roster website aduanix email-marketing
+(cd dist/projects && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/inventory && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/asset-roster && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/website && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/aduanix && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/email-marketing && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+
+ng build tasks sales purchases accounting
+(cd dist/tasks && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/sales && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/purchases && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/accounting && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+
+ng build helpdesk l10n_cr_einvoice
+(cd dist/helpdesk && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+(cd dist/l10n_cr_einvoice && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+
+ng build calendar
+(cd dist/calendar && npm pack && npm publish --registry http://libraries.assetroster.com:4873/)
+```
+
+Private registry URL: `http://libraries.assetroster.com:4873/`

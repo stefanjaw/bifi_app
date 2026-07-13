@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/calendar",
-  "version": "0.0.14",
+  "version": "0.1.0",
   "peerDependencies": {
     "@angular/animations": "^20.3.25",
     "@angular/cdk": "^20.2.14",
@@ -14,10 +14,10 @@
     "tailwindcss": "^4.1.11",
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
-    "@avalantec/base-app": "^0.0.11",
-    "@avalantec/tasks": "^0.0.14",
-    "@avalantec/helpdesk": "^0.0.14",
-    "@avalantec/projects": "^0.0.12"
+    "@avalantec/base-app": "^0.1.0",
+    "@avalantec/tasks": "^0.1.0",
+    "@avalantec/helpdesk": "^0.1.0",
+    "@avalantec/projects": "^0.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
