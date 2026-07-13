@@ -252,6 +252,9 @@ npm run pre:build        # ts-node prebuild.ts -- fetches templates from backend
 npm run post:build       # build selected libs via tools/build/build.sh
 npm run config:library   # full CI flow: submodule update → install → build → install tgz → gen config → build parent
 
+npm run release          # full build + pack + publish of all 14 libs (see Versioning & Publishing)
+npm run post:build       # build selected libs via tools/build/build.sh
+
 ng test <project>        # e.g. ng test sales, ng test base-app
 ng build <project>       # single project build
 ng serve                 # serves asset-roster-demo (default app)
@@ -693,6 +696,18 @@ ng build calendar
 After building, each library's output in `dist/<name>/` must be packed into a
 `.tgz` and published to the private npm registry. **Publish in the same
 topological order as the build** so dependents can resolve the new version.
+
+**Automated release script** — builds all libs in order, packs, and publishes:
+
+```sh
+sh tools/build/release.sh
+```
+
+The script follows the layered build order below. Each library is built with
+`ng build --configuration production`, then `npm pack` + `npm publish` to the
+private registry.
+
+**Manual equivalent:**
 
 ```sh
 # Full release pipeline

@@ -10,7 +10,8 @@
     "graphs": "sh ./tools/graphs/graphs.sh",
     "pre:build": "ts-node ./tools/prebuild/prebuild.ts",
     "post:build": "sh ./tools/build/build.sh",
-    "config:library": "sh ./tools/config/config-library.sh"
+    "config:library": "sh ./tools/config/config-library.sh",
+    "release": "sh ./tools/build/release.sh"
   },
   "private": true,
   "dependencies": {

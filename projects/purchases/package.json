@@ -15,7 +15,8 @@
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
     "@avalantec/base-app": "^0.1.0",
-    "@avalantec/inventory": "^0.1.0"
+    "@avalantec/inventory": "^0.1.0",
+    "@avalantec/accounting": "^0.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
