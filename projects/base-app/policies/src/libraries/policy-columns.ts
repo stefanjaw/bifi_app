@@ -15,7 +15,13 @@ export const policyColumns: tableColumn<policy<any, any>>[] = [
     type: 'text',
     sortable: true,
   },
-  { field: 'type', title: 'type', type: 'text', sortable: true },
+  {
+    field: 'type',
+    title: 'type',
+    type: 'text',
+    sortable: true,
+    parseField: (value: string) => t('form.generalInfo.type.' + value, {}, 'base-app/policies'),
+  },
   {
     field: 'conditions',
     title: 'totalConditions',

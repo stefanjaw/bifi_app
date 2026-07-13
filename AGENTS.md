@@ -415,6 +415,14 @@ cannotInactivateSelf, searchPlaceholder
 2. Add en/es pair for each key using the conventions above
 3. Reference filename in the `provideTranslations('scope')` call in your lib's provider
 
+**When creating or updating Catalog translation files, always cross-reference every translation key used in:**
+- Column `title` values in `*-columns.ts` files (translated by `| translate` pipe via `TableLayout` scope)
+- `t('key', {}, 'scope')` calls in column `parseField` / `component` configs
+- Template `| translate` references in `.html` files
+- `TranslationService.translate()` calls in `.ts` files
+
+Every key must have an en/es pair in the corresponding scope's JSON file, or the UI will show the raw key string.
+
 ### Column & Filter i18n
 
 Column titles and filter labels are translated **centrally** in `TableLayout` and `FilterBar` — not at the source in each module's library file.
