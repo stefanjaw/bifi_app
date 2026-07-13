@@ -5,7 +5,14 @@ export const PURCHASES_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'orders',
+    redirectTo: 'dashboard',
+  },
+  {
+    path: 'dashboard',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/purchases-dashboard/purchases-dashboard').then(c => c.PurchasesDashboard),
+    data: { resource: 'purchases/dashboard/list' },
   },
   {
     path: 'suppliers',

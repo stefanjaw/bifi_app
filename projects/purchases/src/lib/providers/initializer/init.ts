@@ -20,6 +20,13 @@ export function initializePurchases() {
         showInMainMenu: true,
         items: [
           {
+            icon: PrimeIcons.HOME,
+            routerLink: ['/purchases/dashboard'],
+            label: 'nav.dashboard',
+            resource: 'purchases/orders/menu',
+            scope: 'purchases',
+          },
+          {
             icon: PrimeIcons.USERS,
             routerLink: ['/purchases/suppliers'],
             label: 'nav.suppliers',

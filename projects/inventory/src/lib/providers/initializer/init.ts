@@ -18,6 +18,13 @@ export function initializeInventory() {
         showInMainMenu: true,
         items: [
           {
+            icon: PrimeIcons.HOME,
+            routerLink: ['/inventory/dashboard'],
+            label: 'dashboard',
+            resource: 'inventory/products/menu',
+            scope: 'inventory',
+          },
+          {
             icon: PrimeIcons.BUILDING,
             routerLink: ['/inventory/warehouses'],
             label: 'warehouses',
@@ -69,6 +76,13 @@ export function initializeInventory() {
         resource: 'inventory/settings/menu',
         scope: 'inventory',
         items: [
+          {
+            icon: PrimeIcons.COG,
+            routerLink: ['/settings/inventory/configuration'],
+            label: 'configuration',
+            resource: 'inventory-settings/menu',
+            scope: 'inventory',
+          },
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/inventory/product-types'],

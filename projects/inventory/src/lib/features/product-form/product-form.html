@@ -21,10 +21,69 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
+      @if (isUpdate()) {
+        <bifi-app-form-section
+          [title]="'stockSummary' | translate: {} : 'inventory'"
+          id="product-stock"
+          [ordinal]="1"
+        >
+          <div class="flex flex-wrap gap-3">
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'quantityOnHand' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold leading-snug">
+                  {{ stockSummary()?.onHand ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'incoming' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-blue-600 leading-snug">
+                  {{ stockSummary()?.incoming ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'committed' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-amber-600 leading-snug">
+                  {{ stockSummary()?.committed ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'available' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-green-600 leading-snug">
+                  {{ stockSummary()?.available ?? 0 }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </bifi-app-form-section>
+      }
+
       <bifi-app-form-section
         [title]="'productInformation' | translate: {} : 'inventory'"
         id="product-info"
-        [ordinal]="1"
+        [ordinal]="2"
       >
         <div class="flex flex-col md:flex-row gap-8">
           <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -145,7 +204,7 @@
       <bifi-app-form-section
         [title]="'pricing' | translate: {} : 'inventory'"
         id="product-pricing"
-        [ordinal]="2"
+        [ordinal]="3"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
@@ -231,7 +290,7 @@
       <bifi-app-form-section
         [title]="'documents' | translate: {} : 'inventory'"
         id="product-documents"
-        [ordinal]="3"
+        [ordinal]="4"
       >
         <bifi-app-form-field>
           <bifi-app-form-label>

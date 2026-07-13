@@ -15,7 +15,7 @@ import {
   FormValueState,
 } from '@avalantec/base-app/form';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { CrudProducts } from '../../services/crud-products';
+import { CrudProducts, productStockSummary } from '../../services/crud-products';
 import { CrudUoms } from '../../services/crud-uoms';
 import { CrudProductTypes } from '../../services/crud-product-types';
 import { CrudTaxes } from '@avalantec/base-app/taxes';
@@ -92,6 +92,8 @@ export class ProductForm {
   );
   isSubmitLoading = signal(false);
 
+  stockSummary = signal<productStockSummary | null>(null);
+
   uoms = this.uomsResource.value;
 
   productTypes = this.productTypesResource.value;
@@ -122,6 +124,21 @@ export class ProductForm {
     effect(() => {
       const entry = this.productResource.value();
       this.resetValueToInitialState(entry);
+    });
+
+    effect(() => {
+      const id = this.id();
+      this.stockSummary.set(null);
+      if (!id) {
+        return;
+      }
+      this.crudProducts
+        .getStockSummary(id)
+        .pipe(takeUntilDestroyed(this.destroy$))
+        .subscribe({
+          next: summary => this.stockSummary.set(summary),
+          error: () => this.stockSummary.set(null),
+        });
     });
   }
 

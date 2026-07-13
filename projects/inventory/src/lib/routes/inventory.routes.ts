@@ -3,6 +3,15 @@ import { permissionGuard } from '@avalantec/base-app/auth';
 
 export const INVENTORY_SETTINGS_ROUTES: Routes = [
   {
+    path: 'configuration',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../modules/inventory-settings/features/inventory-settings-form/inventory-settings-form').then(
+        c => c.InventorySettingsFormComponent
+      ),
+    data: { resource: 'inventory-settings' },
+  },
+  {
     path: 'product-types',
     canActivate: [permissionGuard],
     loadComponent: () =>
@@ -29,7 +38,14 @@ export const INVENTORY_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'warehouses',
+    redirectTo: 'dashboard',
+  },
+  {
+    path: 'dashboard',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/inventory-dashboard/inventory-dashboard').then(c => c.InventoryDashboard),
+    data: { resource: 'inventory/dashboard/list' },
   },
   {
     path: 'warehouses',

@@ -1,0 +1,203 @@
+@if (isLoading()) {
+  <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+}
+
+<h1 class="text-2xl font-bold text-gray-800">
+  {{ 'inventoryDashboard' | translate: {} : 'inventory' }}
+</h1>
+
+@if (dashboard(); as data) {
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow p-5 border-l-4 border-indigo-500">
+      <p class="text-sm text-gray-500 font-medium">
+        {{ 'totalProducts' | translate: {} : 'inventory' }}
+      </p>
+      <p class="text-2xl font-bold text-gray-800 mt-1">{{ data.totalProducts }}</p>
+      <p class="text-xs text-gray-400 mt-1">
+        {{ 'activeInCatalog' | translate: {} : 'inventory' }}
+      </p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
+      <p class="text-sm text-gray-500 font-medium">
+        {{ 'totalStockValue' | translate: {} : 'inventory' }}
+      </p>
+      <p class="text-2xl font-bold text-gray-800 mt-1">{{ data.totalStockValue | currency }}</p>
+      <p class="text-xs text-gray-400 mt-1">
+        {{ 'qtyTimesCostPrice' | translate: {} : 'inventory' }}
+      </p>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow p-5 border-l-4 border-red-500 cursor-pointer select-none"
+      (click)="toggleOutOfStock()"
+    >
+      <p class="text-sm text-gray-500 font-medium">
+        {{ 'outOfStock' | translate: {} : 'inventory' }}
+      </p>
+      <p class="text-2xl font-bold text-gray-800 mt-1">{{ data.outOfStockItems }}</p>
+      <div class="flex items-center justify-between mt-1">
+        <p class="text-xs text-gray-400">
+          {{ 'productsWithZeroUnits' | translate: {} : 'inventory' }}
+        </p>
+        @if (data.outOfStockItems > 0) {
+          <span class="text-xs text-red-500 font-medium">
+            {{
+              showOutOfStock()
+                ? ('hide' | translate: {} : 'inventory') + ' ▲'
+                : ('view' | translate: {} : 'inventory') + ' ▼'
+            }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow p-5 border-l-4 border-yellow-500 cursor-pointer select-none"
+      (click)="toggleLowStock()"
+    >
+      <p class="text-sm text-gray-500 font-medium">
+        {{ 'lowStock' | translate: {} : 'inventory' }}
+      </p>
+      <p class="text-2xl font-bold text-gray-800 mt-1">{{ data.lowStockItems }}</p>
+      <div class="flex items-center justify-between mt-1">
+        <p class="text-xs text-gray-400">{{ 'below5Units' | translate: {} : 'inventory' }}</p>
+        @if (data.lowStockItems > 0) {
+          <span class="text-xs text-yellow-600 font-medium">
+            {{
+              showLowStock()
+                ? ('hide' | translate: {} : 'inventory') + ' ▲'
+                : ('view' | translate: {} : 'inventory') + ' ▼'
+            }}
+          </span>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (showOutOfStock() && data.outOfStockProducts.length > 0) {
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+        <h2 class="text-sm font-semibold text-gray-700">
+          {{ 'outOfStockProducts' | translate: {} : 'inventory' }}
+        </h2>
+        <span class="ml-auto text-xs text-gray-400">
+          {{ data.outOfStockItems }} {{ 'products' | translate: {} : 'inventory' }}
+        </span>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+          <tr>
+            <th class="px-5 py-2 text-left font-medium">
+              {{ 'product' | translate: {} : 'inventory' }}
+            </th>
+            <th class="px-5 py-2 text-left font-medium">
+              {{ 'sku' | translate: {} : 'inventory' }}
+            </th>
+            <th class="px-5 py-2 text-right font-medium">
+              {{ 'units' | translate: {} : 'inventory' }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of data.outOfStockProducts; track product._id) {
+            <tr class="border-t border-gray-50 hover:bg-red-50 transition-colors">
+              <td class="px-5 py-2.5">
+                <a
+                  [routerLink]="['/inventory/products', product._id]"
+                  class="text-indigo-600 hover:text-indigo-800 font-medium hover:underline"
+                  (click)="$event.stopPropagation()"
+                >
+                  {{ product.name }}
+                </a>
+              </td>
+              <td class="px-5 py-2.5 text-gray-500 font-mono text-xs">{{ product.sku }}</td>
+              <td class="px-5 py-2.5 text-right">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"
+                >
+                  0
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (data.outOfStockItems > data.outOfStockProducts.length) {
+        <div class="px-5 py-2.5 text-xs text-gray-400 border-t border-gray-100">
+          {{ 'showing' | translate: {} : 'inventory' }} {{ data.outOfStockProducts.length }}
+          {{ 'of' | translate: {} : 'inventory' }} {{ data.outOfStockItems }} —
+          <a [routerLink]="['/inventory/products']" class="text-indigo-600 hover:underline">
+            {{ 'viewAllProducts' | translate: {} : 'inventory' }}
+          </a>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showLowStock() && data.lowStockProducts.length > 0) {
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span>
+        <h2 class="text-sm font-semibold text-gray-700">
+          {{ 'lowStockProducts' | translate: {} : 'inventory' }}
+        </h2>
+        <span class="ml-auto text-xs text-gray-400">
+          {{ data.lowStockItems }} {{ 'products' | translate: {} : 'inventory' }}
+        </span>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+          <tr>
+            <th class="px-5 py-2 text-left font-medium">
+              {{ 'product' | translate: {} : 'inventory' }}
+            </th>
+            <th class="px-5 py-2 text-left font-medium">
+              {{ 'sku' | translate: {} : 'inventory' }}
+            </th>
+            <th class="px-5 py-2 text-right font-medium">
+              {{ 'units' | translate: {} : 'inventory' }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of data.lowStockProducts; track product._id) {
+            <tr class="border-t border-gray-50 hover:bg-yellow-50 transition-colors">
+              <td class="px-5 py-2.5">
+                <a
+                  [routerLink]="['/inventory/products', product._id]"
+                  class="text-indigo-600 hover:text-indigo-800 font-medium hover:underline"
+                  (click)="$event.stopPropagation()"
+                >
+                  {{ product.name }}
+                </a>
+              </td>
+              <td class="px-5 py-2.5 text-gray-500 font-mono text-xs">{{ product.sku }}</td>
+              <td class="px-5 py-2.5 text-right">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700"
+                >
+                  {{ product.totalQty }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (data.lowStockItems > data.lowStockProducts.length) {
+        <div class="px-5 py-2.5 text-xs text-gray-400 border-t border-gray-100">
+          {{ 'showing' | translate: {} : 'inventory' }} {{ data.lowStockProducts.length }}
+          {{ 'of' | translate: {} : 'inventory' }} {{ data.lowStockItems }} —
+          <a [routerLink]="['/inventory/products']" class="text-indigo-600 hover:underline">
+            {{ 'viewAllProducts' | translate: {} : 'inventory' }}
+          </a>
+        </div>
+      }
+    </div>
+  }
+} @else if (!isLoading()) {
+  <div class="text-center py-12 text-gray-400">
+    <p class="text-lg">{{ 'noDashboardData' | translate: {} : 'inventory' }}</p>
+  </div>
+}
