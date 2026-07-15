@@ -281,12 +281,209 @@ Each `provide*()` should also include `provideTranslations('scope')` from `@aval
 - **Class naming**: omit "Component" / "Directive" / "Pipe" suffixes. Form components pluralize the subject noun (e.g. `AgentsForm`), form services (`BaseForm` subclasses) use singular (e.g. `AgentForm`). Settings-based components use `Page` suffix (e.g. `AiSettingsPage`).
 - **Interfaces/types use camelCase starting with lowercase** (e.g. `interface userFormValues`).
 - **Standalone components only** — no NgModules.
-- **`inject()` over constructor DI**.
-- **Angular Signals** (`signal()`, `computed()`, `effect()`, `input()`, `output()`, `model()`) preferred over RxJS. Only use RxJS with `DestroyRef` + `takeUntilDestroyed`.
+- **`inject()` is the only DI pattern** — never use constructor-based dependency injection. Constructor must not have parameters. Always use `inject()` at the field level.
+  ```typescript
+  // ✅ Correct — Angular 20 style
+  export class XxxList {
+    private crud = inject(CrudXxx);
+    private router = inject(Router);
+  }
+
+  // ❌ Wrong — no constructor DI
+  constructor(private crud: CrudXxx, private router: Router) {}
+  ```
+- **Signal-based `input()`/`output()` over decorators** — always use `input<T>()`, `output<T>()`, and `model<T>()` from `@angular/core`. Never use `@Input()`, `@Output()`, or `@HostBinding()` decorators.
+  ```typescript
+  // ✅ Correct — Angular 20 signal inputs/outputs
+  @Component({ selector: 'bifi-app-xxx-child' })
+  export class XxxChild {
+    value = input.required<string>();
+    disabled = input(false);
+    changed = output<string>();
+  }
+
+  // ❌ Wrong — decorator-based inputs/outputs
+  @Input() value!: string;
+  @Output() changed = new EventEmitter<string>();
+  ```
+- **Angular Signals** (`signal()`, `computed()`, `effect()`, `input()`, `output()`, `model()`) preferred over RxJS for all state management. Only use RxJS when bridging third-party libraries (e.g. Angular HTTP events, Firebase auth state). When using RxJS, always pair with `DestroyRef` + `takeUntilDestroyed()`.
 - **Smart (`features/`) vs dumb (`ui/`) separation**: dumb components only via `input()`/`output()`, no service injection.
 - **PrimeNG** is the mandatory UI component library.
 - **Import from barrel only** — never from internal paths. E.g. `import { X } from '@avalantec/base-app/core'`.
 - **JSDoc is mandatory** for all public methods and exported symbols (see [Documentation section](#documentation-jsdoc) below).
+
+## Feature Module Conventions
+
+> **Mandatory rule**: Every component, view, route, and service **must** follow the [Permission & Policy System](#permission--policy-system) and [i18n/Translation](#i18n-internationalization) guidelines listed in this document. Exceptions only when explicitly directed otherwise.
+
+### Component File Structure
+- **Every component must have a matching `.html` template file** referenced via `templateUrl`. Exceptions: plugin components (no template needed), and very simple settings CRUD lists (like l10n_cr_einvoice's `CondicionVentaList`) may use inline `template` when the markup is minimal.
+- **Never create `.ts`-only components** for list/form views — always produce a `.html` + `.ts` pair.
+- **File naming**: component files use kebab-case (e.g. `ticket-list.ts` / `ticket-list.html`). No `.component.ts` suffix.
+
+### List Component Pattern
+Every list component must follow this structure (reference: `projects/helpdesk/src/lib/features/ticket-list/ticket-list.ts`):
+
+```typescript
+@Component({
+  selector: 'bifi-app-xxx-list',
+  providers: [provideResourceManager(CrudXxx)],
+  host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
+  imports: [
+    TableLayout, SearchBar, ButtonModule, RouterLink,
+    HasPermission, ButtonsActions, TranslatePipe,
+  ],
+  templateUrl: './xxx-list.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class XxxList {
+  private resourceManager = inject<ResourceManager<Xxx>>(ResourceManager);
+  private crud = inject(CrudXxx);
+  private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  columns = xxxColumns;
+  filters = xxxFilters;
+  data = this.resourceManager.data;
+
+  delete(id: string) { /* ... */ }
+  gotoEdit = (element: Xxx) => { /* ... */ };
+}
+```
+
+**Template** (`xxx-list.html`) must include:
+- An "Add New" `p-button` with `*bifiAppHasPermission` for the create route
+- `<bifi-app-search-bar>` with `[label]` and `[searchFilters]`
+- `<bifi-app-table-layout>` with `[infiniteScroll]`, `[columns]`, `[data]`, `[onClickRow]`, `clickRowPermission`, and a `#actions` ng-template containing `<bifi-app-buttons-actions>`
+
+### CRUD Service Pattern
+- **One class per file** — never define multiple `@Injectable()` CRUD classes in the same file.
+- **File naming**: `crud-<entity-name>.ts` using kebab-case (e.g. `crud-roles.ts`, `crud-tickets.ts`).
+- **Use `inject()` never constructor DI** — set endpoint as a class field or in a parameterless constructor:
+
+```typescript
+// ✅ Correct — field-level endpoint + no constructor
+@Injectable({ providedIn: 'root' })
+export class CrudXxx extends ApiRequestManager<xxx> {
+  endpoint = 'xxx-endpoint';
+}
+
+// ✅ Correct — parameterless constructor with super call
+@Injectable({ providedIn: 'root' })
+export class CrudXxx extends ApiRequestManager<xxx> {
+  constructor() {
+    super();
+    this.endpoint = 'xxx-endpoint';
+  }
+}
+```
+
+- If the interface is simple and module-specific, it MAY be co-located in the same file (as `l10n_cr_einvoice` does). Otherwise import from a separate `interfaces/` barrel.
+
+### Form Service Pattern
+- **One class per file** — exactly one `BaseForm<T>` subclass per file, matching one backend entity. Never define multiple form services in a single file.
+- **File naming**: `<entity>-form.ts` using kebab-case, singular noun (e.g. `policy-form.ts`, `patient-form.ts`).
+- **Must define a `FormModel` interface** as a named export in the same file, describing the form's control structure.
+- **Must override `createForm()`** returning a `FormGroup` via `this.fb.group()`.
+- **Must use `inject()`** — no constructor DI.
+- Reference: `projects/base-app/policies/src/services/policy-form.ts`
+
+```typescript
+export interface XxxFormModel {
+  name: string;
+  // ... all form controls
+}
+
+@Injectable({ providedIn: 'root' })
+export class XxxForm extends BaseForm<XxxFormModel> {
+  override createForm() {
+    return this.fb.group<XxxFormModel>({
+      name: ['', [Validators.required]],
+      // ... control definitions
+    });
+  }
+
+  // Custom helpers (optional)
+  addItem() { /* ... */ }
+  removeItem(index: number) { /* ... */ }
+}
+```
+
+### Form Component Pattern
+Every form/create-edit component must follow this structure (reference: `projects/base-app/policies/src/components/policies-form/policies-form.ts`):
+
+```typescript
+@Component({
+  selector: 'bifi-app-xxx-form',
+  providers: [provideResourceManager(CrudXxx)],
+  imports: [
+    FormModule, ReactiveFormsModule, TranslatePipe,
+    SelectModule, InputText, Button, /* ... */
+  ],
+  templateUrl: './xxx-form.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class XxxForm implements OnInit {
+  protected formService = inject(XxxForm);
+  private crud = inject(CrudXxx);
+  private translationService = inject(TranslationService);
+  private destroy$ = inject(DestroyRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  id = input.required<string>();
+  resource = this.crud.get({ id: this.id, triggerRequest: computed(() => this.id() !== undefined) });
+  entity = this.resource.value;
+
+  form = this.formService.form;
+  loading = this.resource.isLoading;
+  isSubmitLoading = signal(false);
+  isUpdate = computed(() => !!this.entity());
+
+  constructor() {
+    effect(() => {
+      const data = this.entity();
+      if (data) this.formService.patchValue(data);
+      else this.formService.reset();
+    });
+  }
+
+  ngOnInit(): void { this.formService.reset(); }
+
+  async handleSubmit(data: FormValueState<XxxFormModel>) {
+    this.isSubmitLoading.set(true);
+    const { rawValue } = data;
+    const action = this.isUpdate()
+      ? this.crud.put({ _id: this.entity()?._id || '', data: rawValue })
+      : this.crud.post({ data: rawValue });
+    action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      error: () => { this.isSubmitLoading.set(false); },
+    });
+  }
+
+  goBack() {
+    const route = this.isUpdate() ? '../../list' : '../list';
+    this.router.navigate([route], { relativeTo: this.route });
+  }
+}
+```
+
+**Template** (`xxx-form.html`) must use the following structure:
+- `<bifi-app-form-layout>` with a `[title]` using `TranslatePipe` and dynamic create/update key
+- `<bifi-app-form-actions>` with `[isSubmitting]`, `(cancelClicked)`, `[formChanged]`
+- `<bifi-app-form-section>` with `[title]`, `[ordinal]` for each group of fields
+- `<bifi-app-form-field>` + `<bifi-app-form-label>` + `<bifi-app-form-error>` for each individual control
+- Loading state via `@if (!loading())` / `@else if (error())` / `@else` with progress bar
+- All display strings through `TranslatePipe` with explicit scope
+
+### Column & Filter File Grouping
+- Column and filter definition files may group **multiple arrays per file**, but each array must target a **single entity model**.
+- **NOT allowed**: mixing columns for different entity types in the same array.
+- **Allowed**: separate named exports per entity in the same file (e.g. `settings-columns.ts` exports `genderColumns`, `maritalStatusColumns`, etc., each typed as `tableColumn<gender>[]`, `tableColumn<maritalStatus>[]`).
+- Column objects must use `title` (not `header`) and `type: 'text'` with `parseField` for boolean display.
+- Filter objects must use `type: 'string'` | `'number'` | `'date'` | `'boolean'` (not `'text'` or `'select'`).
 
 ## i18n (Internationalization)
 
