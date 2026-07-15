@@ -478,6 +478,107 @@ export class XxxForm implements OnInit {
 - Loading state via `@if (!loading())` / `@else if (error())` / `@else` with progress bar
 - All display strings through `TranslatePipe` with explicit scope
 
+### Dialog Component Pattern
+
+Dialogs are used for create/edit forms that appear as modals rather than full-page routes (reference: `projects/asset-roster/src/lib/modules/asset-roster/features/asset-roster-form-dialog/asset-roster-form-dialog.ts`).
+
+**Structure:**
+```
+features/<dialog-name>/
+  <dialog-name>.ts     -- component class extending BaseDialog
+  <dialog-name>.html   -- template with p-dialog wrapper
+```
+
+**Class conventions:**
+- **Extend `BaseDialog`** from `@avalantec/base-app/core` — provides `dialogState` model signal, `openDialog()`, `closeDialog()`
+- **No "Component" suffix** in class name (e.g. `AssetRosterFormDialog`, not `AssetRosterFormDialogComponent`)
+- **`inject()` only** — never constructor DI
+- **`input.required<T>()`** for data passed into the dialog
+- **`templateUrl`** — never inline `template`
+- **Override `openDialog()`** to reset form state, then call `super.openDialog()`
+- **`handleSubmit(data: FormValueState<T>)`** for form submission, using `takeUntilDestroyed(this.destroy$)`
+- All labels through `TranslatePipe` with explicit scope
+
+```typescript
+@Component({
+  selector: 'bifi-app-xxx-form-dialog',
+  imports: [
+    DialogModule, ReactiveFormsModule, FormModule, TranslatePipe,
+    SelectModule, InputText, /* ... */
+  ],
+  templateUrl: './xxx-form-dialog.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class XxxFormDialog extends BaseDialog {
+  protected formService = inject(XxxForm);
+  private crud = inject(CrudXxx);
+  private destroy$ = inject(DestroyRef);
+
+  // inputs
+  entity = input.required<Xxx>();
+
+  // state
+  form = this.formService.form;
+  submitLoading = signal<boolean>(false);
+
+  override openDialog(): void {
+    this.formService.reset();
+    super.openDialog();
+  }
+
+  handleSubmit(data: FormValueState<XxxFormModel>) {
+    this.submitLoading.set(true);
+    const { rawValue } = data;
+    this.crud.post({ data: rawValue })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.submitLoading.set(false);
+          this.formService.reset();
+          this.closeDialog();
+        },
+        error: () => { this.submitLoading.set(false); },
+      });
+  }
+}
+```
+
+**Template** (`xxx-form-dialog.html`) must use the following structure:
+```html
+<p-dialog
+  [header]="'dialogTitleKey' | translate : {} : 'scope'"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+  >
+    <bifi-app-form-field>
+      <bifi-app-form-label>{{ 'fieldLabel' | translate : {} : 'scope' }}</bifi-app-form-label>
+      <p-select formControlName="field" [options]="options()" [filter]="true"></p-select>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      [cancelLabel]="'cancel' | translate : {} : 'scope'"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>
+```
+
+Key differences from full-page form pattern:
+- `<p-dialog>` wrapper instead of `<bifi-app-form-layout>` — dialog visibility bound to `dialogState` from `BaseDialog`
+- `bifiAppFormActionsHandler` directive + `(appSubmit)` on `<form>` instead of `FormActions`'s `(formSubmit)`
+- `cancelClicked` on `FormActions` calls `closeDialog()` instead of `goBack()`
+- No `FormSection` for simple dialogs (use raw `div` grids or individual form-field groups)
+- No `Router` or `ActivatedRoute` — dialogs receive data via `input()` signals
+
 ### Column & Filter File Grouping
 - Column and filter definition files may group **multiple arrays per file**, but each array must target a **single entity model**.
 - **NOT allowed**: mixing columns for different entity types in the same array.
