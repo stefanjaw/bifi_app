@@ -65,6 +65,32 @@
         }
       }
     },
+    "l10n_cr_einvoice": {
+      "projectType": "library",
+      "root": "projects/l10n_cr_einvoice",
+      "sourceRoot": "projects/l10n_cr_einvoice/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/l10n_cr_einvoice/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/l10n_cr_einvoice/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/l10n_cr_einvoice/tsconfig.spec.json"
+          }
+        }
+      }
+    },
     "asset-roster-demo": {
       "projectType": "application",
       "schematics": {},
@@ -87,7 +113,8 @@
               }
             ],
             "styles": [
-              "projects/asset-roster-demo/src/styles.css"
+              "projects/asset-roster-demo/src/styles.css",
+              "node_modules/grapesjs/dist/css/grapes.min.css"
             ]
           },
           "configurations": {
@@ -95,8 +122,13 @@
               "budgets": [
                 {
                   "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
+                },
+                {
+                  "type": "any",
                   "maximumWarning": "500kB",
-                  "maximumError": "4MB"
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -397,6 +429,13 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/purchases/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
         }
       }
     },
@@ -417,6 +456,13 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/inventory/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
         }
       }
     },
@@ -437,6 +483,40 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/accounting/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        }
+      }
+    },
+    "email-marketing": {
+      "projectType": "library",
+      "root": "projects/email-marketing",
+      "sourceRoot": "projects/email-marketing/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/email-marketing/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/email-marketing/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/email-marketing/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
         }
       }
     }

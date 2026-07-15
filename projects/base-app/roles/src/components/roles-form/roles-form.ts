@@ -20,6 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SelectPolicyDialog } from './select-policy-dialog/select-policy-dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { policyColumns } from '@avalantec/base-app/policies';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { policy } from '@avalantec/base-app/interfaces';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TabsModule } from 'primeng/tabs';
@@ -33,6 +34,7 @@ import { TabsModule } from 'primeng/tabs';
     InputTextModule,
     CheckboxModule,
     ButtonModule,
+    TranslatePipe,
     TabsModule,
     ProgressBarModule,
     SelectPolicyDialog,

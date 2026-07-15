@@ -11,6 +11,7 @@ import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
 import { BcdForm } from '../../../services/bcd-form';
 import { FormModule } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { bcdTaxId, bcdTaxType } from '../../../../bcd-taxes';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TariffPicker } from '../../../../customs-tariffs';
@@ -28,6 +29,7 @@ import { TariffPicker } from '../../../../customs-tariffs';
     TableModule,
     AccordionModule,
     TariffPicker,
+    TranslatePipe,
   ],
   templateUrl: './bcds-records-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

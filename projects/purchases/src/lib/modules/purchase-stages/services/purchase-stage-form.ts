@@ -7,6 +7,7 @@ export interface PurchaseStageFormModel {
   description: string;
   color: string;
   order: number;
+  isDefault: boolean;
 }
 
 @Injectable({
@@ -19,6 +20,7 @@ export class PurchaseStageForm extends BaseForm<PurchaseStageFormModel> {
       description: [''],
       color: ['#6366f1'],
       order: [0],
+      isDefault: [false],
     });
   }
 }

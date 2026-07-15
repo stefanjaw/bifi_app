@@ -17,11 +17,20 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form.service';
+import { CurrencyFormService, CurrencyFormModel } from '../../services/currency-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-currency-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './currency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

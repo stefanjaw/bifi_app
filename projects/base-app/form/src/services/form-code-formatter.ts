@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
 
-// parsers
-import prettier from 'prettier/standalone';
-import * as parserBabel from 'prettier/parser-babel';
-import * as parserHtml from 'prettier/parser-html';
-import * as parserPostCSS from 'prettier/parser-postcss';
-import * as parserTypescript from 'prettier/parser-typescript';
-import pluginEstree from 'prettier/plugins/estree';
-
 import { formCodeEditorLanguages } from '../interfaces/form-code-editor-languages';
 
 @Injectable({
@@ -25,7 +17,17 @@ export class FormCodeFormatter {
           ? 'css'
           : language.includes('typescript')
             ? 'typescript'
-            : 'babel'; // ts/js
+            : 'babel';
+
+    const [prettier, parserBabel, parserHtml, parserPostCSS, parserTypescript, pluginEstree] =
+      await Promise.all([
+        import('prettier/standalone').then(m => m.default),
+        import('prettier/parser-babel'),
+        import('prettier/parser-html'),
+        import('prettier/parser-postcss'),
+        import('prettier/parser-typescript'),
+        import('prettier/plugins/estree').then(m => m.default),
+      ]);
 
     const plugins = [parserBabel, parserHtml, parserPostCSS, parserTypescript, pluginEstree];
 

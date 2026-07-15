@@ -19,10 +19,23 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DiscountFormService, DiscountFormModel } from '../../services/discount-form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-discount-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    InputNumberModule,
+    PluginSlot,
+    TranslatePipe,
+  ],
+  providers: [providePluginContext(DiscountForm)],
   templateUrl: './discount-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,9 +58,17 @@ export class DiscountForm {
 
   form = this.formService.form;
 
+  private translationService = inject(TranslationService);
+
   discountTypeOptions = [
-    { label: 'Percentage', value: 'percentage' },
-    { label: 'Fixed Amount', value: 'fixed' },
+    {
+      label: this.translationService.translate('options.percentage', {}, 'accounting'),
+      value: 'percentage',
+    },
+    {
+      label: this.translationService.translate('options.fixedAmount', {}, 'accounting'),
+      value: 'fixed',
+    },
   ];
 
   constructor() {
@@ -75,7 +96,10 @@ export class DiscountForm {
       : this.crudDiscounts.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

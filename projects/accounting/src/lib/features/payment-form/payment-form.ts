@@ -20,10 +20,20 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DatePickerModule } from 'primeng/datepicker';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaymentFormService, PaymentFormModel } from '../../services/payment-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-payment-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ProgressBarModule, InputNumberModule, DatePickerModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ProgressBarModule,
+    InputNumberModule,
+    DatePickerModule,
+    TranslatePipe,
+  ],
   templateUrl: './payment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -44,7 +54,7 @@ export class PaymentForm {
     () =>
       this.journalsResource.isLoading() ||
       this.currenciesResource.isLoading() ||
-      this.contactsResource.isLoading(),
+      this.contactsResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -53,9 +63,17 @@ export class PaymentForm {
   currencies = this.currenciesResource.value;
   contacts = this.contactsResource.value;
 
+  private translationService = inject(TranslationService);
+
   paymentTypeOptions = [
-    { label: 'Inbound', value: 'inbound' },
-    { label: 'Outbound', value: 'outbound' },
+    {
+      label: this.translationService.translate('options.inbound', {}, 'accounting'),
+      value: 'inbound',
+    },
+    {
+      label: this.translationService.translate('options.outbound', {}, 'accounting'),
+      value: 'outbound',
+    },
   ];
 
   handleSubmit(data: FormValueState<PaymentFormModel>) {
@@ -65,12 +83,19 @@ export class PaymentForm {
       ...rawValue,
       partnerId: rawValue.partnerId || undefined,
       exchangeRate: rawValue.exchangeRate || undefined,
-      paymentDate: rawValue.paymentDate instanceof Date ? rawValue.paymentDate.toISOString() : rawValue.paymentDate,
+      paymentDate:
+        rawValue.paymentDate instanceof Date
+          ? rawValue.paymentDate.toISOString()
+          : rawValue.paymentDate,
     };
-    this.crudPayments.post({ data: payload })
+    this.crudPayments
+      .post({ data: payload })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+        next: () => {
+          this.isSubmitLoading.set(false);
+          this.goBack();
+        },
         error: () => this.isSubmitLoading.set(false),
       });
   }

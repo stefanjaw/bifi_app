@@ -12,6 +12,10 @@ export class CrudTickets extends ApiRequestManager<ticket> {
     super.endpoint = 'tickets';
   }
 
+  /**
+   * Fetches the helpdesk report data (by stage, resolution times, assignments)
+   * @returns Observable of the report data
+   */
   getReport<R = unknown>(): Observable<R> {
     const url = `${this.formatFullURL()}/report`;
     return this._httpClient.get<R>(url);

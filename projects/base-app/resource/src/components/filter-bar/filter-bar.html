@@ -6,7 +6,7 @@
         [ngModel]="row.field"
         (ngModelChange)="onFieldChange(row.id, $event)"
         [ngModelOptions]="{ standalone: true }"
-        placeholder="Select field"
+        [placeholder]="'filter.selectField' | translate: {} : 'base-app/resource'"
         optionLabel="label"
         optionValue="value"
         appendTo="body"
@@ -18,7 +18,7 @@
           [ngModel]="row.operator"
           (ngModelChange)="onOperatorChange(row.id, $event)"
           [ngModelOptions]="{ standalone: true }"
-          placeholder="Operator"
+          [placeholder]="'filter.operator' | translate: {} : 'base-app/resource'"
           optionLabel="label"
           optionValue="value"
           appendTo="body"
@@ -32,21 +32,21 @@
             [ngModel]="row.value"
             (ngModelChange)="onValueChange(row.id, $event)"
             [ngModelOptions]="{ standalone: true }"
-            placeholder="Value"
+            [placeholder]="'filter.value' | translate: {} : 'base-app/resource'"
           />
         } @else if (row.type === 'number') {
           <p-inputnumber
             [ngModel]="row.value"
             (ngModelChange)="onValueChange(row.id, $event)"
             [ngModelOptions]="{ standalone: true }"
-            placeholder="Number"
+            [placeholder]="'filter.number' | translate: {} : 'base-app/resource'"
           />
         } @else if (row.type === 'date') {
           <p-datepicker
             [ngModel]="row.value"
             (ngModelChange)="onValueChange(row.id, $event)"
             [ngModelOptions]="{ standalone: true }"
-            placeholder="Date"
+            [placeholder]="'filter.date' | translate: {} : 'base-app/resource'"
             dateFormat="dd/mm/yy"
             appendTo="body"
           />
@@ -59,7 +59,9 @@
               [binary]="true"
             ></p-checkbox>
           } @else if (row.operator === 'in') {
-            <span class="text-sm italic text-gray-500">Include both</span>
+            <span class="text-sm italic text-gray-500">
+              {{ 'filter.includeBoth' | translate: {} : 'base-app/resource' }}
+            </span>
           }
         }
       }
@@ -74,7 +76,7 @@
   }
   <div class="flex items-center gap-2 mt-1">
     <p-button
-      label="Add Filter"
+      [label]="'filter.addFilter' | translate: {} : 'base-app/resource'"
       icon="pi pi-plus"
       [outlined]="true"
       size="small"
@@ -83,7 +85,7 @@
     />
     @if (rows().length > 0) {
       <p-button
-        label="Clear all"
+        [label]="'filter.clearAll' | translate: {} : 'base-app/resource'"
         icon="pi pi-times"
         severity="secondary"
         [text]="true"

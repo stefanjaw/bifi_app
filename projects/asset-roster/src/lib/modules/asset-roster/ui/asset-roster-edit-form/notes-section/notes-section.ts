@@ -3,6 +3,7 @@ import { Component, computed, inject, input, model, signal } from '@angular/core
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormModule } from '@avalantec/base-app/form';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -29,6 +30,8 @@ import { assetRoster } from '../../../interfaces/asset-roster';
     SelectModule,
     FormModule,
     MessageModule,
+    LocaleDatePipe,
+    TranslatePipe,
   ],
   templateUrl: './notes-section.html',
 })
@@ -38,9 +41,14 @@ export class NotesSection {
   private remarksVersion = signal(0);
   readonly sortedNotes = computed(() => {
     this.remarksVersion(); // Trigger recomputation when remarksVersion changes
-    return [...this.notesControl.controls].sort(
-      (a, b) => new Date(b.value.performDate).getTime() - new Date(a.value.performDate).getTime()
-    );
+    return [...this.notesControl.controls]
+      .filter(c => {
+        const remark = c.value?.remark;
+        return typeof remark === 'string' && remark.trim().length > 0;
+      })
+      .sort(
+        (a, b) => new Date(b.value.performDate).getTime() - new Date(a.value.performDate).getTime()
+      );
   });
   showAllNotes = signal(false);
 
@@ -59,6 +67,7 @@ export class NotesSection {
   get notesControl() {
     return this.form.get('remarks') as FormArray;
   }
+
   getUserName(userId: string) {
     console.log('🚀 ~ NotesSection ~ getUserName ~ userId:', userId);
     const user = this.userResource.value();

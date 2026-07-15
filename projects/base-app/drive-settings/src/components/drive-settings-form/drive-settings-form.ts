@@ -9,16 +9,13 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudDriveSettings } from '../../services/crud-drive-settings';
-import {
-  DriveSettingsForm,
-  DriveSettingsFormModel,
-} from '../../services/drive-settings-form';
+import { DriveSettingsForm, DriveSettingsFormModel } from '../../services/drive-settings-form';
 import { driveSettings } from '../../interfaces/drive-settings';
 
 @Component({
@@ -26,15 +23,15 @@ import { driveSettings } from '../../interfaces/drive-settings';
   imports: [
     ReactiveFormsModule,
     FormModule,
+    TranslatePipe,
     ButtonModule,
     InputTextModule,
-    TextareaModule,
     ProgressBarModule,
   ],
   templateUrl: './drive-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DriveSettingsFormComponent {
+export class DriveSettingsPage {
   private crudSettings = inject(CrudDriveSettings);
   private formService = inject(DriveSettingsForm);
   private destroy$ = inject(DestroyRef);

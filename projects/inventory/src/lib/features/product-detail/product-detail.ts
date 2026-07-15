@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudProducts } from '../../services/crud-products';
 import { CrudStockBalances } from '../../services/crud-stock-balances';
 import { CrudMovements } from '../../services/crud-movements';
@@ -14,13 +8,14 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-product-detail',
   host: {
     class: 'flex flex-col gap-4 p-6 ms-4 me-4',
   },
-  imports: [ButtonModule, RouterLink, CurrencyPipe, CardModule],
+  imports: [ButtonModule, RouterLink, CurrencyPipe, CardModule, TranslatePipe],
   templateUrl: './product-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,10 +23,14 @@ export class ProductDetail {
   private crudProducts = inject(CrudProducts);
   private crudStockBalances = inject(CrudStockBalances);
   private crudMovements = inject(CrudMovements);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
-  productResource = this.crudProducts.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  productResource = this.crudProducts.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   balancesResource = this.crudStockBalances.get({});
   movementsResource = this.crudMovements.get({});
 
@@ -40,18 +39,20 @@ export class ProductDetail {
 
   stockBalances = computed(() => {
     const all = (this.balancesResource.value() as stockBalance[]) ?? [];
-    return all.filter(b => (b.productId as any)?._id === this.id() || b.productId === this.id() as any);
+    return all.filter(
+      b => (b.productId as any)?._id === this.id() || b.productId === (this.id() as any)
+    );
   });
 
-  totalStock = computed(() =>
-    this.stockBalances().reduce((sum, b) => sum + b.quantity, 0)
-  );
+  totalStock = computed(() => this.stockBalances().reduce((sum, b) => sum + b.quantity, 0));
 
   stockByWarehouse = computed(() => {
     const map = new Map<string, { name: string; quantity: number }>();
     for (const b of this.stockBalances()) {
       const wid = (b.warehouseId as any)?._id ?? '';
-      const wname = (b.warehouseId as any)?.name ?? 'Unknown';
+      const wname =
+        (b.warehouseId as any)?.name ??
+        this.translationService.translate('unknown', {}, 'inventory');
       const prev = map.get(wid) ?? { name: wname, quantity: 0 };
       map.set(wid, { name: wname, quantity: prev.quantity + b.quantity });
     }
@@ -61,7 +62,7 @@ export class ProductDetail {
   recentMovements = computed(() => {
     const all = (this.movementsResource.value() as stockMovement[]) ?? [];
     return all
-      .filter(m => (m.productId as any)?._id === this.id() || m.productId === this.id() as any)
+      .filter(m => (m.productId as any)?._id === this.id() || m.productId === (this.id() as any))
       .slice(0, 20);
   });
 }

@@ -25,7 +25,7 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
-import { AssetRosterStatusCardComponent } from '../../ui/asset-roster-status-card/asset-roster-status-card';
+import { AssetRosterStatusCard } from '../../ui/asset-roster-status-card/asset-roster-status-card';
 import { AssetRosterFormDialog } from '../asset-roster-form-dialog/asset-roster-form-dialog';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -37,6 +37,7 @@ import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/ass
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { AvatarModule } from 'primeng/avatar';
 
 @Component({
@@ -45,7 +46,7 @@ import { AvatarModule } from 'primeng/avatar';
   providers: [provideResourceManager(CrudAssetRoster)],
   imports: [
     RouterLink,
-    AssetRosterStatusCardComponent,
+    AssetRosterStatusCard,
     ButtonModule,
     SearchBar,
     TableLayout,
@@ -59,6 +60,7 @@ import { AvatarModule } from 'primeng/avatar';
     SelectButtonModule,
     AvatarModule,
     InfiniteScroll,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

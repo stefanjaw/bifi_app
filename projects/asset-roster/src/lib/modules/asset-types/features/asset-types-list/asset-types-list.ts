@@ -14,10 +14,19 @@ import { assetType } from '../../interfaces/asset-type';
 import { assetTypeColumns } from '../../libraries/asset-type-columns';
 import { assetTypeFilters } from '../../libraries/asset-type-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 @Component({
   selector: 'bifi-app-asset-types-list',
   providers: [provideResourceManager(CrudAssetType)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -29,7 +38,7 @@ export class AssetTypesList {
   private crudAssetType = inject(CrudAssetType);
   private destroy$ = inject(DestroyRef);
 
-    // Router
+  // Router
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -40,7 +49,7 @@ export class AssetTypesList {
 
   gotoEditAssetType = (element: assetType) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 
   deleteAssetType(id: string) {
     this.crudAssetType

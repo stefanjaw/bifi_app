@@ -1,5 +1,5 @@
 <p-dialog
-  header="Edit Task"
+  [header]="'updateTask.title' | translate: {} : 'tasks'"
   [(visible)]="dialogState"
   [modal]="true"
   [draggable]="false"
@@ -8,7 +8,7 @@
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-full! m-0!"
 >
   @if (isLoading()) {
-    <p>Loading...</p>
+    <p>{{ 'loading' | translate: {} : 'tasks' }}</p>
   } @else {
     <form
       [formGroup]="form"
@@ -17,19 +17,27 @@
       (appSubmit)="handleSubmit($event)"
     >
       <bifi-app-form-field>
-        <bifi-app-form-label>Task Name</bifi-app-form-label>
-        <input pInputText formControlName="name" type="text" placeholder="e.g, Laser Therapy" />
+        <bifi-app-form-label>
+          {{ 'taskName' | translate: {} : 'tasks' }}
+          <span class="text-red-500 ml-0.5">*</span>
+        </bifi-app-form-label>
+        <input
+          pInputText
+          formControlName="name"
+          type="text"
+          [placeholder]="'updateTask.namePlaceholder' | translate: {} : 'tasks'"
+        />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Description</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'description' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <textarea pInputTextarea formControlName="description"></textarea>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Start Date</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'startDate' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <p-datepicker
           appendTo="body"
           formControlName="plannedStartDate"
@@ -40,7 +48,7 @@
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>End Date</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'endDate' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <p-datepicker
           appendTo="body"
           formControlName="plannedEndDate"
@@ -51,14 +59,16 @@
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Duration (hrs)</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'updateTask.durationHrs' | translate: {} : 'tasks' }}
+        </bifi-app-form-label>
         <input pInputText type="number" formControlName="plannedDuration" />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
         <bifi-app-form-label>
-          Progress
+          {{ 'progress' | translate: {} : 'tasks' }}
           <span>({{ taskProgress() }}%)</span>
         </bifi-app-form-label>
         <p-slider formControlName="progress" [step]="1" [min]="0" [max]="100"></p-slider>
@@ -67,7 +77,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <bifi-app-form-field>
-          <bifi-app-form-label>Stage</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'stage' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="stage"
@@ -80,7 +90,7 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Type</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'type' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="typeId"
@@ -88,17 +98,17 @@
             optionLabel="name"
             optionValue="_id"
             [filter]="true"
-            placeholder="Select a type"
+            [placeholder]="'updateTask.typePlaceholder' | translate: {} : 'tasks'"
           ></p-select>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Priority</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'priority' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="priority"
-            [options]="priorityOptions"
+            [options]="priorityOptions()"
             optionLabel="label"
             optionValue="value"
             [filter]="true"
@@ -107,7 +117,7 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Parent Task</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'parentTask' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="parentId"
@@ -120,7 +130,7 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Project</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'project' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="projectId"
@@ -134,7 +144,7 @@
       </div>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Assigned</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'assigned' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="assigned"
@@ -147,7 +157,7 @@
       </bifi-app-form-field>
 
       <div formArrayName="dependencyIds" class="flex flex-col gap-4">
-        <p class="font-medium text-sm">Dependencies</p>
+        <p class="font-medium text-sm">{{ 'updateTask.dependencies' | translate: {} : 'tasks' }}</p>
 
         @for (control of form.controls.dependencyIds.controls; track $index; let i = $index) {
           <div class="flex flex-row gap-2 justify-between items-center w-full">
@@ -189,14 +199,16 @@
             [binary]="true"
             inputId="isMilestone"
           ></p-checkbox>
-          <label for="isMilestone" class="cursor-pointer">Is Milestone</label>
+          <label for="isMilestone" class="cursor-pointer">
+            {{ 'updateTask.isMilestone' | translate: {} : 'tasks' }}
+          </label>
         </div>
       </bifi-app-form-field>
 
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'cancel' | translate: {} : 'tasks'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

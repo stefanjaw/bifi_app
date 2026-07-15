@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   input,
   OnDestroy,
   output,
@@ -13,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CalendarDay, CalendarEvent, CalendarViewMode } from '../../interfaces/calendar';
 import { CalendarEventCard } from '../calendar-event-card/calendar-event-card';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -22,11 +24,13 @@ dayjs.extend(isSameOrAfter);
 
 @Component({
   selector: 'bifi-app-calendar-view',
-  imports: [CommonModule, CalendarEventCard],
+  imports: [CommonModule, CalendarEventCard, TranslatePipe, LocaleDatePipe],
   templateUrl: './calendar-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarView implements OnDestroy {
+  private translationService = inject(TranslationService);
+
   events = input<CalendarEvent[]>([]);
 
   itemClick = output<string>();
@@ -135,48 +139,67 @@ export class CalendarView implements OnDestroy {
     const start = this.dragPreviewStart();
     const end = this.dragPreviewEnd();
     if (!start || !end) return '';
+    const locale = this.translationService.activeLanguage();
+    const arrow = this.translationService.translate(
+      'calendar.preview.arrow',
+      {},
+      'base-app/resource'
+    );
     if (this.view() === 'day') {
-      const fmt = new Intl.DateTimeFormat('en-US', {
+      const fmt = new Intl.DateTimeFormat(locale, {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
       });
-      return `${fmt.format(start)} → ${fmt.format(end)}`;
+      return `${fmt.format(start)}${arrow}${fmt.format(end)}`;
     }
-    const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-    return `${fmt.format(start)} → ${fmt.format(end)}`;
+    const fmt = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' });
+    return `${fmt.format(start)}${arrow}${fmt.format(end)}`;
   });
 
   previewResizeEndLabel = computed(() => {
     const end = this.dragPreviewEnd();
     if (!end) return '';
+    const locale = this.translationService.activeLanguage();
+    const prefix = this.translationService.translate(
+      'calendar.preview.until',
+      {},
+      'base-app/resource'
+    );
     if (this.view() === 'day') {
-      return `Until ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(end)}`;
+      return `${prefix}${new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', hour12: true }).format(end)}`;
     }
-    return `Until ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(end)}`;
+    return `${prefix}${new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(end)}`;
   });
 
   previewResizeStartLabel = computed(() => {
     const start = this.dragPreviewStart();
     if (!start) return '';
+    const locale = this.translationService.activeLanguage();
+    const prefix = this.translationService.translate(
+      'calendar.preview.from',
+      {},
+      'base-app/resource'
+    );
     if (this.view() === 'day') {
-      return `From ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(start)}`;
+      return `${prefix}${new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', hour12: true }).format(start)}`;
     }
-    return `From ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(start)}`;
+    return `${prefix}${new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(start)}`;
   });
 
   headerTitle = computed(() => {
     const date = this.currentDate();
+    const locale = this.translationService.activeLanguage();
     switch (this.view()) {
       case 'day':
-        return new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(date);
+        return new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(date);
       case 'week': {
         const startOfWeek = dayjs(date).startOf('week');
         const endOfWeek = startOfWeek.add(6, 'day');
-        const startMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+        const startMonth = new Intl.DateTimeFormat(locale, { month: 'long' }).format(
           startOfWeek.toDate()
         );
-        const endMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+        const endMonth = new Intl.DateTimeFormat(locale, { month: 'long' }).format(
           endOfWeek.toDate()
         );
         if (startMonth === endMonth) {
@@ -185,18 +208,28 @@ export class CalendarView implements OnDestroy {
         return `${startMonth} - ${endMonth} ${endOfWeek.year()}`;
       }
       case 'month':
-        return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
+        return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(date);
       case 'year':
         return date.getFullYear().toString();
       case 'list':
-        return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
+        return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(date);
       default:
         return '';
     }
   });
 
   views: CalendarViewMode[] = ['day', 'week', 'month', 'year', 'list'];
-  weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  weekdays = computed(() => {
+    const locale = this.translationService.activeLanguage();
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+    // dayjs week starts on Sunday (0=Sun); need Mon=0..Sun=6
+    return [3, 4, 5, 6, 0, 1, 2].map(d => fmt.format(new Date(Date.UTC(2024, 0, d + 1))));
+  });
+  yearWeekdays = computed(() => {
+    const locale = this.translationService.activeLanguage();
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: 'narrow' });
+    return [3, 4, 5, 6, 0, 1, 2].map(d => fmt.format(new Date(Date.UTC(2024, 0, d + 1))));
+  });
   hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
   calendarBody = viewChild<ElementRef<HTMLDivElement>>('calendarBody');
@@ -296,9 +329,9 @@ export class CalendarView implements OnDestroy {
   }
 
   getMonthName(monthIndex: number): string {
-    return new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-      new Date(2000, monthIndex, 1)
-    );
+    return new Intl.DateTimeFormat(this.translationService.activeLanguage(), {
+      month: 'long',
+    }).format(new Date(2000, monthIndex, 1));
   }
 
   getFirstDayOfMonth(monthIndex: number): number {

@@ -1,11 +1,11 @@
 <p-dialog
-  header="Create New Task"
+  [header]="'createTask.title' | translate: {} : 'tasks'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
 >
   @if (isLoading()) {
-    <p>Loading...</p>
+    <p>{{ 'loading' | translate: {} : 'tasks' }}</p>
   } @else {
     <form
       [formGroup]="form"
@@ -14,23 +14,34 @@
       (appSubmit)="handleSubmit($event)"
     >
       <bifi-app-form-field>
-        <bifi-app-form-label>Task Name</bifi-app-form-label>
-        <input pInputText formControlName="name" type="text" placeholder="e.g, Laser Therapy" />
+        <bifi-app-form-label>
+          {{ 'taskName' | translate: {} : 'tasks' }}
+          <span class="text-red-500 ml-0.5">*</span>
+        </bifi-app-form-label>
+        <input
+          pInputText
+          formControlName="name"
+          type="text"
+          [placeholder]="'createTask.namePlaceholder' | translate: {} : 'tasks'"
+        />
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Description</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'description' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <textarea
           pInputTextarea
           formControlName="description"
-          placeholder="Optional description"
+          [placeholder]="'description' | translate: {} : 'tasks'"
         ></textarea>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Type</bifi-app-form-label>
+        <bifi-app-form-label>
+          {{ 'type' | translate: {} : 'tasks' }}
+          <span class="text-red-500 ml-0.5">*</span>
+        </bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="typeId"
@@ -38,13 +49,13 @@
           optionLabel="name"
           optionValue="_id"
           [filter]="true"
-          placeholder="Select a type"
+          [placeholder]="'createTask.typePlaceholder' | translate: {} : 'tasks'"
         ></p-select>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Project</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'project' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="projectId"
@@ -58,7 +69,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Start Date</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'startDate' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-datepicker
             appendTo="body"
             formControlName="plannedStartDate"
@@ -69,7 +80,7 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>End Date</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'endDate' | translate: {} : 'tasks' }}</bifi-app-form-label>
           <p-datepicker
             appendTo="body"
             formControlName="plannedEndDate"
@@ -82,7 +93,7 @@
 
       <bifi-app-form-field>
         <bifi-app-form-label>
-          Progress
+          {{ 'progress' | translate: {} : 'tasks' }}
           <span>({{ taskProgress() }}%)</span>
         </bifi-app-form-label>
         <p-slider formControlName="progress" [step]="1" [min]="0" [max]="100"></p-slider>
@@ -90,7 +101,7 @@
       </bifi-app-form-field>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Parent Task</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'parentTask' | translate: {} : 'tasks' }}</bifi-app-form-label>
         <p-select
           appendTo="body"
           formControlName="parentId"
@@ -103,20 +114,38 @@
       </bifi-app-form-field>
 
       <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'createTask.assignedTo' | translate: {} : 'tasks' }}
+        </bifi-app-form-label>
+        <p-select
+          appendTo="body"
+          formControlName="assigned"
+          [options]="users()"
+          optionLabel="username"
+          optionValue="_id"
+          [filter]="true"
+          [placeholder]="'createTask.assigneePlaceholder' | translate: {} : 'tasks'"
+        ></p-select>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
         <div class="flex items-center gap-2">
           <p-checkbox
             formControlName="isMilestone"
             [binary]="true"
             inputId="isMilestone"
           ></p-checkbox>
-          <label for="isMilestone" class="cursor-pointer">Is Milestone</label>
+          <label for="isMilestone" class="cursor-pointer">
+            {{ 'createTask.isMilestone' | translate: {} : 'tasks' }}
+          </label>
         </div>
       </bifi-app-form-field>
 
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'cancel' | translate: {} : 'tasks'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

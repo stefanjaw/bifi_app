@@ -1,4 +1,6 @@
-export type FirebaseUser = firebase.default.User;
+import type { User } from 'firebase/auth';
+
+export type FirebaseUser = User;
 
 export interface Session<TUser> {
   appUser: TUser;

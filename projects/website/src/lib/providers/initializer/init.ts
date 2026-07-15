@@ -14,23 +14,26 @@ function initializeMenu() {
     {
       item: {
         id: 'website',
-        label: 'Website',
+        label: 'website',
         icon: 'pi pi-globe',
         routerLink: ['/website'],
         showInMainMenu: true,
+        scope: 'website',
       },
     },
     {
       item: {
         id: 'website',
-        label: 'Website',
+        label: 'website',
         icon: 'pi pi-globe',
+        scope: 'website',
         items: [
           {
             icon: 'pi pi-file-pdf',
             routerLink: ['/settings/templates'],
-            label: 'Templates',
+            label: 'templates',
             resource: 'templates/menu',
+            scope: 'website',
           },
         ],
       },

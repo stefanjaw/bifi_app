@@ -78,3 +78,66 @@ export function getFormGroupDirtyValue<T extends FormGroup>(group: FormGroup): F
   }
   return dirtyValue;
 }
+
+export interface FormErrorEntry {
+  label: string;
+  errorKey: string;
+  errorParams: any;
+}
+
+/**
+ * Converts a camelCase string to Title Case with spaces.
+ * E.g. "firstName" → "First Name", "roles" → "Roles"
+ *
+ * @param str - The camelCase string to convert.
+ * @returns The string converted to Title Case with spaces.
+ */
+function toTitleCase(str: string): string {
+  return str
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, s => s.toUpperCase())
+    .trim();
+}
+
+/**
+ * Collects the first validation error for each invalid control in a FormGroup,
+ * returning a human-readable label alongside the error key and params.
+ *
+ * Rules:
+ * - If a control has its own errors, those are captured and its children are NOT visited.
+ * - FormArray children are not descended into — only array-level errors are captured
+ *   (e.g. arrayMinLength set on the FormArray itself).
+ * - Nested FormGroups are recursed into when they have no own errors.
+ *
+ * @param group - The root FormGroup to inspect.
+ * @returns An array of error entries, one per invalid control (up to one error per control).
+ */
+export function collectFormErrors(group: FormGroup): FormErrorEntry[] {
+  const errors: FormErrorEntry[] = [];
+
+  const walk = (control: AbstractControl, label: string) => {
+    if (control.valid) return;
+
+    if (control.errors) {
+      const firstKey = Object.keys(control.errors)[0];
+      errors.push({ label, errorKey: firstKey, errorParams: control.errors[firstKey] });
+      return;
+    }
+
+    if (control instanceof FormArray) {
+      return;
+    }
+
+    if (control instanceof FormGroup) {
+      for (const [key, child] of Object.entries(control.controls)) {
+        walk(child, toTitleCase(key));
+      }
+    }
+  };
+
+  for (const [key, child] of Object.entries(group.controls)) {
+    walk(child, toTitleCase(key));
+  }
+
+  return errors;
+}

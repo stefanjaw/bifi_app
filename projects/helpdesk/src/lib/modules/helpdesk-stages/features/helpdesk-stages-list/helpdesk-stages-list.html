@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Helpdesk Stages</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'ticketStages.title' | translate: {} : 'helpdesk' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Stage"
+    [label]="'ticketStages.addNew' | translate: {} : 'helpdesk'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -10,7 +10,10 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by name" [searchFilters]="filters"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'ticketStages.searchPlaceholder' | translate: {} : 'helpdesk'"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
@@ -18,6 +21,7 @@
   [data]="stages"
   [onClickRow]="gotoEditHelpdeskStage"
   clickRowPermission="helpdesk-stages/update:view"
+  [scope]="'helpdesk'"
 >
   <ng-template #actions let-row>
     <bifi-app-buttons-actions

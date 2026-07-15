@@ -6,10 +6,11 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { contact } from '@avalantec/base-app/interfaces';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-select-contact-dialog',
-  imports: [ReactiveFormsModule, DialogModule, SelectModule, FormModule],
+  imports: [ReactiveFormsModule, DialogModule, SelectModule, FormModule, TranslatePipe],
   templateUrl: './select-contact-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

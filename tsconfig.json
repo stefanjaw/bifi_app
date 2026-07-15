@@ -9,6 +9,9 @@
       "@avalantec/asset-roster": ["projects/asset-roster/src/lib"],
       "@avalantec/asset-roster/*": ["projects/asset-roster/src/lib/*"],
 
+      "@avalantec/l10n_cr_einvoice": ["projects/l10n_cr_einvoice/src/lib"],
+      "@avalantec/l10n_cr_einvoice/*": ["projects/l10n_cr_einvoice/src/lib/*"],
+
       "@avalantec/calendar": ["./projects/calendar/src/lib"],
       "@avalantec/calendar/*": ["./projects/calendar/src/lib/*"],
 
@@ -38,6 +41,9 @@
 
       "@avalantec/accounting": ["./projects/accounting/src/lib"],
       "@avalantec/accounting/*": ["./projects/accounting/src/lib/*"],
+
+      "@avalantec/email-marketing": ["./projects/email-marketing/src/lib"],
+      "@avalantec/email-marketing/*": ["./projects/email-marketing/src/lib/*"],
 
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
@@ -69,11 +75,7 @@
     "projects/base-app/core/index.ts",
     "projects/base-app/form/index.ts",
     "projects/base-app/resource/index.ts",
-    "projects/base-app/settings/src/services",
-    "projects/base-app/settings/index.ts",
-    "projects/base-app/settings/src/modules",
-    "projects/base-app/settings/src/components",
-    "projects/base-app/interfaces/user.ts"
+
   ],
   "exclude": ["**/node_modules", "**/**/*.spec.ts"]
 }

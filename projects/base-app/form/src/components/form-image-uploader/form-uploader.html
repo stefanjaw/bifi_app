@@ -1,4 +1,9 @@
-<div (click)="handleClick()" (keydown)="handleKeyDown($event)" tabindex="0">
+<div
+  [class]="inline() ? 'flex items-center justify-center gap-2' : ''"
+  (click)="handleClick()"
+  (keydown)="handleKeyDown($event)"
+  tabindex="0"
+>
   <ng-content>
     <p-fileupload
       #uploader
@@ -16,12 +21,15 @@
   </ng-content>
 
   @if (formValue().length > 0) {
-    <div class="mt-1"></div>
+    @if (!inline()) {
+      <div class="mt-1"></div>
+    }
     <p-button
-      variant="text"
+      [variant]="inline() ? 'outlined' : 'text'"
       icon="pi pi-trash"
       severity="danger"
       label="Clear"
+      [size]="inline() ? 'small' : undefined"
       (onClick)="onPrimeFileClear()"
     ></p-button>
   }

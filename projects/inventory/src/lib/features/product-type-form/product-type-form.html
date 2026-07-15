@@ -1,0 +1,61 @@
+<bifi-app-form-layout
+  [title]="(isUpdate() ? 'editProductType' : 'newProductType') | translate: {} : 'inventory'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!isLoading()) {
+      <bifi-app-form-section
+        [title]="'productTypeInformation' | translate: {} : 'inventory'"
+        id="product-type-info"
+        [ordinal]="1"
+      >
+        <div class="grid grid-cols-1 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'productTypeNamePlaceholder' | translate: {} : 'inventory'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <textarea
+              pTextarea
+              formControlName="description"
+              rows="3"
+              [placeholder]="'optionalDescription' | translate: {} : 'inventory'"
+            ></textarea>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'active' | translate: {} : 'inventory' }}</bifi-app-form-label>
+            <p-toggleSwitch formControlName="active"></p-toggleSwitch>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    }
+
+    @if (isLoading()) {
+      <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

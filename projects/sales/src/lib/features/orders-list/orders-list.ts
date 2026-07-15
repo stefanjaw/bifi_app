@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-orders-list',
@@ -21,7 +22,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, ButtonsActions],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, ButtonsActions, TranslatePipe],
   templateUrl: './orders-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

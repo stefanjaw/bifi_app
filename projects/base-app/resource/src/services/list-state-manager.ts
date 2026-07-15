@@ -39,10 +39,16 @@ export class ListStateManager {
    */
   partialSave = signal<Partial<ListState>>({});
 
+  /**
+   * Stores a list state to be restored later on component init
+   *
+   * @param state - The list state to restore later.
+   */
   setPendingRestore(state: ListState): void {
     this.pendingRestore = state;
   }
 
+  /** Clears any pending list state restoration */
   clearPendingRestore(): void {
     this.pendingRestore = null;
   }
@@ -50,15 +56,24 @@ export class ListStateManager {
   /**
    * Merges partial state into the accumulated save buffer.
    * Called by FilterBar/SearchBar whenever their state changes.
+   *
+   * @param partial - The partial state to merge.
    */
   savePartialState(partial: Partial<ListState>): void {
     this.partialSave.update(current => ({ ...current, ...partial }));
   }
 
+  /** Resets the accumulated partial save buffer to empty */
   clearPartialSave(): void {
     this.partialSave.set({});
   }
 
+  /**
+   * Persists a full list state snapshot to localStorage under the given key
+   *
+   * @param key - The localStorage key.
+   * @param state - The list state to persist.
+   */
   saveToLocalStorage(key: string, state: ListState): void {
     try {
       localStorage.setItem(key, JSON.stringify(state));
@@ -67,6 +82,12 @@ export class ListStateManager {
     }
   }
 
+  /**
+   * Restores a previously saved list state from localStorage, or null if none exists
+   *
+   * @param key - The localStorage key.
+   * @returns The restored list state or null.
+   */
   loadFromLocalStorage(key: string): ListState | null {
     try {
       const raw = localStorage.getItem(key);
@@ -79,6 +100,9 @@ export class ListStateManager {
   /**
    * Serialises a partial ListState into Angular Router queryParams.
    * Null values instruct the router to remove the corresponding param.
+   *
+   * @param state - The partial list state to serialize.
+   * @returns A record of query params.
    */
   buildQueryParams(state: Partial<ListState>): Record<string, string | null> {
     const k = LIST_STATE_QUERY_KEYS;
@@ -94,6 +118,9 @@ export class ListStateManager {
   /**
    * Parses Angular route queryParams into a ListState.
    * Returns null if none of the recognised keys are present.
+   *
+   * @param params - The route query parameters.
+   * @returns The parsed list state or null.
    */
   parseQueryParams(params: Record<string, string>): ListState | null {
     const k = LIST_STATE_QUERY_KEYS;

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CrudTickets } from '../../services/crud-tickets';
 import { CrudHelpdeskStages } from '../../services/crud-helpdesk-stages';
-import { TicketForm as TicketFormService, TicketFormModel } from '../../services/ticket-form';
+import { TicketForm, TicketFormModel } from '../../services/ticket-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,12 +20,19 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudTasks } from '@avalantec/tasks';
 import { ticket, ticketAttachment } from '../../interfaces/ticket';
-import { DatePipe } from '@angular/common';
-import { CrudActivityHistories, FileResolver } from '@avalantec/base-app/resource';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
+import {
+  activityHistory,
+  CrudActivityHistories,
+  FileResolver,
+  orderByQuery,
+} from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'bifi-app-ticket-form',
@@ -35,17 +42,20 @@ import { DatePickerModule } from 'primeng/datepicker';
     ReactiveFormsModule,
     InputText,
     ButtonModule,
+    HasPermission,
     SelectModule,
     TextareaModule,
     ProgressBarModule,
-    DatePipe,
+    LocaleDatePipe,
+    TranslatePipe,
     DatePickerModule,
+    ToggleSwitchModule,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TicketFormComponent {
-  protected formService = inject(TicketFormService);
+export class TicketsForm {
+  protected formService = inject(TicketForm);
   private crudTickets = inject(CrudTickets);
   private crudStages = inject(CrudHelpdeskStages);
   private crudUsers = inject(CrudUsers);
@@ -55,6 +65,7 @@ export class TicketFormComponent {
   private route = inject(ActivatedRoute);
   private fileResolver = inject(FileResolver);
   private crudActivityHistories = inject(CrudActivityHistories);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -63,11 +74,16 @@ export class TicketFormComponent {
     triggerRequest: computed(() => !!this.id()),
   });
 
+  private activityHistoryOrder = signal<orderByQuery<activityHistory>>([
+    { field: 'performDate', order: 'desc' },
+  ]);
+
   stagesResource = this.crudStages.get({});
   usersResource = this.crudUsers.get({});
   tasksResource = this.crudTasks.get({});
   activityHistoriesResource = this.crudActivityHistories.get({
     searchParams: computed(() => (this.id() ? { model: 'Ticket', modelId: this.id() } : undefined)),
+    sort: this.activityHistoryOrder,
     triggerRequest: computed(() => !!this.id()),
     getInactive: null,
   });
@@ -102,23 +118,32 @@ export class TicketFormComponent {
     return this.formService.followersArray;
   }
 
-  priorityOptions = [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-    { label: 'Urgent', value: 'urgent' },
-  ];
+  priorityOptions = computed(() => [
+    { label: this.translationService.translate('priority.low', {}, 'helpdesk'), value: 'low' },
+    {
+      label: this.translationService.translate('priority.medium', {}, 'helpdesk'),
+      value: 'medium',
+    },
+    { label: this.translationService.translate('priority.high', {}, 'helpdesk'), value: 'high' },
+    {
+      label: this.translationService.translate('priority.urgent', {}, 'helpdesk'),
+      value: 'urgent',
+    },
+  ]);
 
-  typeOptions = [
-    { label: 'Helpdesk', value: 'helpdesk' },
-    { label: 'Task', value: 'task' },
-  ];
+  typeOptions = computed(() => [
+    {
+      label: this.translationService.translate('type.helpdesk', {}, 'helpdesk'),
+      value: 'helpdesk',
+    },
+    { label: this.translationService.translate('type.task', {}, 'helpdesk'), value: 'task' },
+  ]);
 
-  timeOptions = [
-    { label: 'min', value: 'minutes' },
-    { label: 'hrs', value: 'hours' },
-    { label: 'days', value: 'days' },
-  ];
+  timeOptions = computed(() => [
+    { label: this.translationService.translate('time.min', {}, 'helpdesk'), value: 'minutes' },
+    { label: this.translationService.translate('time.hrs', {}, 'helpdesk'), value: 'hours' },
+    { label: this.translationService.translate('time.days', {}, 'helpdesk'), value: 'days' },
+  ]);
 
   constructor() {
     effect(() => {
@@ -141,6 +166,7 @@ export class TicketFormComponent {
           dateEnd: entry.dateEnd ? new Date(entry.dateEnd) : undefined,
           dateScheduled: entry.dateScheduled ? new Date(entry.dateScheduled) : undefined,
           duration: entry.duration ?? '30',
+          active: entry.active ?? true,
         });
         this.linkedTaskIds.set(entry.taskIds?.map(t => t._id) ?? []);
         this.formService.resetDirtyState();
@@ -214,6 +240,7 @@ export class TicketFormComponent {
     if (rawValue.category) payload['category'] = rawValue.category;
     if (rawValue.appModule) payload['appModule'] = rawValue.appModule;
     if (rawValue.duration) payload['duration'] = rawValue.duration;
+    payload['active'] = rawValue.active ?? true;
 
     payload['dateStart'] = rawValue.dateStart
       ? new Date(rawValue.dateStart).toISOString()
@@ -269,24 +296,6 @@ export class TicketFormComponent {
   }
 
   activityFieldLabel(field: string): string {
-    const labels: Record<string, string> = {
-      name: 'Subject',
-      description: 'Description',
-      internalNotes: 'Internal Notes',
-      priority: 'Priority',
-      type: 'Type',
-      stage: 'Stage',
-      assigned: 'Assigned',
-      followers: 'Followers',
-      tags: 'Tags',
-      taskIds: 'Linked Tasks',
-      category: 'Category',
-      appModule: 'Module',
-      active: 'Active',
-      dateStart: 'Start Date',
-      dateEnd: 'End Date',
-      duration: 'Duration',
-    };
-    return labels[field] ?? field;
+    return this.translationService.translate('activityField.' + field, {}, 'helpdesk');
   }
 }

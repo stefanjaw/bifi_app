@@ -1,26 +1,40 @@
 <section class="flex flex-col gap-6 py-4" [formGroup]="form">
-  <bifi-app-form-section title="Totals" id="summary-totals" [ordinal]="1">
+  <bifi-app-form-section
+    [title]="'formSection.totals' | translate: {} : 'aduanix'"
+    id="summary-totals"
+    [ordinal]="1"
+  >
     <div class="grid gap-4 sm:grid-cols-3">
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Invoice Amount</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.invoiceAmount' | translate: {} : 'aduanix' }}
+        </span>
         <span class="text-lg font-semibold">
           {{ form.controls.invoiceAmount.value | number: '1.2-2' }}
         </span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Payable Amount</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.payableAmount' | translate: {} : 'aduanix' }}
+        </span>
         <span class="text-lg font-semibold">
           {{ form.controls.payableAmount.value | number: '1.2-2' }}
         </span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Number of Records</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.numberOfRecords' | translate: {} : 'aduanix' }}
+        </span>
         <span class="text-lg font-semibold">{{ form.controls.recordsCount.value }}</span>
       </div>
     </div>
   </bifi-app-form-section>
 
-  <bifi-app-form-section title="Records Breakdown" id="summary-records" [ordinal]="2">
+  <bifi-app-form-section
+    [title]="'formSection.recordsBreakdown' | translate: {} : 'aduanix'"
+    id="summary-records"
+    [ordinal]="2"
+  >
     @if (form.controls.records.controls.length > 0) {
       <p-table
         [value]="form.controls.records.controls"
@@ -29,14 +43,14 @@
       >
         <ng-template #header>
           <tr>
-            <th>#</th>
-            <th>Tariff Code</th>
-            <th>Description</th>
-            <th>Qty</th>
-            <th>Currency</th>
-            <th>Invoice Value</th>
-            <th>BDA Value</th>
-            <th>Total Due</th>
+            <th>{{ 'column.recordNumber' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.tariffCode' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.description' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.qty' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.currency' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.invoiceValue' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.bdaValue' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.totalDue' | translate: {} : 'aduanix' }}</th>
           </tr>
         </ng-template>
         <ng-template #body let-record let-i="rowIndex">
@@ -55,23 +69,29 @@
         </ng-template>
         <ng-template #emptymessage>
           <tr>
-            <td colspan="8" class="text-center text-color-secondary py-4">No records added yet.</td>
+            <td colspan="8" class="text-center text-color-secondary py-4">
+              {{ 'message.noRecordsAdded' | translate: {} : 'aduanix' }}
+            </td>
           </tr>
         </ng-template>
       </p-table>
     } @else {
-      <p class="text-color-secondary">No records added yet.</p>
+      <p class="text-color-secondary">{{ 'message.noRecordsAdded' | translate: {} : 'aduanix' }}</p>
     }
   </bifi-app-form-section>
 
-  <bifi-app-form-section title="Header Charges" id="summary-charges" [ordinal]="3">
+  <bifi-app-form-section
+    [title]="'formSection.headerCharges' | translate: {} : 'aduanix'"
+    id="summary-charges"
+    [ordinal]="3"
+  >
     @if (form.controls.charges.controls.length > 0) {
       <p-table [value]="form.controls.charges.controls">
         <ng-template #header>
           <tr>
-            <th>Charge Code</th>
-            <th>Percentage</th>
-            <th>Amount</th>
+            <th>{{ 'column.chargeCode' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.percentage' | translate: {} : 'aduanix' }}</th>
+            <th>{{ 'column.amount' | translate: {} : 'aduanix' }}</th>
           </tr>
         </ng-template>
         <ng-template #body let-charge>
@@ -89,44 +109,58 @@
         </ng-template>
         <ng-template #emptymessage>
           <tr>
-            <td colspan="3" class="text-center text-color-secondary py-4">No charges added.</td>
+            <td colspan="3" class="text-center text-color-secondary py-4">
+              {{ 'message.noChargesAdded' | translate: {} : 'aduanix' }}
+            </td>
           </tr>
         </ng-template>
       </p-table>
     } @else {
-      <p class="text-color-secondary">No header charges added yet.</p>
+      <p class="text-color-secondary">
+        {{ 'message.noHeaderChargesAdded' | translate: {} : 'aduanix' }}
+      </p>
     }
   </bifi-app-form-section>
 
   <bifi-app-form-section
-    title="Declaration Details"
+    [title]="'formSection.declarationDetails' | translate: {} : 'aduanix'"
     id="summary-declaration"
     [ordinal]="4"
     formGroupName="declarant"
   >
     <div class="grid gap-4 sm:grid-cols-2">
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Declarant Name</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.declarantName' | translate: {} : 'aduanix' }}
+        </span>
         <span>{{ form.controls.declarant.value.name || '—' }}</span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Company ID</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.companyId' | translate: {} : 'aduanix' }}
+        </span>
         <span>{{ form.controls.declarant.value.companyId || '—' }}</span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Trader Reference</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.traderReference' | translate: {} : 'aduanix' }}
+        </span>
         <span>{{ form.controls.declarant.value.traderReference || '—' }}</span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Capacity</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.capacity' | translate: {} : 'aduanix' }}
+        </span>
         <span>{{ form.controls.declarant.value.capacity || '—' }}</span>
       </div>
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-color-secondary">Declaration Date</span>
+        <span class="text-sm font-medium text-color-secondary">
+          {{ 'label.declarationDate' | translate: {} : 'aduanix' }}
+        </span>
         <span>
           {{
             form.controls.declarant.value.date
-              ? (form.controls.declarant.value.date | date: 'mediumDate')
+              ? (form.controls.declarant.value.date | localeDate: { dateStyle: 'medium' })
               : '—'
           }}
         </span>

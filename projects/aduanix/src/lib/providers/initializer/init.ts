@@ -17,7 +17,8 @@ function initializeMenu() {
       item: {
         icon: PrimeIcons.TRUCK,
         routerLink: ['/aduanix'],
-        label: 'Aduanix',
+        label: 'menu.aduanix',
+        scope: 'aduanix',
         resource: 'aduanix/menu',
         showInMainMenu: true,
       },

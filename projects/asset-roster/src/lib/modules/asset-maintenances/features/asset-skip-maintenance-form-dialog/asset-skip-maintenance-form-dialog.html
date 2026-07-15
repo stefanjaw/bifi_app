@@ -1,5 +1,5 @@
 <p-dialog
-  header="Skip PM"
+  [header]="'skipPm' | translate: {} : 'asset-roster'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -11,16 +11,17 @@
     (appSubmit)="handleSubmit($event)"
   >
     <p [bifiAppText]="'small'" class="font-bold!">
-      Comfirm skip of PM for {{ assetRoster()?.maintenanceDate | date }}
+      {{ 'confirmSkipPm' | translate: {} : 'asset-roster' }}
+      {{ assetRoster()?.maintenanceDate | localeDate: { dateStyle: 'medium' } }}
     </p>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Notes</bifi-app-form-label>
+      <bifi-app-form-label>{{ 'notes' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="notes"
         type="text"
-        placeholder="Eg. No issues"
+        [placeholder]="'egNoIssues' | translate: {} : 'asset-roster'"
       ></textarea>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
@@ -28,8 +29,8 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      saveLabel="Confirm Skip"
-      cancelLabel="Cancel"
+      [saveLabel]="'confirmSkip' | translate: {} : 'asset-roster'"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { CrmForm as CrmFormService, CrmFormModel } from '../../services/crm-form';
+import { CrmForm, CrmFormModel } from '../../services/crm-form';
 import { CrudCrm } from '../../services/crud-crm';
 import { CrudCrmStages } from '../../modules/crm-stages';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,6 +25,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-crm-form',
@@ -37,12 +38,13 @@ import { CrudCurrencies } from '@avalantec/base-app/currency';
     SelectModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './crm-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrmFormComponent {
-  private formService = inject(CrmFormService);
+export class CrmsForm {
+  private formService = inject(CrmForm);
   private crudCrm = inject(CrudCrm);
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);
@@ -63,6 +65,9 @@ export class CrmFormComponent {
   contactsResource = this.crudContacts.get({});
   companiesResource = this.crudCompanies.get({});
   stagesResource = this.crudCrmStages.get({});
+  defaultStageResource = this.crudCrmStages.get({
+    searchParams: computed(() => ({ isDefault: true })),
+  });
   usersResource = this.crudUsers.get({});
   currenciesResource = this.crudCurrencies.get({});
 
@@ -109,6 +114,13 @@ export class CrmFormComponent {
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
+      }
+    });
+
+    effect(() => {
+      const stage = (this.defaultStageResource.value() as any[])[0];
+      if (stage && !this.isUpdate()) {
+        this.formService.patchValue({ stage: stage._id });
       }
     });
   }

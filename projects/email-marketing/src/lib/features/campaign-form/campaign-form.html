@@ -1,0 +1,270 @@
+<bifi-app-form-layout
+  [title]="
+    isUpdate()
+      ? ('form.editCampaign' | translate: {} : 'email-marketing')
+      : ('form.createCampaign' | translate: {} : 'email-marketing')
+  "
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="true"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      @if (actionMessage(); as msg) {
+        <p-message [severity]="msg.ok ? 'success' : 'error'" [text]="msg.message"></p-message>
+      }
+
+      @if (isUpdate()) {
+        <div
+          class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3"
+        >
+          <span class="text-sm text-gray-500 mr-2">
+            {{ 'form.label.status' | translate: {} : 'email-marketing' }}:
+          </span>
+          <span class="font-semibold capitalize">{{ status() }}</span>
+          <div class="flex-1"></div>
+          <p-button
+            label="Send Test"
+            icon="pi pi-paper-plane"
+            severity="secondary"
+            type="button"
+            (onClick)="openTestDialog()"
+          ></p-button>
+          @if (isEditable()) {
+            <p-button
+              label="Schedule"
+              icon="pi pi-clock"
+              severity="secondary"
+              type="button"
+              (onClick)="openScheduleDialog()"
+            ></p-button>
+            <p-button
+              label="Send Now"
+              icon="pi pi-send"
+              type="button"
+              [loading]="actionLoading()"
+              (onClick)="sendNow()"
+            ></p-button>
+          }
+          @if (status() === 'scheduled') {
+            <p-button
+              label="Cancel Send"
+              icon="pi pi-times"
+              severity="danger"
+              type="button"
+              (onClick)="cancelCampaign()"
+            ></p-button>
+          }
+        </div>
+      }
+
+      <bifi-app-form-section
+        [title]="'form.section.campaignDetails' | translate: {} : 'email-marketing'"
+        id="campaign-details"
+        [ordinal]="1"
+        [collapsible]="true"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.campaignName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'form.placeholder.internalName' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.subjectLine' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="subject"
+              type="text"
+              [placeholder]="
+                'form.placeholder.whatRecipientsSee' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.previewText' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="previewText"
+              type="text"
+              [placeholder]="'form.placeholder.inboxPreview' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.mailingLists' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <p-multiselect
+              formControlName="listIds"
+              [options]="listOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'form.placeholder.selectLists' | translate: {} : 'email-marketing'"
+              class="w-full"
+            ></p-multiselect>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'form.section.sender' | translate: {} : 'email-marketing'"
+        id="sender"
+        [ordinal]="2"
+        [collapsible]="true"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.fromName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="fromName"
+              type="text"
+              [placeholder]="
+                'form.placeholder.leaveBlankDefault' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.fromEmail' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="fromEmail"
+              type="email"
+              [placeholder]="
+                'form.placeholder.leaveBlankDefault' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.replyTo' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="replyTo"
+              type="email"
+              [placeholder]="'form.placeholder.optional' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'form.section.content' | translate: {} : 'email-marketing'"
+        id="content"
+        [ordinal]="3"
+      >
+        <bifi-app-form-field class="mb-4 block max-w-md">
+          <bifi-app-form-label>
+            {{ 'form.label.startFromTemplate' | translate: {} : 'email-marketing' }}
+          </bifi-app-form-label>
+          <p-select
+            formControlName="templateId"
+            [options]="templateOptions()"
+            optionLabel="name"
+            optionValue="_id"
+            [placeholder]="'form.placeholder.selectTemplate' | translate: {} : 'email-marketing'"
+            [showClear]="true"
+            (onChange)="onTemplateChange($event.value)"
+            class="w-full"
+          ></p-select>
+        </bifi-app-form-field>
+        <bifi-app-email-editor #editor [designJson]="designJson()"></bifi-app-email-editor>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>
+
+<p-dialog
+  [header]="'dialog.sendTestEmail' | translate: {} : 'email-marketing'"
+  [visible]="testDialogVisible()"
+  (visibleChange)="testDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '28rem' }"
+>
+  <div class="flex flex-col gap-3">
+    <label class="text-sm font-medium text-gray-700">
+      {{ 'dialog.recipientEmail' | translate: {} : 'email-marketing' }}
+    </label>
+    <input
+      pInputText
+      type="email"
+      [value]="testEmail()"
+      (input)="testEmail.set($any($event.target).value)"
+      [placeholder]="'form.placeholder.testEmail' | translate: {} : 'email-marketing'"
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="testDialogVisible.set(false)"
+    ></p-button>
+    <p-button label="Send Test" [loading]="actionLoading()" (onClick)="sendTest()"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [header]="'dialog.scheduleCampaign' | translate: {} : 'email-marketing'"
+  [visible]="scheduleDialogVisible()"
+  (visibleChange)="scheduleDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '28rem' }"
+>
+  <div class="flex flex-col gap-3">
+    <label class="text-sm font-medium text-gray-700">
+      {{ 'dialog.sendAt' | translate: {} : 'email-marketing' }}
+    </label>
+    <p-datepicker
+      [showTime]="true"
+      [ngModel]="scheduleDate()"
+      (ngModelChange)="scheduleDate.set($event)"
+      [ngModelOptions]="{ standalone: true }"
+      [minDate]="undefined"
+      appendTo="body"
+    ></p-datepicker>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="scheduleDialogVisible.set(false)"
+    ></p-button>
+    <p-button label="Schedule" [loading]="actionLoading()" (onClick)="confirmSchedule()"></p-button>
+  </ng-template>
+</p-dialog>

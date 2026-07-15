@@ -231,6 +231,6 @@ export class FilterManager {
   private normalizeForFlexibleSearch(value: string): string {
     value = value.trim().replace(/\s+/g, ' ');
     const parts = value.split(' ').map(v => this.escapeRegex(v));
-    return parts.join('\\s+');
+    return parts.join(' ');
   }
 }

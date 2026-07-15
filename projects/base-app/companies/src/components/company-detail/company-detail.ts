@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudCompanies } from '../../services/crud-companies';
 import { FormModule } from '@avalantec/base-app/form';
 import { RouterLink } from '@angular/router';
@@ -12,10 +6,19 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-company-detail',
-  imports: [FormModule, RouterLink, ButtonModule, TableModule, TagModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    RouterLink,
+    ButtonModule,
+    TableModule,
+    TagModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './company-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,7 +37,7 @@ export class CompanyDetail {
 
   company = this.companyResource.value;
   isLoading = computed(
-    () => this.companyResource.isLoading() || this.branchOfficesResource.isLoading(),
+    () => this.companyResource.isLoading() || this.branchOfficesResource.isLoading()
   );
 
   branches = computed(() => {

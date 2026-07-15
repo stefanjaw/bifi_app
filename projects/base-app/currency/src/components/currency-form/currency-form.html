@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Currency' : 'New Currency'"
+  [title]="
+    (isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create')
+      | translate: {} : 'base-app/currency'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,38 +21,69 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Currency Details" id="currency-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.details.title' | translate: {} : 'base-app/currency'"
+        id="currency-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. US Dollar" />
+            <bifi-app-form-label>
+              {{ 'form.details.name' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'form.details.namePlaceholder' | translate: {} : 'base-app/currency'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>ISO Code *</bifi-app-form-label>
-            <input pInputText formControlName="code" placeholder="e.g. USD" maxlength="3" />
+            <bifi-app-form-label>
+              {{ 'form.details.isoCode' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="code"
+              [placeholder]="
+                'form.details.isoCodePlaceholder' | translate: {} : 'base-app/currency'
+              "
+              maxlength="3"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Symbol *</bifi-app-form-label>
-            <input pInputText formControlName="symbol" placeholder="e.g. $" />
+            <bifi-app-form-label>
+              {{ 'form.details.symbol' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="symbol"
+              [placeholder]="'form.details.symbolPlaceholder' | translate: {} : 'base-app/currency'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Decimal Precision</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.details.decimalPrecision' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
             <p-inputNumber formControlName="decimalPrecision" [min]="0" [max]="8"></p-inputNumber>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Active</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.details.active' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
             <p-toggleSwitch formControlName="active"></p-toggleSwitch>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Default Currency</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'form.details.defaultCurrency' | translate: {} : 'base-app/currency' }}
+            </bifi-app-form-label>
             <p-toggleSwitch formControlName="isDefault"></p-toggleSwitch>
           </bifi-app-form-field>
         </div>

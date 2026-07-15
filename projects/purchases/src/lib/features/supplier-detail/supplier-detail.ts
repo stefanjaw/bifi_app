@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudPurchaseOrders } from '../../services/crud-purchase-orders';
 import { RouterLink } from '@angular/router';
@@ -12,19 +6,32 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
+import { HasPermission } from '@avalantec/base-app/auth';
+import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { purchaseOrder } from '../../interfaces/purchase-order';
 import { contact } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-supplier-detail',
-  imports: [RouterLink, ButtonModule, TagModule, CardModule, ProgressBarModule, CurrencyPipe, DatePipe],
+  imports: [
+    RouterLink,
+    ButtonModule,
+    TagModule,
+    CardModule,
+    ProgressBarModule,
+    CurrencyPipe,
+    LocaleDatePipe,
+    TranslatePipe,
+    HasPermission,
+  ],
   templateUrl: './supplier-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupplierDetail {
   private crudContacts = inject(CrudContacts);
   private crudPurchaseOrders = inject(CrudPurchaseOrders);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -34,7 +41,7 @@ export class SupplierDetail {
   });
 
   ordersResource = this.crudPurchaseOrders.get({
-    searchParams: computed(() => this.id() ? { contactId: this.id() } : {}),
+    searchParams: computed(() => (this.id() ? { contactId: this.id() } : {})),
     triggerRequest: computed(() => !!this.id()),
     getInactive: null,
   });
@@ -71,13 +78,6 @@ export class SupplierDetail {
   }
 
   getStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      draft: 'Draft',
-      sent: 'Sent',
-      partially_received: 'Partially Received',
-      received: 'Received',
-      cancelled: 'Cancelled',
-    };
-    return map[status] ?? status;
+    return this.translationService.translate('status.' + status, {}, 'purchases');
   }
 }

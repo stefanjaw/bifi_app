@@ -1,11 +1,22 @@
 <header class="shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
-    <h1 class="text-2xl font-bold text-gray-800">Projects</h1>
+    <h1 class="text-2xl font-bold text-gray-800">
+      {{ 'projects.title' | translate: {} : 'projects' }}
+    </h1>
   </div>
   <div class="flex items-center space-x-2">
     @if (viewState() === 'gantt' || viewState() === 'list') {
       <p-button
-        [title]="ganttAnyExpanded() ? 'Collapse All' : 'Expand All'"
+        [title]="
+          ganttAnyExpanded()
+            ? ('projects.collapseAll' | translate: {} : 'projects')
+            : ('projects.expandAll' | translate: {} : 'projects')
+        "
+        [label]="
+          ganttAnyExpanded()
+            ? ('projects.collapseAll' | translate: {} : 'projects')
+            : ('projects.expandAll' | translate: {} : 'projects')
+        "
         size="small"
         severity="secondary"
         [icon]="ganttAnyExpanded() ? 'pi pi-angle-double-up' : 'pi pi-angle-double-down'"
@@ -14,7 +25,7 @@
       ></p-button>
     }
     <p-button
-      label="Add New Project"
+      [label]="'projects.addNew' | translate: {} : 'projects'"
       severity="secondary"
       icon="pi pi-plus"
       [routerLink]="['../create']"
@@ -22,7 +33,9 @@
     ></p-button>
 
     <div class="flex items-center space-x-3">
-      <span class="text-sm font-medium text-gray-600">View:</span>
+      <span class="text-sm font-medium text-gray-600">
+        {{ 'projects.view' | translate: {} : 'projects' }}
+      </span>
 
       <div class="flex items-center rounded-md bg-gray-200 p-0.5">
         <button
@@ -42,7 +55,7 @@
             <rect x="3" y="5" width="7" height="2" rx="1" />
             <rect x="1" y="9" width="6" height="2" rx="1" />
           </svg>
-          Gantt
+          {{ 'projects.gantt' | translate: {} : 'projects' }}
         </button>
         <button
           (click)="viewState.set('list')"
@@ -50,7 +63,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-list text-xs"></i>
-          List
+          {{ 'projects.list' | translate: {} : 'projects' }}
         </button>
         <button
           (click)="viewState.set('timeline')"
@@ -60,7 +73,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-calendar text-xs"></i>
-          Timeline
+          {{ 'projects.timelineView' | translate: {} : 'projects' }}
         </button>
         <button
           (click)="viewState.set('calendar')"
@@ -70,7 +83,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-th-large text-xs"></i>
-          Calendar
+          {{ 'projects.calendar' | translate: {} : 'projects' }}
         </button>
       </div>
     </div>
@@ -79,14 +92,17 @@
 
 <bifi-app-search-bar
   [searchFilters]="projectFilters"
-  label="Search by name or description"
+  [label]="'projects.searchPlaceholder' | translate: {} : 'projects'"
 ></bifi-app-search-bar>
 
-<bifi-app-filter-bar [filterFields]="projectFilterFields"></bifi-app-filter-bar>
+<bifi-app-filter-bar
+  [filterFields]="projectFilterFields"
+  [scope]="'projects'"
+></bifi-app-filter-bar>
 
 @if (viewState() === 'gantt') {
   <bifi-app-gantt-view
-    title="Projects"
+    [title]="'projects.ganttTitle' | translate: {} : 'projects'"
     [flat]="ganttFlat()"
     [map]="ganttMap()"
     [dependencies]="[]"

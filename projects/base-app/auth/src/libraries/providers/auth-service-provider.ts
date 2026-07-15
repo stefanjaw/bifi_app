@@ -16,6 +16,10 @@ export const createAuthServiceToken = <AuthService extends IAuthService<user>>()
   return token;
 };
 
+/**
+ * Injects the application-wide auth service instance.
+ * Provides strong typing via the generic parameter.
+ */
 export function injectAuthService<
   AuthService extends IAuthService<user> = IAuthService<user>,
 >(): AuthService {

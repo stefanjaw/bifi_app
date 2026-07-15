@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Rooms</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'rooms' | translate: {} : 'asset-roster' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Room"
+    [label]="'addNewRoom' | translate: {} : 'asset-roster'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,12 +11,13 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, code, facility or address"
+  [label]="'searchByNameCodeFacility' | translate: {} : 'asset-roster'"
   [searchFilters]="roomFilters"
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
+  [scope]="'asset-roster'"
   [columns]="roomColumns"
   [data]="rooms"
   [onClickRow]="goToEditRoom"

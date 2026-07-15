@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CountryForm, CountryFormModel } from '../../services/country-form';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-countries-form',
@@ -28,6 +29,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
   ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',

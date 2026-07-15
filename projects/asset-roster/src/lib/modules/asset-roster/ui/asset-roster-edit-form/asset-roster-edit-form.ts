@@ -1,5 +1,6 @@
 import { HasPermission } from '@avalantec/base-app/auth';
 import { Component, inject, input } from '@angular/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { GeneralInformationSection } from './general-information-section/general-information-section';
 import { DocumentsSection } from './documents-section/documents-section';
@@ -19,12 +20,13 @@ import { assetType } from '../../../asset-types';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { activityHistory } from '@avalantec/base-app/resource';
 import { FormModule } from '@avalantec/base-app/form';
-import { assetMaintenance } from '../../../asset-maintenances/interfaces/asset-maintenance';
-import { assetCommissionning } from '../../../asset-commissioning/interfaces/asset-commissioning';
+import { assetMaintenance } from '../../../asset-maintenances';
+import { assetCommissionning } from '../../../asset-commissioning';
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tabs, TabsModule } from 'primeng/tabs';
 import { FinancialInformation } from './financial-information-section/financial-information';
 import { NotesSection } from './notes-section/notes-section';
+import { StatusBannerSection } from './status-banner-section/status-banner-section';
 
 @Component({
   selector: 'bifi-app-asset-roster-edit-form',
@@ -46,8 +48,11 @@ import { NotesSection } from './notes-section/notes-section';
     TabsModule,
     FormModule,
     HasPermission,
+    StatusBannerSection,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-edit-form.html',
+  styleUrl: './asset-roster-edit-form.css',
 })
 export class AssetRosterEditForm {
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
@@ -57,6 +62,11 @@ export class AssetRosterEditForm {
   isLoading = input.required<boolean>();
   isSubmitLoading = input.required<boolean>();
   isEditMode = input.required<boolean>();
+  isDirty = input<boolean>(false);
+  prevAssetId = input<string | null>(null);
+  nextAssetId = input<string | null>(null);
+  currentIndex = input<number>(-1);
+  totalAssets = input<number>(0);
   formService = inject(UpdateAssetRosterForm);
 
   // data to inject in children
@@ -70,9 +80,19 @@ export class AssetRosterEditForm {
 
     for (let i = remarksArray.length - 1; i >= 0; i--) {
       const value = remarksArray.at(i).value;
+      const remark = value?.remark;
 
-      if (!value) {
+      if (!value || typeof remark !== 'string' || remark.trim().length === 0) {
         remarksArray.removeAt(i);
+      }
+    }
+
+    const locationAssignmentsArray = this.formService.form.controls.locationAssignments;
+
+    for (let i = locationAssignmentsArray.length - 1; i >= 0; i--) {
+      const value = locationAssignmentsArray.at(i).value;
+      if (!value?.locationId || !((value?.assignedQuantity ?? 0) > 0)) {
+        locationAssignmentsArray.removeAt(i);
       }
     }
 
@@ -83,11 +103,15 @@ export class AssetRosterEditForm {
     this.assetRosterMaintenanceContext.handleCancel();
   }
 
-  toggleEdit() {
-    this.assetRosterMaintenanceContext.toggleEditMode();
-  }
-
   handleBackToDashboard() {
     this.assetRosterMaintenanceContext.handleBackToDashboard();
+  }
+
+  handleNavigatePrev() {
+    this.assetRosterMaintenanceContext.handleNavigatePrevAsset();
+  }
+
+  handleNavigateNext() {
+    this.assetRosterMaintenanceContext.handleNavigateNextAsset();
   }
 }

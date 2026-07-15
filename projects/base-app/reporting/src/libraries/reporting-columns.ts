@@ -1,3 +1,4 @@
+import { t } from '@avalantec/base-app/i18n';
 import { reporting } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { Tag } from 'primeng/tag';
@@ -5,25 +6,27 @@ import { Tag } from 'primeng/tag';
 export const reportingColumns: tableColumn<reporting>[] = [
   {
     field: 'title',
-    title: 'Template',
+    title: 'report',
     type: 'text',
     sortable: true,
   },
   {
     field: 'model',
-    title: 'Model',
+    title: 'model',
     type: 'text',
     sortable: true,
   },
   {
     field: 'template',
-    title: 'Template',
+    title: 'templateFile',
     type: 'text',
     component: (value: reporting) => {
       return {
         component: Tag,
         inputs: {
-          value: value.template ? 'Code provided' : 'Code not provided',
+          value: value.template
+            ? t('status.codeProvided', {}, 'base-app/reporting')
+            : t('status.codeNotProvided', {}, 'base-app/reporting'),
           severity: value.template ? 'success' : 'warn',
         },
       };

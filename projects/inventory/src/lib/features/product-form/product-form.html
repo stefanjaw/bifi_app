@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Product' : 'New Product'"
+  [title]="(isUpdate() ? 'editProduct' : 'newProduct') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -15,55 +15,303 @@
       (cancelClicked)="goBack()"
       class="mb-4"
       [formChanged]="form.dirty"
-      *bifiAppHasPermission="isUpdate() ? 'inventory/products:update:model' : 'inventory/products:create:model'"
+      *bifiAppHasPermission="
+        isUpdate() ? 'inventory/products:update:model' : 'inventory/products:create:model'
+      "
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Product Information" id="product-info" [ordinal]="1">
+      @if (isUpdate()) {
+        <bifi-app-form-section
+          [title]="'stockSummary' | translate: {} : 'inventory'"
+          id="product-stock"
+          [ordinal]="1"
+        >
+          <div class="flex flex-wrap gap-3">
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'quantityOnHand' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold leading-snug">
+                  {{ stockSummary()?.onHand ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'incoming' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-blue-600 leading-snug">
+                  {{ stockSummary()?.incoming ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'committed' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-amber-600 leading-snug">
+                  {{ stockSummary()?.committed ?? 0 }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-2 flex-1 min-w-30"
+            >
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500 leading-tight">
+                  {{ 'available' | translate: {} : 'inventory' }}
+                </span>
+                <span class="text-lg font-bold text-green-600 leading-snug">
+                  {{ stockSummary()?.available ?? 0 }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </bifi-app-form-section>
+      }
+
+      <bifi-app-form-section
+        [title]="'productInformation' | translate: {} : 'inventory'"
+        id="product-info"
+        [ordinal]="2"
+      >
+        <div class="flex flex-col md:flex-row gap-8">
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'name' | translate: {} : 'inventory' }} *
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="name"
+                [placeholder]="'productNamePlaceholder' | translate: {} : 'inventory'"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>{{ 'sku' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sku"
+                [placeholder]="'skuPlaceholder' | translate: {} : 'inventory'"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'barcode' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="barcode"
+                [placeholder]="'barcodePlaceholder' | translate: {} : 'inventory'"
+              />
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'unitOfMeasure' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <p-select
+                formControlName="unitOfMeasureId"
+                [options]="uoms() || []"
+                optionLabel="name"
+                optionValue="_id"
+                [placeholder]="'selectUnitOfMeasure' | translate: {} : 'inventory'"
+                [showClear]="true"
+              ></p-select>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'productType' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <p-select
+                formControlName="productTypeId"
+                [options]="productTypes()"
+                optionLabel="name"
+                optionValue="_id"
+                [placeholder]="'selectProductType' | translate: {} : 'inventory'"
+                [showClear]="true"
+              ></p-select>
+            </bifi-app-form-field>
+
+            <bifi-app-form-field class="md:col-span-2">
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <textarea
+                pTextarea
+                formControlName="description"
+                rows="3"
+                [placeholder]="'optionalDescription' | translate: {} : 'inventory'"
+              ></textarea>
+            </bifi-app-form-field>
+          </div>
+
+          <div class="md:w-56 flex flex-col gap-2">
+            @if (uploadedFile(); as file) {
+              <img
+                [src]="file.url"
+                alt="Product photo"
+                class="mx-auto asset-photo-thumbnail"
+                role="button"
+                tabindex="0"
+                title="Click to view full size"
+                width="250"
+                height="250"
+              />
+            } @else {
+              <div class="text-gray-500">{{ 'noPhoto' | translate: {} : 'inventory' }}</div>
+            }
+
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'productImage' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <bifi-app-form-uploader formArrayName="photo" [inline]="true">
+                <p-fileupload
+                  showUploadButton="false"
+                  showCancelButton="false"
+                  name="photo"
+                  [multiple]="false"
+                  accept="image/*"
+                  [maxFileSize]="5000000"
+                  mode="basic"
+                  [auto]="false"
+                  [chooseLabel]="'chooseImage' | translate: {} : 'inventory'"
+                  chooseIcon="pi pi-upload"
+                  [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+                />
+              </bifi-app-form-uploader>
+            </bifi-app-form-field>
+          </div>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'pricing' | translate: {} : 'inventory'"
+        id="product-pricing"
+        [ordinal]="3"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="Product name" />
-            <bifi-app-form-error></bifi-app-form-error>
+            <bifi-app-form-label>
+              {{ 'purchasePrice' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <p-inputNumber
+              formControlName="costPrice"
+              [min]="0"
+              mode="currency"
+              currency="USD"
+            ></p-inputNumber>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>SKU *</bifi-app-form-label>
-            <input pInputText formControlName="sku" placeholder="Unique product code" />
-            <bifi-app-form-error></bifi-app-form-error>
+            <bifi-app-form-label>
+              {{ 'salePrice' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <p-inputNumber
+              formControlName="salePrice"
+              [min]="0"
+              mode="currency"
+              currency="USD"
+            ></p-inputNumber>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Unit of Measure</bifi-app-form-label>
-            <p-select
-              formControlName="unitOfMeasureId"
-              [options]="uoms() || []"
+            <bifi-app-form-label>
+              {{ 'defaultSaleTaxes' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <p-multiselect
+              [ngModel]="defaultSaleTaxIds()"
+              (ngModelChange)="onSaleTaxesChange($event)"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="saleTaxOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a unit of measure"
+              [placeholder]="'selectDefaultSaleTaxes' | translate: {} : 'inventory'"
+              [filter]="true"
+              filterBy="name"
               [showClear]="true"
-            ></p-select>
+              display="chip"
+            >
+              <ng-template pTemplate="item" let-tax>
+                <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+              </ng-template>
+            </p-multiselect>
+            <small class="text-gray-500">
+              {{ 'saleTaxesHelpText' | translate: {} : 'inventory' }}
+            </small>
           </bifi-app-form-field>
 
-          <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pTextarea formControlName="description" rows="3" placeholder="Optional description"></textarea>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'defaultPurchaseTaxes' | translate: {} : 'inventory' }}
+            </bifi-app-form-label>
+            <p-multiselect
+              [ngModel]="defaultPurchaseTaxIds()"
+              (ngModelChange)="onPurchaseTaxesChange($event)"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="purchaseTaxOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'selectDefaultPurchaseTaxes' | translate: {} : 'inventory'"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              display="chip"
+            >
+              <ng-template pTemplate="item" let-tax>
+                <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+              </ng-template>
+            </p-multiselect>
+            <small class="text-gray-500">
+              {{ 'purchaseTaxesHelpText' | translate: {} : 'inventory' }}
+            </small>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Pricing" id="product-pricing" [ordinal]="2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <bifi-app-form-field>
-            <bifi-app-form-label>Cost Price</bifi-app-form-label>
-            <p-inputNumber formControlName="costPrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
-          </bifi-app-form-field>
+      <bifi-app-plugin-slot name="product-form-general-information"></bifi-app-plugin-slot>
 
-          <bifi-app-form-field>
-            <bifi-app-form-label>Sale Price</bifi-app-form-label>
-            <p-inputNumber formControlName="salePrice" [min]="0" mode="currency" currency="USD"></p-inputNumber>
-          </bifi-app-form-field>
-        </div>
+      <bifi-app-form-section
+        [title]="'documents' | translate: {} : 'inventory'"
+        id="product-documents"
+        [ordinal]="4"
+      >
+        <bifi-app-form-field>
+          <bifi-app-form-label>
+            {{ 'attachments' | translate: {} : 'inventory' }}
+          </bifi-app-form-label>
+          <bifi-app-form-uploader formArrayName="attachments">
+            <p-fileupload
+              showUploadButton="false"
+              showCancelButton="false"
+              name="attachments"
+              [multiple]="true"
+              accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain"
+              [maxFileSize]="20000000"
+              mode="basic"
+              [auto]="false"
+              [chooseLabel]="'chooseDocuments' | translate: {} : 'inventory'"
+              chooseIcon="pi pi-paperclip"
+              [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
+            />
+          </bifi-app-form-uploader>
+        </bifi-app-form-field>
       </bifi-app-form-section>
     }
 

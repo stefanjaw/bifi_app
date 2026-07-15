@@ -9,7 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
+import { tax } from '../../interfaces/tax';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,10 +21,23 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TaxFormService, TaxFormModel } from '../../services/tax-form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-tax-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, InputNumberModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    InputNumberModule,
+    PluginSlot,
+    TranslatePipe,
+  ],
+  providers: [providePluginContext(TaxForm)],
   templateUrl: './tax-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,22 +57,25 @@ export class TaxForm {
   accountsResource = this.crudAccounts.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(
-    () => this.taxResource.isLoading() || this.accountsResource.isLoading(),
-  );
+  isLoading = computed(() => this.taxResource.isLoading() || this.accountsResource.isLoading());
   isSubmitLoading = signal(false);
 
   form = this.formService.form;
   accounts = this.accountsResource.value;
 
+  private translationService = inject(TranslationService);
+
   taxTypeOptions = [
-    { label: 'Sales', value: 'sales' },
-    { label: 'Purchase', value: 'purchase' },
+    { label: this.translationService.translate('options.sales', {}, 'accounting'), value: 'sales' },
+    {
+      label: this.translationService.translate('options.purchase', {}, 'accounting'),
+      value: 'purchase',
+    },
   ];
 
   constructor() {
     effect(() => {
-      const entry = this.taxResource.value();
+      const entry = this.taxResource.value() as tax | undefined;
       if (entry) {
         this.formService.patchValue({
           name: entry.name,
@@ -82,7 +99,10 @@ export class TaxForm {
       : this.crudTaxes.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

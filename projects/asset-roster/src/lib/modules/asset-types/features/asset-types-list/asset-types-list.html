@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Asset Types</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'assetTypes' | translate: {} : 'asset-roster' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Asset Type"
+    [label]="'addNewAssetType' | translate: {} : 'asset-roster'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,12 +11,13 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name and description"
+  [label]="'searchByNameDescription' | translate: {} : 'asset-roster'"
   [searchFilters]="assetTypeFilters"
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
+  [scope]="'asset-roster'"
   [columns]="assetTypeColumns"
   [data]="assetTypes"
   [onClickRow]="gotoEditAssetType"

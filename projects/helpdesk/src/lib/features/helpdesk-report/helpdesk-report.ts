@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { CrudTickets } from '../../services/crud-tickets';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -22,7 +31,7 @@ interface ReportData {
 
 @Component({
   selector: 'bifi-app-helpdesk-report',
-  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule],
+  imports: [RouterLink, ButtonModule, TableModule, ProgressBarModule, TranslatePipe],
   host: {
     class: 'flex flex-col gap-6 p-6 ms-4 me-4',
   },
@@ -30,6 +39,8 @@ interface ReportData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HelpdeskReport implements OnInit {
+  private translationService = inject(TranslationService);
+  private destroyRef = inject(DestroyRef);
   private crudTickets = inject(CrudTickets);
 
   isLoading = signal(true);
@@ -37,16 +48,19 @@ export class HelpdeskReport implements OnInit {
   report = signal<ReportData | null>(null);
 
   ngOnInit() {
-    this.crudTickets.getReport<ReportData>().subscribe({
-      next: data => {
-        this.report.set(data);
-        this.isLoading.set(false);
-      },
-      error: err => {
-        this.error.set('Failed to load report data.');
-        this.isLoading.set(false);
-      },
-    });
+    this.crudTickets
+      .getReport<ReportData>()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: data => {
+          this.report.set(data);
+          this.isLoading.set(false);
+        },
+        error: err => {
+          this.error.set(this.translationService.translate('report.error', {}, 'helpdesk'));
+          this.isLoading.set(false);
+        },
+      });
   }
 
   formatMinutes(minutes: number | null | undefined): string {

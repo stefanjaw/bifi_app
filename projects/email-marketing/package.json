@@ -1,0 +1,19 @@
+{
+  "name": "@avalantec/email-marketing",
+  "version": "0.1.0",
+  "peerDependencies": {
+    "@angular/animations": "^20.3.25",
+    "@angular/cdk": "^20.2.14",
+    "@angular/common": "^20.3.25",
+    "@angular/compiler": "^20.3.25",
+    "@angular/core": "^20.3.25",
+    "@angular/forms": "^20.3.25",
+    "@angular/router": "^20.3.25",
+    "@avalantec/base-app": "^0.1.0",
+    "tslib": "^2.3.0",
+    "grapesjs": "^0.22.12",
+    "grapesjs-mjml": "^1.0.8",
+    "grapesjs-rte-extensions": "^1.0.13"
+  },
+  "sideEffects": false
+}

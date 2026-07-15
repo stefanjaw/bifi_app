@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Unit of Measure' : 'New Unit of Measure'"
+  [title]="(isUpdate() ? 'editUnitOfMeasure' : 'newUnitOfMeasure') | translate: {} : 'inventory'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,32 +18,48 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Unit of Measure" id="uom-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'unitOfMeasure' | translate: {} : 'inventory'"
+        id="uom-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. Kilogram, Box, Litre" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'inventory' }} *</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'uomNamePlaceholder' | translate: {} : 'inventory'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Symbol</bifi-app-form-label>
-            <input pInputText formControlName="symbol" placeholder="e.g. kg, box, L" />
+            <bifi-app-form-label>{{ 'symbol' | translate: {} : 'inventory' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="symbol"
+              [placeholder]="'uomSymbolPlaceholder' | translate: {} : 'inventory'"
+            />
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Category *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'category' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="categoryId"
               [options]="categories() || []"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a category"
+              [placeholder]="'selectCategory' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
+
+      <bifi-app-plugin-slot name="uom-form-general-information"></bifi-app-plugin-slot>
     }
 
     @if (isLoading()) {

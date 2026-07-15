@@ -20,6 +20,7 @@ import { SalesTargetForm, SalesTargetFormModel } from '../../../services/sales-t
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-targets-form',
@@ -31,6 +32,7 @@ import { CrudUsers } from '@avalantec/base-app/users';
     SelectModule,
     ButtonModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './targets-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +44,7 @@ export class TargetsForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -60,20 +63,20 @@ export class TargetsForm {
   isLoading = computed(() => this.targetResource.isLoading() || this.usersResource.isLoading());
   isSubmitLoading = signal(false);
 
-  monthOptions = [
-    { label: 'January', value: 1 },
-    { label: 'February', value: 2 },
-    { label: 'March', value: 3 },
-    { label: 'April', value: 4 },
-    { label: 'May', value: 5 },
-    { label: 'June', value: 6 },
-    { label: 'July', value: 7 },
-    { label: 'August', value: 8 },
-    { label: 'September', value: 9 },
-    { label: 'October', value: 10 },
-    { label: 'November', value: 11 },
-    { label: 'December', value: 12 },
-  ];
+  monthOptions = computed(() => [
+    { label: this.translationService.translate('sales.months.january', {}, 'sales'), value: 1 },
+    { label: this.translationService.translate('sales.months.february', {}, 'sales'), value: 2 },
+    { label: this.translationService.translate('sales.months.march', {}, 'sales'), value: 3 },
+    { label: this.translationService.translate('sales.months.april', {}, 'sales'), value: 4 },
+    { label: this.translationService.translate('sales.months.may', {}, 'sales'), value: 5 },
+    { label: this.translationService.translate('sales.months.june', {}, 'sales'), value: 6 },
+    { label: this.translationService.translate('sales.months.july', {}, 'sales'), value: 7 },
+    { label: this.translationService.translate('sales.months.august', {}, 'sales'), value: 8 },
+    { label: this.translationService.translate('sales.months.september', {}, 'sales'), value: 9 },
+    { label: this.translationService.translate('sales.months.october', {}, 'sales'), value: 10 },
+    { label: this.translationService.translate('sales.months.november', {}, 'sales'), value: 11 },
+    { label: this.translationService.translate('sales.months.december', {}, 'sales'), value: 12 },
+  ]);
 
   constructor() {
     effect(() => {

@@ -13,4 +13,6 @@ export interface user {
   contactId?: contact;
   active: boolean;
   confirmed: boolean;
+  /** Preferred locale code, e.g. "en" or "es". Persisted via PUT /api/users/me/language */
+  language?: string;
 }

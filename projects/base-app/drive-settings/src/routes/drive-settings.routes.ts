@@ -7,7 +7,7 @@ export const DRIVE_SETTINGS_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../components/drive-settings-form/drive-settings-form').then(
-        m => m.DriveSettingsFormComponent
+        m => m.DriveSettingsPage
       ),
     data: { resource: 'drive-settings' },
   },

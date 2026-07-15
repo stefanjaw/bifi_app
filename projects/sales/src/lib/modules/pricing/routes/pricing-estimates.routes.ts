@@ -12,7 +12,7 @@ export const PRICING_ESTIMATES_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/pricing-estimate-form/pricing-estimate-form').then(
-        (c) => c.PricingEstimateFormComponent
+        c => c.PricingEstimateForm
       ),
     data: { resource: 'pricing-estimates/create' },
   },
@@ -21,7 +21,7 @@ export const PRICING_ESTIMATES_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/pricing-estimate-list/pricing-estimate-list').then(
-        (c) => c.PricingEstimateListComponent
+        c => c.PricingEstimateList
       ),
     data: { resource: 'pricing-estimates/list' },
   },
@@ -30,7 +30,7 @@ export const PRICING_ESTIMATES_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/pricing-estimate-output/pricing-estimate-output').then(
-        (c) => c.PricingEstimateOutputComponent
+        c => c.PricingEstimateOutput
       ),
     data: { resource: 'pricing-estimates/read' },
   },

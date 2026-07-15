@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -19,6 +14,7 @@ import { uomFilters } from '../../libraries/uom-filters';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-uoms-list',
@@ -26,7 +22,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   templateUrl: './uoms-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,5 +55,5 @@ export class UomsList {
 
   gotoEditUom = (element: uom) => {
     this.router.navigate([`../uoms/${element._id}/edit`], { relativeTo: this.route });
-  }
+  };
 }

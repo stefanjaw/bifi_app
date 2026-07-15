@@ -11,7 +11,12 @@ import {
 import { ContactForm, ContactFormModel } from '../../services/contact-form';
 import { CrudContacts } from '../../services/crud-contacts';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import {
+  FormFileControlHelper,
+  FormModule,
+  FormUploader,
+  FormValueState,
+} from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -19,17 +24,21 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableLayout } from '@avalantec/base-app/resource';
+import { FileResolver, TableLayout } from '@avalantec/base-app/resource';
 import { SelectChildContactDialog } from './select-child-contact-dialog/select-child-contact-dialog';
 import { contactColumns } from '../../libraries/contact-columns';
 import { CrudCountries } from '@avalantec/base-app/countries';
 import { contact } from '@avalantec/base-app/interfaces';
 import { TagModule } from 'primeng/tag';
+import { FileUpload } from 'primeng/fileupload';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-contacts-form',
   imports: [
     FormModule,
+    FormUploader,
     ReactiveFormsModule,
     SelectModule,
     InputText,
@@ -39,7 +48,11 @@ import { TagModule } from 'primeng/tag';
     TableLayout,
     SelectChildContactDialog,
     TagModule,
+    FileUpload,
+    PluginSlot,
+    TranslatePipe,
   ],
+  providers: [providePluginContext(ContactsForm)],
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,9 +60,10 @@ export class ContactsForm {
   private formService = inject(ContactForm);
   private crudContacts = inject(CrudContacts);
   private crudCountries = inject(CrudCountries);
-
+  private fileHelper = inject(FormFileControlHelper);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
+  private fileResolverService = inject(FileResolver);
   private route = inject(ActivatedRoute);
 
   // inputs
@@ -91,8 +105,6 @@ export class ContactsForm {
   form = this.formService.form;
   contactType = this.formService.type;
 
-  //Display name options
-
   isLoading = computed(
     () =>
       this.contactResource.isLoading() ||
@@ -104,6 +116,9 @@ export class ContactsForm {
   error = this.contactResource.error;
   childIdsData = signal<contact[]>([]);
 
+  private fileState = this.fileHelper.generateMetadataFromFileControl(this.form.controls.photo);
+  uploadedFile = this.fileState.firstFile;
+
   /**
    * Constructor that initializes the form values if the contact is being updated.
    * If the contact is not available (i.e. it's being created), it resets the form values.
@@ -112,31 +127,7 @@ export class ContactsForm {
     effect(() => {
       const contact = this.contact();
 
-      if (contact) {
-        this.formService.patchValue({
-          name: contact.name,
-          lastName: contact.lastName,
-          parentId: contact.parentId?._id,
-          email: contact.email,
-          website: contact.website,
-          phoneNumber: contact.phoneNumber,
-          childIds: contact.childIds?.map(c => c._id) || [],
-          type: contact.type,
-          countryId: contact.countryId?._id,
-          state: contact.state,
-          city: contact.city,
-          zipCode: contact.zipCode,
-          streetAddress: contact.streetAddress,
-          streetAddress2: contact.streetAddress2,
-        });
-
-        this.formService.resetDirtyState();
-        this.childIdsData.set(contact.childIds || []);
-      } else {
-        this.formService.reset();
-        this.formService.form.controls.childIds.clear();
-        this.childIdsData.set([]);
-      }
+      this.resetValueToInitialState(contact);
     });
   }
 
@@ -163,15 +154,20 @@ export class ContactsForm {
     if (!rawValue.phoneNumber) delete rawValue.phoneNumber;
     if (!rawValue.email) delete rawValue.email;
     if (!rawValue.website) delete rawValue.website;
+    if (!rawValue.vat) delete rawValue.vat;
 
-    // if is individual and childIds had something, then erease array
+    // if is individual and childIds had something, then erase array
     if (rawValue.type === 'individual' && rawValue.childIds && rawValue.childIds.length > 0) {
       rawValue.childIds = [];
     }
 
     const action = this.isUpdate()
-      ? this.crudContacts.put({ _id: this.contact()?._id || '', data: rawValue })
-      : this.crudContacts.post({ data: rawValue });
+      ? this.crudContacts.put({
+          _id: this.contact()?._id || '',
+          data: rawValue,
+          fileFields: ['photo'],
+        })
+      : this.crudContacts.post({ data: rawValue, fileFields: ['photo'] });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
@@ -200,12 +196,59 @@ export class ContactsForm {
 
   /**
    * Navigates back to the list of contacts.
-   *
-   * If the contact is being updated, it will navigate to the list of contacts.
-   * If the contact is being created, it will navigate to the list of contacts.
    */
   goBack() {
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
+  }
+
+  private async resetValueToInitialState(contact: contact | undefined) {
+    if (!contact) {
+      this.formService.reset();
+      this.formService.form.controls.childIds.clear();
+      this.formService.form.controls.photo.clear();
+      this.childIdsData.set([]);
+      return;
+    }
+
+    const parsedImage = contact.photo
+      ? await this.fileResolverService.resolveFile({ id: contact.photo }, 'preview')
+      : null;
+
+    this.formService.patchValue({
+      name: contact.name,
+      lastName: contact.lastName,
+      parentId: contact.parentId?._id,
+      email: contact.email,
+      website: contact.website,
+      phoneNumber: contact.phoneNumber,
+      childIds: contact.childIds?.map(c => c._id) || [],
+      type: contact.type,
+      countryId: contact.countryId?._id,
+      state: contact.state,
+      city: contact.city,
+      zipCode: contact.zipCode,
+      streetAddress: contact.streetAddress,
+      streetAddress2: contact.streetAddress2,
+      vat: contact.vat,
+      ...((parsedImage && {
+        photo: [
+          {
+            id: contact.photo,
+            file: parsedImage,
+          },
+        ],
+      }) || {
+        photo: [],
+      }),
+    });
+
+    this.formService.resetDirtyState();
+    this.childIdsData.set(contact.childIds || []);
+  }
+
+  openPhotoFullSize() {
+    const url = this.uploadedFile()?.url;
+    if (url) window.open(url, '_blank');
   }
 }

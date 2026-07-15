@@ -3,12 +3,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { BcdForm } from '../../../services/bcd-form';
 import { BCDFormManager } from '../../../services/bcd-form-manager';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormModule } from '@avalantec/base-app/form';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-bcds-summary-form',
-  imports: [ReactiveFormsModule, FormModule, TableModule, DecimalPipe, DatePipe],
+  imports: [
+    ReactiveFormsModule,
+    FormModule,
+    TableModule,
+    DecimalPipe,
+    LocaleDatePipe,
+    TranslatePipe,
+  ],
   templateUrl: './bcds-summary-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

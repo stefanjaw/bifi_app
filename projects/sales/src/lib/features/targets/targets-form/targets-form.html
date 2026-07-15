@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Update Sales Target' : 'New Sales Target'"
+  [title]="
+    (isUpdate() ? 'sales.targets.updateTitle' : 'sales.targets.createTitle')
+      | translate: {} : 'sales'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,58 +21,86 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Target Details" id="target-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'sales.section.targetDetails' | translate: {} : 'sales'"
+        id="target-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. Q1 Revenue Target" />
+            <bifi-app-form-label>
+              {{ 'sales.form.name' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'sales.placeholder.name' | translate: {} : 'sales'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Year</bifi-app-form-label>
-            <p-inputNumber formControlName="year" [useGrouping]="false" placeholder="2025"></p-inputNumber>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Month</bifi-app-form-label>
-            <p-select
-              formControlName="month"
-              [options]="monthOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select month"
-            ></p-select>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Target Amount</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.year' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-inputNumber
-              formControlName="targetAmount"
-              mode="currency"
-              currency="USD"
-              [min]="0"
-              placeholder="0.00"
+              formControlName="year"
+              [useGrouping]="false"
+              [placeholder]="'sales.placeholder.year' | translate: {} : 'sales'"
             ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Currency</bifi-app-form-label>
-            <input pInputText formControlName="currency" placeholder="USD" />
+            <bifi-app-form-label>
+              {{ 'sales.form.month' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="month"
+              [options]="monthOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="'sales.placeholder.selectMonth' | translate: {} : 'sales'"
+            ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Sales Rep (optional)</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.targetAmount' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-inputNumber
+              formControlName="targetAmount"
+              mode="currency"
+              currency="USD"
+              [min]="0"
+              [placeholder]="'sales.placeholder.targetAmount' | translate: {} : 'sales'"
+            ></p-inputNumber>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.form.currency' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="currency"
+              [placeholder]="'sales.placeholder.currency' | translate: {} : 'sales'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.targets.salesRepOptional' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="salesperson"
               [options]="userOptions()"
               optionLabel="username"
               optionValue="_id"
-              placeholder="Select a sales rep"
+              [placeholder]="'sales.placeholder.selectSalesRep' | translate: {} : 'sales'"
               [filter]="true"
               [showClear]="true"
             ></p-select>

@@ -33,6 +33,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import dayjs from 'dayjs';
 import { CreateTasksFormDialog } from '@avalantec/tasks';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 const TASKS_VIEW_QUERY_KEY = '_view';
 
@@ -53,6 +54,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     CalendarView,
     TooltipModule,
     CreateTasksFormDialog,
+    TranslatePipe,
   ],
   templateUrl: './ticket-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

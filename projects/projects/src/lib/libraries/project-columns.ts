@@ -1,43 +1,45 @@
+import { t } from '@avalantec/base-app/i18n';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { project } from '../interfaces/projects';
 
 export const projectColumns: tableColumn<project>[] = [
   {
     field: 'number',
-    title: 'Number',
+    title: 'columns.number',
     type: 'text',
     sortable: true,
   },
   {
     field: 'name',
-    title: 'Name',
+    title: 'columns.name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'contactId.fullName',
-    title: 'Contact',
+    title: 'columns.contact',
     type: 'text',
   },
   {
     field: 'description',
-    title: 'Description',
-    parseField: (value: string | null | undefined) => (value && value.trim() ? value : 'Not set'),
+    title: 'columns.description',
+    parseField: (value: string | null | undefined) =>
+      value && value.trim() ? value : t('status.fallback.notSet', {}, 'projects'),
     type: 'text',
   },
   {
     field: 'dateStart',
-    title: 'Start Date',
+    title: 'columns.startDate',
     type: 'date',
   },
   {
     field: 'dateEnd',
-    title: 'End Date',
+    title: 'columns.endDate',
     type: 'date',
   },
   {
     field: 'active',
-    title: 'Active',
+    title: 'columns.active',
     type: 'text',
   },
 ];

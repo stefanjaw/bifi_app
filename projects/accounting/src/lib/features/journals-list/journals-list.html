@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Journals</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle.journals' | translate: {} : 'accounting' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Journal"
+    [label]="'buttons.addNewJournal' | translate: {} : 'accounting'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../journals/create']"
@@ -12,6 +12,7 @@
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
+  [scope]="'accounting'"
   [columns]="columns"
   [data]="journals"
   [onClickRow]="goToEditJournal"

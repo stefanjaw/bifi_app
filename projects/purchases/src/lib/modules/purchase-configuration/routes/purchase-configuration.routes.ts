@@ -7,7 +7,7 @@ export const PURCHASE_CONFIGURATION_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/purchase-settings-form/purchase-settings-form').then(
-        m => m.PurchaseSettingsFormComponent
+        m => m.PurchaseSettingsPage
       ),
     data: { resource: 'purchases/settings' },
   },

@@ -1,6 +1,12 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8">
-    <bifi-app-form-layout [title]="isLogin() ? 'Sign In to Your Account' : 'Create Your Account'">
+    <bifi-app-form-layout
+      [title]="
+        isLogin()
+          ? ('authForm.pageTitle.login' | translate: {} : 'base-app/auth')
+          : ('authForm.pageTitle.register' | translate: {} : 'base-app/auth')
+      "
+    >
       <form
         ngProjectAs="div"
         [formGroup]="form"
@@ -9,7 +15,11 @@
         class="space-y-6"
       >
         <bifi-app-form-section
-          [title]="isLogin() ? 'Sign In' : 'Sign Up'"
+          [title]="
+            isLogin()
+              ? ('authForm.sectionTitle.login' | translate: {} : 'base-app/auth')
+              : ('authForm.sectionTitle.register' | translate: {} : 'base-app/auth')
+          "
           id="auth-form"
           [ordinal]="1"
         >
@@ -17,7 +27,11 @@
             <!-- Email/Username Field -->
             <bifi-app-form-field>
               <bifi-app-form-label>
-                {{ isLogin() ? 'Email or Username' : 'Email address' }}
+                {{
+                  isLogin()
+                    ? ('authForm.emailOrUsername' | translate: {} : 'base-app/auth')
+                    : ('authForm.emailAddress' | translate: {} : 'base-app/auth')
+                }}
               </bifi-app-form-label>
               <input
                 pInputText
@@ -31,7 +45,9 @@
 
             <!-- Password Field -->
             <bifi-app-form-field>
-              <bifi-app-form-label>Password</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'authForm.password' | translate: {} : 'base-app/auth' }}
+              </bifi-app-form-label>
               <input
                 type="password"
                 pPassword
@@ -45,7 +61,9 @@
             <!-- Confirm Password Field (Register only) -->
             @if (!isLogin()) {
               <bifi-app-form-field>
-                <bifi-app-form-label>Confirm Password</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'authForm.confirmPassword' | translate: {} : 'base-app/auth' }}
+                </bifi-app-form-label>
                 <input
                   type="password"
                   pPassword
@@ -66,24 +84,24 @@
               {{
                 isLoading()
                   ? isLogin()
-                    ? 'Signing In...'
-                    : 'Creating Account...'
+                    ? ('authForm.signingIn' | translate: {} : 'base-app/auth')
+                    : ('authForm.creatingAccount' | translate: {} : 'base-app/auth')
                   : isLogin()
-                    ? 'Sign In'
-                    : 'Create Account'
+                    ? ('authForm.signIn' | translate: {} : 'base-app/auth')
+                    : ('authForm.createAccount' | translate: {} : 'base-app/auth')
               }}
             </p-button>
 
             <div class="text-center">
               <p class="text-sm text-gray-600">
-                Forgot password?
+                {{ 'authForm.forgotPassword' | translate: {} : 'base-app/auth' }}
                 <button
                   [routerLink]="['/auth/resetpassword']"
                   type="button"
                   class="font-medium text-blue-600 hover:text-blue-500 ml-1"
                   [disabled]="isLoading()"
                 >
-                  Request
+                  {{ 'authForm.request' | translate: {} : 'base-app/auth' }}
                 </button>
               </p>
             </div>
@@ -99,7 +117,11 @@
           </div>
           <div class="relative flex justify-center text-sm">
             <span class="px-2 bg-gray-50 text-gray-500">
-              {{ isLogin() ? 'Or continue with' : 'Or sign up with' }}
+              {{
+                isLogin()
+                  ? ('authForm.orContinueWith' | translate: {} : 'base-app/auth')
+                  : ('authForm.orSignUpWith' | translate: {} : 'base-app/auth')
+              }}
             </span>
           </div>
         </div>
@@ -125,21 +147,29 @@
       <!-- Toggle Mode Link -->
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
-          {{ isLogin() ? 'New to App?' : 'Already have an account?' }}
+          {{
+            isLogin()
+              ? ('authForm.newToApp' | translate: {} : 'base-app/auth')
+              : ('authForm.alreadyHaveAccount' | translate: {} : 'base-app/auth')
+          }}
           <button
             type="button"
             class="font-medium text-blue-600 hover:text-blue-500 ml-1"
             (click)="onToggleMode()"
             [disabled]="isLoading()"
           >
-            {{ isLogin() ? 'Create an account' : 'Sign in' }}
+            {{
+              isLogin()
+                ? ('authForm.createAnAccount' | translate: {} : 'base-app/auth')
+                : ('authForm.signInLink' | translate: {} : 'base-app/auth')
+            }}
           </button>
         </p>
       </div>
 
       <div class="flex justify-start items-center flex-col">
         <!-- Timestamp -->
-        <p class="text-gray-600" [bifiAppText]="'small'">FRONTEND VERSION: 202604271011</p>
+        <p class="text-gray-600" [bifiAppText]="'small'">FRONTEND VERSION: 202607131320</p>
         <p class="text-gray-600" [bifiAppText]="'small'">BACKEND VERSION: {{ backendVersion() }}</p>
       </div>
     </bifi-app-form-layout>

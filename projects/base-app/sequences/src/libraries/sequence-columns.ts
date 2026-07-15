@@ -4,31 +4,31 @@ import { sequence } from '../interfaces/sequence';
 export const sequenceColumns: tableColumn<sequence>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'prefix',
-    title: 'Prefix',
+    title: 'prefix',
     type: 'text',
     sortable: true,
   },
   {
     field: 'step',
-    title: 'Step',
+    title: 'step',
     type: 'text',
     sortable: true,
   },
   {
     field: 'size',
-    title: 'Size',
+    title: 'size',
     type: 'text',
     sortable: true,
   },
   {
     field: 'active',
-    title: 'Active',
+    title: 'active',
     type: 'text',
   },
 ];

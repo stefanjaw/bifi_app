@@ -1,16 +1,16 @@
 <div class="p-6 ms-4 me-4 max-w-5xl">
-  <h1 class="text-2xl font-bold mb-6">Stock Transfer</h1>
+  <h1 class="text-2xl font-bold mb-6">{{ 'stockTransfer' | translate: {} : 'inventory' }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="flex flex-col gap-6">
       <bifi-app-form-field>
-        <bifi-app-form-label>Product *</bifi-app-form-label>
+        <bifi-app-form-label>{{ 'product' | translate: {} : 'inventory' }} *</bifi-app-form-label>
         <p-select
           formControlName="productId"
           [options]="products()"
           optionLabel="name"
           optionValue="_id"
-          placeholder="Select product"
+          [placeholder]="'selectProduct' | translate: {} : 'inventory'"
           [filter]="true"
           filterBy="name,sku"
         ></p-select>
@@ -19,68 +19,90 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="flex flex-col gap-4 border rounded-lg p-4">
-          <h2 class="font-semibold text-lg text-red-600">From</h2>
+          <h2 class="font-semibold text-lg text-red-600">
+            {{ 'from' | translate: {} : 'inventory' }}
+          </h2>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'warehouse' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="fromWarehouseId"
               [options]="warehouses()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Source warehouse"
+              [placeholder]="'sourceWarehouse' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Location *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'location' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="fromLocationId"
               [options]="fromLocations()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Source location"
+              [placeholder]="'sourceLocation' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
             @if (selectedFromWarehouseId() && fromLocations().length === 0) {
               <small class="text-orange-500">
-                No locations found for this warehouse.
-                <a [routerLink]="['/inventory/warehouses', selectedFromWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+                {{ 'noLocationsForWarehouse' | translate: {} : 'inventory' }}
+                <a
+                  [routerLink]="['/inventory/warehouses', selectedFromWarehouseId()]"
+                  class="underline font-medium"
+                >
+                  {{ 'addLocationsFromWarehouse' | translate: {} : 'inventory' }}
+                </a>
               </small>
             }
           </bifi-app-form-field>
         </div>
 
         <div class="flex flex-col gap-4 border rounded-lg p-4">
-          <h2 class="font-semibold text-lg text-green-600">To</h2>
+          <h2 class="font-semibold text-lg text-green-600">
+            {{ 'to' | translate: {} : 'inventory' }}
+          </h2>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Warehouse *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'warehouse' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="toWarehouseId"
               [options]="warehouses()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Destination warehouse"
+              [placeholder]="'destinationWarehouse' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Location *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'location' | translate: {} : 'inventory' }} *
+            </bifi-app-form-label>
             <p-select
               formControlName="toLocationId"
               [options]="toLocations()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Destination location"
+              [placeholder]="'destinationLocation' | translate: {} : 'inventory'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
             @if (selectedToWarehouseId() && toLocations().length === 0) {
               <small class="text-orange-500">
-                No locations found for this warehouse.
-                <a [routerLink]="['/inventory/warehouses', selectedToWarehouseId()]" class="underline font-medium">Add locations from the warehouse page.</a>
+                {{ 'noLocationsForWarehouse' | translate: {} : 'inventory' }}
+                <a
+                  [routerLink]="['/inventory/warehouses', selectedToWarehouseId()]"
+                  class="underline font-medium"
+                >
+                  {{ 'addLocationsFromWarehouse' | translate: {} : 'inventory' }}
+                </a>
               </small>
             }
           </bifi-app-form-field>
@@ -89,34 +111,56 @@
 
       <div class="flex gap-4">
         <bifi-app-form-field class="flex-1">
-          <bifi-app-form-label>Quantity *</bifi-app-form-label>
-          <p-inputNumber formControlName="quantity" [min]="1" [max]="availableQuantity() ?? undefined"></p-inputNumber>
+          <bifi-app-form-label>
+            {{ 'quantity' | translate: {} : 'inventory' }} *
+          </bifi-app-form-label>
+          <p-inputNumber
+            formControlName="quantity"
+            [min]="1"
+            [max]="availableQuantity() ?? undefined"
+          ></p-inputNumber>
           <bifi-app-form-error></bifi-app-form-error>
           @if (availableQuantity() !== null) {
-            <small class="text-muted-color">Available: {{ availableQuantity() }}</small>
+            <small class="text-muted-color">
+              {{ 'available' | translate: {} : 'inventory' }}: {{ availableQuantity() }}
+            </small>
           }
         </bifi-app-form-field>
 
         <bifi-app-form-field class="flex-1">
-          <bifi-app-form-label>Reference</bifi-app-form-label>
-          <input pInputText formControlName="reference" placeholder="Optional reference" />
+          <bifi-app-form-label>{{ 'reference' | translate: {} : 'inventory' }}</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="reference"
+            [placeholder]="'optionalReference' | translate: {} : 'inventory'"
+          />
         </bifi-app-form-field>
       </div>
 
       <bifi-app-form-field>
-        <bifi-app-form-label>Notes</bifi-app-form-label>
-        <textarea pTextarea formControlName="notes" rows="2" placeholder="Optional notes"></textarea>
+        <bifi-app-form-label>{{ 'notes' | translate: {} : 'inventory' }}</bifi-app-form-label>
+        <textarea
+          pTextarea
+          formControlName="notes"
+          rows="2"
+          [placeholder]="'optionalNotes' | translate: {} : 'inventory'"
+        ></textarea>
       </bifi-app-form-field>
 
       <div class="flex gap-3">
         <p-button
           type="submit"
-          label="Transfer"
+          [label]="'transfer' | translate: {} : 'inventory'"
           icon="pi pi-arrows-h"
           [loading]="isSubmitLoading()"
           [disabled]="form.invalid"
         ></p-button>
-        <p-button type="button" label="Cancel" severity="secondary" (onClick)="goBack()"></p-button>
+        <p-button
+          type="button"
+          [label]="'cancel' | translate: {} : 'inventory'"
+          severity="secondary"
+          (onClick)="goBack()"
+        ></p-button>
       </div>
     </div>
   </form>

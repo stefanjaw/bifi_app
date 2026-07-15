@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { CrudFiscalPositions } from '../../services/crud-fiscal-positions';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,11 +20,24 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FiscalPositionFormService, FiscalPositionFormModel } from '../../services/fiscal-position-form';
+import {
+  FiscalPositionFormService,
+  FiscalPositionFormModel,
+} from '../../services/fiscal-position-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-fiscal-position-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule, ButtonModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    ButtonModule,
+    TranslatePipe,
+  ],
   templateUrl: './fiscal-position-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -50,7 +63,7 @@ export class FiscalPositionForm {
     () =>
       this.fiscalPositionResource.isLoading() ||
       this.taxesResource.isLoading() ||
-      this.accountsResource.isLoading(),
+      this.accountsResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -113,7 +126,10 @@ export class FiscalPositionForm {
       : this.crudFiscalPositions.post({ data: rawValue as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

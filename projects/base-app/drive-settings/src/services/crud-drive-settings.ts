@@ -23,9 +23,6 @@ export class CrudDriveSettings extends ApiRequestManager<driveSettings> {
   }
 
   putSettings(data: Record<string, unknown>): Observable<driveSettings | undefined> {
-    return this._httpClient.put<driveSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<driveSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Sequences</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/sequences' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Sequence"
+    [label]="'addNew' | translate: {} : 'base-app/sequences'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -10,7 +10,9 @@
   ></p-button>
 </div>
 
-<bifi-app-search-bar label="Search by name or prefix"></bifi-app-search-bar>
+<bifi-app-search-bar
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/sequences'"
+></bifi-app-search-bar>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
@@ -19,6 +21,7 @@
   [data]="sequences"
   [onClickRow]="goToEditSequence"
   clickRowPermission="sequences/update:view"
+  [scope]="'base-app/sequences'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

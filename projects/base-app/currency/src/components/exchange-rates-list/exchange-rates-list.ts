@@ -14,6 +14,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { exchangeRate } from '../../interfaces/exchange-rate';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-exchange-rates-list',
@@ -21,7 +22,16 @@ import { exchangeRate } from '../../interfaces/exchange-rate';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './exchange-rates-list.html',
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    TranslatePipe,
+  ],
+  templateUrl: './exchange-rates-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangeRatesList {

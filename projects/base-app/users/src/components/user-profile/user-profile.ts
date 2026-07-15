@@ -19,6 +19,7 @@ import { Location } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { FileUploadModule } from 'primeng/fileupload';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-user-profile',
@@ -29,6 +30,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     ButtonModule,
     ProgressBarModule,
     FileUploadModule,
+    TranslatePipe,
   ],
   templateUrl: './user-profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

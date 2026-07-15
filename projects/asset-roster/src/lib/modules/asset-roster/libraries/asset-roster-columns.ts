@@ -1,6 +1,7 @@
+import { t } from '@avalantec/base-app/i18n';
 import { assetRoster } from '../interfaces/asset-roster';
 import { assetType } from '../../asset-types';
-import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { DynamicComponentConfig, tableColumn } from '@avalantec/base-app/resource';
 import { contact } from '@avalantec/base-app/interfaces';
 import { Tag } from 'primeng/tag';
 import { Avatar } from 'primeng/avatar';
@@ -32,9 +33,9 @@ export const assetRosterColumns = (
   //photo
   {
     field: 'photo',
-    title: 'PHOTO',
+    title: 'photo',
     type: 'text',
-    component: (row: assetRoster): DynamicComponent<any> => ({
+    component: (row: assetRoster): DynamicComponentConfig<any> => ({
       component: Avatar,
       inputs: {
         image:
@@ -58,51 +59,54 @@ export const assetRosterColumns = (
 
   {
     field: 'assetTypeIds',
-    parseField: (value: assetType[]) => value[0]?.name || 'Not set',
-    title: 'TYPE',
+    parseField: (value: assetType[]) =>
+      value[0]?.name || t('status.fallback.notSet', {}, 'asset-roster'),
+    title: 'type',
     type: 'text',
   },
   {
     field: 'makeIds',
-    parseField: (value: contact[]) => value[0]?.name || 'Not set',
-    title: 'MAKE',
+    parseField: (value: contact[]) =>
+      value[0]?.name || t('status.fallback.notSet', {}, 'asset-roster'),
+    title: 'make',
     type: 'text',
   },
   {
     field: 'productModel',
     sortable: true,
-    title: 'MODEL',
+    title: 'model',
     type: 'text',
   },
   {
     field: 'serialNumber',
     sortable: true,
-    title: 'SERIAL NUMBER',
+    title: 'serialNumber',
     type: 'text',
   },
   {
     field: 'locationId.name',
-    title: 'LOCATION',
-    parseField: value => value?.name || 'Not set',
+    title: 'location',
+    parseField: value => value?.name || t('status.fallback.notSet', {}, 'asset-roster'),
 
     type: 'text',
   },
   {
     field: 'vendorIds',
-    parseField: (value: contact[]) => value[0]?.name || 'Not set',
-    title: 'VENDOR',
+    parseField: (value: contact[]) =>
+      value[0]?.name || t('status.fallback.notSet', {}, 'asset-roster'),
+    title: 'vendor',
     type: 'text',
   },
   {
     field: 'acquiredDate',
     sortable: true,
-    title: 'ACQUIRED DATE',
+    title: 'acquiredDate',
     type: 'date',
   },
   {
     field: 'maintenanceDate',
     sortable: true,
-    title: 'NEXT PM DUE',
+    title: 'nextPmDue',
     type: 'date',
   },
   {
@@ -113,39 +117,39 @@ export const assetRosterColumns = (
         switch (value.status) {
           case 'active':
             return {
-              text: 'Active',
+              text: t('status.active', {}, 'asset-roster'),
               variant: 'success',
             };
           case 'awaiting-commissioning':
             return {
-              text: 'Awaiting commissioning',
+              text: t('status.awaitingCommissioning', {}, 'asset-roster'),
               variant: 'warn',
             };
           case 'under-service':
             return {
-              text: 'Under service',
+              text: t('status.underService', {}, 'asset-roster'),
               variant: 'warn',
             };
           case 'decommissioned':
             return {
-              text: 'Decommissioned',
+              text: t('status.decommissioned', {}, 'asset-roster'),
               variant: 'danger',
             };
           case 'in-pm':
             return {
-              text: 'In PM',
+              text: t('status.inPm', {}, 'asset-roster'),
               variant: 'info',
             };
           default: {
             return {
-              text: 'Unknown',
+              text: t('status.unknown', {}, 'asset-roster'),
               variant: 'warn',
             };
           }
         }
       })();
 
-      const component: DynamicComponent<any> = {
+      const component: DynamicComponentConfig<any> = {
         component: Tag,
         inputs: {
           value: inputs.text,
@@ -156,7 +160,7 @@ export const assetRosterColumns = (
 
       return component;
     },
-    title: 'STATUS',
+    title: 'status',
     type: 'text',
   },
 ];

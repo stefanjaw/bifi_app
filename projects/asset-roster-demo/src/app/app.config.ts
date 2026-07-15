@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 import { APP_AUTH_SERVICE, provideAppAuth } from '@avalantec/base-app/auth';
 import { environment } from '../environments/environment.development';
 import { CrudUsers } from '@avalantec/base-app/users';
-import { withLibraryInterceptors } from '@avalantec/base-app/routing';
+import { provideMenuItems, withLibraryInterceptors } from '@avalantec/base-app/routing';
 import { Noir } from './primeng.preset';
 import { provideAssetRoster } from '@avalantec/asset-roster';
 import { provideWebsite } from '@avalantec/website';
@@ -24,9 +24,12 @@ import { provideSales } from '@avalantec/sales';
 import { providePurchases } from '@avalantec/purchases';
 import { provideInventory } from '@avalantec/inventory';
 import { provideAccounting } from '@avalantec/accounting';
+import { provideEmailMarketing } from '@avalantec/email-marketing';
 import { provideHelpdesk } from '@avalantec/helpdesk';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
+import { provideL10nCrEinvoice } from '@avalantec/l10n_cr_einvoice';
+import { provideTranslationRoot } from '@avalantec/base-app/i18n';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,7 +41,7 @@ export const appConfig: ApplicationConfig = {
       provide: LIBRARY_CONFIG,
       useValue: {
         apiURL: environment.apiURL,
-        rbacEnable: false,
+        rbacEnable: true,
         bugReportingURL: environment.bugReportingURL,
       },
     },
@@ -66,8 +69,12 @@ export const appConfig: ApplicationConfig = {
     providePurchases(),
     provideInventory(),
     provideAccounting(),
+    provideEmailMarketing(),
     provideHelpdesk(),
     provideProjects(),
+    provideL10nCrEinvoice(),
+    provideTranslationRoot(),
+    provideMenuItems(),
     provideAppAuth({
       authProvider: {
         type: 'FIREBASE',

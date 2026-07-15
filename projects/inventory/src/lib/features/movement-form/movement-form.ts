@@ -21,17 +21,23 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MovementFormService, MovementFormModel } from '../../services/movement-form.service';
-
-const MOVEMENT_TYPES = [
-  { label: 'Stock In (IN)', value: 'IN' },
-  { label: 'Stock Out (OUT)', value: 'OUT' },
-  { label: 'Adjustment', value: 'ADJUSTMENT' },
-];
+import { MovementFormService, MovementFormModel } from '../../services/movement-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-movement-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, TextareaModule, ProgressBarModule, RouterLink, HasPermission],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    SelectModule,
+    TextareaModule,
+    ProgressBarModule,
+    RouterLink,
+    HasPermission,
+    TranslatePipe,
+  ],
   templateUrl: './movement-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,22 +48,32 @@ export class MovementForm {
   private crudWarehouses = inject(CrudWarehouses);
   private crudLocations = inject(CrudLocations);
   private router = inject(Router);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   form = this.formService.form;
   selectedWarehouseId = this.formService.selectedWarehouseId;
 
   isSubmitLoading = signal(false);
-  movementTypes = MOVEMENT_TYPES;
+
+  movementTypes = computed(() => [
+    { label: this.translationService.translate('stockIn', {}, 'inventory'), value: 'IN' },
+    { label: this.translationService.translate('stockOut', {}, 'inventory'), value: 'OUT' },
+    {
+      label: this.translationService.translate('adjustment', {}, 'inventory'),
+      value: 'ADJUSTMENT',
+    },
+  ]);
 
   productsResource = this.crudProducts.get({});
   warehousesResource = this.crudWarehouses.get({});
   locationsResource = this.crudLocations.get({});
 
-  isLoading = computed(() =>
-    this.productsResource.isLoading() ||
-    this.warehousesResource.isLoading() ||
-    this.locationsResource.isLoading()
+  isLoading = computed(
+    () =>
+      this.productsResource.isLoading() ||
+      this.warehousesResource.isLoading() ||
+      this.locationsResource.isLoading()
   );
 
   products = this.productsResource.value;
@@ -65,7 +81,9 @@ export class MovementForm {
   allLocations = this.locationsResource.value;
 
   filteredLocations = computed(() =>
-    (this.allLocations() as location[] ?? []).filter(l => l.warehouseId?._id === this.formService.selectedWarehouseId())
+    ((this.allLocations() as location[]) ?? []).filter(
+      l => l.warehouseId?._id === this.formService.selectedWarehouseId()
+    )
   );
 
   handleSubmit(data: FormValueState<MovementFormModel>) {

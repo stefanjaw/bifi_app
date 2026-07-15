@@ -1,42 +1,64 @@
 <form
   [formGroup]="formService.form"
-  class="min-h-screen bg-gray-50"
+  class="min-h-screen bg-gray-100"
   bifiAppFormActionsHandler
   (appSubmit)="handleSave()"
   [isPreviewMode]="!isEditMode()"
 >
   <!-- Header -->
-  <div class="bg-white border-b border-gray-200 px-6 py-4">
+  <div class="sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
-        <p-button icon="pi pi-chevron-left" [text]="true" severity="secondary" size="small" />
-        <h1 class="text-xl font-semibold text-gray-900">Asset Details</h1>
-        <p-button icon="pi pi-chevron-right" [text]="true" severity="secondary" size="small" />
+        <p-button
+          icon="pi pi-chevron-left"
+          [text]="true"
+          severity="secondary"
+          size="small"
+          [disabled]="!prevAssetId()"
+          (onClick)="handleNavigatePrev()"
+          type="button"
+          aria-label="Previous asset"
+        />
+        <h1 class="text-xl font-semibold text-gray-900">
+          {{ 'assetDetails' | translate: {} : 'asset-roster' }}
+        </h1>
+        @if (totalAssets() > 0 && currentIndex() >= 0) {
+          <span class="text-sm text-gray-500">{{ currentIndex() + 1 }} of {{ totalAssets() }}</span>
+        }
+        <p-button
+          icon="pi pi-chevron-right"
+          [text]="true"
+          severity="secondary"
+          size="small"
+          [disabled]="!nextAssetId()"
+          (onClick)="handleNavigateNext()"
+          type="button"
+          aria-label="Next asset"
+        />
       </div>
 
       <div class="flex items-center space-x-3">
-        @if (isEditMode()) {
-          <p-button label="Cancel" severity="secondary" (onClick)="handleCancel()" type="button" />
+        @if (isDirty()) {
           <p-button
-            [icon]="isSubmitLoading() ? 'pi pi-spinner' : undefined"
-            [label]="isSubmitLoading() ? 'Saving...' : 'Save Changes'"
-            icon="pi pi-check"
+            [label]="'cancel' | translate: {} : 'asset-roster'"
+            severity="secondary"
+            (onClick)="handleCancel()"
+            type="button"
+          />
+          <p-button
+            [icon]="isSubmitLoading() ? 'pi pi-spinner' : 'pi pi-check'"
+            [label]="
+              isSubmitLoading()
+                ? ('saving' | translate: {} : 'asset-roster')
+                : ('saveChanges' | translate: {} : 'asset-roster')
+            "
             severity="success"
             type="submit"
             *bifiAppHasPermission="'asset-rosters:update:model'"
           />
-        } @else {
-          <p-button
-            [disabled]="isLoading()"
-            label="Edit Details"
-            icon="pi pi-pencil"
-            (onClick)="toggleEdit()"
-            type="button"
-            *bifiAppHasPermission="'asset-rosters:update:model'"
-          />
         }
         <p-button
-          label="Back to Dashboard"
+          [label]="'backToDashboard' | translate: {} : 'asset-roster'"
           icon="pi pi-arrow-left"
           severity="info"
           [outlined]="true"
@@ -47,71 +69,85 @@
     </div>
   </div>
 
+  <!-- Page-level status banner: visible above the tabs so it applies to both -->
+  @if (assetRoster()) {
+    <div class="px-6 pt-3 bg-gray-100">
+      <bifi-app-status-banner-section [assetRoster]="assetRoster()" class="w-full" />
+    </div>
+  }
+
   <p-tabs value="0">
-    <p-tablist>
-      <p-tab value="0">
-        <span class="p-tabheader-title">Info & Maintenance</span>
-      </p-tab>
-      <p-tab value="1">
-        <span class="p-tabheader-title">Lifecycle & TCO</span>
-      </p-tab>
-    </p-tablist>
+    <div class="px-6 pt-2 bg-gray-100">
+      <p-tablist>
+        <p-tab value="0">
+          <span class="p-tabheader-title">
+            {{ 'infoMaintenance' | translate: {} : 'asset-roster' }}
+          </span>
+        </p-tab>
+        <p-tab value="1">
+          <span class="p-tabheader-title">
+            {{ 'lifecycleTco' | translate: {} : 'asset-roster' }}
+          </span>
+        </p-tab>
+      </p-tablist>
+    </div>
 
     <p-tabpanels>
       <!-- Form Content -->
-      <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="max-w-7xl mx-auto px-6 pt-4 pb-8">
         @if (!isLoading()) {
           <bifi-app-form-layout title="">
-            <div class="flex flex-col gap-8">
+            <div class="flex flex-col gap-4">
               <p-tabpanel value="0">
-                <!-- the general information of the assetRoster -->
-                <bifi-app-general-information-section
-                  [assetRoster]="assetRoster()"
-                  [assetTypes]="assetTypes()"
-                  [contacts]="contacts()"
-                  [rooms]="rooms()"
-                  [isEditMode]="isEditMode()"
-                />
+                <div class="flex flex-col gap-4">
+                  <!-- the general information of the assetRoster -->
+                  <bifi-app-general-information-section
+                    [assetRoster]="assetRoster()"
+                    [assetTypes]="assetTypes()"
+                    [contacts]="contacts()"
+                    [rooms]="rooms()"
+                    [isEditMode]="isEditMode()"
+                  />
 
-                <!-- the documents of the assetRoster -->
-                <bifi-app-documents-section
-                  [assetRoster]="assetRoster()"
-                  [isEditMode]="isEditMode()"
-                />
+                  <!-- the documents of the assetRoster -->
+                  <bifi-app-documents-section
+                    [assetRoster]="assetRoster()"
+                    [isEditMode]="isEditMode()"
+                  />
 
-                <!-- the maintenance service of the assetRoster -->
-                <bifi-app-maintenance-service-section
-                  [assetRoster]="assetRoster()"
-                  [maintenanceWindows]="maintenanceWindows()"
-                  [isEditMode]="isEditMode()"
-                />
+                  <!-- the maintenance service of the assetRoster -->
+                  <bifi-app-maintenance-service-section
+                    [assetRoster]="assetRoster()"
+                    [maintenanceWindows]="maintenanceWindows()"
+                    [isEditMode]="isEditMode()"
+                  />
 
-                <!-- the commissioning and lifecycle of the assetRoster -->
-                <bifi-app-commissioning-lifecycle-section
-                  [assetRoster]="assetRoster()"
-                  [isEditMode]="isEditMode()"
-                />
-                <!-- the activity history of the assetRoster -->
-                <bifi-app-activity-history-section [activityHistory]="activityHistories()" />
+                  <!-- the commissioning and lifecycle of the assetRoster -->
+                  <bifi-app-commissioning-lifecycle-section [assetRoster]="assetRoster()" />
+                  <!-- the activity history of the assetRoster -->
+                  <bifi-app-activity-history-section [activityHistory]="activityHistories()" />
 
-                <!-- Notes Section -->
-                <bifi-app-notes-section
-                  [assetRoster]="assetRoster()"
-                  [isEditMode]="isEditMode()"
-                />
+                  <!-- Notes Section -->
+                  <bifi-app-notes-section
+                    [assetRoster]="assetRoster()"
+                    [isEditMode]="isEditMode()"
+                  />
+                </div>
               </p-tabpanel>
 
               <p-tabpanel value="1">
-                <bifi-app-asset-roster-financial-information
-                  [assetRoster]="assetRoster()"
-                  [assetTypes]="assetTypes()"
-                  [isEditMode]="isEditMode()"
-                />
+                <div class="flex flex-col gap-4">
+                  <bifi-app-asset-roster-financial-information
+                    [assetRoster]="assetRoster()"
+                    [assetTypes]="assetTypes()"
+                    [isEditMode]="isEditMode()"
+                  />
+                </div>
               </p-tabpanel>
             </div>
           </bifi-app-form-layout>
         } @else {
-          <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+          <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
         }
       </div>
     </p-tabpanels>

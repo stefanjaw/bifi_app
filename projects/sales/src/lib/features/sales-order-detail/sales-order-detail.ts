@@ -14,23 +14,34 @@ import { CrudCrm } from '../../services/crud-crm';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
+import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
+import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
+import { startWith } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TooltipModule } from 'primeng/tooltip';
 import { LineItemsTable } from '../../components/line-items-table/line-items-table';
+import { calculateTotalsPerLine, TotalsPreview } from '../../utils/price-calculator';
+import { salesOrderStatus } from '../../interfaces/sales-order';
+import { DynamicBreadcrumbService } from '@avalantec/base-app/core';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-sales-order-detail',
   imports: [
+    DecimalPipe,
     FormModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -39,7 +50,9 @@ import { LineItemsTable } from '../../components/line-items-table/line-items-tab
     TextareaModule,
     DatePickerModule,
     ProgressBarModule,
+    TooltipModule,
     LineItemsTable,
+    TranslatePipe,
   ],
   templateUrl: './sales-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,9 +64,14 @@ export class SalesOrderDetail {
   private crudContacts = inject(CrudContacts);
   private crudCompanies = inject(CrudCompanies);
   private crudUsers = inject(CrudUsers);
+  private crudCurrencies = inject(CrudCurrencies);
   private crudProducts = inject(CrudProducts);
   private crudStockBalances = inject(CrudStockBalances);
   private crudSalesOrderStages = inject(CrudSalesOrderStages);
+  private crudTaxes = inject(CrudTaxes);
+  private crudDiscounts = inject(CrudDiscounts);
+  private dynamicBreadcrumb = inject(DynamicBreadcrumbService);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -69,9 +87,12 @@ export class SalesOrderDetail {
   contactsResource = this.crudContacts.get({});
   companiesResource = this.crudCompanies.get({});
   usersResource = this.crudUsers.get({});
+  currenciesResource = this.crudCurrencies.get({});
   productsResource = this.crudProducts.get({});
   stockResource = this.crudStockBalances.get({});
   stagesResource = this.crudSalesOrderStages.get({});
+  taxesResource = this.crudTaxes.get({});
+  discountsResource = this.crudDiscounts.get({});
 
   entry = this.orderResource.value;
 
@@ -83,9 +104,29 @@ export class SalesOrderDetail {
   productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
   stageOptions = computed(() => (this.stagesResource.value() as any[]) ?? []);
 
+  currencyOptions = computed(() =>
+    ((this.currenciesResource.value() as any[]) ?? []).filter((c: any) => c?.active !== false)
+  );
+
+  taxOptions = computed(() =>
+    ((this.taxesResource.value() as any[]) ?? []).filter(
+      (t: any) => t?.active === true && t?.taxType === 'sales'
+    )
+  );
+
+  discountOptions = computed(() =>
+    ((this.discountsResource.value() as any[]) ?? []).filter((d: any) => d?.active !== false)
+  );
+
   defaultStageId = computed(() => {
     const stages = this.stageOptions();
     const def = stages.find((s: any) => s.isDefault);
+    return def?._id ?? '';
+  });
+
+  defaultCurrencyId = computed(() => {
+    const currencies = this.currencyOptions();
+    const def = currencies.find((c: any) => c.isDefault);
     return def?._id ?? '';
   });
 
@@ -108,22 +149,130 @@ export class SalesOrderDetail {
       this.contactsResource.isLoading() ||
       this.companiesResource.isLoading() ||
       this.usersResource.isLoading() ||
+      this.currenciesResource.isLoading() ||
       this.productsResource.isLoading() ||
-      this.stagesResource.isLoading()
+      this.stagesResource.isLoading() ||
+      this.taxesResource.isLoading() ||
+      this.discountsResource.isLoading()
   );
   isSubmitLoading = signal(false);
+  isPdfLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
   form = this.formService.form;
 
-  currencyOptions = [
-    { label: 'USD', value: 'USD' },
-    { label: 'EUR', value: 'EUR' },
-    { label: 'GBP', value: 'GBP' },
-    { label: 'MXN', value: 'MXN' },
-  ];
+  private lineItemValues = toSignal(
+    this.formService.lineItemsArray.valueChanges.pipe(
+      startWith(this.formService.lineItemsArray.value)
+    ),
+    { initialValue: this.formService.lineItemsArray.value }
+  );
+
+  totalsPreview = computed<TotalsPreview>(() => {
+    const items = (this.lineItemValues() ?? []) as any[];
+    const lineTaxIds = this.formService.lineTaxIds();
+    const allTaxes = this.taxOptions();
+    const allDiscounts = this.discountOptions();
+    const discountedPrices = items.map((item: any) => {
+      const discountId = item?.discountId;
+      const discount = discountId ? allDiscounts.find((d: any) => d._id === discountId) : null;
+      if (!discount) return Number(item?.unitPrice ?? 0);
+      return discount.discountType === 'percentage'
+        ? Number(item.unitPrice ?? 0) * (1 - discount.value / 100)
+        : Math.max(0, Number(item.unitPrice ?? 0) - discount.value);
+    });
+    return calculateTotalsPerLine(items, lineTaxIds, allTaxes, discountedPrices);
+  });
+
+  statusOptions = computed(() => [
+    {
+      label: this.translationService.translate('sales.orderStatus.draft', {}, 'sales'),
+      value: 'draft',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.quote', {}, 'sales'),
+      value: 'quote',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.confirmed', {}, 'sales'),
+      value: 'confirmed',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.shipped', {}, 'sales'),
+      value: 'shipped',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.completed', {}, 'sales'),
+      value: 'completed',
+    },
+    {
+      label: this.translationService.translate('sales.orderStatus.cancelled', {}, 'sales'),
+      value: 'cancelled',
+    },
+  ]);
+
+  activeLanguage = this.translationService.activeLanguage;
+
+  readonly today = computed(() => {
+    const locale = this.activeLanguage();
+    return new Date().toLocaleDateString(locale);
+  });
+
+  private statusLabels = computed<Record<string, string>>(() => ({
+    draft: this.translationService.translate('sales.orderStatus.draft', {}, 'sales'),
+    quote: this.translationService.translate('sales.orderStatus.quote', {}, 'sales'),
+    confirmed: this.translationService.translate('sales.orderStatus.confirmed', {}, 'sales'),
+    shipped: this.translationService.translate('sales.orderStatus.shipped', {}, 'sales'),
+    completed: this.translationService.translate('sales.orderStatus.completed', {}, 'sales'),
+    cancelled: this.translationService.translate('sales.orderStatus.cancelled', {}, 'sales'),
+  }));
+
+  statusLabel = computed(() => this.statusLabels()[this.entry()?.status ?? ''] ?? '');
+
+  statusSteps = computed(() => {
+    const status = this.entry()?.status ?? 'draft';
+    const isCancelled = status === 'cancelled';
+    const labels = this.statusLabels();
+
+    const steps = [
+      { key: 'draft', label: labels['draft'] },
+      { key: 'quote', label: labels['quote'] },
+      { key: 'confirmed', label: labels['confirmed'] },
+      { key: 'shipped', label: labels['shipped'] },
+      { key: 'completed', label: labels['completed'] },
+    ];
+
+    const activeIndex = isCancelled ? -1 : steps.findIndex(s => s.key === status);
+
+    return steps.map((step, i) => ({
+      ...step,
+      done: !isCancelled && i < activeIndex,
+      active: !isCancelled && i === activeIndex,
+      future: isCancelled || i > activeIndex,
+    }));
+  });
 
   constructor() {
+    effect(() => {
+      const id = this.id();
+      const entry = this.entry();
+      if (id && entry?.number) {
+        this.dynamicBreadcrumb.set(id, entry.number);
+      }
+    });
+
+    this.destroy$.onDestroy(() => {
+      const id = this.id();
+      if (id) this.dynamicBreadcrumb.clear(id);
+    });
+
+    this.form.controls.amount.disable({ emitEvent: false });
+
+    effect(() => {
+      const preview = this.totalsPreview();
+      this.form.controls.amount.setValue(preview.grandTotal, { emitEvent: false });
+    });
+
     effect(() => {
       const entry = this.entry();
       if (entry) {
@@ -135,9 +284,10 @@ export class SalesOrderDetail {
         const companyId = companyData?._id ?? companyData ?? '';
         const salespersonData = entry.salesperson as any;
         const salespersonId = salespersonData?._id ?? salespersonData ?? '';
-
         const stageData = entry.stageId as any;
         const stageId = stageData?._id ?? stageData ?? '';
+        const currencyData = entry.currency as any;
+        const currencyId = currencyData?._id ?? currencyData ?? '';
 
         this.formService.patchValue({
           crmId,
@@ -145,8 +295,9 @@ export class SalesOrderDetail {
           company: companyId,
           salesperson: salespersonId,
           stageId,
+          status: entry.status ?? 'draft',
           amount: entry.amount,
-          currency: entry.currency,
+          currency: currencyId,
           closeDate: new Date(entry.closeDate),
           notes: entry.notes || '',
         });
@@ -161,14 +312,29 @@ export class SalesOrderDetail {
           quantity: item.quantity ?? 1,
           unitPrice: item.unitPrice ?? 0,
           total: item.total ?? 0,
+          taxIds: Array.isArray(item.taxIds)
+            ? item.taxIds
+                .map((id: any) =>
+                  typeof id === 'object' ? (id?._id?.toString() ?? '') : (id?.toString() ?? '')
+                )
+                .filter(Boolean)
+            : [],
+          discountId:
+            typeof item.discountId === 'object'
+              ? (item.discountId?._id ?? '')
+              : (item.discountId ?? ''),
         }));
-        this.formService.patchLineItems(mappedLineItems);
+        this.formService.initLineItems(mappedLineItems);
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {
         this.formService.reset();
         const defaultId = this.defaultStageId();
         if (defaultId) {
           this.formService.patchValue({ stageId: defaultId });
+        }
+        const defCurrency = this.defaultCurrencyId();
+        if (defCurrency && !this.form.controls.currency.value) {
+          this.formService.patchValue({ currency: defCurrency });
         }
       }
     });
@@ -179,16 +345,70 @@ export class SalesOrderDetail {
     this.router.navigate([isUpdate ? '../../' : '../'], { relativeTo: this.route });
   }
 
+  markAsQuote() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'quote')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsConfirmed() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'confirmed')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsShipped() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'shipped')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  markAsCompleted() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'completed')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  cancelOrder() {
+    if (!this.id()) return;
+    this.crudSalesOrders
+      .updateStatus(this.id(), 'cancelled')
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({ next: () => this.orderResource.reload() });
+  }
+
+  exportPdf() {
+    if (!this.id() || this.isPdfLoading()) return;
+    this.isPdfLoading.set(true);
+    this.crudSalesOrders
+      .openPdf(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => this.isPdfLoading.set(false),
+        error: () => this.isPdfLoading.set(false),
+      });
+  }
+
   handleSubmit(data: FormValueState<SalesOrderFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
 
-    const lineItems = (rawValue.lineItems ?? []).map((item: any) => ({
+    const lineTaxIds = this.formService.lineTaxIds();
+    const lineItems = (rawValue.lineItems ?? []).map((item: any, i: number) => ({
       productId: item.productId || undefined,
       description: item.description,
       quantity: item.quantity,
       unitPrice: item.unitPrice,
-      total: (item.quantity ?? 0) * (item.unitPrice ?? 0),
+      taxIds: lineTaxIds[i] ?? [],
+      discountId: item.discountId || null,
     }));
 
     const payload: Record<string, any> = {
@@ -197,7 +417,7 @@ export class SalesOrderDetail {
       company: rawValue.company,
       salesperson: rawValue.salesperson || undefined,
       stageId: rawValue.stageId || undefined,
-      amount: rawValue.amount,
+      status: rawValue.status as salesOrderStatus,
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,
@@ -220,9 +440,9 @@ export class SalesOrderDetail {
         .post({ data: payload })
         .pipe(takeUntilDestroyed(this.destroy$))
         .subscribe({
-          next: () => {
+          next: (newOrder: any) => {
             this.isSubmitLoading.set(false);
-            this.router.navigate(['../'], { relativeTo: this.route });
+            this.router.navigate(['../edit', newOrder._id], { relativeTo: this.route });
           },
           error: () => this.isSubmitLoading.set(false),
         });

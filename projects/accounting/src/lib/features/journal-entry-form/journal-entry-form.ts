@@ -22,10 +22,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { HttpClient } from '@angular/common/http';
-import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { DecimalPipe } from '@angular/common';
 import { JournalEntryFormService, JournalEntryFormModel } from '../../services/journal-entry-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-journal-entry-form',
@@ -39,6 +38,7 @@ import { JournalEntryFormService, JournalEntryFormModel } from '../../services/j
     ButtonModule,
     DatePickerModule,
     DecimalPipe,
+    TranslatePipe,
   ],
   templateUrl: './journal-entry-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,8 +51,7 @@ export class JournalEntryForm {
   private crudCurrencies = inject(CrudCurrencies);
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
-  private http = inject(HttpClient);
-  private apiURL = inject(LIBRARY_CONFIG).apiURL;
+  private translationService = inject(TranslationService);
 
   id = input<string>('');
 
@@ -70,7 +69,7 @@ export class JournalEntryForm {
       this.entryResource.isLoading() ||
       this.journalsResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPostLoading = signal(false);
@@ -87,17 +86,16 @@ export class JournalEntryForm {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(
-    this.formService.linesArray.valueChanges,
-    { initialValue: this.formService.linesArray.value },
-  );
+  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
+    initialValue: this.formService.linesArray.value,
+  });
 
   totalDebit = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0)
   );
 
   totalCredit = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0)
   );
 
   addLine() {
@@ -139,11 +137,11 @@ export class JournalEntryForm {
     const totalDebit = lines.reduce((s: number, l: any) => s + (l.debit ?? 0), 0);
     const totalCredit = lines.reduce((s: number, l: any) => s + (l.credit ?? 0), 0);
     if (Math.abs(totalDebit - totalCredit) > 0.0001) {
-      alert('Total debits must equal total credits.');
+      alert(this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting'));
       return;
     }
     if (lines.length < 2) {
-      alert('At least 2 lines are required.');
+      alert(this.translationService.translate('validation.minLinesRequired', {}, 'accounting'));
       return;
     }
 
@@ -157,18 +155,26 @@ export class JournalEntryForm {
       : this.crudJournalEntries.post({ data: payload as any });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }
 
   postEntry() {
     this.isPostLoading.set(true);
-    const url = `${this.apiURL}/accounting/journal-entries/${this.id()}/post`;
-    this.http.put(url, {}).pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isPostLoading.set(false); this.goBack(); },
-      error: () => this.isPostLoading.set(false),
-    });
+    this.crudJournalEntries
+      .postEntry(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isPostLoading.set(false);
+          this.goBack();
+        },
+        error: () => this.isPostLoading.set(false),
+      });
   }
 
   goBack() {

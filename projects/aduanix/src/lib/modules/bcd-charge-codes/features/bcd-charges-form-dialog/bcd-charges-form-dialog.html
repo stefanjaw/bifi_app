@@ -1,4 +1,8 @@
-<p-dialog header="New Charge" [(visible)]="dialogState" [modal]="true">
+<p-dialog
+  [header]="'dialogHeader.newCharge' | translate: {} : 'aduanix'"
+  [(visible)]="dialogState"
+  [modal]="true"
+>
   @if (!loading()) {
     <form
       [formGroup]="form"
@@ -8,7 +12,7 @@
     >
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Code</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'label.code' | translate: {} : 'aduanix' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="code"
@@ -20,21 +24,35 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Percentage</bifi-app-form-label>
-          <input pInputText formControlName="percentage" type="number" placeholder="Quantity" />
+          <bifi-app-form-label>
+            {{ 'column.percentage' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="percentage"
+            type="number"
+            [placeholder]="'placeholder.quantity' | translate: {} : 'aduanix'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Amount</bifi-app-form-label>
-          <input pInputText formControlName="amount" type="number" placeholder="Amount" />
+          <bifi-app-form-label>
+            {{ 'column.amount' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="amount"
+            type="number"
+            [placeholder]="'placeholder.amount' | translate: {} : 'aduanix'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </section>
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'button.cancel' | translate: {} : 'aduanix'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

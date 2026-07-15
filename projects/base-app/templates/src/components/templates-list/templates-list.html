@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Templates</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : 'base-app/templates' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Template"
+    [label]="'addNew' | translate: {} : 'base-app/templates'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -11,7 +11,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name, directory, filename and mime type"
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/templates'"
   [searchFilters]="templateFilters"
 ></bifi-app-search-bar>
 
@@ -21,6 +21,7 @@
   [data]="reportings"
   [onClickRow]="gotoEditTemplate"
   clickRowPermission="templates/update:view"
+  [scope]="'base-app/templates'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

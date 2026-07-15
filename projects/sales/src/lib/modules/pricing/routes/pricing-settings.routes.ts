@@ -7,7 +7,7 @@ export const PRICING_SETTINGS_ROUTES: Routes = [
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/pricing-settings-form/pricing-settings-form').then(
-        m => m.PricingSettingsFormComponent
+        m => m.PricingSettingsPage
       ),
     data: { resource: 'pricing-settings' },
   },

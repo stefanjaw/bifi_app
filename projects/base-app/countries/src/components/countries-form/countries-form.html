@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Country"
+  [title]="
+    (isUpdate() ? 'form.pageTitle.update' : 'form.pageTitle.create')
+      | translate: {} : 'base-app/countries'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,38 +21,60 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.generalInfo.title' | translate: {} : 'base-app/countries'"
+        id="general-info"
+        [ordinal]="1"
+      >
         <bifi-app-form-field class="mb-4">
-          <bifi-app-form-label>Name</bifi-app-form-label>
-          <input pInputText formControlName="name" type="text" placeholder="Name" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field class="mb-4">
-          <bifi-app-form-label>Code</bifi-app-form-label>
-          <input pInputText formControlName="code" type="text" placeholder="Code" />
-          <bifi-app-form-error></bifi-app-form-error>
-        </bifi-app-form-field>
-
-        <bifi-app-form-field class="mb-4">
-          <bifi-app-form-label>Currency Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'form.generalInfo.name' | translate: {} : 'base-app/countries' }}
+          </bifi-app-form-label>
           <input
             pInputText
-            formControlName="currencyCode"
+            formControlName="name"
             type="text"
-            placeholder="Currency Code"
+            [placeholder]="'form.generalInfo.name' | translate: {} : 'base-app/countries'"
           />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field class="mb-4">
-          <bifi-app-form-label>Currency Symbol</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'form.generalInfo.code' | translate: {} : 'base-app/countries' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="code"
+            type="text"
+            [placeholder]="'form.generalInfo.code' | translate: {} : 'base-app/countries'"
+          />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field class="mb-4">
+          <bifi-app-form-label>
+            {{ 'form.generalInfo.currencyCode' | translate: {} : 'base-app/countries' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="currencyCode"
+            type="text"
+            [placeholder]="'form.generalInfo.currencyCode' | translate: {} : 'base-app/countries'"
+          />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+
+        <bifi-app-form-field class="mb-4">
+          <bifi-app-form-label>
+            {{ 'form.generalInfo.currencySymbol' | translate: {} : 'base-app/countries' }}
+          </bifi-app-form-label>
           <input pInputText formControlName="currencySymbol" type="text" placeholder="$,€,¥" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/countries' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

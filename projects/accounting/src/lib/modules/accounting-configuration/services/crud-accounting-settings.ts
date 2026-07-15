@@ -13,19 +13,22 @@ export class CrudAccountingSettings extends ApiRequestManager<accountingSettings
     super.endpoint = 'accounting/settings';
   }
 
+  /** Returns a reactive resource ref that fetches the accounting settings */
   getSettings() {
     return rxResource<accountingSettings, void>({
       stream: () =>
-        this._httpClient.get<accountingSettings>(`${this._apiURL}/${this.endpoint}`).pipe(
-          catchError(() => of({} as accountingSettings))
-        ),
+        this._httpClient
+          .get<accountingSettings>(`${this._apiURL}/${this.endpoint}`)
+          .pipe(catchError(() => of({} as accountingSettings))),
     });
   }
 
+  /**
+   * Saves updated accounting settings to the server
+   * @param data - Updated accounting settings
+   * @returns Observable of the updated accounting settings
+   */
   putSettings(data: Record<string, any>): Observable<accountingSettings | undefined> {
-    return this._httpClient.put<accountingSettings>(
-      `${this._apiURL}/${this.endpoint}`,
-      data
-    );
+    return this._httpClient.put<accountingSettings>(`${this._apiURL}/${this.endpoint}`, data);
   }
 }

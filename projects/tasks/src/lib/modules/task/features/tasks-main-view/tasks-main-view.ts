@@ -22,6 +22,8 @@ import dayjs from 'dayjs';
 import { TasksMaintenanceContext } from '../../services/tasks-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
+import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CreateTasksFormDialog } from '../create-tasks-form-dialog/create-tasks-form-dialog';
 import { UpdateTasksFormDialog } from '../update-tasks-form-dialog/update-tasks-form-dialog';
 import {
@@ -68,12 +70,14 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     PopoverModule,
     TasksListView,
     GanttView,
+    HasPermission,
     CreateTasksFormDialog,
     UpdateTasksFormDialog,
     SearchBar,
     FilterBar,
     TimelineView,
     CalendarView,
+    TranslatePipe,
   ],
   templateUrl: './tasks-main-view.html',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
@@ -280,6 +284,7 @@ export class TasksMainView {
       parentId: t.parentId?._id || null,
       sequence: t.sequence ?? 1,
       stage: t.stage,
+      color: t.stage?.color,
       priority: t.priority,
       projectName: t.projectId?.name,
       assignedUserName: t.assigned?.username,

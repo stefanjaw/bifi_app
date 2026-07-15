@@ -13,6 +13,7 @@ import { maintenanceWindow } from '../../../../maintenance-windows';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { preventiveMaintenanceStatus } from './maintenance-status.model';
 import { FormModule } from '@avalantec/base-app/form';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-maintenance-service-section',
@@ -25,6 +26,8 @@ import { FormModule } from '@avalantec/base-app/form';
     DatePickerModule,
     ButtonModule,
     FormModule,
+    LocaleDatePipe,
+    TranslatePipe,
   ],
   templateUrl: './maintenance-service-section.html',
 })
@@ -84,27 +87,31 @@ export class MaintenanceServiceSection {
     )
       return false;
 
-    return !this.serviceStarted() && !this.isEditMode();
+    return !this.serviceStarted() && !this.pmStarted();
   });
 
-  // to check if PM is started
+  // to check if PM is currently active (a finished PM has active === false)
   pmStarted = computed(() => {
-    return !!this.assetRoster()?.assetMaintenances.find(m => m.type === 'preventive-maintenance');
+    return !!this.assetRoster()?.assetMaintenances.find(
+      m => m.type === 'preventive-maintenance' && m.active
+    );
   });
 
-  // to check if service is started
+  // to check if a service is currently active
   serviceStarted = computed(() => {
-    return !!this.assetRoster()?.assetMaintenances.find(m => m.type === 'service');
+    return !!this.assetRoster()?.assetMaintenances.find(m => m.type === 'service' && m.active);
   });
 
-  // to get current PM
+  // to get current (active) PM
   currPM = computed(() => {
-    return this.assetRoster()?.assetMaintenances.find(m => m.type === 'preventive-maintenance');
+    return this.assetRoster()?.assetMaintenances.find(
+      m => m.type === 'preventive-maintenance' && m.active
+    );
   });
 
-  // to get current service
+  // to get current (active) service
   currService = computed(() => {
-    return this.assetRoster()?.assetMaintenances.find(m => m.type === 'service');
+    return this.assetRoster()?.assetMaintenances.find(m => m.type === 'service' && m.active);
   });
 
   pmScheduleStatus = computed(() => {

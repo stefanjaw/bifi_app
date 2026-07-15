@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Fiscal Position' : 'New Fiscal Position'"
+  [title]="
+    isUpdate()
+      ? ('form.editFiscalPosition' | translate: {} : 'accounting')
+      : ('form.newFiscalPosition' | translate: {} : 'accounting')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,89 +22,137 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Fiscal Position Details" id="fp-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.fiscalPositionDetails' | translate: {} : 'accounting'"
+        id="fp-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. EU VAT Position" />
+            <bifi-app-form-label>
+              {{ 'form.label.name' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'placeholders.e.g.EU-VAT' | translate: {} : 'accounting'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (isUpdate()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>Active</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.label.active' | translate: {} : 'accounting' }}
+              </bifi-app-form-label>
               <p-toggleSwitch formControlName="active"></p-toggleSwitch>
             </bifi-app-form-field>
           }
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Tax Mappings" id="tax-mappings" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.taxMappings' | translate: {} : 'accounting'"
+        id="tax-mappings"
+        [ordinal]="2"
+      >
         <div class="flex flex-col gap-4">
           @for (mapping of taxMappings; track $index) {
             <div class="flex gap-4 items-end border rounded p-4">
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>From Tax</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'form.label.fromTax' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
                 <p-select
                   [formControl]="$any(mapping.get('fromTaxId'))"
                   [options]="taxes() || []"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select tax"
+                  [placeholder]="'placeholders.selectTax' | translate: {} : 'accounting'"
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>To Tax</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'form.label.toTax' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
                 <p-select
                   [formControl]="$any(mapping.get('toTaxId'))"
                   [options]="taxes() || []"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select tax"
+                  [placeholder]="'placeholders.selectTax' | translate: {} : 'accounting'"
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
-              <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeTaxMapping($index)"></p-button>
+              <p-button
+                severity="danger"
+                icon="pi pi-trash"
+                [label]="'buttons.remove' | translate: {} : 'accounting'"
+                (onClick)="removeTaxMapping($index)"
+              ></p-button>
             </div>
           }
           <div>
-            <p-button severity="secondary" icon="pi pi-plus" label="Add Tax Mapping" (onClick)="addTaxMapping()"></p-button>
+            <p-button
+              severity="secondary"
+              icon="pi pi-plus"
+              [label]="'buttons.addTaxMapping' | translate: {} : 'accounting'"
+              (onClick)="addTaxMapping()"
+            ></p-button>
           </div>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Account Mappings" id="account-mappings" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'form.accountMappings' | translate: {} : 'accounting'"
+        id="account-mappings"
+        [ordinal]="3"
+      >
         <div class="flex flex-col gap-4">
           @for (mapping of accountMappings; track $index) {
             <div class="flex gap-4 items-end border rounded p-4">
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>From Account</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'form.label.fromAccount' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
                 <p-select
                   [formControl]="$any(mapping.get('fromAccountId'))"
                   [options]="accounts() || []"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select account"
+                  [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>To Account</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'form.label.toAccount' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
                 <p-select
                   [formControl]="$any(mapping.get('toAccountId'))"
                   [options]="accounts() || []"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select account"
+                  [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
                   [filter]="true"
                 ></p-select>
               </bifi-app-form-field>
-              <p-button severity="danger" icon="pi pi-trash" label="Remove" (onClick)="removeAccountMapping($index)"></p-button>
+              <p-button
+                severity="danger"
+                icon="pi pi-trash"
+                [label]="'buttons.remove' | translate: {} : 'accounting'"
+                (onClick)="removeAccountMapping($index)"
+              ></p-button>
             </div>
           }
           <div>
-            <p-button severity="secondary" icon="pi pi-plus" label="Add Account Mapping" (onClick)="addAccountMapping()"></p-button>
+            <p-button
+              severity="secondary"
+              icon="pi pi-plus"
+              [label]="'buttons.addAccountMapping' | translate: {} : 'accounting'"
+              (onClick)="addAccountMapping()"
+            ></p-button>
           </div>
         </div>
       </bifi-app-form-section>

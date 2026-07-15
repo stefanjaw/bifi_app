@@ -13,12 +13,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { invoiceColumns } from '../../libraries/invoice-columns';
 import { invoiceFilters } from '../../libraries/invoice-filters';
+import { PluginSlot } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-invoices-list',
   providers: [provideResourceManager(CrudInvoices)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    PluginSlot,
+    TranslatePipe,
+  ],
   templateUrl: './invoices-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

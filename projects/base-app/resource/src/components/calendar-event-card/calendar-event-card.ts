@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalendarEvent } from '../../interfaces/calendar';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 
 const COLOR_MAP = {
   blue: {
@@ -32,7 +33,7 @@ const COLOR_MAP = {
 
 @Component({
   selector: 'bifi-app-calendar-event-card',
-  imports: [CommonModule],
+  imports: [CommonModule, LocaleDatePipe],
   templateUrl: './calendar-event-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,10 +15,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TextareaModule } from 'primeng/textarea';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CrudPurchaseStages } from '../../services/crud-purchase-stages';
 import { PurchaseStageForm, PurchaseStageFormModel } from '../../services/purchase-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-stages-form',
@@ -30,6 +32,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    ToggleSwitchModule,
+    TranslatePipe,
   ],
   templateUrl: './purchase-stages-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +69,7 @@ export class PurchaseStagesForm {
           description: s.description ?? '',
           color: s.color,
           order: s.order,
+          isDefault: s.isDefault ?? false,
         });
         this.formService.resetDirtyState();
       } else {

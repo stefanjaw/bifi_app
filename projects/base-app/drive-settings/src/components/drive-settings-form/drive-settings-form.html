@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="Google Drive Configuration"
+  [title]="'pageTitle' | translate: {} : 'base-app/drive-settings'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -17,17 +17,25 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Service Account" id="service-account" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'serviceAccount.sectionTitle' | translate: {} : 'base-app/drive-settings'"
+        id="service-account"
+        [ordinal]="1"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Paste the Google service account JSON key to connect to Google Drive.
+          {{ 'serviceAccount.description' | translate: {} : 'base-app/drive-settings' }}
         </p>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Service Account Key (JSON)</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'serviceAccount.keyLabel' | translate: {} : 'base-app/drive-settings' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="serviceAccountKey"
-            placeholder="Paste service account JSON key here"
+            [placeholder]="
+              'serviceAccount.keyPlaceholder' | translate: {} : 'base-app/drive-settings'
+            "
             rows="4"
             class="w-full font-mono text-xs"
           ></textarea>

@@ -20,10 +20,19 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { JournalFormService, JournalFormModel } from '../../services/journal-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-journal-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './journal-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,7 +58,7 @@ export class JournalForm {
     () =>
       this.journalResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -57,12 +66,20 @@ export class JournalForm {
   accounts = this.accountsResource.value;
   currencies = this.currenciesResource.value;
 
+  private translationService = inject(TranslationService);
+
   journalTypeOptions = [
-    { label: 'Sales', value: 'sales' },
-    { label: 'Purchase', value: 'purchase' },
-    { label: 'Cash', value: 'cash' },
-    { label: 'Bank', value: 'bank' },
-    { label: 'General', value: 'general' },
+    { label: this.translationService.translate('options.sales', {}, 'accounting'), value: 'sales' },
+    {
+      label: this.translationService.translate('options.purchase', {}, 'accounting'),
+      value: 'purchase',
+    },
+    { label: this.translationService.translate('options.cash', {}, 'accounting'), value: 'cash' },
+    { label: this.translationService.translate('options.bank', {}, 'accounting'), value: 'bank' },
+    {
+      label: this.translationService.translate('options.general', {}, 'accounting'),
+      value: 'general',
+    },
   ];
 
   constructor() {
@@ -99,7 +116,10 @@ export class JournalForm {
       : this.crudJournals.post({ data: payload });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => { this.isSubmitLoading.set(false); this.goBack(); },
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
       error: () => this.isSubmitLoading.set(false),
     });
   }

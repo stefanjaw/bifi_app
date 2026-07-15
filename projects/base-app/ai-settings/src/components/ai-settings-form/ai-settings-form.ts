@@ -16,11 +16,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudAiSettings } from '../../services/crud-ai-settings';
-import {
-  AiSettingsForm,
-  AiSettingsFormModel,
-} from '../../services/ai-settings-form';
+import { AiSettingsForm, AiSettingsFormModel } from '../../services/ai-settings-form';
 import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-ai-settings-form',
@@ -32,11 +30,12 @@ import { aiSettings, promptVersion } from '../../interfaces/ai-settings';
     TextareaModule,
     InputNumberModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './ai-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AiSettingsFormComponent {
+export class AiSettingsPage {
   private crudSettings = inject(CrudAiSettings);
   private formService = inject(AiSettingsForm);
   private fb = inject(FormBuilder);
@@ -72,7 +71,7 @@ export class AiSettingsFormComponent {
       const versions = settings.promptVersions ?? [];
       this.promptVersions.set(versions);
       this.promptForms.set(
-        versions.map((v) =>
+        versions.map(v =>
           this.fb.group({
             name: [v.name],
             prompt: [v.prompt],
@@ -91,11 +90,11 @@ export class AiSettingsFormComponent {
       version: [1],
       _id: [''],
     });
-    this.promptForms.update((forms) => [...forms, newForm]);
+    this.promptForms.update(forms => [...forms, newForm]);
   }
 
   protected removePromptVersion(index: number) {
-    this.promptForms.update((forms) => forms.filter((_, i) => i !== index));
+    this.promptForms.update(forms => forms.filter((_, i) => i !== index));
   }
 
   protected handleSubmit(state: FormValueState<AiSettingsFormModel>) {
@@ -108,10 +107,9 @@ export class AiSettingsFormComponent {
     if (rawValue.apiKey) payload['apiKey'] = rawValue.apiKey;
     if (rawValue.model) payload['model'] = rawValue.model;
     if (rawValue.embeddingModel) payload['embeddingModel'] = rawValue.embeddingModel;
-    if (rawValue.maxTokenLimit)
-      payload['maxTokenLimit'] = Number(rawValue.maxTokenLimit);
+    if (rawValue.maxTokenLimit) payload['maxTokenLimit'] = Number(rawValue.maxTokenLimit);
 
-    const versions = this.promptForms().map((fg) => {
+    const versions = this.promptForms().map(fg => {
       const val = fg.getRawValue();
       const entry: Record<string, unknown> = {
         name: val.name,

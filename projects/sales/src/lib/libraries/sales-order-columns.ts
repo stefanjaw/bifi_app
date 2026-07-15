@@ -4,51 +4,57 @@ import { salesOrder } from '../interfaces/sales-order';
 export const salesOrderColumns: tableColumn<salesOrder>[] = [
   {
     field: 'number',
-    title: 'Order #',
+    title: 'sales.columns.orderNumber',
     type: 'text',
     sortable: true,
   },
   {
     field: 'stageId.name',
-    title: 'Stage',
+    title: 'sales.columns.stage',
     type: 'text',
     sortable: true,
   },
   {
     field: 'crmId.title',
-    title: 'Deal',
+    title: 'sales.columns.deal',
     type: 'text',
   },
   {
     field: 'company.name',
-    title: 'Company',
+    title: 'sales.columns.company',
     type: 'text',
   },
   {
     field: 'contact.name',
-    title: 'Contact',
+    title: 'sales.columns.contact',
     type: 'text',
   },
   {
-    field: 'amount',
-    title: 'Amount',
+    field: 'grandTotal',
+    title: 'sales.columns.grandTotal',
     type: 'currency',
     sortable: true,
   },
   {
-    field: 'currency',
-    title: 'Currency',
+    field: 'taxTotal',
+    title: 'sales.columns.tax',
+    type: 'currency',
+    sortable: true,
+  },
+  {
+    field: 'currency.code',
+    title: 'sales.columns.currency',
     type: 'text',
   },
   {
     field: 'closeDate',
-    title: 'Close Date',
+    title: 'sales.columns.closeDate',
     type: 'date',
     sortable: true,
   },
   {
     field: 'salesperson.username',
-    title: 'Sales Rep',
+    title: 'sales.columns.salesRep',
     type: 'text',
   },
 ];

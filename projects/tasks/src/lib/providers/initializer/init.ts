@@ -19,7 +19,8 @@ function initializeMenu() {
       item: {
         icon: PrimeIcons.LIST_CHECK,
         routerLink: ['/tasks'],
-        label: 'Tasks',
+        label: 'menu.tasks',
+        scope: 'tasks',
         resource: 'tasks/menu',
         showInMainMenu: true,
       },
@@ -27,19 +28,22 @@ function initializeMenu() {
     {
       item: {
         icon: PrimeIcons.COG,
-        label: 'Tasks',
+        label: 'menu.tasks',
+        scope: 'tasks',
         resource: 'tasks/settings/menu',
         items: [
           {
             icon: PrimeIcons.LIST,
             routerLink: ['/settings/tasks/task-stages'],
-            label: 'Task Stages',
+            label: 'menu.taskStages',
+            scope: 'tasks',
             resource: 'task-stages/menu',
           },
           {
             icon: PrimeIcons.TAG,
             routerLink: ['/settings/tasks/task-types'],
-            label: 'Task Types',
+            label: 'menu.taskTypes',
+            scope: 'tasks',
             resource: 'task-types/menu',
           },
         ],

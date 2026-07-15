@@ -1,0 +1,345 @@
+<bifi-app-form-layout
+  [title]="'settings.pageTitle' | translate: {} : 'email-marketing'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section
+        [title]="'settings.section.sendingProvider' | translate: {} : 'email-marketing'"
+        id="provider"
+        [ordinal]="1"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'settings.label.emailServiceProvider' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="provider"
+              [options]="providerOptions"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onProviderChange($event.value)"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+
+        @if (selectedProvider() === 'resend') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.resendApiKey' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="resendApiKey"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.resendApiKey' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'mailgun') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.mailgunApiKey' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="mailgunApiKey"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.mailgunApiKey' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.mailgunDomain' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="mailgunDomain"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.mailgunDomain' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.region' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <p-select
+                formControlName="mailgunRegion"
+                [options]="mailgunRegionOptions"
+                optionLabel="label"
+                optionValue="value"
+                class="w-full"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'ses') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.accessKeyId' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sesAccessKeyId"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.accessKeyId' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.secretAccessKey' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sesSecretAccessKey"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.secretAccessKey' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.region' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sesRegion"
+                type="text"
+                [placeholder]="'settings.placeholder.sesRegion' | translate: {} : 'email-marketing'"
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        @if (selectedProvider() === 'sendgrid') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'settings.label.sendgridApiKey' | translate: {} : 'email-marketing' }}
+              </bifi-app-form-label>
+              <input
+                pInputText
+                formControlName="sendgridApiKey"
+                type="text"
+                [placeholder]="
+                  'settings.placeholder.sendgridApiKey' | translate: {} : 'email-marketing'
+                "
+              />
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          </div>
+        }
+
+        <div class="mt-4 flex items-center gap-3">
+          <p-button
+            [label]="'buttons.testConnection' | translate: {} : 'email-marketing'"
+            severity="secondary"
+            icon="pi pi-bolt"
+            [loading]="testLoading()"
+            (onClick)="testConnection()"
+            type="button"
+          ></p-button>
+          @if (testResult(); as result) {
+            <p-message
+              [severity]="result.ok ? 'success' : 'error'"
+              [text]="result.message"
+            ></p-message>
+          }
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'settings.section.senderDefaults' | translate: {} : 'email-marketing'"
+        id="sender"
+        [ordinal]="2"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.fromName' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="fromName"
+              type="text"
+              [placeholder]="'settings.placeholder.fromName' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.fromEmail' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="fromEmail"
+              type="email"
+              [placeholder]="'settings.placeholder.fromEmail' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.replyTo' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="replyTo"
+              type="email"
+              [placeholder]="'settings.placeholder.replyTo' | translate: {} : 'email-marketing'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'settings.label.publicBaseUrl' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="publicBaseUrl"
+              type="text"
+              [placeholder]="
+                'settings.placeholder.publicBaseUrl' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'settings.section.trackingAndFooter' | translate: {} : 'email-marketing'"
+        id="tracking"
+        [ordinal]="3"
+      >
+        <div class="flex flex-col gap-6">
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox
+                formControlName="trackOpens"
+                [binary]="true"
+                inputId="trackOpens"
+              ></p-checkbox>
+              <label for="trackOpens" class="cursor-pointer font-medium text-gray-700">
+                {{ "{{ 'settings.label.trackOpens' | translate : {} : 'email-marketing' }}" }}
+              </label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox
+                formControlName="trackClicks"
+                [binary]="true"
+                inputId="trackClicks"
+              ></p-checkbox>
+              <label for="trackClicks" class="cursor-pointer font-medium text-gray-700">
+                {{ "{{ 'settings.label.trackClicks' | translate : {} : 'email-marketing' }}" }}
+              </label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'settings.label.footerText' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <textarea
+              pInputTextarea
+              formControlName="footerText"
+              [placeholder]="'settings.placeholder.footerText' | translate: {} : 'email-marketing'"
+              rows="2"
+            ></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'settings.label.unsubscribeText' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="unsubscribeText"
+              type="text"
+              [placeholder]="
+                'settings.placeholder.unsubscribeText' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'settings.section.testMode' | translate: {} : 'email-marketing'"
+        id="test-mode"
+        [ordinal]="4"
+      >
+        <div class="flex flex-col gap-6">
+          <bifi-app-form-field>
+            <div class="flex items-center gap-3">
+              <p-checkbox
+                formControlName="testMode"
+                [binary]="true"
+                inputId="testMode"
+              ></p-checkbox>
+              <label for="testMode" class="cursor-pointer font-medium text-gray-700">
+                {{ "{{ 'settings.label.testMode' | translate : {} : 'email-marketing' }}" }}
+              </label>
+            </div>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'settings.label.testRecipient' | translate: {} : 'email-marketing' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="testRecipient"
+              type="email"
+              [placeholder]="
+                'settings.placeholder.testRecipient' | translate: {} : 'email-marketing'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

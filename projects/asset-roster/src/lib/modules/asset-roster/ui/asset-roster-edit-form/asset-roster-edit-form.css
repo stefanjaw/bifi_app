@@ -1,0 +1,68 @@
+:host ::ng-deep bifi-app-form-section > header h3 {
+  color: rgb(17 24 39);
+  font-size: 1rem;
+  font-weight: 600;
+  border-left: 3px solid #c8a026;
+  padding-left: 0.625rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+:host ::ng-deep bifi-app-form-section > p-divider {
+  display: none;
+}
+
+:host ::ng-deep bifi-app-form-section > div.mt-6 {
+  margin-top: 1.25rem;
+}
+
+:host ::ng-deep .p-tabs .p-tablist {
+  background: transparent;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+:host ::ng-deep .p-tabs .p-tablist-active-bar {
+  background-color: #c8a026 !important;
+}
+
+:host ::ng-deep .p-tabs .p-tab[data-p-active='true'],
+:host ::ng-deep .p-tabs .p-tab[aria-selected='true'] {
+  color: rgb(17 24 39);
+}
+
+:host ::ng-deep .p-tabs,
+:host ::ng-deep .p-tabs .p-tabpanels,
+:host ::ng-deep .p-tabs .p-tabpanel {
+  background: transparent;
+  padding: 0;
+}
+
+:host ::ng-deep .asset-photo-thumbnail {
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+:host ::ng-deep .asset-photo-thumbnail:hover {
+  opacity: 0.85;
+  transform: scale(1.01);
+}
+
+/* Asset Photo card: hide filename, keep buttons within the card */
+:host ::ng-deep .photo-uploader-wrap .p-fileupload-filename {
+  display: none;
+}
+
+:host ::ng-deep .photo-uploader-wrap .p-fileupload-basic {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .photo-uploader-wrap .p-fileupload-basic .p-button {
+  width: 100%;
+  justify-content: center;
+}

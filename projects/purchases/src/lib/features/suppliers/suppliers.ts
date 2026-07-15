@@ -4,13 +4,15 @@ import { CrudSuppliers } from '../../services/crud-suppliers';
 import { supplierColumns } from '../../libraries/supplier-columns';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-suppliers',
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, RouterLink],
+  imports: [TableLayout, ButtonModule, RouterLink, HasPermission, TranslatePipe],
   templateUrl: './suppliers.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,7 +22,7 @@ export class Suppliers {
   showAll = signal(false);
   supplierColumns = supplierColumns;
 
-  searchParams = computed(() => this.showAll() ? { showAll: 'true' } : {});
+  searchParams = computed(() => (this.showAll() ? { showAll: 'true' } : {}));
 
   suppliersResource = this.crudSuppliers.getWithPagination({
     searchParams: this.searchParams,

@@ -1,49 +1,243 @@
-<bifi-app-form-layout
-  [title]="isUpdate() ? 'Sales Order: ' + (entry()?.number ?? '') : 'New Sales Order'"
-  titlePosition="center"
-  class="block px-4 bg-gray-50 py-4"
->
+<div class="block px-4 bg-gray-50 py-4">
   <form
-    ngProjectAs="div"
     [formGroup]="form"
     bifiAppFormActionsHandler
     (appSubmit)="handleSubmit($event)"
     class="min-h-screen flex flex-col gap-6"
   >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
+    @if (isUpdate() && entry()) {
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <!-- Compact action strip: Back | [Export PDF] [Save] -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+          <p-button
+            [label]="'sales.actions.back' | translate: {} : 'sales'"
+            icon="pi pi-arrow-left"
+            [text]="true"
+            size="small"
+            type="button"
+            (onClick)="goBack()"
+          ></p-button>
+          <div class="flex items-center gap-2">
+            <p-button
+              [icon]="isPdfLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-file-pdf'"
+              [text]="true"
+              size="small"
+              type="button"
+              [pTooltip]="
+                isPdfLoading()
+                  ? ('sales.actions.generating' | translate: {} : 'sales')
+                  : ('sales.actions.exportPdf' | translate: {} : 'sales')
+              "
+              tooltipPosition="bottom"
+              [disabled]="isPdfLoading()"
+              (onClick)="exportPdf()"
+            ></p-button>
+            @if (form.dirty) {
+              <p-button
+                [label]="
+                  isSubmitLoading()
+                    ? ('sales.actions.saving' | translate: {} : 'sales')
+                    : ('sales.actions.save' | translate: {} : 'sales')
+                "
+                [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
+                size="small"
+                type="submit"
+                [disabled]="isSubmitLoading()"
+              ></p-button>
+            }
+          </div>
+        </div>
+
+        <!-- Missing sequence number warning -->
+        @if (!entry()!.number) {
+          <div
+            class="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-amber-800 text-sm"
+          >
+            <i class="pi pi-exclamation-triangle text-amber-500 shrink-0"></i>
+            <span>{{ 'sales.orderDetail.missingSequence' | translate: {} : 'sales' }}</span>
+          </div>
+        }
+
+        <!-- Stepper row -->
+        <div class="px-6 py-4 flex items-center gap-6 min-h-18">
+          <!-- Left: status badge + SO number -->
+          <div class="flex flex-col gap-0.5 shrink-0 min-w-30">
+            <span
+              class="text-[10px] font-bold tracking-widest uppercase"
+              [class]="
+                entry()!.status === 'cancelled'
+                  ? 'text-red-500'
+                  : entry()!.status === 'completed'
+                    ? 'text-green-600'
+                    : 'text-blue-600'
+              "
+            >
+              {{ statusLabel() }}
+            </span>
+            <span class="text-base font-bold text-gray-900 whitespace-nowrap">
+              {{ entry()!.number ?? '—' }}
+            </span>
+          </div>
+
+          <!-- Center: horizontal stepper -->
+          <div class="flex-1 flex items-start min-w-0">
+            @for (step of statusSteps(); track step.key; let last = $last) {
+              <div class="flex flex-col items-center">
+                <div
+                  class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors"
+                  [class]="
+                    step.done
+                      ? 'bg-blue-600 border-blue-600'
+                      : step.active
+                        ? 'bg-white border-blue-600 ring-4 ring-blue-50'
+                        : 'bg-white border-gray-300'
+                  "
+                >
+                  @if (step.done) {
+                    <i class="pi pi-check text-white" style="font-size: 10px"></i>
+                  }
+                </div>
+                <span
+                  class="mt-1.5 text-[11px] font-medium text-center whitespace-nowrap"
+                  [class]="
+                    step.active ? 'text-blue-600' : step.done ? 'text-gray-600' : 'text-gray-400'
+                  "
+                >
+                  {{ step.label }}
+                </span>
+                @if (step.active) {
+                  <span class="text-[10px] text-gray-400 mt-0.5">{{ today() }}</span>
+                }
+              </div>
+              @if (!last) {
+                <div
+                  class="flex-1 h-px mt-3.5 mx-2"
+                  [class]="step.done ? 'bg-blue-600' : 'bg-gray-200'"
+                ></div>
+              }
+            }
+            @if (entry()!.status === 'cancelled') {
+              <div class="w-6 h-px mt-3.5 mx-2 bg-gray-200"></div>
+              <div class="flex flex-col items-center">
+                <div
+                  class="w-7 h-7 rounded-full border-2 flex items-center justify-center bg-red-50 border-red-400"
+                >
+                  <i class="pi pi-times text-red-500" style="font-size: 10px"></i>
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-red-500 whitespace-nowrap">
+                  {{ 'sales.orderStatus.cancelled' | translate: {} : 'sales' }}
+                </span>
+                <span class="text-[10px] text-gray-400 mt-0.5">{{ today() }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Right: contextual action button -->
+          <div class="shrink-0 flex items-center gap-2">
+            @switch (entry()!.status) {
+              @case ('draft') {
+                <p-button
+                  [label]="'sales.actions.sendQuote' | translate: {} : 'sales'"
+                  icon="pi pi-send"
+                  (onClick)="markAsQuote()"
+                ></p-button>
+              }
+              @case ('quote') {
+                <p-button
+                  [label]="'sales.actions.confirmOrder' | translate: {} : 'sales'"
+                  icon="pi pi-check"
+                  (onClick)="markAsConfirmed()"
+                ></p-button>
+              }
+              @case ('confirmed') {
+                <p-button
+                  [label]="'sales.actions.markShipped' | translate: {} : 'sales'"
+                  icon="pi pi-truck"
+                  (onClick)="markAsShipped()"
+                ></p-button>
+              }
+              @case ('shipped') {
+                <p-button
+                  [label]="'sales.actions.markCompleted' | translate: {} : 'sales'"
+                  icon="pi pi-check-circle"
+                  severity="success"
+                  (onClick)="markAsCompleted()"
+                ></p-button>
+              }
+            }
+            @if (entry()!.status !== 'cancelled') {
+              <p-button
+                [label]="'sales.actions.cancelOrder' | translate: {} : 'sales'"
+                icon="pi pi-times"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="cancelOrder()"
+              ></p-button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (!isUpdate()) {
+      <div class="flex items-center justify-between">
+        <p-button
+          [label]="'sales.actions.back' | translate: {} : 'sales'"
+          icon="pi pi-arrow-left"
+          [text]="true"
+          size="small"
+          type="button"
+          (onClick)="goBack()"
+        ></p-button>
+        @if (form.dirty) {
+          <p-button
+            [label]="
+              isSubmitLoading()
+                ? ('sales.actions.saving' | translate: {} : 'sales')
+                : ('sales.actions.save' | translate: {} : 'sales')
+            "
+            [icon]="isSubmitLoading() ? 'pi pi-spinner pi-spin' : 'pi pi-cloud-upload'"
+            size="small"
+            type="submit"
+            [disabled]="isSubmitLoading()"
+          ></p-button>
+        }
+      </div>
+    }
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="General Information" id="order-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'sales.section.generalInformation' | translate: {} : 'sales'"
+        id="order-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <bifi-app-form-field>
-            <bifi-app-form-label>Opportunity</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.opportunity' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="crmId"
               [options]="crmOptions()"
               optionLabel="title"
               optionValue="_id"
-              placeholder="Select an opportunity"
+              [placeholder]="'sales.placeholder.selectOpportunity' | translate: {} : 'sales'"
               [filter]="true"
               filterBy="title"
-              [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Contact *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.contactRequired' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contact"
               [options]="contactOptions()"
               optionLabel="fullName"
               optionValue="_id"
-              placeholder="Select a contact"
+              [placeholder]="'sales.placeholder.selectContact' | translate: {} : 'sales'"
               [filter]="true"
               filterBy="fullName,email"
             ></p-select>
@@ -51,13 +245,15 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Company *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.companyRequired' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="company"
               [options]="companyOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a company"
+              [placeholder]="'sales.placeholder.selectCompany' | translate: {} : 'sales'"
               [filter]="true"
               filterBy="name"
             ></p-select>
@@ -65,50 +261,44 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Salesperson</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.salesperson' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="salesperson"
               [options]="userOptions()"
               optionLabel="username"
               optionValue="_id"
-              placeholder="Select a salesperson"
+              [placeholder]="'sales.placeholder.selectSalesperson' | translate: {} : 'sales'"
               [filter]="true"
-              [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Amount *</bifi-app-form-label>
-            <p-inputnumber
-              formControlName="amount"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-              placeholder="0.00"
-            ></p-inputnumber>
-            <bifi-app-form-error></bifi-app-form-error>
-          </bifi-app-form-field>
-
-          <bifi-app-form-field>
-            <bifi-app-form-label>Currency</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.status' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
-              formControlName="currency"
-              [options]="currencyOptions"
+              formControlName="status"
+              [options]="statusOptions()"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select currency"
+              [placeholder]="'sales.placeholder.selectStatus' | translate: {} : 'sales'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Stage</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.pipelineStage' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="stageId"
               [options]="stageOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a stage"
+              [placeholder]="'sales.placeholder.selectStage' | translate: {} : 'sales'"
               [filter]="true"
               filterBy="name"
               [showClear]="true"
@@ -117,11 +307,45 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Close Date *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.form.amount' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-inputnumber
+              formControlName="amount"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              [placeholder]="'sales.placeholder.amount' | translate: {} : 'sales'"
+            ></p-inputnumber>
+            <small class="text-gray-500">
+              {{ 'sales.orderDetail.amountCalculated' | translate: {} : 'sales' }}
+            </small>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.form.currencyRequired' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="currency"
+              [options]="currencyOptions()"
+              optionLabel="code"
+              optionValue="_id"
+              [placeholder]="'sales.placeholder.selectCurrency' | translate: {} : 'sales'"
+              [filter]="true"
+              filterBy="code,name"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.form.closeDateRequired' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="closeDate"
               dateFormat="mm/dd/yy"
-              placeholder="Select date"
+              [placeholder]="'sales.placeholder.selectDate' | translate: {} : 'sales'"
               [showIcon]="true"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
@@ -129,19 +353,59 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Order Items" id="order-items" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'sales.section.orderItems' | translate: {} : 'sales'"
+        id="order-items"
+        [ordinal]="2"
+      >
         <bifi-app-line-items-table
           [productOptions]="productOptions()"
+          [taxOptions]="taxOptions()"
+          [discountOptions]="discountOptions()"
           [stockMap]="stockMap()"
           [readonly]="false"
         ></bifi-app-line-items-table>
+
+        <div class="mt-6 flex flex-col items-end gap-2">
+          <div class="w-full max-w-sm space-y-2">
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>{{ 'sales.orderDetail.subtotal' | translate: {} : 'sales' }}</span>
+              <span class="font-medium">{{ totalsPreview().subtotal | number: '1.2-2' }}</span>
+            </div>
+            @for (appliedTax of totalsPreview().appliedTaxes; track appliedTax.taxId) {
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>{{ appliedTax.name }} ({{ appliedTax.percentage }}%)</span>
+                <span>{{ appliedTax.amount | number: '1.2-2' }}</span>
+              </div>
+            }
+            <div class="flex justify-between text-sm text-gray-600 border-t pt-1">
+              <span>{{ 'sales.orderDetail.taxTotal' | translate: {} : 'sales' }}</span>
+              <span>{{ totalsPreview().taxTotal | number: '1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between font-semibold text-base border-t pt-1">
+              <span>{{ 'sales.orderDetail.grandTotal' | translate: {} : 'sales' }}</span>
+              <span>{{ totalsPreview().grandTotal | number: '1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Notes" id="order-notes" [ordinal]="3">
+      <bifi-app-form-section
+        [title]="'sales.section.notes' | translate: {} : 'sales'"
+        id="order-notes"
+        [ordinal]="3"
+      >
         <div class="grid grid-cols-1 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Notes</bifi-app-form-label>
-            <textarea pTextarea formControlName="notes" rows="4" placeholder="Internal notes..."></textarea>
+            <bifi-app-form-label>
+              {{ 'sales.form.notes' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <textarea
+              pTextarea
+              formControlName="notes"
+              rows="4"
+              [placeholder]="'sales.form.internalNotes' | translate: {} : 'sales'"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
@@ -152,4 +416,4 @@
       <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
     }
   </form>
-</bifi-app-form-layout>
+</div>

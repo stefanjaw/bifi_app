@@ -1,7 +1,7 @@
 import { effect, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ContactFormModel {
   name: string;
@@ -12,12 +12,14 @@ export interface ContactFormModel {
   parentId?: string;
   type: 'individual' | 'company';
   childIds?: string[];
+  photo?: FormUploaderFile[];
   countryId?: string;
   state?: string;
   city?: string;
   zipCode?: string;
   streetAddress?: string;
   streetAddress2?: string;
+  vat?: string;
 }
 
 @Injectable({
@@ -61,12 +63,20 @@ export class ContactForm extends BaseForm<ContactFormModel> {
         template: [''],
         formArrayElements: [],
       },
+      photo: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
       countryId: [''],
       state: [''],
       city: [''],
       zipCode: [''],
       streetAddress: [''],
       streetAddress2: [''],
+      vat: [''],
     });
   }
 }

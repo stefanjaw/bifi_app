@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudSales } from '../../services/crud-sales';
 import { ProgressBarModule } from 'primeng/progressbar';
 
@@ -8,7 +9,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
   host: {
     class: 'flex flex-col gap-6 p-6',
   },
-  imports: [CurrencyPipe, DecimalPipe, ProgressBarModule],
+  imports: [CurrencyPipe, DecimalPipe, ProgressBarModule, TranslatePipe],
   templateUrl: './sales-dashboard.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

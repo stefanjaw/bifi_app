@@ -28,4 +28,7 @@ export * from './services/crud-locations';
 export * from './services/crud-products';
 export * from './services/crud-stock-balances';
 export * from './services/crud-movements';
-export * from './services/transfer.service';
+export * from './services/transfer';
+export * from './features/uom-form/uom-form';
+export * from './services/product-form';
+export * from './services/uom-form';

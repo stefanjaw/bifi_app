@@ -1,5 +1,9 @@
 <bifi-app-form-layout
-  [title]="isUpdate() ? 'Edit Payment Term' : 'New Payment Term'"
+  [title]="
+    isUpdate()
+      ? ('form.editPaymentTerm' | translate: {} : 'accounting')
+      : ('form.newPaymentTerm' | translate: {} : 'accounting')
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,39 +22,64 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Payment Term Details" id="payment-term-details" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'form.paymentTermDetails' | translate: {} : 'accounting'"
+        id="payment-term-details"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" placeholder="e.g. 30 Days Net" />
+            <bifi-app-form-label>
+              {{ 'form.label.name' | translate: {} : 'accounting' }} *
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              [placeholder]="'placeholders.e.g.30DaysNet' | translate: {} : 'accounting'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           @if (isUpdate()) {
             <bifi-app-form-field>
-              <bifi-app-form-label>Active</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'form.label.active' | translate: {} : 'accounting' }}
+              </bifi-app-form-label>
               <p-toggleSwitch formControlName="active"></p-toggleSwitch>
             </bifi-app-form-field>
           }
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Term Lines" id="term-lines" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'form.termLines' | translate: {} : 'accounting'"
+        id="term-lines"
+        [ordinal]="2"
+      >
         <div class="flex flex-col gap-4">
           @for (line of lines; track $index) {
             <div class="flex gap-4 items-end border rounded p-4">
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>Percentage (%)</bifi-app-form-label>
-                <p-inputNumber [formControl]="$any(line.get('percentage'))" [min]="0" [max]="100" suffix="%"></p-inputNumber>
+                <bifi-app-form-label>
+                  {{ 'form.label.percentage' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
+                <p-inputNumber
+                  [formControl]="$any(line.get('percentage'))"
+                  [min]="0"
+                  [max]="100"
+                  suffix="%"
+                ></p-inputNumber>
               </bifi-app-form-field>
               <bifi-app-form-field class="flex-1">
-                <bifi-app-form-label>Due Days</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'form.label.dueDays' | translate: {} : 'accounting' }}
+                </bifi-app-form-label>
                 <p-inputNumber [formControl]="$any(line.get('dueDays'))" [min]="0"></p-inputNumber>
               </bifi-app-form-field>
               <p-button
                 severity="danger"
                 icon="pi pi-trash"
-                label="Remove"
+                [label]="'buttons.remove' | translate: {} : 'accounting'"
                 (onClick)="removeLine($index)"
               ></p-button>
             </div>
@@ -59,7 +88,7 @@
             <p-button
               severity="secondary"
               icon="pi pi-plus"
-              label="Add Line"
+              [label]="'buttons.addLine' | translate: {} : 'accounting'"
               (onClick)="addLine()"
             ></p-button>
           </div>

@@ -19,11 +19,21 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form.service';
+import { ExchangeRateFormService, ExchangeRateFormModel } from '../../services/exchange-rate-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-exchange-rate-form',
-  imports: [FormModule, ReactiveFormsModule, SelectModule, InputNumberModule, ToggleSwitchModule, DatePickerModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    SelectModule,
+    InputNumberModule,
+    ToggleSwitchModule,
+    DatePickerModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './exchange-rate-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,8 +55,8 @@ export class ExchangeRateForm {
   currenciesResource = this.crudCurrencies.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(() =>
-    this.exchangeRateResource.isLoading() || this.currenciesResource.isLoading()
+  isLoading = computed(
+    () => this.exchangeRateResource.isLoading() || this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -78,13 +88,19 @@ export class ExchangeRateForm {
           _id: this.id(),
           data: {
             ...rawValue,
-            effectiveDate: rawValue.effectiveDate instanceof Date ? rawValue.effectiveDate.toISOString() : rawValue.effectiveDate,
+            effectiveDate:
+              rawValue.effectiveDate instanceof Date
+                ? rawValue.effectiveDate.toISOString()
+                : rawValue.effectiveDate,
           } as any,
         })
       : this.crudExchangeRates.post({
           data: {
             ...rawValue,
-            effectiveDate: rawValue.effectiveDate instanceof Date ? rawValue.effectiveDate.toISOString() : rawValue.effectiveDate,
+            effectiveDate:
+              rawValue.effectiveDate instanceof Date
+                ? rawValue.effectiveDate.toISOString()
+                : rawValue.effectiveDate,
           } as any,
         });
 

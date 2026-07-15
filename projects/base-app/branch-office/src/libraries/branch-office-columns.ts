@@ -4,24 +4,24 @@ import { branchOffice } from '../interfaces/branch-office';
 export const branchOfficeColumns: tableColumn<branchOffice>[] = [
   {
     field: 'companyId.name',
-    title: 'Company',
+    title: 'company',
     type: 'text',
   },
   {
     field: 'name',
-    title: 'Branch Name',
+    title: 'branchName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'branchCode',
-    title: 'Code',
+    title: 'code',
     type: 'text',
     sortable: true,
   },
   {
     field: 'address',
-    title: 'Address',
+    title: 'address',
     type: 'text',
   },
 ];

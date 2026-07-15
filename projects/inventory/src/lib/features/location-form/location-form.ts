@@ -18,11 +18,20 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LocationFormService, LocationFormModel } from '../../services/location-form.service';
+import { LocationFormService, LocationFormModel } from '../../services/location-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-location-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, InputNumberModule, SelectModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    InputNumberModule,
+    SelectModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './location-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,11 +47,16 @@ export class LocationForm {
 
   form = this.formService.form;
 
-  locationResource = this.crudLocations.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  locationResource = this.crudLocations.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   warehousesResource = this.crudWarehouses.get({});
 
   isUpdate = computed(() => !!this.id());
-  isLoading = computed(() => this.locationResource.isLoading() || this.warehousesResource.isLoading());
+  isLoading = computed(
+    () => this.locationResource.isLoading() || this.warehousesResource.isLoading()
+  );
   isSubmitLoading = signal(false);
 
   warehouses = this.warehousesResource.value;

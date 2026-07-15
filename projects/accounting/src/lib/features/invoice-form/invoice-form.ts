@@ -4,22 +4,25 @@ import {
   computed,
   DestroyRef,
   effect,
+  HostListener,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 import { CrudInvoices } from '../../services/crud-invoices';
 import { CrudJournals } from '../../services/crud-journals';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudContacts } from '@avalantec/base-app/contacts';
-import { CrudTaxes } from '../../services/crud-taxes';
+import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudPaymentTerms } from '../../services/crud-payment-terms';
 import { CrudDiscounts } from '../../services/crud-discounts';
 import { CrudProducts } from '@avalantec/inventory';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -32,11 +35,24 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-form';
+import { ColWidthManager } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
+
+const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
+  product: 96,
+  description: 240,
+  account: 180,
+  quantity: 80,
+  unitPrice: 128,
+  taxes: 160,
+  amount: 112,
+};
 
 @Component({
   selector: 'bifi-app-invoice-form',
   imports: [
     FormModule,
+    PluginSlot,
     ReactiveFormsModule,
     InputText,
     SelectModule,
@@ -48,9 +64,11 @@ import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-for
     TabsModule,
     DecimalPipe,
     TagModule,
+    TranslatePipe,
   ],
   templateUrl: './invoice-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [providePluginContext(InvoiceForm)],
 })
 export class InvoiceForm {
   private formService = inject(InvoiceFormService);
@@ -64,6 +82,7 @@ export class InvoiceForm {
   private crudDiscounts = inject(CrudDiscounts);
   private crudProducts = inject(CrudProducts);
   private router = inject(Router);
+  private location = inject(Location);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
@@ -92,7 +111,7 @@ export class InvoiceForm {
       this.taxesResource.isLoading() ||
       this.paymentTermsResource.isLoading() ||
       this.discountsResource.isLoading() ||
-      this.productsResource.isLoading(),
+      this.productsResource.isLoading()
   );
   isSubmitLoading = signal(false);
   isPosting = signal(false);
@@ -114,19 +133,35 @@ export class InvoiceForm {
   canCancel = computed(() => this.isUpdate() && this.invoiceState() !== 'cancel');
   isReadOnly = computed(() => this.isUpdate() && this.invoiceState() !== 'draft');
 
+  private cwm = new ColWidthManager(INVOICE_DEFAULT_WIDTHS, 'lineItems.invoice.colWidths');
+  colWidths = this.cwm.colWidths;
+
+  onResizeStart(event: MouseEvent, colKey: string) {
+    this.cwm.onResizeStart(event, colKey);
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onResizeMove(event: MouseEvent) {
+    this.cwm.onResizeMove(event);
+  }
+
+  @HostListener('document:mouseup')
+  onResizeEnd() {
+    this.cwm.onResizeEnd();
+  }
+
   get lines(): FormGroup[] {
     return this.formService.lines;
   }
 
-  private linesValue = toSignal(
-    this.formService.linesArray.valueChanges,
-    { initialValue: this.formService.linesArray.value },
-  );
+  private linesValue = toSignal(this.formService.linesArray.valueChanges, {
+    initialValue: this.formService.linesArray.value,
+  });
 
   untaxedTotal = computed(() =>
     this.linesValue()
       .filter((l: any) => !l.lineType || l.lineType === 'product')
-      .reduce((sum: number, l: any) => sum + (l.quantity ?? 1) * (l.unitPrice ?? 0), 0),
+      .reduce((sum: number, l: any) => sum + (l.quantity ?? 1) * (l.unitPrice ?? 0), 0)
   );
 
   taxTotal = computed(() => {
@@ -147,16 +182,14 @@ export class InvoiceForm {
   grandTotal = computed(() => this.untaxedTotal() + this.taxTotal());
 
   jeDebitTotal = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.debit ?? 0), 0)
   );
 
   jeCreditTotal = computed(() =>
-    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0),
+    this.linesValue().reduce((s: number, l: any) => s + (l.credit ?? 0), 0)
   );
 
-  jeIsBalanced = computed(() =>
-    Math.abs(this.jeDebitTotal() - this.jeCreditTotal()) < 0.001,
-  );
+  jeIsBalanced = computed(() => Math.abs(this.jeDebitTotal() - this.jeCreditTotal()) < 0.001);
 
   isProductLine(g: FormGroup): boolean {
     return this.formService.isProductLine(g);
@@ -233,6 +266,10 @@ export class InvoiceForm {
     this.isSubmitLoading.set(true);
 
     const val = this.form.getRawValue() as any;
+
+    // in case contactId is empty, delete it
+    if (!val.contactId || val.contactId === '') delete val.contactId;
+
     const lines = (val.lines ?? []).map((v: any) => ({
       lineType: v.lineType || 'product',
       productId: v.productId || undefined,
@@ -247,13 +284,9 @@ export class InvoiceForm {
     }));
 
     const payload = {
-      contactId: val.contactId || undefined,
-      paymentTermId: val.paymentTermId || undefined,
+      ...val,
       invoiceDate: val.invoiceDate ? (val.invoiceDate as Date).toISOString() : '',
       dueDate: val.dueDate ? (val.dueDate as Date).toISOString() : undefined,
-      journalId: val.journalId,
-      paymentReference: val.paymentReference || undefined,
-      currencyId: val.currencyId,
       lines,
     };
 
@@ -314,6 +347,6 @@ export class InvoiceForm {
   }
 
   goBack() {
-    this.router.navigate(['/accounting/invoices']);
+    this.location.back();
   }
 }

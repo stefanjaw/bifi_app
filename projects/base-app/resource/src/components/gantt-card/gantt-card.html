@@ -1,24 +1,31 @@
 <div
-  class="absolute group h-8 rounded-md flex items-center cursor-pointer"
+  class="absolute group h-8 rounded-md flex items-center"
+  [class.cursor-pointer]="!overview()"
+  [class.cursor-default]="overview()"
   [style.top.px]="index() * height() + 6"
   [style.left.px]="taskOffset()"
   [style.width.px]="taskWidth()"
-  [class]="item().children.length > 0 ? 'bg-indigo-700' : 'bg-indigo-500'"
+  [class]="!color() ? (item().children.length > 0 ? 'bg-indigo-700' : 'bg-indigo-500') : ''"
+  [style.background-color]="color() || null"
   (mousedown)="onMouseDown($event)"
 >
   <div
-    class="absolute top-0 left-0 h-full rounded-l-md bg-indigo-400"
+    class="absolute top-0 left-0 h-full rounded-l-md"
+    [class.bg-indigo-400]="!color()"
+    [style.background-color]="color() ? color() + 'cc' : null"
     [style.width.%]="item().progress"
   ></div>
   <span class="relative text-white text-xs font-semibold px-2 truncate">
     {{ item().name }}
   </span>
 
-  <!-- Resize Handle -->
-  <div
-    (mousedown)="onResizeMouseDown($event)"
-    class="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity"
-  >
-    <div class="w-1 h-4 bg-white/50 rounded-full mx-auto my-2"></div>
-  </div>
+  <!-- Resize Handle — hidden in overview mode -->
+  @if (!overview()) {
+    <div
+      (mousedown)="onResizeMouseDown($event)"
+      class="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+      <div class="w-1 h-4 bg-white/50 rounded-full mx-auto my-2"></div>
+    </div>
+  }
 </div>

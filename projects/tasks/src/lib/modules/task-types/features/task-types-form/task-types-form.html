@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Task Type"
+  [title]="
+    (isUpdate() ? 'taskTypes.form.titleUpdate' : 'taskTypes.form.titleCreate')
+      | translate: {} : 'tasks'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,23 +21,36 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Type Information" id="type-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'taskTypes.form.typeInformation' | translate: {} : 'tasks'"
+        id="type-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g. Bug" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'tasks' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'taskTypes.form.namePlaceholder' | translate: {} : 'tasks'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="description" placeholder="Description"></textarea>
+            <bifi-app-form-label>{{ 'description' | translate: {} : 'tasks' }}</bifi-app-form-label>
+            <textarea
+              pInputTextarea
+              formControlName="description"
+              [placeholder]="'taskTypes.form.descriptionPlaceholder' | translate: {} : 'tasks'"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'taskTypes.form.error.somethingWentWrong' | translate: {} : 'tasks' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

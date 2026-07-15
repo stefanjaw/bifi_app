@@ -1,0 +1,32 @@
+<h1 class="text-2xl font-bold mb-4">{{ 'productTypes' | translate: {} : 'inventory' }}</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    [label]="'newProductType' | translate: {} : 'inventory'"
+    severity="secondary"
+    icon="pi pi-plus"
+    routerLink="/settings/inventory/product-types/new"
+    *bifiAppHasPermission="'inventory/product-types/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  [label]="'searchByName' | translate: {} : 'inventory'"
+  [searchFilters]="productTypeFilters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="productTypeColumns"
+  [data]="entries"
+  [onClickRow]="gotoEditProductType"
+  clickRowPermission="inventory/product-types/update:view"
+  [scope]="'inventory'"
+>
+  <ng-template #actions let-element>
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(element._id)"
+      resource="inventory/product-types"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>

@@ -5,8 +5,13 @@
   @if (infiniteScroll() && state.isPaginated) {
     <!-- include total records and total records in display when using infinite scroll -->
     <div class="p-2 text-sm text-gray-500 flex flex-row gap-4 items-center justify-start">
-      <span>Total Records: {{ pagination?.totalDocs ?? 0 }}</span>
-      <span>Showing: {{ state.value.length }}</span>
+      <span>
+        {{ 'table.totalRecords' | translate: {} : 'base-app/resource' }}
+        {{ pagination?.totalDocs ?? 0 }}
+      </span>
+      <span>
+        {{ 'table.showing' | translate: {} : 'base-app/resource' }} {{ state.value.length }}
+      </span>
     </div>
   }
 
@@ -39,13 +44,13 @@
           @if (column.sortable) {
             <th [pSortableColumn]="column.field">
               <div class="flex items-center gap-2 whitespace-nowrap">
-                {{ column.title }}
+                {{ column.title | translate: {} : scope() }}
                 <p-sortIcon [field]="column.field"></p-sortIcon>
               </div>
             </th>
           } @else {
             <th class="whitespace-nowrap">
-              {{ column.title }}
+              {{ column.title | translate: {} : scope() }}
             </th>
           }
         }
@@ -97,16 +102,24 @@
             } @else if (column.type === 'image') {
               <img
                 [src]="value"
-                alt="image"
+                [alt]="'table.imageAlt' | translate: {} : 'base-app/resource'"
                 class="w-18.75 h-18.75 object-cover rounded-full my-4"
               />
             } @else {
               @if (column.type === 'date') {
-                {{ value ? (value | date) : 'Not set' }}
+                {{
+                  value
+                    ? (value | localeDate: { dateStyle: 'medium' })
+                    : ('table.notSet' | translate: {} : 'base-app/resource')
+                }}
               } @else if (column.type === 'currency') {
-                {{ value ? (value | currency: column.currencySymbol ?? '$') : 'Not set' }}
+                {{
+                  value
+                    ? (value | currency: column.currencySymbol ?? '$')
+                    : ('table.notSet' | translate: {} : 'base-app/resource')
+                }}
               } @else {
-                {{ value ?? 'Not set' }}
+                {{ value ?? ('table.notSet' | translate: {} : 'base-app/resource') }}
               }
             }
           </td>
@@ -145,9 +158,11 @@
         <td [colSpan]="columns().length + (actions() ? 1 : 0) + (expandContent() ? 1 : 0)">
           <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
             <i class="pi pi-search mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
-            <p class="mb-2 font-light text-2xl">No Results Found</p>
+            <p class="mb-2 font-light text-2xl">
+              {{ 'table.noResults' | translate: {} : 'base-app/resource' }}
+            </p>
             <p class="mb-0 font-light">
-              No results match your current search term or filter selection
+              {{ 'table.noResultsDesc' | translate: {} : 'base-app/resource' }}
             </p>
           </div>
         </td>
@@ -163,7 +178,7 @@
       class="text-gray-400 m-4 w-100 flex flex-row justify-start items-center gap-2"
     >
       <i class="pi pi-check-circle"></i>
-      All records loaded
+      {{ 'table.allLoaded' | translate: {} : 'base-app/resource' }}
     </span>
   } @else {
     <span
@@ -171,7 +186,7 @@
       class="text-blue-400 m-4 w-100 flex flex-row justify-start items-center gap-2"
     >
       <i class="pi pi-info-circle"></i>
-      Scroll down to load more
+      {{ 'table.scrollToLoad' | translate: {} : 'base-app/resource' }}
     </span>
   }
 }

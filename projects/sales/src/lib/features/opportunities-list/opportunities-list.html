@@ -1,50 +1,79 @@
 <p-toast></p-toast>
-<h1 class="text-2xl font-bold mb-4">Opportunities</h1>
 
-<div class="flex gap-2 mb-4">
-  <p-button
-    label="New Opportunity"
-    severity="secondary"
-    icon="pi pi-plus"
-    routerLink="/sales/opportunities/new"
-    *bifiAppHasPermission="'sales/opportunities/create:view'"
-  ></p-button>
+<div class="flex items-center justify-between mb-2">
+  <h1 class="text-2xl font-bold">{{ 'sales.opportunities.title' | translate: {} : 'sales' }}</h1>
+  <div class="flex items-center gap-3">
+    <div class="flex items-center rounded-md bg-gray-200 p-0.5">
+      <button
+        (click)="setView('list')"
+        [class]="viewMode() === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+        class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+      >
+        <i class="pi pi-list text-sm"></i>
+        <span>{{ 'sales.opportunities.listView' | translate: {} : 'sales' }}</span>
+      </button>
+      <button
+        (click)="setView('kanban')"
+        [class]="viewMode() === 'kanban' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'"
+        class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
+      >
+        <i class="pi pi-table text-sm"></i>
+        <span>{{ 'sales.opportunities.pipelineView' | translate: {} : 'sales' }}</span>
+      </button>
+    </div>
+    <p-button
+      [label]="'sales.opportunities.new' | translate: {} : 'sales'"
+      severity="secondary"
+      icon="pi pi-plus"
+      routerLink="/sales/opportunities/new"
+      *bifiAppHasPermission="'sales/opportunities/create:view'"
+    ></p-button>
+  </div>
 </div>
 
-<bifi-app-search-bar
-  label="Search by title, company, contact or stage"
-  [searchFilters]="crmFilters"
-></bifi-app-search-bar>
+@if (viewMode() === 'list') {
+  <bifi-app-search-bar
+    [label]="'sales.opportunities.searchPlaceholder' | translate: {} : 'sales'"
+    [searchFilters]="crmFilters"
+  ></bifi-app-search-bar>
 
-<bifi-app-table-layout
-  [infiniteScroll]="true"
-  [columns]="crmColumns"
-  [data]="entries"
-  [onClickRow]="editOpportunity"
-  clickRowPermission="sales/opportunities/update:view"
->
-  <ng-template #actions let-element>
-    <p-button
-      *bifiAppHasPermission="'sales:update:model'"
-      severity="success"
-      label="Won"
-      icon="pi pi-check"
-      size="small"
-      [loading]="markingId() === element._id"
-      (onClick)="markWon($event, element)"
-    ></p-button>
-    <p-button
-      *bifiAppHasPermission="'sales:update:model'"
-      severity="danger"
-      label="Lost"
-      icon="pi pi-times"
-      size="small"
-      [loading]="markingId() === element._id"
-      (onClick)="markLost($event, element)"
-    ></p-button>
-    <bifi-app-buttons-actions
-      (deleteClicked)="deleteEntry(element._id)"
-      resource="sales/opportunities"
-    ></bifi-app-buttons-actions>
-  </ng-template>
-</bifi-app-table-layout>
+  <bifi-app-filter-bar [filterFields]="filterFields" [scope]="'sales'"></bifi-app-filter-bar>
+
+  <bifi-app-table-layout
+    [infiniteScroll]="true"
+    [columns]="crmColumns"
+    [data]="entries"
+    [onClickRow]="editOpportunity"
+    [scope]="'sales'"
+    clickRowPermission="sales/opportunities/update:view"
+  >
+    <ng-template #actions let-element>
+      <p-button
+        *bifiAppHasPermission="'sales:update:model'"
+        severity="success"
+        [label]="'sales.actions.won' | translate: {} : 'sales'"
+        icon="pi pi-check"
+        size="small"
+        [loading]="markingId() === element._id"
+        (onClick)="markWon($event, element)"
+      ></p-button>
+      <p-button
+        *bifiAppHasPermission="'sales:update:model'"
+        severity="danger"
+        [label]="'sales.actions.lost' | translate: {} : 'sales'"
+        icon="pi pi-times"
+        size="small"
+        [loading]="markingId() === element._id"
+        (onClick)="markLost($event, element)"
+      ></p-button>
+      <bifi-app-buttons-actions
+        (deleteClicked)="deleteEntry(element._id)"
+        resource="sales/opportunities"
+      ></bifi-app-buttons-actions>
+    </ng-template>
+  </bifi-app-table-layout>
+}
+
+@if (viewMode() === 'kanban') {
+  <bifi-app-sales-pipeline></bifi-app-sales-pipeline>
+}

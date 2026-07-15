@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">UoM Categories</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'uomCategories' | translate: {} : 'inventory' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Category"
+    [label]="'newCategory' | translate: {} : 'inventory'"
     severity="secondary"
     icon="pi pi-plus"
     routerLink="/inventory/uom-categories/new"
@@ -11,16 +11,20 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by name"
+  [label]="'searchByName' | translate: {} : 'inventory'"
   [searchFilters]="uomCategoryFilters"
 ></bifi-app-search-bar>
 
 <bifi-app-table-layout
-  [infiniteScroll]="true" [columns]="uomCategoryColumns" [data]="entries">
+  [infiniteScroll]="true"
+  [columns]="uomCategoryColumns"
+  [data]="entries"
+  [scope]="'inventory'"
+>
   <ng-template #actions let-element>
     <p-button
       severity="secondary"
-      label="Edit"
+      [label]="'edit' | translate: {} : 'inventory'"
       icon="pi pi-pencil"
       size="small"
       routerLink="/inventory/uom-categories/{{ element._id }}/edit"

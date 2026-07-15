@@ -10,14 +10,14 @@ import {
   resource,
   user,
 } from '@avalantec/base-app/interfaces';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth } from '@angular/fire/auth';
 import { permission } from './permission';
 
 export abstract class IAuthService<
   TUser extends user,
   TSession extends Session<TUser> = Session<TUser>,
 > {
-  abstract authClient: AngularFireAuth | any;
+  abstract authClient: Auth | any;
   abstract session: Signal<TSession | null>;
   abstract user: Signal<TUser | null>;
 
@@ -39,6 +39,16 @@ export abstract class IAuthService<
 
   private readonly rbacEnable = inject(LIBRARY_CONFIG).rbacEnable;
 
+  /**
+   * Creates a reactive signal that evaluates whether the current user has a given permission.
+   * Accepts signals or static values for resource, action, type, resourceData, and context.
+   * @param options.resource - The resource to check
+   * @param options.action - The action to check (read/create/update/delete)
+   * @param options.type - The permission type (view/menu/model), defaults to 'model'
+   * @param options.resourceData - Optional resource data for condition evaluation
+   * @param options.context - Optional context for condition evaluation
+   * @returns A signal that emits true/false reactively based on user policies
+   */
   createPermissionSignal<TModel = unknown>({
     resource,
     action,
@@ -63,7 +73,6 @@ export abstract class IAuthService<
       const resourceDataValue = mayBeSignalValue(resourceData);
       const contextValue = mayBeSignalValue(context);
 
-      // If no resource or action is provided, grant permission by default
       if (!resourceValue || (!actionValue && !typeValue)) return true;
 
       return this.hasPermission({
@@ -77,30 +86,53 @@ export abstract class IAuthService<
     });
   }
 
-  //#region Permission utils
+  /**
+   * Checks if a string is a valid CRUD action type
+   * @param action - The string to check
+   * @returns True if the action is read/create/update/delete
+   */
   isPermissionAction(action: string) {
     return ['read', 'create', 'update', 'delete'].includes(action);
   }
 
+  /**
+   * Checks if a string is a valid permission scope type
+   * @param type - The string to check
+   * @returns True if the type is view/menu/model
+   */
   isPermissionType(type: string) {
     return ['view', 'menu', 'model'].includes(type);
   }
 
+  /**
+   * Extracts the resource name from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:read")
+   * @returns The resource name, or undefined if invalid
+   */
   getPermissionResource(permission: permission | undefined): resource | undefined {
     const split = permission?.split(':');
     return split?.[0];
   }
 
+  /**
+   * Extracts the action (read/create/update/delete) from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:read")
+   * @returns The action, or undefined if not a valid action
+   */
   getPermissionAction(permission: permission | undefined): policyAction | undefined {
     const split = permission?.split(':');
 
-    // check if segment is an action
     const segment = split?.[1];
 
     if (segment && this.isPermissionAction(segment)) return segment as policyAction;
     else return undefined;
   }
 
+  /**
+   * Extracts the type (view/menu/model) from a colon-delimited permission string
+   * @param permission - The permission string (e.g. "resource:view" or "resource:model:read")
+   * @returns The permission type, or undefined if not a valid type
+   */
   getPermissionType(permission: permission | undefined): policyType | undefined {
     const split = permission?.split(':');
 
@@ -111,8 +143,20 @@ export abstract class IAuthService<
     else if (segmentB && this.isPermissionType(segmentB)) return segmentB as policyType;
     else return undefined;
   }
-  //#endregion
 
+  /**
+   * Evaluates whether a given user has a specific permission on a resource.
+   * Checks user role-based policies, matching resource, action, and type.
+   * If RBAC is disabled globally, always returns true.
+   * If conditions are defined on the policy, evaluates them against resourceData.
+   * @param options.user - The user to check permissions for
+   * @param options.resource - The resource being accessed
+   * @param options.action - Optional CRUD action to check
+   * @param options.type - Optional permission type (view/menu/model)
+   * @param options.resourceData - Optional resource data for condition evaluation
+   * @param options.context - Additional context for condition evaluation
+   * @returns Whether the user has the required permission
+   */
   hasPermission<TModel = unknown>({
     user,
     resource,
@@ -130,38 +174,28 @@ export abstract class IAuthService<
   }): boolean {
     if (!this.rbacEnable) return true;
 
-    // Get all user's policies
     const userPolicies = user.roles.flatMap(role => role.policies);
 
-    // Find the policy that matches the resource and action and/or type
     const policies = userPolicies.filter(p => {
-      // if resource doesnt match, then no
       if (p.policyId.resource !== resource) return false;
-
-      // if action doesnt match if included, then no
       if (action && !p.actions.includes(action)) return false;
-
-      // if type doesnt match if included, then no
       if (type && p.policyId.type !== type) return false;
-
       return true;
     });
 
     if (!policies.length) {
-      return false; // No policy found for the resource and action
+      return false;
     }
 
     return policies.some(policy => {
       if (policy.policyId.conditions.length === 0) {
-        return true; // No conditions, permission granted
+        return true;
       }
 
-      // If conditions are provided, check if they match the resource data
       if (!resourceData) {
-        return false; // No resource data provided, cannot evaluate conditions
+        return false;
       }
 
-      // Check if all conditions are met
       return policy.policyId.conditions.every(condition => {
         return this.evaluateCondition({
           cond: condition,
@@ -219,9 +253,8 @@ export abstract class IAuthService<
     resourceData: TModel;
     context: object;
   }) {
-    // Ejemplo {{user.id}}
     if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
-      const path = value.slice(2, -2).trim(); // ej: "user.id"
+      const path = value.slice(2, -2).trim();
       const [root, ...rest] = path.split('.');
 
       let source: any;

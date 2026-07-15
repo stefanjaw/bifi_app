@@ -7,7 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CrudBCDAdditionalInformationType } from '../../services/crud-bcd-additional-information-type';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { BCDFormManager } from '../../../bcds/services/bcd-form-manager';
+import { BCDFormManager } from '../../../bcds';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-bcd-additional-information-form-dialog',
@@ -18,6 +19,7 @@ import { BCDFormManager } from '../../../bcds/services/bcd-form-manager';
     InputTextModule,
     SelectModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './bcd-additional-information-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

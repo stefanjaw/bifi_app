@@ -1,4 +1,8 @@
-<p-dialog header="New Tax Entry" [(visible)]="dialogState" [modal]="true">
+<p-dialog
+  [header]="'dialogHeader.newTaxEntry' | translate: {} : 'aduanix'"
+  [(visible)]="dialogState"
+  [modal]="true"
+>
   @if (!loading()) {
     <form
       [formGroup]="form"
@@ -8,7 +12,9 @@
     >
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Code</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.taxTypeCode' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="type"
@@ -20,7 +26,9 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Tax Id</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'column.taxId' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="taxId"
@@ -32,19 +40,25 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Value For Tax</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'column.valueForTax' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input pInputText type="number" formControlName="valueForTax" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Rate Percentage</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'label.ratePercentage' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input pInputText type="number" formControlName="ratePercentage" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Amount</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'column.amount' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
           <input pInputText type="number" formControlName="amount" />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
@@ -52,7 +66,7 @@
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'button.cancel' | translate: {} : 'aduanix'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

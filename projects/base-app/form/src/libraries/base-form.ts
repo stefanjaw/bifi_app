@@ -133,10 +133,17 @@ export abstract class BaseForm<TModel extends FormGroupLike> {
     this.form.patchValue(data, options);
   }
 
+  /** Resets the dirty tracking state to clean, marking the form as pristine */
   resetDirtyState() {
     markAsDirty({ group: this.form, dirtyValue: false });
   }
 
+  /**
+   * Returns the current form value state including value, rawValue, and dirty flag.
+   * Useful for snapshot comparisons before/after form edits.
+   *
+   * @returns The current form value state.
+   */
   getValueState(): FormValueState<TModel> {
     return {
       value: this.value(),

@@ -18,6 +18,7 @@ import { AssetTypeForm, AssetTypeFormModel } from '../../services/asset-type-for
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-types-form',
@@ -28,6 +29,7 @@ import { TextareaModule } from 'primeng/textarea';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
   ],
   templateUrl: './asset-types-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

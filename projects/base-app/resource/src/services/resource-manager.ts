@@ -47,6 +47,7 @@ export class ResourceManager<T> {
   private _getInactive = signal<boolean | null>(false);
   private storageKey = `bifi_list_${this.service.endpoint}`;
 
+  /** Toggles whether inactive/deleted records should be included in the list */
   toggleInactiveRecords = () => this._getInactive.update(value => !value);
 
   // triggering:
@@ -89,6 +90,12 @@ export class ResourceManager<T> {
       } else {
         this._searchParams.set({});
         this._getInactive.set(false);
+      }
+
+      // Reset to page 1 whenever filters change so accumulated pages reset cleanly.
+      // untracked() prevents a reactive cycle since paginationOptions is read elsewhere.
+      if (this.mode === 'paginated') {
+        untracked(() => this.paginationManager.resetPaginationOptions());
       }
     });
 
@@ -245,10 +252,12 @@ export class ResourceManager<T> {
     this.listStateManager.saveToLocalStorage(this.storageKey, state);
   }
 
+  /** Current search/filter parameters as a signal */
   get searchParams() {
     return this._searchParams;
   }
 
+  /** Whether inactive records are currently included in results */
   get getInactiveStatus() {
     return this._getInactive;
   }
@@ -281,6 +290,7 @@ export function provideResourceManager<T>(
   ];
 }
 
+/** Injects the ResourceManager for the current resource context */
 export function injectResourceManager<T>() {
   return inject(ResourceManager<T>);
 }

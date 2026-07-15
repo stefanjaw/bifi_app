@@ -13,12 +13,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { journalEntryColumns } from '../../libraries/journal-entry-columns';
 import { journalEntryFilters } from '../../libraries/journal-entry-filters';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-journal-entries-list',
   providers: [provideResourceManager(CrudJournalEntries)],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
-  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions],
+  imports: [TableLayout, ButtonModule, HasPermission, RouterLink, ButtonsActions, TranslatePipe],
   templateUrl: './journal-entries-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

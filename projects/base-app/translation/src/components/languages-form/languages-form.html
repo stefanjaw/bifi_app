@@ -1,0 +1,90 @@
+<bifi-app-form-layout
+  [title]="
+    (isUpdate() ? 'languages.form.pageTitle.update' : 'languages.form.pageTitle.create')
+      | translate: {} : 'base-app/translation'
+  "
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="goBack()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section
+        [title]="'form.generalInfo.title' | translate: {} : 'base-app/translation'"
+        id="form-general"
+        [ordinal]="1"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'languages.form.localeCode' | translate: {} : 'base-app/translation' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="locale"
+              type="text"
+              [placeholder]="
+                'languages.form.localeCodePlaceholder' | translate: {} : 'base-app/translation'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'languages.form.name' | translate: {} : 'base-app/translation' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="
+                'languages.form.namePlaceholder' | translate: {} : 'base-app/translation'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'languages.form.nativeName' | translate: {} : 'base-app/translation' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="nativeName"
+              type="text"
+              [placeholder]="
+                'languages.form.nativeNamePlaceholder' | translate: {} : 'base-app/translation'
+              "
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.status.active' | translate: {} : 'base-app/translation' }}
+            </bifi-app-form-label>
+            <p-toggleswitch formControlName="active"></p-toggleswitch>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    } @else if (error()) {
+      <p>{{ 'error.somethingWentWrong' | translate: {} : 'base-app/translation' }} {{ error() }}</p>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

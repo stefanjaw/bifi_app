@@ -19,13 +19,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-warehouse-detail',
   host: {
     class: 'flex flex-col gap-4 p-6 ms-4 me-4',
   },
-  imports: [ButtonModule, RouterLink, CurrencyPipe, ToastModule, CardModule],
+  imports: [ButtonModule, RouterLink, CurrencyPipe, ToastModule, CardModule, TranslatePipe],
   templateUrl: './warehouse-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,11 +35,15 @@ export class WarehouseDetail {
   private crudLocations = inject(CrudLocations);
   private crudStockBalances = inject(CrudStockBalances);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   id = input<string>('');
 
-  warehouseResource = this.crudWarehouses.get({ id: this.id, triggerRequest: computed(() => !!this.id()) });
+  warehouseResource = this.crudWarehouses.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   locationsResource = this.crudLocations.get({});
   balancesResource = this.crudStockBalances.get({});
 
@@ -68,11 +73,22 @@ export class WarehouseDetail {
         next: () => {
           this.deactivating.set(null);
           this.locationsResource.reload();
-          this.messageService.add({ severity: 'success', summary: 'Location deactivated' });
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translationService.translate('locationDeactivated', {}, 'inventory'),
+          });
         },
         error: () => {
           this.deactivating.set(null);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not deactivate location.' });
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translationService.translate('error', {}, 'inventory'),
+            detail: this.translationService.translate(
+              'couldNotDeactivateLocation',
+              {},
+              'inventory'
+            ),
+          });
         },
       });
   }

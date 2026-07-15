@@ -1,10 +1,12 @@
 <header class="shrink-0 flex items-center justify-between pb-4 border-b border-gray-200">
   <div>
-    <h1 class="text-2xl font-bold text-gray-800">Helpdesk Tickets</h1>
+    <h1 class="text-2xl font-bold text-gray-800">
+      {{ 'tickets.title' | translate: {} : 'helpdesk' }}
+    </h1>
   </div>
   <div class="flex items-center space-x-2">
     <p-button
-      label="New Ticket"
+      [label]="'tickets.addNew' | translate: {} : 'helpdesk'"
       severity="secondary"
       icon="pi pi-plus"
       [routerLink]="['../create']"
@@ -12,7 +14,9 @@
     ></p-button>
 
     <div class="flex items-center space-x-3">
-      <span class="text-sm font-medium text-gray-600">View:</span>
+      <span class="text-sm font-medium text-gray-600">
+        {{ 'tickets.view' | translate: {} : 'helpdesk' }}
+      </span>
 
       <div class="flex items-center rounded-md bg-gray-200 p-0.5">
         <button
@@ -21,7 +25,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-list text-xs"></i>
-          List
+          {{ 'tickets.list' | translate: {} : 'helpdesk' }}
         </button>
         <button
           (click)="viewState.set('calendar')"
@@ -31,7 +35,7 @@
           class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded transition-colors duration-200"
         >
           <i class="pi pi-th-large text-xs"></i>
-          Calendar
+          {{ 'tickets.calendar' | translate: {} : 'helpdesk' }}
         </button>
       </div>
     </div>
@@ -39,11 +43,11 @@
 </header>
 
 <bifi-app-search-bar
-  label="Search by subject, type, priority, stage, category, module or assigned user"
+  [label]="'tickets.searchPlaceholder' | translate: {} : 'helpdesk'"
   [searchFilters]="filters"
 ></bifi-app-search-bar>
 
-<bifi-app-filter-bar [filterFields]="filterFields"></bifi-app-filter-bar>
+<bifi-app-filter-bar [filterFields]="filterFields" [scope]="'helpdesk'"></bifi-app-filter-bar>
 
 @if (viewState() === 'list') {
   <bifi-app-table-layout
@@ -52,6 +56,7 @@
     [infiniteScroll]="true"
     [onClickRow]="gotoEditTicket"
     clickRowPermission="tickets/update:view"
+    [scope]="'helpdesk'"
   >
     <ng-template #actions let-element>
       <p-button
@@ -59,7 +64,7 @@
         variant="text"
         severity="info"
         icon="pi pi-plus"
-        pTooltip="Create Task"
+        [pTooltip]="'tickets.createTask' | translate: {} : 'helpdesk'"
         (onClick)="$event.stopPropagation(); createTask(element)"
       ></p-button>
       <bifi-app-buttons-actions

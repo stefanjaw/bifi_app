@@ -1,5 +1,7 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Edit Project' : 'New Project' }}"
+  title="{{
+    (isUpdate() ? 'projectForm.titleEdit' : 'projectForm.titleCreate') | translate: {} : 'projects'
+  }}"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -21,7 +23,7 @@
       @if (isUpdate()) {
         <p-button
           *bifiAppHasPermission="'tasks/view:view'"
-          label="View Tasks"
+          [label]="'projectForm.viewTasks' | translate: {} : 'projects'"
           icon="pi pi-list-check"
           severity="secondary"
           (onClick)="viewTasks()"
@@ -30,49 +32,68 @@
     </div>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Project Information" id="project-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'projectForm.projectInformation' | translate: {} : 'projects'"
+        id="project-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Name *</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="Project name" />
+            <bifi-app-form-label>
+              {{ 'projectForm.name' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'projectForm.namePlaceholder' | translate: {} : 'projects'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <textarea
               pInputTextarea
               formControlName="description"
               rows="4"
-              placeholder="Project description"
+              [placeholder]="'projectForm.descriptionPlaceholder' | translate: {} : 'projects'"
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Stage *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.stage' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="stage"
               [options]="stages()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a stage"
+              [placeholder]="'projectForm.stagePlaceholder' | translate: {} : 'projects'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Priority *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.priority' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="priority"
-              [options]="priorityOptions"
-              placeholder="Select priority"
+              [options]="priorityOptions()"
+              [placeholder]="'projectForm.priorityPlaceholder' | translate: {} : 'projects'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Start Date *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.startDate' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-datepicker
               appendTo="body"
               formControlName="dateStart"
@@ -84,7 +105,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>End Date *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.endDate' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-datepicker
               appendTo="body"
               formControlName="dateEnd"
@@ -96,44 +119,50 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Contact</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.contact' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="contactId"
               [options]="contacts()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a contact"
+              [placeholder]="'projectForm.contactPlaceholder' | translate: {} : 'projects'"
               [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Parent Project</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.parentProject' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="parentId"
               [options]="parentOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a parent project"
+              [placeholder]="'projectForm.parentProjectPlaceholder' | translate: {} : 'projects'"
               [showClear]="true"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Sequence *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'projectForm.sequence' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="sequence"
               type="number"
-              placeholder="Project sequence"
+              [placeholder]="'projectForm.sequencePlaceholder' | translate: {} : 'projects'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Active</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'active' | translate: {} : 'projects' }}</bifi-app-form-label>
             <p-checkbox formControlName="active" [binary]="true"></p-checkbox>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -141,7 +170,11 @@
       </bifi-app-form-section>
 
       @if (isUpdate() && children().length > 0) {
-        <bifi-app-form-section title="Sub-projects" id="sub-projects" [ordinal]="2">
+        <bifi-app-form-section
+          [title]="'projectForm.subProjects' | translate: {} : 'projects'"
+          id="sub-projects"
+          [ordinal]="2"
+        >
           <div class="flex flex-col gap-2">
             @for (child of children(); track child._id) {
               <div
@@ -161,7 +194,7 @@
         </bifi-app-form-section>
       }
     } @else {
-      <p>Loading...</p>
+      <p>{{ 'loading' | translate: {} : 'projects' }}</p>
     }
   </form>
 </bifi-app-form-layout>

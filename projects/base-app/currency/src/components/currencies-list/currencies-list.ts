@@ -14,6 +14,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { currency } from '../../interfaces/currency';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-currencies-list',
@@ -21,7 +22,16 @@ import { currency } from '../../interfaces/currency';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, RouterLink, ButtonsActions],  templateUrl: './currencies-list.html',
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    TranslatePipe,
+  ],
+  templateUrl: './currencies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrenciesList {
@@ -29,7 +39,7 @@ export class CurrenciesList {
   private crudCurrencies = inject(CrudCurrencies);
   private destroy$ = inject(DestroyRef);
 
-  //router 
+  //router
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   currencyColumns = currencyColumns;
@@ -39,7 +49,7 @@ export class CurrenciesList {
 
   goToEditCurrency = (element: currency) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deleteCurrency(id: string) {
     this.crudCurrencies
       .delete({ _id: id })

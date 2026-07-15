@@ -6,11 +6,10 @@ import { FormFileControlHelper } from '@avalantec/base-app/form';
 
 @Component({
   selector: 'bifi-app-asset-roster-image-dialog',
-  imports:[DialogModule],
+  imports: [DialogModule],
   templateUrl: './asset-roster-image-dialog.html',
 })
 export class AssetRosterImageDialog extends BaseDialog {
-
   formService = inject(UpdateAssetRosterForm);
   private fileHelper = inject(FormFileControlHelper);
 
@@ -20,8 +19,7 @@ export class AssetRosterImageDialog extends BaseDialog {
     return this.form.controls.photo;
   }
 
-  private fileState =
-    this.fileHelper.generateMetadataFromFileControl(this.photoArray);
+  private fileState = this.fileHelper.generateMetadataFromFileControl(this.photoArray);
 
   uploadedFile = this.fileState.firstFile;
 

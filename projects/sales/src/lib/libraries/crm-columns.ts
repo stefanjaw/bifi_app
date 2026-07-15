@@ -4,40 +4,40 @@ import { crm } from '../interfaces/crm';
 export const crmColumns: tableColumn<crm>[] = [
   {
     field: 'title',
-    title: 'Title',
+    title: 'sales.columns.title',
     type: 'text',
     sortable: true,
   },
   {
     field: 'company.name',
-    title: 'Company',
+    title: 'sales.columns.company',
     type: 'text',
   },
   {
     field: 'contact.name',
-    title: 'Contact',
+    title: 'sales.columns.contact',
     type: 'text',
   },
   {
     field: 'amount',
-    title: 'Amount',
+    title: 'sales.columns.amount',
     type: 'number',
     sortable: true,
   },
   {
     field: 'currency.code',
-    title: 'Currency',
+    title: 'sales.columns.currency',
     type: 'text',
   },
   {
     field: 'stage.name',
-    title: 'Stage',
+    title: 'sales.columns.stage',
     type: 'text',
     sortable: true,
   },
   {
     field: 'expectedCloseDate',
-    title: 'Expected Close',
+    title: 'sales.columns.expectedClose',
     type: 'date',
     sortable: true,
   },

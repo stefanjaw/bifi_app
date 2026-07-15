@@ -1,4 +1,8 @@
-<p-dialog header="New Additional Information" [(visible)]="dialogState" [modal]="true">
+<p-dialog
+  [header]="'dialogHeader.newAdditionalInfo' | translate: {} : 'aduanix'"
+  [(visible)]="dialogState"
+  [modal]="true"
+>
   @if (!loading()) {
     <form
       [formGroup]="form"
@@ -8,7 +12,7 @@
     >
       <section class="w-full grid gap-3 sm:grid-cols-2">
         <bifi-app-form-field>
-          <bifi-app-form-label>Type</bifi-app-form-label>
+          <bifi-app-form-label>{{ 'column.type' | translate: {} : 'aduanix' }}</bifi-app-form-label>
           <p-select
             appendTo="body"
             formControlName="type"
@@ -20,15 +24,22 @@
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Value</bifi-app-form-label>
-          <input pInputText formControlName="value" type="text" placeholder="Value" />
+          <bifi-app-form-label>
+            {{ 'column.value' | translate: {} : 'aduanix' }}
+          </bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="value"
+            type="text"
+            [placeholder]="'placeholder.value' | translate: {} : 'aduanix'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </section>
 
       <bifi-app-form-actions
         (cancelClicked)="closeDialog()"
-        cancelLabel="Cancel"
+        [cancelLabel]="'button.cancel' | translate: {} : 'aduanix'"
         [formChanged]="form.dirty"
       ></bifi-app-form-actions>
     </form>

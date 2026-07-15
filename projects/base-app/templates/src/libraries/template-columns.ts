@@ -1,3 +1,4 @@
+import { t } from '@avalantec/base-app/i18n';
 import { template } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { Tag } from 'primeng/tag';
@@ -5,19 +6,21 @@ import { Tag } from 'primeng/tag';
 export const templateColumns: tableColumn<template>[] = [
   {
     field: 'name',
-    title: 'Template',
+    title: 'template',
     type: 'text',
     sortable: true,
   },
   {
     field: 'codeOriginal',
-    title: 'Original Code',
+    title: 'originalCode',
     type: 'text',
     component: (value: template) => {
       return {
         component: Tag,
         inputs: {
-          value: value.codeOriginal ? 'Code provided' : 'Code not provided',
+          value: value.codeOriginal
+            ? t('status.codeProvided', {}, 'base-app/templates')
+            : t('status.codeNotProvided', {}, 'base-app/templates'),
           severity: value.codeOriginal ? 'success' : 'warn',
         },
       };
@@ -25,13 +28,15 @@ export const templateColumns: tableColumn<template>[] = [
   },
   {
     field: 'codeCustom',
-    title: 'Custom Code',
+    title: 'customCode',
     type: 'text',
     component: (value: template) => {
       return {
         component: Tag,
         inputs: {
-          value: value.codeCustom ? 'Code provided' : 'Code not provided',
+          value: value.codeCustom
+            ? t('status.codeProvided', {}, 'base-app/templates')
+            : t('status.codeNotProvided', {}, 'base-app/templates'),
           severity: value.codeCustom ? 'success' : 'warn',
         },
       };
@@ -39,13 +44,13 @@ export const templateColumns: tableColumn<template>[] = [
   },
   {
     field: 'directory',
-    title: 'Directory',
+    title: 'directory',
     type: 'text',
     sortable: true,
   },
   {
     field: 'filename',
-    title: 'Filename',
+    title: 'filename',
     type: 'text',
     sortable: true,
   },

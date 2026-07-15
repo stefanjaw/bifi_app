@@ -25,6 +25,7 @@ import { TableModule } from 'primeng/table';
 import { InvoiceLinesFormDialog } from '../invoice-lines-form-dialog/invoice-lines-form-dialog';
 import { CheckboxModule } from 'primeng/checkbox';
 import { invoice } from '../../interfaces/shipping';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-shippings-form',
@@ -40,6 +41,7 @@ import { invoice } from '../../interfaces/shipping';
     TableModule,
     InvoiceLinesFormDialog,
     CheckboxModule,
+    TranslatePipe,
   ],
   templateUrl: './shippings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +54,7 @@ export class ShippingsForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translationService = inject(TranslationService);
 
   // Comming in route as param
   id = input.required<string>();
@@ -75,8 +78,14 @@ export class ShippingsForm {
   // view
   invoiceViewMode = signal<'hsCode' | 'tariff'>('hsCode');
   invoiceViewModeOptions = [
-    { label: 'HS Code', value: 'hsCode' },
-    { label: 'Tariff', value: 'tariff' },
+    {
+      label: this.translationService.translate('option.viewMode.hsCode', {}, 'aduanix'),
+      value: 'hsCode',
+    },
+    {
+      label: this.translationService.translate('option.viewMode.tariff', {}, 'aduanix'),
+      value: 'tariff',
+    },
   ];
 
   // State

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
-  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -15,11 +14,20 @@ import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { user } from '@avalantec/base-app/interfaces';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-users-list',
   providers: [provideResourceManager(CrudUsers)],
-  imports: [TableLayout, ButtonModule, TooltipModule, SearchBar, RouterLink, HasPermission],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    TooltipModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -72,5 +80,5 @@ export class UsersList {
 
   gotoEditUser = (element: user) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -29,6 +30,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
   imports: [
     FormModule,
     ReactiveFormsModule,
+    TranslatePipe,
     SelectModule,
     InputText,
     Button,
@@ -41,6 +43,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 export class PoliciesForm implements OnInit {
   protected formService = inject(PolicyForm);
   private policiesService = inject(CrudPolicies);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -62,19 +65,35 @@ export class PoliciesForm implements OnInit {
   error = this.policyResource.error;
 
   // Options
-  conditionOperatorOptions: { label: string; value: conditionOperator }[] = [
-    { label: 'Equal', value: '==' },
-    { label: 'Not Equal', value: '!=' },
-    { label: 'More than', value: '>' },
-    { label: 'Less than', value: '<' },
-    { label: 'In', value: 'in' },
-  ];
+  conditionOperatorOptions: { label: string; value: conditionOperator }[] = [];
 
   /**
    * Sets the form values based on the current policy in the route, if any.
    * If there is no policy, resets the form.
    */
   constructor() {
+    this.conditionOperatorOptions = [
+      {
+        label: this.translationService.translate('operator.equal', {}, 'base-app/policies'),
+        value: '==',
+      },
+      {
+        label: this.translationService.translate('operator.notEqual', {}, 'base-app/policies'),
+        value: '!=',
+      },
+      {
+        label: this.translationService.translate('operator.moreThan', {}, 'base-app/policies'),
+        value: '>',
+      },
+      {
+        label: this.translationService.translate('operator.lessThan', {}, 'base-app/policies'),
+        value: '<',
+      },
+      {
+        label: this.translationService.translate('operator.in', {}, 'base-app/policies'),
+        value: 'in',
+      },
+    ];
     effect(() => {
       const policy = this.policy();
 
@@ -133,6 +152,8 @@ export class PoliciesForm implements OnInit {
    * Add a new condition to the form.
    *
    * This will add a new condition to the form with default values.
+   *
+   * @param condition - Optional condition to add. Defaults to undefined.
    */
   addCondition(condition: condition<string> | undefined = undefined) {
     this.formService.createCondition(condition);

@@ -1,0 +1,88 @@
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'pageTitle' | translate: {} : 'base-app/search-destinations' }}
+</h1>
+
+<p class="text-gray-500 mb-4">
+  {{ 'pageDescription' | translate: {} : 'base-app/search-destinations' }}
+</p>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    [label]="'addNew' | translate: {} : 'base-app/search-destinations'"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'search-destinations/create:view'"
+  ></p-button>
+  <p-button
+    [label]="'syncFromMenu' | translate: {} : 'base-app/search-destinations'"
+    severity="secondary"
+    icon="pi pi-sync"
+    [loading]="syncing()"
+    (onClick)="syncFromMenu()"
+    [pTooltip]="'syncFromMenuTooltip' | translate: {} : 'base-app/search-destinations'"
+    tooltipPosition="top"
+    *bifiAppHasPermission="'search-destinations/update:view'"
+  ></p-button>
+  <p-button
+    [label]="
+      (showInactiveStatus() ? 'showActive' : 'showInactive')
+        | translate: {} : 'base-app/search-destinations'
+    "
+    severity="info"
+    [icon]="showInactiveStatus() ? 'pi pi-circle-on' : 'pi pi-circle-off'"
+    (onClick)="toggleInactiveRecords()"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  [label]="'searchPlaceholder' | translate: {} : 'base-app/search-destinations'"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="searchDestinationColumns"
+  [data]="destinations"
+  [onClickRow]="goToEdit"
+  clickRowPermission="search-destinations/update:view"
+  [scope]="'base-app/search-destinations'"
+>
+  <ng-template #actions let-row>
+    @if (row.active) {
+      <p-button
+        severity="secondary"
+        [label]="'edit' | translate: {} : 'base-app/search-destinations'"
+        icon="pi pi-pencil"
+        [routerLink]="['../edit', row._id]"
+        *bifiAppHasPermission="'search-destinations/update:view'"
+      ></p-button>
+      @if (row.isSystem) {
+        <p-button
+          severity="warn"
+          [label]="'deactivate' | translate: {} : 'base-app/search-destinations'"
+          icon="pi pi-ban"
+          (onClick)="setActive(row._id, false)"
+          [pTooltip]="'systemTooltip' | translate: {} : 'base-app/search-destinations'"
+          tooltipPosition="top"
+          *bifiAppHasPermission="'search-destinations/update:view'"
+        ></p-button>
+      } @else {
+        <p-button
+          severity="danger"
+          [label]="'delete' | translate: {} : 'base-app/search-destinations'"
+          icon="pi pi-trash"
+          (onClick)="deleteDestination(row._id)"
+          *bifiAppHasPermission="'search-destinations:delete:model'"
+        ></p-button>
+      }
+    } @else {
+      <p-button
+        severity="secondary"
+        [label]="'reactivate' | translate: {} : 'base-app/search-destinations'"
+        icon="pi pi-eye"
+        (onClick)="setActive(row._id, true)"
+        *bifiAppHasPermission="'search-destinations/update:view'"
+      ></p-button>
+    }
+  </ng-template>
+</bifi-app-table-layout>

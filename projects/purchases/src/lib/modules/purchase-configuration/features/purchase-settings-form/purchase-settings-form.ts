@@ -15,9 +15,13 @@ import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudPurchaseSettings } from '../../services/crud-purchase-settings';
-import { PurchaseSettingsForm, PurchaseSettingsFormModel } from '../../services/purchase-settings-form';
+import {
+  PurchaseSettingsForm,
+  PurchaseSettingsFormModel,
+} from '../../services/purchase-settings-form';
 import { purchaseSettings } from '../../interfaces/purchase-settings';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-settings-form',
@@ -28,11 +32,12 @@ import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
     ButtonModule,
     TextareaModule,
     ProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './purchase-settings-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PurchaseSettingsFormComponent {
+export class PurchaseSettingsPage {
   private crudPurchaseSettings = inject(CrudPurchaseSettings);
   private formService = inject(PurchaseSettingsForm);
   private crudSequences = inject(CrudSequences);

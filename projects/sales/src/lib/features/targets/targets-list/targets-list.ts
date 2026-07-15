@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { 
+import {
   ButtonsActions,
-  provideResourceManager, 
-  ResourceManager, 
-  TableLayout 
+  provideResourceManager,
+  ResourceManager,
+  TableLayout,
 } from '@avalantec/base-app/resource';
 import { CrudSalesTargets } from '../../../services/crud-sales-targets';
 import { salesTarget } from '../../../interfaces/sales-target';
@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-targets-list',
@@ -19,7 +20,7 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, RouterLink, HasPermission, ButtonsActions],
+  imports: [TableLayout, ButtonModule, RouterLink, HasPermission, ButtonsActions, TranslatePipe],
   templateUrl: './targets-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,5 +48,5 @@ export class TargetsList {
 
   gotoEditTarget = (element: salesTarget) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

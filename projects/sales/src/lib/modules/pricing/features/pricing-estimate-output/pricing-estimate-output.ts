@@ -8,7 +8,8 @@ import {
   computed,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DecimalPipe, DatePipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
+import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TableModule } from 'primeng/table';
@@ -23,8 +24,9 @@ import { pricingEstimate, pricingEstimateLineItem } from '../../interfaces/prici
   selector: 'bifi-app-pricing-estimate-output',
   imports: [
     DecimalPipe,
-    DatePipe,
     CurrencyPipe,
+    LocaleDatePipe,
+    TranslatePipe,
     ButtonModule,
     ToggleSwitchModule,
     TableModule,
@@ -35,7 +37,7 @@ import { pricingEstimate, pricingEstimateLineItem } from '../../interfaces/prici
   templateUrl: './pricing-estimate-output.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateOutputComponent implements OnInit {
+export class PricingEstimateOutput implements OnInit {
   private route = inject(ActivatedRoute);
   private crudEstimate = inject(CrudPricingEstimate);
   private destroy$ = inject(DestroyRef);
@@ -56,7 +58,7 @@ export class PricingEstimateOutputComponent implements OnInit {
       .getById(id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.estimate.set(data);
           this.loading.set(false);
         },
@@ -67,7 +69,7 @@ export class PricingEstimateOutputComponent implements OnInit {
   }
 
   protected toggleView() {
-    this.isDistributorView.update((v) => !v);
+    this.isDistributorView.update(v => !v);
   }
 
   protected downloadPdf() {
@@ -78,7 +80,7 @@ export class PricingEstimateOutputComponent implements OnInit {
       .getPdf(est._id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (blob) => {
+        next: blob => {
           this.triggerDownload(blob, `estimate-${est.number}.pdf`);
           this.downloadingPdf.set(false);
         },
@@ -94,7 +96,7 @@ export class PricingEstimateOutputComponent implements OnInit {
       .getCsv(est._id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (blob) => {
+        next: blob => {
           this.triggerDownload(blob, `estimate-${est.number}.csv`);
           this.downloadingCsv.set(false);
         },

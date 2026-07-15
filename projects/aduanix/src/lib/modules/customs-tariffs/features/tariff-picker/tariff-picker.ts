@@ -9,11 +9,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -21,10 +17,11 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CrudCustomsTariffs } from '../../services/crud-customs-tariffs';
 import { customsTariff } from '../../interfaces/customs-tariff';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-tariff-picker',
-  imports: [FormsModule, AutoCompleteModule, DecimalPipe],
+  imports: [FormsModule, AutoCompleteModule, DecimalPipe, TranslatePipe],
   templateUrl: './tariff-picker.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -46,7 +43,7 @@ export class TariffPicker implements OnDestroy {
 
   private debouncedQuery = toSignal(
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()),
-    { initialValue: '' },
+    { initialValue: '' }
   );
 
   private tariffResource = this.crudTariffs.get({

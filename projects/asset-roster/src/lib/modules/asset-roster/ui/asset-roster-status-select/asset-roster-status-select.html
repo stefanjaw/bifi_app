@@ -1,9 +1,9 @@
 <p-select
-  [options]="options"
+  [options]="options()"
   [(ngModel)]="variant"
   optionLabel="label"
   optionValue="variant"
-  placeholder="Filter by status"
+  [placeholder]="'filterByStatus' | translate: {} : 'asset-roster'"
   class="w-full"
   (onChange)="assetRosterStatusManager.filter($event.value)"
 />

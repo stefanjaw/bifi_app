@@ -7,5 +7,6 @@ export interface crmStage {
   probability: number;
   isWon: boolean;
   isLost: boolean;
+  isDefault: boolean;
   active: boolean;
 }

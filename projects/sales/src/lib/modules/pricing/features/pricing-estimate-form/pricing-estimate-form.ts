@@ -19,7 +19,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, EMPTY, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs';
 import { CrudPricingEstimate } from '../../services/crud-pricing-estimate';
 import { tokenEstimation } from '../../interfaces/pricing-estimate';
-import { TokenEstimatorCardComponent } from '../token-estimator-card/token-estimator-card';
+import { TokenEstimatorCard } from '../token-estimator-card/token-estimator-card';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-pricing-estimate-form',
@@ -32,12 +33,13 @@ import { TokenEstimatorCardComponent } from '../token-estimator-card/token-estim
     CheckboxModule,
     RadioButtonModule,
     ProgressBarModule,
-    TokenEstimatorCardComponent,
+    TokenEstimatorCard,
+    TranslatePipe,
   ],
   templateUrl: './pricing-estimate-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateFormComponent implements OnInit {
+export class PricingEstimateForm implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private crudEstimate = inject(CrudPricingEstimate);
@@ -69,7 +71,7 @@ export class PricingEstimateFormComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        switchMap((text) => {
+        switchMap(text => {
           if (text.trim().length <= 5) {
             this.tokenData.set(null);
             this.tokenLoading.set(false);
@@ -85,19 +87,21 @@ export class PricingEstimateFormComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroy$)
       )
-      .subscribe((data) => {
+      .subscribe(data => {
         this.tokenData.set(data);
         this.tokenLoading.set(false);
       });
 
-    this.form.get('requestText')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('requestText')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe((val: string) => {
         this.requestText$.next(val ?? '');
       });
 
-    this.form.get('pricingMethod')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy$))
+    this.form
+      .get('pricingMethod')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroy$))
       .subscribe((method: string) => {
         this.form.patchValue({
           pricingValue: method === 'markup' ? '1.3' : '30',
@@ -129,7 +133,7 @@ export class PricingEstimateFormComponent implements OnInit {
       .generate(payload)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
-        next: (estimate) => {
+        next: estimate => {
           this.isSubmitting.set(false);
           this.router.navigate(['/pricing/estimates', estimate._id]);
         },

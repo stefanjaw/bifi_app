@@ -1,5 +1,7 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Edit Ticket' : 'New Ticket' }}"
+  title="{{
+    (isUpdate() ? 'ticketForm.titleEdit' : 'ticketForm.titleCreate') | translate: {} : 'helpdesk'
+  }}"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,104 +20,126 @@
     ></bifi-app-form-actions>
 
     @if (!isLoading()) {
-      <bifi-app-form-section title="Ticket Information" id="ticket-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'ticketForm.ticketInformation' | translate: {} : 'helpdesk'"
+        id="ticket-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Subject *</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.subject' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="name"
               type="text"
-              placeholder="Brief description of the issue"
+              [placeholder]="'ticketForm.subjectPlaceholder' | translate: {} : 'helpdesk'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Description</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <textarea
               pInputTextarea
               formControlName="description"
               rows="4"
-              placeholder="Detailed description"
+              [placeholder]="'ticketForm.descriptionPlaceholder' | translate: {} : 'helpdesk'"
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Internal Notes</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.internalNotes' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <textarea
               pInputTextarea
               formControlName="internalNotes"
               rows="3"
-              placeholder="Internal notes (not visible to requester)"
+              [placeholder]="'ticketForm.internalNotesPlaceholder' | translate: {} : 'helpdesk'"
             ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Priority</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.priority' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="priority"
-              [options]="priorityOptions"
+              [options]="priorityOptions()"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select priority"
+              [placeholder]="'ticketForm.priorityPlaceholder' | translate: {} : 'helpdesk'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Type</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.type' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="type"
-              [options]="typeOptions"
+              [options]="typeOptions()"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select type"
+              [placeholder]="'ticketForm.typePlaceholder' | translate: {} : 'helpdesk'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Stage</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.stage' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="stage"
               [options]="stageOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select stage"
+              [placeholder]="'ticketForm.stagePlaceholder' | translate: {} : 'helpdesk'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Assigned To</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.assignedTo' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="assigned"
               [options]="userOptions()"
               optionLabel="username"
               optionValue="_id"
-              placeholder="Select user"
+              [placeholder]="'ticketForm.assignedPlaceholder' | translate: {} : 'helpdesk'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Requester</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.requester' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="senderUser"
               [options]="userOptions()"
               optionLabel="username"
               optionValue="_id"
-              placeholder="Select requester"
+              [placeholder]="'ticketForm.requesterPlaceholder' | translate: {} : 'helpdesk'"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <div class="flex items-center gap-2 md:grid-cols-2">
             <bifi-app-form-field>
-              <bifi-app-form-label>Duration</bifi-app-form-label>
+              <bifi-app-form-label>
+                {{ 'ticketForm.duration' | translate: {} : 'helpdesk' }}
+              </bifi-app-form-label>
               <input pInputText formControlName="duration" type="text" />
               <!-- <p-select [options]="timeOptions" 
             optionLabel="label" 
@@ -129,10 +153,12 @@
           </div>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Start Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.startDate' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="dateStart"
-              placeholder="Select date"
+              [placeholder]="'ticketForm.startDatePlaceholder' | translate: {} : 'helpdesk'"
               [showIcon]="true"
               [fluid]="true"
             ></p-datepicker>
@@ -140,10 +166,12 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>End Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.endDate' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="dateEnd"
-              placeholder="Select date"
+              [placeholder]="'ticketForm.endDatePlaceholder' | translate: {} : 'helpdesk'"
               [showIcon]="true"
               [fluid]="true"
             ></p-datepicker>
@@ -151,10 +179,12 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Scheduled Date</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.scheduledDate' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <p-datepicker
               formControlName="dateScheduled"
-              placeholder="Select date"
+              [placeholder]="'ticketForm.scheduledDatePlaceholder' | translate: {} : 'helpdesk'"
               [showIcon]="true"
               [fluid]="true"
             ></p-datepicker>
@@ -162,7 +192,9 @@
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Followers</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.followers' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <div class="flex flex-col gap-2">
               <div class="flex gap-2 flex-wrap">
                 @for (ctrl of followersArray.controls; track $index) {
@@ -171,6 +203,7 @@
                   >
                     <span>{{ getFollowerName(ctrl.value) }}</span>
                     <button
+                      *bifiAppHasPermission="'tickets:update:model'"
                       type="button"
                       class="ml-1 text-gray-500 hover:text-gray-800"
                       (click)="removeFollower($index)"
@@ -180,55 +213,82 @@
                   </div>
                 }
                 @if (followersArray.controls.length === 0) {
-                  <p class="text-gray-400 text-sm">No followers selected.</p>
+                  <p class="text-gray-400 text-sm">
+                    {{ 'ticketForm.noFollowers' | translate: {} : 'helpdesk' }}
+                  </p>
                 }
               </div>
               <p-select
                 [options]="userOptions()"
                 optionLabel="username"
                 optionValue="_id"
-                placeholder="Add a follower..."
+                [placeholder]="'ticketForm.addFollowerPlaceholder' | translate: {} : 'helpdesk'"
                 (onChange)="addFollower($event.value)"
               ></p-select>
             </div>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Category</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.category' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="category"
               type="text"
-              placeholder="e.g. Billing, Technical"
+              [placeholder]="'ticketForm.categoryPlaceholder' | translate: {} : 'helpdesk'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Module</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'ticketForm.module' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="appModule"
               type="text"
-              placeholder="e.g. Inventory, CRM"
+              [placeholder]="'ticketForm.modulePlaceholder' | translate: {} : 'helpdesk'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field class="md:col-span-2">
-            <bifi-app-form-label>Tags (comma-separated)</bifi-app-form-label>
+            <bifi-app-form-label>{{ 'active' | translate: {} : 'helpdesk' }}</bifi-app-form-label>
+            <div class="flex items-center gap-3 pt-1">
+              <p-toggle-switch formControlName="active"></p-toggle-switch>
+              <span class="text-sm text-gray-600">
+                {{
+                  form.get('active')?.value
+                    ? ('active' | translate: {} : 'helpdesk')
+                    : ('inactive' | translate: {} : 'helpdesk')
+                }}
+              </span>
+            </div>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>
+              {{ 'ticketForm.tags' | translate: {} : 'helpdesk' }}
+            </bifi-app-form-label>
             <input
               pInputText
               formControlName="tagsInput"
               type="text"
-              placeholder="tag1, tag2, tag3"
+              [placeholder]="'ticketForm.tagsPlaceholder' | translate: {} : 'helpdesk'"
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Linked Tasks" id="linked-tasks" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'ticketForm.linkedTasks' | translate: {} : 'helpdesk'"
+        id="linked-tasks"
+        [ordinal]="2"
+      >
         <div class="flex flex-col gap-4">
           <div class="flex gap-2 flex-wrap">
             @for (id of linkedTaskIds(); track id) {
@@ -239,6 +299,7 @@
 
                 <span>{{ getTaskName(taskId) }}</span>
                 <button
+                  *bifiAppHasPermission="'tickets:update:model'"
                   type="button"
                   class="ml-1 text-blue-500 hover:text-blue-800"
                   (click)="removeTask(taskId)"
@@ -248,7 +309,9 @@
               </div>
             }
             @if (linkedTaskIds().length === 0) {
-              <p class="text-gray-400 text-sm">No tasks linked to this ticket.</p>
+              <p class="text-gray-400 text-sm">
+                {{ 'ticketForm.noTasks' | translate: {} : 'helpdesk' }}
+              </p>
             }
           </div>
 
@@ -257,7 +320,7 @@
               [options]="availableTasks()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Add a task..."
+              [placeholder]="'ticketForm.addTaskPlaceholder' | translate: {} : 'helpdesk'"
               (onChange)="addTask($event.value)"
               class="flex-1"
             ></p-select>
@@ -266,17 +329,23 @@
       </bifi-app-form-section>
 
       @if (isUpdate()) {
-        <bifi-app-form-section title="Attachments" id="attachments" [ordinal]="3">
+        <bifi-app-form-section
+          [title]="'ticketForm.attachments' | translate: {} : 'helpdesk'"
+          id="attachments"
+          [ordinal]="3"
+        >
           <div class="flex flex-col gap-2">
             @if ((entry()?.attachments ?? []).length === 0) {
-              <p class="text-sm text-gray-500 italic">No attachments.</p>
+              <p class="text-sm text-gray-500 italic">
+                {{ 'ticketForm.noAttachments' | translate: {} : 'helpdesk' }}
+              </p>
             }
             @for (attachment of entry()?.attachments ?? []; track attachment.fileId) {
               <div class="flex items-center gap-2 rounded border border-gray-200 p-2">
                 <span class="pi pi-file text-gray-500"></span>
                 <p class="flex-1 truncate text-sm">{{ attachment.name }}</p>
                 <p-button
-                  label="Download"
+                  [label]="'ticketForm.download' | translate: {} : 'helpdesk'"
                   icon="pi pi-download"
                   severity="secondary"
                   size="small"
@@ -289,15 +358,21 @@
       }
 
       @if (isUpdate()) {
-        <bifi-app-form-section title="Activity History" id="activity-history" [ordinal]="4">
+        <bifi-app-form-section
+          [title]="'ticketForm.activityHistory' | translate: {} : 'helpdesk'"
+          id="activity-history"
+          [ordinal]="4"
+        >
           <div class="flex flex-col gap-3">
             @if (activityHistories().length === 0) {
-              <p class="text-sm text-gray-500 italic">No activity recorded yet.</p>
+              <p class="text-sm text-gray-500 italic">
+                {{ 'ticketForm.noActivity' | translate: {} : 'helpdesk' }}
+              </p>
             }
             @for (activity of activityHistories(); track activity._id) {
               <div class="flex flex-col gap-1 border-l-2 border-blue-300 pl-3 py-1">
                 <div class="text-xs text-gray-500">
-                  {{ activity.performDate | date: 'medium' }}
+                  {{ activity.performDate | localeDate: { dateStyle: 'medium' } }}
                   @if (activity.userId) {
                     —
                     <span class="font-medium">
@@ -321,7 +396,7 @@
         </bifi-app-form-section>
       }
     } @else {
-      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
     }
   </form>
 </bifi-app-form-layout>

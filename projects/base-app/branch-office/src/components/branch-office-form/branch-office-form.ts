@@ -19,11 +19,20 @@ import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form.service';
+import { BranchOfficeFormService, BranchOfficeFormModel } from '../../services/branch-office-form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-branch-office-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './branch-office-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,7 +60,7 @@ export class BranchOfficeForm {
     () =>
       this.branchOfficeResource.isLoading() ||
       this.companiesResource.isLoading() ||
-      this.countriesResource.isLoading(),
+      this.countriesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 

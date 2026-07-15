@@ -20,12 +20,13 @@ import {
   AssetRosterActivityHistoryAddFileFormModel,
 } from '../../services/asset-roster-activity-history-add-file-form';
 import { BaseDialog } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'bifi-app-asset-roster-activity-history-add-file-dialog',
-  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, FormModule],
+  imports: [DialogModule, ReactiveFormsModule, FileUploadModule, FormModule, TranslatePipe],
   templateUrl: './asset-roster-activity-history-add-file-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

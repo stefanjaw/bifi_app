@@ -19,6 +19,7 @@ import { CrudTaskStages } from '../../services/crud-task-stages';
 import { TaskStageForm, TaskStageFormModel } from '../../services/task-stage-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-task-stages-form',
@@ -30,6 +31,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ButtonModule,
     ProgressBarModule,
     TextareaModule,
+    TranslatePipe,
   ],
   templateUrl: './task-stages-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +64,7 @@ export class TaskStagesForm {
         this.formService.patchValue({
           name: stage.name,
           description: stage.description ?? '',
+          color: stage.color ?? '#6366f1',
           isDefault: stage.isDefault,
         });
         this.formService.resetDirtyState();

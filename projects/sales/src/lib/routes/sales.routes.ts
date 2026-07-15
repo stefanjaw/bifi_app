@@ -24,29 +24,24 @@ export const SALES_ROUTES: Routes = [
   {
     path: 'opportunities/new',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+    loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/create' },
   },
   {
     path: 'opportunities/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/crm-form/crm-form').then(c => c.CrmFormComponent),
+    loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/update' },
   },
   {
     path: 'pipeline',
-    canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/sales-pipeline/sales-pipeline').then(c => c.SalesPipeline),
-    data: { resource: 'sales/pipeline/list' },
+    redirectTo: 'opportunities',
+    pathMatch: 'full',
   },
   {
     path: 'orders',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/orders-list/orders-list').then(c => c.OrdersList),
+    loadComponent: () => import('../features/orders-list/orders-list').then(c => c.OrdersList),
     data: { resource: 'sales/orders/list' },
   },
   {
@@ -114,8 +109,10 @@ export const SALES_ROUTES: Routes = [
       },
       {
         path: 'list',
+        canActivate: [permissionGuard],
         loadComponent: () =>
           import('../features/targets/targets-list/targets-list').then(c => c.TargetsList),
+        data: { resource: 'sales/targets/list' },
       },
       {
         path: 'create',

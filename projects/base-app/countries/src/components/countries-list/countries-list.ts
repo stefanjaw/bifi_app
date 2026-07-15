@@ -15,11 +15,21 @@ import { countryFilters } from '../../libraries/countries-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { country } from '@avalantec/base-app/interfaces';
 import { DebugMode } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-countries-list',
   providers: [provideResourceManager(CrudCountries)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, DebugMode, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    DebugMode,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -32,8 +42,8 @@ export class CountriesList {
   private destroy$ = inject(DestroyRef);
 
   // Router
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   countryColumns = countryColumns;
   countryFilters = countryFilters;

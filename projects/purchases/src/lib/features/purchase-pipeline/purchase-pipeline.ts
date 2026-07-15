@@ -15,13 +15,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
+import { injectAuthService } from '@avalantec/base-app/auth';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-pipeline',
   host: {
     class: 'flex flex-col h-full',
   },
-  imports: [CurrencyPipe, ProgressBarModule, TagModule],
+  imports: [CurrencyPipe, ProgressBarModule, TagModule, TranslatePipe],
   templateUrl: './purchase-pipeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,7 +31,9 @@ export class PurchasePipeline {
   private crudPurchaseOrders = inject(CrudPurchaseOrders);
   private crudPurchaseStages = inject(CrudPurchaseStages);
   private router = inject(Router);
+  private auth = injectAuthService();
   private destroy$ = inject(DestroyRef);
+  private translationService = inject(TranslationService);
 
   ordersResource = this.crudPurchaseOrders.get({ getInactive: null });
   stagesResource = this.crudPurchaseStages.get({});
@@ -56,7 +60,9 @@ export class PurchasePipeline {
     return this.getOrdersByStage(stageId).reduce((sum, o) => sum + (o.totalAmount || 0), 0);
   }
 
-  getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+  getStatusSeverity(
+    status: string
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     const map: Record<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast'> = {
       draft: 'secondary',
       sent: 'info',
@@ -68,14 +74,7 @@ export class PurchasePipeline {
   }
 
   getStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      draft: 'Draft',
-      sent: 'Sent',
-      partially_received: 'Partial',
-      received: 'Received',
-      cancelled: 'Cancelled',
-    };
-    return map[status] ?? status;
+    return this.translationService.translate('status.' + status, {}, 'purchases');
   }
 
   onDragStart(event: DragEvent, order: purchaseOrder) {
@@ -121,6 +120,16 @@ export class PurchasePipeline {
   }
 
   navigateToOrder(order: purchaseOrder) {
-    this.router.navigate(['/purchases/orders', order._id]);
+    const user = this.auth.user();
+    if (!user) return;
+    const hasPermission = this.auth.hasPermission({
+      user,
+      resource: 'purchases/orders/read' as any,
+      type: 'view',
+      context: {},
+    });
+    if (hasPermission) {
+      this.router.navigate(['/purchases/orders', order._id]);
+    }
   }
 }

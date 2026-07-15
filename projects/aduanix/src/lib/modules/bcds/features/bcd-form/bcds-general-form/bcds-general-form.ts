@@ -14,6 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 @Component({
   selector: 'bifi-app-bcds-general-form',
   imports: [
@@ -27,6 +28,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     TextareaModule,
     ProgressBarModule,
     RadioButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './bcds-general-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +38,7 @@ export class BcdsGeneralForm {
   protected formManager = inject(BCDFormManager);
   private crudCountries = inject(CrudCountries);
   private crudContacts = inject(CrudContacts);
+  private translationService = inject(TranslationService);
 
   form = this.formService.form;
 
@@ -50,7 +53,12 @@ export class BcdsGeneralForm {
   bcdTransportOptions = this.formManager.bcdTransportOptions;
   bcdAdditionalInformationTypeOptions = this.formManager.bcdAdditionalInformationTypeOptions;
   bcdPortOptions = this.formManager.bcdPortOptions;
-  valuationMethodTypeOptions = valuationMethodTypeOptions;
+  valuationMethodTypeOptions = computed(() =>
+    valuationMethodTypeOptions.map(opt => ({
+      value: opt.value,
+      label: this.translationService.translate(opt.label, {}, 'aduanix'),
+    }))
+  );
   private bcdChargeCodeOptions = this.formManager.bcdChargeCodeOptions;
 
   chargeCodeOptions = computed(() =>

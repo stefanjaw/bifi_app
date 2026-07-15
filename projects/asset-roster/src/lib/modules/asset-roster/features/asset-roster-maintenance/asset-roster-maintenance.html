@@ -8,7 +8,15 @@
   [isLoading]="loading()"
   [isSubmitLoading]="submitLoading()"
   [isEditMode]="isEditMode()"
+  [isDirty]="isDirty()"
+  [prevAssetId]="prevAssetId()"
+  [nextAssetId]="nextAssetId()"
+  [currentIndex]="currentIndex()"
+  [totalAssets]="totalAssets()"
 />
+
+<!-- Full-resolution photo viewer -->
+<bifi-app-asset-roster-image-dialog></bifi-app-asset-roster-image-dialog>
 
 <!-- dialogs -->
 <bifi-app-asset-commissioning-form-dialog

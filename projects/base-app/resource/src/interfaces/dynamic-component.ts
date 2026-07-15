@@ -18,7 +18,7 @@ export type ComponentOutputs<T> = {
 
 export type ComponentType = any;
 
-export interface DynamicComponent<TComponent extends ComponentType = ComponentType> {
+export interface DynamicComponentConfig<TComponent extends ComponentType = ComponentType> {
   component: Type<TComponent>;
   inputs?: ComponentInputs<TComponent>;
   outputs?: ComponentOutputs<TComponent>;

@@ -1,71 +1,180 @@
 <div class="flex flex-col gap-4">
   <div class="flex items-center justify-between">
-    <h3 class="text-lg font-semibold">Order Items</h3>
-    @if (!readonly()) {
-      <p-button
-        label="Add Item"
-        icon="pi pi-plus"
-        severity="secondary"
-        size="small"
-        (onClick)="addItem()"
-      ></p-button>
-    }
+    <h3 class="text-lg font-semibold">
+      {{ 'sales.lineItems.orderItems' | translate: {} : 'sales' }}
+    </h3>
   </div>
 
   <div class="overflow-x-auto">
-    <table class="w-full text-sm border-collapse">
+    <table class="w-full text-sm border-collapse" style="table-layout: fixed">
+      <colgroup>
+        @if (!readonly()) {
+          <col style="width: 32px" />
+        }
+        <col [style.width.px]="colWidths()['sku']" />
+        <col [style.width.px]="colWidths()['description']" />
+        <col [style.width.px]="colWidths()['quantity']" />
+        <col [style.width.px]="colWidths()['uom']" />
+        <col [style.width.px]="colWidths()['unitPrice']" />
+        @if (discountOptions().length > 0) {
+          <col [style.width.px]="colWidths()['discount']" />
+        }
+        @if (taxOptions().length > 0) {
+          <col [style.width.px]="colWidths()['taxes']" />
+        }
+        <col [style.width.px]="colWidths()['total']" />
+        @if (!readonly()) {
+          <col style="width: 48px" />
+        }
+      </colgroup>
       <thead>
         <tr class="bg-gray-100">
-          <th class="text-left p-3 border-b">Product</th>
-          <th class="text-left p-3 border-b">Description</th>
-          <th class="text-left p-3 border-b w-36">Quantity</th>
-          <th class="text-left p-3 border-b w-20">UoM</th>
-          <th class="text-left p-3 border-b w-32">Unit Price</th>
-          <th class="text-left p-3 border-b w-32">Total</th>
           @if (!readonly()) {
-            <th class="p-3 border-b w-16"></th>
+            <th class="p-3 border-b"></th>
+          }
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['sku']"
+          >
+            {{ 'sales.lineItems.sku' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'sku')"></div>
+          </th>
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['description']"
+          >
+            {{ 'sales.lineItems.description' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'description')"></div>
+          </th>
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['quantity']"
+          >
+            {{ 'sales.lineItems.qty' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'quantity')"></div>
+          </th>
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['uom']"
+          >
+            {{ 'sales.lineItems.uom' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'uom')"></div>
+          </th>
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['unitPrice']"
+          >
+            {{ 'sales.lineItems.unitPrice' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'unitPrice')"></div>
+          </th>
+          @if (discountOptions().length > 0) {
+            <th
+              class="text-left p-3 border-b border-r border-gray-200 relative"
+              [style.width.px]="colWidths()['discount']"
+            >
+              {{ 'sales.lineItems.discount' | translate: {} : 'sales' }}
+              <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'discount')"></div>
+            </th>
+          }
+          @if (taxOptions().length > 0) {
+            <th
+              class="text-left p-3 border-b border-r border-gray-200 relative"
+              [style.width.px]="colWidths()['taxes']"
+            >
+              {{ 'sales.lineItems.taxes' | translate: {} : 'sales' }}
+              <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'taxes')"></div>
+            </th>
+          }
+          <th
+            class="text-left p-3 border-b border-r border-gray-200 relative"
+            [style.width.px]="colWidths()['total']"
+          >
+            {{ 'sales.lineItems.total' | translate: {} : 'sales' }}
+            <div class="col-resize-handle" (mousedown)="onResizeStart($event, 'total')"></div>
+          </th>
+          @if (!readonly()) {
+            <th class="p-3 border-b"></th>
           }
         </tr>
       </thead>
-      <tbody>
+      <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
+        @if (!readonly()) {
+          <tr>
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="border-b p-0"
+            >
+              <button
+                *bifiAppHasPermission="'sales-orders:update:model'"
+                type="button"
+                class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
+                (click)="addItem()"
+              >
+                <span class="pi pi-plus text-xs"></span>
+                {{ 'sales.lineItems.addItem' | translate: {} : 'sales' }}
+              </button>
+            </td>
+          </tr>
+        }
         @for (control of lineItemsArray.controls; track $index) {
-          <tr class="hover:bg-gray-50" [formGroup]="$any(control)">
-            <td class="p-2 border-b">
+          <tr class="hover:bg-gray-50" [formGroup]="$any(control)" cdkDrag>
+            @if (!readonly()) {
+              <td class="p-2 border-b text-gray-300" cdkDragHandle>
+                <span class="pi pi-bars text-sm cursor-grab active:cursor-grabbing"></span>
+              </td>
+            }
+            <td class="p-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-select
                   formControlName="productId"
                   [options]="productOptions()"
                   optionLabel="name"
                   optionValue="_id"
-                  placeholder="Select product"
+                  [placeholder]="'sales.lineItems.select' | translate: {} : 'sales'"
                   [filter]="true"
                   filterBy="name,sku"
                   styleClass="w-full"
                   (onChange)="onProductChange($index, $event.value)"
                   appendTo="body"
-                ></p-select>
+                >
+                  <ng-template pTemplate="selectedItem" let-p>
+                    <span class="font-mono text-xs">{{ p?.sku }}</span>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-p>
+                    <span class="font-mono text-xs text-gray-500 mr-2">{{ p.sku }}</span>
+                    {{ p.name }}
+                  </ng-template>
+                </p-select>
               } @else {
-                {{ getProductName($index) }}
+                <span class="font-mono text-xs">{{ getProductSku($index) }}</span>
               }
             </td>
-            <td class="p-2 border-b">
+            <td class="p-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <input
                   pInputText
                   formControlName="description"
-                  placeholder="Description"
+                  [placeholder]="'sales.lineItems.description' | translate: {} : 'sales'"
                   class="w-full"
                 />
               } @else {
                 {{ $any(control).value.description }}
               }
             </td>
-            <td class="p-2 border-b">
+            <td class="p-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-inputnumber
                   formControlName="quantity"
                   [min]="0"
                   [showButtons]="true"
+                  buttonLayout="horizontal"
+                  decrementButtonIcon="pi pi-minus"
+                  incrementButtonIcon="pi pi-plus"
                   styleClass="w-full"
                   (onInput)="onQuantityChange($index, $event.value)"
                 ></p-inputnumber>
@@ -75,9 +184,12 @@
                       isOverStock($index) ? 'block mt-1 text-amber-500' : 'block mt-1 text-gray-400'
                     "
                   >
-                    Available: {{ getAvailableStock($index) }}
+                    {{
+                      'sales.lineItems.available'
+                        | translate: { stock: getAvailableStock($index) } : 'sales'
+                    }}
                     @if (isOverStock($index)) {
-                      &mdash; Exceeds available stock
+                      {{ 'sales.lineItems.exceedsStock' | translate: {} : 'sales' }}
                     }
                   </small>
                 }
@@ -85,10 +197,10 @@
                 {{ $any(control).value.quantity }}
               }
             </td>
-            <td class="p-2 border-b text-gray-500">
+            <td class="p-2 border-b text-gray-500 overflow-hidden">
               {{ getUom($index) }}
             </td>
-            <td class="p-2 border-b">
+            <td class="p-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-inputnumber
                   formControlName="unitPrice"
@@ -102,12 +214,65 @@
                 {{ $any(control).value.unitPrice | currency }}
               }
             </td>
-            <td class="p-2 border-b font-semibold">
-              {{ $any(control).value.quantity * $any(control).value.unitPrice | currency }}
+            @if (discountOptions().length > 0) {
+              <td class="p-2 border-b overflow-hidden">
+                @if (!readonly()) {
+                  <p-select
+                    formControlName="discountId"
+                    [options]="discountOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    placeholder="—"
+                    [showClear]="true"
+                    styleClass="w-full"
+                    appendTo="body"
+                  >
+                    <ng-template pTemplate="item" let-d>
+                      <span>
+                        {{ d.name }} ({{
+                          d.discountType === 'percentage' ? d.value + '%' : '$' + d.value
+                        }})
+                      </span>
+                    </ng-template>
+                  </p-select>
+                } @else {
+                  <span class="text-gray-500">{{ getDiscountLabel($index) }}</span>
+                }
+              </td>
+            }
+            @if (taxOptions().length > 0) {
+              <td class="p-2 border-b overflow-hidden">
+                @if (!readonly()) {
+                  <p-multiselect
+                    [ngModel]="getLineTaxIds($index)"
+                    (ngModelChange)="onLineTaxChange($index, $event)"
+                    [ngModelOptions]="{ standalone: true }"
+                    [options]="taxOptions()"
+                    optionLabel="name"
+                    optionValue="_id"
+                    [placeholder]="'sales.lineItems.taxesOptional' | translate: {} : 'sales'"
+                    [filter]="true"
+                    filterBy="name"
+                    display="chip"
+                    styleClass="w-full text-xs"
+                    appendTo="body"
+                  >
+                    <ng-template pTemplate="item" let-tax>
+                      <span>{{ tax.name }} ({{ tax.percentage }}%)</span>
+                    </ng-template>
+                  </p-multiselect>
+                } @else {
+                  <span class="text-gray-500">{{ getLineTaxPerUnit($index) | currency }}</span>
+                }
+              </td>
+            }
+            <td class="p-2 border-b font-semibold overflow-hidden">
+              {{ getLineGrossTotal($index) | currency }}
             </td>
             @if (!readonly()) {
               <td class="p-2 border-b">
                 <p-button
+                  *bifiAppHasPermission="'sales-orders:update:model'"
                   icon="pi pi-trash"
                   severity="danger"
                   size="small"
@@ -120,17 +285,43 @@
         }
         @if (lineItemsArray.controls.length === 0) {
           <tr>
-            <td [colSpan]="readonly() ? 6 : 7" class="p-4 text-center text-gray-500">
-              No items yet. {{ readonly() ? '' : 'Click "Add Item" to get started.' }}
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="p-4 text-center text-gray-500"
+            >
+              {{ 'sales.lineItems.noItems' | translate: {} : 'sales'
+              }}{{ readonly() ? '' : ' ' + ('sales.lineItems.addLine' | translate: {} : 'sales') }}
             </td>
           </tr>
         }
       </tbody>
-      @if (lineItemsArray.controls.length > 0) {
+      @if (!readonly()) {
         <tfoot>
-          <tr class="bg-gray-50 font-bold">
-            <td [colSpan]="readonly() ? 5 : 6" class="p-3 text-right">Grand Total:</td>
-            <td class="p-3 text-green-600">{{ grandTotal() | currency }}</td>
+          <tr>
+            <td
+              [colSpan]="
+                6 +
+                (discountOptions().length > 0 ? 1 : 0) +
+                (taxOptions().length > 0 ? 1 : 0) +
+                (!readonly() ? 2 : 0)
+              "
+              class="border-t p-0"
+            >
+              <button
+                *bifiAppHasPermission="'sales-orders:update:model'"
+                type="button"
+                class="w-full py-1.5 text-xs text-primary-500 hover:bg-primary-50 flex items-center justify-start px-3 gap-1 transition-colors"
+                (click)="addItem()"
+              >
+                <span class="pi pi-plus text-xs"></span>
+                {{ 'sales.lineItems.addItem' | translate: {} : 'sales' }}
+              </button>
+            </td>
           </tr>
         </tfoot>
       }

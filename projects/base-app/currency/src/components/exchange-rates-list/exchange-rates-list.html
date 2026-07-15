@@ -1,15 +1,17 @@
-<h1 class="text-2xl font-bold mb-4">Exchange Rates</h1>
+<h1 class="text-2xl font-bold mb-4">
+  {{ 'exchangeRate.pageTitle' | translate: {} : 'base-app/currency' }}
+</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Rate"
+    [label]="'exchangeRate.addNew' | translate: {} : 'base-app/currency'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
     *bifiAppHasPermission="'exchange-rates/create:view'"
   ></p-button>
   <p-button
-    label="Back to Currencies"
+    [label]="'exchangeRate.backToCurrencies' | translate: {} : 'base-app/currency'"
     severity="secondary"
     icon="pi pi-arrow-left"
     [routerLink]="['/settings/currencies']"
@@ -17,7 +19,7 @@
 </div>
 
 <bifi-app-search-bar
-  label="Search by currency code"
+  [label]="'exchangeRate.searchPlaceholder' | translate: {} : 'base-app/currency'"
   [searchFilters]="exchangeRateFilters"
 ></bifi-app-search-bar>
 
@@ -27,6 +29,7 @@
   [data]="exchangeRates"
   [onClickRow]="goToEditExchangeRate"
   clickRowPermission="exchange-rates/update:view"
+  [scope]="'base-app/currency'"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions

@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Taxes</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle.taxes' | translate: {} : 'accounting' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="Add New Tax"
+    [label]="'buttons.addNewTax' | translate: {} : 'accounting'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../taxes/create']"
@@ -12,6 +12,7 @@
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
+  [scope]="'accounting'"
   [columns]="columns"
   [data]="taxes"
   [onClickRow]="goToEditTax"

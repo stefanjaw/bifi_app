@@ -15,9 +15,10 @@ function initializeMenu() {
     item: {
       icon: PrimeIcons.CALENDAR,
       routerLink: ['/calendar'],
-      label: 'Calendar',
+      label: 'calendar',
       showInMainMenu: true,
       resource: 'calendar/menu',
+      scope: 'calendar',
     },
   });
 

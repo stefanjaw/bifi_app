@@ -16,6 +16,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { AddDocumentForm, addDocumentFormModel } from '../../services/add-document-form';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-roster-document-dialog',
@@ -26,6 +27,7 @@ import { InputTextModule } from 'primeng/inputtext';
     SelectModule,
     FileUploadModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-document-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

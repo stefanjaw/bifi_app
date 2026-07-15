@@ -3,9 +3,11 @@
     <div class="flex items-center gap-2">
       <i class="pi pi-question-circle" bifiAppIcon="lg"></i>
       <div>
-        <div class="font-medium">Asset: Awaiting Commissioning</div>
+        <div class="font-medium">
+          {{ 'assetAwaitingCommissioning' | translate: {} : 'asset-roster' }}
+        </div>
         <div class="text-sm mt-1">
-          This asset requires initial inspection and commissioning before use.
+          {{ 'assetAwaitingCommissioningDesc' | translate: {} : 'asset-roster' }}
         </div>
       </div>
     </div>
@@ -15,7 +17,7 @@
     <div class="flex items-center gap-2">
       <i class="pi pi-check-circle" bifiAppIcon="lg"></i>
       <div>
-        <div class="font-medium">Asset: Active</div>
+        <div class="font-medium">{{ 'assetActive' | translate: {} : 'asset-roster' }}</div>
       </div>
     </div>
   </p-message>
@@ -24,8 +26,10 @@
     <div class="flex items-center gap-2">
       <i class="pi pi-question-circle" bifiAppIcon="lg"></i>
       <div>
-        <div class="font-medium">Asset: Under Service</div>
-        <div class="text-sm mt-1">This asset is currently under service.</div>
+        <div class="font-medium">{{ 'assetUnderService' | translate: {} : 'asset-roster' }}</div>
+        <div class="text-sm mt-1">
+          {{ 'assetUnderServiceDesc' | translate: {} : 'asset-roster' }}
+        </div>
       </div>
     </div>
   </p-message>
@@ -34,7 +38,7 @@
     <div class="flex items-center gap-2">
       <i class="pi pi-ban" bifiAppIcon="lg"></i>
       <div>
-        <div class="font-medium">Asset: Decommissioned</div>
+        <div class="font-medium">{{ 'assetDecommissioned' | translate: {} : 'asset-roster' }}</div>
       </div>
     </div>
   </p-message>

@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Asset Type"
+  [title]="(isUpdate() ? 'updateAssetType' : 'createAssetType') | translate: {} : 'asset-roster'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,25 +18,36 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="General information" id="general-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'generalInformation' | translate: {} : 'asset-roster'"
+        id="general-info"
+        [ordinal]="1"
+      >
         <bifi-app-form-field class="mb-4">
-          <bifi-app-form-label>Name</bifi-app-form-label>
-          <input pInputText formControlName="name" type="text" placeholder="Name" />
+          <bifi-app-form-label>{{ 'name' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="name"
+            type="text"
+            [placeholder]="'name' | translate: {} : 'asset-roster'"
+          />
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
 
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
+          <bifi-app-form-label>
+            {{ 'description' | translate: {} : 'asset-roster' }}
+          </bifi-app-form-label>
           <textarea
             pInputTextarea
             formControlName="description"
-            placeholder="Description"
+            [placeholder]="'description' | translate: {} : 'asset-roster'"
           ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'somethingWentWrong' | translate: {} : 'asset-roster' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

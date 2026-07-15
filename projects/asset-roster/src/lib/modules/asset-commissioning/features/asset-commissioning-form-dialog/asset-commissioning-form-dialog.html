@@ -1,5 +1,8 @@
 <p-dialog
-  [header]="assetRoster()?.assetCommission ? 'Re-attempt Commission' : 'Commission'"
+  [header]="
+    (assetRoster()?.assetCommission ? 'reattemptCommission' : 'commission')
+      | translate: {} : 'asset-roster'
+  "
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
@@ -11,32 +14,39 @@
     (appSubmit)="handleSubmit($event)"
   >
     <p [bifiAppText]="'small'">
-      Peform inspection for: {{ assetRoster()?.productModel + ' - ' + assetRoster()?.serialNumber }}
+      {{ 'performInspectionFor' | translate: {} : 'asset-roster' }}
+      {{ assetRoster()?.productModel + ' - ' + assetRoster()?.serialNumber }}
     </p>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Inspection Outcome</bifi-app-form-label>
+      <bifi-app-form-label>
+        {{ 'inspectionOutcome' | translate: {} : 'asset-roster' }}
+      </bifi-app-form-label>
       <div class="flex flex-wrap gap-4">
         <div class="flex items-center">
           <p-radiobutton value="pass" formControlName="outcome" inputId="pass" />
-          <label for="pass" [bifiAppText]="'small'" class="ml-2 text-green-600">Pass</label>
+          <label for="pass" [bifiAppText]="'small'" class="ml-2 text-green-600">
+            {{ 'pass' | translate: {} : 'asset-roster' }}
+          </label>
         </div>
 
         <div class="flex items-center">
           <p-radiobutton value="fail" formControlName="outcome" inputId="fail" />
-          <label for="fail" [bifiAppText]="'small'" class="ml-2 text-red-600">Fail</label>
+          <label for="fail" [bifiAppText]="'small'" class="ml-2 text-red-600">
+            {{ 'fail' | translate: {} : 'asset-roster' }}
+          </label>
         </div>
       </div>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
     <bifi-app-form-field>
-      <bifi-app-form-label>Details</bifi-app-form-label>
+      <bifi-app-form-label>{{ 'details' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
       <textarea
         pInputTextarea
         formControlName="details"
         type="text"
-        placeholder="Enter details"
+        [placeholder]="'enterDetails' | translate: {} : 'asset-roster'"
       ></textarea>
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
@@ -62,7 +72,7 @@
     <bifi-app-form-actions
       [isSubmitting]="submitLoading()"
       (cancelClicked)="closeDialog()"
-      cancelLabel="Cancel"
+      [cancelLabel]="'cancel' | translate: {} : 'asset-roster'"
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
   </form>

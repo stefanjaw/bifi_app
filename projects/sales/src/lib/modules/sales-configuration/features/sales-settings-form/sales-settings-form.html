@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  title="Sales Configuration"
+  [title]="'sales.settings.title' | translate: {} : 'sales'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -17,20 +17,26 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Document Sequences" id="document-sequences" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'sales.settings.documentSequences' | translate: {} : 'sales'"
+        id="document-sequences"
+        [ordinal]="1"
+      >
         <p class="text-sm text-gray-500 mb-4">
-          Select which sequence is used to generate document numbers for sales orders.
+          {{ 'sales.settings.sequenceDescription' | translate: {} : 'sales' }}
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Sales Order Sequence</bifi-app-form-label>
+            <bifi-app-form-label>
+              {{ 'sales.settings.orderSequence' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
             <p-select
               formControlName="orderSequence"
               [options]="sequenceOptions()"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a sequence"
+              [placeholder]="'sales.settings.selectSequence' | translate: {} : 'sales'"
               [showClear]="true"
               class="w-full"
             ></p-select>
@@ -39,10 +45,21 @@
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Additional Information" id="additional-info" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'sales.settings.additionalInformation' | translate: {} : 'sales'"
+        id="additional-info"
+        [ordinal]="2"
+      >
         <bifi-app-form-field>
-          <bifi-app-form-label>Description</bifi-app-form-label>
-          <textarea pInputTextarea formControlName="description" placeholder="Notes about this configuration" rows="3"></textarea>
+          <bifi-app-form-label>
+            {{ 'sales.settings.description' | translate: {} : 'sales' }}
+          </bifi-app-form-label>
+          <textarea
+            pInputTextarea
+            formControlName="description"
+            [placeholder]="'sales.settings.notesPlaceholder' | translate: {} : 'sales'"
+            rows="3"
+          ></textarea>
           <bifi-app-form-error></bifi-app-form-error>
         </bifi-app-form-field>
       </bifi-app-form-section>

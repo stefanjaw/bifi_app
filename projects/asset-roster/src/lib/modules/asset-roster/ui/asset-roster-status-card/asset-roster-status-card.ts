@@ -2,15 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { CommonModule } from '@angular/common';
 import { AssetRosterStatusFilterManager } from '../../services/asset-roster-status-filter-manager';
 import { Icon } from '@avalantec/base-app/core';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { statusCardState, statusVariant } from '../../interfaces/asset-roster-status-card';
 
 @Component({
   selector: 'bifi-app-asset-roster-status-card',
-  imports: [CommonModule, Icon],
+  imports: [CommonModule, Icon, TranslatePipe],
   templateUrl: './asset-roster-status-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AssetRosterStatusCardComponent {
+export class AssetRosterStatusCard {
   protected assetRosterStatusManager = inject(AssetRosterStatusFilterManager);
 
   variant = input.required<statusVariant>();
@@ -23,31 +24,31 @@ export class AssetRosterStatusCardComponent {
     switch (variant) {
       case 'under-service':
         return {
-          title: 'Under Service',
+          title: 'underService',
           icon: 'pi pi-hammer',
           className: 'bg-orange-500 hover:bg-orange-600 ring-orange-400 whitespace-nowrap',
         };
       case 'overdue':
         return {
-          title: 'Overdue',
+          title: 'overdue',
           icon: 'pi pi-exclamation-triangle',
           className: 'bg-red-500 hover:bg-red-600 ring-red-400',
         };
       case 'due':
         return {
-          title: 'Due',
+          title: 'due',
           icon: 'pi pi-clock',
           className: ' bg-yellow-500 hover:bg-yellow-600 ring-yellow-400',
         };
       case 'in-pm':
         return {
-          title: 'In PM',
+          title: 'inPm',
           icon: 'pi pi-cog',
           className: 'bg-teal-500 hover:bg-teal-600 ring-teal-400',
         };
       case 'pm-not-set':
         return {
-          title: 'PM Not Set',
+          title: 'pmNotSet',
           icon: 'pi pi-question',
           className: 'bg-indigo-500 hover:bg-indigo-600 ring-indigo-400',
         };

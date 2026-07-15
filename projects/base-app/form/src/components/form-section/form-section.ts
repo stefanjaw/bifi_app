@@ -6,6 +6,7 @@ import {
   inject,
   input,
   OnDestroy,
+  signal,
 } from '@angular/core';
 import { FormSections } from '../../services/form-sections';
 import { DividerModule } from 'primeng/divider';
@@ -25,6 +26,13 @@ export class FormSection implements AfterViewInit, OnDestroy {
   id = input.required<string>();
   ordinal = input<number>();
   class = input<string>();
+  collapsible = input<boolean>(false);
+
+  collapsed = signal(false);
+
+  toggle() {
+    this.collapsed.update(v => !v);
+  }
 
   ngAfterViewInit(): void {
     this.sectionsService.registerSection({

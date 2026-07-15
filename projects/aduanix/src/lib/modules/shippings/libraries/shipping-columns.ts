@@ -1,4 +1,5 @@
-import { DynamicComponent, tableColumn } from '@avalantec/base-app/resource';
+import { DynamicComponentConfig, tableColumn } from '@avalantec/base-app/resource';
+import { t } from '@avalantec/base-app/i18n';
 import { shipping } from '../interfaces/shipping';
 import { Tag } from 'primeng/tag';
 import { getBCDStatusConfig } from '../../bcds';
@@ -7,39 +8,39 @@ import { getShippingStatusConfig } from './shipping-utils';
 export const shippingColumns: tableColumn<shipping>[] = [
   {
     field: 'name',
-    title: 'Shipment',
+    title: 'column.shipment',
     type: 'text',
     sortable: true,
   },
   {
     field: 'createdAt',
-    title: 'Date',
+    title: 'column.date',
     type: 'date',
     sortable: true,
   },
   {
     field: 'status',
-    title: 'Status',
+    title: 'column.status',
     type: 'text',
     sortable: true,
     component: (value: shipping) => {
-      // if bcds are available, get the last one
       const bcdStatus =
         value.bcds && value.bcds.length > 0
           ? getBCDStatusConfig(value.bcds[value.bcds.length - 1].status)
           : undefined;
 
-      // get the shipping status
       const shippingStatus = getShippingStatusConfig(value.status);
 
-      // create the component
-      const input = bcdStatus
-        ? { ...bcdStatus, value: `${bcdStatus.value} (${shippingStatus.value})` }
-        : shippingStatus;
+      const displayValue = bcdStatus
+        ? `${t(bcdStatus.value, {}, 'aduanix')} (${t(shippingStatus.value, {}, 'aduanix')})`
+        : t(shippingStatus.value, {}, 'aduanix');
 
-      const component: DynamicComponent<any> = {
+      const component: DynamicComponentConfig<any> = {
         component: Tag,
-        inputs: { ...input, value: input.value },
+        inputs: {
+          value: displayValue,
+          severity: bcdStatus?.severity || shippingStatus.severity,
+        },
         outputs: {},
       };
 

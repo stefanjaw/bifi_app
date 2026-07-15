@@ -1,16 +1,20 @@
 <div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-bold">Invoices</h1>
-  <a routerLink="/accounting/invoices/create">
-    <p-button
-      label="Create Invoice"
-      icon="pi pi-plus"
-      *bifiAppHasPermission="'accounting/invoices/create:view'"
-    ></p-button>
-  </a>
+  <h1 class="text-2xl font-bold">{{ 'pageTitle.invoices' | translate: {} : 'accounting' }}</h1>
+  <div class="flex items-center gap-2">
+    <bifi-app-plugin-slot name="invoices-list-actions"></bifi-app-plugin-slot>
+    <a routerLink="/accounting/invoices/create">
+      <p-button
+        [label]="'buttons.createInvoice' | translate: {} : 'accounting'"
+        icon="pi pi-plus"
+        *bifiAppHasPermission="'accounting/invoices/create:view'"
+      ></p-button>
+    </a>
+  </div>
 </div>
 
 <bifi-app-table-layout
   [infiniteScroll]="true"
+  [scope]="'accounting'"
   [columns]="columns"
   [data]="invoices"
   [onClickRow]="gotoEditInvoice"

@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Sales Order Stage"
+  [title]="
+    (isUpdate() ? 'sales.orderStages.updateTitle' : 'sales.orderStages.createTitle')
+      | translate: {} : 'sales'
+  "
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,41 +21,78 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Stage Information" id="stage-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'sales.section.stageInformation' | translate: {} : 'sales'"
+        id="stage-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g. Confirmed" />
+            <bifi-app-form-label>
+              {{ 'sales.form.name' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'sales.placeholder.stageName' | translate: {} : 'sales'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Color</bifi-app-form-label>
-            <input type="color" formControlName="color" class="h-10 w-full rounded border border-gray-300 cursor-pointer p-1" />
+            <bifi-app-form-label>
+              {{ 'sales.form.color' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <input
+              type="color"
+              formControlName="color"
+              class="h-10 w-full rounded border border-gray-300 cursor-pointer p-1"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Order</bifi-app-form-label>
-            <p-inputnumber formControlName="order" [min]="0" placeholder="0" />
+            <bifi-app-form-label>
+              {{ 'sales.form.order' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-inputnumber
+              formControlName="order"
+              [min]="0"
+              [placeholder]="'sales.placeholder.order' | translate: {} : 'sales'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="description" placeholder="Description"></textarea>
+            <bifi-app-form-label>
+              {{ 'sales.form.description' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <textarea
+              pInputTextarea
+              formControlName="description"
+              [placeholder]="'sales.placeholder.description' | translate: {} : 'sales'"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
-      <bifi-app-form-section title="Stage Options" id="stage-options" [ordinal]="2">
+      <bifi-app-form-section
+        [title]="'sales.section.stageOptions' | translate: {} : 'sales'"
+        id="stage-options"
+        [ordinal]="2"
+      >
         <div class="flex flex-col gap-6">
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="isDefault" [binary]="true" inputId="isDefault"></p-checkbox>
+              <p-checkbox
+                formControlName="isDefault"
+                [binary]="true"
+                inputId="isDefault"
+              ></p-checkbox>
               <label for="isDefault" class="cursor-pointer font-medium text-gray-700">
-                Set as <span class="text-indigo-600 font-semibold">default stage</span> for new orders
+                {{ 'sales.orderStages.setDefault' | translate: {} : 'sales' }}
               </label>
             </div>
             <bifi-app-form-error></bifi-app-form-error>
@@ -60,7 +100,7 @@
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>{{ 'sales.orderStages.somethingWrong' | translate: {} : 'sales' }} {{ error() }}</p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

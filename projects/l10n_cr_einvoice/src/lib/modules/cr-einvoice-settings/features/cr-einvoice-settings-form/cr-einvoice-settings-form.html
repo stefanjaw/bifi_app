@@ -1,0 +1,122 @@
+<bifi-app-form-layout
+  title="CR Electronic Invoice Configuration"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <form
+    ngProjectAs="div"
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="min-h-screen flex flex-col gap-6"
+  >
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      class="mb-4"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+
+    @if (!loading()) {
+      <bifi-app-form-section title="Credenciales Hacienda" id="hacienda-credentials" [ordinal]="1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Ambiente</bifi-app-form-label>
+            <p-select
+              formControlName="haciendaEnvironment"
+              [options]="environmentOptions"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Usuario ATV</bifi-app-form-label>
+            <input pInputText formControlName="haciendaUsername" placeholder="Usuario ATV" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Contraseña ATV</bifi-app-form-label>
+            <input
+              pInputText
+              type="password"
+              formControlName="haciendaPassword"
+              placeholder="Contraseña ATV"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Proveedor de Sistemas (PIN)</bifi-app-form-label>
+            <input pInputText formControlName="proveedorSistemas" placeholder="PIN del proveedor" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field class="md:col-span-2">
+            <bifi-app-form-label>Certificado Digital (.p12)</bifi-app-form-label>
+            <bifi-app-form-uploader formArrayName="certificateFile">
+              <p-fileUpload
+                mode="basic"
+                accept=".p12,application/x-pkcs12"
+                [maxFileSize]="5242880"
+                chooseLabel="Seleccionar certificado .p12"
+                [multiple]="false"
+              ></p-fileUpload>
+            </bifi-app-form-uploader>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Contraseña del Certificado</bifi-app-form-label>
+            <input
+              pInputText
+              type="password"
+              formControlName="certificatePassword"
+              placeholder="Contraseña del certificado P12"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section title="Configuración Técnica" id="technical-config" [ordinal]="2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <bifi-app-form-field>
+            <bifi-app-form-label>Compañía Emisora</bifi-app-form-label>
+            <p-select
+              formControlName="emisorCompanyId"
+              [options]="companyOptions()"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccione la compañía emisora"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Código de Establecimiento</bifi-app-form-label>
+            <input pInputText formControlName="codigoEstablecimiento" placeholder="001" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Código de Punto de Venta</bifi-app-form-label>
+            <input pInputText formControlName="codigoPuntoVenta" placeholder="00001" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>Versión FE</bifi-app-form-label>
+            <input pInputText formControlName="feVersion" placeholder="4.4" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+    } @else {
+      <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
+    }
+  </form>
+</bifi-app-form-layout>

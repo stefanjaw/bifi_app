@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -20,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastModule } from 'primeng/toast';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-warehouses-list',
@@ -27,7 +23,16 @@ import { ToastModule } from 'primeng/toast';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, ToastModule, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    RouterLink,
+    ToastModule,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   templateUrl: './warehouses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,5 +57,5 @@ export class WarehousesList {
 
   gotoEditWarehouse = (element: warehouse) => {
     this.router.navigate([`../warehouses/${element._id}/edit`], { relativeTo: this.route });
-  }
+  };
 }

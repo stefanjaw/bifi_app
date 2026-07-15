@@ -17,15 +17,13 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: 'accounts/create',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/account-form/account-form').then(m => m.AccountForm),
+    loadComponent: () => import('../features/account-form/account-form').then(m => m.AccountForm),
     data: { resource: 'accounting/accounts/create' },
   },
   {
     path: 'accounts/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/account-form/account-form').then(m => m.AccountForm),
+    loadComponent: () => import('../features/account-form/account-form').then(m => m.AccountForm),
     data: { resource: 'accounting/accounts/update' },
   },
   {
@@ -38,22 +36,22 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: 'journals/create',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/journal-form/journal-form').then(m => m.JournalForm),
+    loadComponent: () => import('../features/journal-form/journal-form').then(m => m.JournalForm),
     data: { resource: 'accounting/journals/create' },
   },
   {
     path: 'journals/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/journal-form/journal-form').then(m => m.JournalForm),
+    loadComponent: () => import('../features/journal-form/journal-form').then(m => m.JournalForm),
     data: { resource: 'accounting/journals/update' },
   },
   {
     path: 'journal-entries',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/journal-entries-list/journal-entries-list').then(m => m.JournalEntriesList),
+      import('../features/journal-entries-list/journal-entries-list').then(
+        m => m.JournalEntriesList
+      ),
     data: { resource: 'accounting/journal-entries/list' },
   },
   {
@@ -80,29 +78,25 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: 'payments/create',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/payment-form/payment-form').then(m => m.PaymentForm),
+    loadComponent: () => import('../features/payment-form/payment-form').then(m => m.PaymentForm),
     data: { resource: 'accounting/payments/create' },
   },
   {
     path: 'taxes',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/taxes-list/taxes-list').then(m => m.TaxesList),
+    loadComponent: () => import('../features/taxes-list/taxes-list').then(m => m.TaxesList),
     data: { resource: 'accounting/taxes/list' },
   },
   {
     path: 'taxes/create',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/tax-form/tax-form').then(m => m.TaxForm),
+    loadComponent: () => import('../features/tax-form/tax-form').then(m => m.TaxForm),
     data: { resource: 'accounting/taxes/create' },
   },
   {
     path: 'taxes/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/tax-form/tax-form').then(m => m.TaxForm),
+    loadComponent: () => import('../features/tax-form/tax-form').then(m => m.TaxForm),
     data: { resource: 'accounting/taxes/update' },
   },
   {
@@ -130,21 +124,27 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'fiscal-positions',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/fiscal-positions-list/fiscal-positions-list').then(m => m.FiscalPositionsList),
+      import('../features/fiscal-positions-list/fiscal-positions-list').then(
+        m => m.FiscalPositionsList
+      ),
     data: { resource: 'accounting/fiscal-positions/list' },
   },
   {
     path: 'fiscal-positions/create',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/fiscal-position-form/fiscal-position-form').then(m => m.FiscalPositionForm),
+      import('../features/fiscal-position-form/fiscal-position-form').then(
+        m => m.FiscalPositionForm
+      ),
     data: { resource: 'accounting/fiscal-positions/create' },
   },
   {
     path: 'fiscal-positions/edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/fiscal-position-form/fiscal-position-form').then(m => m.FiscalPositionForm),
+      import('../features/fiscal-position-form/fiscal-position-form').then(
+        m => m.FiscalPositionForm
+      ),
     data: { resource: 'accounting/fiscal-positions/update' },
   },
   {
@@ -178,15 +178,13 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: 'invoices/create',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/invoice-form/invoice-form').then(m => m.InvoiceForm),
+    loadComponent: () => import('../features/invoice-form/invoice-form').then(m => m.InvoiceForm),
     data: { resource: 'accounting/invoices/create' },
   },
   {
     path: 'invoices/edit/:id',
     canActivate: [permissionGuard],
-    loadComponent: () =>
-      import('../features/invoice-form/invoice-form').then(m => m.InvoiceForm),
+    loadComponent: () => import('../features/invoice-form/invoice-form').then(m => m.InvoiceForm),
     data: { resource: 'accounting/invoices/update' },
   },
 ];

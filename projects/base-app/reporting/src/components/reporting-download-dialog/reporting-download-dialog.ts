@@ -14,10 +14,11 @@ import { SelectModule } from 'primeng/select';
 import { CrudReporting } from '../../services/crud-reporting';
 import { BaseDialog } from '@avalantec/base-app/core';
 import { ButtonModule } from 'primeng/button';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-reporting-download-dialog',
-  imports: [FormsModule, DialogModule, SelectModule, FormModule, ButtonModule],
+  imports: [FormsModule, DialogModule, SelectModule, FormModule, ButtonModule, TranslatePipe],
   templateUrl: './reporting-download-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

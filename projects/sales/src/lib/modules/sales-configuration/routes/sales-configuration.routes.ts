@@ -6,9 +6,7 @@ export const SALES_CONFIGURATION_ROUTES: Routes = [
     path: '',
     canActivate: [permissionGuard],
     loadComponent: () =>
-      import('../features/sales-settings-form/sales-settings-form').then(
-        m => m.SalesSettingsFormComponent
-      ),
+      import('../features/sales-settings-form/sales-settings-form').then(m => m.SalesSettingsPage),
     data: { resource: 'sales/settings' },
   },
 ];

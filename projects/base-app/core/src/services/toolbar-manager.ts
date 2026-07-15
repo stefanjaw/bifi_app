@@ -17,10 +17,18 @@ export class BaseToolbarManager {
     return this._items;
   }
 
+  /**
+   * Appends a single toolbar action button
+   * @param item - The toolbar item to add
+   */
   addItem(item: ToolbarItem) {
     this._items.update(items => [...items, item]);
   }
 
+  /**
+   * Appends multiple toolbar action buttons at once
+   * @param items - The toolbar items to add
+   */
   addItems(items: ToolbarItem[]) {
     items.forEach(item => this.addItem(item));
   }

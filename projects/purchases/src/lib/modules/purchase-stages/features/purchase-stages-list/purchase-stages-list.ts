@@ -14,11 +14,20 @@ import { purchaseStageColumns } from '../../libraries/purchase-stage-columns';
 import { purchaseStageFilters } from '../../libraries/purchase-stage-filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-purchase-stages-list',
   providers: [provideResourceManager(CrudPurchaseStages)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -40,7 +49,7 @@ export class PurchaseStagesList {
 
   goToEditStage = (element: purchaseStage) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deleteStage(id: string) {
     this.crudPurchaseStages
       .delete({ _id: id })

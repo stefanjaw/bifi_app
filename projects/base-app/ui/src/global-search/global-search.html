@@ -1,0 +1,67 @@
+<div class="relative">
+  <span
+    class="absolute left-2.5 top-1/2 -translate-y-1/2 pi pi-search text-surface-400 text-xs pointer-events-none"
+  ></span>
+  <input
+    #searchInput
+    type="text"
+    [value]="query()"
+    (input)="onInput(searchInput.value)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="onKeydown($event)"
+    [placeholder]="'search.placeholder' | translate: {} : 'base-app/ui'"
+    [attr.aria-label]="'search.ariaLabel' | translate: {} : 'base-app/ui'"
+    autocomplete="off"
+    class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-surface-300 bg-surface-0 text-surface-700 placeholder:text-surface-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-colors shadow-sm"
+  />
+
+  @if (open()) {
+    <div
+      #overlay
+      class="absolute right-0 mt-1 w-80 max-h-[60vh] overflow-auto rounded-lg border border-surface-200 bg-surface-0 shadow-xl z-[1000] py-1"
+    >
+      @if (!hasQuery()) {
+        <div class="px-3 py-2 text-xs text-surface-400 flex items-center gap-1.5">
+          <span class="pi pi-info-circle text-[10px]"></span>
+          {{ 'search.hint' | translate: {} : 'base-app/ui' }}
+        </div>
+      } @else if (flatItems().length === 0) {
+        <div class="px-3 py-3 text-sm text-surface-500">
+          {{ 'search.noResults' | translate: { query: query() } : 'base-app/ui' }}
+        </div>
+      } @else {
+        @for (group of displayGroups(); track group.group) {
+          <div
+            class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wide text-surface-400 select-none"
+          >
+            {{ group.group }}
+          </div>
+          @for (entry of group.items; track entry.item.key) {
+            <button
+              type="button"
+              [attr.data-result-index]="entry.index"
+              (mouseenter)="activeIndex.set(entry.index)"
+              (mousedown)="$event.preventDefault()"
+              (click)="select(entry.item)"
+              class="w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm transition-colors"
+              [ngClass]="{
+                'bg-primary-50 text-primary-700': entry.index === activeIndex(),
+                'text-surface-700 hover:bg-surface-50': entry.index !== activeIndex(),
+              }"
+            >
+              @if (entry.item.icon) {
+                <span [class]="entry.item.icon" class="text-xs w-4 text-center shrink-0"></span>
+              } @else {
+                <span
+                  class="pi pi-angle-right text-xs w-4 text-center shrink-0 text-surface-300"
+                ></span>
+              }
+              <span class="flex-1 truncate">{{ entry.item.label }}</span>
+            </button>
+          }
+        }
+      }
+    </div>
+  }
+</div>

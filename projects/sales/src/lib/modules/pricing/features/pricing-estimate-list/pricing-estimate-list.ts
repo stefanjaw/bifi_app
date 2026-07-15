@@ -13,6 +13,7 @@ import { pricingEstimateFilters } from '../../libraries/pricing-estimate-filters
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-pricing-estimate-list',
@@ -20,11 +21,11 @@ import { HasPermission } from '@avalantec/base-app/auth';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, SearchBar, ButtonModule, HasPermission],
+  imports: [TableLayout, SearchBar, ButtonModule, HasPermission, TranslatePipe],
   templateUrl: './pricing-estimate-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingEstimateListComponent {
+export class PricingEstimateList {
   private resourceManager = inject<ResourceManager<pricingEstimate>>(ResourceManager);
   private router = inject(Router);
 

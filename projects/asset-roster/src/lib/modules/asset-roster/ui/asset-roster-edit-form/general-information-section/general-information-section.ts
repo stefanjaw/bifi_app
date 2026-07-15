@@ -9,23 +9,25 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { UpdateAssetRosterForm } from '../../../services/update-asset-roster-form';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { assetRoster } from '../../../interfaces/asset-roster';
-import { StatusBannerSection } from '../status-banner-section/status-banner-section';
 import { assetType } from '../../../../asset-types';
 import { contact } from '@avalantec/base-app/interfaces';
-import { CrudFacilities, CrudRooms, facility, room } from '../../../../facilities';
+import { CrudFacilities, CrudRooms, room } from '../../../../facilities';
 import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
+import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 
 @Component({
   selector: 'bifi-app-general-information-section',
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
@@ -36,10 +38,10 @@ import { map, startWith } from 'rxjs';
     CardModule,
     CommonModule,
     SelectModule,
-    StatusBannerSection,
     TagModule,
     ToggleSwitchModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './general-information-section.html',
 })
@@ -50,6 +52,7 @@ export class GeneralInformationSection {
   private crudAssetRoster = inject(CrudAssetRoster);
   private destroy$ = inject(DestroyRef);
   private crudFacilities = inject(CrudFacilities);
+  private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   assetRoster = input.required<assetRoster | undefined>();
 
   vendorsResource = this.crudVendorContacts.get({});
@@ -74,33 +77,32 @@ export class GeneralInformationSection {
     (this.assetRosters.value() ?? []).map(ar => ({
       _id: ar._id,
       label: ar.serialNumber || ar.productModel || ar.description || 'Unnamed',
-    })),
+    }))
   );
 
   isEditMode = input.required<boolean>();
   formService = inject(UpdateAssetRosterForm);
   showVendorForm = signal(false);
   showRoomForm = signal(false);
+  openNewLocationForIndex = signal<number | null>(null);
+  newLocationNameForAssignment = model('');
+  newFacilityIdForAssignment = model<string | null>(null);
   form = this.formService.form;
 
   deviceType = toSignal(
-    this.form.controls.deviceType.valueChanges.pipe(
-      startWith(this.form.controls.deviceType.value),
-    ),
+    this.form.controls.deviceType.valueChanges.pipe(startWith(this.form.controls.deviceType.value))
   );
 
   totalQuantity = toSignal(
-    this.form.controls.quantity.valueChanges.pipe(
-      startWith(this.form.controls.quantity.value),
-    ),
+    this.form.controls.quantity.valueChanges.pipe(startWith(this.form.controls.quantity.value))
   );
 
   totalAssigned = toSignal(
     this.form.controls.locationAssignments.valueChanges.pipe(
       startWith(this.form.controls.locationAssignments.value),
-      map(rows => rows.reduce((sum: number, r: any) => sum + (r.assignedQuantity ?? 0), 0)),
+      map(rows => rows.reduce((sum: number, r: any) => sum + (r.assignedQuantity ?? 0), 0))
     ),
-    { initialValue: 0 },
+    { initialValue: 0 }
   );
 
   totalUnassigned = computed(() => (this.totalQuantity() ?? 0) - this.totalAssigned());
@@ -108,9 +110,9 @@ export class GeneralInformationSection {
   selectedLocationIds = toSignal(
     this.form.controls.locationAssignments.valueChanges.pipe(
       startWith(this.form.controls.locationAssignments.value),
-      map(rows => rows.map((r: any) => r.locationId).filter(Boolean)),
+      map(rows => rows.map((r: any) => r.locationId).filter(Boolean))
     ),
-    { initialValue: [] as string[] },
+    { initialValue: [] as string[] }
   );
 
   getAvailableRoomOptions(currentIndex: number) {
@@ -198,7 +200,14 @@ export class GeneralInformationSection {
   handleRoomCreation() {
     this.crudRooms
       .post({
-        data: { name: this.roomName(), facilityId: this.form.controls.facilityId.value, code: ' ', address: ' ' },
+        data: {
+          name: this.roomName(),
+          ...(this.form.controls.facilityId.value && {
+            facilityId: this.form.controls.facilityId.value,
+          }),
+          code: ' ',
+          address: ' ',
+        },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
@@ -217,5 +226,40 @@ export class GeneralInformationSection {
 
   toggleRoomForm() {
     this.showRoomForm.update(v => !v);
+  }
+
+  toggleLocationFormForRow(index: number) {
+    this.openNewLocationForIndex.update(i => (i === index ? null : index));
+    this.newLocationNameForAssignment.set('');
+    this.newFacilityIdForAssignment.set(null);
+  }
+
+  handleRoomCreationForRow(index: number) {
+    this.crudRooms
+      .post({
+        data: {
+          name: this.newLocationNameForAssignment(),
+          facilityId: this.newFacilityIdForAssignment()!,
+          code: ' ',
+          address: ' ',
+        },
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: created => {
+          if (!created) return;
+          this.roomsResources.reload();
+          this.form.controls.locationAssignments
+            .at(index)
+            .controls.locationId.setValue(created._id);
+          this.newLocationNameForAssignment.set('');
+          this.newFacilityIdForAssignment.set(null);
+          this.openNewLocationForIndex.set(null);
+        },
+      });
+  }
+
+  openPhotoDialog() {
+    this.assetRosterMaintenanceContext.handleOpenPhotoDialog();
   }
 }

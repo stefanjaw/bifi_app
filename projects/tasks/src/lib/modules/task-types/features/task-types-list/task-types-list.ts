@@ -13,12 +13,21 @@ import { taskTypeFilters } from '../../libraries/task-type-filters';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'bifi-app-task-types-list',
   providers: [provideResourceManager(CrudTaskTypes)],
-  imports: [TableLayout, SearchBar, ButtonModule, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    SearchBar,
+    ButtonModule,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -49,5 +58,5 @@ export class TaskTypesList {
 
   gotoEditTaskType = (element: taskType) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
 }

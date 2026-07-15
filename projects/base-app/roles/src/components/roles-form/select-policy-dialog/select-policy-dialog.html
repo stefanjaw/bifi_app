@@ -1,11 +1,13 @@
 <p-dialog
-  header="Select Policy"
+  [header]="'selectPolicy.header' | translate: {} : 'base-app/roles'"
   [(visible)]="dialogState"
   [modal]="true"
   styleClass="w-full max-w-full sm:max-w-sm md:max-w-md"
 >
   <bifi-app-form-field class="mb-8 min-h-40">
-    <bifi-app-form-label>Policy</bifi-app-form-label>
+    <bifi-app-form-label>
+      {{ 'selectPolicy.policyLabel' | translate: {} : 'base-app/roles' }}
+    </bifi-app-form-label>
     <p-multiSelect
       appendTo="body"
       [formControl]="policy"
@@ -22,8 +24,8 @@
     [formDisabled]="!policy.valid || !policy.value"
     (submitClicked)="handleSubmit()"
     (cancelClicked)="closeDialog()"
-    cancelLabel="Cancel"
-    saveLabel="Add"
+    [cancelLabel]="'selectPolicy.cancel' | translate: {} : 'base-app/roles'"
+    [saveLabel]="'selectPolicy.add' | translate: {} : 'base-app/roles'"
     [formChanged]="true"
   ></bifi-app-form-actions>
 </p-dialog>

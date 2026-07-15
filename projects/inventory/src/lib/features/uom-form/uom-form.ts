@@ -18,11 +18,23 @@ import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UomFormService, UomFormModel } from '../../services/uom-form.service';
+import { UomFormService, UomFormModel } from '../../services/uom-form';
+import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-uom-form',
-  imports: [FormModule, ReactiveFormsModule, ButtonModule, InputText, SelectModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    InputText,
+    SelectModule,
+    ProgressBarModule,
+    PluginSlot,
+    TranslatePipe,
+  ],
+  providers: [providePluginContext(UomForm)],
   templateUrl: './uom-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

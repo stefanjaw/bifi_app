@@ -1,5 +1,8 @@
 <bifi-app-form-layout
-  title="{{ isUpdate() ? 'Update' : 'Create' }} Project Stage"
+  title="{{
+    (isUpdate() ? 'projectStages.form.titleUpdate' : 'projectStages.form.titleCreate')
+      | translate: {} : 'projects'
+  }}"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -18,25 +21,50 @@
     ></bifi-app-form-actions>
 
     @if (!loading()) {
-      <bifi-app-form-section title="Stage Information" id="stage-info" [ordinal]="1">
+      <bifi-app-form-section
+        [title]="'projectStages.form.stageInformation' | translate: {} : 'projects'"
+        id="stage-info"
+        [ordinal]="1"
+      >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
-            <bifi-app-form-label>Name</bifi-app-form-label>
-            <input pInputText formControlName="name" type="text" placeholder="e.g. Planning" />
+            <bifi-app-form-label>{{ 'name' | translate: {} : 'projects' }}</bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="name"
+              type="text"
+              [placeholder]="'projectStages.form.namePlaceholder' | translate: {} : 'projects'"
+            />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
-            <bifi-app-form-label>Description</bifi-app-form-label>
-            <textarea pInputTextarea formControlName="description" placeholder="Description" [required]="false"></textarea>
+            <bifi-app-form-label>
+              {{ 'description' | translate: {} : 'projects' }}
+            </bifi-app-form-label>
+            <textarea
+              pInputTextarea
+              formControlName="description"
+              [placeholder]="
+                'projectStages.form.descriptionPlaceholder' | translate: {} : 'projects'
+              "
+              [required]="false"
+            ></textarea>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
           <bifi-app-form-field>
             <div class="flex items-center gap-3">
-              <p-checkbox formControlName="isDefault" [binary]="true" inputId="isDefault"></p-checkbox>
+              <p-checkbox
+                formControlName="isDefault"
+                [binary]="true"
+                inputId="isDefault"
+              ></p-checkbox>
               <label for="isDefault" class="cursor-pointer font-medium text-gray-700">
-                Set as <span class="text-blue-600 font-semibold">Default Stage</span>
+                {{ 'projectStages.form.setAs' | translate: {} : 'projects' }}
+                <span class="text-blue-600 font-semibold">
+                  {{ 'projectStages.form.defaultStage' | translate: {} : 'projects' }}
+                </span>
               </label>
             </div>
             <bifi-app-form-error></bifi-app-form-error>
@@ -44,7 +72,10 @@
         </div>
       </bifi-app-form-section>
     } @else if (error()) {
-      <p>Something went wrong... {{ error() }}</p>
+      <p>
+        {{ 'projectStages.form.error.somethingWentWrong' | translate: {} : 'projects' }}
+        {{ error() }}
+      </p>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-[5px]'"></p-progress-bar>
     }

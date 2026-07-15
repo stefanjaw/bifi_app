@@ -1,8 +1,8 @@
-<h1 class="text-2xl font-bold mb-4">Sales Targets</h1>
+<h1 class="text-2xl font-bold mb-4">{{ 'sales.targets.title' | translate: {} : 'sales' }}</h1>
 
 <div class="flex gap-2 mb-4">
   <p-button
-    label="New Target"
+    [label]="'sales.targets.new' | translate: {} : 'sales'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
@@ -15,6 +15,7 @@
   [columns]="salesTargetColumns"
   [data]="entries"
   [onClickRow]="gotoEditTarget"
+  [scope]="'sales'"
   clickRowPermission="sales/targets/update:view"
 >
   <ng-template #actions let-element>

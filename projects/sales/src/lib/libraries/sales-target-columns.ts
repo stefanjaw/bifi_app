@@ -4,36 +4,36 @@ import { salesTarget } from '../interfaces/sales-target';
 export const salesTargetColumns: tableColumn<salesTarget>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'sales.columns.name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'year',
-    title: 'Year',
+    title: 'sales.columns.year',
     type: 'number',
     sortable: true,
   },
   {
     field: 'month',
-    title: 'Month',
+    title: 'sales.columns.month',
     type: 'number',
     sortable: true,
   },
   {
     field: 'targetAmount',
-    title: 'Target',
+    title: 'sales.columns.target',
     type: 'currency',
     sortable: true,
   },
   {
     field: 'currency',
-    title: 'Currency',
+    title: 'sales.columns.currency',
     type: 'text',
   },
   {
     field: 'salesperson.username',
-    title: 'Sales Rep',
+    title: 'sales.columns.salesRep',
     type: 'text',
   },
 ];

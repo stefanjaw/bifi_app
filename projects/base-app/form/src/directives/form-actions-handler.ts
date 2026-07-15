@@ -3,7 +3,7 @@ import { DestroyRef, Directive, effect, inject, input, OnInit, output } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormValueState } from '../interfaces/form-helpers';
-import { getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
+import { collectFormErrors, getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 import { ToastManager } from '@avalantec/base-app/core';
 import { FormContext } from '../services/form-context';
 import { FormTranslation } from '../services/form-translation';
@@ -46,6 +46,7 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
    * Emits the appSubmit event with a FormValueState containing the form's value, dirty value, and raw value.
    *
    * If the form is invalid, marks invalid form controls as dirty (display errors)
+   * and shows a toast with specific field-level error messages.
    */
   private submit() {
     if (!this.form.dirty) {
@@ -62,9 +63,26 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
 
       this.appSubmit.emit(data);
     } else {
-      this.toastManager.showError('The form contains errors.');
+      const MAX_SHOWN = 3;
+      const fieldErrors = collectFormErrors(this.form);
+      const shown = fieldErrors.slice(0, MAX_SHOWN);
+      const extra = fieldErrors.length - MAX_SHOWN;
 
-      // Helper function to mark invalid form controls as dirty (display errors)
+      const lines = shown.map(({ label, errorKey, errorParams }) => {
+        const msg =
+          this.formTranslation.getErrorMessage({ errorKey, params: errorParams }) ?? errorKey;
+        return `${label}: ${msg}`;
+      });
+
+      if (extra > 0) {
+        lines.push(`+${extra} more`);
+      }
+
+      const description = lines.length > 0 ? lines.join('\n') : undefined;
+
+      this.toastManager.showError('The form contains errors.', { description });
+
+      // Mark invalid form controls as dirty to surface inline errors
       markAsDirty({
         group: this.form,
         target: 'invalid',

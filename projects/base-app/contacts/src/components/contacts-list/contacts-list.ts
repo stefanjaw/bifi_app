@@ -11,6 +11,7 @@ import {
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { contact } from '@avalantec/base-app/interfaces';
@@ -21,7 +22,15 @@ import { contact } from '@avalantec/base-app/interfaces';
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
-  imports: [TableLayout, ButtonModule, SearchBar, HasPermission, RouterLink, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    HasPermission,
+    RouterLink,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   templateUrl: './contacts-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

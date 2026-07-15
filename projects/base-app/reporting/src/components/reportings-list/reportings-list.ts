@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import {
-  ButtonsActions,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -10,6 +9,7 @@ import { CrudReporting } from '../../services/crud-reporting';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { reporting } from '@avalantec/base-app/interfaces';
 import { reportingColumns } from '../../libraries/reporting-columns';
 import { reportingFilters } from '../../libraries/reporting-filters';
@@ -18,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'bifi-app-reportings-list',
   providers: [provideResourceManager(CrudReporting)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission],
+  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, TranslatePipe],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },

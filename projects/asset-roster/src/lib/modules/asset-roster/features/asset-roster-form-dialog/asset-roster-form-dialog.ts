@@ -25,6 +25,7 @@ import {
 } from '../../services/create-asset-roster-form';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -40,6 +41,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     TextareaModule,
     ToggleSwitchModule,
     FormModule,
+    TranslatePipe,
   ],
   templateUrl: './asset-roster-form-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,7 +66,7 @@ export class AssetRosterFormDialog extends BaseDialog {
     (this.assetRosters.value() ?? []).map(ar => ({
       _id: ar._id,
       label: ar.serialNumber || ar.productModel || ar.description || 'Unnamed',
-    })),
+    }))
   );
   isSubmitLoading = signal(false);
 
@@ -122,10 +124,10 @@ export class AssetRosterFormDialog extends BaseDialog {
     const { rawValue } = data;
     const dt = rawValue.deviceType;
 
-      if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
-  }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.crudAssetRoster
       .post({
         data: {
@@ -145,12 +147,14 @@ export class AssetRosterFormDialog extends BaseDialog {
               website: 'www.example.com',
             },
           }),
-          ...(!this.isCreatingNewAssetType() && rawValue.assetTypeIds && {
-            assetTypeIds: [rawValue.assetTypeIds],
-          }),
-          ...(!this.isCreatingNewMake() && rawValue.makeIds && {
-            makeIds: [rawValue.makeIds],
-          }),
+          ...(!this.isCreatingNewAssetType() &&
+            rawValue.assetTypeIds && {
+              assetTypeIds: [rawValue.assetTypeIds],
+            }),
+          ...(!this.isCreatingNewMake() &&
+            rawValue.makeIds && {
+              makeIds: [rawValue.makeIds],
+            }),
           ...(dt === 'serialized' && {
             serialNumber: rawValue.serialNumber,
             productModel: rawValue.productModel,

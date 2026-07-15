@@ -20,6 +20,7 @@ import { roleColumns } from '@avalantec/base-app/roles';
 import { role } from '@avalantec/base-app/interfaces';
 import { CreateUserForm, CreateUserFormModel } from '../../services/create-user-form';
 import { ToastManager } from '@avalantec/base-app/core';
+import { TranslationService, TranslatePipe } from '@avalantec/base-app/i18n';
 import { PasswordModule } from 'primeng/password';
 
 @Component({
@@ -33,6 +34,7 @@ import { PasswordModule } from 'primeng/password';
     ButtonModule,
     TableLayout,
     PasswordModule,
+    TranslatePipe,
   ],
   templateUrl: './create-users-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +46,7 @@ export class CreateUsersForm implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private toastManager = inject(ToastManager);
+  private translationService = inject(TranslationService);
 
   id = input.required<string>();
   roleCols = roleColumns;
@@ -94,7 +97,9 @@ export class CreateUsersForm implements OnInit {
           },
         });
     } catch (error) {
-      this.toastManager.showError('Error creating user. Please try again.');
+      this.toastManager.showError(
+        this.translationService.translate('createForm.error', {}, 'base-app/users')
+      );
       console.error('Error creating user:', error);
     } finally {
       if (this.isSubmitLoading()) this.isSubmitLoading.set(false);

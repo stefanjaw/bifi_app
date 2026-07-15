@@ -1,17 +1,19 @@
+import { t } from '@avalantec/base-app/i18n';
 import { role } from '@avalantec/base-app/interfaces';
 import { tableColumn } from '@avalantec/base-app/resource';
 
 export const roleColumns: tableColumn<role>[] = [
   {
     field: 'name',
-    title: 'Role Name',
+    title: 'roleName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'policies',
-    title: 'Total Policies',
-    parseField: (value: role['policies']) => `${value.length} Policies`,
+    title: 'totalPolicies',
+    parseField: (value: role['policies']) =>
+      t('policies.count', { count: value.length }, 'base-app/roles'),
     type: 'text',
   },
 ];

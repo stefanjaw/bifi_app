@@ -19,10 +19,19 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AccountFormService, AccountFormModel } from '../../services/account-form';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-account-form',
-  imports: [FormModule, ReactiveFormsModule, InputText, SelectModule, ToggleSwitchModule, ProgressBarModule],
+  imports: [
+    FormModule,
+    ReactiveFormsModule,
+    InputText,
+    SelectModule,
+    ToggleSwitchModule,
+    ProgressBarModule,
+    TranslatePipe,
+  ],
   templateUrl: './account-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,7 +56,7 @@ export class AccountForm {
     () =>
       this.accountResource.isLoading() ||
       this.accountsResource.isLoading() ||
-      this.currenciesResource.isLoading(),
+      this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
 
@@ -55,12 +64,26 @@ export class AccountForm {
   accounts = this.accountsResource.value;
   currencies = this.currenciesResource.value;
 
+  private translationService = inject(TranslationService);
+
   accountTypeOptions = [
-    { label: 'Asset', value: 'asset' },
-    { label: 'Liability', value: 'liability' },
-    { label: 'Equity', value: 'equity' },
-    { label: 'Income', value: 'income' },
-    { label: 'Expense', value: 'expense' },
+    { label: this.translationService.translate('options.asset', {}, 'accounting'), value: 'asset' },
+    {
+      label: this.translationService.translate('options.liability', {}, 'accounting'),
+      value: 'liability',
+    },
+    {
+      label: this.translationService.translate('options.equity', {}, 'accounting'),
+      value: 'equity',
+    },
+    {
+      label: this.translationService.translate('options.income', {}, 'accounting'),
+      value: 'income',
+    },
+    {
+      label: this.translationService.translate('options.expense', {}, 'accounting'),
+      value: 'expense',
+    },
   ];
 
   constructor() {

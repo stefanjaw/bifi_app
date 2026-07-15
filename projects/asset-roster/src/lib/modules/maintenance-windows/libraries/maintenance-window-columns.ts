@@ -4,25 +4,25 @@ import { maintenanceWindow } from '../interfaces/maintenance-window';
 export const maintenanceWindowColumns: tableColumn<maintenanceWindow>[] = [
   {
     field: 'name',
-    title: 'Role Name',
+    title: 'roleName',
     type: 'text',
     sortable: true,
   },
   {
     field: 'daysBefore',
-    title: 'Days Before',
+    title: 'daysBefore',
     type: 'number',
     sortable: true,
   },
   {
     field: 'daysAfter',
-    title: 'Days After',
+    title: 'daysAfter',
     type: 'number',
     sortable: true,
   },
   {
     field: 'recurrency',
-    title: 'Recurrency',
+    title: 'recurrency',
     type: 'text',
     sortable: true,
   },

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TimelineItem } from './timeline-item';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 const AXIS_LEFT = 45;
 const AXIS_RIGHT = 955;
@@ -73,11 +74,13 @@ interface TimelineLayout {
 
 @Component({
   selector: 'bifi-app-timeline-view',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './timeline-view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineView {
+  private translationService = inject(TranslationService);
+
   items = input<TimelineItem[]>([]);
 
   readonly LEVEL_HEIGHT = LEVEL_HEIGHT;
@@ -88,7 +91,12 @@ export class TimelineView {
     );
 
     if (sorted.length === 0) {
-      return { items: [], months: [], viewBox: `0 0 1000 ${BASE_SVG_HEIGHT}`, svgHeight: BASE_SVG_HEIGHT };
+      return {
+        items: [],
+        months: [],
+        viewBox: `0 0 1000 ${BASE_SVG_HEIGHT}`,
+        svgHeight: BASE_SVG_HEIGHT,
+      };
     }
 
     const timestamps = sorted.map(i => new Date(i.date).getTime());
@@ -143,10 +151,13 @@ export class TimelineView {
       return {
         label: truncate(item.label, MAX_LABEL_CHARS),
         fullLabel: item.label,
-        dateLabel: new Date(item.date).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        }),
+        dateLabel: new Date(item.date).toLocaleDateString(
+          this.translationService.activeLanguage(),
+          {
+            month: 'short',
+            day: 'numeric',
+          }
+        ),
         type,
         x,
         labelX: x,
@@ -204,7 +215,9 @@ export class TimelineView {
       const x = toX(cur.getTime());
       if (x >= AXIS_LEFT && x <= AXIS_RIGHT) {
         months.push({
-          label: cur.toLocaleDateString('en-US', { month: 'short' }),
+          label: cur.toLocaleDateString(this.translationService.activeLanguage(), {
+            month: 'short',
+          }),
           x,
         });
       }

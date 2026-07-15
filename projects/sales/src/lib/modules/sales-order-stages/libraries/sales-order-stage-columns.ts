@@ -1,35 +1,38 @@
+import { t } from '@avalantec/base-app/i18n';
 import { tableColumn } from '@avalantec/base-app/resource';
 import { salesOrderStage } from '../interfaces/sales-order-stage';
 
 export const salesOrderStageColumns: tableColumn<salesOrderStage>[] = [
   {
     field: 'name',
-    title: 'Name',
+    title: 'sales.columns.name',
     type: 'text',
     sortable: true,
   },
   {
     field: 'color',
-    title: 'Color',
+    title: 'sales.columns.color',
     type: 'text',
     parseField: (value: string) => value,
   },
   {
     field: 'order',
-    title: 'Order',
+    title: 'sales.columns.order',
     type: 'number',
     sortable: true,
   },
   {
     field: 'isDefault',
-    title: 'Default',
+    title: 'sales.columns.default',
     type: 'text',
-    parseField: (value: boolean) => (value ? '✓ Default' : '—'),
+    parseField: (value: boolean) =>
+      value ? t('sales.columns.markDefault', {}, 'sales') : t('status.fallback.dash', {}, 'sales'),
   },
   {
     field: 'active',
-    title: 'Active',
+    title: 'sales.columns.active',
     type: 'text',
-    parseField: (value: boolean) => (value ? 'Yes' : 'No'),
+    parseField: (value: boolean) =>
+      value ? t('label.yes', {}, 'sales') : t('label.no', {}, 'sales'),
   },
 ];

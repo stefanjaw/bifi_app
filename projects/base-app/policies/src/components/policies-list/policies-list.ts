@@ -12,13 +12,22 @@ import { policyColumns } from '../../libraries/policy-columns';
 import { policyFilters } from '../../libraries/policy-filters';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
+import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { policy } from '@avalantec/base-app/interfaces';
 
 @Component({
   selector: 'bifi-app-policies-list',
   providers: [provideResourceManager(CrudPolicies)],
-  imports: [TableLayout, ButtonModule, SearchBar, RouterLink, HasPermission, ButtonsActions],
+  imports: [
+    TableLayout,
+    ButtonModule,
+    SearchBar,
+    RouterLink,
+    HasPermission,
+    ButtonsActions,
+    TranslatePipe,
+  ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
   },
@@ -39,7 +48,7 @@ export class PoliciesList {
 
   gotoEditPolicy = (element: policy<string, string>) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  }
+  };
   deletePolicy(id: string) {
     this.crudPolicies
       .delete({ _id: id })

@@ -149,28 +149,24 @@ export class InfiniteScroll {
 
   /**
    * Load the next page of data.
-   * If the limit is greater or equal to the total number of documents, do nothing.
-   * Otherwise, increment the page number and the limit by the pivot value.
+   * If there is no next page, do nothing.
+   * Otherwise, advance to the next page keeping the limit fixed at PIVOT.
    * Set the loadingNextPage flag to true.
-   * Call setPaginationOptions on the pagination manager with the updated page and limit.
+   * Call setPaginationOptions on the pagination manager with the updated page and fixed limit.
    */
   private loadNextPage() {
     const state = this.resource();
     if (!this.isPaginatedFN(state?.value())) return;
 
-    const { totalDocs, limit } = state.value() as pagination<any>;
+    const { hasNextPage, page } = state.value() as pagination<any>;
 
-    // Si ya tenemos todos los documentos, no hacer nada
-    if (limit >= totalDocs) return;
+    if (!hasNextPage) return;
 
     const pivot = this.paginationManager.PIVOT;
 
     this.loadingNextPage = true;
 
-    // FORZAMOS page a 1 para que el backend traiga desde el principio
-    // hasta el nuevo límite (limit + pivot)
-    const FIRST_PAGE = 1;
-    this.paginationManager.setPaginationOptions(FIRST_PAGE, limit + pivot);
+    this.paginationManager.setPaginationOptions(page + 1, pivot);
   }
 
   private checkIfShouldLoadMore() {
@@ -185,8 +181,7 @@ export class InfiniteScroll {
     const data = state.value();
     if (!this.isPaginatedFN(data)) return;
 
-    // Si ya cargamos todo lo que existe en la DB, detenerse
-    if (data.limit >= data.totalDocs) return;
+    if (!data.hasNextPage) return;
 
     const fullHeight = container.scrollHeight;
     const viewportHeight = container.clientHeight;

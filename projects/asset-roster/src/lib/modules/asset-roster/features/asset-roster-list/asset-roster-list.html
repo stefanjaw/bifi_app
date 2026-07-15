@@ -5,7 +5,7 @@
   [class.shadow-md]="isScrolled()"
 >
   <div class="flex justify-between items-center gap-2">
-    <h1 class="text-2xl font-bold">Asset Dashboard</h1>
+    <h1 class="text-2xl font-bold">{{ 'assetDashboard' | translate: {} : 'asset-roster' }}</h1>
     <div class="flex gap-2">
       <p-selectButton
         [options]="optionsView"
@@ -19,7 +19,7 @@
       </p-selectButton>
 
       <p-button
-        label="Reporting"
+        [label]="'reporting' | translate: {} : 'asset-roster'"
         severity="success"
         icon="pi pi-file-pdf"
         (onClick)="downloadReportDialog.openDialog()"
@@ -27,25 +27,25 @@
         [disabled]="downloadReportDialog.reportingTemplates().length === 0"
         [pTooltip]="
           downloadReportDialog.reportingTemplates().length === 0
-            ? 'Configure the Report Template under Settings/Reporting'
+            ? ('configureReportTemplate' | translate: {} : 'asset-roster')
             : undefined
         "
       ></p-button>
       <p-button
-        label="Import CSV"
+        [label]="'importCsv' | translate: {} : 'asset-roster'"
         severity="success"
         icon="pi pi-upload"
         (onClick)="fileInput.click()"
         *bifiAppHasPermission="'asset-rosters/import:create:model'"
       ></p-button>
       <p-button
-        label="Export CSV"
+        [label]="'exportCsv' | translate: {} : 'asset-roster'"
         icon="pi pi-download"
         (onClick)="exportCSV()"
         *bifiAppHasPermission="'asset-rosters/export:read:model'"
       ></p-button>
       <p-button
-        label="Add New Asset"
+        [label]="'addNewAsset' | translate: {} : 'asset-roster'"
         severity="secondary"
         icon="pi pi-plus"
         (onClick)="createDialog.openDialog()"
@@ -97,7 +97,7 @@
 <section class="flex flex-col md:flex-row gap-2 mb-4">
   <bifi-app-search-bar
     [searchFilters]="assetRosterFilters"
-    label="Search by Model, S/N, condition, type, make, vendor and location"
+    [label]="'searchAssets' | translate: {} : 'asset-roster'"
     class="md:w-7/10"
   ></bifi-app-search-bar>
   <bifi-app-asset-roster-status-select class="md:w-3/10"></bifi-app-asset-roster-status-select>
@@ -105,8 +105,9 @@
 
 <!-- table -->
 @if (!isGrid()) {
-<bifi-app-table-layout
+  <bifi-app-table-layout
     [infiniteScroll]="true"
+    [scope]="'asset-roster'"
     [columns]="assetRosterColumns"
     [data]="assetRosters"
     [onClickRow]="goToEditAssetRoster"
@@ -118,7 +119,7 @@
       routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
       class="cursor-pointer"
       severity="warn"
-      [value]="'View details'"
+      [value]="'viewDetails' | translate: {} : 'asset-roster'"
       *bifiAppHasPermission="'asset-rosters/update:view'"
     ></p-tag>
   </ng-template>
@@ -137,13 +138,13 @@
       >
         <!-- IMAGE -->
         <ng-template pTemplate="header">
-          <div class="relative w-full h-48 overflow-hidden rounded-t-xl">
+          <div class="relative w-full h-48 overflow-hidden rounded-t-xl bg-gray-50">
             <img
               [src]="
                 assetPictures()[element._id] ||
                 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg'
               "
-              class="w-full h-full object-cover"
+              class="w-full h-full object-contain"
               alt=""
             />
 
@@ -168,12 +169,16 @@
             </span>
 
             <div class="grid grid-cols-2 gap-y-1 text-xs text-gray-600 mt-2">
-              <span class="font-medium text-gray-400">Serial Number</span>
+              <span class="font-medium text-gray-400">
+                {{ 'serialNumber' | translate: {} : 'asset-roster' }}
+              </span>
               <span class="text-right">{{ element.serialNumber }}</span>
 
-              <span class="font-medium text-gray-400">Location</span>
+              <span class="font-medium text-gray-400">
+                {{ 'location' | translate: {} : 'asset-roster' }}
+              </span>
               <span class="text-right truncate">
-                {{ element?.locationId?.address ?? 'Not set' }}
+                {{ element.locationId.address }}
               </span>
             </div>
           </div>
@@ -182,7 +187,9 @@
         <!-- FOOTER -->
         <ng-template pTemplate="footer">
           <div class="flex justify-between items-center text-xs text-gray-500">
-            <span class="font-medium text-gray-400">NEXT PM OVERDUE</span>
+            <span class="font-medium text-gray-400">
+              {{ 'nextPmOverdue' | translate: {} : 'asset-roster' }}
+            </span>
             <span class="text-right capitalize">
               {{ element.maintenanceDate }}
             </span>
