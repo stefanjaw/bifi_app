@@ -14,6 +14,14 @@
     icon="pi pi-arrows-h"
     [routerLink]="['../exchange-rates']"
   ></p-button>
+  <p-button
+    [label]="'populateCurrencies' | translate: {} : 'base-app/currency'"
+    severity="success"
+    icon="pi pi-refresh"
+    *bifiAppDebugMode
+    (onClick)="populateCurrencies()"
+    [disabled]="populationLoading()"
+  ></p-button>
 </div>
 
 <bifi-app-search-bar

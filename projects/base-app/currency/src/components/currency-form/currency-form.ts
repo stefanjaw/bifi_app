@@ -63,7 +63,6 @@ export class CurrencyForm {
           symbol: entry.symbol,
           decimalPrecision: entry.decimalPrecision ?? 2,
           active: entry.active ?? true,
-          isDefault: entry.isDefault ?? false,
         });
         this.formService.resetDirtyState();
       } else if (!this.isUpdate()) {

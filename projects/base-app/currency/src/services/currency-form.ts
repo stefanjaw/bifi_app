@@ -8,7 +8,6 @@ export interface CurrencyFormModel {
   symbol: string;
   decimalPrecision: number;
   active: boolean;
-  isDefault: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +19,6 @@ export class CurrencyFormService extends BaseForm<CurrencyFormModel> {
       symbol: ['', [Validators.required]],
       decimalPrecision: [2],
       active: [true],
-      isDefault: [false],
     });
   }
 }
