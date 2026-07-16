@@ -29,6 +29,7 @@ import { provideHelpdesk } from '@avalantec/helpdesk';
 import { provideCalendar } from '@avalantec/calendar';
 import { provideProjects } from '@avalantec/projects';
 import { provideL10nCrEinvoice } from '@avalantec/l10n_cr_einvoice';
+import { provideClinical } from '@avalantec/clinical';
 import { provideTranslationRoot } from '@avalantec/base-app/i18n';
 
 export const appConfig: ApplicationConfig = {
@@ -73,6 +74,7 @@ export const appConfig: ApplicationConfig = {
     provideHelpdesk(),
     provideProjects(),
     provideL10nCrEinvoice(),
+    provideClinical(),
     provideTranslationRoot(),
     provideMenuItems(),
     provideAppAuth({

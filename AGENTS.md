@@ -241,6 +241,142 @@ All loaded under `/settings/cr-einvoice/`. Follow the same pattern as base-app s
 
 `@avalantec/accounting` (`InvoiceForm`, `TaxForm`, `DiscountForm`), `@avalantec/inventory` (`ProductForm`, `UomForm`).
 
+## Extending Existing Entities — The Plugin Pattern
+
+When a feature lib needs to add fields to an existing entity (instead of creating a new entity), follow the `l10n_cr_einvoice` pattern:
+
+### 1. Distinguish Entity Types
+
+| Type | What to do | Example |
+|---|---|---|
+| **Genuinely new entity** | Create fresh: model, CRUD service, form service, routes, features | `product-frequency`, `product-route`, `product-lot` |
+| **Extension of existing entity** | Add prefixed fields to existing schema + PluginSlot injection on frontend | `cr*` fields on Product, Uom, Contact |
+| **Duplicate of existing entity** | Delete and redirect refs — never reimplement | `clinical-product` (was duplicate of `product`) |
+
+### 2. Field Prefix Convention
+
+Extension fields **must** use a module-specific prefix to namespace them and prevent collisions. The prefix can be anything unique to the module:
+
+```ts
+// l10n_cr_einvoice uses "cr" — Costa Rica
+crVatType, crUnidadMedida, crPartidaArancelaria
+
+// Another module might use a different prefix, e.g. "mx" for Mexico, "cl" for clinical
+// The exact prefix doesn't matter — only that it's unique per module
+```
+
+The prefix makes ownership obvious at a glance. Without one, a future extension could collide with core fields or another module's fields.
+
+### 3. Backend: Fields Live on Core Schema
+
+Extension fields are defined **statically** on the core entity's Mongoose schema — they are NOT injected dynamically. See:
+- `bifi_app_be/src/modules/inventory/models/product.model.ts` — has `codigoComercial`, `crPartidaArancelaria`, `productKind`
+- `bifi_app_be/src/modules/inventory/models/uom.model.ts` — has `crUnidadMedida`
+- `bifi_app_be/src/modules/contacts/models/contact.model.ts` — has `crVatType`, `commercialName`, `crDistrito`, `crEconomicActivityCodes`
+
+The extension module (`l10n_cr_einvoice`) never touches those schema files. It provides business logic (JSON/XML build, API submission, PDF gen) and reference lookups that consume the fields.
+
+### 4. Frontend: PluginSlot + Dynamic addControl
+
+**Host form** adds a `<bifi-app-plugin-slot>` in its template and provides itself as context:
+
+```html
+<!-- in host form template (e.g., product-form.html) -->
+<bifi-app-plugin-slot name="product-form-general-information"></bifi-app-plugin-slot>
+```
+
+```ts
+// host form component (e.g., ProductForm)
+providers: [providePluginContext(ProductForm)],
+```
+
+**Plugin component** injects the host via `PLUGIN_CONTEXT`, dynamically adds controls in `ngOnInit`, and patches values via `(entity as any)` in an `effect`:
+
+```ts
+// plugin component (e.g., ProductCrPlugin)
+export class ProductCrPlugin implements OnInit {
+  host = inject<ProductForm>(PLUGIN_CONTEXT);
+  hostForm = this.host.form as FormGroup<any>;
+
+  ngOnInit() {
+    this.hostForm.addControl('codigoComercial', new FormControl(''));
+    this.hostForm.addControl('productKind', new FormControl(''));
+    this.hostForm.addControl('crPartidaArancelaria', new FormControl(''));
+  }
+
+  constructor() {
+    effect(() => {
+      const product = this.host.productResource.value();
+      if (!product) return;
+      this.hostForm.patchValue({
+        codigoComercial: (product as any)?.codigoComercial ?? '',
+        productKind: (product as any)?.productKind ?? '',
+        crPartidaArancelaria: (product as any)?.crPartidaArancelaria ?? '',
+      });
+    });
+  }
+}
+```
+
+The `(entity as any)` cast is intentional — it signals "these fields are not part of the core type, they belong to the plugin."
+
+**Registration** happens in the plugin module's `init.ts`:
+
+```ts
+// in initializeL10nCrEinvoice()
+pluginManager.register([
+  {
+    slot: 'product-form-general-information',
+    component: ProductCrPlugin,
+  },
+  // ...
+]);
+```
+
+### 5. When to Extend vs Create New
+
+| Scenario | Approach | Example |
+|---|---|---|
+| Adding locale/domain-specific metadata to an existing entity | Add prefixed fields to core Mongoose schema + PluginSlot on frontend | `cl*` on Product, `cr*` on Contact/Uom |
+| Adding a genuinely new sub-entity with its own lifecycle | Create new entity files | ProductFrequency, ProductRoute, ProductLot |
+| Reimplementing an existing entity | ❌ Never — delete and redirect refs | clinical-product (deleted, merged into Product) |
+
+### 6. Core Interfaces Must NOT Include Extension Fields
+
+The frontend **core entity interface** (e.g., `product` in `@avalantec/inventory`) **must not** define extension fields:
+
+```typescript
+// ✅ CORRECT — core product interface in @avalantec/inventory
+export interface product {
+  _id: string;
+  name: string;
+  sku: string;
+  // ... core fields only
+}
+```
+
+```typescript
+// ❌ WRONG — extension fields don't belong in the core interface
+export interface product {
+  _id: string;
+  name: string;
+  clStrengths?: string[];  // ❌ belongs to clinical extension
+  clRouteIds?: string[];     // ❌ belongs to clinical extension
+}
+```
+
+The extension module (e.g., `@avalantec/clinical`) accesses these fields on the frontend exclusively via `(entity as any)?.clFieldName` in its plugin components — the core type is never polluted. This keeps contracts clean and makes extensions optional (a deployment without `@avalantec/clinical` never sees the `cl*` fields).
+
+### 7. Reference Implementation
+
+### 6. Reference Implementation
+
+See `projects/l10n_cr_einvoice/` for the canonical example:
+- `src/lib/providers/initializer/init.ts` — plugin registration
+- `src/lib/features/product-cr-plugin/product-cr-plugin.ts` — ProductForm extension
+- `src/lib/features/uom-cr-plugin/uom-cr-plugin.ts` — UomForm extension
+- `src/lib/features/contact-cr-plugin/contact-cr-plugin.ts` — ContactsForm extension (with FormArray)
+
 ## Commands
 
 ```sh

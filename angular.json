@@ -519,6 +519,33 @@
           }
         }
       }
+    },
+    "clinical": {
+      "projectType": "library",
+      "root": "projects/clinical",
+      "sourceRoot": "projects/clinical/src",
+      "prefix": "bifi-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/clinical/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/clinical/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/clinical/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        }
+      }
     }
   },
   "cli": {

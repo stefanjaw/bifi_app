@@ -1,0 +1,60 @@
+@if (!loading()) {
+  <bifi-app-form-layout
+    [title]="
+      (isUpdate() ? 'admissionGoal.edit' : 'admissionGoal.create') | translate: {} : 'clinical'
+    "
+  >
+    <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit($event)">
+      <bifi-app-form-section
+        id="details"
+        [title]="'admissionGoal.details' | translate: {} : 'clinical'"
+        [ordinal]="1"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuumId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="careContinuumId" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'patientId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="patientId" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'contentTitle' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="contentTitle" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'contentBody' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <textarea pInputTextarea formControlName="contentBody"></textarea>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'priority' | translate: {} : 'clinical' }}</bifi-app-form-label>
+            <input pInputText type="number" formControlName="priority" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  </bifi-app-form-layout>
+} @else {
+  <div class="flex justify-center p-6">
+    <p-progressBar mode="indeterminate" styleClass="w-full max-w-md"></p-progressBar>
+  </div>
+}

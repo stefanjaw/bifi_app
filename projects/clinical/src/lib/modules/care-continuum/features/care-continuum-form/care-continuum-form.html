@@ -1,0 +1,68 @@
+@if (!loading()) {
+  <bifi-app-form-layout
+    [title]="
+      (isUpdate() ? 'careContinuum.edit' : 'careContinuum.create') | translate: {} : 'clinical'
+    "
+  >
+    <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit($event)">
+      <bifi-app-form-section
+        id="details"
+        [title]="'careContinuum.details' | translate: {} : 'clinical'"
+        [ordinal]="1"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'patientId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="patientId" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'typeOfEvent' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="typeOfEvent"
+              [options]="['Transfer', 'Care Update', 'Discharge', 'Admission']"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'state' | translate: {} : 'clinical' }}</bifi-app-form-label>
+            <p-select formControlName="state" [options]="['Draft', 'Active', 'Discharge']" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'insuranceCarrier' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="insuranceCarrier" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'policyNumber' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="policyNumber" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'endDate' | translate: {} : 'clinical' }}</bifi-app-form-label>
+            <input pInputText formControlName="endDate" />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+    </form>
+  </bifi-app-form-layout>
+} @else {
+  <div class="flex justify-center p-6">
+    <p-progressBar mode="indeterminate" styleClass="w-full max-w-md"></p-progressBar>
+  </div>
+}

@@ -45,6 +45,9 @@
       "@avalantec/email-marketing": ["./projects/email-marketing/src/lib"],
       "@avalantec/email-marketing/*": ["./projects/email-marketing/src/lib/*"],
 
+      "@avalantec/clinical": ["./projects/clinical/src/lib"],
+      "@avalantec/clinical/*": ["./projects/clinical/src/lib/*"],
+
       "@avalantec/base-app": ["./projects/base-app"],
       "@avalantec/base-app/*": ["./projects/base-app/*"]
     },

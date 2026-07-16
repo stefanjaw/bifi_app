@@ -1,0 +1,25 @@
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New"
+    severity="secondary"
+    icon="pi pi-plus"
+    [routerLink]="['../create']"
+    *bifiAppHasPermission="'clinical/genders/create:view'"
+  ></p-button>
+</div>
+<bifi-app-search-bar label="Search..." [searchFilters]="filters"></bifi-app-search-bar>
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="columns"
+  [data]="data"
+  [onClickRow]="gotoEdit"
+  clickRowPermission="clinical/genders/update:view"
+  [scope]="'clinical'"
+>
+  <ng-template #actions let-row>
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(row._id)"
+      resource="clinical/genders"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>
