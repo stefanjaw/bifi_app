@@ -286,6 +286,7 @@ export class TasksMainView {
       stage: t.stage,
       color: t.stage?.color,
       priority: t.priority,
+      projectId: t.projectId?._id || (t.projectId as any as string) || undefined,
       projectName: t.projectId?.name,
       assignedUserName: t.assigned?.username,
     };
@@ -335,7 +336,11 @@ export class TasksMainView {
   }
 
   onGanttAddSubitem(id: string): void {
-    this.tasksMaintenanceContext.openCreateSubTaskDialog(id);
+    const node = this.ganttMap().get(id);
+    this.tasksMaintenanceContext.openCreateSubTaskDialog({
+      parentId: id,
+      projectId: node?.projectId,
+    });
   }
 
   onGanttItemReorder(event: { id: string; targetId: string; mode: 'before' | 'after' }): void {

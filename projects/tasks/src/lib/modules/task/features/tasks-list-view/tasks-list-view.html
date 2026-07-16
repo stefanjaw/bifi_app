@@ -59,7 +59,7 @@
             icon="pi pi-plus"
             variant="text"
             (onClick)="
-              tasksMaintenanceContext.openCreateSubTaskDialog(task.id); $event.stopPropagation()
+              tasksMaintenanceContext.openCreateSubTaskDialog({ parentId: task.id, projectId: task.projectId }); $event.stopPropagation()
             "
           ></p-button>
           <bifi-app-buttons-actions
