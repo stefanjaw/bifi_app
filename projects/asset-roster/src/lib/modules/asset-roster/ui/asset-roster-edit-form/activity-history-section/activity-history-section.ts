@@ -10,7 +10,7 @@ import { AssetRosterActiviyHistoryAddFileDialog } from '../../../features/asset-
 import { assetRoster } from '../../../interfaces/asset-roster';
 import { Tag, TagModule } from 'primeng/tag';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { AssetRosterMaintenanceContext } from 'projects/asset-roster/src/public-api';
+import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { LocaleDatePipe, TranslatePipe } from '@avalantec/base-app/i18n';
 
 @Component({
