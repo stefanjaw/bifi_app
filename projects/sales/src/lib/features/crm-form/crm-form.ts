@@ -7,6 +7,7 @@ import {
   inject,
   input,
   signal,
+  model,
 } from '@angular/core';
 import { CrmForm, CrmFormModel } from '../../services/crm-form';
 import { CrudCrm } from '../../services/crud-crm';
@@ -14,24 +15,26 @@ import { CrudCrmStages } from '../../modules/crm-stages';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
+import { DraftService, DirtyComponent } from '@avalantec/base-app/form';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'bifi-app-crm-form',
   imports: [
     FormModule,
     ReactiveFormsModule,
+    FormsModule,
     InputText,
     ButtonModule,
     InputNumberModule,
@@ -43,7 +46,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
   templateUrl: './crm-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrmsForm {
+export class CrmsForm implements DirtyComponent {
   private formService = inject(CrmForm);
   private crudCrm = inject(CrudCrm);
   private crudContacts = inject(CrudContacts);
@@ -54,6 +57,7 @@ export class CrmsForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
 
   id = input<string>('');
 
@@ -90,11 +94,30 @@ export class CrmsForm {
   isSubmitLoading = signal(false);
   isUpdate = computed(() => !!this.id());
 
+  contactNameModel = model('');
+  contactMethodModel = model('');
+  companyNameModel = model('');
+
   form = this.formService.form;
+  private draftRestored = false;
 
   constructor() {
     effect(() => {
       const entry = this.entry();
+
+      if (!this.draftRestored) {
+        const draft = this.draftService.getDraft(this.router.url);
+        if (draft) {
+          this.form.patchValue(draft);
+          this.form.markAsDirty();
+          this.draftService.clearDraft(this.router.url);
+          this.draftRestored = true;
+          return;
+        }
+      }
+
+      if (this.draftRestored) return;
+
       if (entry) {
         this.formService.patchValue({
           title: entry.title,
@@ -131,9 +154,9 @@ export class CrmsForm {
 
     const tags = rawValue.tagsInput
       ? rawValue.tagsInput
-          .split(',')
-          .map(t => t.trim())
-          .filter(Boolean)
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {
@@ -171,4 +194,11 @@ export class CrmsForm {
   goBack() {
     this.router.navigate(['/sales/opportunities']);
   }
+
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
+  }
+
+  handleContactCreation() { }
+  handleCompanyCreation() { }
 }

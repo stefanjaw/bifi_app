@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState, DraftService } from '@avalantec/base-app/form';
 import { TableLayout } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -45,6 +45,7 @@ export class FacilitiesForm {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
 
   id = input.required<string>();
 
@@ -92,10 +93,10 @@ export class FacilitiesForm {
       : this.crudFacilities.post({ data: values.dirtyValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitLoading.set(false);
         this.formService.reset();
-        this.goBack();
+        this.goBack(res?._id);
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -103,7 +104,22 @@ export class FacilitiesForm {
     });
   }
 
-  goBack() {
+  goBack(createdId?: string) {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const controlName = this.route.snapshot.queryParamMap.get('controlName');
+
+    if (returnUrl) {
+      this.formService.form.markAsPristine();
+      this.formService.form.markAsUntouched();
+      
+      if (createdId && controlName) {
+        this.draftService.updateDraftField(returnUrl, controlName, createdId);
+      }
+      
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
   }

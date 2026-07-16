@@ -8,6 +8,7 @@ import {
   viewChild,
   input,
 } from '@angular/core';
+import { FormValueState, DirtyComponent, DraftService } from '@avalantec/base-app/form';
 import { Router } from '@angular/router';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
 import { UpdateAssetRosterForm } from '../../services/update-asset-roster-form';
@@ -58,7 +59,7 @@ import { AssetRosterImageDialog } from '../asset-roster-image-dialog/asset-roste
   ],
   templateUrl: './asset-roster-maintenance.html',
 })
-export class AssetRosterMaintenance {
+export class AssetRosterMaintenance implements DirtyComponent {
   private formService = inject(UpdateAssetRosterForm);
   private crudAssetRoster = inject(CrudAssetRoster);
   private assetTypesService = inject(CrudAssetType);
@@ -73,6 +74,7 @@ export class AssetRosterMaintenance {
   private fileResolverService = inject(FileResolver);
   private filterManager = inject(FilterManager);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
+  private draftService = inject(DraftService);
 
   // Coming in route as param
   id = input.required<string>();
@@ -376,10 +378,15 @@ export class AssetRosterMaintenance {
       this.toastManager.showInfo('Please wait — your changes are still being saved.');
       return false;
     }
-    if (!this.formService.form.dirty) return true;
+    if (!this.hasUnsavedChanges()) return true;
+    if (this.draftService.isDraftNavigating) return true;
     return window.confirm(
       'You have unsaved changes on this asset. Leaving will discard them. Continue?'
     );
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.formService.form.dirty;
   }
 
   handleReloadAssetRoster() {

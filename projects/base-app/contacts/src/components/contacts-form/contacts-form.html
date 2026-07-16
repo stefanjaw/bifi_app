@@ -387,5 +387,6 @@
 <bifi-app-select-child-contact-dialog
   #selectChildContactDialog
   [childContactOptions]="childOptions() || []"
+  [draftFormValue]="form.value"
   (selected)="handleContactSelect($event)"
 ></bifi-app-select-child-contact-dialog>

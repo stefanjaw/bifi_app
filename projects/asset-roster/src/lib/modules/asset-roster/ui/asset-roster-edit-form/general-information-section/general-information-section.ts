@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, model, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, model, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
@@ -16,13 +16,14 @@ import { assetRoster } from '../../../interfaces/asset-roster';
 import { assetType } from '../../../../asset-types';
 import { contact } from '@avalantec/base-app/interfaces';
 import { CrudFacilities, CrudRooms, room } from '../../../../facilities';
-import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
+import { DraftService, FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-general-information-section',
@@ -53,6 +54,8 @@ export class GeneralInformationSection {
   private destroy$ = inject(DestroyRef);
   private crudFacilities = inject(CrudFacilities);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
+  private router = inject(Router);
+  private draftService = inject(DraftService);
   assetRoster = input.required<assetRoster | undefined>();
 
   vendorsResource = this.crudVendorContacts.get({});
@@ -82,12 +85,33 @@ export class GeneralInformationSection {
 
   isEditMode = input.required<boolean>();
   formService = inject(UpdateAssetRosterForm);
-  showVendorForm = signal(false);
-  showRoomForm = signal(false);
-  openNewLocationForIndex = signal<number | null>(null);
   newLocationNameForAssignment = model('');
   newFacilityIdForAssignment = model<string | null>(null);
   form = this.formService.form;
+
+  constructor() {
+    let draftRestored = false;
+    effect(() => {
+      const asset = this.assetRoster();
+
+      if (!draftRestored) {
+        const draft = this.draftService.getDraft(this.router.url);
+        if (draft) {
+          this.form.patchValue(draft);
+          this.form.markAsDirty();
+          this.draftService.clearDraft(this.router.url);
+          draftRestored = true;
+          return;
+        }
+      }
+
+      if (draftRestored) return;
+
+      if (asset) {
+        this.form.patchValue(asset as any);
+      }
+    });
+  }
 
   deviceType = toSignal(
     this.form.controls.deviceType.valueChanges.pipe(startWith(this.form.controls.deviceType.value))
@@ -173,91 +197,11 @@ export class GeneralInformationSection {
     this.formService.removeLocationAssignment(index);
   }
 
-  handleVendorCreation() {
-    this.crudVendorContacts
-      .post({
-        data: {
-          name: this.vendorName(),
-          lastName: ' ',
-          email: this.vendorEmail(),
-          phoneNumber: 'Phone not provided',
-          type: 'individual',
-        },
-      })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: createdVendor => {
-          if (!createdVendor) return;
-          this.vendorsResource.reload();
-          this.form.controls.vendorIds.setValue(createdVendor._id);
-          this.vendorName.set('');
-          this.vendorEmail.set('');
-          this.showVendorForm.set(false);
-        },
-      });
-  }
+  handleVendorCreation() { }
 
-  handleRoomCreation() {
-    this.crudRooms
-      .post({
-        data: {
-          name: this.roomName(),
-          ...(this.form.controls.facilityId.value && {
-            facilityId: this.form.controls.facilityId.value,
-          }),
-          code: ' ',
-          address: ' ',
-        },
-      })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.roomsResources.reload();
-          this.roomName.set('');
-          this.facilitiesResource.reload();
-          this.showRoomForm.set(false);
-        },
-      });
-  }
+  handleRoomCreation() { }
 
-  toggleVendorForm() {
-    this.showVendorForm.update(v => !v);
-  }
-
-  toggleRoomForm() {
-    this.showRoomForm.update(v => !v);
-  }
-
-  toggleLocationFormForRow(index: number) {
-    this.openNewLocationForIndex.update(i => (i === index ? null : index));
-    this.newLocationNameForAssignment.set('');
-    this.newFacilityIdForAssignment.set(null);
-  }
-
-  handleRoomCreationForRow(index: number) {
-    this.crudRooms
-      .post({
-        data: {
-          name: this.newLocationNameForAssignment(),
-          facilityId: this.newFacilityIdForAssignment()!,
-          code: ' ',
-          address: ' ',
-        },
-      })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: created => {
-          if (!created) return;
-          this.roomsResources.reload();
-          this.form.controls.locationAssignments
-            .at(index)
-            .controls.locationId.setValue(created._id);
-          this.newLocationNameForAssignment.set('');
-          this.newFacilityIdForAssignment.set(null);
-          this.openNewLocationForIndex.set(null);
-        },
-      });
-  }
+  handleRoomCreationForRow(index: number) { }
 
   openPhotoDialog() {
     this.assetRosterMaintenanceContext.handleOpenPhotoDialog();

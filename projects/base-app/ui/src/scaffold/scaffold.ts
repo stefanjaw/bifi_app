@@ -24,6 +24,7 @@ import { NgxSonnerToaster } from 'ngx-sonner';
 import { UserPanel } from '../user-panel/user-panel';
 import { GlobalSearch } from '../global-search/global-search';
 import { NotificationPanel } from '../notifications/notification-panel';
+import { DirtyFormConfirmationDialog } from '@avalantec/base-app/form';
 import { HasPermission, injectAuthService } from '@avalantec/base-app/auth';
 import { RippleModule } from 'primeng/ripple';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
@@ -53,6 +54,7 @@ import { filter, take } from 'rxjs';
     TranslatePipe,
     GlobalSearch,
     NotificationPanel,
+    DirtyFormConfirmationDialog,
   ],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.css',

@@ -12,6 +12,8 @@ import { Hint } from '../components/hint/hint';
 import { FormActionsHandler } from '../directives/form-actions-handler';
 import { FormControlExtension } from '../directives/form-control-extension';
 import { TranslatedErrors } from '../directives/translated-errors';
+import { FormSelectFooter } from '../components/form-select-footer/form-select-footer';
+import { FormSelectNavigateFooter } from '../components/form-select-navigate-footer/form-select-navigate-footer';
 
 @NgModule({
   imports: [
@@ -28,6 +30,8 @@ import { TranslatedErrors } from '../directives/translated-errors';
     FormActionsHandler,
     FormControlExtension,
     TranslatedErrors,
+    FormSelectFooter,
+    FormSelectNavigateFooter,
   ],
   exports: [
     FormActions,
@@ -43,6 +47,8 @@ import { TranslatedErrors } from '../directives/translated-errors';
     FormActionsHandler,
     FormControlExtension,
     TranslatedErrors,
+    FormSelectFooter,
+    FormSelectNavigateFooter,
   ],
 })
 export class FormModule {}

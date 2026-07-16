@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const ASSET_ROSTER_ROUTES: Routes = [
   {
@@ -17,6 +18,7 @@ export const ASSET_ROSTER_ROUTES: Routes = [
   {
     path: 'maintenance/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/asset-roster-maintenance/asset-roster-maintenance').then(
         m => m.AssetRosterMaintenance

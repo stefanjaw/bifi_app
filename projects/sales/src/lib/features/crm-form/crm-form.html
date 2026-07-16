@@ -135,7 +135,18 @@
               optionValue="_id"
               [placeholder]="'sales.placeholder.selectContact' | translate: {} : 'sales'"
               [filter]="true"
-            ></p-select>
+            >
+              <ng-template #footer>
+                <bifi-app-form-select-navigate-footer
+                  resource="contacts"
+                  label="Other contact +"
+                  controlName="contact"
+                  [createRoute]="['/contacts', 'create']"
+                  #contactFooter
+                >
+                </bifi-app-form-select-navigate-footer>
+              </ng-template>
+            </p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
@@ -150,7 +161,18 @@
               optionValue="_id"
               [placeholder]="'sales.placeholder.selectCompany' | translate: {} : 'sales'"
               [filter]="true"
-            ></p-select>
+            >
+              <ng-template #footer>
+                <bifi-app-form-select-navigate-footer
+                  resource="companies"
+                  label="Other company +"
+                  controlName="company"
+                  [createRoute]="['/settings', 'companies', 'create']"
+                  #companyFooter
+                >
+                </bifi-app-form-select-navigate-footer>
+              </ng-template>
+            </p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
