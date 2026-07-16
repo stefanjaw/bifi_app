@@ -20,6 +20,10 @@ export class FormSelectNavigateFooter {
   private controlContainer = inject(ControlContainer, { optional: true });
 
   navigate(route: any[]) {
+    console.log('Navigating to:', route);
+    console.log('DraftFormValue:', this.draftFormValue());
+    console.log('ControlContainer:', this.controlContainer);
+
     this.draftService.isDraftNavigating = true;
 
     if (this.draftFormValue()) {
@@ -35,6 +39,9 @@ export class FormSelectNavigateFooter {
       queryParams['controlName'] = cName;
     }
     
-    this.router.navigate(route, { queryParams });
+    // Force component recreation if navigating to the same route
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(route, { queryParams });
+    });
   }
 }
