@@ -278,7 +278,31 @@ Each `provide*()` should also include `provideTranslations('scope')` from `@aval
 ## Code Conventions (from base-app docs)
 
 - **No `.component.ts` / `.service.ts` / `.directive.ts` suffixes** — files end with `.ts` only.
-- **Class naming**: omit "Component" / "Directive" / "Pipe" suffixes. Form components pluralize the subject noun (e.g. `AgentsForm`), form services (`BaseForm` subclasses) use singular (e.g. `AgentForm`). Settings-based components use `Page` suffix (e.g. `AiSettingsPage`).
+- **Class naming**: omit "Component" / "Directive" / "Pipe" suffixes. Settings-based components use `Page` suffix (e.g. `AiSettingsPage`).
+- **Form naming convention — MANDATORY**: Form services (BaseForm subclasses) MUST use **singular** noun, form components MUST use **plural** noun. This applies to ALL modules across the monorepo — no exceptions.
+  ```typescript
+  // ✅ CORRECT — mandatory pattern
+  // Service file: services/room-form.ts
+  export class RoomForm extends BaseForm<RoomFormModel> { ... }  // singular
+  
+  // Component file: features/rooms-form/rooms-form.ts
+  export class RoomsForm implements OnInit { ... }  // plural
+  
+  // ✅ CORRECT — more examples
+  // services/patient-form.ts → export class PatientForm
+  // features/patients-form/patients-form.ts → export class PatientsForm
+  
+  // services/asset-roster-form.ts → export class AssetRosterForm
+  // features/asset-rosters-form/asset-rosters-form.ts → export class AssetRostersForm
+  
+  // ❌ WRONG — using same name for both
+  // services/patient-form.ts → export class PatientForm
+  // features/patient-form/patient-form.ts → export class PatientForm  // ❌ WRONG
+  
+  // ❌ WRONG — using singular for component
+  // services/room-form.ts → export class RoomForm
+  // features/room-form/room-form.ts → export class RoomForm  // ❌ WRONG, should be RoomsForm
+  ```
 - **Interfaces/types use camelCase starting with lowercase** (e.g. `interface userFormValues`).
 - **Standalone components only** — no NgModules.
 - **`inject()` is the only DI pattern** — never use constructor-based dependency injection. Constructor must not have parameters. Always use `inject()` at the field level.
@@ -311,15 +335,48 @@ Each `provide*()` should also include `provideTranslations('scope')` from `@aval
 - **PrimeNG** is the mandatory UI component library.
 - **Import from barrel only** — never from internal paths. E.g. `import { X } from '@avalantec/base-app/core'`.
 - **JSDoc is mandatory** for all public methods and exported symbols (see [Documentation section](#documentation-jsdoc) below).
+- **Never use `any` as a type shortcut.** Every variable, parameter, return type, and interface field must have an explicit type. Use `string | null`, `number | null`, proper nested interfaces, or `Record<string, string>` for dynamic objects. This applies to all modules across the monorepo — no exceptions. Reference: `projects/asset-roster/src/lib/modules/asset-roster/services/create-asset-roster-form.ts`
+  ```typescript
+  // ❌ WRONG — using `any` as a shortcut
+  export interface BadModel {
+    patientId: any;
+    medications: any;
+    extraFields: any;
+  }
+
+  // ✅ CORRECT — explicit types, no `any`
+  export interface MedicationItem {
+    name: string;
+    dosage: string;
+    frequency: string;
+  }
+
+  export interface GoodModel {
+    patientId: string;
+    medications: MedicationItem[];
+    extraFields: Record<string, string>;
+  }
+  ```
 
 ## Feature Module Conventions
 
 > **Mandatory rule**: Every component, view, route, and service **must** follow the [Permission & Policy System](#permission--policy-system) and [i18n/Translation](#i18n-internationalization) guidelines listed in this document. Exceptions only when explicitly directed otherwise.
 
 ### Component File Structure
+- **Every component lives in its own folder** under `features/` (or `ui/`). The folder name matches the component name (kebab-case). Inside the folder, the `.ts` and `.html` files share the same name.
+  ```
+  features/
+    asset-roster-list/
+      asset-roster-list.ts
+      asset-roster-list.html
+    asset-roster-form-dialog/
+      asset-roster-form-dialog.ts
+      asset-roster-form-dialog.html
+  ```
 - **Every component must have a matching `.html` template file** referenced via `templateUrl`. Exceptions: plugin components (no template needed), and very simple settings CRUD lists (like l10n_cr_einvoice's `CondicionVentaList`) may use inline `template` when the markup is minimal.
-- **Never create `.ts`-only components** for list/form views — always produce a `.html` + `.ts` pair.
+- **Never create `.ts`-only components** for list/form views — always produce a `.html` + `.ts` pair inside a dedicated folder.
 - **File naming**: component files use kebab-case (e.g. `ticket-list.ts` / `ticket-list.html`). No `.component.ts` suffix.
+- **`templateUrl`** is relative to the component's own folder: `templateUrl: './ticket-list.html'`.
 
 ### List Component Pattern
 Every list component must follow this structure (reference: `projects/helpdesk/src/lib/features/ticket-list/ticket-list.ts`):
@@ -387,27 +444,98 @@ export class CrudXxx extends ApiRequestManager<xxx> {
 - **Must define a `FormModel` interface** as a named export in the same file, describing the form's control structure.
 - **Must override `createForm()`** returning a `FormGroup` via `this.fb.group()`.
 - **Must use `inject()`** — no constructor DI.
-- Reference: `projects/base-app/policies/src/services/policy-form.ts`
+- **Array fields** MUST use the `{ template, formArrayElements }` pattern from `TypedFormBuilder`. The `template` must match the interface structure exactly. Never use bare `[[]]` or `any`. Reference: `projects/asset-roster/src/lib/modules/asset-roster/services/update-asset-roster-form.ts`
 
 ```typescript
-export interface XxxFormModel {
-  name: string;
-  // ... all form controls
+// Define interfaces for array items
+export interface LocationAssignmentModel {
+  locationId: string;
+  assignedQuantity: number;
+}
+
+export interface NotesModel {
+  remark: string;
+  createdBy: string;
+  performDate: Date;
+}
+
+export interface UpdateAssetRosterFormModel {
+  deviceType: string;
+  locationAssignments: LocationAssignmentModel[];
+  remarks: NotesModel[] | null;
+  photo: FormUploaderFile[];
 }
 
 @Injectable({ providedIn: 'root' })
-export class XxxForm extends BaseForm<XxxFormModel> {
+export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> {
   override createForm() {
-    return this.fb.group<XxxFormModel>({
-      name: ['', [Validators.required]],
-      // ... control definitions
+    return this.fb.group<UpdateAssetRosterFormModel>({
+      deviceType: ['serialized'],
+      // ✅ CORRECT — template matches LocationAssignmentModel interface
+      locationAssignments: {
+        template: {
+          locationId: [''],
+          assignedQuantity: [0],
+        },
+        formArrayElements: [],
+      },
+      // ✅ CORRECT — template matches NotesModel interface
+      remarks: {
+        template: {
+          remark: [''],
+          createdBy: [''],
+          performDate: [new Date()],
+        },
+        formArrayElements: [],
+      },
+      // ✅ CORRECT — template matches FormUploaderFile interface
+      photo: {
+        template: {
+          id: [''],
+          file: [null!],
+        },
+        formArrayElements: [],
+      },
     });
   }
 
-  // Custom helpers (optional)
-  addItem() { /* ... */ }
-  removeItem(index: number) { /* ... */ }
+  // Helper methods to add/remove items
+  addLocationAssignment() {
+    this.form.controls.locationAssignments.push(
+      this.fb.group<LocationAssignmentModel>({
+        locationId: [''],
+        assignedQuantity: [0],
+      })
+    );
+  }
+
+  removeLocationAssignment(index: number) {
+    this.form.controls.locationAssignments.removeAt(index);
+  }
 }
+```
+
+**❌ WRONG patterns:**
+```typescript
+// ❌ WRONG — using bare [[]]
+locationAssignments: [[]],
+
+// ❌ WRONG — using any in template
+locationAssignments: {
+  template: {
+    locationId: [null],
+    assignedQuantity: [null],
+  } as any,
+  formArrayElements: [],
+},
+
+// ❌ WRONG — template doesn't match interface
+locationAssignments: {
+  template: {
+    name: [''],  // ❌ interface has locationId, not name
+  },
+  formArrayElements: [],
+},
 ```
 
 ### Form Component Pattern
@@ -946,6 +1074,17 @@ Karma + Jasmine. `ng test <project>` runs tests for a specific project. Spec fil
 - `projects/base-app/README.md` — full architecture guide (DI, Signals, naming, structure)
 - `projects/base-app/CORE.md` — core module deep-dive (directives, services)
 - `projects/base-app/FORMS-README.MD` — form architecture (`BaseForm<T>`, `TypedFormBuilder`)
+
+## Agent Task Management
+
+**MANDATORY for AI agents**: When working on tasks in this codebase, you MUST mark tasks as **completed** when finished. Do not leave tasks in an ambiguous state.
+
+- Use clear task tracking (checklists, TODOs, or explicit status markers)
+- Mark each task as **done/completed** immediately after finishing it
+- If a task cannot be completed, mark it as **blocked** or **failed** with a clear reason
+- Never leave tasks in a "partially done" state without explicit documentation
+
+This ensures the human developer knows exactly what is finished and what remains.
 
 ## Versioning & Publishing
 
