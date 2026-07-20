@@ -8,7 +8,7 @@ export class TasksMaintenanceContext {
   private _taskCreatedOrUpdated = new Subject<void>();
   private _toggleExpand = new Subject<string>();
   private _openUpdateTaskDialog = new Subject<string>();
-  private _openCreateSubTaskDialog = new Subject<string>();
+  private _openCreateSubTaskDialog = new Subject<{ parentId: string; projectId?: string }>();
   private _deleteTask = new Subject<string>();
   private _expandAll = new Subject<void>();
   private _collapseAll = new Subject<void>();
@@ -25,8 +25,8 @@ export class TasksMaintenanceContext {
     this._deleteTask.next(id);
   }
 
-  openCreateSubTaskDialog(id: string) {
-    this._openCreateSubTaskDialog.next(id);
+  openCreateSubTaskDialog(payload: { parentId: string; projectId?: string }) {
+    this._openCreateSubTaskDialog.next(payload);
   }
 
   openUpdateTaskDialog(id: string) {

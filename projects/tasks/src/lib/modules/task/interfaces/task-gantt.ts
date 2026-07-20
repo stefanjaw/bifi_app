@@ -6,6 +6,7 @@ export type { GanttDependency, GanttViewMode };
 export interface ganttTask extends GanttItem {
   stage?: taskStage;
   priority?: string;
+  projectId?: string;
   projectName?: string;
   assignedUserName?: string;
 }

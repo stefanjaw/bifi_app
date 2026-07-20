@@ -3,6 +3,6 @@ import { FormGroupDirective } from '@angular/forms';
 
 @Injectable()
 export class FormContext {
-  form = signal<FormGroupDirective>(null!);
+  form = signal<FormGroupDirective | null>(null);
   isPreviewMode = signal<boolean>(false);
 }

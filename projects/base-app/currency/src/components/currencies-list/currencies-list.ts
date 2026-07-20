@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { CrudCurrencies } from '../../services/crud-currencies';
 import { currencyColumns } from '../../libraries/currency-columns';
 import { currencyFilters } from '../../libraries/currency-filters';
@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { currency } from '../../interfaces/currency';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { DebugMode } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-currencies-list',
@@ -30,6 +31,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     RouterLink,
     ButtonsActions,
     TranslatePipe,
+    DebugMode,
   ],
   templateUrl: './currencies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,10 +48,27 @@ export class CurrenciesList {
   currencyFilters = currencyFilters;
 
   currencies = this.resourceManager.data;
+  populationLoading = signal(false);
 
   goToEditCurrency = (element: currency) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+  populateCurrencies() {
+    this.populationLoading.set(true);
+    this.crudCurrencies
+      .post({
+        data: {},
+        specificEndpoint: 'populate',
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res) this.currencies.reload();
+          this.populationLoading.set(false);
+        },
+        error: () => this.populationLoading.set(false),
+      });
+  }
   deleteCurrency(id: string) {
     this.crudCurrencies
       .delete({ _id: id })

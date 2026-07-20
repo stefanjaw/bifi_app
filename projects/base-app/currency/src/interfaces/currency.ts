@@ -5,5 +5,4 @@ export interface currency {
   symbol: string;
   decimalPrecision: number;
   active: boolean;
-  isDefault: boolean;
 }

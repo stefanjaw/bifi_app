@@ -37,3 +37,8 @@ export * from './src/services/form-file-control-helper';
 export * from './src/services/form-sections';
 export * from './src/services/form-translation';
 export * from './src/services/typed-form-builder';
+export * from './src/components/form-select-footer/form-select-footer';
+export * from './src/components/form-select-navigate-footer/form-select-navigate-footer';
+export * from './src/components/dirty-form-confirmation-dialog/dirty-form-confirmation-dialog';
+export * from './src/services/draft.service';
+export * from './src/guards/dirty-form.guard';

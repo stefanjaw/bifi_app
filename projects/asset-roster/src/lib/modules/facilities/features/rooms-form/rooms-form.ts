@@ -14,7 +14,7 @@ import { CrudRooms } from '../../services/crud-rooms';
 import { CrudFacilities } from '../../services/crud-facilities';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState, DraftService, DirtyComponent } from '@avalantec/base-app/form';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -37,13 +37,14 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
   templateUrl: './rooms-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomsForm {
+export class RoomsForm implements DirtyComponent {
   private crudRooms = inject(CrudRooms);
   private crudFacilities = inject(CrudFacilities);
   private formService = inject(RoomForm);
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
 
   id = input.required<string>();
 
@@ -68,8 +69,22 @@ export class RoomsForm {
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
+    let draftRestored = false;
     effect(() => {
       const room = this.room();
+      
+      if (!draftRestored) {
+        const draft = this.draftService.getDraft(this.router.url);
+        if (draft) {
+          this.form.patchValue(draft);
+          this.form.markAsDirty();
+          this.draftService.clearDraft(this.router.url);
+          draftRestored = true;
+          return;
+        }
+      }
+
+      if (draftRestored) return;
 
       if (room) {
         this.form.patchValue({
@@ -93,10 +108,9 @@ export class RoomsForm {
       : this.crudRooms.post({ data: values.dirtyValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitLoading.set(false);
-        this.formService.reset();
-        this.goBack();
+        this.goBack(res?._id);
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -104,20 +118,28 @@ export class RoomsForm {
     });
   }
 
-  handleFacilityCreation() {
-    this.crudFacilities
-      .post({ data: { name: this.facilityNameModel() } })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.facilitiesResource.reload();
-          this.facilityNameModel.set('');
-        },
-      });
-  }
+  handleFacilityCreation() {}
 
-  goBack() {
+  goBack(createdId?: string) {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const controlName = this.route.snapshot.queryParamMap.get('controlName');
+
+    if (returnUrl) {
+      this.formService.form.markAsPristine();
+      this.formService.form.markAsUntouched();
+      
+      if (createdId && controlName) {
+        this.draftService.updateDraftField(returnUrl, controlName, createdId);
+      }
+      
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
   }
 }

@@ -1,0 +1,27 @@
+<p-dialog
+  [header]="'confirmDialog.header' | translate: {} : 'base-app/resource'"
+  [visible]="dialogState()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-md max-h-[90vh]"
+  (click)="$event.stopPropagation()"
+>
+  <div class="confirmation-message">
+    <p>{{ 'confirmDialog.unsavedChanges' | translate: {} : 'base-app/resource' }}</p>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-4">
+    <p-button
+      [label]="'confirmDialog.cancel' | translate: {} : 'base-app/resource'"
+      severity="secondary"
+      icon="pi pi-times"
+      (click)="confirmationService.reject()"
+    ></p-button>
+    <p-button
+      [label]="'confirmDialog.confirm' | translate: {} : 'base-app/resource'"
+      severity="danger"
+      icon="pi pi-check"
+      (click)="confirmationService.confirm()"
+    ></p-button>
+  </div>
+</p-dialog>

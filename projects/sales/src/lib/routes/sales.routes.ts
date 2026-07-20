@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const SALES_ROUTES: Routes = [
   {
@@ -24,12 +25,14 @@ export const SALES_ROUTES: Routes = [
   {
     path: 'opportunities/new',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/create' },
   },
   {
     path: 'opportunities/edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () => import('../features/crm-form/crm-form').then(c => c.CrmsForm),
     data: { resource: 'sales/opportunities/update' },
   },

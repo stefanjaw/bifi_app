@@ -86,9 +86,16 @@ export class CreateTasksFormDialog extends BaseDialog {
     // Listen for changes to the parentId input
     this.tasksMaintenanceContext.openCreateSubTaskDialog$
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe(id => {
-        this.formService.patchValue({ parentId: id });
+      .subscribe(({ parentId, projectId }) => {
+        const patchData: any = { parentId };
+        if (projectId) {
+          patchData.projectId = projectId;
+        }
+        this.formService.patchValue(patchData);
         this.form.controls.parentId.markAsDirty();
+        if (projectId) {
+          this.form.controls.projectId.markAsDirty();
+        }
       });
   }
 

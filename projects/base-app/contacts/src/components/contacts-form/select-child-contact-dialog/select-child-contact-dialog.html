@@ -15,7 +15,19 @@
       optionLabel="name"
       optionValue="_id"
       [filter]="true"
-    ></p-multiSelect>
+    >
+      <ng-template #footer>
+        <bifi-app-form-select-navigate-footer
+          resource="contacts"
+          label="Other contact +"
+          controlName="childIds"
+          [draftFormValue]="draftFormValue()"
+          [createRoute]="['/contacts', 'create']"
+          #contactFooter
+        >
+        </bifi-app-form-select-navigate-footer>
+      </ng-template>
+    </p-multiSelect>
     <bifi-app-form-error></bifi-app-form-error>
   </bifi-app-form-field>
 

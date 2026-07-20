@@ -16,6 +16,8 @@ import {
   FormModule,
   FormUploader,
   FormValueState,
+  DirtyComponent,
+  DraftService,
 } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -56,7 +58,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
   templateUrl: './contacts-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContactsForm {
+export class ContactsForm implements DirtyComponent {
   private formService = inject(ContactForm);
   private crudContacts = inject(CrudContacts);
   private crudCountries = inject(CrudCountries);
@@ -65,6 +67,7 @@ export class ContactsForm {
   private router = inject(Router);
   private fileResolverService = inject(FileResolver);
   private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
 
   // inputs
   id = input.required<string>();
@@ -119,6 +122,8 @@ export class ContactsForm {
   private fileState = this.fileHelper.generateMetadataFromFileControl(this.form.controls.photo);
   uploadedFile = this.fileState.firstFile;
 
+  private draftRestored = false;
+
   /**
    * Constructor that initializes the form values if the contact is being updated.
    * If the contact is not available (i.e. it's being created), it resets the form values.
@@ -126,6 +131,27 @@ export class ContactsForm {
   constructor() {
     effect(() => {
       const contact = this.contact();
+      const allContacts = this.contactsResource.value();
+
+      if (!this.draftRestored) {
+        const draft = this.draftService.getDraft(this.router.url);
+        if (draft) {
+          this.formService.patchValue(draft);
+          this.form.markAsDirty();
+          this.draftService.clearDraft(this.router.url);
+          this.draftRestored = true;
+        }
+      }
+
+      if (this.draftRestored) {
+        // Hydrate childIdsData if it's empty but draft had childIds
+        const childIds = this.form.value.childIds;
+        if (childIds && childIds.length > 0 && allContacts && allContacts.length > 0 && this.childIdsData().length === 0) {
+          const childContacts = allContacts.filter((c: any) => childIds.includes(c._id));
+          this.childIdsData.set(childContacts);
+        }
+        return;
+      }
 
       this.resetValueToInitialState(contact);
     });
@@ -170,9 +196,9 @@ export class ContactsForm {
       : this.crudContacts.post({ data: rawValue, fileFields: ['photo'] });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitLoading.set(false);
-        this.goBack();
+        this.goBack(res?._id);
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -194,12 +220,27 @@ export class ContactsForm {
     }
   }
 
-  /**
-   * Navigates back to the list of contacts.
-   */
-  goBack() {
+  goBack(createdId?: string) {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const controlName = this.route.snapshot.queryParamMap.get('controlName');
+
+    if (returnUrl) {
+      this.formService.form.markAsPristine();
+      this.formService.form.markAsUntouched();
+      
+      if (createdId && controlName) {
+        this.draftService.updateDraftField(returnUrl, controlName, createdId);
+      }
+      
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
   }
 
   private async resetValueToInitialState(contact: contact | undefined) {

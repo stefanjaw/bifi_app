@@ -12,7 +12,7 @@ import {
 import { CompanyForm, CompanyFormModel } from '../../services/company-form';
 import { CrudCompanies } from '../../services/crud-companies';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormModule, FormValueState } from '@avalantec/base-app/form';
+import { FormModule, FormValueState, DraftService } from '@avalantec/base-app/form';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { startWith } from 'rxjs';
@@ -50,6 +50,7 @@ export class CompaniesForm implements OnInit {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
 
   id = input.required<string>();
 
@@ -147,9 +148,9 @@ export class CompaniesForm implements OnInit {
       : this.crudCompanies.post({ data: rawValue });
 
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitLoading.set(false);
-        this.goBack();
+        this.goBack(res?._id);
       },
       error: () => {
         this.isSubmitLoading.set(false);
@@ -157,7 +158,22 @@ export class CompaniesForm implements OnInit {
     });
   }
 
-  goBack() {
+  goBack(createdId?: string) {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const controlName = this.route.snapshot.queryParamMap.get('controlName');
+
+    if (returnUrl) {
+      this.formService.form.markAsPristine();
+      this.formService.form.markAsUntouched();
+      
+      if (createdId && controlName) {
+        this.draftService.updateDraftField(returnUrl, controlName, createdId);
+      }
+      
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });
   }

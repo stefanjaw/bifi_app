@@ -1,0 +1,18 @@
+<button
+  *ngIf="!showForm()"
+  type="button"
+  class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors text-center"
+  (click)="toggleForm($event)"
+>
+  {{ label() }}
+</button>
+
+<div
+  *ngIf="showForm()"
+  class="w-full p-3 cursor-pointer border-top-1 surface-border"
+  (click)="toggleForm($event)"
+>
+  <div class="flex flex-col gap-2" (click)="$event.stopPropagation()">
+    <ng-content></ng-content>
+  </div>
+</div>

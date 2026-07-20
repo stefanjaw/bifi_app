@@ -190,41 +190,14 @@
                 placeholder="Select a vendor"
               >
                 <ng-template #footer>
-                  <button
-                    type="button"
-                    class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
-                    (click)="toggleVendorForm()"
+                  <bifi-app-form-select-navigate-footer
+                    resource="contacts"
+                    label="Other vendor +"
+                    controlName="vendorIds"
+                    [createRoute]="['/contacts', 'create']"
+                    #vendorFooter
                   >
-                    Other vendor +
-                  </button>
-                  @if (showVendorForm()) {
-                    <div class="flex flex-col gap-3 p-4">
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="text"
-                        placeholder="Name"
-                        [value]="vendorName()"
-                        (input)="vendorName.set($any($event.target).value)"
-                      />
-                      <input
-                        class="w-full"
-                        pInputText
-                        type="email"
-                        placeholder="Email"
-                        [value]="vendorEmail()"
-                        (input)="vendorEmail.set($any($event.target).value)"
-                      />
-                      <p-button
-                        type="button"
-                        size="small"
-                        variant="text"
-                        icon="pi pi-plus"
-                        (click)="handleVendorCreation()"
-                        [disabled]="!vendorName().trim() || !vendorEmail().trim()"
-                      ></p-button>
-                    </div>
-                  }
+                  </bifi-app-form-select-navigate-footer>
                 </ng-template>
               </p-select>
               <bifi-app-form-error></bifi-app-form-error>
@@ -250,41 +223,14 @@
                   placeholder="Select a location"
                 >
                   <ng-template #footer>
-                    <button
-                      type="button"
-                      class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
-                      (click)="toggleRoomForm()"
+                    <bifi-app-form-select-navigate-footer
+                      resource="rooms"
+                      label="Other room +"
+                      controlName="locationId"
+                      [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
+                      #roomFooter2
                     >
-                      Other location +
-                    </button>
-                    @if (showRoomForm()) {
-                      <div class="flex flex-col gap-3 p-4">
-                        <input
-                          class="w-full"
-                          pInputText
-                          type="text"
-                          placeholder="Name"
-                          [value]="roomName()"
-                          (input)="roomName.set($any($event.target).value)"
-                        />
-                        <p-select
-                          formControlName="facilityId"
-                          [options]="facilityOptions()"
-                          optionLabel="name"
-                          optionValue="_id"
-                          [filter]="true"
-                          placeholder="Select a facility"
-                        ></p-select>
-                        <p-button
-                          type="button"
-                          size="small"
-                          variant="text"
-                          icon="pi pi-plus"
-                          (click)="handleRoomCreation()"
-                          [disabled]="!roomName().trim()"
-                        ></p-button>
-                      </div>
-                    }
+                    </bifi-app-form-select-navigate-footer>
                   </ng-template>
                 </p-select>
                 <bifi-app-form-error></bifi-app-form-error>
@@ -380,47 +326,14 @@
                           appendTo="body"
                         >
                           <ng-template #footer>
-                            <button
-                              type="button"
-                              class="w-full p-3 cursor-pointer border-top-1 surface-border hover:bg-surface-100 transition-colors"
-                              (click)="toggleLocationFormForRow($index)"
+                            <bifi-app-form-select-navigate-footer
+                              resource="rooms"
+                              label="Other room +"
+                              controlName="locations.{{$index}}.locationId"
+                              [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
+                              #roomFooter
                             >
-                              Other location +
-                            </button>
-                            @if (openNewLocationForIndex() === $index) {
-                              <div class="flex flex-col gap-3 p-4">
-                                <input
-                                  class="w-full"
-                                  pInputText
-                                  type="text"
-                                  placeholder="Location name"
-                                  [value]="newLocationNameForAssignment()"
-                                  (input)="
-                                    newLocationNameForAssignment.set($any($event.target).value)
-                                  "
-                                />
-                                <p-select
-                                  [options]="facilityOptions()"
-                                  optionLabel="name"
-                                  optionValue="_id"
-                                  [filter]="true"
-                                  placeholder="Select a facility"
-                                  [(ngModel)]="newFacilityIdForAssignment"
-                                  [ngModelOptions]="{ standalone: true }"
-                                ></p-select>
-                                <p-button
-                                  type="button"
-                                  size="small"
-                                  variant="text"
-                                  icon="pi pi-plus"
-                                  (click)="handleRoomCreationForRow($index)"
-                                  [disabled]="
-                                    !newLocationNameForAssignment().trim() ||
-                                    !newFacilityIdForAssignment()
-                                  "
-                                ></p-button>
-                              </div>
-                            }
+                            </bifi-app-form-select-navigate-footer>
                           </ng-template>
                         </p-select>
                         <bifi-app-form-error></bifi-app-form-error>

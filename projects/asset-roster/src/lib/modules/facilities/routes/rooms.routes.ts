@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const ROOMS_ROUTES: Routes = [
   {
@@ -16,12 +17,14 @@ export const ROOMS_ROUTES: Routes = [
   {
     path: 'create',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () => import('../features/rooms-form/rooms-form').then(m => m.RoomsForm),
     data: { resource: 'rooms/create' },
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () => import('../features/rooms-form/rooms-form').then(m => m.RoomsForm),
     data: { resource: 'rooms/update' },
   },
