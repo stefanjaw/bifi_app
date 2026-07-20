@@ -95,6 +95,8 @@ export class FacilitiesForm {
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: (res: any) => {
         this.isSubmitLoading.set(false);
+        this.formService.form.markAsUntouched();
+        this.formService.form.markAsPristine();
         this.formService.reset();
         this.goBack(res?._id);
       },
@@ -109,9 +111,6 @@ export class FacilitiesForm {
     const controlName = this.route.snapshot.queryParamMap.get('controlName');
 
     if (returnUrl) {
-      this.formService.form.markAsPristine();
-      this.formService.form.markAsUntouched();
-      
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }

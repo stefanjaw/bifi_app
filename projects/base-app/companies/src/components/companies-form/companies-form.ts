@@ -150,6 +150,8 @@ export class CompaniesForm implements OnInit {
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: (res: any) => {
         this.isSubmitLoading.set(false);
+        this.formService.form.markAsUntouched();
+        this.formService.form.markAsPristine();
         this.goBack(res?._id);
       },
       error: () => {
@@ -163,9 +165,6 @@ export class CompaniesForm implements OnInit {
     const controlName = this.route.snapshot.queryParamMap.get('controlName');
 
     if (returnUrl) {
-      this.formService.form.markAsPristine();
-      this.formService.form.markAsUntouched();
-      
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }
