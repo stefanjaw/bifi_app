@@ -15,6 +15,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudPatients } from '../../services/crud-patients';
 import { patient } from '../../interfaces/patient';
 
+/** Column definitions for the patients list table */
 const patientsColumns: tableColumn<patient>[] = [
   { field: 'contactId.name', title: 'name', type: 'text' },
   { field: 'contactId.lastName', title: 'lastName', type: 'text' },
@@ -60,8 +61,8 @@ export class PatientsList {
       });
   }
 
-  /** Navigates to the patient edit form */
-  gotoEdit = (element: patient) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
+  /** Navigates to the patient form shell with clinical sub-pages */
+  gotoPatientForm = (element: patient) => {
+    this.router.navigate(['../patient', element._id], { relativeTo: this.route });
   };
 }

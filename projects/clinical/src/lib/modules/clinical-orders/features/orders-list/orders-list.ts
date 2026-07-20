@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudOrders } from '../../services/crud-orders';
 import { orderColumns } from '../../routes/clinical-orders-columns';
 import { orderFilters } from '../../routes/clinical-orders-filters';
 import { order } from '../../interfaces/clinical-orders';
+import { OrderFormDialog } from '../order-form-dialog/order-form-dialog';
 
+/** List component for clinical orders */
 @Component({
   selector: 'bifi-app-orders-list',
   providers: [provideResourceManager(CrudOrders)],
@@ -24,40 +25,41 @@ import { order } from '../../interfaces/clinical-orders';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    OrderFormDialog,
   ],
   templateUrl: './orders-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for clinical orders */
 export class OrdersList {
   private resourceManager = inject<ResourceManager<order>>(ResourceManager);
   private crud = inject(CrudOrders);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = orderColumns;
   filters = orderFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(OrderFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: order): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes an order after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the order edit form */
-  gotoEdit = (element: order) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

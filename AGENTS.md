@@ -551,15 +551,20 @@ export class XxxList {
 - `<bifi-app-table-layout>` with `[infiniteScroll]`, `[columns]`, `[data]`, `[onClickRow]`, `clickRowPermission`, and a `#actions` ng-template containing `<bifi-app-buttons-actions>`
 
 ### CRUD Service Pattern
+
+**Every frontend model has a corresponding `Crud<EntityName>` service** that extends `ApiRequestManager<T>`. This is the frontend client that pairs with the backend's `BaseRoutes<T>` — the backend routes define the API endpoints, and the Crud service provides the typed frontend class to call them.
+
 - **One class per file** — never define multiple `@Injectable()` CRUD classes in the same file.
-- **File naming**: `crud-<entity-name>.ts` using kebab-case (e.g. `crud-roles.ts`, `crud-tickets.ts`).
+- **File naming**: `crud-<entity-name>.ts` using kebab-case (e.g. `crud-roles.ts`, `crud-tickets.ts`, `crud-asset-types.ts`).
+- **Class naming**: `Crud<EntityName>` PascalCase (e.g. `CrudAssetType`, `CrudPatient`, `CrudOrder`).
 - **Use `inject()` never constructor DI** — set endpoint as a class field or in a parameterless constructor:
+- **The `endpoint` string must match the backend route path exactly** (e.g. `endpoint = 'asset-types'` → `GET/POST/PUT/DELETE /api/asset-types`). The generic type parameter `<T>` is the frontend interface for that entity.
 
 ```typescript
-// ✅ Correct — field-level endpoint + no constructor
+// ✅ Correct — field-level endpoint, no constructor
 @Injectable({ providedIn: 'root' })
-export class CrudXxx extends ApiRequestManager<xxx> {
-  endpoint = 'xxx-endpoint';
+export class CrudAssetType extends ApiRequestManager<assetType> {
+  endpoint = 'asset-types';
 }
 
 // ✅ Correct — parameterless constructor with super call
@@ -573,6 +578,52 @@ export class CrudXxx extends ApiRequestManager<xxx> {
 ```
 
 - If the interface is simple and module-specific, it MAY be co-located in the same file (as `l10n_cr_einvoice` does). Otherwise import from a separate `interfaces/` barrel.
+
+#### Custom Endpoint Methods
+
+When the backend exposes custom action endpoints beyond standard CRUD (e.g. `POST /email-campaigns/{id}/send-test`, `PUT /orders/{id}/status`), add corresponding methods to the Crud service using `this._httpClient` directly. `ApiRequestManager` exposes `_httpClient` (Angular `HttpClient`) and `_apiURL` (base API URL) as protected fields.
+
+Reference: `projects/email-marketing/src/lib/services/crud-email-campaigns.ts`:
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class CrudEmailCampaigns extends ApiRequestManager<emailCampaign> {
+  constructor() {
+    super();
+    super.endpoint = 'email-campaigns';
+  }
+
+  /** Returns a reactive resource ref with email campaign dashboard stats */
+  getDashboard() {
+    return rxResource<emailDashboard, void>({
+      stream: () =>
+        this._httpClient.get<emailDashboard>(`${this._apiURL}/${this.endpoint}/dashboard`).pipe(
+          catchError(() => of({ totals: { campaigns: 0, subscribers: 0, lists: 0, templates: 0 },
+            aggregateStats: { sent: 0, delivered: 0, opened: 0, clicked: 0, bounced: 0, unsubscribed: 0 },
+            recentCampaigns: [], })),
+        ),
+    });
+  }
+
+  /**
+   * Sends a test email for the given campaign to a specific address
+   * @param id - The campaign ID
+   * @param email - The recipient email address for the test
+   * @returns Observable with ok status and message
+   */
+  sendTest(id: string, email: string): Observable<{ ok: boolean; message: string }> {
+    return this._httpClient.post<{ ok: boolean; message: string }>(
+      `${this._apiURL}/${this.endpoint}/${id}/send-test`, { email }
+    );
+  }
+}
+```
+
+Pattern for custom methods:
+- Use `this._apiURL` (base URL) + `/${this.endpoint}` (entity route) for the URL path
+- **GET endpoints** (reads) — use `rxResource` from `@angular/core/rxjs-interop` to return a signal-based resource, never raw `this._httpClient.get().subscribe()`. See `getDashboard()` above.
+- **POST/PUT/DELETE endpoints** (mutations) — return typed `Observable<T>` from `this._httpClient.post/put/delete`. Callers subscribe via `takeUntilDestroyed` in components.
+- Add JSDoc with `@param` and `@returns` for every custom method
 
 ### Form Service Pattern
 - **One class per file** — exactly one `BaseForm<T>` subclass per file, matching one backend entity. Never define multiple form services in a single file.
@@ -733,6 +784,22 @@ export class XxxForm implements OnInit {
   }
 }
 ```
+
+**Trigger-to-ID Rule**: The **smart/container component** (the one hosting the form) **must** gate its resource fetch behind `triggerRequest: computed(() => this.id() !== undefined)`. This ensures:
+- **Edit mode** (`id` defined by route param): resource is fetched, form populates
+- **Create mode** (`id` undefined — no route param): no HTTP call fires, form stays empty
+
+Reference implementation: `projects/asset-roster/src/lib/modules/asset-roster/features/asset-roster-maintenance/asset-roster-maintenance.ts:77-83`
+
+```typescript
+id = input.required<string>();
+assetRosterResource = this.crudAssetRoster.get({
+  id: this.id,
+  triggerRequest: computed(() => this.id() !== undefined),
+});
+```
+
+The dumb `ui/` form component receives data via `input()` signals only and never manages its own resource loading.
 
 **Template** (`xxx-form.html`) must use the following structure:
 - `<bifi-app-form-layout>` with a `[title]` using `TranslatePipe` and dynamic create/update key
@@ -1310,3 +1377,47 @@ ng build calendar
 ```
 
 Private registry URL: `http://libraries.assetroster.com:4873/`
+
+## Migration Anti-Patterns (Lessons Learned)
+
+> **Read this before starting new module migration.** Every item below was found and fixed during the clinical lib migration.
+
+### Code Generation
+- **Verify closing braces** — generated code had stray `}` causing TS1128. Always run `tsc --noEmit` immediately after generation.
+- **Verify import paths** — check singular/plural and casing match actual filenames (e.g. `progress-note` vs `progress-notes`).
+- **Verify template bindings** — cross-reference every template property against the component's interface type. String comparisons must match enum value casing exactly.
+
+### Component Patterns
+- **Never inject `HttpClient` in feature components** — inject typed `CrudXxx` services. Only Crud services should use `HttpClient`.
+- **Never use `signal<any[]>`** — define proper interfaces and use `signal<Xxx[]>`.
+- **All subscriptions must use `takeUntilDestroyed()`** — never raw `.subscribe()`.
+- **All routes must have `runGuardsAndResolvers: true`** on create/edit routes with params.
+- **All routes must have `permissionGuard` + `data: { resource: '...' }`** — every single route.
+
+### Form Services
+- **Never `any` in FormModel interfaces** — define explicit types for every field.
+- **Form array templates must be typed** — use `{ template: [null!, XxxFormModel] }`, not bare `[[]]` or `as any`.
+- **All user-facing text must use `TranslatePipe`** — never hardcode English strings.
+- **Translation keys must be camelCase** — e.g. `patientSummary.title`, not `patient_summary.title`.
+
+### Routing
+- Route files: `xxx-routes.ts` (dash), not `xxx.routes.ts` (dot).
+- Route constants: `XXX_ROUTES` in `xxx-routes.ts`, matching module name.
+
+### File Structure
+- Every component in its own folder with `index.ts` barrel.
+- Column translation keys must be camelCase.
+
+### Pre-Commit Checklist (run after every pass)
+```
+tsc --noEmit passes
+No any types remain
+All imports resolve to actual files
+Template bindings match interface properties
+All routes have permissionGuard + runGuardsAndResolvers
+All user-facing text uses TranslatePipe
+Translation keys are camelCase
+Route files use dash separators
+Components are in own folders
+ng serve compiles (JIT mode)
+```

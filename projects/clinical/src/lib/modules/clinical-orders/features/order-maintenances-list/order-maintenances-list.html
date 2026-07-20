@@ -3,7 +3,7 @@
     label="Add New"
     severity="secondary"
     icon="pi pi-plus"
-    [routerLink]="['../create']"
+    (onClick)="addNew()"
     *bifiAppHasPermission="'clinical/order-maintenances/create:view'"
   ></p-button>
 </div>
@@ -23,3 +23,6 @@
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>
+<bifi-app-order-maintenance-form-dialog
+  (saved)="onSaved()"
+></bifi-app-order-maintenance-form-dialog>

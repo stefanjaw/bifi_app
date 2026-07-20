@@ -14,6 +14,8 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
+import { InputNumber } from 'primeng/inputnumber';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ProgressBar } from 'primeng/progressbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -34,6 +36,8 @@ import { CrudCareContinuum } from '../../services/crud-care-continuum';
     InputTextModule,
     SelectModule,
     ButtonModule,
+    InputNumber,
+    ToggleSwitch,
     ProgressBar,
   ],
   templateUrl: './care-continuum-form.html',

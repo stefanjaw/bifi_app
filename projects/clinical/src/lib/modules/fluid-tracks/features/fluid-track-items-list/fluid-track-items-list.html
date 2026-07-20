@@ -1,0 +1,26 @@
+<div class="flex gap-2 mb-4">
+  <p-button
+    label="Add New"
+    severity="secondary"
+    icon="pi pi-plus"
+    (onClick)="addNew()"
+    *bifiAppHasPermission="'clinical/fluid-track-items/create:view'"
+  ></p-button>
+</div>
+<bifi-app-search-bar label="Search..." [searchFilters]="filters"></bifi-app-search-bar>
+<bifi-app-table-layout
+  [infiniteScroll]="true"
+  [columns]="columns"
+  [data]="data"
+  [onClickRow]="gotoEdit"
+  clickRowPermission="clinical/fluid-track-items/update:view"
+  [scope]="'clinical'"
+>
+  <ng-template #actions let-row>
+    <bifi-app-buttons-actions
+      (deleteClicked)="delete(row._id)"
+      resource="clinical/fluid-track-items"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>
+<bifi-app-fluid-track-item-form-dialog (saved)="onSaved()"></bifi-app-fluid-track-item-form-dialog>

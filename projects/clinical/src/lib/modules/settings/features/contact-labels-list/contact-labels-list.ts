@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudContactLabels } from '../../services/crud-contact-labels';
 import { contactLabelColumns } from '../../routes/settings-columns';
 import { contactLabelFilters } from '../../routes/settings-filters';
 import { contactLabel } from '../../interfaces/settings';
+import { ContactLabelFormDialog } from '../contact-label-form-dialog/contact-label-form-dialog';
 
 /** List component for contact labels */
 @Component({
@@ -25,10 +25,10 @@ import { contactLabel } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    ContactLabelFormDialog,
   ],
   templateUrl: './contact-labels-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class ContactLabelsList {
   private resourceManager = inject<ResourceManager<contactLabel>>(ResourceManager);
   private crud = inject(CrudContactLabels);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = contactLabelColumns;
   filters = contactLabelFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(ContactLabelFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: contactLabel): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a contact label record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given contact label */
-  gotoEdit = (element: contactLabel) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

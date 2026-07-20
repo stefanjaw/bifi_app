@@ -1,4 +1,5 @@
 export * from './features/recurrent-tasks-list/recurrent-tasks-list';
+export * from './features/recurrent-task-form-dialog/recurrent-task-form-dialog';
 export * from './interfaces/recurrent-task';
 export * from './routes/clinical-tasks-columns';
 export * from './routes/clinical-tasks-filters';

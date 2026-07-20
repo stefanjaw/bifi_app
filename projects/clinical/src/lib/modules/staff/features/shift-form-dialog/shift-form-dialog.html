@@ -1,0 +1,75 @@
+<p-dialog
+  [header]="(isUpdate() ? 'shift.edit' : 'shift.create') | translate: {} : 'clinical'"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit()">
+    <div class="grid grid-cols-12 gap-4">
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>{{ 'shift.name' | translate: {} : 'clinical' }}</bifi-app-form-label>
+        <input pInputText formControlName="name" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>{{ 'shift.type' | translate: {} : 'clinical' }}</bifi-app-form-label>
+        <p-select formControlName="type" [options]="['Morning', 'Evening', 'Afternoon']"></p-select>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.timeStart' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="timeStart" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.timeEnd' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="timeEnd" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.dateStart' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-datepicker formControlName="dateStart"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.dateEnd' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-datepicker formControlName="dateEnd"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.manager' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="manager" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'shift.staffId' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="staffId" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-12">
+        <bifi-app-form-label>
+          {{ 'shift.patientId' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="patientId" />
+      </bifi-app-form-field>
+    </div>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

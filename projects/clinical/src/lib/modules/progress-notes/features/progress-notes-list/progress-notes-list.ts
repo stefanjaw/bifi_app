@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudProgressNotes } from '../../services/crud-progress-notes';
 import { progressNoteColumns } from '../../routes/progress-notes-columns';
 import { progressNoteFilters } from '../../routes/progress-notes-filters';
 import { progressNote } from '../../interfaces/progress-notes';
+import { ProgressNoteFormDialog } from '../progress-note-form-dialog/progress-note-form-dialog';
 
+/** List component for progress notes */
 @Component({
   selector: 'bifi-app-progress-notes-list',
   providers: [provideResourceManager(CrudProgressNotes)],
@@ -24,40 +25,41 @@ import { progressNote } from '../../interfaces/progress-notes';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    ProgressNoteFormDialog,
   ],
   templateUrl: './progress-notes-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for progress notes */
 export class ProgressNotesList {
   private resourceManager = inject<ResourceManager<progressNote>>(ResourceManager);
   private crud = inject(CrudProgressNotes);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = progressNoteColumns;
   filters = progressNoteFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(ProgressNoteFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: progressNote): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a progress note after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the progress note edit form */
-  gotoEdit = (element: progressNote) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

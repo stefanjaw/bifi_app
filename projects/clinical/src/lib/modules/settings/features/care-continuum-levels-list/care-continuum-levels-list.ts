@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudCareContinuumLevels } from '../../services/crud-care-continuum-leve
 import { careContinuumLevelColumns } from '../../routes/settings-columns';
 import { careContinuumLevelFilters } from '../../routes/settings-filters';
 import { careContinuumLevel } from '../../interfaces/settings';
+import { CareLevelFormDialog } from '../care-level-form-dialog/care-level-form-dialog';
 
 /** List component for care continuum levels */
 @Component({
@@ -25,10 +25,10 @@ import { careContinuumLevel } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    CareLevelFormDialog,
   ],
   templateUrl: './care-continuum-levels-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class CareContinuumLevelsList {
   private resourceManager = inject<ResourceManager<careContinuumLevel>>(ResourceManager);
   private crud = inject(CrudCareContinuumLevels);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = careContinuumLevelColumns;
   filters = careContinuumLevelFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(CareLevelFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: careContinuumLevel): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a care continuum level record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given care continuum level */
-  gotoEdit = (element: careContinuumLevel) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

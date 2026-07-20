@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudMedicalAllergies } from '../../services/crud-medical-allergies';
 import { medicalAllergyColumns } from '../../routes/settings-columns';
 import { medicalAllergyFilters } from '../../routes/settings-filters';
 import { medicalAllergy } from '../../interfaces/settings';
+import { MedicalAllergyFormDialog } from '../medical-allergy-form-dialog/medical-allergy-form-dialog';
 
 /** List component for medical allergies */
 @Component({
@@ -25,10 +25,10 @@ import { medicalAllergy } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    MedicalAllergyFormDialog,
   ],
   templateUrl: './medical-allergies-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class MedicalAllergiesList {
   private resourceManager = inject<ResourceManager<medicalAllergy>>(ResourceManager);
   private crud = inject(CrudMedicalAllergies);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = medicalAllergyColumns;
   filters = medicalAllergyFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(MedicalAllergyFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: medicalAllergy): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a medical allergy record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given medical allergy */
-  gotoEdit = (element: medicalAllergy) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

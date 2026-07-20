@@ -11,11 +11,10 @@ import {
   untracked,
   ViewChild,
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { injectAuthService } from '@avalantec/base-app/auth';
+import { CrudUsers } from '@avalantec/base-app/users';
 import { FileResolver } from '@avalantec/base-app/resource';
-import { LIBRARY_CONFIG } from '@avalantec/base-app/core';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
@@ -36,8 +35,7 @@ export class UserPanel {
   private fileResolver = inject(FileResolver);
   private appRef = inject(ApplicationRef);
   private envInjector = inject(EnvironmentInjector);
-  private http = inject(HttpClient);
-  private config = inject(LIBRARY_CONFIG);
+  private crudUsers = inject(CrudUsers);
   private translationService = inject(TranslationService);
 
   @ViewChild('userMenu') private userMenu!: Menu;
@@ -177,6 +175,6 @@ export class UserPanel {
    */
   private selectLanguage(locale: string): void {
     this.translationService.setLanguage(locale);
-    this.http.put(`${this.config.apiURL}/users/me/language`, { language: locale }).subscribe();
+    this.crudUsers.updateLanguage(locale).subscribe();
   }
 }

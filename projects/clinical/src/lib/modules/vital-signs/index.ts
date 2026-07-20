@@ -1,5 +1,7 @@
 export * from './features/vital-sign-types-list/vital-sign-types-list';
+export * from './features/vital-sign-type-form-dialog/vital-sign-type-form-dialog';
 export * from './features/vital-signs-list/vital-signs-list';
+export * from './features/vital-sign-form-dialog/vital-sign-form-dialog';
 export * from './interfaces/vital-signs';
 export * from './routes/vital-signs-columns';
 export * from './routes/vital-signs-filters';

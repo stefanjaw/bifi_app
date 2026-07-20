@@ -1,0 +1,66 @@
+<p-dialog
+  [header]="
+    (isUpdate() ? 'recurrentTask.edit' : 'recurrentTask.create') | translate: {} : 'clinical'
+  "
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit()">
+    <div class="grid grid-cols-12 gap-4">
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.startDate' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="startDate" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.endDate' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="endDate" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.type' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="type" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.deltaTime' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="deltaTime" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.repetitionSequence' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="repetitionSequence" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.repetitionTimes' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="repetitionTimes" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.repetitionLapse' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="repetitionLapse" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-4">
+        <bifi-app-form-label>
+          {{ 'recurrentTask.parentId' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="parentId" />
+      </bifi-app-form-field>
+    </div>
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

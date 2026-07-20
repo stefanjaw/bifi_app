@@ -1,0 +1,32 @@
+<h2 class="text-xl font-semibold mb-4">{{ 'tasks.title' | translate: {} : 'clinical' }}</h2>
+
+@if (loading()) {
+  <div class="flex flex-col gap-3">
+    @for (item of [1, 2, 3, 4]; track item) {
+      <p-skeleton height="4rem"></p-skeleton>
+    }
+  </div>
+} @else if (tasks().length === 0) {
+  <p class="text-surface-500">{{ 'tasks.empty' | translate: {} : 'clinical' }}</p>
+} @else {
+  <div class="flex flex-col gap-3">
+    @for (task of tasks(); track task._id) {
+      <p-card>
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col gap-1">
+            <span class="font-medium">{{ task.title }}</span>
+            <span class="text-sm text-surface-500">{{ task.description | slice: 0 : 80 }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            @if (task.priority) {
+              <p-tag
+                [value]="task.priority"
+                [severity]="task.priority === 'Urgent' ? 'danger' : 'info'"
+              ></p-tag>
+            }
+          </div>
+        </div>
+      </p-card>
+    }
+  </div>
+}

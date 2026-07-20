@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudGenders } from '../../services/crud-genders';
 import { genderColumns } from '../../routes/settings-columns';
 import { genderFilters } from '../../routes/settings-filters';
 import { gender } from '../../interfaces/settings';
+import { GenderFormDialog } from '../gender-form-dialog/gender-form-dialog';
 
 /** List component for genders */
 @Component({
@@ -25,10 +25,10 @@ import { gender } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    GenderFormDialog,
   ],
   templateUrl: './genders-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class GendersList {
   private resourceManager = inject<ResourceManager<gender>>(ResourceManager);
   private crud = inject(CrudGenders);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = genderColumns;
   filters = genderFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(GenderFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: gender): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a gender record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given gender */
-  gotoEdit = (element: gender) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

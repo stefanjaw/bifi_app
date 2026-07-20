@@ -1,0 +1,42 @@
+<p-dialog
+  [header]="
+    (isUpdate() ? 'vitalSignType.edit' : 'vitalSignType.create') | translate: {} : 'clinical'
+  "
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit()">
+    <div class="grid grid-cols-12 gap-4">
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'vitalSignType.name' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="name" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'vitalSignType.value' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="value" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'vitalSignType.unit' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="unit" />
+      </bifi-app-form-field>
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'vitalSignType.active' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-toggleswitch formControlName="active"></p-toggleswitch>
+      </bifi-app-form-field>
+    </div>
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudMedicalPrecautions } from '../../services/crud-medical-precautions'
 import { medicalPrecautionColumns } from '../../routes/settings-columns';
 import { medicalPrecautionFilters } from '../../routes/settings-filters';
 import { medicalPrecaution } from '../../interfaces/settings';
+import { MedicalPrecautionFormDialog } from '../medical-precaution-form-dialog/medical-precaution-form-dialog';
 
 /** List component for medical precautions */
 @Component({
@@ -25,10 +25,10 @@ import { medicalPrecaution } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    MedicalPrecautionFormDialog,
   ],
   templateUrl: './medical-precautions-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class MedicalPrecautionsList {
   private resourceManager = inject<ResourceManager<medicalPrecaution>>(ResourceManager);
   private crud = inject(CrudMedicalPrecautions);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = medicalPrecautionColumns;
   filters = medicalPrecautionFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(MedicalPrecautionFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: medicalPrecaution): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a medical precaution record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given medical precaution */
-  gotoEdit = (element: medicalPrecaution) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

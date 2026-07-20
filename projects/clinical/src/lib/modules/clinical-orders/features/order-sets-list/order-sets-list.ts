@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudOrderSets } from '../../services/crud-order-sets';
 import { orderSetColumns } from '../../routes/clinical-orders-columns';
 import { orderSetFilters } from '../../routes/clinical-orders-filters';
 import { orderSet } from '../../interfaces/clinical-orders';
+import { OrderSetFormDialog } from '../order-set-form-dialog/order-set-form-dialog';
 
+/** List component for clinical order sets */
 @Component({
   selector: 'bifi-app-order-sets-list',
   providers: [provideResourceManager(CrudOrderSets)],
@@ -24,40 +25,41 @@ import { orderSet } from '../../interfaces/clinical-orders';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    OrderSetFormDialog,
   ],
   templateUrl: './order-sets-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for clinical order sets */
 export class OrderSetsList {
   private resourceManager = inject<ResourceManager<orderSet>>(ResourceManager);
   private crud = inject(CrudOrderSets);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = orderSetColumns;
   filters = orderSetFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(OrderSetFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: orderSet): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes an order set after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the order set edit form */
-  gotoEdit = (element: orderSet) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

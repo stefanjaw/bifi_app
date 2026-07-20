@@ -1,0 +1,61 @@
+<h2 class="text-xl font-semibold mb-4">{{ 'summary.title' | translate: {} : 'clinical' }}</h2>
+
+@if (!loaded()) {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (item of [1, 2, 3, 4, 5]; track item) {
+      <p-skeleton height="8rem"></p-skeleton>
+    }
+  </div>
+} @else {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <p-card
+      [routerLink]="['../care-continuum/list']"
+      class="cursor-pointer hover:shadow-lg transition-shadow"
+    >
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'summary.careContinuum' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p class="text-3xl font-bold">{{ careContinuumCount() }}</p>
+    </p-card>
+
+    <p-card
+      [routerLink]="['../order/list']"
+      class="cursor-pointer hover:shadow-lg transition-shadow"
+    >
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'summary.orders' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p class="text-3xl font-bold">{{ ordersCount() }}</p>
+    </p-card>
+
+    <p-card
+      [routerLink]="['../progress-note/list']"
+      class="cursor-pointer hover:shadow-lg transition-shadow"
+    >
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'summary.progressNotes' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p class="text-3xl font-bold">{{ progressNotesCount() }}</p>
+    </p-card>
+
+    <p-card
+      [routerLink]="['../vital-signs/list']"
+      class="cursor-pointer hover:shadow-lg transition-shadow"
+    >
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'summary.vitalSigns' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p class="text-3xl font-bold">{{ vitalSignsCount() }}</p>
+    </p-card>
+
+    <p-card
+      [routerLink]="['../fluidtrack/intakeoutput']"
+      class="cursor-pointer hover:shadow-lg transition-shadow"
+    >
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'summary.fluidTracks' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p class="text-3xl font-bold">{{ fluidTracksCount() }}</p>
+    </p-card>
+  </div>
+}

@@ -48,7 +48,6 @@ export class CreateUsersForm implements OnInit {
   private toastManager = inject(ToastManager);
   private translationService = inject(TranslationService);
 
-  id = input.required<string>();
   roleCols = roleColumns;
 
   // Form

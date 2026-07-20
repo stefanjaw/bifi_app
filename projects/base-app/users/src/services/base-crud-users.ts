@@ -22,4 +22,13 @@ export class BaseCrudUsers<TUser = user>
       specificEndpoint: 'profile',
     }) as ResourceRef<TUser>;
   }
+
+  /**
+   * Updates the language preference for the current user.
+   * @param language - The locale code (e.g. "en", "es")
+   * @returns Observable with the update result
+   */
+  updateLanguage(language: string): Observable<unknown> {
+    return this._httpClient.put(`${this.formatFullURL()}/me/language`, { language });
+  }
 }

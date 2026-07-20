@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudMaritalStatuses } from '../../services/crud-marital-statuses';
 import { maritalStatusColumns } from '../../routes/settings-columns';
 import { maritalStatusFilters } from '../../routes/settings-filters';
 import { maritalStatus } from '../../interfaces/settings';
+import { MaritalStatusFormDialog } from '../marital-status-form-dialog/marital-status-form-dialog';
 
 /** List component for marital statuses */
 @Component({
@@ -25,10 +25,10 @@ import { maritalStatus } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    MaritalStatusFormDialog,
   ],
   templateUrl: './marital-statuses-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class MaritalStatusesList {
   private resourceManager = inject<ResourceManager<maritalStatus>>(ResourceManager);
   private crud = inject(CrudMaritalStatuses);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = maritalStatusColumns;
   filters = maritalStatusFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(MaritalStatusFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: maritalStatus): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a marital status record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given marital status */
-  gotoEdit = (element: maritalStatus) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

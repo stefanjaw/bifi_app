@@ -1,0 +1,64 @@
+<h2 class="text-xl font-semibold mb-4">{{ 'carePlan.title' | translate: {} : 'clinical' }}</h2>
+
+@if (loading()) {
+  <div class="grid grid-cols-1 gap-4">
+    @for (item of [1, 2, 3]; track item) {
+      <p-skeleton height="6rem"></p-skeleton>
+    }
+  </div>
+} @else {
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg font-medium">
+        {{ 'carePlan.goals' | translate: {} : 'clinical' }} ({{ goals().length }})
+      </h3>
+      @for (goal of goals(); track goal._id) {
+        <p-card>
+          <div class="flex flex-col gap-1">
+            <span class="font-medium">{{ goal.contentTitle }}</span>
+            <span class="text-sm text-surface-500">{{ goal.contentBody?.substring(0, 100) }}</span>
+            @if (goal.priority !== undefined) {
+              <p-tag
+                [value]="'priority' + goal.priority"
+                [severity]="goal.priority > 2 ? 'warn' : 'info'"
+              ></p-tag>
+            }
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg font-medium">
+        {{ 'carePlan.interventions' | translate: {} : 'clinical' }} ({{ interventions().length }})
+      </h3>
+      @for (intervention of interventions(); track intervention._id) {
+        <p-card>
+          <div class="flex flex-col gap-1">
+            <span class="font-medium">{{ intervention.contentTitle }}</span>
+            <span class="text-sm text-surface-500">
+              {{ intervention.contentBody?.substring(0, 100) }}
+            </span>
+            <span class="text-xs text-surface-400">{{ intervention.state }}</span>
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg font-medium">
+        {{ 'carePlan.outcomes' | translate: {} : 'clinical' }} ({{ outcomes().length }})
+      </h3>
+      @for (outcome of outcomes(); track outcome._id) {
+        <p-card>
+          <div class="flex flex-col gap-1">
+            <span class="font-medium">{{ outcome.contentTitle }}</span>
+            <span class="text-sm text-surface-500">
+              {{ outcome.contentBody?.substring(0, 100) }}
+            </span>
+          </div>
+        </p-card>
+      }
+    </div>
+  </div>
+}

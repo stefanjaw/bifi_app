@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudRaces } from '../../services/crud-races';
 import { raceColumns } from '../../routes/settings-columns';
 import { raceFilters } from '../../routes/settings-filters';
 import { race } from '../../interfaces/settings';
+import { RaceFormDialog } from '../race-form-dialog/race-form-dialog';
 
 /** List component for races */
 @Component({
@@ -25,10 +25,10 @@ import { race } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    RaceFormDialog,
   ],
   templateUrl: './races-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class RacesList {
   private resourceManager = inject<ResourceManager<race>>(ResourceManager);
   private crud = inject(CrudRaces);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = raceColumns;
   filters = raceFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(RaceFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: race): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a race record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given race */
-  gotoEdit = (element: race) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

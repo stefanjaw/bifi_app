@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudNotes } from '../../services/crud-notes';
 import { noteColumns } from '../../routes/progress-notes-columns';
 import { noteFilters } from '../../routes/progress-notes-filters';
 import { note } from '../../interfaces/progress-notes';
+import { NoteFormDialog } from '../note-form-dialog/note-form-dialog';
 
+/** List component for notes */
 @Component({
   selector: 'bifi-app-notes-list',
   providers: [provideResourceManager(CrudNotes)],
@@ -24,40 +25,41 @@ import { note } from '../../interfaces/progress-notes';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    NoteFormDialog,
   ],
   templateUrl: './notes-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for notes */
 export class NotesList {
   private resourceManager = inject<ResourceManager<note>>(ResourceManager);
   private crud = inject(CrudNotes);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = noteColumns;
   filters = noteFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(NoteFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: note): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a note after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the note edit form */
-  gotoEdit = (element: note) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

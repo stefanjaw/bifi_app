@@ -1,0 +1,70 @@
+<h2 class="text-xl font-semibold mb-4">{{ 'fluidBalance.title' | translate: {} : 'clinical' }}</h2>
+
+@if (loading()) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    @for (item of [1, 2, 3]; track item) {
+      <p-skeleton height="5rem"></p-skeleton>
+    }
+  </div>
+} @else {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <p-card>
+      <ng-template pTemplate="title">
+        <span class="text-lg text-blue-500">
+          {{ 'fluidBalance.intake' | translate: {} : 'clinical' }}
+        </span>
+      </ng-template>
+      <p class="text-3xl font-bold text-blue-600">{{ totalIntake() }} ml</p>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="title">
+        <span class="text-lg text-red-500">
+          {{ 'fluidBalance.output' | translate: {} : 'clinical' }}
+        </span>
+      </ng-template>
+      <p class="text-3xl font-bold text-red-600">{{ totalOutput() }} ml</p>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="title">
+        <span class="text-lg">{{ 'fluidBalance.balance' | translate: {} : 'clinical' }}</span>
+      </ng-template>
+      <p
+        class="text-3xl font-bold"
+        [class.text-green-600]="balance() >= 0"
+        [class.text-red-600]="balance() < 0"
+      >
+        {{ balance() >= 0 ? '+' : '' }}{{ balance() }} ml
+      </p>
+    </p-card>
+  </div>
+
+  <h3 class="text-lg font-medium mb-2">
+    {{ 'fluidBalance.history' | translate: {} : 'clinical' }}
+  </h3>
+  <p-table [value]="items()" [paginator]="true" [rows]="10" styleClass="text-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'type' | translate: {} : 'clinical' }}</th>
+        <th>{{ 'description' | translate: {} : 'clinical' }}</th>
+        <th class="text-right">ml</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>
+          <span
+            class="text-xs px-2 py-1 rounded"
+            [class.bg-blue-100]="item.type === 'intake'"
+            [class.bg-red-100]="item.type === 'output'"
+          >
+            {{ item.type }}
+          </span>
+        </td>
+        <td>{{ item.description || '--' }}</td>
+        <td class="text-right">{{ item.amount }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+}

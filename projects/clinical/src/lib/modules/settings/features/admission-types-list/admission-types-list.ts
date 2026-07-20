@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,6 +14,7 @@ import { CrudAdmissionTypes } from '../../services/crud-admission-types';
 import { admissionTypeColumns } from '../../routes/settings-columns';
 import { admissionTypeFilters } from '../../routes/settings-filters';
 import { admissionType } from '../../interfaces/settings';
+import { AdmissionTypeFormDialog } from '../admission-type-form-dialog/admission-type-form-dialog';
 
 /** List component for admission types */
 @Component({
@@ -25,10 +25,10 @@ import { admissionType } from '../../interfaces/settings';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    AdmissionTypeFormDialog,
   ],
   templateUrl: './admission-types-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,27 +37,29 @@ export class AdmissionTypesList {
   private resourceManager = inject<ResourceManager<admissionType>>(ResourceManager);
   private crud = inject(CrudAdmissionTypes);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = admissionTypeColumns;
   filters = admissionTypeFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(AdmissionTypeFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: admissionType): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes an admission type record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form for the given admission type */
-  gotoEdit = (element: admissionType) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

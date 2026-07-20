@@ -1,4 +1,7 @@
 export * from './features/fluid-tracks-list/fluid-tracks-list';
+export * from './features/fluid-track-form-dialog/fluid-track-form-dialog';
+export * from './features/fluid-track-items-list/fluid-track-items-list';
+export * from './features/fluid-track-item-form-dialog/fluid-track-item-form-dialog';
 export * from './interfaces/fluid-tracks';
 export * from './routes/fluid-tracks-columns';
 export * from './routes/fluid-tracks-filters';

@@ -2,6 +2,8 @@ import { inject } from '@angular/core';
 import { MainMenuManager, MainRoutingManager } from '@avalantec/base-app/routing';
 import { PrimeIcons } from 'primeng/api';
 import { CLINICAL_ROUTES } from '../modules/patients/routes/patients.routes';
+import { STAFF_ROUTES } from '../modules/staff/routes/staff-routes';
+import { VENDORS_ROUTES } from '../modules/vendors/routes/vendors-routes';
 import { CARE_CONTINUUM_ROUTES } from '../modules/care-continuum/routes/care-continuum-routes';
 import { CARE_PLAN_ROUTES } from '../modules/care-plan/routes/care-plan-routes';
 import { CLINICAL_ORDERS_ROUTES } from '../modules/clinical-orders/routes/clinical-orders-routes';
@@ -20,6 +22,7 @@ import {
   CONTACT_LABELS_ROUTES,
 } from '../modules/settings/routes/settings-routes';
 
+/** Registers clinical module menus, routes, and translations with the base-app framework */
 export function initializeClinical() {
   initializeMenu();
 }
@@ -32,11 +35,54 @@ function initializeMenu() {
     {
       item: {
         icon: PrimeIcons.HEART,
-        routerLink: ['/clinical/patients'],
         label: 'menu.clinical',
         scope: 'clinical',
         resource: 'clinical/menu',
         showInMainMenu: true,
+        items: [
+          {
+            icon: PrimeIcons.USERS,
+            routerLink: ['/clinical/patients'],
+            label: 'menu.patients',
+            scope: 'clinical',
+            resource: 'patients/menu',
+          },
+          {
+            icon: PrimeIcons.USER,
+            routerLink: ['/clinical/staff'],
+            label: 'menu.staff',
+            scope: 'clinical',
+            resource: 'staff/menu',
+          },
+          {
+            icon: PrimeIcons.USERS,
+            routerLink: ['/clinical/staff-groups'],
+            label: 'menu.staffGroups',
+            scope: 'clinical',
+            resource: 'staff-groups/menu',
+          },
+          {
+            icon: PrimeIcons.CALENDAR_CLOCK,
+            routerLink: ['/clinical/shifts'],
+            label: 'menu.shifts',
+            scope: 'clinical',
+            resource: 'shifts/menu',
+          },
+          {
+            icon: PrimeIcons.CHART_BAR,
+            routerLink: ['/clinical/shift-dashboard'],
+            label: 'menu.shiftDashboard',
+            scope: 'clinical',
+            resource: 'shift-dashboard/menu',
+          },
+          {
+            icon: PrimeIcons.SHOPPING_BAG,
+            routerLink: ['/clinical/vendors'],
+            label: 'menu.vendors',
+            scope: 'clinical',
+            resource: 'vendors/menu',
+          },
+        ],
       },
     },
     {
@@ -146,6 +192,16 @@ function initializeMenu() {
   mainRoutingManager.addRouting({
     newRouting: CLINICAL_TASKS_ROUTES,
     basePath: 'clinical/clinical-tasks',
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: STAFF_ROUTES,
+    basePath: 'clinical',
+  });
+
+  mainRoutingManager.addRouting({
+    newRouting: VENDORS_ROUTES,
+    basePath: 'clinical',
   });
 
   // Settings routes

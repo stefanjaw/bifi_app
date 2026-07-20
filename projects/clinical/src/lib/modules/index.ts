@@ -7,3 +7,5 @@ export * from './patients';
 export * from './progress-notes';
 export * from './settings';
 export * from './vital-signs';
+export * from './staff';
+export * from './vendors';

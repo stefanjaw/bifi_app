@@ -1,0 +1,110 @@
+<p-dialog
+  [header]="(isUpdate() ? 'staff.edit' : 'staff.create') | translate: {} : 'clinical'"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form [formGroup]="form" bifiAppFormActionsHandler (appSubmit)="handleSubmit()">
+    <div class="grid grid-cols-12 gap-4">
+      <bifi-app-form-field class="col-span-12">
+        <bifi-app-form-label>
+          {{ 'staff.contactName' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText [value]="selectedContact()?.displayName ?? ''" disabled />
+      </bifi-app-form-field>
+      <input type="hidden" formControlName="contactId" />
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.personnelId' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="personnelId" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.department' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="department" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.engagementType' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-select
+          formControlName="engagementType"
+          [options]="['Employee', 'Contractor']"
+        ></p-select>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.position' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-select
+          formControlName="position"
+          [options]="['Nurse', 'Caregiver', 'Manager', 'Other']"
+        ></p-select>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.startDate' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-datepicker formControlName="startDate"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.endDate' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-datepicker formControlName="endDate"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.licenseCertificationType' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-select
+          formControlName="licenseCertificationType"
+          [options]="['Registered Nurse', 'MD', 'LPN', 'Other']"
+        ></p-select>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.licenseNumber' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="licenseNumber" />
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.licenseExpirationDate' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-datepicker formControlName="licenseExpirationDate"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-6">
+        <bifi-app-form-label>
+          {{ 'staff.workPermitRequired' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <p-toggleswitch formControlName="workPermitRequired"></p-toggleswitch>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field class="col-span-12">
+        <bifi-app-form-label>
+          {{ 'staff.credentials' | translate: {} : 'clinical' }}
+        </bifi-app-form-label>
+        <input pInputText formControlName="credentials" />
+      </bifi-app-form-field>
+    </div>
+
+    <bifi-app-form-actions
+      [isSubmitting]="submitLoading()"
+      (cancelClicked)="closeDialog()"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

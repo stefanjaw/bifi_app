@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudVitalSigns } from '../../services/crud-vital-signs';
 import { vitalSignColumns } from '../../routes/vital-signs-columns';
 import { vitalSignFilters } from '../../routes/vital-signs-filters';
 import { vitalSign } from '../../interfaces/vital-signs';
+import { VitalSignFormDialog } from '../vital-sign-form-dialog/vital-sign-form-dialog';
 
+/** List component for vital signs */
 @Component({
   selector: 'bifi-app-vital-signs-list',
   providers: [provideResourceManager(CrudVitalSigns)],
@@ -24,40 +25,41 @@ import { vitalSign } from '../../interfaces/vital-signs';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    VitalSignFormDialog,
   ],
   templateUrl: './vital-signs-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for vital signs */
 export class VitalSignsList {
   private resourceManager = inject<ResourceManager<vitalSign>>(ResourceManager);
   private crud = inject(CrudVitalSigns);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = vitalSignColumns;
   filters = vitalSignFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(VitalSignFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: vitalSign): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a vital sign record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the vital sign edit form */
-  gotoEdit = (element: vitalSign) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

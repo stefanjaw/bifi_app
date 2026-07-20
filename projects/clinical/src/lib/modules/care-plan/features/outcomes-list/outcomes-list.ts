@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, viewChild } from '@angular/core';
 import {
   TableLayout,
   SearchBar,
@@ -15,7 +14,9 @@ import { CrudOutcomes } from '../../services/crud-outcomes';
 import { outcomeColumns } from '../../routes/care-plan-columns';
 import { outcomeFilters } from '../../routes/care-plan-filters';
 import { outcome } from '../../interfaces/care-plan';
+import { OutcomeFormDialog } from '../outcome-form-dialog/outcome-form-dialog';
 
+/** List component for outcomes */
 @Component({
   selector: 'bifi-app-outcomes-list',
   providers: [provideResourceManager(CrudOutcomes)],
@@ -24,40 +25,41 @@ import { outcome } from '../../interfaces/care-plan';
     TableLayout,
     SearchBar,
     ButtonModule,
-    RouterLink,
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    OutcomeFormDialog,
   ],
   templateUrl: './outcomes-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** List component for outcomes */
 export class OutcomesList {
   private resourceManager = inject<ResourceManager<outcome>>(ResourceManager);
   private crud = inject(CrudOutcomes);
   private destroy$ = inject(DestroyRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   columns = outcomeColumns;
   filters = outcomeFilters;
   data = this.resourceManager.data;
+  formDialog = viewChild.required(OutcomeFormDialog);
+
+  addNew(): void {
+    this.formDialog().open();
+  }
+
+  gotoEdit = (element: outcome): void => {
+    this.formDialog().open(element);
+  };
+
+  onSaved(): void {
+    this.data.reload();
+  }
 
   /** Deletes a record after confirmation */
-  delete(id: string) {
+  delete(id: string): void {
     this.crud
       .delete({ _id: id })
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (res) this.resourceManager.data.reload();
-        },
-      });
+      .subscribe({ next: () => this.data.reload() });
   }
-
-  /** Navigates to the edit form */
-  gotoEdit = (element: outcome) => {
-    this.router.navigate(['../edit', element._id], { relativeTo: this.route });
-  };
 }

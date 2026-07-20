@@ -54,6 +54,625 @@
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="insurance"
+        [title]="'careContinuum.insurance' | translate: {} : 'clinical'"
+        [ordinal]="2"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'planNumber' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="planNumber" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'groupNumber' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="groupNumber" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>{{ 'memberId' | translate: {} : 'clinical' }}</bifi-app-form-label>
+            <input pInputText formControlName="memberId" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'effectiveDate' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="effectiveDate" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="assignment"
+        [title]="'careContinuum.assignment' | translate: {} : 'clinical'"
+        [ordinal]="3"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.careContinuumLevelId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="careContinuumLevelId" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.transferPoint' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="transferPoint" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.assignedCaregiver' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="assignedCaregiver" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.assignedNurse' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="assignedNurse" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.unitId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="unitId" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.bedId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="bedId" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.roomId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="roomId" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="demographics"
+        [title]="'careContinuum.demographics' | translate: {} : 'clinical'"
+        [ordinal]="4"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.genderAtBirth' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="genderAtBirth" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.genderAtPresent' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="genderAtPresent" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.race' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="race" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.height' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <p-inputNumber formControlName="height" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.weight' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <p-inputNumber formControlName="weight" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="healthCareProxy"
+        [title]="'careContinuum.healthCareProxy' | translate: {} : 'clinical'"
+        [ordinal]="5"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.healthCareProxyContactId' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="healthCareProxyContactId" />
+          </bifi-app-form-field>
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'careContinuum.healthCareProxyRelationShip' | translate: {} : 'clinical' }}
+            </bifi-app-form-label>
+            <input pInputText formControlName="healthCareProxyRelationShip" />
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="medications"
+        [title]="'careContinuum.medications' | translate: {} : 'clinical'"
+        [ordinal]="6"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addMedication()"
+          />
+        </div>
+        @for (group of formService.medications.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.productId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="productId" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.uomId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="uomId" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.strength' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="strength" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.routeId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="routeId" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.frequencyId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="frequencyId" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.duration' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <p-inputNumber formControlName="duration" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.durationUnit' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="durationUnit" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.startDate' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="startDate" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.quantity' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <p-inputNumber formControlName="quantity" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.medication.note' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="note" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeMedication($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="allergies"
+        [title]="'careContinuum.allergies' | translate: {} : 'clinical'"
+        [ordinal]="7"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addAllergy()"
+          />
+        </div>
+        @for (group of formService.allergies.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.allergy.medicalAllergyId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="medicalAllergyId'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.allergy.severity' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="severity'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.allergy.note' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="note'" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeAllergy($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="immunizations"
+        [title]="'careContinuum.immunizations' | translate: {} : 'clinical'"
+        [ordinal]="8"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addImmunization()"
+          />
+        </div>
+        @for (group of formService.immunizations.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.productId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="productId'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.dateGiven' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="dateGiven'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.lotCode' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="lotCode'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.contactId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="contactId'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.totalDoses' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <p-inputNumber formControlName="totalDoses'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.dosesGiven' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <p-inputNumber formControlName="dosesGiven'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.immunization.note' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="note'" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeImmunization($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="precautions"
+        [title]="'careContinuum.precautions' | translate: {} : 'clinical'"
+        [ordinal]="9"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addPrecaution()"
+          />
+        </div>
+        @for (group of formService.precautions.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.precaution.medicalPrecautionId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="medicalPrecautionId'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.precaution.note' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="note'" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removePrecaution($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="socialHistory"
+        [title]="'careContinuum.socialHistory' | translate: {} : 'clinical'"
+        [ordinal]="10"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addSocialHistory()"
+          />
+        </div>
+        @for (group of formService.socialHistory.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="flex gap-4 items-start border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field class="flex-1">
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="description'" />
+            </bifi-app-form-field>
+            <div class="flex items-end">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeSocialHistory($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="familyHistory"
+        [title]="'careContinuum.familyHistory' | translate: {} : 'clinical'"
+        [ordinal]="11"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addFamilyHistory()"
+          />
+        </div>
+        @for (group of formService.familyHistory.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="flex gap-4 items-start border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field class="flex-1">
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="description'" />
+            </bifi-app-form-field>
+            <div class="flex items-end">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeFamilyHistory($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="medicalHistory"
+        [title]="'careContinuum.medicalHistory' | translate: {} : 'clinical'"
+        [ordinal]="12"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addMedicalHistory()"
+          />
+        </div>
+        @for (group of formService.medicalHistory.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="flex gap-4 items-start border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field class="flex-1">
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="description'" />
+            </bifi-app-form-field>
+            <div class="flex items-end">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeMedicalHistory($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="surgicalHistory"
+        [title]="'careContinuum.surgicalHistory' | translate: {} : 'clinical'"
+        [ordinal]="13"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addSurgicalHistory()"
+          />
+        </div>
+        @for (group of formService.surgicalHistory.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="flex gap-4 items-start border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field class="flex-1">
+              <bifi-app-form-label>
+                {{ 'description' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="description'" />
+            </bifi-app-form-field>
+            <div class="flex items-end">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeSurgicalHistory($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="advanceDirectives"
+        [title]="'careContinuum.advanceDirectives' | translate: {} : 'clinical'"
+        [ordinal]="14"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addAdvanceDirective()"
+          />
+        </div>
+        @for (group of formService.advanceDirectives.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.advanceDirective.types' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="types'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.advanceDirective.information' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="information'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.advanceDirective.outdated' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <p-toggleSwitch formControlName="outdated'" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeAdvanceDirective($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        id="externalProviders"
+        [title]="'careContinuum.externalProviders' | translate: {} : 'clinical'"
+        [ordinal]="15"
+      >
+        <div class="flex justify-end mb-2">
+          <p-button
+            icon="pi pi-plus"
+            label="Add"
+            severity="secondary"
+            (onClick)="formService.addExternalProvider()"
+          />
+        </div>
+        @for (group of formService.externalProviders.controls; track $index) {
+          <div
+            [formGroup]="group"
+            class="grid grid-cols-2 gap-4 border-b border-surface-200 pb-4 mb-4"
+          >
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.externalProvider.contactId' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="contactId'" />
+            </bifi-app-form-field>
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'careContinuum.externalProvider.providerType' | translate: {} : 'clinical' }}
+              </bifi-app-form-label>
+              <input pInputText formControlName="providerType'" />
+            </bifi-app-form-field>
+            <div class="flex items-end col-span-2">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (onClick)="formService.removeExternalProvider($index)"
+              />
+            </div>
+          </div>
+        }
+      </bifi-app-form-section>
+
       <bifi-app-form-actions
         [isSubmitting]="isSubmitLoading()"
         (cancelClicked)="goBack()"
