@@ -2,6 +2,7 @@
 
 ## LOGIN Guidelines
 
+- Use playwright MCP for testings
 - Navigate to http://localhost:4200
 - On the login screen, use the following credentians: email: opencode@test.com ; password: 123456
 - Once logged, the home screen will be presented.
