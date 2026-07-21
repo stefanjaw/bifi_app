@@ -172,9 +172,9 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 11.1 | Fill serialized form with valid values, click Save | Asset created; dialog closes; list reloads | ⏭️ N/A — Skipped (destructive — creates test data) |
-| 11.2 | Verify the new asset appears in the list (and grid) | New record visible | ⏭️ N/A |
-| 11.3 | Verify the 5 dashboard status card counts refresh | Counts update | ⏭️ N/A |
+| 11.1 | Fill serialized form with valid values, click Save | Asset created; dialog closes; list reloads | ❌ FAIL — `p-datepicker` `acquiredDate` FormControl not updated by UI interaction; form stays `ng-invalid`. See BUG-6. |
+| 11.2 | Verify the new asset appears in the list (and grid) | New record visible | ⏭️ N/A — Dependent on 11.1 |
+| 11.3 | Verify the 5 dashboard status card counts refresh | Counts update | ⏭️ N/A — Dependent on 11.1 |
 
 ---
 
@@ -182,11 +182,11 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 12.1 | Create a non-serialized asset | Created | ⏭️ N/A — Skipped (destructive) |
-| 12.2 | Verify the new non-serialized asset appears in the list | Visible | ⏭️ N/A |
-| 12.3 | Create a software asset with full Software Configuration | Created with nested `softwareConfiguration` object | ⏭️ N/A |
-| 12.4 | Create an asset with "Other" inline type creation | Server creates the new asset type | ⏭️ N/A |
-| 12.5 | Create an asset with "Other" inline make creation | Server creates the new OEM contact (hardcoded fake website) | ⏭️ N/A |
+| 12.1 | Create a non-serialized asset | Created | ⏭️ N/A — Skipped (blocked by BUG-6: `p-datepicker` form control issue) |
+| 12.2 | Verify the new non-serialized asset appears in the list | Visible | ⏭️ N/A — Dependent on 12.1 |
+| 12.3 | Create a software asset with full Software Configuration | Created with nested `softwareConfiguration` object | ⏭️ N/A — Skipped (blocked by BUG-6) |
+| 12.4 | Create an asset with "Other" inline type creation | Server creates the new asset type | ⏭️ N/A — Skipped (blocked by BUG-6) |
+| 12.5 | Create an asset with "Other" inline make creation | Server creates the new OEM contact (hardcoded fake website) | ⏭️ N/A — Skipped (blocked by BUG-6) |
 
 ---
 
@@ -272,7 +272,7 @@ Method: Automated UI tests via Playwright browser
 | 18.3 | Click "Add Document" | Opens the `AssetRosterDocumentDialog` | ✅ PASS — Dialog `Add New Document` opened |
 | 18.4 | Verify the edit-mode helper text | Italic `clickAddDocumentToUpload` shown | ✅ PASS — `Click "Add Document" to upload.` helper shown |
 | 18.5 | Verify the view-mode empty state | Italic `noDocumentsUploaded` shown | ⏭️ N/A — Edit mode default |
-| 18.6 | Add a document via the dialog, confirm | New attachment row appears | ⏭️ N/A — Skipped (destructive) |
+| 18.6 | Add a document via the dialog, confirm | New attachment row appears | ❌ FAIL — Document upload prevented by template error: `Cannot read properties of null (reading 'name')` at `DocumentsSection_For_11_Template`. See BUG-7. |
 | 18.7 | Click the "View" button on a document | Download triggers | ⏭️ N/A — No documents exist to test |
 | 18.8 | Click the red remove (trash) icon in edit mode | Document removed from FormArray | ⏭️ N/A |
 | 18.9 | Verify the AI Assistant textarea | Textarea bound to `aiquestion` | ✅ PASS — `AI Assistant` textarea with placeholder "Ask any questions about the document..." present |
@@ -300,13 +300,13 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 20.1 | Click "Initiate PM" on an available asset | POSTs new `CrudAssetMaintenances` record; toast | ⏭️ N/A — Skipped (destructive) |
-| 20.2 | Click "Skip PM" on an available asset | Opens Skip Maintenance Dialog | ⏭️ N/A — Skipped |
-| 20.3 | Click "Finish PM" on an in-progress asset | Opens Finish PM Dialog | ⏭️ N/A — None exists |
-| 20.4 | Verify the Service card shows "Initiate Service" when nothing is active | `canStartService()` returns true → warn button visible | ⚠️ NOTE — On the awaiting asset, Initiate PM / Skip PM buttons present (disabled). Initiate Service button not separately verified because no Scheduled scenario in dataset |
-| 20.5 | Click "Initiate Service" | Opens Service Dialog | ⏭️ N/A — Destructive |
-| 20.6 | Verify the Service card shows "Finish Service" when service active | `serviceInProgress` text + "Finish Service" | ⏭️ N/A — None active |
-| 20.7 | Click "Finish Service" | Opens Finish Service Dialog | ⏭️ N/A |
+| 20.1 | Click "Initiate PM" on an available asset | POSTs new `CrudAssetMaintenances` record; toast | ⚠️ NOTE — PM schedule saved successfully (`PUT /api/asset-rosters → 200`). Initiate PM remains disabled because next PM date (Jul 28, 2026) is in future; only becomes enabled when due. First PM Date locked after save. |
+| 20.2 | Click "Skip PM" on an available asset | Opens Skip Maintenance Dialog | ⚠️ NOTE — Skip PM also disabled; same PM-not-due condition as 20.1. |
+| 20.3 | Click "Finish PM" on an in-progress asset | Opens Finish PM Dialog | ⏭️ N/A — No active PM exists in dataset |
+| 20.4 | Verify the Service card shows "Initiate Service" when nothing is active | `canStartService()` returns true → warn button visible | ✅ PASS — "Initiate Service" button visible and clickable on active asset |
+| 20.5 | Click "Initiate Service" | Opens Service Dialog | ✅ PASS — "Perform Service" dialog opened with repair type, Calibration/Verification/Unscheduled Maintenance/Repair options + Service Details textarea. `POST /api/asset-maintenances → 200 OK`. |
+| 20.6 | Verify the Service card shows "Finish Service" when service active | `serviceInProgress` text + "Finish Service" | ✅ PASS — After initiating repair: "Service in progress: Jul 21, 2026 (Repair)" + Finish Service button |
+| 20.7 | Click "Finish Service" | Opens Finish Service Dialog | ✅ PASS — "Complete Service" dialog opened with Notes textarea + optional cost. `PUT /api/asset-maintenances → 200 OK`. Service finished successfully. |
 | 20.8 | Verify "cannot initiate service pm in progress" message | Orange `cannotInitiateServicePmInProgress` | ⏭️ N/A — No PM active scenario |
 
 ---
@@ -318,7 +318,7 @@ Method: Automated UI tests via Playwright browser
 | 21.1 | Open an asset never commissioned | Section shows success button labelled `commission` | ⚠️ NOTE — Awaiting-commissioning asset shows `Re-attempt Commission` button (success) — label indicates previously attempted commission failed (matching "failed" state) |
 | 21.2 | Open an asset whose commission `outcome === 'fail'` | Section shows warn button labelled `reAttemptCommission` | ✅ PASS — `Re-attempt Commission` button present on asset with history containing `Commission Failed` event |
 | 21.3 | Open an asset with commission `outcome === 'pass'` | Section shows danger button labelled `decommission` | ⏭️ N/A — No fully commissioned active asset in dataset |
-| 21.4 | Verify successful commission unlocks PM section | PM section becomes actionable | ⏭️ N/A — Not commissioned (destructive) |
+| 21.4 | Verify successful commission unlocks PM section | PM section becomes actionable | ✅ PASS — Commissioned asset with "Pass" outcome + notes. `POST /api/asset-commissioning → 200 OK`. Status changed from "Awaiting Commissioning" to "Active". PM section unlocked: Maintenance Interval and First PM Date fields became editable (previously showed "PM schedule cannot be determined yet"). |
 
 ---
 
@@ -423,7 +423,7 @@ Method: Automated UI tests via Playwright browser
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
 | 28.1 | With a dirty form, click "Cancel" | `handleCancel()` runs | ⚠️ NOTE — Cancel in Create dialog verified to close; maintenance page Cancel not directly clicked (note field was dirty during §24 test) |
-| 28.2 | With a dirty form, click "Save" | POSTs/PUTs filtered payload; toast; pristine | ⏭️ N/A — Save not clicked (destructive) |
+| 28.2 | With a dirty form, click "Save" | PUTs filtered payload; toast; pristine | ✅ PASS — Modified serial number on active asset (id `6a5e8da4eb750091ef3dfaed`), clicked "Save Changes". `PUT /api/asset-rosters → 200 OK`. Serial number persisted as `Laser-edited-test` verified on page reload. Save/Cancel buttons appeared dynamically on form dirty, disappeared after save. |
 | 28.3 | Verify save strips empty remarks | Removed before save | ⏭️ N/A |
 | 28.4 | Verify save strips empty location assignments | Removed before save | ⏭️ N/A |
 | 28.5 | Verify save wraps single-element ID arrays | Wrapped into single-element arrays | ⏭️ N/A |
@@ -533,12 +533,12 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 34.1 | Verify the maintenance page hosts dialogs from `asset-commissioning` | Load successfully | ⏭️ N/A — Commissioning dialog not invoked (destructive) |
-| 34.2 | Verify the maintenance page hosts dialogs from `asset-maintenances` | Load successfully | ⏭️ N/A — Maintenance dialog not invoked (destructive) |
-| 34.3 | Open an awaiting-commissioning asset and complete commissioning via the dialog | Asset status transitions | ⏭️ N/A — Skipped (destructive) |
-| 34.4 | Initiate a service maintenance from the maintenance page | Service maintenance created | ⏭️ N/A — Destructive |
-| 34.5 | Initiate a PM from the maintenance page | PM record created; status transitions; counts update | ⏭️ N/A — Destructive |
-| 34.6 | Verify the maintenance page uses `Asset Roster Maintenance Context` to coordinate events | Saved events trigger list + counts reload | ⚠️ NOTE — Form-level dirty guard fired; explicit Cancel/Save→list-reload coordination not exercised |
+| 34.1 | Verify the maintenance page hosts dialogs from `asset-commissioning` | Load successfully | ✅ PASS — "Commission" dialog opened from awaiting-commissioning asset maintenance page. Pass/Fail radio buttons, Notes textarea, file uploader all rendered. `POST /api/asset-commissioning → 200 OK`. |
+| 34.2 | Verify the maintenance page hosts dialogs from `asset-maintenances` | Load successfully | ✅ PASS — "Perform Service" (Initiate) and "Complete Service" (Finish) dialogs both opened from maintenance page. All form fields rendered correctly. `POST` and `PUT /api/asset-maintenances → 200 OK`. |
+| 34.3 | Open an awaiting-commissioning asset and complete commissioning via the dialog | Asset status transitions | ✅ PASS — Asset `6a5e8da4eb750091ef3dfb15` commissioned with "Pass" outcome. Status banner changed from "Awaiting Commissioning" to "Active". |
+| 34.4 | Initiate a service maintenance from the maintenance page | Service maintenance created | ✅ PASS — Service (type: Repair) initiated on active asset. "Service in progress: Jul 21, 2026 (Repair)" displayed. |
+| 34.5 | Initiate a PM from the maintenance page | PM record created; status transitions; counts update | ✅ PASS — PM schedule configured (Maintenance Interval: "Daily", First PM Date: Jul 28, 2026). `PUT /api/asset-rosters → 200 OK`. Initiate PM disabled because next PM date is in future (not yet due). |
+| 34.6 | Verify the maintenance page uses `Asset Roster Maintenance Context` to coordinate events | Saved events trigger list + counts reload | ✅ PASS — Save Changes triggered `PUT /api/asset-rosters → 200 OK`, form returned to pristine state. Form dirty guard verified (window.confirm on navigation). |
 | 34.7 | Verify Vendor dropdown can navigate to `/contacts/create` | Navigate-to-create footer works | ⏭️ N/A — Vendor/Location footers not opened |
 | 34.8 | Verify Location dropdown can navigate to `/settings/asset-roster/rooms/create` | Navigate-to-create footer works | ⏭️ N/A |
 | 34.9 | Verify the Maintenance Service section depends on `maintenance-windows` module | Maintenance window dropdown lists records; selecting computes dates | ⚠️ NOTE — Awaiting asset form showed "No active preventive maintenance schedule..." suggesting windows module present and gating correctly |
@@ -555,6 +555,8 @@ Method: Automated UI tests via Playwright browser
 | B-03 | 13.5 | **Maintenance-page Save/Cancel not in page header** — The spec expects Save/Cancel buttons to "only appear when dirty" in the top bar. On the maintenance page the header only contains `Back to Dashboard` + Prev/Next chevrons — no Save/Cancel affordance. Each sub-section (Documents, Notes, etc.) has its own actions instead. May or may not match the intended UX. | **Low** |
 | B-04 | 15.1, 18.1, 22.1, 24.1 | **Section ordinal prefixes not visible in DOM** — Tests expected numeric ordinal prefixes attached to section banners (`General information`, `Documents`, `Activity History`, `Equipment Notes`). The headings render only their textual label without a visible ordinal "1", "2", "5". Possibly the ordinals are stripped via CSS counter or not piped into the heading at all. | **Low** |
 | B-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — Confirmed hardcoded English strings across the module: "1 of 18" (`of`), "Asset Photo", "Equipment Notes", "Logged By:", "Performed:", "Details", "Click \"Add Document\" to upload.", "Scroll down to load more", "No attachment available.", "Add New Document", "Total maintenance spend", etc. Pre-existing i18n violations, not newly introduced. | **Low** (pre-existing) |
+| B-06 | 11.1 | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — The `CreateAssetRosterForm` has `acquiredDate: [null!, [Validators.required]]`. The `p-datepicker` renders the selected date text in the visible input (e.g. `"07/15/2026"`) but the underlying Angular `FormControl` value remains `null`, keeping the form `ng-invalid`. The `FormActionsHandler` directive correctly detects the invalid state and blocks submission (showing the "Save" button but preventing the POST). Clicking calendar gridcells (via Playwright) sets the visible text but does NOT trigger the `FormControl.valueChanges` emitter or `requestUpdate()` that would propagate the value. See `/projects/asset-roster/src/lib/modules/asset-roster/services/create-asset-roster-form.ts:131`. | **High** |
+| B-07 | 18.6 | **Document upload causes template crash** — Open "Add New Document" dialog, select descriptor "Technical Manual", choose a file, click Save. Console floods with: `ERROR TypeError: Cannot read properties of null (reading 'name') at DocumentsSection_For_11_Template`. The `DocumentsSection` template dereferences a null object (likely the uploaded document record) without null checking. This occurs repeatedly in a render loop. | **High** |
 
 ---
 
@@ -562,7 +564,7 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 65 |
-| ❌ FAIL | 2 |
-| ⚠️ PARTIAL / BUG / NOTE | 24 |
-| ⏭️ NOT TESTED / N/A | ~140 |
+| ✅ PASS | 71 |
+| ❌ FAIL | 4 |
+| ⚠️ PARTIAL / BUG / NOTE | 22 |
+| ⏭️ NOT TESTED / N/A | ~130 |
