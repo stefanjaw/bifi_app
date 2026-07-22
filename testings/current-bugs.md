@@ -39,13 +39,14 @@ Source: `asset-roster/asset-commissioning/asset-commissioning-results_20260721.m
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| AC-01 | 3.4, 10.2 | **No whitespace validation on Details/Reason fields** — Whitespace-only input accepted and submitted. | **Medium** | `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17` — both use `details: ['', [Validators.required]]`. `Validators.required` only rejects `null`/`undefined`/`''`; whitespace passes through. No trim validator exists in `base-app/form` (confirmed by search). |
-| AC-02 | 16.6, 13.4 | **Decommissioned assets can be re-commissioned via the UI** — Commission button enabled on decommissioned assets. | **High** | `commissioning-lifecycle-section.html:7-9` — Condition is `@if (!assetCommissioning \|\| assetCommissioning.outcome === 'fail')`. It never checks `assetRoster()?.status !== 'decommissioned'`. When an asset is decommissioned, `assetCommission` becomes null (deactivated by backend), so `!assetCommissioning` is true → Commission button shows. |
+| AC-01 | ~ | **No whitespace validation on Details/Reason fields** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. See Resolved Bugs. | **Fixed** |
+| AC-02 | ~ | **Decommissioned assets can be re-commissioned via the UI** — ✅ **RESOLVED 2026-07-22**: Added `assetRoster()?.status !== 'decommissioned'` check. See Resolved Bugs. | **Fixed** |
 | AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Low** | `asset-commissioning-form-dialog.html:16` uses translation key `performInspectionFor`. The typo is in the **translation catalog value** on the backend (key `performInspectionFor`, scope `asset-roster`). The template itself is correct; the misspelled value "Peform inspection for:" lives in the backend translation database. |
 | AC-04 | 14.4 | **Activity History entries have no expand/collapse** — Details always visible. | **Low** | `activity-history-section.html:22-136` — `@for` loop renders each card with all content (badge, dates, cost, details) unconditionally. No `expanded`/`collapsed` signal, no toggle handler, no `@if` guard around details. Component class has no expand-state signal. |
 | AC-05 | 14.5/14.6 | **Labeling inconsistency — "Add Attachment" button vs "Add File" dialog header** | **Low** | Button: `activity-history-section.html:120` uses key `addAttachment` → "Add Attachment". Dialog header: `asset-roster-activity-history-add-file-dialog.ts:44-54` returns hardcoded English strings with "Add File" (not routed through `TranslatePipe`). Two different terms for the same action. |
 | AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Low** | `asset-roster-edit-form.html:118-123` — `<bifi-app-maintenance-service-section>` rendered unconditionally (no `@if` on status). Inside, controls are disabled via `canStartOrSkipPM()`/`canStartService()` returning false, but the section (headers, cards, disabled buttons) is never hidden. |
-| AC-07 | 4.2, 11.3 | **Double toasts per action** — Domain toast + generic toast fire for same request. | **Low** | `notification.ts:57-63` — `NotificationInterceptor` auto-shows generic success toast for every POST/PUT. `commissioning-form-dialog.ts:82` and `decommissioning-form-dialog.ts:66` also manually call `toastManager.showSuccess(...)`. Two layers independently fire toasts for the same HTTP response. |
+| AC-08 | ~ | **Decommission button shows on decommissioned assets** — ✅ **RESOLVED 2026-07-22**: Wrapped entire button block in `@if (status !== 'decommissioned')` so neither Commission nor Decommission buttons appear on already-decommissioned assets. Verified: both null (hidden). File: `commissioning-lifecycle-section.html:9-31`. | **Fixed** |
+| AC-07 | ~ | **Double toasts per action** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. See Resolved Bugs. | **Fixed** |
 
 ---
 
@@ -286,10 +287,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | Severity | Count | IDs (active) |
 |----------|-------|-------------|
 | **Critical** | 0 | (AM-01 resolved) |
-| **High** | 2 | AC-02, FA-03 |
+| **High** | 1 | FA-03 |
 | **Medium** | 7 | AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
-| **Low** | 17 | AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-06, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 26 | (25 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Low** | 16 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 23 | (28 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -330,6 +331,9 @@ When a bug is fixed:
 | | | | | |
 | | | **Note on FA-04 / CO-03:** The `confirmDialog.unsavedChanges` translation key was added to the local `base-app-resource-translations.json` catalog file, but translations are served from the backend API at runtime (`GET /api/translations/scope`). The raw key is still displayed because the backend catalog has not been updated. These fixes require backend deployment to take effect. | | |
 | AC-01 | Asset Commissioning | No whitespace validation on Details/Reason fields | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Also created shared validator in `base-app/form`. File: `non-whitespace.validator.ts` |
+| AC-02 | Asset Commissioning | Decommissioned assets can be re-commissioned via the UI | 2026-07-22 | Added `assetRoster()?.status !== 'decommissioned'` to Commission button condition. File: `commissioning-lifecycle-section.html:9` |
+| AC-07 | Asset Commissioning | Double toasts per action | 2026-07-22 | Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. Files: `asset-commissioning-form-dialog.ts:74`, `asset-decommissioning-form-dialog.ts:59` |
+| AC-08 | Asset Commissioning | Decommission button shows on decommissioned assets | 2026-07-22 | Wrapped buttons in `@if (status !== 'decommissioned')`. Both Commission and Decommission hidden on decommissioned assets. File: `commissioning-lifecycle-section.html:9-31` |
 | AT-01 | Asset Types | Save button only appears when form is dirty | 2026-07-22 | Changed `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() \|\| isSubmitting() \|\| formDisabled()"`. File: `form-actions.html:14-26` |
 | AT-05 | Asset Types | Empty name accepted via whitespace | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `asset-type-form.ts:16`. File: `non-whitespace.validator.ts` |
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |

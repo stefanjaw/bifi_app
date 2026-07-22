@@ -145,7 +145,7 @@ Method: Automated UI tests via Playwright browser
 | 11.4 | Verify dialog closes | Dialog closes automatically | ✅ PASS |
 | 11.5 | Verify the asset roster reloads | Parent reloads | ✅ PASS — roster shows "Decommissioned" |
 | 11.6 | Verify the asset status changes to `decommissioned` | Status changes from `active` to `decommissioned` | ✅ PASS — alert "Asset: Decommissioned" |
-| 11.7 | Verify the Commissioning Lifecycle section updates | "Decommission" button no longer shown | ⚠️ PARTIAL — button changed from "Decommission" to "Commission" (see bug 16.6) |
+| 11.7 | Verify the Commissioning Lifecycle section updates | Neither Commission nor Decommission buttons shown for decommissioned assets | ✅ PASS — Both buttons hidden. AC-08 fix: wrapped in `@if (status !== 'decommissioned')`. |
 | 11.8 | Verify the activity history shows the decommission record | New entry appears | ✅ PASS — "Decommissioned … Reason: Asset retired due to end of life" |
 
 ---
@@ -168,7 +168,7 @@ Method: Automated UI tests via Playwright browser
 | 13.1 | Asset with NO `assetCommission` record (status `awaiting-commissioning`) | Green "Commission" button shown; "Decommission" hidden | ✅ PASS — verified on awaiting-commissioning asset (`p-button-success`) |
 | 13.2 | Asset with `assetCommission.outcome === 'fail'` | Yellow "Re-attempt Commission" button shown | ✅ PASS — verified after failing a commission (`p-button-warn`) |
 | 13.3 | Asset with `assetCommission.outcome === 'pass'` (status `active`) | Red "Decommission" button shown; "Commission"/"Re-attempt" hidden | ✅ PASS — verified on active asset (`p-button-danger`) |
-| 13.4 | Asset with status `decommissioned` | Verify which buttons are shown | ⚠️ BUG — shows an ENABLED "Commission" button allowing re-commissioning (see bug 16.6) |
+| 13.4 | Asset with status `decommissioned` | Neither Commission nor Decommission buttons shown | ✅ PASS — Both buttons hidden (AC-08 fix: wrapped in `@if (assetRoster()?.status !== 'decommissioned')`). Verified browser: `{commission: null, decommission: null}`. |
 | 13.5 | Asset with status `under-service` or `in-pm` | Verify which commissioning buttons are shown | ⏭️ SKIPPED — all dashboard cards show 0 for these statuses |
 
 ---
@@ -207,7 +207,7 @@ Method: Automated UI tests via Playwright browser
 | 16.3 | Verify `attachments` is conditionally included in the POST payload | Empty array sent or omitted | ⏭️ SKIPPED — API test |
 | 16.4 | Verify the decommission PUT uses `specificEndpoint: 'decommission'` | URL is `PUT /api/asset-commissioning/{id}/decommission` | ✅ PASS — `PUT /api/asset-commissioning/decommission` 200 observed |
 | 16.5 | Verify the `assetRosterId` in the POST payload is the asset's `_id` | Commissioning record linked to correct asset | ⏭️ SKIPPED — API test |
-| 16.6 | Verify a decommissioned asset cannot be re-commissioned via the UI | "Commission" button not shown after decommission | ❌ FAIL — Decommissioned asset shows an ENABLED "Commission" button that opens the full Commission dialog, allowing re-commissioning. Verified on multiple decommissioned assets. |
+| 16.6 | Verify a decommissioned asset cannot be re-commissioned via the UI | "Commission" button not shown after decommission | ✅ PASS — Commission button hidden on decommissioned asset (AC-02 fix). Verified via browser: `{visible: false}`. |
 
 ---
 
@@ -267,12 +267,13 @@ Method: Automated UI tests via Playwright browser
 | # | Test | Description | Severity |
 |---|------|-------------|----------|
 | B-01 | ~ | **No whitespace validation (AC-01)** — ~~The required "Details" and "Reason for Decommissioning" fields accept whitespace-only input~~ ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on both `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Shared validator created in `base-app/form`. Files: `non-whitespace.validator.ts`, `create-commissioning-form.ts`, `update-decommissioning-form.ts`. | **Fixed** |
-| B-02 | 16.6, 13.4 | **Decommissioned assets can be re-commissioned via the UI** — On a decommissioned asset, the "Commissioning & Lifecycle" section shows an ENABLED "Commission" button that opens the full Commission dialog, allowing a decommissioned asset to be commissioned again. The button should be hidden or disabled for `decommissioned` status. | High |
+| B-02 | ~ | **Decommissioned assets can be re-commissioned (AC-02)** — ✅ **RESOLVED 2026-07-22**: Added `assetRoster()?.status !== 'decommissioned'` check. File: `commissioning-lifecycle-section.html:9`. | **Fixed** |
 | B-03 | 2.3 | **Commission dialog subtitle typo** — Shows "Peform inspection for:" instead of "Perform inspection for:" (missing "r"). | Low |
 | B-04 | 14.4 | **Activity History entries have no expand/collapse** — Details (Logged By, Performed date, Details text) are always visible. Clicking the entry does not toggle expand/collapse. | Low |
 | B-05 | 14.5/14.6 | **Labeling inconsistency** — Activity History action button says "Add Attachment" but the dialog header says "Add File to commissioning from asset: null". Inconsistent terminology. | Low |
 | B-06 | 15.1 | **Maintenance section visible (not hidden) on awaiting-commissioning assets** — Section is visible with PM buttons disabled and message "This asset is awaiting commissioning. PM schedule cannot be determined yet." | Low |
-| B-07 | 4.2, 11.3 | **Double toasts per action** — Each commission/decommission fires two toasts (a domain message like "commissioning created successfully" plus a generic "The element was created/updated successfully!"). Minor UX noise. | Low |
+| B-07 | ~ | **Double toasts per action (AC-07)** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. Files: `asset-commissioning-form-dialog.ts:74`, `asset-decommissioning-form-dialog.ts:59`. | **Fixed** |
+| B-08 | ~ | **Decommission button shows on decommissioned assets (AC-08)** — ✅ **RESOLVED 2026-07-22**: Wrapped buttons in `@if (assetRoster()?.status !== 'decommissioned')`. Verified: both Commission and Decommission hidden. File: `commissioning-lifecycle-section.html:9-31`. | **Fixed** |
 
 ---
 
@@ -280,12 +281,12 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 55 |
-| ❌ FAIL | 1 |
-| ⚠️ PARTIAL / BUG / NOTE | 6 |
+| ✅ PASS | 57 |
+| ❌ FAIL | 0 |
+| ⚠️ PARTIAL / BUG / NOTE | 5 |
 | ⏭️ SKIPPED / N/A | 14 |
 
-> **Re-tested 2026-07-22 after fixes:** AC-01 (whitespace validation) resolved. B-01 removed. 2 more PASS, 2 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 after fixes:** AC-01 (whitespace), AC-02 (decommissioned re-commission), AC-07 (double toasts), AC-08 (Decommission on decommissioned) resolved. B-01, B-02, B-07, B-08 moved to Fixed. Tests 11.7, 13.4, 16.6 now PASS. 1 more PASS, 1 fewer NOTE.
 
 ---
 

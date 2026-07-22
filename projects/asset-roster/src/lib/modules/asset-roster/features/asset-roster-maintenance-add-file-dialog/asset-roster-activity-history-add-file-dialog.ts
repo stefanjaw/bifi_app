@@ -20,7 +20,7 @@ import {
   AssetRosterActivityHistoryAddFileFormModel,
 } from '../../services/asset-roster-activity-history-add-file-form';
 import { BaseDialog } from '@avalantec/base-app/core';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 
@@ -36,6 +36,7 @@ export class AssetRosterActiviyHistoryAddFileDialog extends BaseDialog {
   private crudAssetMaintenace = inject(CrudAssetMaintenances);
   private crudAssetCommissioning = inject(CrudAssetCommissioning);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
+  private translationService = inject(TranslationService);
   form = this.formService.form;
 
   // inputs
@@ -44,12 +45,12 @@ export class AssetRosterActiviyHistoryAddFileDialog extends BaseDialog {
   header = computed(() => {
     const model = this.activityHistoryDocument();
 
-    if (!model) return 'Add File';
+    if (!model) return this.translationService.translate('addFile', {}, 'asset-roster');
 
     if ('name' in model) {
-      return `Add File to Maintenance: ${model.name}`;
+      return this.translationService.translate('addFileToMaintenance', { name: model.name }, 'asset-roster');
     } else {
-      return `Add File to commissioning from asset: ${model.assetRosterId.productModel}`;
+      return this.translationService.translate('addFileToCommissioning', { model: model.assetRosterId.productModel }, 'asset-roster');
     }
   });
 

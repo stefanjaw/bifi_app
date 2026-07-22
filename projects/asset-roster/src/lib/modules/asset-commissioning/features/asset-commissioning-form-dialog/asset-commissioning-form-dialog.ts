@@ -71,6 +71,7 @@ export class AssetCommissioningFormDialog extends BaseDialog {
           details: rawValue.details || '',
           ...(rawValue.attachments && { attachments: rawValue.attachments }),
         },
+        notificationConfig: { enable: false },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({

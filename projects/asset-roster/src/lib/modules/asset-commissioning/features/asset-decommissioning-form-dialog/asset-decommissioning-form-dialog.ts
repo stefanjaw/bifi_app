@@ -56,6 +56,7 @@ export class AssetDecommissioningFormDialog extends BaseDialog {
           details: data.rawValue.details || '',
         },
         specificEndpoint: 'decommission',
+        notificationConfig: { enable: false },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
