@@ -45,11 +45,7 @@ export class MaintenanceServiceSection {
 
   // computed
   isMaintenanceWindowsEditLocked = computed(() => {
-    const assetRoster = this.assetRoster();
-
-    if (!assetRoster) return false;
-
-    return assetRoster.maintenanceWindowIds?.length > 0;
+    return this.pmStarted();
   });
 
   // to check if PM can be started

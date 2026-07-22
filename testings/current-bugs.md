@@ -55,14 +55,14 @@ Source: `asset-roster/asset-maintenances/asset-maintenances-results_20260721.md`
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| AM-01 | 6.9, 11.9 | **CRITICAL — Finish Service/PM with empty Notes returns HTTP 400 "notes should not be empty"** — No client-side validation; no error feedback to user. | **Critical** | **Missing validation:** `update-maintenance-form.ts:18` — `notes: ['']` has no validators. Backend requires notes. **No error feedback:** `asset-finish-maintenance-form-dialog.ts:99-101` — `error` callback only resets `submitLoading`, shows no toast/error. |
-| AM-02 | 10.3, 14.1 | **"Skip PM" button NOT shown when PM is in progress** — Only Finish PM appears. | **Medium** | `maintenance-service-section.html:125-151` — Skip PM button is inside `@if (!pmStarted())` block (line 125), only rendered when PM is **not** in progress. When `pmStarted()` is true, `@else` (line 143) renders only Finish PM. Skip PM should also be available during in-progress state. |
-| AM-03 | 10.2 | **Maintenance page status alert shows "Active" instead of "In PM"** after initiating PM. | **Medium** | `status-banner-section.html:15-20` — `@else if (assetRoster()?.status === 'active' \|\| assetRoster()?.status === 'in-pm')` groups both statuses in one branch. Both display `assetActive` translation key → "Active". No separate branch for `'in-pm'` that would show an "In PM" label. |
-| AM-04 | 6.3, 11.3 | **Double-colon typo "initiated on::"** in Finish Service/PM confirmation line. | **Low** | `asset-finish-maintenance-form-dialog.html:18` — `{{ 'initiatedOn' | translate: {} : 'asset-roster' }}:` has a literal `:` after `}}`. The `initiatedOn` translation value already ends with `:`, so the template adds a second `:` → "Initiated on::". |
-| AM-05 | 1.3, 1.4 | **Initiate Service button HIDDEN (not disabled) on awaiting-commissioning and decommissioned assets** | **Low** | `maintenance-service-section.html:163-170` — Initiate Service wrapped in `@if (canStartService())` which **removes from DOM** when false. Should use `[disabled]="!canStartService()"` to keep visible but disabled. |
+| AM-01 | ~ | **CRITICAL — Finish Service/PM with empty Notes returns HTTP 400 (AM-01)** — ✅ **RESOLVED 2026-07-22**: Added `NonWhitespaceValidators.nonWhitespaceRequired` to notes. Error handler now shows toast. See Resolved Bugs. | **Fixed** |
+| AM-02 | ~ | **"Skip PM" button NOT shown when PM is in progress (AM-02)** — ✅ **RESOLVED 2026-07-22**: Skip PM always rendered. See Resolved Bugs. | **Fixed** |
+| AM-03 | ~ | **Status alert shows "Active" instead of "In PM" (AM-03)** — ✅ **RESOLVED 2026-07-22**: Added separate `in-pm` branch. See Resolved Bugs. | **Fixed** |
+| AM-04 | ~ | **Double-colon typo (AM-04)** — ✅ **RESOLVED 2026-07-22**: Removed extra `:`. See Resolved Bugs. | **Fixed** |
+| AM-05 | ~ | **Initiate Service button HIDDEN (AM-05)** — ✅ **RESOLVED 2026-07-22**: Changed to always visible with `[disabled]`. See Resolved Bugs. | **Fixed** |
 | AM-06 | 3.5, 10.4, 19.1, 19.3 | **Activity history does NOT show entries immediately after initiating service or PM** | **Low** | `api-request-manager.ts:200-204` — `httpResource` GET request does not set `cache: 'no-store'`. `FetchBackend` passes `req.cache` (undefined) to `fetch()`, so browser uses default cache mode and may return cached GET responses on `reload()`. The code does call `activityHistories.reload()` but the browser cache prevents fresh data. |
-| AM-07 | 18.4 | **PM schedule fields remain locked after finishing PM** — "Cannot change" message persists. | **Low** | `maintenance-service-section.ts:47-53` — `isMaintenanceWindowsEditLocked` checks `assetRoster.maintenanceWindowIds?.length > 0` (whether windows were **ever assigned**). Once assigned, they persist even after PM finishes, so the condition stays `true` forever. Should check `this.pmStarted()` (currently active) instead. |
-| AM-08 | 3.1 | **Double toast on service creation** — Extra generic toast alongside domain toast. | **Low** | `asset-maintenance-form-dialog.ts:80` — manual `toastManager.showSuccess('Service created successfully')` + `notification.ts:57-63` interceptor auto-toast. Same double-toast pattern as AC-07. Also affects `handleInitiatePM()` at `asset-roster-maintenance.ts:360`. |
+| AM-07 | ~ | **PM schedule fields remain locked after finishing PM (AM-07)** — ✅ **RESOLVED 2026-07-22**: Changed to check `pmStarted()`. See Resolved Bugs. | **Fixed** |
+| AM-08 | ~ | **Double toast on service creation (AM-08)** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }`. See Resolved Bugs. | **Fixed** |
 
 ---
 
@@ -285,11 +285,11 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 | Severity | Count | IDs (active) |
 |----------|-------|-------------|
-| **Critical** | 1 | AM-01 |
+| **Critical** | 0 | (AM-01 resolved) |
 | **High** | 2 | AC-02, FA-03 |
-| **Medium** | 9 | AM-02, AM-03, AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
-| **Low** | 21 | AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-04, AM-05, AM-06, AM-07, AM-08, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 32 | (19 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Medium** | 7 | AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
+| **Low** | 17 | AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-06, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 26 | (25 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -320,6 +320,13 @@ When a bug is fixed:
 | AR-04 | Asset Roster | Section ordinal prefixes not visible in DOM | 2026-07-22 | Added `@if (ordinal()) { ... } {{ ordinal() }}.` to `form-section.html:10` template. The `ordinal` input was declared but never rendered. File: `form-section.html:12` |
 | AR-06 | Asset Roster | Cannot create asset via UI — p-datepicker FormControl not updating | 2026-07-22 | Added `appendTo="body"` to p-datepicker inside dialog. File: `asset-roster-form-dialog.html:319` |
 | AR-07 | Asset Roster | Document upload causes template crash | 2026-07-22 | Added null guard `document.file?.name` with fallback. File: `documents-section.html:33` |
+| AM-01 | Asset Maintenances | CRITICAL — Finish Service/PM with empty Notes HTTP 400 | 2026-07-22 | Added `NonWhitespaceValidators.nonWhitespaceRequired` to notes field. Error handler now shows toast. Files: `update-maintenance-form.ts:18`, `asset-finish-maintenance-form-dialog.ts:99-101` |
+| AM-02 | Asset Maintenances | "Skip PM" button NOT shown when PM is in progress | 2026-07-22 | Moved Skip PM outside `@if (!pmStarted())` block — always rendered. File: `maintenance-service-section.html:125-151` |
+| AM-03 | Asset Maintenances | Status alert shows "Active" instead of "In PM" | 2026-07-22 | Added separate `@else if (status === 'in-pm')` branch. File: `status-banner-section.html:15-23` |
+| AM-04 | Asset Maintenances | Double-colon typo "initiated on::" | 2026-07-22 | Removed extra `:` after translation. File: `asset-finish-maintenance-form-dialog.html:18` |
+| AM-05 | Asset Maintenances | Initiate Service button HIDDEN (not disabled) | 2026-07-22 | Changed to always rendered with `[disabled]="!canStartService()"`. File: `maintenance-service-section.html:163-170` |
+| AM-07 | Asset Maintenances | PM schedule fields remain locked after finishing PM | 2026-07-22 | Changed `isMaintenanceWindowsEditLocked` to check `pmStarted()` not `maintenanceWindowIds?.length`. File: `maintenance-service-section.ts:47-53` |
+| AM-08 | Asset Maintenances | Double toast on service creation | 2026-07-22 | Added `notificationConfig: { enable: false }` to service POST. File: `asset-maintenance-form-dialog.ts:72` |
 | | | | | |
 | | | **Note on FA-04 / CO-03:** The `confirmDialog.unsavedChanges` translation key was added to the local `base-app-resource-translations.json` catalog file, but translations are served from the backend API at runtime (`GET /api/translations/scope`). The raw key is still displayed because the backend catalog has not been updated. These fixes require backend deployment to take effect. | | |
 | AC-01 | Asset Commissioning | No whitespace validation on Details/Reason fields | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Also created shared validator in `base-app/form`. File: `non-whitespace.validator.ts` |

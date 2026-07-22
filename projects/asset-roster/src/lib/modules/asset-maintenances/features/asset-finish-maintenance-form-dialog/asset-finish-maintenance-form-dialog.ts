@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BaseDialog, Text } from '@avalantec/base-app/core';
+import { BaseDialog, Text, ToastManager } from '@avalantec/base-app/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -47,6 +47,7 @@ export class AssetFinishMaintenanceFormDialog extends BaseDialog {
   protected formService = inject(UpdateMaintenanceForm);
   private crudAssetMaintenance = inject(CrudAssetMaintenances);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
+  private toastManager = inject(ToastManager);
   form = this.formService.form;
 
   // inputs
@@ -96,8 +97,9 @@ export class AssetFinishMaintenanceFormDialog extends BaseDialog {
             this.assetRosterMaintenanceContext.handleFinishPM();
           }
         },
-        error: () => {
+        error: (err) => {
           this.submitLoading.set(false);
+          this.toastManager.showError(err?.error?.message || 'An error occurred while finishing the maintenance.');
         },
       });
   }

@@ -132,15 +132,17 @@
                 class="me-2"
                 [disabled]="!canStartOrSkipPM()"
               ></p-button>
-              <p-button
-                (onClick)="handleOpenSkipPMDialog()"
-                size="small"
-                [label]="'skipPm' | translate: {} : 'asset-roster'"
-                severity="secondary"
-                type="button"
-                [disabled]="!canStartOrSkipPM()"
-              ></p-button>
-            } @else {
+            }
+            <p-button
+              (onClick)="handleOpenSkipPMDialog()"
+              size="small"
+              [label]="'skipPm' | translate: {} : 'asset-roster'"
+              severity="secondary"
+              type="button"
+              class="me-2"
+              [disabled]="!canStartOrSkipPM()"
+            ></p-button>
+            @if (pmStarted()) {
               <p-button
                 (onClick)="handleOpenFinishPMDialog()"
                 size="small"
@@ -160,15 +162,15 @@
             {{ 'serviceActions' | translate: {} : 'asset-roster' }}
           </h3>
 
-          @if (canStartService()) {
-            <p-button
-              (onClick)="handleOpenServiceDialog()"
-              size="small"
-              [label]="'initiateService' | translate: {} : 'asset-roster'"
-              severity="warn"
-              type="button"
-            ></p-button>
-          } @else if (serviceStarted()) {
+          <p-button
+            (onClick)="handleOpenServiceDialog()"
+            size="small"
+            [label]="'initiateService' | translate: {} : 'asset-roster'"
+            severity="warn"
+            type="button"
+            [disabled]="!canStartService()"
+          ></p-button>
+          @if (serviceStarted()) {
             <p class="mb-4">
               {{ 'serviceInProgress' | translate: {} : 'asset-roster' }}
               {{

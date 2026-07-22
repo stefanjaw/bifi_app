@@ -69,6 +69,7 @@ export class AssetMaintenanceFormDialog extends BaseDialog {
           type: 'service',
           dateStart: new Date().toISOString(),
         },
+        notificationConfig: { enable: false },
       })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({

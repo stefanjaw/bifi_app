@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile, NonWhitespaceValidators } from '@avalantec/base-app/form';
 
 export interface UpdateMaintenanceFormModel {
   notes?: string;
@@ -15,7 +15,7 @@ export class UpdateMaintenanceForm extends BaseForm<UpdateMaintenanceFormModel> 
 
   override createForm() {
     return this.fb.group<UpdateMaintenanceFormModel>({
-      notes: [''],
+      notes: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
       cost: [null],
       attachments: {
         template: {

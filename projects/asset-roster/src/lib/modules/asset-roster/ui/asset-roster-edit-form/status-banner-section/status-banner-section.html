@@ -12,12 +12,21 @@
       </div>
     </div>
   </p-message>
-} @else if (assetRoster()?.status === 'active' || assetRoster()?.status === 'in-pm') {
+} @else if (assetRoster()?.status === 'active') {
   <p-message severity="success" [closable]="false" class="w-full">
     <div class="flex items-center gap-2">
       <i class="pi pi-check-circle" bifiAppIcon="lg"></i>
       <div>
         <div class="font-medium">{{ 'assetActive' | translate: {} : 'asset-roster' }}</div>
+      </div>
+    </div>
+  </p-message>
+} @else if (assetRoster()?.status === 'in-pm') {
+  <p-message severity="info" [closable]="false" class="w-full">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-cog" bifiAppIcon="lg"></i>
+      <div>
+        <div class="font-medium">{{ 'status.inPm' | translate: {} : 'asset-roster' }}</div>
       </div>
     </div>
   </p-message>
