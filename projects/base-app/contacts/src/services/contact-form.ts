@@ -1,6 +1,6 @@
 import { effect, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Validators } from '@angular/forms';
+import { AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ContactFormModel {
@@ -20,6 +20,13 @@ export interface ContactFormModel {
   streetAddress?: string;
   streetAddress2?: string;
   vat?: string;
+}
+
+function atLeastOneContactMethod(control: AbstractControl): ValidationErrors | null {
+  const phone = control.get('phoneNumber')?.value;
+  const email = control.get('email')?.value;
+  const website = control.get('website')?.value;
+  return phone || email || website ? null : { atLeastOneContactMethod: true };
 }
 
 @Injectable({
@@ -48,35 +55,38 @@ export class ContactForm extends BaseForm<ContactFormModel> {
   }
 
   override createForm() {
-    return this.fb.group<ContactFormModel>({
-      name: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      phoneNumber: [''],
-      email: ['', [Validators.email]],
-      website: [
-        '',
-        // [Validators.pattern(/^(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w\-.]*)*\/?$/)],
-      ],
-      parentId: [''],
-      type: ['individual', [Validators.required]],
-      childIds: {
-        template: [''],
-        formArrayElements: [],
-      },
-      photo: {
-        template: {
-          id: [''],
-          file: [null!],
+    return this.fb.group<ContactFormModel>(
+      {
+        name: ['', [Validators.required]],
+        lastName: ['', [Validators.required]],
+        phoneNumber: [''],
+        email: ['', [Validators.email]],
+        website: [
+          '',
+          // [Validators.pattern(/^(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w\-.]*)*\/?$/)],
+        ],
+        parentId: [''],
+        type: ['individual', [Validators.required]],
+        childIds: {
+          template: [''],
+          formArrayElements: [],
         },
-        formArrayElements: [],
+        photo: {
+          template: {
+            id: [''],
+            file: [null!],
+          },
+          formArrayElements: [],
+        },
+        countryId: [''],
+        state: [''],
+        city: [''],
+        zipCode: [''],
+        streetAddress: [''],
+        streetAddress2: [''],
+        vat: [''],
       },
-      countryId: [''],
-      state: [''],
-      city: [''],
-      zipCode: [''],
-      streetAddress: [''],
-      streetAddress2: [''],
-      vat: [''],
-    });
+      { validators: atLeastOneContactMethod }
+    );
   }
 }

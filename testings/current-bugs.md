@@ -121,13 +121,13 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 | CO-01 | 3.2 | **Save button only appears when form is dirty** | **Medium** | `form-actions.html:14` — `@if (formChanged() && showSave())`. Consumer: `contacts-form.html:21` binds `[formChanged]="form.dirty"`. Same shared root cause as AT-01. |
 | CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Medium** | `contacts-list.ts:55-64` — direct delete, no child check. Backend `ContactService` has no `delete()` override. `BaseService.delete` removes parent; children's `parentId` points to non-existent ObjectId. |
 | CO-03 | — | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** | **Low** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` with scope `base-app/resource`. Catalog only has `confirmDialog.message`/`.header`/`.cancel`/`.confirm` — no `.unsavedChanges` entry. Same as FA-04. |
-| CO-04 | 3.4, 4.3 | **CR VAT Type required but not indicated** — API 400 on empty, no client validation. | **Low** | `contact-cr-plugin.ts:115` — `new FormControl('')` with no `Validators.required`. Label (`contact-cr-plugin.html:33`) has no required marker (`*`). Control is dynamically added by plugin, never receives required validator. |
-| CO-05 | 3.4, 4.3 | **Contact method required but not indicated** — At least one method required by API. | **Low** | `contact-form.ts:50-81` — `phoneNumber: ['']`, `email: ['', [Validators.email]]`, `website: ['']`. None have `Validators.required`, no group-level validator enforcing "at least one." Backend has `AtLeastOneContactConstraint` (`contact.dto.ts:24-41,97`) but frontend has no equivalent. |
+| CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. File: `contact-cr-plugin.ts:115`. | **Fixed** |
+| CO-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. Ensures at least one of phone/email/website is provided. File: `contact-form.ts`. | **Fixed** |
 | CO-06 | 8–9 | **Export and Import not implemented** — No buttons or methods. | **Low** (planned) | `contacts-list.html:3-17` — only `goBack` and `addNew` buttons, no export/import. `crud-contacts.ts` — only sets `endpoint = 'contacts'`, no export/import methods. Backend `BaseRoutes` auto-registers `/export`/`/import` but frontend never calls them. |
 | CO-07 | 10 | **No Active/Inactive toggle in UI** — `active` field exists but no UI control. | **Low** (planned) | `contact-form.ts:50-81` — `createForm()` has no `active` control. `contacts-form.html` and `contacts-list.html` — no active/inactive toggle. Interface (`contact.ts:24`) and backend model (`contact.model.ts:124-127`) have `active: boolean` but it's not exposed in the UI. |
-| CO-08 | 5.9 | **No UI mechanism to clear parent company** — p-select lacks clear button. | **Medium** | `contacts-form.html:115-124` — `<p-select formControlName="parentId">` missing `[showClear]="true"`. Same as FA-02. Additionally, `contacts-form.ts:173` does `if (!rawValue.parentId) delete rawValue.parentId;` but the user can never produce an empty `parentId` to trigger that path. |
+| CO-08 | ~ | **No UI mechanism to clear parent company** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to parentId p-select. Also changed submit handler to send `parentId: null` instead of deleting the key (fixes CO-10 frontend component). Files: `contacts-form.html:115-124`, `contacts-form.ts:179`. | **Fixed** |
 | CO-09 | 3.9 | **Duplicate emails silently allowed** | **Low** | `contact-form.ts:55` — `email: ['', [Validators.email]]` has only format validation, no async uniqueness validator. Backend model (`contact.model.ts:25-29`) has `// unique: true,` **commented out**. Neither layer enforces uniqueness. |
-| CO-10 | 5.9 | **parentId cannot be removed via PUT** — Empty string fails `@IsMongoId()`. | **Medium** | `contact.dto.ts:93-95` — `@IsMongoId()` rejects empty string `""`. `@IsOptional()` only skips for `null`/`undefined`, not `""`. Compounded by `contacts-form.ts:173` — `if (!rawValue.parentId) delete rawValue.parentId;` deletes the key from the payload entirely, so backend never receives instruction to null it out → existing `parentId` preserved. |
+| CO-10 | ~ | **parentId cannot be removed via PUT** — ✅ **RESOLVED 2026-07-22**: Three-part fix. (1) Frontend sends `parentId: ''` via FormData when cleared (`contacts-form.ts:179`). (2) Backend DTO adds `@ValidateIf` to skip `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before `super.update()` (`contact-service.ts`). Verified: PUT returns 200, request body shows empty `parentId`. | **Fixed** |
 
 ---
 
@@ -287,9 +287,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----------|-------|-------------|
 | **Critical** | 1 | AM-01 |
 | **High** | 5 | AR-01, AR-06, AR-07, AC-02, FA-03 |
-| **Medium** | 11 | AM-02, AM-03, AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-08, CO-10, CO-03 |
-| **Low** | 26 | AR-03, AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-04, AM-05, AM-06, AM-07, AM-08, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-04, CO-05, CO-06, CO-07, CO-09 |
-| **Active total** | 43 | (8 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Medium** | 9 | AM-02, AM-03, AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
+| **Low** | 22 | AR-03, AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-04, AM-05, AM-06, AM-07, AM-08, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 37 | (14 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -324,3 +324,7 @@ When a bug is fixed:
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |
 | MW-01 | Maintenance Windows | Whitespace-only name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `maintenance-window-form.ts:19`. File: `non-whitespace.validator.ts` |
 | CO-01 | Contacts | Save button only appears when form is dirty | 2026-07-22 | Same fix as AT-01 — shared `form-actions.html` change. |
+| CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 | Added `Validators.required` to `crVatType` FormControl and `*` marker to label. File: `contact-cr-plugin.ts:115`. |
+| CO-05 | Contacts | Contact method required but not indicated | 2026-07-22 | Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. File: `contact-form.ts`. |
+| CO-08 | Contacts | No UI mechanism to clear parent company | 2026-07-22 | Added `[showClear]="true"` to parentId p-select. File: `contacts-form.html:115-124`. |
+| CO-10 | Contacts | parentId cannot be removed via PUT | 2026-07-22 | Three files: (1) Frontend sends `parentId: ''` on clear (`contacts-form.ts:179`). (2) Backend DTO: `@ValidateIf` skips `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before update (`contact-service.ts`). Verified PUT 200. |

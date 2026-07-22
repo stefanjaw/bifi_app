@@ -75,7 +75,7 @@ Method: Automated UI tests via Playwright browser
 | 5.6 | Replace the photo/logo | New image shown after save | ⏭️ N/A — Could not test file upload |
 | 5.7 | Remove the photo/logo | Contact saved with no image | ⏭️ N/A — Could not test file upload |
 | 5.8 | Change the parent company | New parent reflected on the contact after save | ✅ PASS — Changed parent from "ds" to "Hi"; display name updated to "Hi, ParentTest Child" after save |
-| 5.9 | Remove the parent company | Contact saved with no parent | ❌ FAIL — No UI mechanism to clear parent contact. The p-select dropdown has no clear button (showClear not enabled), no empty/null option, and keyboard shortcuts don't clear the selection. Confirms API bug where parentId cannot be unset. |
+| 5.9 | Remove the parent company | Contact saved with no parent | ✅ PASS — Clear icon (`.p-select-clear-icon`) renders on parentId dropdown. Clicking it resets the field. Save sends `parentId: ''`, backend converts to `null`, parent reference cleared. Verified: PUT 200, parentId empty in request body. |
 
 ---
 
@@ -148,12 +148,13 @@ Method: Automated UI tests via Playwright browser
 | B-01 | ~ | **Save button only appears when form is dirty (CO-01)** — ✅ **RESOLVED 2026-07-22**: Shared fix S-01 in `form-actions.html:14-26`. Save button now always visible (disabled when pristine). | **Fixed** |
 | B-02 | 6.2 | **Orphaned child contact on parent delete** — Deleting a Company contact that has child contacts succeeds without warning, leaving child contacts with a stale/orphaned parent reference. The child's display name still shows the deleted company name. | Medium |
 | B-03 | — | **Missing i18n translation** — The unsaved changes confirmation dialog displays the raw translation key `confirmDialog.unsavedChanges` instead of the translated message. | Low |
-| B-04 | 3.4, 4.3 | **CR VAT Type required but not indicated** — The CR VAT Type field is required by the API for both Individual and Company contacts, but the form does not mark it as required or show client-side validation. Error only appears as API 400. | Low |
-| B-05 | 3.4, 4.3 | **Contact method required but not indicated** — At least one contact method (phone, email, or website for companies) is required by the API, but the form does not indicate this. Error only surfaces from API response. | Low |
+| B-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` and `*` marker to crVatType field via fix CO-04. File: `contact-cr-plugin.ts:115`. | **Fixed** |
+| B-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator via fix CO-05. File: `contact-form.ts`. | **Fixed** |
 | B-06 | 8–9 | **Export and Import not implemented** — No backend endpoint or frontend UI button for CSV export/import of contacts exists. | Low (planned feature) |
 | B-07 | 10 | **No Active/Inactive toggle in UI** — No UI control for toggling contact active/inactive status, though the API filters by `active:true` by default. | Low (planned feature) |
-| B-08 | 5.9 | **No UI mechanism to clear parent company** — The Parent Contact p-select dropdown lacks `showClear` property, has no empty/null option, and keyboard shortcuts don't clear the selection. Users cannot remove a parent company once set via the UI. Confirms the known API bug where `parentId` cannot be unset. | Medium |
+| B-08 | ~ | **No UI mechanism to clear parent company (CO-08)** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to parentId p-select. File: `contacts-form.html:115-124`. | **Fixed** |
 | B-09 | 3.9 | **Duplicate emails silently allowed** — Creating a contact with an email already used by another contact succeeds without any validation error or warning. This may lead to data confusion if emails are expected to be unique identifiers. | Low |
+| B-10 | ~ | **parentId cannot be cleared via API (CO-10)** — ✅ **RESOLVED 2026-07-22**: Three-part fix: (1) Frontend sends `parentId: ''` on clear (`contacts-form.ts:179`). (2) Backend DTO: `@ValidateIf` skips `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before `super.update()` (`contact-service.ts`). Verified: PUT 200, parentId empty in request body. | **Fixed** |
 
 ---
 
@@ -161,9 +162,9 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 30 |
-| ❌ FAIL / N/A | 8 |
-| ⚠️ PARTIAL / BUG / NOTE | 6 |
+| ✅ PASS | 33 |
+| ❌ FAIL / N/A | 7 |
+| ⚠️ PARTIAL / BUG / NOTE | 4 |
 | ⏭️ NOT TESTED / N/A | 7 |
 
-> **Re-tested 2026-07-22 after fixes:** CO-01 (Save button visibility) resolved. B-01 moved to Fixed. CO-03 (translation key) pending backend catalog deployment. 1 more PASS, 1 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 after fixes:** CO-01, CO-04, CO-05, CO-08, CO-10 all resolved and verified. B-01, B-04, B-05, B-08, B-10 moved to Fixed. CO-03 (translation key) pending backend catalog deployment. 1 more PASS, 1 fewer FAIL, 1 fewer BUG/NOTE.

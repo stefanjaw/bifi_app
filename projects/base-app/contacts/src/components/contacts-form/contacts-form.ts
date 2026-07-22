@@ -176,7 +176,7 @@ export class ContactsForm implements DirtyComponent {
 
     const { rawValue } = data;
 
-    if (!rawValue.parentId) delete rawValue.parentId;
+    if (!rawValue.parentId) rawValue.parentId = '';
     if (!rawValue.countryId) delete rawValue.countryId;
     if (!rawValue.city) delete rawValue.city;
     if (!rawValue.state) delete rawValue.state;

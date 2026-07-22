@@ -5,6 +5,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,7 +31,7 @@ import { CommonModule } from '@angular/common';
       <div class="border-t border-gray-200 mt-4 pt-4 flex flex-col gap-4">
         <h3 class="text-sm font-semibold text-gray-700 mb-3">Costa Rica (CR)</h3>
         <bifi-app-form-field>
-          <bifi-app-form-label>CR VAT Type</bifi-app-form-label>
+          <bifi-app-form-label>CR VAT Type *</bifi-app-form-label>
           <p-select
             formControlName="crVatType"
             [options]="vatTypeOptions"
@@ -112,7 +113,7 @@ export class ContactCrPlugin implements OnInit {
   }
 
   ngOnInit() {
-    this.hostForm.addControl('crVatType', new FormControl(''));
+    this.hostForm.addControl('crVatType', new FormControl('', [Validators.required]));
     this.hostForm.addControl('commercialName', new FormControl(''));
     this.hostForm.addControl('crDistrito', new FormControl(''));
     this.hostForm.addControl('crEconomicActivityCodes', this.fb.array([]));
