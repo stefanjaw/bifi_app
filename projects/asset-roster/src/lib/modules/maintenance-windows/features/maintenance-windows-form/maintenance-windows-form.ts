@@ -21,7 +21,7 @@ import {
 } from '../../services/maintenance-window-form';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-maintenance-windows-form',
@@ -43,6 +43,7 @@ export class MaintenanceWindowsForm {
   private readonly destroy$ = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translationService = inject(TranslationService);
 
   id = input.required<string>();
 
@@ -60,14 +61,32 @@ export class MaintenanceWindowsForm {
   error = this.maintenanceWindowResource.error;
   isSubmitLoading = signal<boolean>(false);
 
-  recurrencyOptions = [
-    { label: 'Daily', value: 'daily' },
-    { label: 'Weekly', value: 'weekly' },
-    { label: 'Monthly', value: 'monthly' },
-    { label: 'Quarterly', value: 'quarterly' },
-    { label: 'Semi-anually', value: 'semi-anually' },
-    { label: 'Annually', value: 'annually' },
-  ];
+  recurrencyOptions = computed(() => [
+    {
+      label: this.translationService.translate('recurrence.daily', {}, 'asset-roster'),
+      value: 'daily',
+    },
+    {
+      label: this.translationService.translate('recurrence.weekly', {}, 'asset-roster'),
+      value: 'weekly',
+    },
+    {
+      label: this.translationService.translate('recurrence.monthly', {}, 'asset-roster'),
+      value: 'monthly',
+    },
+    {
+      label: this.translationService.translate('recurrence.quarterly', {}, 'asset-roster'),
+      value: 'quarterly',
+    },
+    {
+      label: this.translationService.translate('recurrence.semiAnnually', {}, 'asset-roster'),
+      value: 'semi-annually',
+    },
+    {
+      label: this.translationService.translate('recurrence.annually', {}, 'asset-roster'),
+      value: 'annually',
+    },
+  ]);
 
   constructor() {
     effect(() => {
@@ -105,6 +124,10 @@ export class MaintenanceWindowsForm {
         this.isSubmitLoading.set(false);
       },
     });
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
   }
 
   goBack() {

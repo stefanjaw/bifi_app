@@ -316,7 +316,11 @@
         <bifi-app-form-label>
           {{ 'dateAcquired' | translate: {} : 'asset-roster' }}
         </bifi-app-form-label>
-        <p-datepicker formControlName="acquiredDate" [showIcon]="true" appendTo="body"></p-datepicker>
+        <p-datepicker
+          formControlName="acquiredDate"
+          [showIcon]="true"
+          appendTo="body"
+        ></p-datepicker>
         <bifi-app-form-error></bifi-app-form-error>
       </bifi-app-form-field>
 

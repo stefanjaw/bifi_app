@@ -97,9 +97,11 @@ export class AssetFinishMaintenanceFormDialog extends BaseDialog {
             this.assetRosterMaintenanceContext.handleFinishPM();
           }
         },
-        error: (err) => {
+        error: err => {
           this.submitLoading.set(false);
-          this.toastManager.showError(err?.error?.message || 'An error occurred while finishing the maintenance.');
+          this.toastManager.showError(
+            err?.error?.message || 'An error occurred while finishing the maintenance.'
+          );
         },
       });
   }

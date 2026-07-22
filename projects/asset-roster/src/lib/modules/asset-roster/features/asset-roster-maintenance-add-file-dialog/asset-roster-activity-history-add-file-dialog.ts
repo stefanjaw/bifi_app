@@ -48,9 +48,17 @@ export class AssetRosterActiviyHistoryAddFileDialog extends BaseDialog {
     if (!model) return this.translationService.translate('addFile', {}, 'asset-roster');
 
     if ('name' in model) {
-      return this.translationService.translate('addFileToMaintenance', { name: model.name }, 'asset-roster');
+      return this.translationService.translate(
+        'addFileToMaintenance',
+        { name: model.name },
+        'asset-roster'
+      );
     } else {
-      return this.translationService.translate('addFileToCommissioning', { model: model.assetRosterId.productModel }, 'asset-roster');
+      return this.translationService.translate(
+        'addFileToCommissioning',
+        { model: model.assetRosterId.productModel },
+        'asset-roster'
+      );
     }
   });
 

@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (AT-02, AT-04, FA-02, FA-04, FA-06, FA-07, CO-03 fixes applied: see Resolved Bugs)
+> **Last updated:** 2026-07-22 (MW-03, MW-04, MW-05, MW-06, MW-07 fixes applied; see Resolved Bugs)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -106,11 +106,11 @@ Source: `asset-roster/maintenance-windows/maintenance-windows-results_20260721.m
 |----|------|-------------|----------|------------------------|
 | MW-01 | 4.8 | **Whitespace-only name accepted** | **Medium** | `maintenance-window-form.ts:19` — `name: ['', [Validators.required]]`. Same as AT-05: no trim validator. |
 | MW-02 | 10.4 | **Duplicate names silently allowed** | **Medium** | `maintenance-window-form.ts:19` — no async uniqueness validator, no backend unique index. Same as AT-06. |
-| MW-03 | 8.3 | **No unsaved changes prompt** | **Medium** | `maintenance-windows.routes.ts:19-36` — `create` and `edit/:id` routes missing `canDeactivate: [DirtyFormGuard]`. Same as AT-04. |
-| MW-04 | 4.5 | **Days Before/After default to 1, masking required validation** | **Low** | `maintenance-window-form.ts:20-21` — `daysBefore: [1, [Validators.required, Validators.min(1)]]` and `daysAfter: [1, ...]`. Initial value is `1` (valid) instead of `null`, so `Validators.required` never fails on a new form. Users see pre-filled values and can submit without entering them. |
-| MW-05 | 4.2, 11.7 | **Inconsistent section heading casing** — "General information" vs "Window Information". | **Low** | Translation catalog values: `generalInformation` = "General information" (sentence case) vs `windowInformation` = "Window Information" (title case). Both in `asset-roster-translations.json`. Inconsistent capitalization in the translation values themselves. |
-| MW-06 | 2.1, 11.6 | **Column header "Role Name" vs form field "Name"** | **Low** | `maintenance-window-columns.ts:4-10` — `title: 'roleName'` (copy-paste from roles module). Key `roleName` translates to "Role Name". Should be `title: 'name'` which translates to "Name". The form field (`maintenance-windows-form.html:31`) correctly uses key `name`. |
-| MW-07 | 11.9 | **Hardcoded English recurrence labels with typo "Semi-anually"** | **Low** | `maintenance-windows-form.ts:63-70` — `recurrencyOptions` array uses hardcoded English string literals for `label` (not translation keys). Line 68: `'Semi-anually'` (missing "n", should be "Semi-annually"). Typo also propagates into `value: 'semi-anually'` — misspelled enum value persisted to database. |
+| MW-03 | 8.3 | **No unsaved changes prompt** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` + `hasUnsavedChanges()`. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113`. | **Fixed** |
+| MW-04 | 4.5 | **Days Before/After default to 1, masking required validation** — ✅ **RESOLVED 2026-07-22**: Changed initial values from `1` to `null!`. Requires explicit user entry. File: `maintenance-window-form.ts:20-21`. | **Fixed** |
+| MW-05 | 4.2, 11.7 | **Inconsistent section heading casing** — ✅ **RESOLVED 2026-07-22**: Translation catalog already has "General Information" (title case). | **Fixed** |
+| MW-06 | 2.1, 11.6 | **Column header "Role Name" vs form field "Name"** — ✅ **RESOLVED 2026-07-22**: Changed `title: 'roleName'` to `title: 'name'` in `maintenance-window-columns.ts:7`. Column now shows "Name". | **Fixed** |
+| MW-07 | 11.9 | **Hardcoded English recurrence labels with typo "Semi-anually"** — ✅ **RESOLVED 2026-07-22**: Replaced hardcoded labels with translation keys `recurrence.*` (scope `asset-roster`). Fixed value typo `semi-anually` → `semi-annually`. Added `TranslatePipe` to dropdown items. File: `maintenance-windows-form.ts:63-70`, template. | **Fixed** |
 
 ---
 
@@ -163,7 +163,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** Add `confirmDialog.unsavedChanges` en/es pair to `base-app-resource-translations.json` (or move the dialog to use `base-app/form` scope and add the key there).
 
 ### Pattern F — No unsaved changes prompt on plain forms (non-DirtyFormGuard routes)
-- **Affected:** ~~AT-04~~ (resolved 2026-07-22), ~~FA-07~~ (resolved 2026-07-22), MW-03
+- **Affected:** ~~AT-04~~ (resolved 2026-07-22), ~~FA-07~~ (resolved 2026-07-22), ~~MW-03~~ (resolved 2026-07-22)
 - **Root cause:** `asset-types.routes.ts:17-30` and `maintenance-windows.routes.ts:19-36` — `create`/`edit` routes only declare `canActivate: [permissionGuard]`, missing `canDeactivate: [DirtyFormGuard]`. The guard is opt-in per route.
 - **Shared fix location:** Add `canDeactivate: [DirtyFormGuard]` to all create/edit routes. Reference pattern: `contacts/src/routes/contact-routes.ts:21,29`.
 
@@ -261,11 +261,11 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----|------|---------|---------------|
 | MW-01 | `maintenance-window-form.ts` | 19 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
 | MW-02 | `maintenance-window-form.ts` | 19 | No async uniqueness validator, no backend unique index. Same as AT-06. |
-| MW-03 | `maintenance-windows.routes.ts` | 19-36 | Missing `canDeactivate: [DirtyFormGuard]`. Same as AT-04. |
-| MW-04 | `maintenance-window-form.ts` | 20-21 | `daysBefore: [1, ...]` and `daysAfter: [1, ...]` — default to `1` instead of `null`, masking required validation. |
-| MW-05 | Translation catalog (`asset-roster-translations.json`) | — | `generalInformation` = "General information" (sentence case) vs `windowInformation` = "Window Information" (title case). |
-| MW-06 | `maintenance-window-columns.ts` | 4-10 | `title: 'roleName'` — copy-paste from roles module. Should be `title: 'name'`. Key `roleName` → "Role Name". |
-| MW-07 | `maintenance-windows-form.ts` | 63-70 | Hardcoded English `recurrencyOptions` array. Line 68: `'Semi-anually'` (typo, should be "Semi-annually"). Typo also in `value: 'semi-anually'` — persisted to DB. |
+| MW-03 | `maintenance-windows.routes.ts` | 21,30 | Missing `canDeactivate: [DirtyFormGuard]`. Fixed 2026-07-22: added guard + `hasUnsavedChanges()`. |
+| MW-04 | `maintenance-window-form.ts` | 20-21 | `daysBefore: [1, ...]` and `daysAfter: [1, ...]` — default to `1` instead of `null`. Fixed 2026-07-22: changed to `[null!, ...]`. |
+| MW-05 | Translation catalog (`asset-roster-translations.json`) | 3477-3478 | `generalInformation` en value is "General Information" (already title case — no change needed). |
+| MW-06 | `maintenance-window-columns.ts` | 7 | `title: 'roleName'` — copy-paste from roles module. Fixed 2026-07-22: changed to `title: 'name'`. |
+| MW-07 | `maintenance-windows-form.ts` | 63-70 | Hardcoded English `recurrencyOptions` array. Fixed 2026-07-22: replaced with translation keys `recurrence.*`, fixed value typo `semi-anually` → `semi-annually`. |
 
 #### Contacts (CO-01 to CO-10)
 
@@ -290,9 +290,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----------|-------|-------------|
 | **Critical** | 0 | (AM-01 resolved) |
 | **High** | 1 | FA-03 |
-| **Medium** | 5 | AT-03, FA-05, MW-02, MW-03, CO-02 |
-| **Low** | 12 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 17 | (34 resolved, see Resolved Bugs section.) |
+| **Medium** | 4 | AT-03, FA-05, MW-02, CO-02 |
+| **Low** | 8 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, CO-09 |
+| **Active total** | 13 | (38 resolved; see Resolved Bugs section.) |
 | **Original total** | 51 | |
 
 ---
@@ -345,6 +345,11 @@ When a bug is fixed:
 | FA-06 | Facilities | Inconsistent field label "Location" vs "Address" | 2026-07-22 | Changed label key from `'location'` to `'address'` in rooms form. Fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20` |
 | FA-07 | Facilities | No unsaved changes prompt on Facility forms | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to Facility create/edit routes. Added `hasUnsavedChanges()` to `FacilitiesForm`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73` |
 | MW-01 | Maintenance Windows | Whitespace-only name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `maintenance-window-form.ts:19`. File: `non-whitespace.validator.ts` |
+| MW-03 | Maintenance Windows | No unsaved changes prompt | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to create/edit routes; added `hasUnsavedChanges()` method. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113` |
+| MW-04 | Maintenance Windows | Days Before/After default to 1, masking required validation | 2026-07-22 | Changed initial values from `1` to `null!`. Requires explicit user entry. File: `maintenance-window-form.ts:20-21` |
+| MW-05 | Maintenance Windows | Inconsistent section heading casing | 2026-07-22 | Translation catalog already had "General Information" (title case) — no change needed. |
+| MW-06 | Maintenance Windows | Column header "Role Name" vs form field "Name" | 2026-07-22 | Changed `title: 'roleName'` to `title: 'name'` in `maintenance-window-columns.ts:7`. Column now shows "Name" matching the form field. |
+| MW-07 | Maintenance Windows | Hardcoded English recurrence labels with typo "Semi-anually" | 2026-07-22 | Replaced hardcoded labels with translation keys `recurrence.*`. Fixed value typo in options. Added `TranslatePipe` template to dropdown. Files: `maintenance-windows-form.ts:63-70`, template. |
 | CO-01 | Contacts | Save button only appears when form is dirty | 2026-07-22 | Same fix as AT-01 — shared `form-actions.html` change. |
 | CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 | Added `Validators.required` to `crVatType` FormControl and `*` marker to label. File: `contact-cr-plugin.ts:115`. |
 | CO-05 | Contacts | Contact method required but not indicated | 2026-07-22 | Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. File: `contact-form.ts`. |

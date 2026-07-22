@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   {
@@ -19,6 +20,7 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   {
     path: 'create',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm
@@ -28,6 +30,7 @@ export const MAINTENANCE_WINDOWS_ROUTES: Routes = [
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/maintenance-windows-form/maintenance-windows-form').then(
         m => m.MaintenanceWindowsForm

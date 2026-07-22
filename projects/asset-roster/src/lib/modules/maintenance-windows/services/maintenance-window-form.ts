@@ -17,8 +17,8 @@ export class MaintenanceWindowForm extends BaseForm<MaintenanceWindowFormModel> 
   override createForm() {
     return this.fb.group<MaintenanceWindowFormModel>({
       name: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
-      daysBefore: [1, [Validators.required, Validators.min(1)]],
-      daysAfter: [1, [Validators.required, Validators.min(1)]],
+      daysBefore: [null!, [Validators.required, Validators.min(1)]],
+      daysAfter: [null!, [Validators.required, Validators.min(1)]],
       recurrency: ['daily'],
     });
   }
