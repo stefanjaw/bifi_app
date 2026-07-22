@@ -38,25 +38,25 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        @if (isDirty()) {
-          <p-button
-            [label]="'cancel' | translate: {} : 'asset-roster'"
-            severity="secondary"
-            (onClick)="handleCancel()"
-            type="button"
-          />
-          <p-button
-            [icon]="isSubmitLoading() ? 'pi pi-spinner' : 'pi pi-check'"
-            [label]="
-              isSubmitLoading()
-                ? ('saving' | translate: {} : 'asset-roster')
-                : ('saveChanges' | translate: {} : 'asset-roster')
-            "
-            severity="success"
-            type="submit"
-            *bifiAppHasPermission="'asset-rosters:update:model'"
-          />
-        }
+        <p-button
+          [label]="'cancel' | translate: {} : 'asset-roster'"
+          severity="secondary"
+          (onClick)="handleCancel()"
+          type="button"
+          [disabled]="!isDirty()"
+        />
+        <p-button
+          [icon]="isSubmitLoading() ? 'pi pi-spinner' : 'pi pi-check'"
+          [label]="
+            isSubmitLoading()
+              ? ('saving' | translate: {} : 'asset-roster')
+              : ('saveChanges' | translate: {} : 'asset-roster')
+          "
+          severity="success"
+          type="submit"
+          *bifiAppHasPermission="'asset-rosters:update:model'"
+          [disabled]="!isDirty() || isSubmitLoading()"
+        />
         <p-button
           [label]="'backToDashboard' | translate: {} : 'asset-roster'"
           icon="pi pi-arrow-left"

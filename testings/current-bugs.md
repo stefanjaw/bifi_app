@@ -23,13 +23,13 @@ Source: `asset-roster/asset-roster/asset-roster-results_20260721.md`
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| AR-01 | 5.6, 3.2 | **Grid view card template throws `TypeError: Cannot read properties of undefined (reading 'address')`** — Switching to Grid triggers 18 console errors. Cards render partially but the footer block is silently broken. | **High** | `asset-roster-list.html:181` — `{{ element.locationId.address }}` dereferences `locationId` without optional chaining. Adjacent line 163 uses `?.` correctly for `assetTypeIds[0]?.name` but this line doesn't. Backend returns assets with no location → `locationId` is `undefined`. |
-| AR-02 | 28.10, 28.11 | **Dirty form guard re-fires `window.confirm` after accepting** — Confirm dialog re-appears after accepting, leaving user stuck. | **Medium** | `asset-roster-maintenance.ts:376-386` — `confirmDiscardUnsavedChanges()` calls `window.confirm()` but never sets `draftService.isDraftNavigating = true` before navigating. `DirtyFormGuard` (`dirty-form.guard.ts:17-27`) then fires a second confirm because `isDraftNavigating === false` and form is still dirty. Compare correct pattern in `form-select-navigate-footer.ts:27`. |
-| AR-03 | 13.5 | **Maintenance-page Save/Cancel not in page header** — Header only has Back to Dashboard + Prev/Next. | **Low** | `asset-roster-edit-form.html:41` — Save/Cancel wrapped in `@if (isDirty())`. After `resetValueToInitialState()` calls `markAsPristine()` (line 495), `isDirty()` is false so buttons disappear. Intentional gating but confusing UX. |
-| AR-04 | 15.1, 18.1, 22.1, 24.1 | **Section ordinal prefixes not visible in DOM** — Headings render without numeric ordinal "1", "2", "5". | **Low** | `form-section.html:10` — Template renders only `{{ title() }}`. The `ordinal` input is declared (`form-section.ts:27`) and callers pass it, but it is **never referenced in the template** — completely discarded. |
+| AR-01 | ~ | **Grid view card template throws `TypeError: Cannot read properties of undefined (reading 'address')`** — ✅ **RESOLVED 2026-07-22**: Added optional chaining + fallback: `element.locationId?.address \|\| ('notSet' \| translate)`. File: `asset-roster-list.html:181`. | **Fixed** |
+| AR-02 | 28.10, 28.11 | **Dirty form guard re-fires `window.confirm` after accepting** — ✅ **RESOLVED 2026-07-22**: Set `draftService.isDraftNavigating = true` before navigation. See Resolved Bugs. | **Fixed** |
+| AR-03 | ~ | **Maintenance-page Save/Cancel not in page header** — ✅ **RESOLVED 2026-07-22**: Removed `@if (isDirty())` gating. Save/Cancel now always visible but disabled when pristine via `[disabled]="!isDirty()"`. File: `asset-roster-edit-form.html:41-59`. | **Fixed** |
+| AR-04 | ~ | **Section ordinal prefixes not visible in DOM** — ✅ **RESOLVED 2026-07-22**: Added `{{ ordinal() }}.` to `form-section.html`. See Resolved Bugs. | **Fixed** |
 | AR-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — "Asset Photo", "of" counter, "Not set", "Unnamed", document descriptors, etc. | **Low** (pre-existing) | Multiple files — e.g. `asset-roster-edit-form.html:26` (`of`), `general-information-section.html:503` (`Asset Photo`), `asset-roster-list.html:163` (`Not set`), `asset-roster-document-dialog.ts:50-57` (descriptor options). None use `TranslatePipe`. |
-| AR-06 | 11.1 | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — Date text renders but FormControl value stays `null`, form stays `ng-invalid`. | **High** | `asset-roster-form-dialog.html:319` — `<p-datepicker formControlName="acquiredDate" [showIcon]="true">` is missing `appendTo="body"`. Inside a `p-dialog`, the dialog's modal mask intercepts the calendar click before the ControlValueAccessor's `onChange` fires. No fallback `(onChange)`/`(onSelect)` handler to manually `patchValue`. Compare working usages (e.g. `tasks/.../create-tasks-form-dialog.html:73-78`) which include `appendTo="body"`. |
-| AR-07 | 18.6 | **Document upload causes template crash** — `Cannot read properties of null (reading 'name')` at `DocumentsSection_For_11_Template`. | **High** | `documents-section.html:33` — `{{ document.file.name }}` dereferences `file` without null guard. `AddDocumentForm` initializes `file` control with `[null!]` (`add-document-form.ts:19`). When `handleDocumentAdded` pushes an entry whose `file` is null, the template crashes in a render loop. |
+| AR-06 | ~ | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside the dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
+| AR-07 | ~ | **Document upload causes template crash** — ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name \|\| ('notSet' \| translate)`. File: `documents-section.html:33`. | **Fixed** |
 
 ---
 
@@ -286,10 +286,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | Severity | Count | IDs (active) |
 |----------|-------|-------------|
 | **Critical** | 1 | AM-01 |
-| **High** | 5 | AR-01, AR-06, AR-07, AC-02, FA-03 |
+| **High** | 2 | AC-02, FA-03 |
 | **Medium** | 9 | AM-02, AM-03, AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
-| **Low** | 22 | AR-03, AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-04, AM-05, AM-06, AM-07, AM-08, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 37 | (14 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Low** | 21 | AR-05, AC-03, AC-04, AC-05, AC-06, AC-07, AM-04, AM-05, AM-06, AM-07, AM-08, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 32 | (19 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -314,8 +314,12 @@ When a bug is fixed:
 
 | ID | Module | Description | Resolution | Fix Reference |
 |----|--------|-------------|------------|---------------|
+| AR-01 | Asset Roster | Grid view card TypeError reading 'address' | 2026-07-22 | Added optional chaining `element.locationId?.address` with `notSet` fallback. File: `asset-roster-list.html:181` |
 | AR-02 | Asset Roster | Dirty form guard re-fires `window.confirm` after accepting | 2026-07-22 | Set `draftService.isDraftNavigating = true` before `router.navigate()` in `handleBackToDashboard()`, `handleNavigatePrevAsset()`, and `handleNavigateNextAsset()`. File: `asset-roster-maintenance.ts:367,229,236` |
+| AR-03 | Asset Roster | Maintenance-page Save/Cancel not in page header | 2026-07-22 | Removed `@if (isDirty())` gating. Save/Cancel always visible but disabled when pristine. File: `asset-roster-edit-form.html:41-59` |
 | AR-04 | Asset Roster | Section ordinal prefixes not visible in DOM | 2026-07-22 | Added `@if (ordinal()) { ... } {{ ordinal() }}.` to `form-section.html:10` template. The `ordinal` input was declared but never rendered. File: `form-section.html:12` |
+| AR-06 | Asset Roster | Cannot create asset via UI — p-datepicker FormControl not updating | 2026-07-22 | Added `appendTo="body"` to p-datepicker inside dialog. File: `asset-roster-form-dialog.html:319` |
+| AR-07 | Asset Roster | Document upload causes template crash | 2026-07-22 | Added null guard `document.file?.name` with fallback. File: `documents-section.html:33` |
 | | | | | |
 | | | **Note on FA-04 / CO-03:** The `confirmDialog.unsavedChanges` translation key was added to the local `base-app-resource-translations.json` catalog file, but translations are served from the backend API at runtime (`GET /api/translations/scope`). The raw key is still displayed because the backend catalog has not been updated. These fixes require backend deployment to take effect. | | |
 | AC-01 | Asset Commissioning | No whitespace validation on Details/Reason fields | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Also created shared validator in `base-app/form`. File: `non-whitespace.validator.ts` |

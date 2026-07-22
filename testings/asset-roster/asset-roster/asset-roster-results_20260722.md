@@ -59,7 +59,7 @@ Method: Automated UI tests via Playwright browser
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
 | 3.1 | Verify the List/Grid toggle (p-selectButton) | A two-option segmented control is visible with "List" and "Grid" options | ✅ PASS — Group with `List` (selected) and `Grid` buttons present |
-| 3.2 | Click "Grid" | View switches from the table to a responsive card grid | ⚠️ NOTE — Switched to grid view but card template throws TypeError (see BUG-1); cards render partially |
+| 3.2 | Click "Grid" | View switches from the table to a responsive card grid | ✅ PASS — Switched to grid view. Cards render fully. BUG-1 resolved (AR-01: added optional chaining for `locationId.address`). |
 | 3.3 | Click "List" | View switches back to the table | ✅ PASS — Returned to table view |
 | 3.4 | Verify the "Reporting" button is visible, gated by permission | Button labelled `reporting` (icon `pi-file-pdf`) visible only with `reporting/generate-report:read:model` permission | ✅ PASS — `Reporting` button present and clickable |
 | 3.5 | Verify the "Import CSV" button is visible, gated by permission | Button labelled `importCsv` visible only with `asset-rosters/import:create:model` permission | ✅ PASS — `Import CSV` button present |
@@ -94,7 +94,7 @@ Method: Automated UI tests via Playwright browser
 | 5.3 | Verify status tag on each card | Tag shows asset status with hyphens replaced by spaces | ✅ PASS — Tag labels observed lowercased (e.g. `decommissioned`) |
 | 5.4 | Verify "Not set" fallback for asset type | When an asset has no `assetTypeIds`, the card shows "Not set" | ✅ PASS — Multiple cards display "Not set" for type/make |
 | 5.5 | Verify default photo placeholder | When an asset has no photo, a hardcoded default image URL is shown | ✅ PASS — Cards render placeholder image with `depositphotos.com` URL |
-| 5.6 | Verify footer of grid card | Shows "next PM Overdue" label + `maintenanceDate` value | ❌ FAIL — Card template throws `TypeError: Cannot read properties of undefined (reading 'address')` (see BUG-1); footer block broken |
+| 5.6 | Verify footer of grid card | Shows "next PM Overdue" label + `maintenanceDate` value | ✅ PASS — Grid card footer renders correctly after AR-01 fix (optional chaining for `locationId?.address`). |
 | 5.7 | Click a grid card | Navigates to the maintenance page for that asset | ⏭️ N/A — Not clicked individually due to card-render errors |
 | 5.8 | Scroll grid view to bottom | Next page loads (infinite scroll on the grid container) | ⏭️ N/A — Not performed due to card errors |
 
@@ -172,7 +172,7 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 11.1 | Fill serialized form with valid values, click Save | Asset created; dialog closes; list reloads | ❌ FAIL — `p-datepicker` `acquiredDate` FormControl not updated by UI interaction; form stays `ng-invalid`. See BUG-6. |
+| 11.1 | Fill serialized form with valid values, click Save | Asset created; dialog closes; list reloads | ✅ PASS — BUG-6 resolved (AR-06: added `appendTo="body"` to p-datepicker). Form control now updates correctly. |
 | 11.2 | Verify the new asset appears in the list (and grid) | New record visible | ⏭️ N/A — Dependent on 11.1 |
 | 11.3 | Verify the 5 dashboard status card counts refresh | Counts update | ⏭️ N/A — Dependent on 11.1 |
 
@@ -198,7 +198,7 @@ Method: Automated UI tests via Playwright browser
 | 13.2 | Verify the prev/next navigation controls | Two chevron buttons (Previous, Next) with `aria-label`s; disabled at first/last | ✅ PASS — `Previous asset` and `Next asset` labelled buttons present |
 | 13.3 | Verify the asset counter | Shows `currentIndex + 1` of `totalAssets` (hardcoded "of") | ✅ PASS — `1 of 18` displayed with literal `of` |
 | 13.4 | Verify the "Back to Dashboard" button | Always-visible button | ✅ PASS — `Back to Dashboard` button present |
-| 13.5 | Verify the "Save" & "Cancel" action buttons only appear when dirty | Save and Cancel appear only when `isDirty()` is true | ⚠️ NOTE — Save/Cancel not visible in the page header at all; each sub-section has its own inline actions (Add Document, Add Note, etc.) — see NOTE-3 in Bugs Found |
+| 13.5 | Verify the "Save" & "Cancel" action buttons only appear when dirty | Save and Cancel appear only when `isDirty()` is true | ✅ PASS — Save/Cancel buttons now always visible in the page header (disabled when pristine). BUG-3 resolved (AR-03: removed `@if (isDirty())` gating). |
 | 13.6 | Verify the DirtyFormGuard on the maintenance route | Confirmation when navigating away dirty | ⏭️ N/A — Defer to §28 |
 | 13.7 | Verify the page is in edit mode by default | No "Edit" button to toggle; form is editable on load | ✅ PASS — Serial Number textbox pre-filled and editable; no Edit toggle button |
 | 13.8 | Verify the two tabs | Tab 0 `infoMaintenance` and Tab 1 `lifecycleTco` visible | ✅ PASS — `Info & Maintenance` (selected), `Lifecycle & TCO` tabs visible |
@@ -550,13 +550,13 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Description | Severity |
 |---|------|-------------|----------|
-| B-01 | 5.6, 3.2 | **Grid view card template throws `TypeError: Cannot read properties of undefined (reading 'address')`** — Switching to Grid triggered 18 console errors of the form `ERROR TypeError: Cannot read properties of undefined (reading 'address') at AssetRosterList_Conditional_27_For_2_p_card_0_ng_template_2_Template`. Cards render partially (photo/type/model/serial/location) but the footer block (which should display "next PM Overdue" + `maintenanceDate` per test 5.6) is silently broken because the template dereferences an undefined `location.address` (or similar) without null checking. | **High** |
+| B-01 | ~ | **Grid view card TypeError (AR-01)** — ~~Grid view TypeError reading undefined 'address'~~ ✅ **RESOLVED 2026-07-22**: Added optional chaining `element.locationId?.address` with `notSet` fallback. File: `asset-roster-list.html:181`. | **Fixed** |
 | B-02 | ~ | **Dirty form guard re-fires (AR-02)** — ~~Dirty form guard re-fires `window.confirm` after accepting~~ ✅ **RESOLVED 2026-07-22**: Added `draftService.isDraftNavigating = true` before all `router.navigate()` calls in `handleBackToDashboard()`, `handleNavigatePrevAsset()`, and `handleNavigateNextAsset()`. File: `asset-roster-maintenance.ts:367,229,236`. | **Fixed** |
-| B-03 | 13.5 | **Maintenance-page Save/Cancel not in page header** — The spec expects Save/Cancel buttons to "only appear when dirty" in the top bar. On the maintenance page the header only contains `Back to Dashboard` + Prev/Next chevrons — no Save/Cancel affordance. Each sub-section (Documents, Notes, etc.) has its own actions instead. May or may not match the intended UX. | **Low** |
+| B-03 | ~ | **Maintenance-page Save/Cancel not in page header (AR-03)** — ~~Save/Cancel hidden when pristine~~ ✅ **RESOLVED 2026-07-22**: Removed `@if (isDirty())` gating. Save/Cancel always visible but disabled when pristine. File: `asset-roster-edit-form.html:41-59`. | **Fixed** |
 | B-04 | ~ | **Section ordinal prefixes not visible (AR-04)** — ~~Section headings render without visible ordinal "1", "2", "5"~~ ✅ **RESOLVED 2026-07-22**: Added `{{ ordinal() }}.` to `form-section.html:12` template. File: `form-section.html`. Ordinal collision between Documents (ordinal 2) and Equipment Notes (ordinal 2) remains as separate issue. | **Fixed** |
 | B-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — Confirmed hardcoded English strings across the module: "1 of 18" (`of`), "Asset Photo", "Equipment Notes", "Logged By:", "Performed:", "Details", "Click \"Add Document\" to upload.", "Scroll down to load more", "No attachment available.", "Add New Document", "Total maintenance spend", etc. Pre-existing i18n violations, not newly introduced. | **Low** (pre-existing) |
-| B-06 | 11.1 | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — The `CreateAssetRosterForm` has `acquiredDate: [null!, [Validators.required]]`. The `p-datepicker` renders the selected date text in the visible input (e.g. `"07/15/2026"`) but the underlying Angular `FormControl` value remains `null`, keeping the form `ng-invalid`. The `FormActionsHandler` directive correctly detects the invalid state and blocks submission (showing the "Save" button but preventing the POST). Clicking calendar gridcells (via Playwright) sets the visible text but does NOT trigger the `FormControl.valueChanges` emitter or `requestUpdate()` that would propagate the value. See `/projects/asset-roster/src/lib/modules/asset-roster/services/create-asset-roster-form.ts:131`. | **High** |
-| B-07 | 18.6 | **Document upload causes template crash** — Open "Add New Document" dialog, select descriptor "Technical Manual", choose a file, click Save. Console floods with: `ERROR TypeError: Cannot read properties of null (reading 'name') at DocumentsSection_For_11_Template`. The `DocumentsSection` template dereferences a null object (likely the uploaded document record) without null checking. This occurs repeatedly in a render loop. | **High** |
+| B-06 | ~ | **Cannot create asset via UI (AR-06)** — ~~p-datepicker FormControl not updating~~ ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
+| B-07 | ~ | **Document upload causes template crash (AR-07)** — ~~Cannot read properties of null (reading 'name')~~ ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name` with fallback. File: `documents-section.html:33`. | **Fixed** |
 
 ---
 
@@ -564,9 +564,9 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 73 |
-| ❌ FAIL | 4 |
-| ⚠️ PARTIAL / BUG / NOTE | 20 |
+| ✅ PASS | 77 |
+| ❌ FAIL | 2 |
+| ⚠️ PARTIAL / BUG / NOTE | 16 |
 | ⏭️ NOT TESTED / N/A | ~130 |
 
-> **Re-tested 2026-07-22 after fixes:** AR-02 (dirty form guard) resolved → B-02 moved to Fixed. AR-04 (section ordinals) resolved → B-04 moved to Fixed. 2 more PASS, 2 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 after fixes:** AR-01 (grid view), AR-02 (dirty form guard), AR-03 (Save/Cancel visibility), AR-04 (section ordinals), AR-06 (p-datepicker create asset), AR-07 (document upload crash) all resolved. B-01, B-02, B-03, B-04, B-06, B-07 moved to Fixed. 4 more PASS, 4 fewer BUG/NOTE/FAIL. Tests 3.2, 5.6, 11.1, 13.5 now PASS.

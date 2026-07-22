@@ -178,7 +178,7 @@
                 {{ 'location' | translate: {} : 'asset-roster' }}
               </span>
               <span class="text-right truncate">
-                {{ element.locationId.address }}
+                {{ element.locationId?.address || ('notSet' | translate: {} : 'asset-roster') }}
               </span>
             </div>
           </div>

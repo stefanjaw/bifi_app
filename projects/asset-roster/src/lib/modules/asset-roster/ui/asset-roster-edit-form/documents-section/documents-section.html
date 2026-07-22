@@ -30,7 +30,7 @@
         @for (documentControl of attachmentsControl.controls; track $index) {
           @let document = documentControl.getRawValue();
           <div class="flex items-center gap-2 rounded border border-gray-200 p-2">
-            <p class="flex-1 truncate">{{ document.file.name }}</p>
+            <p class="flex-1 truncate">{{ document.file?.name || ('notSet' | translate: {} : 'asset-roster') }}</p>
 
             <div class="flex items-center gap-2">
               <p-button
