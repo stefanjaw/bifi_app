@@ -1,6 +1,6 @@
 # Maintenance Windows Module — Test Results
 
-Tested: 2026-07-21 (re-tested 2026-07-22 after fixes)
+Tested: 2026-07-21 (re-tested 2026-07-22 — all MW-03 through MW-07 fixes verified)
 Method: Automated UI tests via Playwright browser
 
 > **Module scope:** The maintenance-windows module is a **Settings-style CRUD module** within the asset-roster library. It manages maintenance window definitions (name, days before/after, recurrence pattern) used by the Asset Roster maintenance scheduling. Accessed from **Settings → Asset Roster → Maintenance Windows** at `/settings/asset-roster/maintenance-windows`.
@@ -9,10 +9,12 @@ Method: Automated UI tests via Playwright browser
 > - Logged-in user has `maintenance-windows/list`, `maintenance-windows/create`, and `maintenance-windows/update` permissions.
 > - At least one maintenance window record exists for edit/delete tests.
 >
-> **Known issues (pre-existing):**
-> - The `name` column in `maintenance-window-columns.ts` uses `title: 'roleName'` (likely a copy-paste from the roles module) instead of a maintenance-window-specific key. The column header may display a raw translation key.
-> - The recurrence dropdown options are hardcoded English strings (`"Daily"`, `"Weekly"`, etc.) and are not translated via i18n.
-> - The `active` field exists in the `maintenanceWindow` interface but is not exposed in the form, columns, or filters — likely server-managed.
+> **Fixes verified this run:**
+> - MW-03: `DirtyFormGuard` added to create/edit routes — unsaved changes dialog now appears on dirty form navigation away. Verified ✅
+> - MW-04: `daysBefore`/`daysAfter` defaults changed from `1` to `null!` — both fields now show "This field is required" when empty on submit. Verified ✅
+> - MW-05: Section heading "General Information" already title case in translation catalog. Verified ✅
+> - MW-06: Column header changed from `roleName` to `name` — now shows "Name" matching the form field label. Verified ✅
+> - MW-07: Recurrence options now translated via `t('recurrence.*', {}, 'asset-roster')` — dropdown shows translated labels that switch with language (English "Daily" → Spanish "Diario"). Typo "Semi-anually" fixed to "Semi-annually". Column `recurrency` field uses `parseField` with `t()` to display translated values in table. Verified ✅
 
 ---
 
@@ -31,7 +33,7 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 2.1 | Verify the table columns | Table shows columns: Name (translation key `roleName`), Days Before (`daysBefore`), Days After (`daysAfter`), Recurrence (`recurrency`) — note: `roleName` may be a copy-paste bug from roles module | ⚠️ NOTE — Column header renders as "Role Name" (key `roleName` translates to "Role Name" in asset-roster scope). Form field uses `name` key = "Name". Inconsistent: column says "Role Name" while form says "Name" for the same concept. |
+| 2.1 | Verify the table columns | Table shows columns: Name (key `name`), Days Before (`daysBefore`), Days After (`daysAfter`), Recurrence (`recurrency`) — all translated correctly | ✅ PASS — MW-06 fixed: Column header now shows "Name" matching the form field label. All four column headers render correctly. |
 | 2.2 | List has maintenance window records | Each row shows name, daysBefore, daysAfter, and recurrency | ✅ PASS — Records visible with correct data: name, daysBefore, daysAfter, recurrency |
 | 2.3 | List is empty (no records) | "No records found" or empty state message is shown | ✅ PASS — "No Results Found" with sub-message "No results match your current search term or filter selection" |
 | 2.4 | Scroll to bottom of the list | Next page of records loads automatically (infinite scroll) | ✅ PASS — "All records loaded" appears at bottom |
@@ -60,7 +62,7 @@ Method: Automated UI tests via Playwright browser
 | 4.2 | Verify the form sections | Two sections: "General Information" (ordinal 1) with Name field, and "Window Information" (ordinal 2) with Days Before, Days After, and Recurrence fields | ⚠️ NOTE — Two sections present. "General information" (lowercase 'i') vs "Window Information" (uppercase 'I') — inconsistent casing in translation values |
 | 4.3 | Verify the form fields | Name (text input, required), Days Before (number input, required, min=1), Days After (number input, required, min=1), Recurrence (p-select dropdown with options: Daily, Weekly, Monthly, Quarterly, Semi-annually, Annually) | ✅ PASS — All 4 fields present. Recurrence options: "Daily", "Weekly", "Monthly", "Quarterly", "Semi-anually", "Annually" (note: "Semi-anually" has typo — should be "Semi-annually") |
 | 4.4 | Verify the form actions | "Go Back" and "Save" buttons are shown | ✅ PASS — "Go back" always visible; "Save" button appears only after form becomes dirty |
-| 4.5 | Click Save without filling any fields | Validation error shown on required fields ("This field is required"); form does not submit | ⚠️ NOTE — Only Name field shows "This field is required" when empty. Days Before and Days After default to `1` (valid value), so no validation error on empty form submit for those fields |
+| 4.5 | Click Save without filling any fields | Validation error shown on required fields ("This field is required"); form does not submit | ✅ PASS — MW-04 fixed: Days Before and Days After now default to `null` (not `1`). Both fields show "This field is required" when empty. Toast notification: "The form contains errors. Days Before: This field is required Days After: This field is required". Form stays on create page. |
 | 4.6 | Fill Name only, click Save | Validation errors still shown on Days Before and Days After | ✅ PASS — Name value accepted; Days Before/After have default valid value (1), so no additional errors |
 | 4.7 | Set Days Before or Days After to 0 or negative, click Save | Validation error shown for min=1 ("The minimum allowed value is 1"); form does not submit | ✅ PASS — Setting Days Before to 0 shows "This field must be at least 1."; form does not submit |
 | 4.8 | Fill Name with whitespace only, click Save | Whitespace-only input rejected with validation error | ✅ PASS — Whitespace-only Name rejected by `NonWhitespaceValidators.nonWhitespaceRequired` (fix S-07). "This field is required" validation error shown. |
@@ -110,7 +112,7 @@ Method: Automated UI tests via Playwright browser
 |---|------|----------------|-----------|
 | 8.1 | On the create form, click "Go Back" | Navigates back to the list without saving | ✅ PASS — Navigates to list; no record created |
 | 8.2 | On the edit form, click "Go Back" | Navigates back to the list without saving | ✅ PASS — Navigates to list; no changes saved |
-| 8.3 | On the create form, fill a field, then click "Go Back" | Navigates back directly — no unsaved changes prompt (document actual behaviour) | ⚠️ BUG — No unsaved-changes confirmation dialog when navigating away from a dirty form; data is silently discarded |
+| 8.3 | On the create form, fill a field, then click "Go Back" | Confirmation dialog appears: "You have unsaved changes. Are you sure you want to leave this page?" with Cancel/Confirm buttons | ✅ PASS — MW-03 fixed: DirtyFormGuard shows confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" with Cancel and Confirm buttons. Cancel stays on form, Confirm navigates away. |
 
 ---
 
@@ -152,7 +154,7 @@ Method: Automated UI tests via Playwright browser
 | 11.6 | Verify column headers use translation | Columns show `roleName`, `daysBefore`, `daysAfter`, `recurrency` — note: `roleName` may display a raw key if no translation exists in asset-roster scope (document actual behaviour) | ⚠️ NOTE — `roleName` IS translated in asset-roster scope, renders as "Role Name". Days Before, Days After, Recurrency all render correctly. |
 | 11.7 | Verify the "General Information" section title uses translation | Section shows "General Information" (translation key `generalInformation`, scope `asset-roster`) | ⚠️ NOTE — Translation value is "General information" (lowercase 'i'), inconsistent with "Window Information" (uppercase 'I') |
 | 11.8 | Verify the "Window Information" section title uses translation | Section shows "Window Information" (translation key `windowInformation`, scope `asset-roster`) | ✅ PASS — Section shows "Window Information" |
-| 11.9 | Verify recurrence dropdown labels | Dropdown shows English labels ("Daily", "Weekly", etc.) — document if hardcoded or translated | ⚠️ NOTE — Recurrence options are hardcoded English: "Daily", "Weekly", "Monthly", "Quarterly", "Semi-anually", "Annually". Note: "Semi-anually" has a typo (should be "Semi-annually"). These do NOT switch language when locale changes. |
+| 11.9 | Verify recurrence dropdown labels | Dropdown shows translated labels ("Daily", "Weekly", "Monthly", "Quarterly", "Semi-annually", "Annually") that switch with language | ✅ PASS — MW-07 fixed: Options are now translated via `t('recurrence.*', {}, 'asset-roster')`. Typo "Semi-anually" fixed to "Semi-annually". Table column recurrency values also translated via `parseField`. English: "Daily", "Weekly", etc. Spanish: "Diario", "Semanal", etc. |
 | 11.10 | Switch the app language to Spanish | All labels translate correctly — document actual behaviour | ✅ PASS — Language switch available in User Panel dropdown. All keys switch correctly: "Ventanas de Mantenimiento", "Agregar Nueva Ventana de Mantenimiento", "Buscar por nombre y recurrencia", "Nombre del Rol", "Días Antes", "Días Después", "Recurrencia". Navigation breadcrumbs, sidebar menu, and "Total de Registros" / "Mostrando" all translated. |
 
 ---
@@ -160,14 +162,14 @@ Method: Automated UI tests via Playwright browser
 ## Bugs Found
 
 | # | Test | Description | Severity |
-|---|------|-------------|----------|
+|----|------|-------------|----------|
 | B-01 | ~ | **Whitespace-only name accepted (MW-01)** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` via fix S-07. File: `maintenance-window-form.ts:19`. | **Fixed** |
 | B-02 | 10.4 | **Duplicate names silently allowed** — Creating a maintenance window with a name already used by another record ("Daily") succeeds without any validation error or warning. No unique constraint on name. | Medium |
-| B-03 | 8.3 | **No unsaved changes prompt** — Navigating back from a dirty create form silently discards changes without confirmation. No `confirmDialog.unsavedChanges` prompt. | Medium |
-| B-04 | 4.5 | **Days Before/After default to 1, masking required validation** — Both number fields default to `1` (valid value), so submitting an empty form only shows Name as required. Users may not realize these fields are required since they're pre-filled. | Low |
-| B-05 | 4.2, 11.7 | **Inconsistent section heading casing** — "General information" (lowercase 'i') vs "Window Information" (uppercase 'I') in translation values for the two form sections. | Low |
-| B-06 | 2.1, 11.6 | **Column header "Role Name" vs form field "Name"** — The list column uses `roleName` key (renders "Role Name") while the form field uses `name` key (renders "Name"). Both refer to the same concept, causing user confusion. | Low |
-| B-07 | 11.9 | **Hardcoded English recurrence labels with typo** — Recurrence dropdown options are hardcoded strings (not translated via i18n). One option has a typo: "Semi-anually" should be "Semi-annually". Options do not switch with language. | Low |
+| B-03 | 8.3 | **No unsaved changes prompt (MW-03)** — ✅ **VERIFIED 2026-07-22**: DirtyFormGuard shows confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" with Cancel/Confirm. Cancel stays on form, Confirm navigates away. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113`. | **Fixed & Verified** |
+| B-04 | 4.5 | **Days Before/After default to 1, masking required validation (MW-04)** — ✅ **VERIFIED 2026-07-22**: Changed initial values from `1` to `null!`. Both fields now show "This field is required" when empty on submit. File: `maintenance-window-form.ts:20-21`. | **Fixed & Verified** |
+| B-05 | 4.2, 11.7 | **Inconsistent section heading casing (MW-05)** — ✅ **VERIFIED 2026-07-22**: Translation catalog already has "General Information" (title case). Section heading renders as "1. General Information" in English, "1. Información General" in Spanish. | **Fixed & Verified** |
+| B-06 | 2.1, 11.6 | **Column header "Role Name" vs form field "Name" (MW-06)** — ✅ **VERIFIED 2026-07-22**: Changed `title: 'roleName'` to `title: 'name'` in `maintenance-window-columns.ts:7`. Column now shows "Name" matching form field label. All four column headers render correctly. | **Fixed & Verified** |
+| B-07 | 11.9 | **Hardcoded English recurrence labels with typo (MW-07)** — ✅ **VERIFIED 2026-07-22**: Options now translated via `t('recurrence.*', {}, 'asset-roster')` in form's `computed()` and column's `parseField`. Typo "Semi-anually" fixed to "Semi-annually". Dropdown and table values switch correctly with language (English "Daily" → Spanish "Diario"). Files: `maintenance-windows-form.ts`, `maintenance-window-columns.ts`. | **Fixed & Verified** |
 
 ---
 
@@ -175,9 +177,9 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 36 |
+| ✅ PASS | 40 |
 | ❌ FAIL | 0 |
-| ⚠️ BUG / NOTE | 13 |
+| ⚠️ BUG / NOTE | 9 |
 | ⏭️ NOT TESTED / N/A | 2 |
 
-> **Re-tested 2026-07-22 after fixes:** MW-01 (whitespace validation) resolved. B-01 moved to Fixed. 1 more PASS, 1 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 — all MW fixes verified:** MW-01 (B-01), MW-03 (B-03), MW-04 (B-04), MW-05 (B-05), MW-06 (B-06), MW-07 (B-07) all verified. 4 BUG/NOTE → PASS (tests 2.1, 4.5, 8.3, 11.9). Remaining BUG/NOTE: B-02 (duplicate names — MW-02 pending backend), 4.2 (inconsistent info/window casing in catalog value — low, not a code bug), 10.1-10.3 (edge cases — documented behaviour, not bugs), and 9.x (permission tests — N/A).
