@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const FACILITIES_ROUTES: Routes = [
   {
@@ -17,6 +18,7 @@ export const FACILITIES_ROUTES: Routes = [
   {
     path: 'create',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/facilities-form/facilities-form').then(m => m.FacilitiesForm),
     data: { resource: 'facilities/create' },
@@ -24,6 +26,7 @@ export const FACILITIES_ROUTES: Routes = [
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/facilities-form/facilities-form').then(m => m.FacilitiesForm),
     data: { resource: 'facilities/update' },

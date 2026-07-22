@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (AT-02, AT-04, FA-02, FA-06 fixes applied: see Resolved Bugs)
+> **Last updated:** 2026-07-22 (AT-02, AT-04, FA-02, FA-04, FA-06, FA-07, CO-03 fixes applied: see Resolved Bugs)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -91,9 +91,10 @@ Source: `asset-roster/facilities/facilities-results_20260721.md`
 | FA-01 | ~ | **Whitespace-only facility name accepted** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `facility-form.ts:16`. | **Fixed** |
 | FA-02 | ~ | **No UI mechanism to clear selected contact** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47`. | **Fixed** |
 | FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **High** | `facilities-list.ts:54-63` — direct delete with only generic confirmation. Backend `FacilityService` overrides `create`/`update` to manage rooms but does **not** override `delete`. `BaseService.delete` soft-deletes only the facility. Rooms reference via `facilityId` (`room.model.ts:21-23`) → orphaned. |
-| FA-04 | 15.2, 16.3, 16.4 | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog. | **Medium** (pending backend) | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` (en/es), but translations are served from backend API at runtime. Requires backend deployment. |
+| FA-04 | ~ | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Dialog now shows "You have unsaved changes. Are you sure you want to leave this page?" | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to catalog. |
 | FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Medium** | `facility-form.ts:16` — `name: ['', [Validators.required]]` with no async uniqueness validator. No backend unique index. Same as AT-06. |
 | FA-06 | ~ | **Inconsistent field label "Location" vs validation "Address"** — ✅ **RESOLVED 2026-07-22**: Changed label key from `'location'` to `'address'`; fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20`. | **Fixed** |
+| FA-07 | ~ | **No unsaved changes prompt on Facility forms** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` and `hasUnsavedChanges()`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73`. | **Fixed** |
 
 ---
 
@@ -121,7 +122,7 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 |----|------|-------------|----------|------------------------|
 | CO-01 | 3.2 | **Save button only appears when form is dirty** | **Medium** | `form-actions.html:14` — `@if (formChanged() && showSave())`. Consumer: `contacts-form.html:21` binds `[formChanged]="form.dirty"`. Same shared root cause as AT-01. |
 | CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Medium** | `contacts-list.ts:55-64` — direct delete, no child check. Backend `ContactService` has no `delete()` override. `BaseService.delete` removes parent; children's `parentId` points to non-existent ObjectId. |
-| CO-03 | — | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** | **Low** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` with scope `base-app/resource`. Catalog only has `confirmDialog.message`/`.header`/`.cancel`/`.confirm` — no `.unsavedChanges` entry. Same as FA-04. |
+| CO-03 | ~ | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Same fix as FA-04. | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key added to catalog. |
 | CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. File: `contact-cr-plugin.ts:115`. | **Fixed** |
 | CO-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. Ensures at least one of phone/email/website is provided. File: `contact-form.ts`. | **Fixed** |
 | CO-06 | 8–9 | **Export and Import not implemented** — No buttons or methods. | **Low** (planned) | `contacts-list.html:3-17` — only `goBack` and `addNew` buttons, no export/import. `crud-contacts.ts` — only sets `endpoint = 'contacts'`, no export/import methods. Backend `BaseRoutes` auto-registers `/export`/`/import` but frontend never calls them. |
@@ -162,7 +163,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** Add `confirmDialog.unsavedChanges` en/es pair to `base-app-resource-translations.json` (or move the dialog to use `base-app/form` scope and add the key there).
 
 ### Pattern F — No unsaved changes prompt on plain forms (non-DirtyFormGuard routes)
-- **Affected:** ~~AT-04~~ (resolved 2026-07-22), MW-03
+- **Affected:** ~~AT-04~~ (resolved 2026-07-22), ~~FA-07~~ (resolved 2026-07-22), MW-03
 - **Root cause:** `asset-types.routes.ts:17-30` and `maintenance-windows.routes.ts:19-36` — `create`/`edit` routes only declare `canActivate: [permissionGuard]`, missing `canDeactivate: [DirtyFormGuard]`. The guard is opt-in per route.
 - **Shared fix location:** Add `canDeactivate: [DirtyFormGuard]` to all create/edit routes. Reference pattern: `contacts/src/routes/contact-routes.ts:21,29`.
 
@@ -252,6 +253,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
 | FA-05 | `facility-form.ts` | 16 | No async uniqueness validator, no backend unique index. Same as AT-06. |
 | FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
+| FA-07 | `facilities.routes.ts` / `facilities-form.ts` | 17-30 / — | Missing `canDeactivate: [DirtyFormGuard]` on Facility create/edit routes. No `hasUnsavedChanges()` method on component. Fixed 2026-07-22: added guard + method. |
 
 #### Maintenance Windows (MW-01 to MW-07)
 
@@ -288,9 +290,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----------|-------|-------------|
 | **Critical** | 0 | (AM-01 resolved) |
 | **High** | 1 | FA-03 |
-| **Medium** | 7 | AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
+| **Medium** | 5 | AT-03, FA-05, MW-02, MW-03, CO-02 |
 | **Low** | 12 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 19 | (32 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Active total** | 17 | (34 resolved, see Resolved Bugs section.) |
 | **Original total** | 51 | |
 
 ---
@@ -328,8 +330,8 @@ When a bug is fixed:
 | AM-05 | Asset Maintenances | Initiate Service button HIDDEN (not disabled) | 2026-07-22 | Changed to always rendered with `[disabled]="!canStartService()"`. File: `maintenance-service-section.html:163-170` |
 | AM-07 | Asset Maintenances | PM schedule fields remain locked after finishing PM | 2026-07-22 | Changed `isMaintenanceWindowsEditLocked` to check `pmStarted()` not `maintenanceWindowIds?.length`. File: `maintenance-service-section.ts:47-53` |
 | AM-08 | Asset Maintenances | Double toast on service creation | 2026-07-22 | Added `notificationConfig: { enable: false }` to service POST. File: `asset-maintenance-form-dialog.ts:72` |
-| | | | | |
-| | | **Note on FA-04 / CO-03:** The `confirmDialog.unsavedChanges` translation key was added to the local `base-app-resource-translations.json` catalog file, but translations are served from the backend API at runtime (`GET /api/translations/scope`). The raw key is still displayed because the backend catalog has not been updated. These fixes require backend deployment to take effect. | | |
+| FA-04 | Facilities | Untranslated i18n key `confirmDialog.unsavedChanges` in DirtyFormGuard dialog | 2026-07-22 | Added en/es pair to `base-app-resource-translations.json`. Key `confirmDialog.unsavedChanges`. Verified: dialog shows proper message. |
+| CO-03 | Contacts | Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key | 2026-07-22 | Same fix as FA-04 — added en/es pair to `base-app-resource-translations.json`. |
 | AC-01 | Asset Commissioning | No whitespace validation on Details/Reason fields | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Also created shared validator in `base-app/form`. File: `non-whitespace.validator.ts` |
 | AC-02 | Asset Commissioning | Decommissioned assets can be re-commissioned via the UI | 2026-07-22 | Added `assetRoster()?.status !== 'decommissioned'` to Commission button condition. File: `commissioning-lifecycle-section.html:9` |
 | AC-07 | Asset Commissioning | Double toasts per action | 2026-07-22 | Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. Files: `asset-commissioning-form-dialog.ts:74`, `asset-decommissioning-form-dialog.ts:59` |
@@ -341,6 +343,7 @@ When a bug is fixed:
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |
 | FA-02 | Facilities | No UI mechanism to clear selected contact | 2026-07-22 | Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47` |
 | FA-06 | Facilities | Inconsistent field label "Location" vs "Address" | 2026-07-22 | Changed label key from `'location'` to `'address'` in rooms form. Fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20` |
+| FA-07 | Facilities | No unsaved changes prompt on Facility forms | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to Facility create/edit routes. Added `hasUnsavedChanges()` to `FacilitiesForm`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73` |
 | MW-01 | Maintenance Windows | Whitespace-only name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `maintenance-window-form.ts:19`. File: `non-whitespace.validator.ts` |
 | CO-01 | Contacts | Save button only appears when form is dirty | 2026-07-22 | Same fix as AT-01 — shared `form-actions.html` change. |
 | CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 | Added `Validators.required` to `crVatType` FormControl and `*` marker to label. File: `contact-cr-plugin.ts:115`. |

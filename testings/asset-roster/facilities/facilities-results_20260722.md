@@ -198,10 +198,10 @@ Method: Automated UI tests via Playwright browser
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
 | 15.1 | On the Room create form, fill some fields but do not save | The form becomes dirty | ✅ PASS — Form becomes dirty after typing |
-| 15.2 | Click "Go Back" or navigate away (e.g. click Settings in sidebar) | A confirmation dialog appears (translation key `confirmDialog.unsavedChanges`) with "Discard" and "Cancel" options (guarded by `DirtyFormGuard`) | ⚠️ BUG — Dialog appears but shows untranslated i18n key `confirmDialog.unsavedChanges` instead of proper message. **Note: key has been added to `base-app-resource-translations.json` (en/es), but requires backend catalog deployment to take effect.** |
+| 15.2 | Click "Go Back" or navigate away (e.g. click Settings in sidebar) | A confirmation dialog appears with message "You have unsaved changes. Are you sure you want to leave this page?" and Cancel/Confirm buttons | ✅ PASS — Dialog shows proper translated message "You have unsaved changes. Are you sure you want to leave this page?" Fix FA-04: added `confirmDialog.unsavedChanges` key to `base-app-resource-translations.json`. |
 | 15.3 | Click "Discard" in the confirmation dialog | Navigates away; form data is discarded | ✅ PASS — Clicking "Discard" navigates to list; data discarded |
 | 15.4 | Click "Cancel" in the confirmation dialog | Stays on the form; data is preserved | ✅ PASS — Stays on form with data preserved |
-| 15.5 | On the Facility create form (no DirtyFormGuard), fill fields and navigate away | No unsaved changes dialog — navigates directly away, discarding changes (document actual behaviour) | ✅ PASS — No confirmation dialog; navigates directly away |
+| 15.5 | On the Facility create form, fill fields and navigate away | Unsaved changes confirmation dialog appears | ✅ PASS — "Confirmation" dialog shown with "You have unsaved changes. Are you sure you want to leave this page?" Fix FA-07: added `canDeactivate: [DirtyFormGuard]` to Facility routes. |
 
 ---
 
@@ -211,8 +211,8 @@ Method: Automated UI tests via Playwright browser
 |---|------|----------------|-----------|
 | 16.1 | On the Facility create form, click "Go Back" | Navigates back to the Facilities list without saving | ✅ PASS — Navigates to facilities list; no record created |
 | 16.2 | On the Facility edit form, click "Go Back" | Navigates back to the Facilities list without saving | ✅ PASS — Navigates to facilities list; no changes saved |
-| 16.3 | On the Room create form, click "Go Back" | Navigates back to the Rooms list — unsaved changes prompt appears if form is dirty | ✅ PASS — Confirmation dialog shown (key pending backend deployment) |
-| 16.4 | On the Room edit form, click "Go Back" | Navigates back to the Rooms list — unsaved changes prompt appears if form is dirty | ✅ PASS — Confirmation dialog shown (key pending backend deployment) |
+| 16.3 | On the Room create form, click "Go Back" | Navigates back to the Rooms list — unsaved changes prompt appears if form is dirty | ✅ PASS — Confirmation dialog shows proper translated message. Fix FA-04. |
+| 16.4 | On the Room edit form, click "Go Back" | Navigates back to the Rooms list — unsaved changes prompt appears if form is dirty | ✅ PASS — Confirmation dialog shows proper translated message. Fix FA-04. |
 
 ---
 
@@ -274,9 +274,10 @@ Method: Automated UI tests via Playwright browser
 | B-01 | ~ | **Whitespace-only facility name accepted (FA-01)** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` via fix S-07. File: `facility-form.ts:16`. | **Fixed** |
 | B-02 | ~ | **No UI mechanism to clear selected contact (FA-02)** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select in `facilities-form.html:47`. Clear icon (×) now visible when a contact is selected. | **Fixed** |
 | B-03 | 7.3 | **Facility with rooms deleted without warning** — Deleting "pedro" (which had 1 room "Room") succeeded without any warning about related rooms. The room becomes orphaned — still appears in the rooms list with a stale facility reference. | High |
-| B-04 | 15.2, 16.3, 16.4 | **Untranslated i18n key in DirtyFormGuard dialog** — The unsaved changes confirmation dialog shows the raw translation key `confirmDialog.unsavedChanges` instead of a proper message. Buttons "Discard" and "Cancel" work correctly. **Note: key has been added to `base-app-resource-translations.json` (en/es), but requires backend catalog deployment to take effect.** | **Fixed** (pending backend deployment) |
+| B-04 | ~ | **Untranslated i18n key in DirtyFormGuard dialog (FA-04)** — ✅ **RESOLVED 2026-07-22**: Added `confirmDialog.unsavedChanges` en/es pair to `base-app-resource-translations.json`. Dialog now shows "You have unsaved changes. Are you sure you want to leave this page?" Verified via browser test. | **Fixed** |
 | B-05 | 18.6 | **Duplicate facility names silently allowed** — Creating a facility with a name already used by another record succeeds without any validation error or warning. No unique constraint on facility name. | Medium |
 | B-06 | ~ | **Inconsistent field label vs validation message (FA-06)** — ✅ **RESOLVED 2026-07-22**: Changed label translation key from `'location'` to `'address'` in `rooms-form.html:52`. Column type also fixed from `'number'` to `'text'` in `room-columns.ts:20`. | **Fixed** |
+| B-07 | ~ | **No unsaved changes prompt on Facility forms (FA-07)** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` and `hasUnsavedChanges()` to Facility create/edit routes and form. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73`. | **Fixed** |
 
 ---
 
@@ -284,9 +285,9 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 60 |
+| ✅ PASS | 62 |
 | ❌ FAIL | 0 |
-| ⚠️ BUG / NOTE | 7 |
+| ⚠️ BUG / NOTE | 5 |
 | ⏭️ NOT TESTED / N/A | 17 |
 
-> **Re-tested 2026-07-22 after fixes:** FA-01 (whitespace validation), FA-02 (showClear on contact select), FA-06 (Location vs Address label) resolved. B-01, B-02, B-06 moved to Fixed. B-04 `confirmDialog.unsavedChanges` key added to catalog (pending backend deployment). 4 more PASS, 4 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 after fixes:** FA-01 (whitespace validation), FA-02 (showClear on contact select), FA-04 (untranslated key), FA-06 (Location vs Address label), FA-07 (Facility DirtyFormGuard) resolved. B-01, B-02, B-04, B-06, B-07 moved to Fixed. 6 more PASS, 6 fewer BUG/NOTE.

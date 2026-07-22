@@ -69,6 +69,10 @@ export class FacilitiesForm {
   error = this.facilityResource.error;
   isSubmitLoading = signal<boolean>(false);
 
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
+  }
+
   constructor() {
     effect(() => {
       const facility = this.facility();
