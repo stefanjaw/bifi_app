@@ -17,7 +17,7 @@ export const roomColumns: tableColumn<room>[] = [
   {
     field: 'address',
     title: 'address',
-    type: 'number',
+    type: 'text',
     sortable: true,
   },
   {

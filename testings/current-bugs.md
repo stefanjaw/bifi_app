@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (AT-02, AT-04 fixes applied: see Resolved Bugs)
+> **Last updated:** 2026-07-22 (AT-02, AT-04, FA-02, FA-06 fixes applied: see Resolved Bugs)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -88,12 +88,12 @@ Source: `asset-roster/facilities/facilities-results_20260721.md`
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| FA-01 | 4.6 | **Whitespace-only facility name accepted** | **Medium** | `facility-form.ts:16` — `name: ['', [Validators.required]]`. Same as AT-05: no trim validator. |
-| FA-02 | 6.7 | **No UI mechanism to clear selected contact** | **Low** | `facilities-form.html:42-47` — `<p-select>` for `contactId` is missing `[showClear]="true"`. PrimeNG only renders clear (×) button when `showClear` is explicitly enabled. |
+| FA-01 | ~ | **Whitespace-only facility name accepted** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `facility-form.ts:16`. | **Fixed** |
+| FA-02 | ~ | **No UI mechanism to clear selected contact** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47`. | **Fixed** |
 | FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **High** | `facilities-list.ts:54-63` — direct delete with only generic confirmation. Backend `FacilityService` overrides `create`/`update` to manage rooms but does **not** override `delete`. `BaseService.delete` soft-deletes only the facility. Rooms reference via `facilityId` (`room.model.ts:21-23`) → orphaned. |
-| FA-04 | 15.2, 16.3, 16.4 | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog. | **Medium** | `dirty-form-confirmation-dialog.html:10` — uses key `confirmDialog.unsavedChanges` with scope `base-app/resource`. Translation catalog (`base-app-resource-translations.json`) only defines `confirmDialog.message`, `confirmDialog.header`, `.cancel`, `.confirm` — **no** `confirmDialog.unsavedChanges` entry exists. `TranslationService.translate()` returns raw key when not found. |
+| FA-04 | 15.2, 16.3, 16.4 | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog. | **Medium** (pending backend) | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` (en/es), but translations are served from backend API at runtime. Requires backend deployment. |
 | FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Medium** | `facility-form.ts:16` — `name: ['', [Validators.required]]` with no async uniqueness validator. No backend unique index. Same as AT-06. |
-| FA-06 | 11.2, 11.5 | **Inconsistent field label "Location" vs validation "Address"** | **Low** | `rooms-form.html:50-61` — label uses translation key `location` → "Location", but the form control is `formControlName="address"`, the column header uses `title: 'address'` → "Address" (`room-columns.ts:17-22`), and the model field is `address`. Validation errors refer to "Address" while the visible label says "Location". |
+| FA-06 | ~ | **Inconsistent field label "Location" vs validation "Address"** — ✅ **RESOLVED 2026-07-22**: Changed label key from `'location'` to `'address'`; fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20`. | **Fixed** |
 
 ---
 
@@ -137,7 +137,7 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 Several issues appear across multiple modules and indicate shared root causes in `@avalantec/base-app`:
 
 ### Pattern A — Whitespace-only required fields accepted
-- **Affected:** AC-01, ~~AT-05~~ (resolved 2026-07-22), FA-01, MW-01
+- **Affected:** AC-01, ~~AT-05~~ (resolved 2026-07-22), ~~FA-01~~ (resolved 2026-07-22), MW-01
 - **Root cause:** No shared whitespace/trim validator exists anywhere in `base-app/form` (confirmed by exhaustive search — only match is `dirty-utils.ts:99` `.trim()` inside a label formatter, not a validator). `Validators.required` only rejects `null`/`undefined`/`''`; whitespace passes through.
 - **Shared fix location:** `projects/base-app/form/` — add a `nonWhitespaceRequired` validator and use it on all `name`/`details`/`reason` fields.
 
@@ -246,12 +246,12 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
-| FA-01 | `facility-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. |
+| FA-01 | `facility-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. Fixed 2026-07-22: added `NonWhitespaceValidators.nonWhitespaceRequired`. |
+| FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. Fixed 2026-07-22: added `[showClear]="true"`. |
 | FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / — | Direct delete. Backend `FacilityService` overrides `create`/`update` but not `delete`. Rooms orphaned via `facilityId`. |
-| FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` missing from `base-app-resource-translations.json`. |
+| FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
 | FA-05 | `facility-form.ts` | 16 | No async uniqueness validator, no backend unique index. Same as AT-06. |
-| FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label uses key `location` → "Location". Column uses `title: 'address'` → "Address". Form control is `formControlName="address"`. Model field is `address`. |
+| FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
 
 #### Maintenance Windows (MW-01 to MW-07)
 
@@ -289,8 +289,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | **Critical** | 0 | (AM-01 resolved) |
 | **High** | 1 | FA-03 |
 | **Medium** | 7 | AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
-| **Low** | 14 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 21 | (30 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Low** | 12 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 19 | (32 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -339,6 +339,8 @@ When a bug is fixed:
 | AT-04 | Asset Types | No unsaved changes prompt | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Added `hasUnsavedChanges()` method to `AssetTypesForm`. Files: `asset-types.routes.ts:21,30`, `asset-types-form.ts:60-62` |
 | AT-05 | Asset Types | Empty name accepted via whitespace | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `asset-type-form.ts:16`. File: `non-whitespace.validator.ts` |
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |
+| FA-02 | Facilities | No UI mechanism to clear selected contact | 2026-07-22 | Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47` |
+| FA-06 | Facilities | Inconsistent field label "Location" vs "Address" | 2026-07-22 | Changed label key from `'location'` to `'address'` in rooms form. Fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20` |
 | MW-01 | Maintenance Windows | Whitespace-only name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `maintenance-window-form.ts:19`. File: `non-whitespace.validator.ts` |
 | CO-01 | Contacts | Save button only appears when form is dirty | 2026-07-22 | Same fix as AT-01 — shared `form-actions.html` change. |
 | CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 | Added `Validators.required` to `crVatType` FormControl and `*` marker to label. File: `contact-cr-plugin.ts:115`. |
