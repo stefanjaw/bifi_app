@@ -8,7 +8,7 @@ import {
   viewChild,
   input,
 } from '@angular/core';
-import { DirtyComponent, DraftService } from '@avalantec/base-app/form';
+import { DirtyComponent } from '@avalantec/base-app/form';
 import { Router } from '@angular/router';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
 import { UpdateAssetRosterForm } from '../../services/update-asset-roster-form';
@@ -74,7 +74,6 @@ export class AssetRosterMaintenance implements DirtyComponent {
   private fileResolverService = inject(FileResolver);
   private filterManager = inject(FilterManager);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
-  private draftService = inject(DraftService);
 
   // Coming in route as param
   id = input.required<string>();
@@ -224,16 +223,12 @@ export class AssetRosterMaintenance implements DirtyComponent {
   handleNavigatePrevAsset() {
     const id = this.prevAssetId();
     if (!id) return;
-    if (!this.confirmDiscardUnsavedChanges()) return;
-    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
   }
 
   handleNavigateNextAsset() {
     const id = this.nextAssetId();
     if (!id) return;
-    if (!this.confirmDiscardUnsavedChanges()) return;
-    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
   }
 
@@ -365,31 +360,11 @@ export class AssetRosterMaintenance implements DirtyComponent {
   }
 
   handleBackToDashboard() {
-    if (!this.confirmDiscardUnsavedChanges()) return;
-    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'list']);
   }
 
-  /**
-   * Returns true when navigation away from the current asset should proceed.
-   * Blocks while a save is in flight (the asset reload + toast would land on
-   * the new asset and confuse the user). Otherwise prompts the user to
-   * confirm discarding any unsaved edits.
-   */
-  private confirmDiscardUnsavedChanges(): boolean {
-    if (this.submitLoading()) {
-      this.toastManager.showInfo('Please wait — your changes are still being saved.');
-      return false;
-    }
-    if (!this.hasUnsavedChanges()) return true;
-    if (this.draftService.isDraftNavigating) return true;
-    return window.confirm(
-      'You have unsaved changes on this asset. Leaving will discard them. Continue?'
-    );
-  }
-
   hasUnsavedChanges(): boolean {
-    return this.formService.form.dirty;
+    return this.formService.hasUnsavedChanges();
   }
 
   handleReloadAssetRoster() {

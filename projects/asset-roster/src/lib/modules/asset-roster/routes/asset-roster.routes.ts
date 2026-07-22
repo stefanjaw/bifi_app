@@ -24,5 +24,6 @@ export const ASSET_ROSTER_ROUTES: Routes = [
         m => m.AssetRosterMaintenance
       ),
     data: { resource: 'asset-rosters/update' },
+    runGuardsAndResolvers: 'always',
   },
 ];
