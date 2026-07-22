@@ -154,9 +154,9 @@ export class CrmsForm implements DirtyComponent {
 
     const tags = rawValue.tagsInput
       ? rawValue.tagsInput
-        .split(',')
-        .map(t => t.trim())
-        .filter(Boolean)
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {
@@ -199,6 +199,6 @@ export class CrmsForm implements DirtyComponent {
     return this.formService.hasUnsavedChanges();
   }
 
-  handleContactCreation() { }
-  handleCompanyCreation() { }
+  handleContactCreation() {}
+  handleCompanyCreation() {}
 }

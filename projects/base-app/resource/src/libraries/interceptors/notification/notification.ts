@@ -23,6 +23,9 @@ export const notificationInterceptor: HttpInterceptorFn = (
   const translationService = inject(TranslationService);
 
   // Maneja la solicitud si es POST, PUT, DELETE o PATCH, o si recibe una configuración
+  // Si enable === false explícitamente, no manejar la solicitud
+  if (config !== null && config.enable === false) return next(req);
+
   const canHandleRequest =
     req.method === 'POST' ||
     req.method === 'PUT' ||

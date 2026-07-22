@@ -16,7 +16,7 @@ export class FormSelectFooter {
       event.stopPropagation();
       event.preventDefault();
     }
-    this.showForm.update((v) => !v);
+    this.showForm.update(v => !v);
   }
 
   close() {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { BaseForm, ControlsOf } from '@avalantec/base-app/form';
+import { FormGroup } from '@angular/forms';
+import { BaseForm, ControlsOf, NonWhitespaceValidators } from '@avalantec/base-app/form';
 
 export interface UpdateDecommissioningFormModel {
   details: string;
@@ -14,7 +14,7 @@ export class UpdateDecommissioningForm extends BaseForm<UpdateDecommissioningFor
 
   override createForm(): FormGroup<ControlsOf<UpdateDecommissioningFormModel>> {
     return this.fb.group<UpdateDecommissioningFormModel>({
-      details: ['', [Validators.required]],
+      details: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
     });
   }
 }

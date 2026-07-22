@@ -168,7 +168,7 @@ export class CompaniesForm implements OnInit {
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }
-      
+
       this.router.navigateByUrl(returnUrl);
       return;
     }

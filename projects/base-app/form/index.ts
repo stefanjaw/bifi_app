@@ -31,6 +31,7 @@ export * from './src/libraries/form-control-utils';
 export * from './src/libraries/providers/form-errors';
 export * from './src/libraries/utils';
 export * from './src/libraries/validators/array.validators';
+export * from './src/libraries/validators/non-whitespace.validator';
 export * from './src/services/form-context';
 export * from './src/services/form-field-context';
 export * from './src/services/form-file-control-helper';

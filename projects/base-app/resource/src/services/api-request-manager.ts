@@ -1,6 +1,12 @@
 import { pagination } from '../interfaces/pagination';
 import { inject, ResourceRef, Signal, signal } from '@angular/core';
-import { HttpClient, HttpContext, HttpParams, httpResource } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpContext,
+  HttpHeaders,
+  HttpParams,
+  httpResource,
+} from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable, of } from 'rxjs';
 import { paginationOptions } from '../interfaces/pagination-options';
@@ -13,7 +19,10 @@ import {
 } from '@avalantec/base-app/core';
 import { isFormUploaderFile, isFormUploaderFileArray } from '@avalantec/base-app/form';
 import { ApiRequestManagerConfig, ApiRequestType } from '../interfaces/api';
-import { HTTP_NOTIFICATION_CONFIG_TOKEN } from '../libraries/interceptors/notification/notification.context';
+import {
+  HTTP_NOTIFICATION_CONFIG_TOKEN,
+  NotificationTokenConfig,
+} from '../libraries/interceptors/notification/notification.context';
 import { FileResolver } from './file-resolver';
 
 export class ApiRequestManager<T> {
@@ -78,15 +87,26 @@ export class ApiRequestManager<T> {
     data,
     specificEndpoint = '',
     fileFields = [],
+    notificationConfig,
   }: {
     data: Record<string, any>;
     specificEndpoint?: string;
     fileFields?: string[];
+    notificationConfig?: { enable?: boolean; successMessage?: string };
   }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
     const formData = this.createFormDataFromObject(data, fileFields);
+    const context = this.createHttpContext('create');
 
-    return this._httpClient.post<T | undefined>(fullURL, formData);
+    if (notificationConfig) {
+      const existing = context.get(HTTP_NOTIFICATION_CONFIG_TOKEN);
+      context.set(HTTP_NOTIFICATION_CONFIG_TOKEN, {
+        ...existing,
+        ...notificationConfig,
+      } as NotificationTokenConfig);
+    }
+
+    return this._httpClient.post<T | undefined>(fullURL, formData, { context });
   }
 
   /**
@@ -102,20 +122,31 @@ export class ApiRequestManager<T> {
     data,
     fileFields = [],
     specificEndpoint = '',
+    notificationConfig,
   }: {
     _id?: string;
     data: Record<string, any>;
     fileFields?: string[];
     specificEndpoint?: string;
+    notificationConfig?: { enable?: boolean; successMessage?: string };
   }): Observable<T | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
 
     // set id to the formData
     data = { ...data, _id };
     const formData = this.createFormDataFromObject(data, fileFields);
+    const context = this.createHttpContext('update');
+
+    if (notificationConfig) {
+      const existing = context.get(HTTP_NOTIFICATION_CONFIG_TOKEN);
+      context.set(HTTP_NOTIFICATION_CONFIG_TOKEN, {
+        ...existing,
+        ...notificationConfig,
+      } as NotificationTokenConfig);
+    }
 
     return this._httpClient.put<T | undefined>(fullURL, formData, {
-      context: this.createHttpContext('update'),
+      context,
     });
   }
 
@@ -201,6 +232,11 @@ export class ApiRequestManager<T> {
           url: `${this.formatFullURL()}${_path ? '/' + _path : ''}${_id ? `/${_id}` : ''}`,
           params: new HttpParams({ fromString: query.toString() }),
           context: this.createHttpContext(isGetById ? 'get' : 'getAll'),
+          headers: new HttpHeaders({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+            Expires: '0',
+          }),
         };
       },
       {
@@ -267,6 +303,7 @@ export class ApiRequestManager<T> {
         return this._httpClient.get<pagination<T> | undefined>(fullURL, {
           params: new HttpParams({ fromString: query.toString() }),
           context: this.createHttpContext('getWithPagination'),
+          headers: new HttpHeaders({ 'Cache-Control': 'no-cache, no-store', Pragma: 'no-cache' }),
         });
       },
       defaultValue: undefined,

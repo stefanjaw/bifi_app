@@ -9,7 +9,7 @@ export class DirtyFormConfirmationService {
   requestConfirmation(): Promise<boolean> {
     this.isOpen.set(true);
     this.confirmSubject = new Subject<boolean>();
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.confirmSubject!.subscribe(resolve);
     });
   }

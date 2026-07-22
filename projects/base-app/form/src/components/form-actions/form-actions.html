@@ -11,7 +11,7 @@
       icon="pi pi-arrow-left"
     ></p-button>
   }
-  @if (formChanged() && showSave()) {
+  @if (showSave()) {
     <p-button
       type="submit"
       (onClick)="submitClicked.emit()"
@@ -21,7 +21,7 @@
           ? ('saving' | translate: {} : scope())
           : (saveLabel() || 'save' | translate: {} : scope())
       "
-      [disabled]="isSubmitting() || formDisabled()"
+      [disabled]="!formChanged() || isSubmitting() || formDisabled()"
     ></p-button>
   }
 </section>

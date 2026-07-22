@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, NonWhitespaceValidators } from '@avalantec/base-app/form';
 
 export interface AssetTypeFormModel {
   name: string;
@@ -13,7 +12,7 @@ export interface AssetTypeFormModel {
 export class AssetTypeForm extends BaseForm<AssetTypeFormModel> {
   override createForm() {
     return this.fb.group<AssetTypeFormModel>({
-      name: ['', [Validators.required]],
+      name: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
       description: [''],
     });
   }

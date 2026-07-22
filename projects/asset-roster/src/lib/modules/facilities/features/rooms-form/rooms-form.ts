@@ -72,7 +72,7 @@ export class RoomsForm implements DirtyComponent {
     let draftRestored = false;
     effect(() => {
       const room = this.room();
-      
+
       if (!draftRestored) {
         const draft = this.draftService.getDraft(this.router.url);
         if (draft) {
@@ -130,7 +130,7 @@ export class RoomsForm implements DirtyComponent {
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }
-      
+
       this.router.navigateByUrl(returnUrl);
       return;
     }

@@ -8,7 +8,7 @@ import {
   viewChild,
   input,
 } from '@angular/core';
-import { FormValueState, DirtyComponent, DraftService } from '@avalantec/base-app/form';
+import { DirtyComponent, DraftService } from '@avalantec/base-app/form';
 import { Router } from '@angular/router';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
 import { UpdateAssetRosterForm } from '../../services/update-asset-roster-form';
@@ -225,6 +225,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
     const id = this.prevAssetId();
     if (!id) return;
     if (!this.confirmDiscardUnsavedChanges()) return;
+    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
   }
 
@@ -232,6 +233,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
     const id = this.nextAssetId();
     if (!id) return;
     if (!this.confirmDiscardUnsavedChanges()) return;
+    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'maintenance', id]);
   }
 
@@ -364,6 +366,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
 
   handleBackToDashboard() {
     if (!this.confirmDiscardUnsavedChanges()) return;
+    this.draftService.isDraftNavigating = true;
     this.router.navigate(['asset-roster', 'equipment', 'list']);
   }
 

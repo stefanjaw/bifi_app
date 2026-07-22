@@ -5,6 +5,7 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormValueState } from '../interfaces/form-helpers';
 import { collectFormErrors, getFormGroupDirtyValue, markAsDirty } from '../libraries/dirty-utils';
 import { ToastManager } from '@avalantec/base-app/core';
+import { TranslationService } from '@avalantec/base-app/i18n';
 import { FormContext } from '../services/form-context';
 import { FormTranslation } from '../services/form-translation';
 
@@ -18,6 +19,7 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
   private destroy$ = inject(DestroyRef);
   private toastManager = inject(ToastManager);
   private formTranslation = inject(FormTranslation);
+  private translationService = inject(TranslationService);
 
   isPreviewMode = input<boolean>(false);
   appSubmit = output<FormValueState<TForm>>();
@@ -50,7 +52,9 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
    */
   private submit() {
     if (!this.form.dirty) {
-      this.toastManager.showInfo('You have not made any changes.');
+      this.toastManager.showInfo(
+        this.translationService.translate('formActions.noChanges', {}, 'base-app/form')
+      );
       return;
     }
 
@@ -80,7 +84,10 @@ export class FormActionsHandler<TForm extends FormGroup> implements OnInit {
 
       const description = lines.length > 0 ? lines.join('\n') : undefined;
 
-      this.toastManager.showError('The form contains errors.', { description });
+      this.toastManager.showError(
+        this.translationService.translate('formActions.formErrors', {}, 'base-app/form'),
+        { description }
+      );
 
       // Mark invalid form controls as dirty to surface inline errors
       markAsDirty({

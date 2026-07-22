@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { BaseForm } from '@avalantec/base-app/form';
+import { BaseForm, NonWhitespaceValidators } from '@avalantec/base-app/form';
 
 export interface FacilityFormModel {
   name: string;
@@ -13,7 +12,7 @@ export interface FacilityFormModel {
 export class FacilityForm extends BaseForm<FacilityFormModel> {
   override createForm() {
     return this.fb.group<FacilityFormModel>({
-      name: ['', [Validators.required]],
+      name: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
       contactId: [''],
     });
   }

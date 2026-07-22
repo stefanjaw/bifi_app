@@ -9,7 +9,14 @@ import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'bifi-app-select-child-contact-dialog',
-  imports: [ReactiveFormsModule, DialogModule, MultiSelectModule, FormModule, TranslatePipe, FormSelectNavigateFooter],
+  imports: [
+    ReactiveFormsModule,
+    DialogModule,
+    MultiSelectModule,
+    FormModule,
+    TranslatePipe,
+    FormSelectNavigateFooter,
+  ],
   templateUrl: './select-child-contact-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

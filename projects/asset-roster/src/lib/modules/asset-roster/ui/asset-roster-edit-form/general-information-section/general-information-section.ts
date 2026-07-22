@@ -1,4 +1,13 @@
-import { Component, computed, DestroyRef, effect, inject, input, model, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
@@ -197,11 +206,11 @@ export class GeneralInformationSection {
     this.formService.removeLocationAssignment(index);
   }
 
-  handleVendorCreation() { }
+  handleVendorCreation() {}
 
-  handleRoomCreation() { }
+  handleRoomCreation() {}
 
-  handleRoomCreationForRow(index: number) { }
+  handleRoomCreationForRow(index: number) {}
 
   openPhotoDialog() {
     this.assetRosterMaintenanceContext.handleOpenPhotoDialog();

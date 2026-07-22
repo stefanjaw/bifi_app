@@ -146,7 +146,13 @@ export class ContactsForm implements DirtyComponent {
       if (this.draftRestored) {
         // Hydrate childIdsData if it's empty but draft had childIds
         const childIds = this.form.value.childIds;
-        if (childIds && childIds.length > 0 && allContacts && allContacts.length > 0 && this.childIdsData().length === 0) {
+        if (
+          childIds &&
+          childIds.length > 0 &&
+          allContacts &&
+          allContacts.length > 0 &&
+          this.childIdsData().length === 0
+        ) {
           const childContacts = allContacts.filter((c: any) => childIds.includes(c._id));
           this.childIdsData.set(childContacts);
         }
@@ -230,7 +236,7 @@ export class ContactsForm implements DirtyComponent {
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }
-      
+
       this.router.navigateByUrl(returnUrl);
       return;
     }

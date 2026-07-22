@@ -7,7 +7,12 @@
   [tabindex]="collapsible() ? 0 : -1"
   [attr.role]="collapsible() ? 'button' : null"
 >
-  <h3 class="text-lg font-bold flex-1">{{ title() }}</h3>
+  <h3 class="text-lg font-bold flex-1">
+    @if (ordinal()) {
+      <span class="me-1">{{ ordinal() }}.</span>
+    }
+    {{ title() }}
+  </h3>
   @if (collapsible()) {
     <span
       class="pi text-gray-400"

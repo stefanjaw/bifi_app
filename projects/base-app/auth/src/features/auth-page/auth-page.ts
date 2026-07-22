@@ -48,14 +48,17 @@ export class AuthPage {
   backendVersion = signal<string>(''); // Placeholder for backend version, can be set after health check
 
   constructor() {
-    this.healthCheck.check().pipe(takeUntilDestroyed(this.destroy$)).subscribe({
-      next: healthCheck => {
-        this.backendVersion.set(healthCheck.version ?? '');
-      },
-      error: () => {
-        this.backendVersion.set('N/A');
-      },
-    });
+    this.healthCheck
+      .check()
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: healthCheck => {
+          this.backendVersion.set(healthCheck.version ?? '');
+        },
+        error: () => {
+          this.backendVersion.set('N/A');
+        },
+      });
   }
 
   /**
@@ -118,5 +121,4 @@ export class AuthPage {
 
     this.authService.clearError();
   }
-
 }

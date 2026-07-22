@@ -114,7 +114,7 @@ export class FacilitiesForm {
       if (createdId && controlName) {
         this.draftService.updateDraftField(returnUrl, controlName, createdId);
       }
-      
+
       this.router.navigateByUrl(returnUrl);
       return;
     }

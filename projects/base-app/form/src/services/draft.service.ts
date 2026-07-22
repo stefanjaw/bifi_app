@@ -28,7 +28,7 @@ export class DraftService {
   updateDraftField(key: string, fieldPath: string, value: any): void {
     const draft = this.getDraft(key);
     if (!draft) return;
-    
+
     const keys = fieldPath.split('.');
     let current = draft;
     for (let i = 0; i < keys.length - 1; i++) {
@@ -44,7 +44,7 @@ export class DraftService {
     } else {
       current[lastKey] = value;
     }
-    
+
     this.saveDraft(key, draft);
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
+import { BaseForm, FormUploaderFile, NonWhitespaceValidators } from '@avalantec/base-app/form';
 
 export interface CreateCommissioningFormModel {
   outcome: 'fail' | 'pass';
@@ -17,7 +17,7 @@ export class CreateCommissioningForm extends BaseForm<CreateCommissioningFormMod
   override createForm() {
     return this.fb.group<CreateCommissioningFormModel>({
       outcome: ['fail', [Validators.required]],
-      details: ['', [Validators.required]],
+      details: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
       attachments: {
         template: {
           id: [''],

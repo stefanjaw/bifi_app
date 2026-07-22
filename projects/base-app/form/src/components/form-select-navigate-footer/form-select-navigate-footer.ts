@@ -38,7 +38,7 @@ export class FormSelectNavigateFooter {
     if (cName) {
       queryParams['controlName'] = cName;
     }
-    
+
     // Force component recreation if navigating to the same route
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(route, { queryParams });
