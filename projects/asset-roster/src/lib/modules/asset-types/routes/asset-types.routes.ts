@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const ASSET_TYPES_ROUTES: Routes = [
   {
@@ -17,15 +18,19 @@ export const ASSET_TYPES_ROUTES: Routes = [
   {
     path: 'create',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/asset-types-form/asset-types-form').then(m => m.AssetTypesForm),
     data: { resource: 'asset-types/create' },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/asset-types-form/asset-types-form').then(m => m.AssetTypesForm),
     data: { resource: 'asset-types/update' },
+    runGuardsAndResolvers: 'always',
   },
 ];

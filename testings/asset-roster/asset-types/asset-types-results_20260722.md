@@ -1,6 +1,6 @@
 # Asset Types Module — Test Results
 
-Tested: 2026-07-21 (re-tested 2026-07-22 after fixes)
+Tested: 2026-07-21 (re-tested 2026-07-22 after fixes, re-tested 2026-07-22 after AT-02/AT-04 fixes)
 Method: Automated UI tests via Playwright browser
 
 > **Module scope:** The asset-types module is a **Settings-style CRUD module** within the asset-roster library. It manages reference data for asset type categories. Accessed from **Settings → Asset Roster → Asset Types** at `/settings/asset-roster/asset-types`.
@@ -64,7 +64,7 @@ Method: Automated UI tests via Playwright browser
 
 | # | Test | Expected Result | Pass/Fail |
 |---|------|----------------|-----------|
-| 5.1 | Enter Name "Test No Description", leave Description empty, click Save | Server rejects with 400 — Description is required server-side despite no client-side required indicator | ❌ FAIL — HTTP 400 "description should not be empty"; form stays on create page; no client-side validation on Description field |
+| 5.1 | Enter Name "Test No Description", leave Description empty, click Save | Client-side validation blocks submission with "This field is required" on Description | ✅ PASS — "This field is required" shown on Description field; form stays on create URL; no HTTP 400. Fix AT-02: added `NonWhitespaceValidators.nonWhitespaceRequired` to `asset-type-form.ts:16`. |
 | 5.2 | Verify the new asset type appears in the list | Created record (with both Name and Description provided) shows in list | ✅ PASS — Record created with both Name and Description shows in list |
 | 5.3 | Enter Name "Medical Equipment 2" and Description "General test devices", click Save | Asset type created with both values preserved | ✅ PASS — Created and redirected to list |
 | 5.4 | Verify the saved record shows both fields | List row shows name "Medical Equipment 2" and description "General test devices" | ✅ PASS — List shows both values correctly |
@@ -100,7 +100,7 @@ Method: Automated UI tests via Playwright browser
 |---|------|----------------|-----------|
 | 8.1 | On the create form, click "Go Back" | Navigates back to the list without saving | ✅ PASS — Navigates to list; no record created |
 | 8.2 | On the edit form, click "Go Back" | Navigates back to the list without saving | ✅ PASS — Navigates to list; no changes saved |
-| 8.3 | On the create form, fill a field, then click "Go Back" | Navigates back directly — no unsaved changes prompt | ⚠️ NOTE — No unsaved-changes confirmation dialog; changes are silently discarded |
+| 8.3 | On the create form, fill a field, then click "Go Back" | Unsaved changes confirmation dialog appears | ✅ PASS — "Confirmation" dialog shown with message "You have unsaved changes. Are you sure you want to leave this page?" and Cancel/Confirm buttons. Fix AT-04: added `canDeactivate: [DirtyFormGuard]` to `asset-types.routes.ts:21,30`. |
 
 ---
 
@@ -160,9 +160,9 @@ Method: Automated UI tests via Playwright browser
 | # | Test | Description | Severity |
 |---|------|-------------|----------|
 | B-01 | ~ | **Save button only appears when form is dirty (AT-01)** — ✅ **RESOLVED 2026-07-22**: Save button now always visible (disabled when pristine) via fix S-01 in `form-actions.html:14-26`. Changed from `@if (formChanged() && showSave())` to always-rendered with `[disabled]="!formChanged()"`. | **Fixed** |
-| B-02 | 5.1 | **Description server-required but not client-validated** — The Description field is required by the API (HTTP 400 on empty), but the form does not mark it as required or show client-side validation. Error only surfaces from API response as toast/400. | Low |
+| B-02 | ~ | **Description server-required but not client-validated (AT-02)** — ✅ **RESOLVED 2026-07-22**: Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field in `asset-type-form.ts:16`. Client-side validation now blocks empty/whitespace-only Description before submission. | **Fixed** |
 | B-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting an asset type that may be referenced by Asset Roster records succeeds without warning, potentially leaving dangling references. | Medium |
-| B-04 | 8.3 | **No unsaved changes prompt** — Navigating back from a dirty form (create or edit) silently discards changes without confirmation. No `confirmDialog.unsavedChanges` prompt. | Low |
+| B-04 | ~ | **No unsaved changes prompt (AT-04)** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` to both `create` and `edit/:id` routes in `asset-types.routes.ts:21,30`. Confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" now appears. | **Fixed** |
 | B-05 | ~ | **Empty name accepted via whitespace (AT-05)** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` via fix S-07. Shared validator created in `base-app/form`. | **Fixed** |
 | B-06 | 10.3 | **Duplicate names silently allowed** — Creating an asset type with a name already used by another record succeeds without any validation error or warning. No unique constraint on name. | Low |
 
@@ -172,9 +172,9 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 40 |
-| ❌ FAIL | 1 |
-| ⚠️ BUG / NOTE | 6 |
+| ✅ PASS | 43 |
+| ❌ FAIL | 0 |
+| ⚠️ BUG / NOTE | 4 |
 | ⏭️ NOT TESTED / N/A | 13 |
 
-> **Re-tested 2026-07-22 after fixes:** AT-01 (Save button visibility) and AT-05 (whitespace validation) resolved. B-01 and B-05 moved to Fixed. 2 more PASS, 2 fewer BUG/NOTE.
+> **Re-tested 2026-07-22 after fixes:** AT-01 (Save button visibility), AT-05 (whitespace validation), AT-02 (Description validation), AT-04 (unsaved changes prompt) resolved. B-01, B-02, B-04, B-05 moved to Fixed. 3 more PASS, 1 less FAIL, 2 fewer BUG/NOTE.

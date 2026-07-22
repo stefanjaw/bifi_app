@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (fixes applied: see Resolved Bugs)
+> **Last updated:** 2026-07-22 (AT-02, AT-04 fixes applied: see Resolved Bugs)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -73,11 +73,11 @@ Source: `asset-roster/asset-types/asset-types-results_20260721.md`
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| AT-01 | 4.4 | **Save button only appears when form is dirty** — Hidden until a field is modified. | **Medium** | `form-actions.html:14` — `@if (formChanged() && showSave())` conditionally renders the Save button. Consumer binds `[formChanged]="form.dirty"`. When form is pristine, Save is removed from DOM entirely (not just disabled). |
-| AT-02 | 5.1 | **Description server-required but not client-validated** — HTTP 400 on empty description. | **Low** | `asset-type-form.ts:17` — `description: ['']` has no validators. Backend DTO (`asset-type.dto.ts:9-12`) requires it with `@IsNotEmpty()`. Frontend performs no validation. |
+| AT-01 | ~ | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Save button now always visible (disabled when pristine). See Resolved Bugs. | **Fixed** |
+| AT-02 | ~ | **Description server-required but not client-validated** — ✅ **RESOLVED 2026-07-22**: Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field. File: `asset-type-form.ts:16`. | **Fixed** |
 | AT-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting referenced type leaves dangling refs. | **Medium** | `asset-types-list.ts:54-63` — direct `delete()` with no reference check. Backend `AssetTypeService` doesn't override `delete`, so `BaseService.delete` (`base-service.ts:261-285`) just soft-deletes (`active: false`). Assets referencing via `assetTypeIds` are left with orphaned refs. |
-| AT-04 | 8.3 | **No unsaved changes prompt** — Navigating away silently discards changes. | **Low** | `asset-types.routes.ts:17-30` — `create` and `edit/:id` routes only declare `canActivate: [permissionGuard]`, missing `canDeactivate: [DirtyFormGuard]`. Compare `contacts/src/routes/contact-routes.ts:21,29` which includes it. |
-| AT-05 | 4.6 | **Empty name accepted via whitespace** — Whitespace-only Name passes validation. | **Low** | `asset-type-form.ts:16` — `name: ['', [Validators.required]]`. `Validators.required` accepts whitespace-only strings. No trim validator exists in `base-app/form` (confirmed by search). |
+| AT-04 | ~ | **No unsaved changes prompt** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Files: `asset-types.routes.ts:21,30`. | **Fixed** |
+| AT-05 | ~ | **Empty name accepted via whitespace** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `asset-type-form.ts:16`. | **Fixed** |
 | AT-06 | 10.3 | **Duplicate names silently allowed** — No uniqueness validation. | **Low** | `asset-type-form.ts:16` — no async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. Duplicates accepted on both sides. |
 
 ---
@@ -137,7 +137,7 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 Several issues appear across multiple modules and indicate shared root causes in `@avalantec/base-app`:
 
 ### Pattern A — Whitespace-only required fields accepted
-- **Affected:** AC-01, AT-05, FA-01, MW-01
+- **Affected:** AC-01, ~~AT-05~~ (resolved 2026-07-22), FA-01, MW-01
 - **Root cause:** No shared whitespace/trim validator exists anywhere in `base-app/form` (confirmed by exhaustive search — only match is `dirty-utils.ts:99` `.trim()` inside a label formatter, not a validator). `Validators.required` only rejects `null`/`undefined`/`''`; whitespace passes through.
 - **Shared fix location:** `projects/base-app/form/` — add a `nonWhitespaceRequired` validator and use it on all `name`/`details`/`reason` fields.
 
@@ -147,7 +147,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** Backend models need unique indexes + `409 Conflict` responses. Frontend form services need async validators calling a uniqueness-check endpoint.
 
 ### Pattern C — Save button hidden until form is dirty
-- **Affected:** AT-01, CO-01 (and asset-roster create dialog)
+- **Affected:** ~~AT-01~~ (resolved 2026-07-22), CO-01 (and asset-roster create dialog)
 - **Root cause:** `form-actions.html:14` — `@if (formChanged() && showSave())` removes the Save button from the DOM when form is pristine. This is the shared `FormActions` component in `base-app/form`.
 - **Shared fix location:** `projects/base-app/form/src/components/form-actions/form-actions.html:14` — change from conditional render to always-visible-but-disabled.
 
@@ -162,7 +162,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** Add `confirmDialog.unsavedChanges` en/es pair to `base-app-resource-translations.json` (or move the dialog to use `base-app/form` scope and add the key there).
 
 ### Pattern F — No unsaved changes prompt on plain forms (non-DirtyFormGuard routes)
-- **Affected:** AT-04, MW-03
+- **Affected:** ~~AT-04~~ (resolved 2026-07-22), MW-03
 - **Root cause:** `asset-types.routes.ts:17-30` and `maintenance-windows.routes.ts:19-36` — `create`/`edit` routes only declare `canActivate: [permissionGuard]`, missing `canDeactivate: [DirtyFormGuard]`. The guard is opt-in per route.
 - **Shared fix location:** Add `canDeactivate: [DirtyFormGuard]` to all create/edit routes. Reference pattern: `contacts/src/routes/contact-routes.ts:21,29`.
 
@@ -236,9 +236,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
 | AT-01 | `form-actions.html` / `asset-types-form.html` | 14 / 17 | See S-01. `@if (formChanged() && showSave())` + `[formChanged]="form.dirty"`. |
-| AT-02 | `asset-type-form.ts` | 17 | `description: ['']` — no validators. Backend `asset-type.dto.ts:9-12` requires `@IsNotEmpty()`. |
+| AT-02 | `asset-type-form.ts` | 16 | `description: ['']` — no validators. Backend `asset-type.dto.ts:9-12` requires `@IsNotEmpty()`. Fixed 2026-07-22: added `NonWhitespaceValidators.nonWhitespaceRequired`. |
 | AT-03 | `asset-types-list.ts` / `base-service.ts` | 54-63 / 261-285 | Direct delete, no reference check. Backend `BaseService.delete` soft-deletes only. Assets reference via `assetTypeIds`. |
-| AT-04 | `asset-types.routes.ts` | 17-30 | Missing `canDeactivate: [DirtyFormGuard]` on `create`/`edit/:id` routes. |
+| AT-04 | `asset-types.routes.ts` | 17-30 | Missing `canDeactivate: [DirtyFormGuard]` on `create`/`edit/:id` routes. Fixed 2026-07-22: added guard + `hasUnsavedChanges()` method to `asset-types-form.ts`. |
 | AT-05 | `asset-type-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
 | AT-06 | `asset-type-form.ts` | 16 | No async uniqueness validator. No backend unique index on `name`. |
 
@@ -289,8 +289,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | **Critical** | 0 | (AM-01 resolved) |
 | **High** | 1 | FA-03 |
 | **Medium** | 7 | AT-03, FA-04, FA-05, MW-02, MW-03, CO-02, CO-03 |
-| **Low** | 16 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-02, AT-04, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
-| **Active total** | 23 | (28 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
+| **Low** | 14 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, FA-02, FA-06, MW-04, MW-05, MW-06, MW-07, CO-09 |
+| **Active total** | 21 | (30 resolved, see Resolved Bugs section. FA-04 and CO-03 pending backend translation catalog deployment.) |
 | **Original total** | 51 | |
 
 ---
@@ -335,6 +335,8 @@ When a bug is fixed:
 | AC-07 | Asset Commissioning | Double toasts per action | 2026-07-22 | Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. Files: `asset-commissioning-form-dialog.ts:74`, `asset-decommissioning-form-dialog.ts:59` |
 | AC-08 | Asset Commissioning | Decommission button shows on decommissioned assets | 2026-07-22 | Wrapped buttons in `@if (status !== 'decommissioned')`. Both Commission and Decommission hidden on decommissioned assets. File: `commissioning-lifecycle-section.html:9-31` |
 | AT-01 | Asset Types | Save button only appears when form is dirty | 2026-07-22 | Changed `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() \|\| isSubmitting() \|\| formDisabled()"`. File: `form-actions.html:14-26` |
+| AT-02 | Asset Types | Description server-required but not client-validated | 2026-07-22 | Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field. File: `asset-type-form.ts:16` |
+| AT-04 | Asset Types | No unsaved changes prompt | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Added `hasUnsavedChanges()` method to `AssetTypesForm`. Files: `asset-types.routes.ts:21,30`, `asset-types-form.ts:60-62` |
 | AT-05 | Asset Types | Empty name accepted via whitespace | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `asset-type-form.ts:16`. File: `non-whitespace.validator.ts` |
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |
 | MW-01 | Maintenance Windows | Whitespace-only name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `maintenance-window-form.ts:19`. File: `non-whitespace.validator.ts` |

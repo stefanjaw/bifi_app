@@ -13,7 +13,7 @@ export class AssetTypeForm extends BaseForm<AssetTypeFormModel> {
   override createForm() {
     return this.fb.group<AssetTypeFormModel>({
       name: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
-      description: [''],
+      description: ['', [NonWhitespaceValidators.nonWhitespaceRequired]],
     });
   }
 }

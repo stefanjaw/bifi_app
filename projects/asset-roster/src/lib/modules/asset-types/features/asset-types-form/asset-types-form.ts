@@ -57,6 +57,10 @@ export class AssetTypesForm {
   error = this.assetTypeResource.error;
   isSubmitLoading = signal<boolean>(false);
 
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
+  }
+
   constructor() {
     effect(() => {
       const assetType = this.assetType();

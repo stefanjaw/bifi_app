@@ -107,6 +107,41 @@ Every route **MUST** include `permissionGuard` in `canActivate` and a `data.reso
 }
 ```
 
+### Dirty Form Guard (DirtyFormGuard)
+
+Every create/edit form route **MUST** include `DirtyFormGuard` in `canDeactivate` to prevent silent data loss when navigating away from dirty forms. The component must also implement `hasUnsavedChanges()`.
+
+**Route file** — import `DirtyFormGuard` from `@avalantec/base-app/form` and add `canDeactivate` to `create`/`edit/:id` routes:
+
+```ts
+import { DirtyFormGuard } from '@avalantec/base-app/form';
+
+{
+  path: 'create',
+  canActivate: [permissionGuard],
+  canDeactivate: [DirtyFormGuard],
+  loadComponent: () => import('../features/xxx-form/xxx-form').then(m => m.XxxForm),
+  data: { resource: 'xxx/create' },
+},
+{
+  path: 'edit/:id',
+  canActivate: [permissionGuard],
+  canDeactivate: [DirtyFormGuard],
+  loadComponent: () => import('../features/xxx-form/xxx-form').then(m => m.XxxForm),
+  data: { resource: 'xxx/update' },
+},
+```
+
+**Form component** — add a `hasUnsavedChanges()` method that delegates to `BaseForm.hasUnsavedChanges()`:
+
+```ts
+hasUnsavedChanges(): boolean {
+  return this.formService.hasUnsavedChanges();
+}
+```
+
+Reference: `projects/base-app/contacts/src/routes/contact-routes.ts` (routes), `projects/base-app/contacts/src/components/contacts-form/contacts-form.ts:247-249` (component).
+
 ### Resource Naming Convention
 
 | Scope | Pattern | Example |
