@@ -23,7 +23,9 @@
           {{ 'assetDetails' | translate: {} : 'asset-roster' }}
         </h1>
         @if (totalAssets() > 0 && currentIndex() >= 0) {
-          <span class="text-sm text-gray-500">{{ currentIndex() + 1 }} of {{ totalAssets() }}</span>
+          <span class="text-sm text-gray-500">
+            {{ currentIndex() + 1 }} {{ 'of' | translate: {} : 'asset-roster' }} {{ totalAssets() }}
+          </span>
         }
         <p-button
           icon="pi pi-chevron-right"

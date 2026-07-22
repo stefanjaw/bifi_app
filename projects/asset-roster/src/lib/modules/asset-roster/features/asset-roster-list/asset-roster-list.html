@@ -160,7 +160,7 @@
         <!-- CONTENT -->
         <ng-template pTemplate="content">
           <span class="text-xs text-gray-500 font-medium">
-            {{ element.assetTypeIds[0]?.name || 'Not set' }}
+            {{ element.assetTypeIds[0]?.name || ('notSet' | translate: {} : 'asset-roster') }}
           </span>
 
           <div class="p-3 flex flex-col gap-1">

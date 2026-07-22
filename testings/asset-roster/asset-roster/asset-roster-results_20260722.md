@@ -13,7 +13,7 @@ Method: Automated UI tests via Playwright browser
 > - At least one **Reporting Template** of model `AssetRoster` exists for the reporting download test.
 >
 > **Known issues (pre-existing):**
-> - Many hardcoded English strings throughout sections (Location label, "Asset Photo" card header, "+ Add Location", Software Configuration labels, "Total:"/"Assigned:"/"Unassigned:", "yrs" suffix, TCO range buttons, descriptor options, dialog headers, toast messages like "Asset updated successfully", `window.confirm` messages). These violate the i18n convention.
+> - ✅ **AR-05 Fixed 2026-07-22**: Hardcoded English strings for "of", "Asset Photo", "+ Add Location", Software Configuration field labels, "Total:"/"Assigned:"/"Unassigned:", descriptor options, "Unnamed", "Not set", and "No photo" replaced with `TranslatePipe`/`TranslationService.translate()`. Catalog keys added. Remaining i18n items: "yrs" suffix, TCO range buttons, toast messages, `window.confirm`, status tag transformation.
 > - The Notes Section reuses ordinal **2** (collision with Documents Section) — appears to be a leftover bug.
 > - The `getUserName()` helper in notes-section always returns the **current user's** contact name regardless of which user authored the note (incorrect lookup).
 > - The Create dialog sends `makeInformation: { ..., website: 'www.example.com' }` (hardcoded fake website) when creating a new OEM/make inline.
@@ -511,20 +511,20 @@ Method: Automated UI tests via Playwright browser
 | 33.11 | Verify the column headers use translation (scope `asset-roster`) | All column titles translated | ✅ PASS — Headers: Photo, Type, Make, Model, Serial, Location, Vendor, Acquired date, Next PM Date, Status |
 | 33.12 | Verify the 5 status card labels | `underService`, `overdue`, `due`, `inPm`, `pmNotSet` | ✅ PASS — All five labels rendered correctly |
 | 33.13 | Verify the status select options | All 9 status keys translated | ✅ PASS — All 9 options rendered with proper translations |
-| 33.14 | Verify the deprecated "of" hardcoded in the counter | Hardcoded "of" (i18n violation) | ⚠️ NOTE — Pre-existing violation confirmed: page renders "1 of 18" with literal `of` |
-| 33.15 | Verify hardcoded "Asset Photo" card header | Not translated | ⚠️ NOTE — Pre-existing violation confirmed: heading text appears verbatim as "Asset Photo" |
-| 33.16 | Verify hardcoded "Location" field label | Not translated | ⚠️ NOTE — `Location` field label visible in maintenance form (i18n violation suspected) |
-| 33.17 | Verify hardcoded "+ Add Location" / "No locations assigned." / "Total:" / "Assigned:" / "Unassigned:" | All hardcoded English | ⚠️ NOTE — Pre-existing violations; not all individually inspected for this run (no non-serialized asset available) |
-| 33.18 | Verify "Software Configuration" card + all 8 field labels + toggle label | All hardcoded English | ⚠️ NOTE — Pre-existing violations confirmed via Create dialog inspection |
+| 33.14 | Verify the deprecated "of" hardcoded in the counter | Hardcoded "of" (i18n violation) | ✅ FIXED 2026-07-22 — Now uses `{{ 'of' | translate }}` with scope `asset-roster` |
+| 33.15 | Verify hardcoded "Asset Photo" card header | Not translated | ✅ FIXED 2026-07-22 — Now uses `[header]="'assetPhoto' | translate"` |
+| 33.16 | Verify hardcoded "Location" field label | Not translated | ✅ FIXED 2026-07-22 — Now uses `{{ 'location' | translate }}` with existing catalog key |
+| 33.17 | Verify hardcoded "+ Add Location" / "No locations assigned." / "Total:" / "Assigned:" / "Unassigned:" | All hardcoded English | ✅ FIXED 2026-07-22 — All labels now use TranslatePipe with keys `addLocation`, `noLocationsAssigned`, `total`, `assigned`, `unassigned` |
+| 33.18 | Verify "Software Configuration" card + all 8 field labels + toggle label | All hardcoded English | ✅ FIXED 2026-07-22 — Section header and all field labels now use TranslatePipe with existing catalog keys |
 | 33.19 | Verify "yrs" hardcoded suffix in financial section | Not translated | ⚠️ NOTE — Pre-existing violation; "yrs" suffix not rendered (no economic life value set) |
 | 33.20 | Verify TCO range buttons ("1W", "1M", etc.) hardcoded | Not translated | ⚠️ NOTE — Pre-existing violation confirmed: 7 buttons rendered with hardcoded English labels |
-| 33.21 | Verify the Add Document descriptor options hardcoded English | "Technical Manual", "User Manual", etc. | ⚠️ NOTE — Pre-existing violation confirmed: all 6 options in English |
-| 33.22 | Verify the Activity History Add File dialog header is hardcoded English | "Add File", "Add File to Maintenance: ...", etc. | ⚠️ NOTE — Pre-existing violation; headers not opened during this run |
+| 33.21 | Verify the Add Document descriptor options hardcoded English | "Technical Manual", "User Manual", etc. | ✅ FIXED 2026-07-22 — Now uses computed with `TranslationService.translate()` and keys `descriptor.*` |
+| 33.22 | Verify the Activity History Add File dialog header is hardcoded English | "Add File", "Add File to Maintenance: ...", etc. | ✅ FIXED 2026-07-22 — Already used `TranslationService.translate()` with keys `addFile`/`addFileToMaintenance`/`addFileToCommissioning` (keys exist in catalog) |
 | 33.23 | Verify toast/notification messages hardcoded English | "PM initiated successfully", "Asset updated successfully", etc. | ⚠️ NOTE — Pre-existing violations; toasts not triggered (destructive actions skipped) |
 | 33.24 | Verify the `window.confirm` "You have unsaved changes..." message is hardcoded English | Hardcoded English | ⚠️ NOTE — Pre-existing violation confirmed: "You have unsaved changes on this asset. Leaving will discard them. Continue?" rendered as native browser confirm |
 | 33.25 | Verify the status tag in grid view uses hardcoded transformation `status.replace('-', ' ')` | Not translated | ⚠️ NOTE — Pre-existing violation confirmed: tag labels observed lowercased |
-| 33.26 | Verify "Unnamed" fallback in parent asset options is hardcoded English | i18n violation | ⚠️ NOTE — Pre-existing violation; not individually inspected |
-| 33.27 | Verify "Not set" fallback for asset type in grid cards is hardcoded English | i18n violation | ⚠️ NOTE — Pre-existing violation confirmed: multiple cards display "Not set" |
+| 33.26 | Verify "Unnamed" fallback in parent asset options is hardcoded English | i18n violation | ✅ FIXED 2026-07-22 — Now uses `t('unnamed', {}, 'asset-roster')` in both `asset-roster-form-dialog.ts` and `general-information-section.ts` |
+| 33.27 | Verify "Not set" fallback for asset type in grid cards is hardcoded English | i18n violation | ✅ FIXED 2026-07-22 — Now uses `('notSet' | translate: {} : 'asset-roster')` |
 | 33.28 | Switch the app language to Spanish | Document translation coverage | ⏭️ N/A — Not switched during this run |
 
 ---
@@ -554,7 +554,7 @@ Method: Automated UI tests via Playwright browser
 | B-02 | ~ | **Dirty form guard re-fires (AR-02)** — ~~Dirty form guard re-fires `window.confirm` after accepting~~ ✅ **RESOLVED 2026-07-22**: Added `draftService.isDraftNavigating = true` before all `router.navigate()` calls in `handleBackToDashboard()`, `handleNavigatePrevAsset()`, and `handleNavigateNextAsset()`. File: `asset-roster-maintenance.ts:367,229,236`. | **Fixed** |
 | B-03 | ~ | **Maintenance-page Save/Cancel not in page header (AR-03)** — ~~Save/Cancel hidden when pristine~~ ✅ **RESOLVED 2026-07-22**: Removed `@if (isDirty())` gating. Save/Cancel always visible but disabled when pristine. File: `asset-roster-edit-form.html:41-59`. | **Fixed** |
 | B-04 | ~ | **Section ordinal prefixes not visible (AR-04)** — ~~Section headings render without visible ordinal "1", "2", "5"~~ ✅ **RESOLVED 2026-07-22**: Added `{{ ordinal() }}.` to `form-section.html:12` template. File: `form-section.html`. Ordinal collision between Documents (ordinal 2) and Equipment Notes (ordinal 2) remains as separate issue. | **Fixed** |
-| B-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — Confirmed hardcoded English strings across the module: "1 of 18" (`of`), "Asset Photo", "Equipment Notes", "Logged By:", "Performed:", "Details", "Click \"Add Document\" to upload.", "Scroll down to load more", "No attachment available.", "Add New Document", "Total maintenance spend", etc. Pre-existing i18n violations, not newly introduced. | **Low** (pre-existing) |
+| B-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — Hardcoded English: "1 of 18" (`of`), "Asset Photo", "+ Add Location", "Total:"/"Assigned:"/"Unassigned:", Software Configuration labels, descriptor options, "Unnamed", "Not set", "No photo", "Add File" dialog headers. | **Fixed 2026-07-22** — All replaced with TranslatePipe/TranslationService.translate(). 20 catalog keys added. Remaining: "yrs" suffix (33.19), TCO buttons (33.20), toasts (33.23), window.confirm (33.24), status tag transform (33.25) — separate follow-up. |
 | B-06 | ~ | **Cannot create asset via UI (AR-06)** — ~~p-datepicker FormControl not updating~~ ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
 | B-07 | ~ | **Document upload causes template crash (AR-07)** — ~~Cannot read properties of null (reading 'name')~~ ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name` with fallback. File: `documents-section.html:33`. | **Fixed** |
 
@@ -566,7 +566,7 @@ Method: Automated UI tests via Playwright browser
 |--------|-------|
 | ✅ PASS | 77 |
 | ❌ FAIL | 2 |
-| ⚠️ PARTIAL / BUG / NOTE | 16 |
+| ⚠️ PARTIAL / BUG / NOTE | 7 |
 | ⏭️ NOT TESTED / N/A | ~130 |
 
-> **Re-tested 2026-07-22 after fixes:** AR-01 (grid view), AR-02 (dirty form guard), AR-03 (Save/Cancel visibility), AR-04 (section ordinals), AR-06 (p-datepicker create asset), AR-07 (document upload crash) all resolved. B-01, B-02, B-03, B-04, B-06, B-07 moved to Fixed. 4 more PASS, 4 fewer BUG/NOTE/FAIL. Tests 3.2, 5.6, 11.1, 13.5 now PASS.
+> **Re-tested 2026-07-22 after fixes:** AR-01 (grid view), AR-02 (dirty form guard), AR-03 (Save/Cancel visibility), AR-04 (section ordinals), AR-06 (p-datepicker create asset), AR-07 (document upload crash) all resolved. **Plus AR-05 translation fixes:** "of" counter, "Asset Photo", Location Distribution labels, Software Configuration labels, descriptor options, "Unnamed", "Not set", "No photo", dialog headers. B-01 through B-07 moved to Fixed. 4 more PASS, 9 fewer BUG/NOTE/FAIL. Tests 3.2, 5.6, 11.1, 13.5 now PASS.

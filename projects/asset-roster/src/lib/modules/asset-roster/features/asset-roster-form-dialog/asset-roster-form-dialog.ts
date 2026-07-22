@@ -25,7 +25,7 @@ import {
 } from '../../services/create-asset-roster-form';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -65,7 +65,8 @@ export class AssetRosterFormDialog extends BaseDialog {
   assetRosterOptions = computed(() =>
     (this.assetRosters.value() ?? []).map(ar => ({
       _id: ar._id,
-      label: ar.serialNumber || ar.productModel || ar.description || 'Unnamed',
+      label:
+        ar.serialNumber || ar.productModel || ar.description || t('unnamed', {}, 'asset-roster'),
     }))
   );
   isSubmitLoading = signal(false);

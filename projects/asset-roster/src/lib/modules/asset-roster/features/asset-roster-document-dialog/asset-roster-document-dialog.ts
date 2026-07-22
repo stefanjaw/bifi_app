@@ -16,7 +16,7 @@ import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { AddDocumentForm, addDocumentFormModel } from '../../services/add-document-form';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-asset-roster-document-dialog',
@@ -35,6 +35,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
 export class AssetRosterAddDocumentFormDialog extends BaseDialog {
   // services
   private formService = inject(AddDocumentForm);
+  private translationService = inject(TranslationService);
   form = this.formService.form;
 
   // outputs
@@ -47,14 +48,32 @@ export class AssetRosterAddDocumentFormDialog extends BaseDialog {
   descriptorSelectValue = signal<string>('');
   isOther = computed(() => this.descriptorSelectValue() === 'Other');
 
-  descriptorOptions = [
-    'Technical Manual',
-    'User Manual',
-    'Purchase Invoice',
-    'Training Material',
-    'Safety Instructions',
-    'Other',
-  ];
+  descriptorOptions = computed(() => [
+    {
+      label: this.translationService.translate('descriptor.technicalManual', {}, 'asset-roster'),
+      value: 'Technical Manual',
+    },
+    {
+      label: this.translationService.translate('descriptor.userManual', {}, 'asset-roster'),
+      value: 'User Manual',
+    },
+    {
+      label: this.translationService.translate('descriptor.purchaseInvoice', {}, 'asset-roster'),
+      value: 'Purchase Invoice',
+    },
+    {
+      label: this.translationService.translate('descriptor.trainingMaterial', {}, 'asset-roster'),
+      value: 'Training Material',
+    },
+    {
+      label: this.translationService.translate('descriptor.safetyInstructions', {}, 'asset-roster'),
+      value: 'Safety Instructions',
+    },
+    {
+      label: this.translationService.translate('descriptor.other', {}, 'asset-roster'),
+      value: 'Other',
+    },
+  ]);
 
   constructor() {
     super();

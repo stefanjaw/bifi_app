@@ -207,7 +207,7 @@
           @if (deviceType() === 'serialized' || deviceType() === 'software' || !deviceType()) {
             <div>
               <bifi-app-form-field previewVariant="italic">
-                <bifi-app-form-label>Location</bifi-app-form-label>
+                <bifi-app-form-label>{{ 'location' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
                 <bifi-app-form-preview>
                   <ng-template #preview let-typeId let-fallback>
                     {{ assetRoster()?.locationId?.name || fallback }}
@@ -275,20 +275,22 @@
         @if (deviceType() === 'non-serialized') {
           <!-- Location Distribution Card -->
           <div class="mt-6 border border-surface-200 rounded-md p-4 flex flex-col gap-4">
-            <p class="font-semibold text-sm text-surface-700">Location Distribution</p>
+            <p class="font-semibold text-sm text-surface-700">
+              {{ 'locationDistribution' | translate: {} : 'asset-roster' }}
+            </p>
 
             <!-- Stats -->
             <div class="flex gap-8 text-sm">
               <span>
-                Total:
+                {{ 'total' | translate: {} : 'asset-roster' }}
                 <strong>{{ totalQuantity() ?? 0 }}</strong>
               </span>
               <span>
-                Assigned:
+                {{ 'assigned' | translate: {} : 'asset-roster' }}
                 <strong>{{ totalAssigned() }}</strong>
               </span>
               <span>
-                Unassigned:
+                {{ 'unassigned' | translate: {} : 'asset-roster' }}
                 <strong>{{ totalUnassigned() }}</strong>
               </span>
             </div>
@@ -296,11 +298,11 @@
             <!-- Warnings -->
             @if ((totalQuantity() ?? 0) < totalAssigned()) {
               <p class="text-red-500 text-sm">
-                Error: Total quantity cannot be less than the total assigned quantity.
+                {{ 'totalQuantityError' | translate: {} : 'asset-roster' }}
               </p>
             } @else if ((totalQuantity() ?? 0) > totalAssigned()) {
               <p class="text-orange-500 text-sm">
-                Warning: Total quantity is greater than assigned quantity.
+                {{ 'totalQuantityWarning' | translate: {} : 'asset-roster' }}
               </p>
             }
 
@@ -339,7 +341,9 @@
                     <div class="flex gap-2 items-end">
                       <div class="flex-1">
                         <bifi-app-form-field>
-                          <bifi-app-form-label>Assigned Quantity</bifi-app-form-label>
+                          <bifi-app-form-label>
+                            {{ 'assignedQuantity' | translate: {} : 'asset-roster' }}
+                          </bifi-app-form-label>
                           <p-inputnumber
                             formControlName="assignedQuantity"
                             [min]="0"
@@ -364,7 +368,7 @@
               <p-button
                 type="button"
                 icon="pi pi-plus"
-                label="Add Location"
+                [label]="'addLocation' | translate: {} : 'asset-roster'"
                 variant="text"
                 size="small"
                 (click)="addLocation()"
@@ -381,7 +385,9 @@
                   </div>
                 }
                 @if (!assetRoster()?.locationAssignments?.length) {
-                  <p class="text-surface-400 text-sm italic">No locations assigned.</p>
+                  <p class="text-surface-400 text-sm italic">
+                    {{ 'noLocationsAssigned' | translate: {} : 'asset-roster' }}
+                  </p>
                 }
               </div>
             }
@@ -394,10 +400,14 @@
             formGroupName="softwareConfiguration"
             class="mt-6 flex flex-col gap-4 border border-surface-200 rounded-md p-4"
           >
-            <p class="font-semibold text-sm text-surface-700 mb-1">Software Configuration</p>
+            <p class="font-semibold text-sm text-surface-700 mb-1">
+              {{ 'softwareConfiguration' | translate: {} : 'asset-roster' }}
+            </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <bifi-app-form-field>
-                <bifi-app-form-label>Regulatory Classification</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'regulatoryClassification' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-select
                   formControlName="regulatoryClassification"
                   [options]="regulatoryClassificationOptions()"
@@ -409,13 +419,17 @@
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>Version</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'version' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <input pInputText formControlName="version" type="text" placeholder="e.g, 2.1.0" />
                 <bifi-app-form-error></bifi-app-form-error>
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>License Type</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'licenseType' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-select
                   formControlName="licenseType"
                   [options]="licenseTypeOptions()"
@@ -427,7 +441,9 @@
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>Parent Asset ID (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'parentAssetIdOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <bifi-app-form-preview>
                   <ng-template #preview let-value let-fallback>
                     {{ getParentAssetLabel(value, fallback) }}
@@ -447,7 +463,9 @@
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>UDI-DI (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'udiDiOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <input
                   pInputText
                   formControlName="udiDi"
@@ -458,7 +476,9 @@
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>FDA / MDR Class (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'fdaMdrClassOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <p-select
                   formControlName="fdaMdrClass"
                   [options]="fdaMdrClassOptions()"
@@ -471,7 +491,9 @@
               </bifi-app-form-field>
 
               <bifi-app-form-field>
-                <bifi-app-form-label>License Key (Optional)</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'licenseKeyOptional' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <input
                   pInputText
                   formControlName="licenseKey"
@@ -487,7 +509,7 @@
                   formControlName="preventAutoUpdate"
                 ></p-toggle-switch>
                 <label for="preventAutoUpdate" class="text-sm text-surface-700">
-                  Do not patch (Prevent Auto-Update)
+                  {{ 'doNotPatch' | translate: {} : 'asset-roster' }}
                 </label>
               </div>
             </div>
@@ -497,7 +519,10 @@
 
       <!-- Right Column - Asset Photo -->
       <div class="lg:col-span-1">
-        <p-card header="Asset Photo" class="h-full bg-gray-50! border border-gray-200 rounded-xl!">
+        <p-card
+          [header]="'assetPhoto' | translate: {} : 'asset-roster'"
+          class="h-full bg-gray-50! border border-gray-200 rounded-xl!"
+        >
           <div class="rounded-lg p-4 text-center flex flex-col items-center justify-center gap-3">
             <!-- Always show the saved photo (clickable to open full-size) so the
                  thumbnail is reachable in edit mode too. The uploader appears
@@ -515,7 +540,7 @@
                 title="Click to view full size"
               />
             } @else if (!isEditMode()) {
-              <div class="text-gray-500">No photo</div>
+              <div class="text-gray-500">{{ 'noPhoto' | translate: {} : 'asset-roster' }}</div>
             }
             @if (isEditMode()) {
               <div class="photo-uploader-wrap">
@@ -529,7 +554,11 @@
                     maxFileSize="100000000"
                     mode="basic"
                     [auto]="false"
-                    [chooseLabel]="uploadedFile() ? 'Replace photo' : 'Choose photo'"
+                    [chooseLabel]="
+                      uploadedFile()
+                        ? ('replacePhoto' | translate: {} : 'asset-roster')
+                        : ('choosePhoto' | translate: {} : 'asset-roster')
+                    "
                     [chooseIcon]="uploadedFile() ? 'pi pi-pencil' : 'pi pi-upload'"
                     [chooseButtonProps]="{ variant: 'outlined', size: 'small' }"
                   />

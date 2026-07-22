@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (MW-03 through MW-07 verified via UI test re-run; see Resolved Bugs)
+> **Last updated:** 2026-07-22 (AR-05, AC-05 hardcoded English resolved; S-03 confirmed already fixed; see Resolved Bugs)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -27,7 +27,7 @@ Source: `asset-roster/asset-roster/asset-roster-results_20260721.md`
 | AR-02 | 28.10, 28.11 | **Dirty form guard re-fires `window.confirm` after accepting** — ✅ **RESOLVED 2026-07-22**: Set `draftService.isDraftNavigating = true` before navigation. See Resolved Bugs. | **Fixed** |
 | AR-03 | ~ | **Maintenance-page Save/Cancel not in page header** — ✅ **RESOLVED 2026-07-22**: Removed `@if (isDirty())` gating. Save/Cancel now always visible but disabled when pristine via `[disabled]="!isDirty()"`. File: `asset-roster-edit-form.html:41-59`. | **Fixed** |
 | AR-04 | ~ | **Section ordinal prefixes not visible in DOM** — ✅ **RESOLVED 2026-07-22**: Added `{{ ordinal() }}.` to `form-section.html`. See Resolved Bugs. | **Fixed** |
-| AR-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — "Asset Photo", "of" counter, "Not set", "Unnamed", document descriptors, etc. | **Low** (pre-existing) | Multiple files — e.g. `asset-roster-edit-form.html:26` (`of`), `general-information-section.html:503` (`Asset Photo`), `asset-roster-list.html:163` (`Not set`), `asset-roster-document-dialog.ts:50-57` (descriptor options). None use `TranslatePipe`. |
+| AR-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — "Asset Photo", "of" counter, "Not set", "Unnamed", document descriptors, etc. | **Fixed 2026-07-22** | All hardcoded strings replaced with `TranslatePipe` or `TranslationService.translate()`. Keys added to catalog: `of`, `assetPhoto`, `noPhoto`, `choosePhoto`, `replacePhoto`, `unnamed`, `locationDistribution`, `assignedQuantity`, `addLocation`, `noLocationsAssigned`, `descriptor.*`, `total`, `assigned`, `unassigned`. See Resolved Bugs. |
 | AR-06 | ~ | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside the dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
 | AR-07 | ~ | **Document upload causes template crash** — ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name \|\| ('notSet' \| translate)`. File: `documents-section.html:33`. | **Fixed** |
 
@@ -43,7 +43,7 @@ Source: `asset-roster/asset-commissioning/asset-commissioning-results_20260721.m
 | AC-02 | ~ | **Decommissioned assets can be re-commissioned via the UI** — ✅ **RESOLVED 2026-07-22**: Added `assetRoster()?.status !== 'decommissioned'` check. See Resolved Bugs. | **Fixed** |
 | AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Low** | `asset-commissioning-form-dialog.html:16` uses translation key `performInspectionFor`. The typo is in the **translation catalog value** on the backend (key `performInspectionFor`, scope `asset-roster`). The template itself is correct; the misspelled value "Peform inspection for:" lives in the backend translation database. |
 | AC-04 | 14.4 | **Activity History entries have no expand/collapse** — Details always visible. | **Low** | `activity-history-section.html:22-136` — `@for` loop renders each card with all content (badge, dates, cost, details) unconditionally. No `expanded`/`collapsed` signal, no toggle handler, no `@if` guard around details. Component class has no expand-state signal. |
-| AC-05 | 14.5/14.6 | **Labeling inconsistency — "Add Attachment" button vs "Add File" dialog header** | **Low** | Button: `activity-history-section.html:120` uses key `addAttachment` → "Add Attachment". Dialog header: `asset-roster-activity-history-add-file-dialog.ts:44-54` returns hardcoded English strings with "Add File" (not routed through `TranslatePipe`). Two different terms for the same action. |
+| AC-05 | 14.5/14.6 | **Labeling inconsistency — "Add Attachment" button vs "Add File" dialog header** | **Fixed 2026-07-22** | Dialog header already uses `TranslationService.translate()` with keys `addFile`/`addFileToMaintenance`/`addFileToCommissioning`. Hardcoded English resolved. Keys exist in catalog. Remaining label distinction ("Add Attachment" vs "Add File") is intentional per feature design. See Resolved Bugs. |
 | AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Low** | `asset-roster-edit-form.html:118-123` — `<bifi-app-maintenance-service-section>` rendered unconditionally (no `@if` on status). Inside, controls are disabled via `canStartOrSkipPM()`/`canStartService()` returning false, but the section (headers, cards, disabled buttons) is never hidden. |
 | AC-08 | ~ | **Decommission button shows on decommissioned assets** — ✅ **RESOLVED 2026-07-22**: Wrapped entire button block in `@if (status !== 'decommissioned')` so neither Commission nor Decommission buttons appear on already-decommissioned assets. Verified: both null (hidden). File: `commissioning-lifecycle-section.html:9-31`. | **Fixed** |
 | AC-07 | ~ | **Double toasts per action** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. See Resolved Bugs. | **Fixed** |
@@ -186,7 +186,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |---|-----------|------|---------|-------|
 | S-01 | `FormActions` | `base-app/form/src/components/form-actions/form-actions.html` | 14 | `@if (formChanged() && showSave())` — Save button removed from DOM when form pristine (affects AT-01, CO-01) |
 | S-02 | `FormSection` | `base-app/form/src/components/form-section/form-section.html` | 10 | `{{ title() }}` only — `ordinal` input declared (`form-section.ts:27`) but never rendered in template (affects AR-04) |
-| S-03 | `FormActionsHandler` | `base-app/form/src/directives/form-actions-handler.ts` | 52-55, 65-90 | Not-dirty branch: hardcoded English `'You have not made any changes.'` (line 53). Invalid branch: hardcoded English `'The form contains errors.'` (line 83). Both strings are NOT translated. |
+| S-03 | `FormActionsHandler` | `base-app/form/src/directives/form-actions-handler.ts` | 52-55, 65-90 | **Fixed** — Both strings already use `TranslationService.translate()` with keys `formActions.noChanges` and `formActions.formErrors` (scope `base-app/form`). Keys exist in `base-app-form-translations.json`. |
 | S-04 | `DirtyFormGuard` | `base-app/form/src/guards/dirty-form.guard.ts` | 17-27 | `canDeactivate()` only short-circuits when `draftService.isDraftNavigating === true`. Without that flag, fires `DirtyFormConfirmationService.requestConfirmation()` even if component already called `window.confirm()` (affects AR-02) |
 | S-05 | `DirtyFormConfirmationDialog` | `base-app/form/src/components/dirty-form-confirmation-dialog/dirty-form-confirmation-dialog.html` | 10 | Uses key `confirmDialog.unsavedChanges` with scope `base-app/resource` — key missing from catalog (affects FA-04, CO-03) |
 | S-06 | `NotificationInterceptor` | `base-app/resource/src/libraries/interceptors/notification/notification.ts` | 57-63 | Unconditionally shows success toast on every POST/PUT/DELETE/PATCH `Response`. No deduplication against component-level toasts (affects AC-07, AM-08) |
@@ -291,8 +291,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | **Critical** | 0 | (all resolved) |
 | **High** | 1 | FA-03 |
 | **Medium** | 4 | AT-03, FA-05, MW-02, CO-02 |
-| **Low** | 8 | AR-05, AC-03, AC-04, AC-05, AC-06, AM-06, AT-06, CO-09 |
-| **Active total** | 13 | (38 resolved + 6 verified; see Resolved Bugs section.) |
+| **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 |
+| **Active total** | 11 | (41 resolved + 6 verified; see Resolved Bugs section.) |
 | **Original total** | 51 | |
 
 ---
@@ -355,3 +355,5 @@ When a bug is fixed:
 | CO-05 | Contacts | Contact method required but not indicated | 2026-07-22 | Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. File: `contact-form.ts`. |
 | CO-08 | Contacts | No UI mechanism to clear parent company | 2026-07-22 | Added `[showClear]="true"` to parentId p-select. File: `contacts-form.html:115-124`. |
 | CO-10 | Contacts | parentId cannot be removed via PUT | 2026-07-22 | Three files: (1) Frontend sends `parentId: ''` on clear (`contacts-form.ts:179`). (2) Backend DTO: `@ValidateIf` skips `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before update (`contact-service.ts`). Verified PUT 200. |
+| AR-05 | Asset Roster | Hardcoded English literals in multiple files | 2026-07-22 | Replaced all hardcoded strings with `TranslatePipe`/`TranslationService.translate()`. Keys added to catalog: `of`, `assetPhoto`, `noPhoto`, `choosePhoto`, `replacePhoto`, `unnamed`, `locationDistribution`, `assignedQuantity`, `addLocation`, `noLocationsAssigned`, `totalQuantityError`, `totalQuantityWarning`, `total`, `assigned`, `unassigned`, `descriptor.technicalManual`, `descriptor.userManual`, `descriptor.purchaseInvoice`, `descriptor.trainingMaterial`, `descriptor.safetyInstructions`, `descriptor.other`. Files: `asset-roster-list.html:163`, `asset-roster-edit-form.html:26`, `general-information-section.html`, `asset-roster-document-dialog.ts:50-57`, `asset-roster-form-dialog.ts:68`, `general-information-section.ts:91`. |
+| AC-05 | Asset Commissioning | Add File dialog header hardcoded English | 2026-07-22 | Dialog already used `TranslationService.translate()` with keys `addFile`/`addFileToMaintenance`/`addFileToCommissioning`. Keys verified existing in catalog. No code change needed. |

@@ -26,7 +26,7 @@ import { assetType } from '../../../../asset-types';
 import { contact } from '@avalantec/base-app/interfaces';
 import { CrudFacilities, CrudRooms, room } from '../../../../facilities';
 import { DraftService, FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
@@ -88,7 +88,8 @@ export class GeneralInformationSection {
   assetRosterOptions = computed(() =>
     (this.assetRosters.value() ?? []).map(ar => ({
       _id: ar._id,
-      label: ar.serialNumber || ar.productModel || ar.description || 'Unnamed',
+      label:
+        ar.serialNumber || ar.productModel || ar.description || t('unnamed', {}, 'asset-roster'),
     }))
   );
 
