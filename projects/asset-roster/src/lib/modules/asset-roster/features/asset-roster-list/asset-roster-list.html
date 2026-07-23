@@ -4,9 +4,9 @@
   class="sticky top-0 z-10 bg-white py-4 px-6 flex flex-col gap-3 transition-shadow duration-300"
   [class.shadow-md]="isScrolled()"
 >
-  <div class="flex justify-between items-center gap-2">
-    <h1 class="text-2xl font-bold">{{ 'assetDashboard' | translate: {} : 'asset-roster' }}</h1>
-    <div class="flex gap-2">
+  <div class="flex flex-col gap-1">
+    <div class="flex justify-between items-center gap-2">
+      <h1 class="text-xl md:text-2xl font-bold whitespace-nowrap">{{ 'assetDashboard' | translate: {} : 'asset-roster' }}</h1>
       <p-selectButton
         [options]="optionsView"
         optionValue="value"
@@ -17,10 +17,12 @@
           {{ item.label }}
         </ng-template>
       </p-selectButton>
-
+    </div>
+    <div class="flex gap-2 flex-wrap">
       <p-button
         [label]="'reporting' | translate: {} : 'asset-roster'"
         severity="success"
+        size="small"
         icon="pi pi-file-pdf"
         (onClick)="downloadReportDialog.openDialog()"
         *bifiAppHasPermission="'reporting/generate-report:read:model'"
@@ -33,13 +35,16 @@
       ></p-button>
       <p-button
         [label]="'importCsv' | translate: {} : 'asset-roster'"
-        severity="success"
+        [outlined]="true"
+        size="small"
         icon="pi pi-upload"
         (onClick)="fileInput.click()"
         *bifiAppHasPermission="'asset-rosters/import:create:model'"
       ></p-button>
       <p-button
         [label]="'exportCsv' | translate: {} : 'asset-roster'"
+        [outlined]="true"
+        size="small"
         icon="pi pi-download"
         (onClick)="exportCSV()"
         *bifiAppHasPermission="'asset-rosters/export:read:model'"
@@ -47,6 +52,7 @@
       <p-button
         [label]="'addNewAsset' | translate: {} : 'asset-roster'"
         severity="secondary"
+        size="small"
         icon="pi pi-plus"
         (onClick)="createDialog.openDialog()"
         *bifiAppHasPermission="'asset-rosters:create:model'"

@@ -169,8 +169,14 @@ export class AssetRosterList {
       const sentinel = this.scrollSentinel()?.nativeElement;
       if (!sentinel) return;
 
+      let scrollTimeout: ReturnType<typeof setTimeout>;
       const observer = new IntersectionObserver(
-        ([entry]) => this.isScrolled.set(!entry.isIntersecting),
+        ([entry]) => {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            this.isScrolled.set(!entry.isIntersecting);
+          }, 150);
+        },
         { threshold: 0 }
       );
       observer.observe(sentinel);
@@ -261,4 +267,5 @@ export class AssetRosterList {
       relativeTo: this.route,
     });
   };
+
 }

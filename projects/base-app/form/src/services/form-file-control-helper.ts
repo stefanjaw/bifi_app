@@ -2,7 +2,7 @@ import { computed, DestroyRef, inject, Injectable, Injector, signal } from '@ang
 import { FormArray, FormGroup } from '@angular/forms';
 import { ControlsOf } from '../interfaces/typed-form-builder';
 import { FormUploaderFile } from '../interfaces/form-uploader-image';
-import { distinctUntilChanged, filter } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 import { FormFileMetadata } from '../interfaces/form-file';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -47,7 +47,7 @@ export class FormFileControlHelper {
     control.valueChanges
       .pipe(
         takeUntilDestroyed(destroy$),
-        filter(() => !!control.controls.length), // Only proceed if the array contains controls
+        // filter(() => !!control.controls.length), // Only proceed if the array contains controls
         distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
       )
       .subscribe(() => {
