@@ -106,8 +106,9 @@ export class CrmsForm implements DirtyComponent {
       const entry = this.entry();
 
       if (!this.draftRestored) {
-        const draft = this.draftService.getDraft(this.router.url);
-        if (draft) {
+        const draftWrapper = this.draftService.getDraft(this.router.url);
+        if (draftWrapper) {
+          const draft = draftWrapper.data;
           this.form.patchValue(draft);
           this.form.markAsDirty();
           this.draftService.clearDraft(this.router.url);

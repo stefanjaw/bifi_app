@@ -284,12 +284,15 @@ export class AssetRosterMaintenance implements DirtyComponent {
     assetRosterRequest.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.submitLoading.set(false);
-        // Edit mode stays on (edit-by-default); resetValueToInitialState
-        // marks the form pristine via the asset reload effect, which hides
-        // the Save / Cancel buttons.
         this.assetRosterMaintenanceContext.handleSaved();
+        
+        // Mark form as pristine to avoid triggering the DirtyFormGuard on navigation
+        this.formService.form.markAsPristine();
+        this.formService.form.markAsUntouched();
+
         this.handleReloadAssetRoster();
         this.toastManager.showSuccess('Asset updated successfully');
+        this.handleBackToDashboard();
       },
       error: () => {
         this.submitLoading.set(false);

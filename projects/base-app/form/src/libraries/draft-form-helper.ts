@@ -4,7 +4,28 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { DraftService } from '../services/draft-service';
 import { markAsDirty } from './dirty-utils';
 
-function markDraftControlsDirty(form: FormGroup, draft: Record<string, unknown>): void {
+function markDraftControlsDirty(form: FormGroup, draft: Record<string, unknown>, dirtyKeys?: string[]): void {
+  if (dirtyKeys) {
+    dirtyKeys.forEach(key => {
+      const control = form.get(key);
+      if (!control) return;
+      if (control instanceof FormArray) {
+        control.controls.forEach(c => {
+          c.markAsDirty();
+          if (c instanceof FormGroup) {
+            markAsDirty({ group: c });
+          }
+        });
+      } else if (control instanceof FormGroup) {
+        markAsDirty({ group: control });
+      } else {
+        control.markAsDirty();
+      }
+    });
+    return;
+  }
+
+  // Fallback for older drafts without dirtyKeys
   for (const key of Object.keys(draft)) {
     const control = form.get(key);
     if (!control) continue;
@@ -58,28 +79,40 @@ export function autoForm<T>(
 ): AutoFormResult {
   const restored = signal(false);
 
+  // Determine if we are in update mode by checking if the URL has an ID.
+  // This is a heuristic: if we expect data, we shouldn't restore the draft
+  // until the data has loaded. If we are in create mode, we can restore immediately.
+  const isUpdate = router.url.includes('/update/') || router.url.includes('/maintenance/');
+
   effect(() => {
     const current = data();
 
-    if (!restored()) {
-      const draft = draftService.getDraft(router.url);
-      if (draft) {
-        beforePatch?.(draft);
-        form.patchValue(draft);
-        markDraftControlsDirty(form, draft);
-        draftService.clearDraft(router.url);
-        restored.set(true);
-        return;
-      }
-    }
-
     if (restored()) return;
 
+    // If we are in update mode, wait for the data to arrive before proceeding
+    if (isUpdate && !current) {
+      return;
+    }
+
+    const draftWrapper = draftService.getDraft(router.url);
+
+    // 1. Initialize the form first (either load data or reset)
     if (current) {
       load(current);
     } else {
       form.reset();
     }
+
+    // 2. If a draft exists, patch it on top of the initialized form
+    if (draftWrapper) {
+      const { data: draft, dirtyKeys } = draftWrapper;
+      beforePatch?.(draft);
+      form.patchValue(draft);
+      markDraftControlsDirty(form, draft, dirtyKeys);
+      draftService.clearDraft(router.url);
+    }
+
+    restored.set(true);
   });
 
   return { draftRestored: restored };

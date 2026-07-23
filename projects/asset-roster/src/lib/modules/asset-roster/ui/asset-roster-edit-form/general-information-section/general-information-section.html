@@ -195,6 +195,7 @@
                     label="Other vendor +"
                     controlName="vendorIds"
                     [createRoute]="['/contacts', 'create']"
+                    [formGroup]="formService.form"
                     #vendorFooter
                   ></bifi-app-form-select-navigate-footer>
                 </ng-template>
@@ -227,6 +228,7 @@
                       label="Other room +"
                       controlName="locationId"
                       [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
+                      [formGroup]="formService.form"
                       #roomFooter2
                     ></bifi-app-form-select-navigate-footer>
                   </ng-template>
@@ -332,6 +334,7 @@
                               [controlName]="'locationAssignments.' + $index + '.locationId'"
                               [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
                               [draftFormValue]="formService.form.value"
+                              [formGroup]="formService.form"
                               #roomFooter
                             ></bifi-app-form-select-navigate-footer>
                           </ng-template>

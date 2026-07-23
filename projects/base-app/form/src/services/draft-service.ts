@@ -29,9 +29,10 @@ export class DraftService {
    * @param key - The URL or identifier for the draft
    * @param data - The form value object to persist
    */
-  saveDraft(key: string, data: unknown): void {
+  saveDraft(key: string, data: unknown, dirtyKeys?: string[]): void {
     try {
-      localStorage.setItem(`${this.PREFIX}${key}`, JSON.stringify(data));
+      const payload = { _v: 2, data, dirtyKeys };
+      localStorage.setItem(`${this.PREFIX}${key}`, JSON.stringify(payload));
     } catch (e) {
       console.warn('Failed to save draft to localStorage', e);
     }
@@ -43,10 +44,15 @@ export class DraftService {
    * @param key - The URL or identifier used when saving the draft
    * @returns The parsed draft object, or null if not found or corrupted
    */
-  getDraft(key: string): Record<string, unknown> | null {
+  getDraft(key: string): { data: Record<string, unknown>; dirtyKeys?: string[] } | null {
     try {
       const item = localStorage.getItem(`${this.PREFIX}${key}`);
-      return item ? (JSON.parse(item, isoDateReviver) as Record<string, unknown>) : null;
+      if (!item) return null;
+      const parsed = JSON.parse(item, isoDateReviver);
+      if (parsed && typeof parsed === 'object' && (parsed as any)._v === 2) {
+        return parsed as { data: Record<string, unknown>; dirtyKeys?: string[] };
+      }
+      return { data: parsed as Record<string, unknown> };
     } catch (e) {
       console.warn('Failed to read draft from localStorage', e);
       return null;
@@ -62,8 +68,10 @@ export class DraftService {
    * @param value - The value to write
    */
   updateDraftField(key: string, fieldPath: string, value: unknown): void {
-    const draft = this.getDraft(key);
-    if (!draft) return;
+    const draftWrapper = this.getDraft(key);
+    if (!draftWrapper) return;
+
+    const draft = draftWrapper.data;
 
     const keys = fieldPath.split('.');
     let current: Record<string, unknown> = draft;
@@ -83,7 +91,16 @@ export class DraftService {
       current[lastKey] = value;
     }
 
-    this.saveDraft(key, draft);
+    let dirtyKeys = draftWrapper.dirtyKeys;
+    if (dirtyKeys) {
+      if (!dirtyKeys.includes(fieldPath)) {
+        dirtyKeys.push(fieldPath);
+      }
+    } else {
+      dirtyKeys = [fieldPath];
+    }
+
+    this.saveDraft(key, draft, dirtyKeys);
   }
 
   /**

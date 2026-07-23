@@ -14,6 +14,7 @@ export class FormSelectNavigateFooter {
   createRoute = input.required<any[]>();
   controlName = input<string>();
   draftFormValue = input<any>();
+  formGroup = input<any>(); // Optional FormGroup to extract dirty keys
 
   private router = inject(Router);
   private draftService = inject(DraftService);
@@ -26,10 +27,21 @@ export class FormSelectNavigateFooter {
 
     this.draftService.isDraftNavigating = true;
 
-    if (this.draftFormValue()) {
-      this.draftService.saveDraft(this.router.url, this.draftFormValue());
-    } else if (this.controlContainer && this.controlContainer.control) {
-      this.draftService.saveDraft(this.router.url, this.controlContainer.control.value);
+    let dataToSave = this.draftFormValue();
+    let dirtyKeys: string[] | undefined;
+
+    const group = this.formGroup() || (this.controlContainer && this.controlContainer.control);
+    if (group) {
+      if (!dataToSave) {
+        dataToSave = group.value;
+      }
+      if (group.controls) {
+        dirtyKeys = Object.keys(group.controls).filter(key => group.get(key)!.dirty);
+      }
+    }
+
+    if (dataToSave) {
+      this.draftService.saveDraft(this.router.url, dataToSave, dirtyKeys);
     }
 
     // Navigate with returnUrl and optional controlName

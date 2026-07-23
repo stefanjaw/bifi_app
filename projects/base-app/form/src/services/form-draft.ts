@@ -7,9 +7,9 @@ export class DraftService {
   private readonly PREFIX = 'bifi_app_draft_';
   isDraftNavigating = false;
 
-  saveDraft(key: string, data: any, controlName?: string): void {
+  saveDraft(key: string, data: any, controlName?: string, dirtyKeys?: string[]): void {
     try {
-      const payload = { data, controlName };
+      const payload = { data, controlName, dirtyKeys };
       localStorage.setItem(`${this.PREFIX}${key}`, JSON.stringify(payload));
     } catch (e) {
       console.warn('Failed to save draft to localStorage', e);
