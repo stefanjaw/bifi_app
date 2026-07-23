@@ -42,7 +42,7 @@ export interface assetRoster {
   condition: 'excellent' | 'good' | 'fair' | 'poor';
   maintenanceWindowIds: maintenanceWindow[];
   photo: string;
-  locationId: room;
+  locationId?: room;
   warrantyDate: Date;
   supportEndDate?: Date;
   remarks?: notes[] | null;
