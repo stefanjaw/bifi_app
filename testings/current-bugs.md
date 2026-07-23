@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-22 (AR-05, AC-05 hardcoded English resolved; S-03 confirmed already fixed; see Resolved Bugs)
+> **Last updated:** 2026-07-23 (AR-08/AR-09 root causes corrected — async load clobbers draft, not "getDraft returns null"; CO-01 marked Fixed; line refs corrected; AC-03 catalog location identified)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -30,6 +30,8 @@ Source: `asset-roster/asset-roster/asset-roster-results_20260721.md`
 | AR-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — "Asset Photo", "of" counter, "Not set", "Unnamed", document descriptors, etc. | **Fixed 2026-07-22** | All hardcoded strings replaced with `TranslatePipe` or `TranslationService.translate()`. Keys added to catalog: `of`, `assetPhoto`, `noPhoto`, `choosePhoto`, `replacePhoto`, `unnamed`, `locationDistribution`, `assignedQuantity`, `addLocation`, `noLocationsAssigned`, `descriptor.*`, `total`, `assigned`, `unassigned`. See Resolved Bugs. |
 | AR-06 | ~ | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside the dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
 | AR-07 | ~ | **Document upload causes template crash** — ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name \|\| ('notSet' \| translate)`. File: `documents-section.html:33`. | **Fixed** |
+| AR-08 | 36.3 | **Cross-form navigate-back: created room not pre-selected in Location dropdown** — After creating a room from the asset maintenance page's Location dropdown "Other room +" footer and returning, the newly created room exists in the dropdown options but is NOT pre-selected. | **High** | `asset-roster-maintenance.ts:391-482` + `draft-form-helper.ts:101` — `autoForm()` calls `load(current)` (bound to `resetValueToInitialState`, which is `async`) **without awaiting it**. The draft is applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but then the async `load()` completes later and calls `patchValue({entity})` + `markAsPristine()`, **overwriting** the draft values (including the created room ID in `locationId`) with the original entity data. |
+| AR-09 | 36.4 | **Draft restoration broken in update mode after cross-form navigation** — When returning from a room create to the asset maintenance page (update mode, URL contains `/maintenance/`), the entire draft (all user modifications) is NOT restored. The form shows original entity values and is pristine (`ng-pristine`). | **High** | Same root cause as AR-08. `draft-form-helper.ts:101` — `autoForm()` calls `load(current)` without `await`. `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:202`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The sync draft patch is applied first, then the async entity load completes and clobbers it. The draft IS found and applied — the issue is an async/await hazard, not a missing draft. |
 
 ---
 
@@ -41,10 +43,10 @@ Source: `asset-roster/asset-commissioning/asset-commissioning-results_20260721.m
 |----|------|-------------|----------|------------------------|
 | AC-01 | ~ | **No whitespace validation on Details/Reason fields** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. See Resolved Bugs. | **Fixed** |
 | AC-02 | ~ | **Decommissioned assets can be re-commissioned via the UI** — ✅ **RESOLVED 2026-07-22**: Added `assetRoster()?.status !== 'decommissioned'` check. See Resolved Bugs. | **Fixed** |
-| AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Low** | `asset-commissioning-form-dialog.html:16` uses translation key `performInspectionFor`. The typo is in the **translation catalog value** on the backend (key `performInspectionFor`, scope `asset-roster`). The template itself is correct; the misspelled value "Peform inspection for:" lives in the backend translation database. |
+| AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Low** | `asset-commissioning-form-dialog.html:17` uses translation key `performInspectionFor`. The typo is in the **translation catalog value** (`asset-roster-translations.json:2274` — EN value `"Peform inspection for: "`). The template itself is correct; the ES value (line 2288) is correctly spelled. |
 | AC-04 | 14.4 | **Activity History entries have no expand/collapse** — Details always visible. | **Low** | `activity-history-section.html:22-136` — `@for` loop renders each card with all content (badge, dates, cost, details) unconditionally. No `expanded`/`collapsed` signal, no toggle handler, no `@if` guard around details. Component class has no expand-state signal. |
 | AC-05 | 14.5/14.6 | **Labeling inconsistency — "Add Attachment" button vs "Add File" dialog header** | **Fixed 2026-07-22** | Dialog header already uses `TranslationService.translate()` with keys `addFile`/`addFileToMaintenance`/`addFileToCommissioning`. Hardcoded English resolved. Keys exist in catalog. Remaining label distinction ("Add Attachment" vs "Add File") is intentional per feature design. See Resolved Bugs. |
-| AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Low** | `asset-roster-edit-form.html:118-123` — `<bifi-app-maintenance-service-section>` rendered unconditionally (no `@if` on status). Inside, controls are disabled via `canStartOrSkipPM()`/`canStartService()` returning false, but the section (headers, cards, disabled buttons) is never hidden. |
+| AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Low** | `asset-roster-edit-form.html:120-125` — `<bifi-app-maintenance-service-section>` rendered unconditionally (no `@if` on status). Inside, controls are disabled via `canStartOrSkipPM()`/`canStartService()` returning false, but the section (headers, cards, disabled buttons) is never hidden. |
 | AC-08 | ~ | **Decommission button shows on decommissioned assets** — ✅ **RESOLVED 2026-07-22**: Wrapped entire button block in `@if (status !== 'decommissioned')` so neither Commission nor Decommission buttons appear on already-decommissioned assets. Verified: both null (hidden). File: `commissioning-lifecycle-section.html:9-31`. | **Fixed** |
 | AC-07 | ~ | **Double toasts per action** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. See Resolved Bugs. | **Fixed** |
 
@@ -61,7 +63,7 @@ Source: `asset-roster/asset-maintenances/asset-maintenances-results_20260721.md`
 | AM-03 | ~ | **Status alert shows "Active" instead of "In PM" (AM-03)** — ✅ **RESOLVED 2026-07-22**: Added separate `in-pm` branch. See Resolved Bugs. | **Fixed** |
 | AM-04 | ~ | **Double-colon typo (AM-04)** — ✅ **RESOLVED 2026-07-22**: Removed extra `:`. See Resolved Bugs. | **Fixed** |
 | AM-05 | ~ | **Initiate Service button HIDDEN (AM-05)** — ✅ **RESOLVED 2026-07-22**: Changed to always visible with `[disabled]`. See Resolved Bugs. | **Fixed** |
-| AM-06 | 3.5, 10.4, 19.1, 19.3 | **Activity history does NOT show entries immediately after initiating service or PM** | **Low** | `api-request-manager.ts:200-204` — `httpResource` GET request does not set `cache: 'no-store'`. `FetchBackend` passes `req.cache` (undefined) to `fetch()`, so browser uses default cache mode and may return cached GET responses on `reload()`. The code does call `activityHistories.reload()` but the browser cache prevents fresh data. |
+| AM-06 | 3.5, 10.4, 19.1, 19.3 | **Activity history does NOT show entries immediately after initiating service or PM** | **Low** | `api-request-manager.ts:206-245` — `httpResource` GET request sets HTTP `Cache-Control: no-cache, no-store` header (`:235-239`) but does not set the fetch-level `cache: 'no-store'` option. `FetchBackend` passes `req.cache` (undefined) to `fetch()`, so browser uses default cache mode and may return cached GET responses on `reload()`. |
 | AM-07 | ~ | **PM schedule fields remain locked after finishing PM (AM-07)** — ✅ **RESOLVED 2026-07-22**: Changed to check `pmStarted()`. See Resolved Bugs. | **Fixed** |
 | AM-08 | ~ | **Double toast on service creation (AM-08)** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }`. See Resolved Bugs. | **Fixed** |
 
@@ -120,10 +122,10 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
-| CO-01 | 3.2 | **Save button only appears when form is dirty** | **Medium** | `form-actions.html:14` — `@if (formChanged() && showSave())`. Consumer: `contacts-form.html:21` binds `[formChanged]="form.dirty"`. Same shared root cause as AT-01. |
+| CO-01 | 3.2 | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Same fix as AT-01 — shared `form-actions.html:14` changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() || isSubmitting() || formDisabled()"`. Save button now always visible (disabled when pristine). | **Fixed** |
 | CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Medium** | `contacts-list.ts:55-64` — direct delete, no child check. Backend `ContactService` has no `delete()` override. `BaseService.delete` removes parent; children's `parentId` points to non-existent ObjectId. |
 | CO-03 | ~ | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Same fix as FA-04. | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key added to catalog. |
-| CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. File: `contact-cr-plugin.ts:115`. | **Fixed** |
+| CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. ⚠️ **REVERTED 2026-07-23**: Commit `35efa036` removed `Validators.required` and `*` marker — CR VAT Type is now optional. Backend commit `c40a4202` handles empty-string `crVatType` in `ContactDTO`. Filed under Section 12 retest in contacts results. | **Reverted 2026-07-23** |
 | CO-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. Ensures at least one of phone/email/website is provided. File: `contact-form.ts`. | **Fixed** |
 | CO-06 | 8–9 | **Export and Import not implemented** — No buttons or methods. | **Low** (planned) | `contacts-list.html:3-17` — only `goBack` and `addNew` buttons, no export/import. `crud-contacts.ts` — only sets `endpoint = 'contacts'`, no export/import methods. Backend `BaseRoutes` auto-registers `/export`/`/import` but frontend never calls them. |
 | CO-07 | 10 | **No Active/Inactive toggle in UI** — `active` field exists but no UI control. | **Low** (planned) | `contact-form.ts:50-81` — `createForm()` has no `active` control. `contacts-form.html` and `contacts-list.html` — no active/inactive toggle. Interface (`contact.ts:24`) and backend model (`contact.model.ts:124-127`) have `active: boolean` but it's not exposed in the UI. |
@@ -172,6 +174,11 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Root cause:** `notification.ts:57-63` — `NotificationInterceptor` unconditionally fires a success toast for every POST/PUT/DELETE/PATCH response. The `id: toastId` only replaces the loading toast, not any component-level toast. Feature dialogs also manually call `toastManager.showSuccess(...)` in their `next` handler → two toasts for the same request.
 - **Shared fix location:** `projects/base-app/resource/src/libraries/interceptors/notification/notification.ts` — either suppress the interceptor toast when the consuming component shows its own, or remove manual `showSuccess` calls from feature components and rely solely on the interceptor. The interceptor needs a context-level opt-out mechanism.
 
+### Pattern H — Draft restoration race in update mode after cross-form navigation
+- **Affected:** AR-08, AR-09 (asset-roster)
+- **Root cause:** `draft-form-helper.ts:autoForm()` calls `load(current)` (the entity-data loader callback) **without `await`** — Angular `effect()` cannot be `async`. For the asset maintenance form, `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:391`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The draft IS found by `getDraft()` and applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but the async `load()` completes later and its `patchValue({entity})` + `markAsPristine()` **overwrites** the draft. The described "getDraft returns null" hypothesis was incorrect — verified by code inspection.
+- **Shared fix location:** `projects/base-app/form/src/libraries/draft-form-helper.ts` — `autoForm` must not let the async `load` clobber the draft. Options: (1) restructure the effect to chain the async load and apply the draft after it completes; (2) apply the draft inside `load`'s `.then()` completion; (3) make `resetValueToInitialState` synchronous (avoid `fileResolverService.resolveFile` await, or pre-resolve files before the effect runs).
+
 ---
 
 ## Root Cause Analysis (Detailed)
@@ -191,11 +198,11 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | S-05 | `DirtyFormConfirmationDialog` | `base-app/form/src/components/dirty-form-confirmation-dialog/dirty-form-confirmation-dialog.html` | 10 | Uses key `confirmDialog.unsavedChanges` with scope `base-app/resource` — key missing from catalog (affects FA-04, CO-03) |
 | S-06 | `NotificationInterceptor` | `base-app/resource/src/libraries/interceptors/notification/notification.ts` | 57-63 | Unconditionally shows success toast on every POST/PUT/DELETE/PATCH `Response`. No deduplication against component-level toasts (affects AC-07, AM-08) |
 | S-07 | No trim validator | `base-app/form/` (entire entrypoint) | — | No shared whitespace/trim/non-empty-whitespace validator exists. Only `Validators.required` is used everywhere, which accepts whitespace-only strings (affects AC-01, AT-05, FA-01, MW-01) |
-| S-08 | `ApiRequestManager` | `base-app/resource/src/libraries/api-request-manager.ts` | 200-204 | `httpResource` GET requests do not set `cache: 'no-store'`. Browser may return cached responses on `reload()` (affects AM-06) |
+| S-08 | `ApiRequestManager` | `base-app/resource/src/services/api-request-manager.ts:206-245` | `httpResource` GET requests set HTTP `Cache-Control` header but do not set fetch-level `cache: 'no-store'`. Browser may return cached responses on `reload()` (affects AM-06) |
 
 ### Module-Specific Root Causes
 
-#### Asset Roster (AR-01 to AR-07)
+#### Asset Roster (AR-01 to AR-09)
 
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
@@ -206,6 +213,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AR-05 | Multiple files | Multiple | See description column for key locations. |
 | AR-06 | `asset-roster-form-dialog.html` | 319 | `<p-datepicker formControlName="acquiredDate" [showIcon]="true">` — missing `appendTo="body"`. Dialog modal mask intercepts calendar click before CVA `onChange`. Compare working usage in `tasks/.../create-tasks-form-dialog.html:73-78` which has `appendTo="body"`. |
 | AR-07 | `documents-section.html` | 33 | `{{ document.file.name }}` — no null guard. `add-document-form.ts:19` initializes `file: [null!]`. `form-uploader.ts:173-178` writes `file: [data.file]` where `data.file` can be null. |
+| AR-08 | `asset-roster-maintenance.ts` + `draft-form-helper.ts` | 391-482 / 101 | `autoForm()` calls `load(current)` (bound to `resetValueToInitialState`) **without awaiting it** — Angular effects cannot be `async`. `resetValueToInitialState` is `async` (`:391`), `await`s `fileResolverService.resolveFile()` (`:398`, `:403-408`), then calls `patchValue({entity})` (`:425`) + `markAsPristine()` (`:480`). Sequence: (1) `load()` starts, hits first `await`, suspends; (2) `form.patchValue(draft)` applies draft synchronously; (3) async `load()` resumes, `patchValue({entity})` overwrites draft, `markAsPristine()` clears dirty. Result: form shows original entity values, pristine. |
+| AR-09 | `draft-form-helper.ts` + `asset-roster-maintenance.ts` | 101 / 391-482 | Same root cause as AR-08. The draft IS found by `getDraft()` and IS applied via `patchValue(draft)` — the `null` hypothesis was wrong. The real defect is the async `load()` completion clobbering the sync draft patch. Fix direction: `autoForm` must not let the async `load` clobber the draft — either await `load` before patching the draft, apply the draft inside `load`'s completion, or make the entity-patch path synchronous. |
 
 #### Asset Commissioning (AC-01 to AC-07)
 
@@ -213,10 +222,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----|------|---------|---------------|
 | AC-01 | `create-commissioning-form.ts` / `update-decommissioning-form.ts` | 20 / 17 | `details: ['', [Validators.required]]` — no trim validator. See S-07. |
 | AC-02 | `commissioning-lifecycle-section.html` | 7-9 | `@if (!assetCommissioning \|\| assetCommissioning.outcome === 'fail')` — never checks `assetRoster()?.status !== 'decommissioned'`. When decommissioned, `assetCommission` is null → condition is true → Commission button shows. |
-| AC-03 | Translation catalog (backend) | — | Key `performInspectionFor` value has typo "Peform" (missing "r"). Template (`asset-commissioning-form-dialog.html:16`) is correct — uses `{{ 'performInspectionFor' | translate }}`. Fix belongs in the translation database. |
+| AC-03 | Translation catalog (frontend) | `asset-roster-translations.json:2274` | Key `performInspectionFor` EN value has typo "Peform inspection for: " (missing "r"). Template (`asset-commissioning-form-dialog.html:17`) is correct — uses `{{ 'performInspectionFor' | translate }}`. ES value (line 2288) is correctly spelled. Fix belongs in the catalog JSON (which seeds/mirrors the backend DB). |
 | AC-04 | `activity-history-section.html` | 22-136 | `@for` loop renders all content unconditionally. No `expanded` signal, no toggle handler, no `@if` guard. Class (`activity-history-section.ts:31-62`) has no expand-state. |
 | AC-05 | `asset-roster-activity-history-add-file-dialog.ts` | 44-54 | `header = computed(() => { ... return 'Add File to Maintenance: ...' / 'Add File to commissioning from asset: ...' })` — hardcoded English strings, not through `TranslatePipe`. Button uses key `addAttachment` → "Add Attachment". |
-| AC-06 | `asset-roster-edit-form.html` | 118-123 | `<bifi-app-maintenance-service-section>` rendered with no `@if` on status. Section only disables controls, never hides. |
+| AC-06 | `asset-roster-edit-form.html` | 120-125 | `<bifi-app-maintenance-service-section>` rendered with no `@if` on status. Section only disables controls, never hides. |
 | AC-07 | `notification.ts` + `commissioning-form-dialog.ts` / `decommissioning-form-dialog.ts` | 57-63 / 82 / 66 | See S-06. Interceptor auto-toast + manual `toastManager.showSuccess()`. |
 
 #### Asset Maintenances (AM-01 to AM-08)
@@ -228,7 +237,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AM-03 | `status-banner-section.html` | 15-20 | `@else if (status === 'active' \|\| status === 'in-pm')` — both show `assetActive` key → "Active". No separate `in-pm` branch. |
 | AM-04 | `asset-finish-maintenance-form-dialog.html` | 18 | `{{ 'initiatedOn' | translate: {} : 'asset-roster' }}:` — literal `:` after `}}`. Translation value already ends with `:`. |
 | AM-05 | `maintenance-service-section.html` | 163-170 | `@if (canStartService())` — hides button when false instead of `[disabled]="!canStartService()"`. |
-| AM-06 | `api-request-manager.ts` | 200-204 | See S-08. `httpResource` without `cache: 'no-store'`. Browser returns cached GET on `reload()`. |
+| AM-06 | `api-request-manager.ts` | 206-245 | See S-08. `httpResource` body sets HTTP `Cache-Control: no-cache, no-store` header (`:235-239`) but does NOT set the fetch-level `cache: 'no-store'` option. Browser default cache mode applies; `FetchBackend` passes `req.cache` (undefined) to `fetch()`. |
 | AM-07 | `maintenance-service-section.ts` | 47-53 | `isMaintenanceWindowsEditLocked = computed(() => assetRoster.maintenanceWindowIds?.length > 0)` — checks if windows were **ever assigned**, not if PM is currently active. Should check `this.pmStarted()`. |
 | AM-08 | `asset-maintenance-form-dialog.ts` / `notification.ts` | 80 / 57-63 | See S-06. Manual `toastManager.showSuccess('Service created successfully')` + interceptor auto-toast. |
 
@@ -241,7 +250,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AT-03 | `asset-types-list.ts` / `base-service.ts` | 54-63 / 261-285 | Direct delete, no reference check. Backend `BaseService.delete` soft-deletes only. Assets reference via `assetTypeIds`. |
 | AT-04 | `asset-types.routes.ts` | 17-30 | Missing `canDeactivate: [DirtyFormGuard]` on `create`/`edit/:id` routes. Fixed 2026-07-22: added guard + `hasUnsavedChanges()` method to `asset-types-form.ts`. |
 | AT-05 | `asset-type-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| AT-06 | `asset-type-form.ts` | 16 | No async uniqueness validator. No backend unique index on `name`. |
+| AT-06 | `asset-type-form.ts` | 15 | No async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. |
 
 #### Facilities (FA-01 to FA-06)
 
@@ -251,7 +260,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. Fixed 2026-07-22: added `[showClear]="true"`. |
 | FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / — | Direct delete. Backend `FacilityService` overrides `create`/`update` but not `delete`. Rooms orphaned via `facilityId`. |
 | FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
-| FA-05 | `facility-form.ts` | 16 | No async uniqueness validator, no backend unique index. Same as AT-06. |
+| FA-05 | `facility-form.ts` | 15 | No async uniqueness validator, no backend unique index. Same as AT-06. |
 | FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
 | FA-07 | `facilities.routes.ts` / `facilities-form.ts` | 17-30 / — | Missing `canDeactivate: [DirtyFormGuard]` on Facility create/edit routes. No `hasUnsavedChanges()` method on component. Fixed 2026-07-22: added guard + method. |
 
@@ -277,9 +286,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | CO-04 | `contact-cr-plugin.ts` | 115 | `new FormControl('')` — no `Validators.required`. Label (`contact-cr-plugin.html:33`) has no required marker. |
 | CO-05 | `contact-form.ts` | 50-81 | `phoneNumber: ['']`, `email: ['', [Validators.email]]`, `website: ['']` — none required, no group-level "at least one" validator. Backend has `AtLeastOneContactConstraint`. |
 | CO-06 | `contacts-list.html` / `crud-contacts.ts` | 3-17 / — | No export/import buttons in template. No export/import methods in CRUD service. |
-| CO-07 | `contact-form.ts` | 50-81 | `createForm()` has no `active` control. No toggle in form or list templates. `active: boolean` exists on interface and backend model. |
+| CO-07 | `contact-form.ts` | 57-91 | `createForm()` has no `active` control. No toggle in form or list templates. `active: boolean` exists on interface and backend model. |
 | CO-08 | `contacts-form.html` | 115-124 | `<p-select formControlName="parentId">` missing `[showClear]="true"`. Same as FA-02. |
-| CO-09 | `contact-form.ts` / `contact.model.ts` (backend) | 55 / 25-29 | Only `Validators.email` (format), no async uniqueness. Backend `// unique: true,` commented out. |
+| CO-09 | `contact-form.ts` / `contact.model.ts` (backend) | 63 / 25-29 | Only `Validators.email` (format), no async uniqueness. Backend `// unique: true,` commented out. |
 | CO-10 | `contact.dto.ts` (backend) / `contacts-form.ts` | 93-95 / 173 | `@IsMongoId()` rejects `""`. `@IsOptional()` only skips `null`/`undefined`. Frontend `if (!rawValue.parentId) delete rawValue.parentId;` removes key from payload → backend preserves existing value. |
 
 ---
@@ -289,11 +298,11 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | Severity | Count | IDs (active) |
 |----------|-------|-------------|
 | **Critical** | 0 | (all resolved) |
-| **High** | 1 | FA-03 |
+| **High** | 3 | FA-03, AR-08, AR-09 |
 | **Medium** | 4 | AT-03, FA-05, MW-02, CO-02 |
 | **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 |
-| **Active total** | 11 | (41 resolved + 6 verified; see Resolved Bugs section.) |
-| **Original total** | 51 | |
+| **Active total** | 13 | (41 resolved + 6 verified; see Resolved Bugs section.) |
+| **Original total** | 53 | |
 
 ---
 
@@ -351,7 +360,7 @@ When a bug is fixed:
 | MW-06 | Maintenance Windows | Column header "Role Name" vs form field "Name" | 2026-07-22 | Changed `title: 'roleName'` to `title: 'name'` in `maintenance-window-columns.ts:7`. Column now shows "Name" matching the form field. **Verified 2026-07-22: table header shows "Name".** |
 | MW-07 | Maintenance Windows | Hardcoded English recurrence labels with typo "Semi-anually" | 2026-07-22 | Replaced hardcoded labels with `t('recurrence.*', {}, 'asset-roster')` in form computed signal + column `parseField`. Fixed typo to "Semi-annually". Files: `maintenance-windows-form.ts`, `maintenance-window-columns.ts`. **Verified 2026-07-22: dropdown shows translated labels, table values translated, switches with language (EN "Daily" → ES "Diario").** |
 | CO-01 | Contacts | Save button only appears when form is dirty | 2026-07-22 | Same fix as AT-01 — shared `form-actions.html` change. |
-| CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 | Added `Validators.required` to `crVatType` FormControl and `*` marker to label. File: `contact-cr-plugin.ts:115`. |
+| CO-04 | Contacts | CR VAT Type required but not indicated | 2026-07-22 (resolved) / 2026-07-23 (reverted) | Added `Validators.required` to `crVatType` FormControl and `*` marker to label on 2026-07-22. **Reverted 2026-07-23**: Commit `35efa036` removed `Validators.required` and `*` marker — field is optional again. Backend `c40a4202` added empty-string handling for `crVatType` in `ContactDTO`. |
 | CO-05 | Contacts | Contact method required but not indicated | 2026-07-22 | Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. File: `contact-form.ts`. |
 | CO-08 | Contacts | No UI mechanism to clear parent company | 2026-07-22 | Added `[showClear]="true"` to parentId p-select. File: `contacts-form.html:115-124`. |
 | CO-10 | Contacts | parentId cannot be removed via PUT | 2026-07-22 | Three files: (1) Frontend sends `parentId: ''` on clear (`contacts-form.ts:179`). (2) Backend DTO: `@ValidateIf` skips `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before update (`contact-service.ts`). Verified PUT 200. |

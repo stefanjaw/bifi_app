@@ -107,8 +107,22 @@ A comprehensive template should cover the module's full feature surface. Use the
 - **Note hardcoded strings**: If the codebase has known hardcoded English strings (violating the i18n convention), include tests that document them so they are tracked.
 - **Avoid untestable cases**: Do not include tests that cannot be verified via the UI (e.g. internal API payload shape, database field coercion) unless the module has no other way to verify that behaviour. Mark such tests clearly if included.
 
+## NAVIGATION Guidelines
+
+- **Use the app's own navigation buttons to move between pages — NEVER navigate by URL.**
+  - Click sidebar links, breadcrumbs, "Go back" buttons, "Add New" buttons, table row clicks, and any other in-app navigation affordance.
+  - The only exception is the **initial login navigation** to `http://localhost:4200` (see LOGIN Guidelines).
+- **Why this matters:** The Angular router's lifecycle (`canActivate` guards, `canDeactivate` guards like `DirtyFormGuard`, `runGuardsAndResolvers`, route param binding, component reuse strategy) only runs through in-app navigation. Jumping straight to a URL via `playwright_browser_navigate`:
+  - Bypasses `DirtyFormGuard` — the "unsaved changes" confirmation dialog never fires, so dirty-form/draft tests silently pass or fail for the wrong reason.
+  - Skips `permissionGuard` route activation — permission-gating tests become inaccurate.
+  - Discards in-memory component state — `DraftService` localStorage keys are keyed by `router.url`, but the draft-restore `effect()` only runs on a fresh component instantiation through the router, not on a hard URL load.
+  - Loses breadcrumb, sidenav active-state, and resource signal subscriptions — list pages may render empty because `ApiRequestManager` resources were never triggered by the route param `input()`.
+  - Breaks cross-form navigation round-trips — the `returnUrl`/`controlName` query params set by `form-select-navigate-footer` only flow correctly when the user follows the in-app "+ Create" link and the create form's `navigateBack()` returns along the same router history stack.
+- **Consequence:** Many "NOT TESTED" or unexpected results in prior runs were caused by navigating by URL instead of using the app's buttons. If a test cannot be reached via in-app navigation, record that as the reason rather than forcing a URL jump.
+
 ## NOTES
 
 - Do not try to login if already logged, check first where you are, as LOGING Guidelines suggest, it can be skipped.
 - Do not wait much time to check if a page is loaded, first check if loaded on navigation, if not, then wait.
 - In forms/dialogs, the Save/Submit/Confirm button may be hidden until the form becomes dirty (i.e. at least one input is changed). If a submit button is not visible, interact with a form field first (type text, select a radio, etc.) to make it appear before concluding it is missing.
+- **Navigate using in-app buttons only** (see NAVIGATION Guidelines above). Do not use `playwright_browser_navigate` to jump to URLs after the initial login — it bypasses router guards and loses component state, causing false test results.
