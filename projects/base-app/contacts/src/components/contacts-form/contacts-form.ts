@@ -12,12 +12,14 @@ import { ContactForm, ContactFormModel } from '../../services/contact-form';
 import { CrudContacts } from '../../services/crud-contacts';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  autoForm,
+  DraftService,
   FormFileControlHelper,
   FormModule,
   FormUploader,
   FormValueState,
   DirtyComponent,
-  DraftService,
+  navigateBack,
 } from '@avalantec/base-app/form';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -122,44 +124,31 @@ export class ContactsForm implements DirtyComponent {
   private fileState = this.fileHelper.generateMetadataFromFileControl(this.form.controls.photo);
   uploadedFile = this.fileState.firstFile;
 
-  private draftRestored = false;
-
-  /**
-   * Constructor that initializes the form values if the contact is being updated.
-   * If the contact is not available (i.e. it's being created), it resets the form values.
-   */
   constructor() {
+    const { draftRestored } = autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.contact,
+      (data) => this.resetValueToInitialState(data),
+    );
+
     effect(() => {
-      const contact = this.contact();
+      if (!draftRestored()) return;
+
+      const childIds = this.form.value.childIds;
       const allContacts = this.contactsResource.value();
 
-      if (!this.draftRestored) {
-        const draft = this.draftService.getDraft(this.router.url);
-        if (draft) {
-          this.formService.patchValue(draft);
-          this.form.markAsDirty();
-          this.draftService.clearDraft(this.router.url);
-          this.draftRestored = true;
-        }
+      if (
+        childIds &&
+        childIds.length > 0 &&
+        allContacts &&
+        allContacts.length > 0 &&
+        this.childIdsData().length === 0
+      ) {
+        const childContacts = allContacts.filter((c: any) => childIds.includes(c._id));
+        this.childIdsData.set(childContacts);
       }
-
-      if (this.draftRestored) {
-        // Hydrate childIdsData if it's empty but draft had childIds
-        const childIds = this.form.value.childIds;
-        if (
-          childIds &&
-          childIds.length > 0 &&
-          allContacts &&
-          allContacts.length > 0 &&
-          this.childIdsData().length === 0
-        ) {
-          const childContacts = allContacts.filter((c: any) => childIds.includes(c._id));
-          this.childIdsData.set(childContacts);
-        }
-        return;
-      }
-
-      this.resetValueToInitialState(contact);
     });
   }
 
@@ -229,19 +218,7 @@ export class ContactsForm implements DirtyComponent {
   }
 
   goBack(createdId?: string) {
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    const controlName = this.route.snapshot.queryParamMap.get('controlName');
-
-    if (returnUrl) {
-      if (createdId && controlName) {
-        this.draftService.updateDraftField(returnUrl, controlName, createdId);
-      }
-
-      this.router.navigateByUrl(returnUrl);
-      return;
-    }
-    const route = this.isUpdate() ? '../../list' : '../list';
-    this.router.navigate([route], { relativeTo: this.route });
+    navigateBack(this.route, this.router, this.draftService, createdId, this.isUpdate());
   }
 
   hasUnsavedChanges(): boolean {

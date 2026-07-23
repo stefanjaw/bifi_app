@@ -22,7 +22,7 @@ Angular 20 monorepo (Turborepo) with npm@11.8.0. Tailwind CSS v4 (PostCSS plugin
 | `core` | `ToastManager`, `ToolbarManager`, `SidenavManager`, `DebugManager`, `DynamicBreadcrumbService`, `ColWidthManager`, `BaseDialog`, `Icon`/`Text`/`DebugMode` directives, `SplitCaps` pipe, `debouncedSignal`, `maybeSignal`, `<signal>` helper types | All projects |
 | `routing` | `MainMenuManager.addItems()`, `MainRoutingManager.addRouting()`, `BaseMenuManager`, `BaseRoutingManager`, `MainMenu` component, `AUTH_ROUTES`/`BASE_APP_ROUTES`/`SETTINGS_ROUTES`, `withLibraryInterceptors`, `UserShortcutsService`, `NotificationCenterService` | All feature libs register via `provide*()` functions |
 | `auth` | Firebase auth, `authGuard`/`noAuthGuard`/`permissionGuard`, `HasPermission` directive, `AuthPage`/`PasswordPage`/`AccessTokenDialog`, `APP_AUTH_SERVICE` token, `provideAuth`, `FirebaseAuthService`, `AuthTokenInterceptor` | All projects (routing, ui, users, resource, etc.) |
-| `form` | `BaseForm<T>`, `TypedFormBuilder`, `FormModule`, `FormValueState`, `ControlsOf`, form components (`FormField`, `FormError`, `FormActions`, `FormSection`, `FormLayout`, `FormCodeEditor`, `FormUploader`, `FormNavigator`, `FormPreview`, etc.), directives (`FormControlExtension`, `FormActionsHandler`, `TranslatedErrors`), `FORM_ERRORS` provider, `ExtendedFormArray`, `dirtyUtils`, `errorStateTracker`, `arrayValidators` | All feature libs |
+| `form` | `BaseForm<T>`, `TypedFormBuilder`, `FormModule`, `FormValueState`, `ControlsOf`, form components (`FormField`, `FormError`, `FormActions`, `FormSection`, `FormLayout`, `FormCodeEditor`, `FormUploader`, `FormNavigator`, `FormPreview`, etc.), directives (`FormControlExtension`, `FormActionsHandler`, `TranslatedErrors`), `FORM_ERRORS` provider, `ExtendedFormArray`, `dirtyUtils`, `errorStateTracker`, `arrayValidators`, `DraftService`, `DirtyFormGuard`, `DirtyComponent`, `autoForm`, `navigateBack`, `markAsDirty` | All feature libs |
 | `resource` | `ApiRequestManager` (full CRUD lifecycle), `TableLayout`, `FilterBar`, `SearchBar`, `ButtonsActions`, `TreeList`, `GanttView`/`TimelineView`/`CalendarView`, `FileResolver`, `FilterManager`, `PaginationManager`, `SortManager`, `ListStateManager`, `InfiniteScrollManager`, `ResourceManager`, `BackendListModels`, `NotificationMessageResolver`, `CrudActivityHistories`, `DynamicComponent` directive, `AppErrorInterceptor`, `NotificationInterceptor`, `tableColumn`, `filter`, `orderBy`, `ApiActionConfig` types | All feature libs |
 | `ui` | `Scaffold` (app shell with sidebar/toolbar), `UserPanel`, `GlobalSearch`, `SearchService` | Used by `asset-roster-demo` (Scaffold), internal `search-destinations` |
 | `plugin-system` | `PluginSlot` component, `PluginManager`, `PLUGIN_CONTEXT` token, `providePluginContext` | `l10n_cr_einvoice` (invoice/tax plugins), `inventory`, `accounting`, `contacts` |
@@ -843,6 +843,109 @@ The dumb `ui/` form component receives data via `input()` signals only and never
 - `<bifi-app-form-field>` + `<bifi-app-form-label>` + `<bifi-app-form-error>` for each individual control
 - Loading state via `@if (!loading())` / `@else if (error())` / `@else` with progress bar
 - All display strings through `TranslatePipe` with explicit scope
+
+### Draft/Restore Form Pattern
+
+Forms that need draft restoration (preserving user input across navigation) and `form-select-navigate-footer` integration (cross-form navigation create → preselected value) must use `autoForm()` and `navigateBack()` from `@avalantec/base-app/form` instead of writing the effect manually.
+
+#### autoForm()
+
+Sets up an effect that:
+- Checks for a draft at `DraftService.getDraft(router.url)` on first run
+- If a draft exists: calls `beforePatch(draft)` (for FormArray sizing), then `form.patchValue(draft)`, marks the form dirty, clears the draft, sets `draftRestored = true`, and **blocks** the data-loading path so draft values are preserved
+- If no draft: waits for the `data` signal to produce a value, calls `load(data)` (typically `form.patchValue(...)` + `resetDirtyState()`), or calls `form.reset()` when data is undefined
+- Returns `{ draftRestored }` — a `Signal<boolean>` consumers can use in separate effects for post-restore hydration (e.g., populating `childIdsData` from `contactsResource` in `ContactsForm`)
+
+```ts
+import { autoForm, DraftService, FormModule, FormValueState, navigateBack } from '@avalantec/base-app/form';
+
+@Component({
+  selector: 'bifi-app-xxx-form',
+  imports: [FormModule, /* ... */],
+  templateUrl: './xxx-form.html',
+})
+export class XxxForm {
+  private formService = inject(XxxFormService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private draftService = inject(DraftService);
+
+  id = input.required<string>();
+  resource = this.crud.get({ id: this.id, triggerRequest: computed(() => this.id() !== undefined) });
+  entity = this.resource.value;
+  form = this.formService.form;
+  isUpdate = computed(() => !!this.entity());
+
+  constructor() {
+    autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.entity,
+      (data) => {
+        this.form.patchValue({
+          name: data.name,
+          // ... map entity fields to form controls
+        });
+        this.formService.resetDirtyState();
+      },
+      (draft) => {
+        // Optional beforePatch: ensure FormArray has enough rows
+        // e.g., ensure locationAssignments length matches draft
+      },
+    );
+  }
+
+  goBack(createdId?: string) {
+    navigateBack(this.route, this.router, this.draftService, createdId, this.isUpdate());
+  }
+}
+```
+
+#### navigateBack()
+
+Standardizes the "go back" logic that every cross-form navigation needs:
+- Reads `returnUrl` and `controlName` query params (set by `form-select-navigate-footer`)
+- If present: writes `createdId` into the parent form's draft via `DraftService.updateDraftField`, sets `isDraftNavigating = true` (bypasses `DirtyFormGuard`), and navigates back
+- If absent: falls back to the list route (`'../../list'` for update, `'../list'` for create)
+
+#### DraftService
+
+| Member | Type | Description |
+|---|---|---|
+| `getDraft(key)` | `(key: string) => Record<string, unknown> \| null` | Retrieves and parses a draft from localStorage. Uses `isoDateReviver` to convert ISO date strings back to `Date` objects. |
+| `saveDraft(key, value)` | `(key: string, value: unknown) => void` | Saves a draft to localStorage |
+| `clearDraft(key)` | `(key: string) => void` | Removes a draft by URL key |
+| `updateDraftField(key, fieldPath, value)` | `(key: string, fieldPath: string, value: unknown) => void` | Patches a single field into an existing draft (used by `navigateBack` to set the created entity ID) |
+| `isDraftNavigating` | `boolean` | Flag checked by `DirtyFormGuard` to skip the "unsaved changes" dialog when returning from a cross-form create |
+
+#### cross-form-navigate-footer template
+
+The `form-select-navigate-footer` component (part of `FormModule`) renders a "+ Create" link at the bottom of a dropdown/select. It navigates to the creation form with `returnUrl` and `controlName` query params so the created entity ID flows back into the parent form's draft.
+
+**Template usage:**
+
+```html
+<bifi-app-form-select-navigate-footer
+  returnUrl="/asset-roster/asset-rosters/edit/{{ id() }}"
+  controlName="locationAssignments.{{ $index }}.locationId"
+/>
+```
+
+**Key rules:**
+- `returnUrl` must be the **absolute** URL of the parent form
+- `controlName` must match the parent form's **form model** property name (e.g. `locationAssignments`, not the template loop variable `locations`)
+- When the form is inside an `@for` with `formGroupName`, use property binding for `$index`: `[controlName]="'locationAssignments.' + $index + '.locationId'"`
+- The create form must pass `[draftFormValue]="formService.form.value"` to the `<bifi-app-form-layout>` so that the full form state is saved as draft before navigating away
+
+#### Form components that have been refactored to this pattern
+
+| Form Component | File |
+|---|---|
+| `AssetRosterMaintenance` | `projects/asset-roster/.../asset-roster-maintenance.ts` |
+| `RoomsForm` | `projects/asset-roster/.../rooms-form.ts` |
+| `FacilitiesForm` | `projects/asset-roster/.../facilities-form.ts` |
+| `ContactsForm` | `projects/base-app/contacts/.../contacts-form.ts` |
 
 ### Dialog Component Pattern
 

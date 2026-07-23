@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   input,
   model,
@@ -14,7 +13,14 @@ import { CrudRooms } from '../../services/crud-rooms';
 import { CrudFacilities } from '../../services/crud-facilities';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormModule, FormValueState, DraftService, DirtyComponent } from '@avalantec/base-app/form';
+import {
+  autoForm,
+  DraftService,
+  DirtyComponent,
+  FormModule,
+  FormValueState,
+  navigateBack,
+} from '@avalantec/base-app/form';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -69,35 +75,21 @@ export class RoomsForm implements DirtyComponent {
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
-    let draftRestored = false;
-    effect(() => {
-      const room = this.room();
-
-      if (!draftRestored) {
-        const draft = this.draftService.getDraft(this.router.url);
-        if (draft) {
-          this.form.patchValue(draft);
-          this.form.markAsDirty();
-          this.draftService.clearDraft(this.router.url);
-          draftRestored = true;
-          return;
-        }
-      }
-
-      if (draftRestored) return;
-
-      if (room) {
+    autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.room,
+      (data) => {
         this.form.patchValue({
-          name: room.name,
-          code: room.code,
-          address: room.address,
-          facilityId: room.facilityId?._id,
+          name: data.name,
+          code: data.code,
+          address: data.address,
+          facilityId: data.facilityId?._id,
         });
         this.formService.resetDirtyState();
-      } else {
-        this.form.reset();
-      }
-    });
+      },
+    );
   }
 
   handleSubmit(values: FormValueState<RoomFormModel>) {
@@ -120,22 +112,10 @@ export class RoomsForm implements DirtyComponent {
     });
   }
 
-  handleFacilityCreation() {}
+  // handleFacilityCreation() {}
 
   goBack(createdId?: string) {
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    const controlName = this.route.snapshot.queryParamMap.get('controlName');
-
-    if (returnUrl) {
-      if (createdId && controlName) {
-        this.draftService.updateDraftField(returnUrl, controlName, createdId);
-      }
-
-      this.router.navigateByUrl(returnUrl);
-      return;
-    }
-    const route = this.isUpdate() ? '../../list' : '../list';
-    this.router.navigate([route], { relativeTo: this.route });
+    navigateBack(this.route, this.router, this.draftService, createdId, this.isUpdate());
   }
 
   hasUnsavedChanges(): boolean {

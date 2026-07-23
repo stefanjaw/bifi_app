@@ -2,7 +2,7 @@ import { Component, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ControlContainer } from '@angular/forms';
-import { DraftService } from '../../services/draft.service';
+import { DraftService } from '../../services/draft-service';
 
 @Component({
   selector: 'bifi-app-form-select-navigate-footer',

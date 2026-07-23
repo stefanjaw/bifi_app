@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  model,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, model, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
@@ -25,14 +16,13 @@ import { assetRoster } from '../../../interfaces/asset-roster';
 import { assetType } from '../../../../asset-types';
 import { contact } from '@avalantec/base-app/interfaces';
 import { CrudFacilities, CrudRooms, room } from '../../../../facilities';
-import { DraftService, FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
+import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-general-information-section',
@@ -60,11 +50,8 @@ export class GeneralInformationSection {
   private crudVendorContacts = inject(CrudContacts);
   private crudRooms = inject(CrudRooms);
   private crudAssetRoster = inject(CrudAssetRoster);
-  private destroy$ = inject(DestroyRef);
   private crudFacilities = inject(CrudFacilities);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
-  private router = inject(Router);
-  private draftService = inject(DraftService);
   assetRoster = input.required<assetRoster | undefined>();
 
   vendorsResource = this.crudVendorContacts.get({});
@@ -98,30 +85,6 @@ export class GeneralInformationSection {
   newLocationNameForAssignment = model('');
   newFacilityIdForAssignment = model<string | null>(null);
   form = this.formService.form;
-
-  constructor() {
-    let draftRestored = false;
-    effect(() => {
-      const asset = this.assetRoster();
-
-      if (!draftRestored) {
-        const draft = this.draftService.getDraft(this.router.url);
-        if (draft) {
-          this.form.patchValue(draft);
-          this.form.markAsDirty();
-          this.draftService.clearDraft(this.router.url);
-          draftRestored = true;
-          return;
-        }
-      }
-
-      if (draftRestored) return;
-
-      if (asset) {
-        this.form.patchValue(asset as any);
-      }
-    });
-  }
 
   deviceType = toSignal(
     this.form.controls.deviceType.valueChanges.pipe(startWith(this.form.controls.deviceType.value))
@@ -206,12 +169,6 @@ export class GeneralInformationSection {
   removeLocation(index: number) {
     this.formService.removeLocationAssignment(index);
   }
-
-  handleVendorCreation() {}
-
-  handleRoomCreation() {}
-
-  handleRoomCreationForRow(index: number) {}
 
   openPhotoDialog() {
     this.assetRosterMaintenanceContext.handleOpenPhotoDialog();

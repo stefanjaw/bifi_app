@@ -1,14 +1,5 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  DestroyRef,
-  signal,
-  viewChild,
-  input,
-} from '@angular/core';
-import { DirtyComponent } from '@avalantec/base-app/form';
+import { Component, computed, inject, DestroyRef, signal, viewChild, input } from '@angular/core';
+import { autoForm, DirtyComponent, DraftService } from '@avalantec/base-app/form';
 import { Router } from '@angular/router';
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
 import { UpdateAssetRosterForm } from '../../services/update-asset-roster-form';
@@ -74,6 +65,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
   private fileResolverService = inject(FileResolver);
   private filterManager = inject(FilterManager);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
+  private draftService = inject(DraftService);
 
   // Coming in route as param
   id = input.required<string>();
@@ -202,12 +194,23 @@ export class AssetRosterMaintenance implements DirtyComponent {
   imageDialog = viewChild<AssetRosterImageDialog>(AssetRosterImageDialog);
 
   constructor() {
-    effect(() => {
-      const assetRoster = this.assetRoster();
+    autoForm(
+      this.formService.form,
+      this.router,
+      this.draftService,
+      this.assetRoster,
+      data => this.resetValueToInitialState(data),
+      draft => {
+        const assignments = draft['locationAssignments'] as { length: number } | undefined;
 
-      // set new values as initial state
-      this.resetValueToInitialState(assetRoster);
-    });
+        if (assignments?.length) {
+          const arr = this.formService.form.controls.locationAssignments;
+          while (arr.length < assignments.length) {
+            this.formService.addLocationAssignment();
+          }
+        }
+      }
+    );
 
     this.handleEvents();
   }
@@ -237,16 +240,17 @@ export class AssetRosterMaintenance implements DirtyComponent {
 
     this.submitLoading.set(true);
 
+    const assignmentControls = this.formService.form.controls.locationAssignments;
+    const locationAssignments = assignmentControls.value.filter(
+      (la: any) => la?.locationId && la?.assignedQuantity > 0
+    );
+
     const assetRosterRequest = this.crudAssetRoster.put({
       _id: this.assetRoster()?._id || '',
       fileFields: ['photo'],
       data: {
         ...value,
-        ...(value.locationAssignments !== undefined && {
-          locationAssignments: value.locationAssignments.filter(
-            (la: any) => la?.locationId && la?.assignedQuantity > 0
-          ),
-        }),
+        ...(locationAssignments.length > 0 && { locationAssignments }),
         ...(value.assetTypeIds && {
           assetTypeIds: [value.assetTypeIds],
         }),

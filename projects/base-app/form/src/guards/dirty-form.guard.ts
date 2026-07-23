@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
-import { DraftService } from '../services/draft.service';
+import { DraftService } from '../services/draft-service';
 import { DirtyFormConfirmationService } from '../services/dirty-form-confirmation';
 
 export interface DirtyComponent {

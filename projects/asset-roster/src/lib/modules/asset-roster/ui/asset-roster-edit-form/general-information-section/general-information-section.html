@@ -329,8 +329,9 @@
                             <bifi-app-form-select-navigate-footer
                               resource="rooms"
                               label="Other room +"
-                              controlName="locations.{{ $index }}.locationId"
+                              [controlName]="'locationAssignments.' + $index + '.locationId'"
                               [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
+                              [draftFormValue]="formService.form.value"
                               #roomFooter
                             ></bifi-app-form-select-navigate-footer>
                           </ng-template>
