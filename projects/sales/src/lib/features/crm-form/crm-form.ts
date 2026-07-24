@@ -25,7 +25,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
-import { DraftService, DirtyComponent } from '@avalantec/base-app/form';
+import { DraftService, DirtyComponent, autoForm } from '@avalantec/base-app/form';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ProgressBarModule } from 'primeng/progressbar';
 
@@ -99,27 +99,14 @@ export class CrmsForm implements DirtyComponent {
   companyNameModel = model('');
 
   form = this.formService.form;
-  private draftRestored = false;
-
   constructor() {
-    effect(() => {
-      const entry = this.entry();
-
-      if (!this.draftRestored) {
-        const draftWrapper = this.draftService.getDraft(this.router.url);
-        if (draftWrapper) {
-          const draft = draftWrapper.data;
-          this.form.patchValue(draft);
-          this.form.markAsDirty();
-          this.draftService.clearDraft(this.router.url);
-          this.draftRestored = true;
-          return;
-        }
-      }
-
-      if (this.draftRestored) return;
-
-      if (entry) {
+    autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.entry,
+      this.isUpdate,
+      entry => {
         this.formService.patchValue({
           title: entry.title,
           amount: entry.amount,
@@ -136,10 +123,8 @@ export class CrmsForm implements DirtyComponent {
           notes: entry.notes || '',
         });
         this.formService.resetDirtyState();
-      } else if (!this.isUpdate()) {
-        this.formService.reset();
       }
-    });
+    );
 
     effect(() => {
       const stage = (this.defaultStageResource.value() as any[])[0];

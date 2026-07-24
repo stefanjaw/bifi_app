@@ -117,7 +117,7 @@ export class ContactsForm implements DirtyComponent {
       this.countriesResource.isLoading()
   );
   isSubmitLoading = signal(false);
-  isUpdate = computed(() => !!this.contact());
+  isUpdate = computed(() => !!this.id());
   error = this.contactResource.error;
   childIdsData = signal<contact[]>([]);
 
@@ -130,6 +130,7 @@ export class ContactsForm implements DirtyComponent {
       this.router,
       this.draftService,
       this.contact,
+      this.isUpdate,
       data => this.resetValueToInitialState(data)
     );
 

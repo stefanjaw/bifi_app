@@ -19,5 +19,6 @@ export class ButtonsConfirmationDialog extends BaseDialog {
 
   confirm() {
     this.confirmClicked.emit();
+    this.closeDialog();
   }
 }

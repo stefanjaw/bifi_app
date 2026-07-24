@@ -199,6 +199,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
       this.router,
       this.draftService,
       this.assetRoster,
+      computed(() => !!this.id()),
       data => this.resetValueToInitialState(data),
       draft => {
         const assignments = draft['locationAssignments'] as { length: number } | undefined;

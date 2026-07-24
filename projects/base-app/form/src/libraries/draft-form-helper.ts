@@ -78,15 +78,11 @@ export function autoForm<T>(
   router: Router,
   draftService: DraftService,
   data: Signal<T | undefined>,
+  isUpdate: Signal<boolean>,
   load: (data: T) => void,
   beforePatch?: (draft: Record<string, unknown>) => void
 ): AutoFormResult {
   const restored = signal(false);
-
-  // Determine if we are in update mode by checking if the URL has an ID.
-  // This is a heuristic: if we expect data, we shouldn't restore the draft
-  // until the data has loaded. If we are in create mode, we can restore immediately.
-  const isUpdate = router.url.includes('/update/') || router.url.includes('/maintenance/');
 
   effect(() => {
     const current = data();
@@ -94,7 +90,7 @@ export function autoForm<T>(
     if (restored()) return;
 
     // If we are in update mode, wait for the data to arrive before proceeding
-    if (isUpdate && !current) {
+    if (isUpdate() && !current) {
       return;
     }
 
