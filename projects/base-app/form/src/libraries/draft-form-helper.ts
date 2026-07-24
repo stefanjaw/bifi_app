@@ -96,20 +96,21 @@ export function autoForm<T>(
 
     const draftWrapper = draftService.getDraft(router.url);
 
-    // 1. Initialize the form first (either load data or reset)
-    if (current) {
-      load(current);
-    } else {
-      form.reset();
-    }
-
-    // 2. If a draft exists, patch it on top of the initialized form
     if (draftWrapper) {
+      // Draft exists: restore from draft directly, skip async load.
+      // The load callback may be async (e.g. resetValueToInitialState awaits
+      // file resolution), which would clobber the synchronously-applied draft
+      // values once the async continuation runs. Blocking load here ensures
+      // the draft values are the final state.
       const { data: draft, dirtyKeys } = draftWrapper;
       beforePatch?.(draft);
       form.patchValue(draft);
       markDraftControlsDirty(form, draft, dirtyKeys);
       draftService.clearDraft(router.url);
+    } else if (current) {
+      load(current);
+    } else {
+      form.reset();
     }
 
     restored.set(true);

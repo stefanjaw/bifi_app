@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-23 (AR-08/AR-09 root causes corrected — async load clobbers draft, not "getDraft returns null"; CO-01 marked Fixed; line refs corrected; AC-03 catalog location identified)
+> **Last updated:** 2026-07-24 (All sections synced. AR-08/AR-09 verified Fixed. FA-03, AT-03, FA-05, MW-02, CO-02 code-fixed pending test. 20260724 result files created for all affected modules. Summary: 6 active Low, 5 pending test, 42 resolved.)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -30,8 +30,8 @@ Source: `asset-roster/asset-roster/asset-roster-results_20260721.md`
 | AR-05 | 33.14-33.27 | **Many hardcoded English literals confirmed** — "Asset Photo", "of" counter, "Not set", "Unnamed", document descriptors, etc. | **Fixed 2026-07-22** | All hardcoded strings replaced with `TranslatePipe` or `TranslationService.translate()`. Keys added to catalog: `of`, `assetPhoto`, `noPhoto`, `choosePhoto`, `replacePhoto`, `unnamed`, `locationDistribution`, `assignedQuantity`, `addLocation`, `noLocationsAssigned`, `descriptor.*`, `total`, `assigned`, `unassigned`. See Resolved Bugs. |
 | AR-06 | ~ | **Cannot create asset via UI — `p-datepicker` `acquiredDate` FormControl not updating** — ✅ **RESOLVED 2026-07-22**: Added `appendTo="body"` to p-datepicker inside the dialog. File: `asset-roster-form-dialog.html:319`. | **Fixed** |
 | AR-07 | ~ | **Document upload causes template crash** — ✅ **RESOLVED 2026-07-22**: Added null guard `document.file?.name \|\| ('notSet' \| translate)`. File: `documents-section.html:33`. | **Fixed** |
-| AR-08 | 36.3 | **Cross-form navigate-back: created room not pre-selected in Location dropdown** — After creating a room from the asset maintenance page's Location dropdown "Other room +" footer and returning, the newly created room exists in the dropdown options but is NOT pre-selected. | **High** | `asset-roster-maintenance.ts:391-482` + `draft-form-helper.ts:101` — `autoForm()` calls `load(current)` (bound to `resetValueToInitialState`, which is `async`) **without awaiting it**. The draft is applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but then the async `load()` completes later and calls `patchValue({entity})` + `markAsPristine()`, **overwriting** the draft values (including the created room ID in `locationId`) with the original entity data. |
-| AR-09 | 36.4 | **Draft restoration broken in update mode after cross-form navigation** — When returning from a room create to the asset maintenance page (update mode, URL contains `/maintenance/`), the entire draft (all user modifications) is NOT restored. The form shows original entity values and is pristine (`ng-pristine`). | **High** | Same root cause as AR-08. `draft-form-helper.ts:101` — `autoForm()` calls `load(current)` without `await`. `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:202`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The sync draft patch is applied first, then the async entity load completes and clobbers it. The draft IS found and applied — the issue is an async/await hazard, not a missing draft. |
+| AR-08 | 36.3 | **Cross-form navigate-back: created room not pre-selected in Location dropdown** — After creating a room from the asset maintenance page's Location dropdown "Other room +" footer and returning, the newly created room exists in the dropdown options but is NOT pre-selected. | **Fixed 2026-07-24** | **Verified PASS**: `draft-form-helper.ts:autoForm()` — when a draft exists, `load(current)` is skipped. The `beforePatch` callback sizes FormArrays correctly. Test: Serial Number modified to "SN-AR-FIX-TEST", navigated to room create via footer, created "AR-Fix-Room", returned. Result: Serial Number restored as "SN-AR-FIX-TEST", form dirty (`ng-dirty`), "AR-Fix-Room" pre-selected in Location dropdown. |
+| AR-09 | 36.4 | **Draft restoration broken in update mode after cross-form navigation** — When returning from a room create to the asset maintenance page (update mode, URL contains `/maintenance/`), the entire draft (all user modifications) is NOT restored. The form shows original entity values and is pristine (`ng-pristine`). | **Fixed 2026-07-24** | Same verified fix as AR-08. Test confirmed draft fully restored: Serial Number shows draft value, form marked dirty, new room pre-selected. |
 
 ---
 
@@ -77,7 +77,7 @@ Source: `asset-roster/asset-types/asset-types-results_20260721.md`
 |----|------|-------------|----------|------------------------|
 | AT-01 | ~ | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Save button now always visible (disabled when pristine). See Resolved Bugs. | **Fixed** |
 | AT-02 | ~ | **Description server-required but not client-validated** — ✅ **RESOLVED 2026-07-22**: Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field. File: `asset-type-form.ts:16`. | **Fixed** |
-| AT-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting referenced type leaves dangling refs. | **Medium** | `asset-types-list.ts:54-63` — direct `delete()` with no reference check. Backend `AssetTypeService` doesn't override `delete`, so `BaseService.delete` (`base-service.ts:261-285`) just soft-deletes (`active: false`). Assets referencing via `assetTypeIds` are left with orphaned refs. |
+| AT-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting referenced type leaves dangling refs. | **Pending Test** | **Pending test 2026-07-24**: `asset-type-service.ts:13-42` — added `delete()` override that removes the deleted asset type ID from all referencing asset rosters via `AssetRoster.updateMany({ assetTypeIds: _id }, { $pull: { assetTypeIds: _id } })` within the same transaction. |
 | AT-04 | ~ | **No unsaved changes prompt** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Files: `asset-types.routes.ts:21,30`. | **Fixed** |
 | AT-05 | ~ | **Empty name accepted via whitespace** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `asset-type-form.ts:16`. | **Fixed** |
 | AT-06 | 10.3 | **Duplicate names silently allowed** — No uniqueness validation. | **Low** | `asset-type-form.ts:16` — no async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. Duplicates accepted on both sides. |
@@ -92,9 +92,9 @@ Source: `asset-roster/facilities/facilities-results_20260721.md`
 |----|------|-------------|----------|------------------------|
 | FA-01 | ~ | **Whitespace-only facility name accepted** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `facility-form.ts:16`. | **Fixed** |
 | FA-02 | ~ | **No UI mechanism to clear selected contact** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47`. | **Fixed** |
-| FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **High** | `facilities-list.ts:54-63` — direct delete with only generic confirmation. Backend `FacilityService` overrides `create`/`update` to manage rooms but does **not** override `delete`. `BaseService.delete` soft-deletes only the facility. Rooms reference via `facilityId` (`room.model.ts:21-23`) → orphaned. |
+| FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **Pending Test** | **Pending test 2026-07-24**: `facility-service.ts:104-125` — added `delete()` override that cascades soft-delete to all active rooms before deactivating the facility. Uses `connectionManager.getModel("Room")` to count and soft-delete rooms via `updateMany({ facilityId: _id, active: true }, { active: false })` within the same transaction. |
 | FA-04 | ~ | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Dialog now shows "You have unsaved changes. Are you sure you want to leave this page?" | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to catalog. |
-| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Medium** | `facility-form.ts:16` — `name: ['', [Validators.required]]` with no async uniqueness validator. No backend unique index. Same as AT-06. |
+| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `facility.model.ts:12` — added `unique: true` to the `name` field in the facility schema. MongoDB will reject duplicate name values with E11000 error. |
 | FA-06 | ~ | **Inconsistent field label "Location" vs validation "Address"** — ✅ **RESOLVED 2026-07-22**: Changed label key from `'location'` to `'address'`; fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20`. | **Fixed** |
 | FA-07 | ~ | **No unsaved changes prompt on Facility forms** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` and `hasUnsavedChanges()`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73`. | **Fixed** |
 
@@ -107,7 +107,7 @@ Source: `asset-roster/maintenance-windows/maintenance-windows-results_20260721.m
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
 | MW-01 | 4.8 | **Whitespace-only name accepted** — ✅ **VERIFIED 2026-07-22**: Whitespace-only Name rejected with "This field is required" validation error. | **Fixed & Verified** | `maintenance-window-form.ts:19` — replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. |
-| MW-02 | 10.4 | **Duplicate names silently allowed** | **Medium** | `maintenance-window-form.ts:19` — no async uniqueness validator, no backend unique index. Same as AT-06. |
+| MW-02 | 10.4 | **Duplicate names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `maintenance-window.model.ts:12` — added `unique: true` to the `name` field in the maintenance window schema. MongoDB will reject duplicate name values with E11000 error. |
 | MW-03 | 8.3 | **No unsaved changes prompt** — ✅ **VERIFIED 2026-07-22**: DirtyFormGuard shows confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" with Cancel/Confirm. Cancel stays on form, Confirm discards and navigates. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113`. | **Fixed & Verified** |
 | MW-04 | 4.5 | **Days Before/After default to 1, masking required validation** — ✅ **VERIFIED 2026-07-22**: Both fields now default to `null!`. When empty on submit, both show "This field is required" with toast error. File: `maintenance-window-form.ts:20-21`. | **Fixed & Verified** |
 | MW-05 | 4.2, 11.7 | **Inconsistent section heading casing** — ✅ **VERIFIED 2026-07-22**: Section heading renders as "1. General Information" in English, "1. Información General" in Spanish. Translation catalog already title case. | **Fixed & Verified** |
@@ -123,7 +123,7 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
 | CO-01 | 3.2 | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Same fix as AT-01 — shared `form-actions.html:14` changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() || isSubmitting() || formDisabled()"`. Save button now always visible (disabled when pristine). | **Fixed** |
-| CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Medium** | `contacts-list.ts:55-64` — direct delete, no child check. Backend `ContactService` has no `delete()` override. `BaseService.delete` removes parent; children's `parentId` points to non-existent ObjectId. |
+| CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Pending Test** | **Pending test 2026-07-24**: `contact-service.ts:150-169` — added `delete()` override that nullifies `parentId` on all child contacts referencing the deleted parent via `model.updateMany({ parentId: _id, active: true }, { parentId: null })` within the same transaction. |
 | CO-03 | ~ | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Same fix as FA-04. | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key added to catalog. |
 | CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. ⚠️ **REVERTED 2026-07-23**: Commit `35efa036` removed `Validators.required` and `*` marker — CR VAT Type is now optional. Backend commit `c40a4202` handles empty-string `crVatType` in `ContactDTO`. Filed under Section 12 retest in contacts results. | **Reverted 2026-07-23** |
 | CO-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. Ensures at least one of phone/email/website is provided. File: `contact-form.ts`. | **Fixed** |
@@ -145,19 +145,19 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** `projects/base-app/form/` — add a `nonWhitespaceRequired` validator and use it on all `name`/`details`/`reason` fields.
 
 ### Pattern B — Duplicate names silently allowed
-- **Affected:** AT-06, FA-05, MW-02, CO-09 (emails)
+- **Affected:** AT-06, ~~FA-05~~ (pending test 2026-07-24), ~~MW-02~~ (pending test 2026-07-24), CO-09 (emails)
 - **Root cause:** No client-side async uniqueness validator on any `name`/`email` field. No backend unique index (CO-09: `unique: true` is commented out in the model).
 - **Shared fix location:** Backend models need unique indexes + `409 Conflict` responses. Frontend form services need async validators calling a uniqueness-check endpoint.
 
 ### Pattern C — Save button hidden until form is dirty
-- **Affected:** ~~AT-01~~ (resolved 2026-07-22), CO-01 (and asset-roster create dialog)
-- **Root cause:** `form-actions.html:14` — `@if (formChanged() && showSave())` removes the Save button from the DOM when form is pristine. This is the shared `FormActions` component in `base-app/form`.
-- **Shared fix location:** `projects/base-app/form/src/components/form-actions/form-actions.html:14` — change from conditional render to always-visible-but-disabled.
+- **Affected:** ~~AT-01~~ (resolved 2026-07-22), ~~CO-01~~ (resolved 2026-07-22)
+- **Root cause:** `form-actions.html:14` — `@if (formChanged() && showSave())` removed the Save button from the DOM when form was pristine. This was the shared `FormActions` component in `base-app/form`.
+- **Resolved 2026-07-22:** Changed to `@if (showSave())` with `[disabled]="!formChanged()"`. Save button always visible but disabled when pristine.
 
 ### Pattern D — Orphaned references on parent deletion
-- **Affected:** AT-03, FA-03, CO-02, CO-10
-- **Root cause:** Frontend delete handlers call `crud.delete()` directly with no reference check. Backend services don't override `BaseService.delete` to check for inbound references — `base-service.ts:261-285` just soft-deletes (`active: false`).
-- **Shared fix location:** `bifi_app_be/src/system/libraries/base-module/base-service.ts` — `delete()` should check for inbound references and reject with `409 Conflict` or cascade-unlink children.
+- **Affected:** ~~AT-03~~ (pending test 2026-07-24), ~~FA-03~~ (pending test 2026-07-24), ~~CO-02~~ (pending test 2026-07-24), ~~CO-10~~ (resolved 2026-07-22)
+- **Root cause:** Frontend delete handlers call `crud.delete()` directly with no reference check. Backend services didn't override `BaseService.delete` to check for inbound references — `base-service.ts:261-285` just soft-deletes (`active: false`).
+- **Shared fix location:** Each affected service now overrides `delete()` with a transaction that cascades soft-delete or nullifies references before calling `super.delete()`.
 
 ### Pattern E — Untranslated `confirmDialog.unsavedChanges` key
 - **Affected:** FA-04, CO-03
@@ -175,9 +175,9 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** `projects/base-app/resource/src/libraries/interceptors/notification/notification.ts` — either suppress the interceptor toast when the consuming component shows its own, or remove manual `showSuccess` calls from feature components and rely solely on the interceptor. The interceptor needs a context-level opt-out mechanism.
 
 ### Pattern H — Draft restoration race in update mode after cross-form navigation
-- **Affected:** AR-08, AR-09 (asset-roster)
-- **Root cause:** `draft-form-helper.ts:autoForm()` calls `load(current)` (the entity-data loader callback) **without `await`** — Angular `effect()` cannot be `async`. For the asset maintenance form, `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:391`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The draft IS found by `getDraft()` and applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but the async `load()` completes later and its `patchValue({entity})` + `markAsPristine()` **overwrites** the draft. The described "getDraft returns null" hypothesis was incorrect — verified by code inspection.
-- **Shared fix location:** `projects/base-app/form/src/libraries/draft-form-helper.ts` — `autoForm` must not let the async `load` clobber the draft. Options: (1) restructure the effect to chain the async load and apply the draft after it completes; (2) apply the draft inside `load`'s `.then()` completion; (3) make `resetValueToInitialState` synchronous (avoid `fileResolverService.resolveFile` await, or pre-resolve files before the effect runs).
+- **Affected:** ~~AR-08~~ (resolved 2026-07-24), ~~AR-09~~ (resolved 2026-07-24)
+- **Root cause:** `draft-form-helper.ts:autoForm()` calls `load(current)` (the entity-data loader callback) **without `await`** — Angular `effect()` cannot be `async`. For the asset maintenance form, `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:391`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The draft IS found by `getDraft()` and applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but the async `load()` completes later and its `patchValue({entity})` + `markAsPristine()` **overwrites** the draft.
+- **Fixed 2026-07-24:** `draft-form-helper.ts:autoForm()` — when a draft exists, `load(current)` is skipped entirely. The draft already contains the user's prior form state, and `beforePatch` ensures FormArrays are sized correctly. Verified by test: Serial Number restored as "SN-AR-FIX-TEST", newly created room pre-selected in Location dropdown, form marked dirty.
 
 ---
 
@@ -191,8 +191,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 | # | Component | File | Line(s) | Issue |
 |---|-----------|------|---------|-------|
-| S-01 | `FormActions` | `base-app/form/src/components/form-actions/form-actions.html` | 14 | `@if (formChanged() && showSave())` — Save button removed from DOM when form pristine (affects AT-01, CO-01) |
-| S-02 | `FormSection` | `base-app/form/src/components/form-section/form-section.html` | 10 | `{{ title() }}` only — `ordinal` input declared (`form-section.ts:27`) but never rendered in template (affects AR-04) |
+| S-01 | `FormActions` | `base-app/form/src/components/form-actions/form-actions.html` | 14 | **Fixed 2026-07-22** — Changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged()"`. Save button always visible (disabled when pristine). See AT-01, CO-01 in Resolved Bugs. |
+| S-02 | `FormSection` | `base-app/form/src/components/form-section/form-section.html` | 10 | **Fixed 2026-07-22** — Added `{{ ordinal() }}.` to template. `ordinal` input was declared but never rendered. See AR-04 in Resolved Bugs. |
 | S-03 | `FormActionsHandler` | `base-app/form/src/directives/form-actions-handler.ts` | 52-55, 65-90 | **Fixed** — Both strings already use `TranslationService.translate()` with keys `formActions.noChanges` and `formActions.formErrors` (scope `base-app/form`). Keys exist in `base-app-form-translations.json`. |
 | S-04 | `DirtyFormGuard` | `base-app/form/src/guards/dirty-form.guard.ts` | 17-27 | `canDeactivate()` only short-circuits when `draftService.isDraftNavigating === true`. Without that flag, fires `DirtyFormConfirmationService.requestConfirmation()` even if component already called `window.confirm()` (affects AR-02) |
 | S-05 | `DirtyFormConfirmationDialog` | `base-app/form/src/components/dirty-form-confirmation-dialog/dirty-form-confirmation-dialog.html` | 10 | Uses key `confirmDialog.unsavedChanges` with scope `base-app/resource` — key missing from catalog (affects FA-04, CO-03) |
@@ -213,8 +213,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AR-05 | Multiple files | Multiple | See description column for key locations. |
 | AR-06 | `asset-roster-form-dialog.html` | 319 | `<p-datepicker formControlName="acquiredDate" [showIcon]="true">` — missing `appendTo="body"`. Dialog modal mask intercepts calendar click before CVA `onChange`. Compare working usage in `tasks/.../create-tasks-form-dialog.html:73-78` which has `appendTo="body"`. |
 | AR-07 | `documents-section.html` | 33 | `{{ document.file.name }}` — no null guard. `add-document-form.ts:19` initializes `file: [null!]`. `form-uploader.ts:173-178` writes `file: [data.file]` where `data.file` can be null. |
-| AR-08 | `asset-roster-maintenance.ts` + `draft-form-helper.ts` | 391-482 / 101 | `autoForm()` calls `load(current)` (bound to `resetValueToInitialState`) **without awaiting it** — Angular effects cannot be `async`. `resetValueToInitialState` is `async` (`:391`), `await`s `fileResolverService.resolveFile()` (`:398`, `:403-408`), then calls `patchValue({entity})` (`:425`) + `markAsPristine()` (`:480`). Sequence: (1) `load()` starts, hits first `await`, suspends; (2) `form.patchValue(draft)` applies draft synchronously; (3) async `load()` resumes, `patchValue({entity})` overwrites draft, `markAsPristine()` clears dirty. Result: form shows original entity values, pristine. |
-| AR-09 | `draft-form-helper.ts` + `asset-roster-maintenance.ts` | 101 / 391-482 | Same root cause as AR-08. The draft IS found by `getDraft()` and IS applied via `patchValue(draft)` — the `null` hypothesis was wrong. The real defect is the async `load()` completion clobbering the sync draft patch. Fix direction: `autoForm` must not let the async `load` clobber the draft — either await `load` before patching the draft, apply the draft inside `load`'s completion, or make the entity-patch path synchronous. |
+| AR-08 | `draft-form-helper.ts` | 87-116 | **Fixed 2026-07-24**: `autoForm()` effect now skips `load(current)` when a draft exists. The `beforePatch` callback sizes FormArrays before `patchValue(draft)`. Previously `load(current)` was called despite the draft, starting an async `resetValueToInitialState` that eventually clobbered the synchronously-applied draft with entity data + `markAsPristine`. Verified PASS: Serial Number "SN-AR-FIX-TEST" restored, room "AR-Fix-Room" pre-selected in Location dropdown, form `ng-dirty`. |
+| AR-09 | `draft-form-helper.ts` | 87-116 | Same fix as AR-08. When a draft wrapper is found by `getDraft(router.url)`, `load(current)` is skipped — the draft already contains the user's prior form state (modified Serial Number + created room ID in `locationId`). Verified PASS: draft fully restored, form dirty, no data loss on return from cross-form create. |
 
 #### Asset Commissioning (AC-01 to AC-07)
 
@@ -245,9 +245,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
-| AT-01 | `form-actions.html` / `asset-types-form.html` | 14 / 17 | See S-01. `@if (formChanged() && showSave())` + `[formChanged]="form.dirty"`. |
+| AT-01 | `form-actions.html` | 14 | **Fixed 2026-07-22**: Changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged()"`. Save button always visible. |
 | AT-02 | `asset-type-form.ts` | 16 | `description: ['']` — no validators. Backend `asset-type.dto.ts:9-12` requires `@IsNotEmpty()`. Fixed 2026-07-22: added `NonWhitespaceValidators.nonWhitespaceRequired`. |
-| AT-03 | `asset-types-list.ts` / `base-service.ts` | 54-63 / 261-285 | Direct delete, no reference check. Backend `BaseService.delete` soft-deletes only. Assets reference via `assetTypeIds`. |
+| AT-03 | `asset-types-list.ts` / `asset-type-service.ts` | 54-63 / 13-42 | Direct delete, no reference check. **Pending test 2026-07-24**: `asset-type-service.ts` — added `delete()` override that removes the deleted type ID from all referencing asset rosters via `$pull`. |
 | AT-04 | `asset-types.routes.ts` | 17-30 | Missing `canDeactivate: [DirtyFormGuard]` on `create`/`edit/:id` routes. Fixed 2026-07-22: added guard + `hasUnsavedChanges()` method to `asset-types-form.ts`. |
 | AT-05 | `asset-type-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
 | AT-06 | `asset-type-form.ts` | 15 | No async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. |
@@ -258,9 +258,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----|------|---------|---------------|
 | FA-01 | `facility-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. Fixed 2026-07-22: added `NonWhitespaceValidators.nonWhitespaceRequired`. |
 | FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. Fixed 2026-07-22: added `[showClear]="true"`. |
-| FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / — | Direct delete. Backend `FacilityService` overrides `create`/`update` but not `delete`. Rooms orphaned via `facilityId`. |
+| FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / 104-125 | Direct delete. **Pending test 2026-07-24**: `facility-service.ts` — added `delete()` override that cascades soft-delete to all active rooms before deactivating the facility. |
 | FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
-| FA-05 | `facility-form.ts` | 15 | No async uniqueness validator, no backend unique index. Same as AT-06. |
+| FA-05 | `facility.model.ts` | 12 | **Pending test 2026-07-24**: Added `unique: true` to `name` field in facility schema. MongoDB E11000 rejects duplicates. |
 | FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
 | FA-07 | `facilities.routes.ts` / `facilities-form.ts` | 17-30 / — | Missing `canDeactivate: [DirtyFormGuard]` on Facility create/edit routes. No `hasUnsavedChanges()` method on component. Fixed 2026-07-22: added guard + method. |
 
@@ -269,7 +269,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
 | MW-01 | `maintenance-window-form.ts` | 19 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| MW-02 | `maintenance-window-form.ts` | 19 | No async uniqueness validator, no backend unique index. Same as AT-06. |
+| MW-02 | `maintenance-window.model.ts` | 12 | **Pending test 2026-07-24**: Added `unique: true` to `name` field in maintenance-window schema. MongoDB E11000 rejects duplicates. |
 | MW-03 | `maintenance-windows.routes.ts` | 21,30 | Missing `canDeactivate: [DirtyFormGuard]`. Fixed 2026-07-22: added guard + `hasUnsavedChanges()`. |
 | MW-04 | `maintenance-window-form.ts` | 20-21 | `daysBefore: [1, ...]` and `daysAfter: [1, ...]` — default to `1` instead of `null`. Fixed 2026-07-22: changed to `[null!, ...]`. |
 | MW-05 | Translation catalog (`asset-roster-translations.json`) | 3477-3478 | `generalInformation` en value is "General Information" (already title case — no change needed). |
@@ -280,8 +280,8 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
-| CO-01 | `form-actions.html` / `contacts-form.html` | 14 / 21 | See S-01. |
-| CO-02 | `contacts-list.ts` / `contact-service.ts` (backend) | 55-64 / — | Direct delete, no child check. Backend `ContactService` no `delete` override. Children's `parentId` orphaned. |
+| CO-01 | `form-actions.html` | 14 | **Fixed 2026-07-22**: Same as AT-01 — changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]`. Save button always visible. |
+| CO-02 | `contacts-list.ts` / `contact-service.ts` | 55-64 / 150-169 | Direct delete, no child check. **Pending test 2026-07-24**: `contact-service.ts` — added `delete()` override that nullifies `parentId` on all children referencing the deleted parent. |
 | CO-03 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. |
 | CO-04 | `contact-cr-plugin.ts` | 115 | `new FormControl('')` — no `Validators.required`. Label (`contact-cr-plugin.html:33`) has no required marker. |
 | CO-05 | `contact-form.ts` | 50-81 | `phoneNumber: ['']`, `email: ['', [Validators.email]]`, `website: ['']` — none required, no group-level "at least one" validator. Backend has `AtLeastOneContactConstraint`. |
@@ -295,13 +295,13 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 
 ## Summary by Severity
 
-| Severity | Count | IDs (active) |
-|----------|-------|-------------|
-| **Critical** | 0 | (all resolved) |
-| **High** | 3 | FA-03, AR-08, AR-09 |
-| **Medium** | 4 | AT-03, FA-05, MW-02, CO-02 |
-| **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 |
-| **Active total** | 13 | (41 resolved + 6 verified; see Resolved Bugs section.) |
+| Severity | Count | IDs (active) | IDs (pending test) |
+|----------|-------|--------------|-------------------|
+| **Critical** | 0 | (all resolved) | — |
+| **High** | 0 | — | FA-03 |
+| **Medium** | 0 | — | AT-03, FA-05, MW-02, CO-02 |
+| **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 | — |
+| **Active total** | 6 | (AR-08, AR-09 verified fixed 2026-07-24; 5 remaining pending.) |
 | **Original total** | 53 | |
 
 ---
@@ -332,6 +332,8 @@ When a bug is fixed:
 | AR-04 | Asset Roster | Section ordinal prefixes not visible in DOM | 2026-07-22 | Added `@if (ordinal()) { ... } {{ ordinal() }}.` to `form-section.html:10` template. The `ordinal` input was declared but never rendered. File: `form-section.html:12` |
 | AR-06 | Asset Roster | Cannot create asset via UI — p-datepicker FormControl not updating | 2026-07-22 | Added `appendTo="body"` to p-datepicker inside dialog. File: `asset-roster-form-dialog.html:319` |
 | AR-07 | Asset Roster | Document upload causes template crash | 2026-07-22 | Added null guard `document.file?.name` with fallback. File: `documents-section.html:33` |
+| AR-08 | Asset Roster | Cross-form navigate-back: created room not pre-selected in Location dropdown | 2026-07-24 | `draft-form-helper.ts:autoForm()` — when a draft exists, `load(current)` is skipped entirely. `beforePatch` ensures FormArrays are sized. Verified: draft restored, room pre-selected, form dirty. |
+| AR-09 | Asset Roster | Draft restoration broken in update mode after cross-form navigation | 2026-07-24 | Same fix as AR-08. Verified: draft fully restored with user modifications and created room ID. |
 | AM-01 | Asset Maintenances | CRITICAL — Finish Service/PM with empty Notes HTTP 400 | 2026-07-22 | Added `NonWhitespaceValidators.nonWhitespaceRequired` to notes field. Error handler now shows toast. Files: `update-maintenance-form.ts:18`, `asset-finish-maintenance-form-dialog.ts:99-101` |
 | AM-02 | Asset Maintenances | "Skip PM" button NOT shown when PM is in progress | 2026-07-22 | Moved Skip PM outside `@if (!pmStarted())` block — always rendered. File: `maintenance-service-section.html:125-151` |
 | AM-03 | Asset Maintenances | Status alert shows "Active" instead of "In PM" | 2026-07-22 | Added separate `@else if (status === 'in-pm')` branch. File: `status-banner-section.html:15-23` |
