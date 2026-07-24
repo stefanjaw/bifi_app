@@ -217,11 +217,21 @@ Method: Automated UI tests via Playwright browser
 
 ---
 
+## 15. autoForm isUpdate Fix — Contacts Create Form (2026-07-24 fix)
+
+> **Fix applied:** Reverted `isUpdate` from `computed(() => !!this.id())` to `computed(() => !!this.contact())` in `ContactsForm`. The autoForm call still receives `computed(() => !!this.id())` inline to correctly wait for entity data in edit mode. See `contacts-form.ts:120,133`.
+
+| # | Test | Expected | Result |
+|---|------|----------|--------|
+| 15.1 | Navigate to Contacts create form | "Create Contact" heading, empty form, Save disabled | ✅ PASS |
+| 15.2 | Form sections render correctly | "General information", "Contact information", "Address" sections all present | ✅ PASS |
+| 15.3 | Fill Name "AutoForm", LastName "TestContact", Email "autoform.test@example.com", Phone "+1 555-1234" | Fields populated, Save enabled | ✅ PASS |
+
 ## Results Summary
 
 | Result                  | Count |
 | ----------------------- | ----- |
-| ✅ PASS                 | 33    |
+| ✅ PASS                 | 36    |
 | ❌ FAIL / N/A           | 7     |
 | ⚠️ PARTIAL / BUG / NOTE | 4     |
 | ⏭️ NOT TESTED / N/A     | 29    |
@@ -231,3 +241,5 @@ Method: Automated UI tests via Playwright browser
 > **2026-07-23 note:** CO-04 (CR VAT Type required) has been **reverted** — commit `35efa036` removed `Validators.required` from `crVatType` and dropped the `*` marker from the label. The field is now optional again. Backend commit `c40a4202` added empty-string handling for `crVatType` in `ContactDTO`. See section 12 for re-test cases.
 >
 > **2026-07-23 re-test (NOT EXECUTED):** Sections 12–14 were all marked NOT TESTED. The session was disconnected by server abuse detection before navigating to the Contacts module. 22 new test cases remain untested.
+>
+> **2026-07-24 re-test (isUpdate fix):** Section 15 (autoForm isUpdate fix) — 3/3 PASS. Contacts create form loads correctly with proper create mode behavior (empty form, Save disabled).

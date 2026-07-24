@@ -68,14 +68,14 @@ export class RoomsForm implements DirtyComponent {
   room = this.roomResource.value;
   facilities = this.facilitiesResource.value;
 
-  isUpdate = computed(() => !!this.id());
+  isUpdate = computed(() => !!this.room());
   loading = computed(() => this.roomResource.isLoading() || this.facilitiesResource.isLoading());
   error = this.roomResource.error;
   facilityNameModel = model('');
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
-    autoForm(this.form, this.router, this.draftService, this.room, this.isUpdate, data => {
+    autoForm(this.form, this.router, this.draftService, this.room, computed(() => !!this.id()), data => {
       this.form.patchValue({
         name: data.name,
         code: data.code,

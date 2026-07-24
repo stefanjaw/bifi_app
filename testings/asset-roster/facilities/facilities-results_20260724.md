@@ -352,11 +352,30 @@ Method: Automated UI tests via Playwright browser
 
 ---
 
+## 24. autoForm isUpdate Fix — Facilities Create/Update/Cross-Form (2026-07-24 fix)
+
+> **Fix applied:** Reverted `isUpdate` from `computed(() => !!this.id())` to `computed(() => !!this.facility())` in `FacilitiesForm`. The autoForm call still receives `computed(() => !!this.id())` inline to correctly wait for entity data in edit mode. See `facilities-form.ts:72,82`.
+
+| # | Test | Expected | Result |
+|---|------|----------|--------|
+| 24.1 | Navigate to Facilities create form | "Create Facility" heading, empty form, Save disabled | ✅ PASS |
+| 24.2 | Fill Name "autoForm-Test-Fac-1", Save | Facility created, redirected to list | ✅ PASS |
+| 24.3 | Search for "autoForm-Test-Fac-1" | Facility appears in list | ✅ PASS |
+| 24.4 | Click row to edit | "Update Facility" heading, data loaded (name shows "autoForm-Test-Fac-1"), Save disabled (pristine) | ✅ PASS |
+| 24.5 | Change name to "autoForm-Test-Fac-1-Updated", Save | Redirected to list | ✅ PASS |
+| 24.6 | Search for "autoForm-Test-Fac-1-Updated" | Updated name shown | ✅ PASS |
+| 24.7 | Navigate to Rooms create, open Facility dropdown | Dropdown shows facility list + "Other facility +" footer | ✅ PASS |
+| 24.8 | Click "Other facility +" | Navigated to facility create with `returnUrl` + `controlName=facilityId` | ✅ PASS |
+| 24.9 | Fill name "CrossForm-Facility", Save | Facility created, redirected back to room form | ✅ PASS |
+| 24.10 | Verify "CrossForm-Facility" pre-selected in Facility dropdown | Facility dropdown shows "CrossForm-Facility" | ✅ PASS |
+| 24.11 | Fill room Name "autoForm-Room-Test", Code "AF-RM-001", Address "Floor 2, Room 201", Save | Room created | ✅ PASS |
+| 24.12 | Search room "autoForm-Room-Test" in Rooms list | Room shows with facility "CrossForm-Facility" | ✅ PASS |
+
 ## Results Summary
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 69 |
+| ✅ PASS | 81 |
 | ❌ FAIL | 0 |
 | ⚠️ PARTIAL / BUG / NOTE | 6 |
 | ⏭️ NOT TESTED / N/A | 26 |
@@ -364,3 +383,5 @@ Method: Automated UI tests via Playwright browser
 > **Re-tested 2026-07-22 after fixes:** FA-01 (whitespace validation), FA-02 (showClear on contact select), FA-04 (untranslated key), FA-06 (Location vs Address label), FA-07 (Facility DirtyFormGuard) resolved. B-01, B-02, B-04, B-06, B-07 moved to Fixed. 6 more PASS, 6 fewer BUG/NOTE.
 >
 > **Re-tested 2026-07-23 (partial — session disconnected mid-test):** Section 20 (stray `]` fix) — 2/3 PASS, 1 N/A. Section 21 (cross-form nav, draft restore) — 4/9 PASS, 1 PARTIAL, 4 NOT TESTED. Sections 22–23 (facilities draft, dirtyKeys) — all NOT TESTED. Session terminated by server abuse detection. See each section for individual results.
+>
+> **Re-tested 2026-07-24 after isUpdate fix:** Section 24 (autoForm isUpdate fix) — 12/12 PASS. Facilities create, update, cross-form room creation with auto-populate all verified working.

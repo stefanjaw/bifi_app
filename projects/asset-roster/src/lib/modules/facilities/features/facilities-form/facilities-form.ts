@@ -69,7 +69,7 @@ export class FacilitiesForm {
   contacts = this.contactsResource.value;
   roomColumns = roomColumns;
 
-  isUpdate = computed(() => !!this.id());
+  isUpdate = computed(() => !!this.facility());
   loading = computed(() => this.facilityResource.isLoading() || this.contactsResource.isLoading());
   error = this.facilityResource.error;
   isSubmitLoading = signal<boolean>(false);
@@ -79,7 +79,7 @@ export class FacilitiesForm {
   }
 
   constructor() {
-    autoForm(this.form, this.router, this.draftService, this.facility, this.isUpdate, data => {
+    autoForm(this.form, this.router, this.draftService, this.facility, computed(() => !!this.id()), data => {
       this.form.patchValue({
         name: data.name,
         contactId: data.contactId?._id,

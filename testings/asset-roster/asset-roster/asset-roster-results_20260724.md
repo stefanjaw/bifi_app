@@ -664,11 +664,25 @@ Method: Automated UI tests via Playwright browser
 
 ---
 
+## 41. autoForm isUpdate Fix — AR-08/AR-09 Regression Re-test (2026-07-24 fix)
+
+> **Fix applied:** Reverted `isUpdate` from URL-based heuristic to explicit `computed(() => !!this.id())` signal in `autoForm` call at `asset-roster-maintenance.ts:202`. This ensures autoForm correctly waits for entity data in update mode before rendering the form, while the component's `isUpdate` for `handleSubmit`/`goBack` uses entity-based logic.
+
+| # | Test | Expected | Result |
+|---|------|----------|--------|
+| 41.1 | Navigate to asset maintenance page for asset "SN-AR-FIX-TEST" | Form loads, Serial Number shows "SN-AR-FIX-TEST", Save Changes disabled | ✅ PASS |
+| 41.2 | Modify Serial Number to "SN-AR-ISUPDATE-TEST" | Save Changes enabled (form dirty) | ✅ PASS |
+| 41.3 | Open Location dropdown, click "Other room +" | Navigated to room create with `returnUrl` + `controlName=locationId` | ✅ PASS |
+| 41.4 | Fill room Name "AR-isUpdate-Room", Code "AR-IS-001", Address "AR-Test-Location", select Facility "CrossForm-Facility", Save | Room created, redirected back to asset maintenance | ✅ PASS |
+| 41.5 | Verify Serial Number shows "SN-AR-ISUPDATE-TEST" (draft restored) | Serial Number field shows the modified value | ✅ PASS |
+| 41.6 | Verify Location shows "AR-isUpdate-Room" (new room pre-selected) | Location dropdown shows "AR-isUpdate-Room" | ✅ PASS |
+| 41.7 | Verify Save Changes enabled (form dirty) | Save Changes button is clickable | ✅ PASS |
+
 ## Results Summary
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 103 |
+| ✅ PASS | 110 |
 | ❌ FAIL | 0 |
 | ⚠️ PARTIAL / BUG / NOTE | 7 |
 | ⏭️ NOT TESTED / N/A | ~140 |
@@ -677,4 +691,4 @@ Method: Automated UI tests via Playwright browser
 >
 > **Re-tested 2026-07-23 (retry with in-app navigation):** Section 35 — 9/9 PASS. Section 36 — 3/8 PASS, 2 FAIL, 3 NOT TESTED. Section 37 — 5/5 PASS. Section 38 — 2/5 PASS, 3 NOT TESTED. Section 39 — all NOT TESTED. Section 40 — 3/5 PASS, 2 NOT TESTED.
 >
-> **Re-tested 2026-07-24 (after AR-08/AR-09 fix):** Section 36.3 and 36.4 retested and now PASS. The `autoForm()` fix (skip async `load()` when draft exists) successfully restores the draft with user modifications (Serial Number: "SN-AR-FIX-TEST") and pre-selects the newly created room ("AR-Fix-Room") in the Location dropdown. Form is correctly marked dirty (`ng-dirty`). See Bugs B-08, B-09 in current-bugs.md for full fix details.
+> **Re-tested 2026-07-24 (after AR-08/AR-09 + isUpdate fix):** Section 36.3 and 36.4 retested and now PASS. Section 41 (isUpdate fix re-test) — 7/7 PASS. autoForm correctly waits for entity data in maintenance mode, draft restoration preserves modified Serial Number and pre-selects newly created room "AR-isUpdate-Room". See Bugs B-08, B-09 in current-bugs.md for full fix details.

@@ -3,7 +3,6 @@ import {
   Component,
   DestroyRef,
   inject,
-  input,
   OnInit,
   signal,
 } from '@angular/core';

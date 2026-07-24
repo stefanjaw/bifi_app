@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-24 (AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-03, FA-05, CO-02 still pending test. 6 active Low, 3 pending test, 44 resolved.)
+> **Last updated:** 2026-07-24 (autoForm isUpdate regression ✅ Fixed & Verified. AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-03, FA-05, CO-02 still pending test. 6 active Low, 3 pending test, 44 resolved.)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -179,6 +179,11 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Root cause:** `draft-form-helper.ts:autoForm()` calls `load(current)` (the entity-data loader callback) **without `await`** — Angular `effect()` cannot be `async`. For the asset maintenance form, `load` is bound to `resetValueToInitialState` (`asset-roster-maintenance.ts:391`), which is `async` and `await`s `fileResolverService.resolveFile()` before `patchValue` + `markAsPristine`. The draft IS found by `getDraft()` and applied synchronously via `patchValue(draft)` + `markDraftControlsDirty`, but the async `load()` completes later and its `patchValue({entity})` + `markAsPristine()` **overwrites** the draft.
 - **Fixed 2026-07-24:** `draft-form-helper.ts:autoForm()` — when a draft exists, `load(current)` is skipped entirely. The draft already contains the user's prior form state, and `beforePatch` ensures FormArrays are sized correctly. Verified by test: Serial Number restored as "SN-AR-FIX-TEST", newly created room pre-selected in Location dropdown, form marked dirty.
 
+### Pattern I — `isUpdate` signal incorrectly derived from `id` instead of entity data
+- **Affected:** ~~FacilitiesForm~~ (resolved 2026-07-24), ~~RoomsForm~~ (resolved 2026-07-24), ~~ContactsForm~~ (resolved 2026-07-24), ~~CrmsForm~~ (resolved 2026-07-24)
+- **Root cause:** In commit `4bf7c987` (Kimberly), `isUpdate` was changed from `computed(() => !!this.entity())` to `computed(() => !!this.id())` in 4 forms. This meant `isUpdate` remained `true` even if the entity fetch failed (404), causing autoForm to hang waiting for data that never arrives. The `handleSubmit`/`goBack` methods also used this signal to decide PUT vs POST — with `!!this.id()`, a failed fetch in edit mode would still attempt PUT, potentially creating a new entity instead of updating.
+- **Fixed 2026-07-24:** Reverted `isUpdate` back to entity-based (`!!this.facility()`, `!!this.room()`, `!!this.contact()`, `!!this.entry()`) for component-level usage. The autoForm call still receives an id-based signal (`computed(() => !!this.id())`) inline to correctly wait for data in edit mode. Verified by 22-test suite: Facilities create/update/cross-form room creation (12/12 PASS), Asset roster maintenance cross-form room AR-08/AR-09 (7/7 PASS), Contacts basic form (3/3 PASS).
+
 ---
 
 ## Root Cause Analysis (Detailed)
@@ -301,7 +306,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | **High** | 0 | — | (all resolved) |
 | **Medium** | 0 | — | AT-03, FA-05, CO-02 |
 | **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 | — |
-| **Active total** | 6 | (AR-08, AR-09, FA-03, MW-02 verified fixed; AT-03, FA-05, CO-02 pending test.) |
+| **Active total** | 6 | (AR-08, AR-09, FA-03, MW-02, Pattern I verified fixed; AT-03, FA-05, CO-02 pending test.) |
 | **Original total** | 53 | |
 
 ---

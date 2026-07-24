@@ -92,7 +92,7 @@ export class CrmsForm implements DirtyComponent {
       this.currenciesResource.isLoading()
   );
   isSubmitLoading = signal(false);
-  isUpdate = computed(() => !!this.id());
+  isUpdate = computed(() => !!this.entry());
 
   contactNameModel = model('');
   contactMethodModel = model('');
@@ -105,7 +105,7 @@ export class CrmsForm implements DirtyComponent {
       this.router,
       this.draftService,
       this.entry,
-      this.isUpdate,
+      computed(() => !!this.id()),
       entry => {
         this.formService.patchValue({
           title: entry.title,
