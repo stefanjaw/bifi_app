@@ -130,7 +130,7 @@ export class ContactsForm implements DirtyComponent {
       this.router,
       this.draftService,
       this.contact,
-      (data) => this.resetValueToInitialState(data),
+      data => this.resetValueToInitialState(data)
     );
 
     effect(() => {

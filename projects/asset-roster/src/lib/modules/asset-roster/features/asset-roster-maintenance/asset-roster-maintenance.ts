@@ -285,7 +285,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
       next: () => {
         this.submitLoading.set(false);
         this.assetRosterMaintenanceContext.handleSaved();
-        
+
         // Mark form as pristine to avoid triggering the DirtyFormGuard on navigation
         this.formService.form.markAsPristine();
         this.formService.form.markAsUntouched();

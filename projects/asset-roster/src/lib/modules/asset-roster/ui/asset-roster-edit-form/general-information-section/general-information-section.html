@@ -208,7 +208,9 @@
           @if (deviceType() === 'serialized' || deviceType() === 'software' || !deviceType()) {
             <div>
               <bifi-app-form-field previewVariant="italic">
-                <bifi-app-form-label>{{ 'location' | translate: {} : 'asset-roster' }}</bifi-app-form-label>
+                <bifi-app-form-label>
+                  {{ 'location' | translate: {} : 'asset-roster' }}
+                </bifi-app-form-label>
                 <bifi-app-form-preview>
                   <ng-template #preview let-typeId let-fallback>
                     {{ assetRoster()?.locationId?.name || fallback }}

@@ -4,7 +4,11 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { DraftService } from '../services/draft-service';
 import { markAsDirty } from './dirty-utils';
 
-function markDraftControlsDirty(form: FormGroup, draft: Record<string, unknown>, dirtyKeys?: string[]): void {
+function markDraftControlsDirty(
+  form: FormGroup,
+  draft: Record<string, unknown>,
+  dirtyKeys?: string[]
+): void {
   if (dirtyKeys) {
     dirtyKeys.forEach(key => {
       const control = form.get(key);
@@ -75,7 +79,7 @@ export function autoForm<T>(
   draftService: DraftService,
   data: Signal<T | undefined>,
   load: (data: T) => void,
-  beforePatch?: (draft: Record<string, unknown>) => void,
+  beforePatch?: (draft: Record<string, unknown>) => void
 ): AutoFormResult {
   const restored = signal(false);
 
@@ -142,7 +146,7 @@ export function navigateBack(
   router: Router,
   draftService: DraftService,
   createdId?: string,
-  isUpdate?: boolean,
+  isUpdate?: boolean
 ): void {
   const returnUrl = route.snapshot.queryParamMap.get('returnUrl');
   const controlName = route.snapshot.queryParamMap.get('controlName');

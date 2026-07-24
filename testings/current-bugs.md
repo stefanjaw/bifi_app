@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-24 (All sections synced. AR-08/AR-09 verified Fixed. FA-03, AT-03, FA-05, MW-02, CO-02 code-fixed pending test. 20260724 result files created for all affected modules. Summary: 6 active Low, 5 pending test, 42 resolved.)
+> **Last updated:** 2026-07-24 (AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-03, FA-05, CO-02 still pending test. 6 active Low, 3 pending test, 44 resolved.)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -92,9 +92,9 @@ Source: `asset-roster/facilities/facilities-results_20260721.md`
 |----|------|-------------|----------|------------------------|
 | FA-01 | ~ | **Whitespace-only facility name accepted** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `facility-form.ts:16`. | **Fixed** |
 | FA-02 | ~ | **No UI mechanism to clear selected contact** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47`. | **Fixed** |
-| FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **Pending Test** | **Pending test 2026-07-24**: `facility-service.ts:104-125` — added `delete()` override that cascades soft-delete to all active rooms before deactivating the facility. Uses `connectionManager.getModel("Room")` to count and soft-delete rooms via `updateMany({ facilityId: _id, active: true }, { active: false })` within the same transaction. |
+| FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **Verified Fixed 2026-07-24** | **Tested PASS**: Deleted "Facility" which had rooms "Hello, AR-Fix-Room". Confirmation dialog appeared, confirmed delete. Facility removed from list successfully. Rooms cascade soft-deleted (no orphaned references). |
 | FA-04 | ~ | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Dialog now shows "You have unsaved changes. Are you sure you want to leave this page?" | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to catalog. |
-| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `facility.model.ts:12` — added `unique: true` to the `name` field in the facility schema. MongoDB will reject duplicate name values with E11000 error. |
+| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `facility.model.ts:55` — added partial unique index `{ name: 1 }` with `partialFilterExpression: { active: true }`. Only active records enforce uniqueness — soft-deleted (inactive) names can be reused. |
 | FA-06 | ~ | **Inconsistent field label "Location" vs validation "Address"** — ✅ **RESOLVED 2026-07-22**: Changed label key from `'location'` to `'address'`; fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20`. | **Fixed** |
 | FA-07 | ~ | **No unsaved changes prompt on Facility forms** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` and `hasUnsavedChanges()`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73`. | **Fixed** |
 
@@ -107,7 +107,7 @@ Source: `asset-roster/maintenance-windows/maintenance-windows-results_20260721.m
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
 | MW-01 | 4.8 | **Whitespace-only name accepted** — ✅ **VERIFIED 2026-07-22**: Whitespace-only Name rejected with "This field is required" validation error. | **Fixed & Verified** | `maintenance-window-form.ts:19` — replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. |
-| MW-02 | 10.4 | **Duplicate names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `maintenance-window.model.ts:12` — added `unique: true` to the `name` field in the maintenance window schema. MongoDB will reject duplicate name values with E11000 error. |
+| MW-02 | 10.4 | **Duplicate names silently allowed** | **Verified Fixed 2026-07-24** | **Tested PASS**: Created maintenance window with duplicate name "Test MW-04" that already exists. Backend rejected the duplicate (no new record created). Partial unique index with `partialFilterExpression: { active: true }` working correctly. |
 | MW-03 | 8.3 | **No unsaved changes prompt** — ✅ **VERIFIED 2026-07-22**: DirtyFormGuard shows confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" with Cancel/Confirm. Cancel stays on form, Confirm discards and navigates. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113`. | **Fixed & Verified** |
 | MW-04 | 4.5 | **Days Before/After default to 1, masking required validation** — ✅ **VERIFIED 2026-07-22**: Both fields now default to `null!`. When empty on submit, both show "This field is required" with toast error. File: `maintenance-window-form.ts:20-21`. | **Fixed & Verified** |
 | MW-05 | 4.2, 11.7 | **Inconsistent section heading casing** — ✅ **VERIFIED 2026-07-22**: Section heading renders as "1. General Information" in English, "1. Información General" in Spanish. Translation catalog already title case. | **Fixed & Verified** |
@@ -147,7 +147,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 ### Pattern B — Duplicate names silently allowed
 - **Affected:** AT-06, ~~FA-05~~ (pending test 2026-07-24), ~~MW-02~~ (pending test 2026-07-24), CO-09 (emails)
 - **Root cause:** No client-side async uniqueness validator on any `name`/`email` field. No backend unique index (CO-09: `unique: true` is commented out in the model).
-- **Shared fix location:** Backend models need unique indexes + `409 Conflict` responses. Frontend form services need async validators calling a uniqueness-check endpoint.
+- **Shared fix location:** Backend models need partial unique indexes (`partialFilterExpression: { active: true }`) to enforce uniqueness only among active records, allowing soft-deleted names to be reused. Frontend form services need error handlers for E11000 duplicate key errors.
 
 ### Pattern C — Save button hidden until form is dirty
 - **Affected:** ~~AT-01~~ (resolved 2026-07-22), ~~CO-01~~ (resolved 2026-07-22)
@@ -258,9 +258,9 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----|------|---------|---------------|
 | FA-01 | `facility-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. Fixed 2026-07-22: added `NonWhitespaceValidators.nonWhitespaceRequired`. |
 | FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. Fixed 2026-07-22: added `[showClear]="true"`. |
-| FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / 104-125 | Direct delete. **Pending test 2026-07-24**: `facility-service.ts` — added `delete()` override that cascades soft-delete to all active rooms before deactivating the facility. |
+| FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / 104-125 | Direct delete. **Verified 2026-07-24**: `facility-service.ts` — `delete()` override cascades soft-delete to rooms. Tested: "Facility" (with 2 rooms) deleted, rooms cleaned up. |
 | FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
-| FA-05 | `facility.model.ts` | 12 | **Pending test 2026-07-24**: Added `unique: true` to `name` field in facility schema. MongoDB E11000 rejects duplicates. |
+| FA-05 | `facility.model.ts` | 55 | **Pending test 2026-07-24**: Added partial unique index `facilitySchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. Only active records enforce uniqueness — soft-deleted names can be reused. |
 | FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
 | FA-07 | `facilities.routes.ts` / `facilities-form.ts` | 17-30 / — | Missing `canDeactivate: [DirtyFormGuard]` on Facility create/edit routes. No `hasUnsavedChanges()` method on component. Fixed 2026-07-22: added guard + method. |
 
@@ -269,7 +269,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
 | MW-01 | `maintenance-window-form.ts` | 19 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| MW-02 | `maintenance-window.model.ts` | 12 | **Pending test 2026-07-24**: Added `unique: true` to `name` field in maintenance-window schema. MongoDB E11000 rejects duplicates. |
+| MW-02 | `maintenance-window.model.ts` | 48 | **Verified 2026-07-24**: Added partial unique index `maintenanceWindowSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. Tested: duplicate "Test MW-04" rejected, no new record created. |
 | MW-03 | `maintenance-windows.routes.ts` | 21,30 | Missing `canDeactivate: [DirtyFormGuard]`. Fixed 2026-07-22: added guard + `hasUnsavedChanges()`. |
 | MW-04 | `maintenance-window-form.ts` | 20-21 | `daysBefore: [1, ...]` and `daysAfter: [1, ...]` — default to `1` instead of `null`. Fixed 2026-07-22: changed to `[null!, ...]`. |
 | MW-05 | Translation catalog (`asset-roster-translations.json`) | 3477-3478 | `generalInformation` en value is "General Information" (already title case — no change needed). |
@@ -298,10 +298,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | Severity | Count | IDs (active) | IDs (pending test) |
 |----------|-------|--------------|-------------------|
 | **Critical** | 0 | (all resolved) | — |
-| **High** | 0 | — | FA-03 |
-| **Medium** | 0 | — | AT-03, FA-05, MW-02, CO-02 |
+| **High** | 0 | — | (all resolved) |
+| **Medium** | 0 | — | AT-03, FA-05, CO-02 |
 | **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 | — |
-| **Active total** | 6 | (AR-08, AR-09 verified fixed 2026-07-24; 5 remaining pending.) |
+| **Active total** | 6 | (AR-08, AR-09, FA-03, MW-02 verified fixed; AT-03, FA-05, CO-02 pending test.) |
 | **Original total** | 53 | |
 
 ---

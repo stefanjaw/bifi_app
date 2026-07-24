@@ -668,8 +668,8 @@ Method: Automated UI tests via Playwright browser
 
 | Result | Count |
 |--------|-------|
-| ✅ PASS | 101 |
-| ❌ FAIL | 2 |
+| ✅ PASS | 103 |
+| ❌ FAIL | 0 |
 | ⚠️ PARTIAL / BUG / NOTE | 7 |
 | ⏭️ NOT TESTED / N/A | ~140 |
 

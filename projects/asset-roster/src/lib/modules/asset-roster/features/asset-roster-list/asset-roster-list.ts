@@ -267,5 +267,4 @@ export class AssetRosterList {
       relativeTo: this.route,
     });
   };
-
 }
