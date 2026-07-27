@@ -118,11 +118,13 @@
                   />
 
                   <!-- the maintenance service of the assetRoster -->
-                  <bifi-app-maintenance-service-section
-                    [assetRoster]="assetRoster()"
-                    [maintenanceWindows]="maintenanceWindows()"
-                    [isEditMode]="isEditMode()"
-                  />
+                  @if (assetRoster()?.status !== 'awaiting-commissioning' && assetRoster()?.status !== 'decommissioned') {
+                    <bifi-app-maintenance-service-section
+                      [assetRoster]="assetRoster()"
+                      [maintenanceWindows]="maintenanceWindows()"
+                      [isEditMode]="isEditMode()"
+                    />
+                  }
 
                   <!-- the commissioning and lifecycle of the assetRoster -->
                   <bifi-app-commissioning-lifecycle-section [assetRoster]="assetRoster()" />

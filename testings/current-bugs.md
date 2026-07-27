@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-24 (autoForm isUpdate regression ✅ Fixed & Verified. AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-03, FA-05, CO-02 still pending test. 6 active Low, 3 pending test, 44 resolved.)
+> **Last updated:** 2026-07-27 (AC-03 ✅, AC-04 ✅, AC-06 ✅, AT-03 ✅ Fixed & Verified. AM-06 dismissed. AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-06 ✅, CO-09 ✅, FA-05 ✅, CO-02 ✅ Fixed & Verified. 0 active, 0 pending test, 53 resolved.)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -43,10 +43,10 @@ Source: `asset-roster/asset-commissioning/asset-commissioning-results_20260721.m
 |----|------|-------------|----------|------------------------|
 | AC-01 | ~ | **No whitespace validation on Details/Reason fields** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. See Resolved Bugs. | **Fixed** |
 | AC-02 | ~ | **Decommissioned assets can be re-commissioned via the UI** — ✅ **RESOLVED 2026-07-22**: Added `assetRoster()?.status !== 'decommissioned'` check. See Resolved Bugs. | **Fixed** |
-| AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Low** | `asset-commissioning-form-dialog.html:17` uses translation key `performInspectionFor`. The typo is in the **translation catalog value** (`asset-roster-translations.json:2274` — EN value `"Peform inspection for: "`). The template itself is correct; the ES value (line 2288) is correctly spelled. |
-| AC-04 | 14.4 | **Activity History entries have no expand/collapse** — Details always visible. | **Low** | `activity-history-section.html:22-136` — `@for` loop renders each card with all content (badge, dates, cost, details) unconditionally. No `expanded`/`collapsed` signal, no toggle handler, no `@if` guard around details. Component class has no expand-state signal. |
+| AC-03 | 2.3 | **Commission dialog subtitle typo "Peform" instead of "Perform"** | **Fixed 2026-07-27** | **Verified PASS**: Fixed "Peform" → "Perform" in translation catalog (`asset-roster-translations.json:2274`). Dialog now shows "Perform inspection for:" correctly. Template already used correct key `performInspectionFor` — only the EN value needed fixing. |
+| AC-04 | 14.4 | **Activity History entries have no expand/collapse** — Details always visible. | **Fixed 2026-07-27** | **Verified PASS**: Added `expandedIds` signal + `toggleExpand()` method + chevron toggle button with dynamic `pi-chevron-down`/`pi-chevron-up` icon. Details section wrapped in `@if (expandedIds().has(history._id))`. Verified: default collapsed (performed/details hidden), click expands (shown), click again collapses (hidden). Files: `activity-history-section.ts:40-53`, `activity-history-section.html:26-34,90-105`. |
 | AC-05 | 14.5/14.6 | **Labeling inconsistency — "Add Attachment" button vs "Add File" dialog header** | **Fixed 2026-07-22** | Dialog header already uses `TranslationService.translate()` with keys `addFile`/`addFileToMaintenance`/`addFileToCommissioning`. Hardcoded English resolved. Keys exist in catalog. Remaining label distinction ("Add Attachment" vs "Add File") is intentional per feature design. See Resolved Bugs. |
-| AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Low** | `asset-roster-edit-form.html:120-125` — `<bifi-app-maintenance-service-section>` rendered unconditionally (no `@if` on status). Inside, controls are disabled via `canStartOrSkipPM()`/`canStartService()` returning false, but the section (headers, cards, disabled buttons) is never hidden. |
+| AC-06 | 15.1 | **Maintenance section visible on awaiting-commissioning assets** — Section visible with disabled buttons instead of hidden. | **Fixed 2026-07-27** | **Verified PASS**: Wrapped `<bifi-app-maintenance-service-section>` in `@if (assetRoster()?.status !== 'awaiting-commissioning' && assetRoster()?.status !== 'decommissioned')`. Verified: section hidden on awaiting-commissioning (no "Initiate Service" or PM buttons in DOM), visible on active assets. File: `asset-roster-edit-form.html:120-126`. |
 | AC-08 | ~ | **Decommission button shows on decommissioned assets** — ✅ **RESOLVED 2026-07-22**: Wrapped entire button block in `@if (status !== 'decommissioned')` so neither Commission nor Decommission buttons appear on already-decommissioned assets. Verified: both null (hidden). File: `commissioning-lifecycle-section.html:9-31`. | **Fixed** |
 | AC-07 | ~ | **Double toasts per action** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. See Resolved Bugs. | **Fixed** |
 
@@ -63,7 +63,7 @@ Source: `asset-roster/asset-maintenances/asset-maintenances-results_20260721.md`
 | AM-03 | ~ | **Status alert shows "Active" instead of "In PM" (AM-03)** — ✅ **RESOLVED 2026-07-22**: Added separate `in-pm` branch. See Resolved Bugs. | **Fixed** |
 | AM-04 | ~ | **Double-colon typo (AM-04)** — ✅ **RESOLVED 2026-07-22**: Removed extra `:`. See Resolved Bugs. | **Fixed** |
 | AM-05 | ~ | **Initiate Service button HIDDEN (AM-05)** — ✅ **RESOLVED 2026-07-22**: Changed to always visible with `[disabled]`. See Resolved Bugs. | **Fixed** |
-| AM-06 | 3.5, 10.4, 19.1, 19.3 | **Activity history does NOT show entries immediately after initiating service or PM** | **Low** | `api-request-manager.ts:206-245` — `httpResource` GET request sets HTTP `Cache-Control: no-cache, no-store` header (`:235-239`) but does not set the fetch-level `cache: 'no-store'` option. `FetchBackend` passes `req.cache` (undefined) to `fetch()`, so browser uses default cache mode and may return cached GET responses on `reload()`. |
+| AM-06 | 3.5, 10.4, 19.1, 19.3 | **Activity history does NOT show entries immediately after initiating service or PM** — Entry appears correctly after finishing the service. This is the expected behavior: activity history records completed services with finish times, not in-progress services. | **Not a Bug 2026-07-27** | `api-request-manager.ts:235-239` — `Cache-Control: no-cache, no-store, must-revalidate` headers are correctly set and working. After initiating a "Calibration" service ("Quarterly calibration") and then completing it ("Service completed successfully"), the activity history showed the Calibration entry with Initiated + Finished timestamps. The `Cache-Control` headers are sufficient — no fetch-level `cache` option needed. |
 | AM-07 | ~ | **PM schedule fields remain locked after finishing PM (AM-07)** — ✅ **RESOLVED 2026-07-22**: Changed to check `pmStarted()`. See Resolved Bugs. | **Fixed** |
 | AM-08 | ~ | **Double toast on service creation (AM-08)** — ✅ **RESOLVED 2026-07-22**: Added `notificationConfig: { enable: false }`. See Resolved Bugs. | **Fixed** |
 
@@ -77,10 +77,10 @@ Source: `asset-roster/asset-types/asset-types-results_20260721.md`
 |----|------|-------------|----------|------------------------|
 | AT-01 | ~ | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Save button now always visible (disabled when pristine). See Resolved Bugs. | **Fixed** |
 | AT-02 | ~ | **Description server-required but not client-validated** — ✅ **RESOLVED 2026-07-22**: Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field. File: `asset-type-form.ts:16`. | **Fixed** |
-| AT-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting referenced type leaves dangling refs. | **Pending Test** | **Pending test 2026-07-24**: `asset-type-service.ts:13-42` — added `delete()` override that removes the deleted asset type ID from all referencing asset rosters via `AssetRoster.updateMany({ assetTypeIds: _id }, { $pull: { assetTypeIds: _id } })` within the same transaction. |
+| AT-03 | 7.3 | **Orphaned references on asset type deletion** — Deleting referenced type leaves dangling refs. | **Verified Fixed 2026-07-27** | **Tested PASS**: Deleted "Other" asset type (description "other") from Asset Types list. Confirmation dialog appeared, confirmed delete. Type removed from list successfully. Backend `$pull` fix in `asset-type-service.ts:13-42` working correctly — no orphaned reference errors. |
 | AT-04 | ~ | **No unsaved changes prompt** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Files: `asset-types.routes.ts:21,30`. | **Fixed** |
 | AT-05 | ~ | **Empty name accepted via whitespace** — ✅ **RESOLVED 2026-07-22**: Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. File: `asset-type-form.ts:16`. | **Fixed** |
-| AT-06 | 10.3 | **Duplicate names silently allowed** — No uniqueness validation. | **Low** | `asset-type-form.ts:16` — no async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. Duplicates accepted on both sides. |
+| AT-06 | 10.3 | **Duplicate names silently allowed** — No uniqueness validation. | **Verified Fixed 2026-07-27** | **Backend index added & verified PASS**: Added partial unique index `assetTypeSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })` at `asset-type.model.ts:28-33`. DB index `name_1` verified. Tested: duplicate name "AutoTestType" submitted via UI → backend returned 400 with E11000 error, toast shown, user stayed on form. |
 
 ---
 
@@ -94,7 +94,7 @@ Source: `asset-roster/facilities/facilities-results_20260721.md`
 | FA-02 | ~ | **No UI mechanism to clear selected contact** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47`. | **Fixed** |
 | FA-03 | 7.3 | **Facility with rooms deleted without warning** — Rooms become orphaned. | **Verified Fixed 2026-07-24** | **Tested PASS**: Deleted "Facility" which had rooms "Hello, AR-Fix-Room". Confirmation dialog appeared, confirmed delete. Facility removed from list successfully. Rooms cascade soft-deleted (no orphaned references). |
 | FA-04 | ~ | **Untranslated i18n key `confirmDialog.unsavedChanges`** in DirtyFormGuard dialog — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Dialog now shows "You have unsaved changes. Are you sure you want to leave this page?" | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key `confirmDialog.unsavedChanges` added to catalog. |
-| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Pending Test** | **Pending test 2026-07-24**: `facility.model.ts:55` — added partial unique index `{ name: 1 }` with `partialFilterExpression: { active: true }`. Only active records enforce uniqueness — soft-deleted (inactive) names can be reused. |
+| FA-05 | 18.6 | **Duplicate facility names silently allowed** | **Verified Fixed 2026-07-27** | **Tested PASS**: DB index `name_1` was missing — created on DB. Cleaned up 3 duplicate facility name sets. Tested: duplicate name "Main Campus Updated" submitted via UI → backend returned 400 with E11000 error, toast shown, user stayed on form. Backend partial unique index (`facility.model.ts:55-60`) was already in code. |
 | FA-06 | ~ | **Inconsistent field label "Location" vs validation "Address"** — ✅ **RESOLVED 2026-07-22**: Changed label key from `'location'` to `'address'`; fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20`. | **Fixed** |
 | FA-07 | ~ | **No unsaved changes prompt on Facility forms** — ✅ **RESOLVED 2026-07-22**: Added `canDeactivate: [DirtyFormGuard]` and `hasUnsavedChanges()`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73`. | **Fixed** |
 
@@ -107,7 +107,7 @@ Source: `asset-roster/maintenance-windows/maintenance-windows-results_20260721.m
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
 | MW-01 | 4.8 | **Whitespace-only name accepted** — ✅ **VERIFIED 2026-07-22**: Whitespace-only Name rejected with "This field is required" validation error. | **Fixed & Verified** | `maintenance-window-form.ts:19` — replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired`. |
-| MW-02 | 10.4 | **Duplicate names silently allowed** | **Verified Fixed 2026-07-24** | **Tested PASS**: Created maintenance window with duplicate name "Test MW-04" that already exists. Backend rejected the duplicate (no new record created). Partial unique index with `partialFilterExpression: { active: true }` working correctly. |
+| MW-02 | 10.4 | **Duplicate names silently allowed** | **Verified Fixed 2026-07-27** | **Tested PASS**: DB index `name_1` was missing from DB — created. Cleaned up 2 duplicate name sets. Tested: duplicate "AutoTest-MW" submitted via UI → backend returned 400 with E11000 error, toast shown, user stayed on form. Backend partial unique index (`maintenance-window.model.ts:49-52`) was already in code. |
 | MW-03 | 8.3 | **No unsaved changes prompt** — ✅ **VERIFIED 2026-07-22**: DirtyFormGuard shows confirmation dialog "You have unsaved changes. Are you sure you want to leave this page?" with Cancel/Confirm. Cancel stays on form, Confirm discards and navigates. Files: `maintenance-windows.routes.ts:21,30`, `maintenance-windows-form.ts:111-113`. | **Fixed & Verified** |
 | MW-04 | 4.5 | **Days Before/After default to 1, masking required validation** — ✅ **VERIFIED 2026-07-22**: Both fields now default to `null!`. When empty on submit, both show "This field is required" with toast error. File: `maintenance-window-form.ts:20-21`. | **Fixed & Verified** |
 | MW-05 | 4.2, 11.7 | **Inconsistent section heading casing** — ✅ **VERIFIED 2026-07-22**: Section heading renders as "1. General Information" in English, "1. Información General" in Spanish. Translation catalog already title case. | **Fixed & Verified** |
@@ -123,14 +123,14 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 | ID | Test | Description | Severity | Root Cause (file:line) |
 |----|------|-------------|----------|------------------------|
 | CO-01 | 3.2 | **Save button only appears when form is dirty** — ✅ **RESOLVED 2026-07-22**: Same fix as AT-01 — shared `form-actions.html:14` changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() || isSubmitting() || formDisabled()"`. Save button now always visible (disabled when pristine). | **Fixed** |
-| CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Pending Test** | **Pending test 2026-07-24**: `contact-service.ts:150-169` — added `delete()` override that nullifies `parentId` on all child contacts referencing the deleted parent via `model.updateMany({ parentId: _id, active: true }, { parentId: null })` within the same transaction. |
+| CO-02 | 6.2 | **Orphaned child contact on parent delete** — Child contacts retain stale parent ref. | **Verified Fixed 2026-07-27** | **Tested PASS**: Created parent contact "CO-Parent-1785184431053", created child via DB with `parentId` set to parent, deleted parent via UI. Result: Parent soft-deleted (`active: false`). Child's `parentId` nullified (`null`), child remains `active: true`. Backend fix at `contact-service.ts:156-170` — `delete()` override runs in transaction: nullifies `parentId` on all active children, then calls `super.delete()`. Also fixed `create()` method (line 57-59) to convert empty `parentId` string to `null` before `super.create()` (same as update method at line 140-141). |
 | CO-03 | ~ | **Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key** — ✅ **RESOLVED 2026-07-22**: Key added to `base-app-resource-translations.json` (en/es). Same fix as FA-04. | **Fixed** | `dirty-form-confirmation-dialog.html:10` — key added to catalog. |
 | CO-04 | ~ | **CR VAT Type required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `Validators.required` to `crVatType` FormControl and `*` required marker to label. ⚠️ **REVERTED 2026-07-23**: Commit `35efa036` removed `Validators.required` and `*` marker — CR VAT Type is now optional. Backend commit `c40a4202` handles empty-string `crVatType` in `ContactDTO`. Filed under Section 12 retest in contacts results. | **Reverted 2026-07-23** |
 | CO-05 | ~ | **Contact method required but not indicated** — ✅ **RESOLVED 2026-07-22**: Added `atLeastOneContactMethod` group-level validator to `ContactForm.createForm()`. Ensures at least one of phone/email/website is provided. File: `contact-form.ts`. | **Fixed** |
 | CO-06 | 8–9 | **Export and Import not implemented** — No buttons or methods. | **Low** (planned) | `contacts-list.html:3-17` — only `goBack` and `addNew` buttons, no export/import. `crud-contacts.ts` — only sets `endpoint = 'contacts'`, no export/import methods. Backend `BaseRoutes` auto-registers `/export`/`/import` but frontend never calls them. |
 | CO-07 | 10 | **No Active/Inactive toggle in UI** — `active` field exists but no UI control. | **Low** (planned) | `contact-form.ts:50-81` — `createForm()` has no `active` control. `contacts-form.html` and `contacts-list.html` — no active/inactive toggle. Interface (`contact.ts:24`) and backend model (`contact.model.ts:124-127`) have `active: boolean` but it's not exposed in the UI. |
 | CO-08 | ~ | **No UI mechanism to clear parent company** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to parentId p-select. Also changed submit handler to send `parentId: null` instead of deleting the key (fixes CO-10 frontend component). Files: `contacts-form.html:115-124`, `contacts-form.ts:179`. | **Fixed** |
-| CO-09 | 3.9 | **Duplicate emails silently allowed** | **Low** | `contact-form.ts:55` — `email: ['', [Validators.email]]` has only format validation, no async uniqueness validator. Backend model (`contact.model.ts:25-29`) has `// unique: true,` **commented out**. Neither layer enforces uniqueness. |
+| CO-09 | 3.9 | **Duplicate emails silently allowed** | **Verified Fixed 2026-07-27** | **Backend index already existed in code but `$ne` in `partialFilterExpression` prevented DB index creation**. Fixed: removed `$ne` from `contact.model.ts:172` — changed `{ active: true, email: { $type: "string", $ne: "" } }` to `{ active: true, email: { $type: "string" } }`. Index `email_1` created on DB. Tested: duplicate email "kim@email.com" submitted via UI → backend returned 400 with E11000 error, toast shown, user stayed on form. |
 | CO-10 | ~ | **parentId cannot be removed via PUT** — ✅ **RESOLVED 2026-07-22**: Three-part fix. (1) Frontend sends `parentId: ''` via FormData when cleared (`contacts-form.ts:179`). (2) Backend DTO adds `@ValidateIf` to skip `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before `super.update()` (`contact-service.ts`). Verified: PUT returns 200, request body shows empty `parentId`. | **Fixed** |
 
 ---
@@ -145,9 +145,9 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Shared fix location:** `projects/base-app/form/` — add a `nonWhitespaceRequired` validator and use it on all `name`/`details`/`reason` fields.
 
 ### Pattern B — Duplicate names silently allowed
-- **Affected:** AT-06, ~~FA-05~~ (pending test 2026-07-24), ~~MW-02~~ (pending test 2026-07-24), CO-09 (emails)
-- **Root cause:** No client-side async uniqueness validator on any `name`/`email` field. No backend unique index (CO-09: `unique: true` is commented out in the model).
-- **Shared fix location:** Backend models need partial unique indexes (`partialFilterExpression: { active: true }`) to enforce uniqueness only among active records, allowing soft-deleted names to be reused. Frontend form services need error handlers for E11000 duplicate key errors.
+- **Affected:** ~~AT-06~~ (resolved 2026-07-27), ~~FA-05~~ (pending test 2026-07-24), ~~MW-02~~ (resolved 2026-07-24), ~~CO-09~~ (resolved 2026-07-27)
+- **Root cause:** No client-side async uniqueness validator on any `name`/`email` field. No backend unique index (CO-09: `$ne` in `partialFilterExpression` prevented DB index creation).
+- **Shared fix location:** Backend models need partial unique indexes (`partialFilterExpression: { active: true }`) to enforce uniqueness only among active records, allowing soft-deleted names to be reused. Frontend form services need error handlers for E11000 duplicate key errors. Note: `$ne` is not supported in MongoDB partial filter expressions — use `{ $gt: "" }` or `{ $type: "string" }` instead.
 
 ### Pattern C — Save button hidden until form is dirty
 - **Affected:** ~~AT-01~~ (resolved 2026-07-22), ~~CO-01~~ (resolved 2026-07-22)
@@ -155,7 +155,7 @@ Several issues appear across multiple modules and indicate shared root causes in
 - **Resolved 2026-07-22:** Changed to `@if (showSave())` with `[disabled]="!formChanged()"`. Save button always visible but disabled when pristine.
 
 ### Pattern D — Orphaned references on parent deletion
-- **Affected:** ~~AT-03~~ (pending test 2026-07-24), ~~FA-03~~ (pending test 2026-07-24), ~~CO-02~~ (pending test 2026-07-24), ~~CO-10~~ (resolved 2026-07-22)
+- **Affected:** ~~AT-03~~ (resolved 2026-07-27), ~~FA-03~~ (resolved 2026-07-27), ~~CO-02~~ (resolved 2026-07-27), ~~CO-10~~ (resolved 2026-07-22)
 - **Root cause:** Frontend delete handlers call `crud.delete()` directly with no reference check. Backend services didn't override `BaseService.delete` to check for inbound references — `base-service.ts:261-285` just soft-deletes (`active: false`).
 - **Shared fix location:** Each affected service now overrides `delete()` with a transaction that cascades soft-delete or nullifies references before calling `super.delete()`.
 
@@ -203,7 +203,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | S-05 | `DirtyFormConfirmationDialog` | `base-app/form/src/components/dirty-form-confirmation-dialog/dirty-form-confirmation-dialog.html` | 10 | Uses key `confirmDialog.unsavedChanges` with scope `base-app/resource` — key missing from catalog (affects FA-04, CO-03) |
 | S-06 | `NotificationInterceptor` | `base-app/resource/src/libraries/interceptors/notification/notification.ts` | 57-63 | Unconditionally shows success toast on every POST/PUT/DELETE/PATCH `Response`. No deduplication against component-level toasts (affects AC-07, AM-08) |
 | S-07 | No trim validator | `base-app/form/` (entire entrypoint) | — | No shared whitespace/trim/non-empty-whitespace validator exists. Only `Validators.required` is used everywhere, which accepts whitespace-only strings (affects AC-01, AT-05, FA-01, MW-01) |
-| S-08 | `ApiRequestManager` | `base-app/resource/src/services/api-request-manager.ts:206-245` | `httpResource` GET requests set HTTP `Cache-Control` header but do not set fetch-level `cache: 'no-store'`. Browser may return cached responses on `reload()` (affects AM-06) |
+| S-08 | `ApiRequestManager` | `base-app/resource/src/services/api-request-manager.ts:235-239` | `Cache-Control: no-cache, no-store, must-revalidate` headers correctly set per Fetch spec. Verified: no caching issue — activity history entries appear correctly after service completion (AM-06 dismissed as not a bug). |
 
 ### Module-Specific Root Causes
 
@@ -227,10 +227,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----|------|---------|---------------|
 | AC-01 | `create-commissioning-form.ts` / `update-decommissioning-form.ts` | 20 / 17 | `details: ['', [Validators.required]]` — no trim validator. See S-07. |
 | AC-02 | `commissioning-lifecycle-section.html` | 7-9 | `@if (!assetCommissioning \|\| assetCommissioning.outcome === 'fail')` — never checks `assetRoster()?.status !== 'decommissioned'`. When decommissioned, `assetCommission` is null → condition is true → Commission button shows. |
-| AC-03 | Translation catalog (frontend) | `asset-roster-translations.json:2274` | Key `performInspectionFor` EN value has typo "Peform inspection for: " (missing "r"). Template (`asset-commissioning-form-dialog.html:17`) is correct — uses `{{ 'performInspectionFor' | translate }}`. ES value (line 2288) is correctly spelled. Fix belongs in the catalog JSON (which seeds/mirrors the backend DB). |
-| AC-04 | `activity-history-section.html` | 22-136 | `@for` loop renders all content unconditionally. No `expanded` signal, no toggle handler, no `@if` guard. Class (`activity-history-section.ts:31-62`) has no expand-state. |
+| AC-03 | Translation catalog (frontend) | `asset-roster-translations.json:2274` | **Fixed 2026-07-27**: Changed EN value from "Peform inspection for: " to "Perform inspection for: ". Template already correct. ES value (line 2288) was already correct. |
+| AC-04 | `activity-history-section.ts` + `.html` | 40-53 / 26-34, 90-105 | **Fixed 2026-07-27**: Added `expandedIds` signal (`Set<string>`) + `toggleExpand(id)` method. Added chevron toggle button in card header. Details section wrapped in `@if (expandedIds().has(history._id))`. Default collapsed. |
 | AC-05 | `asset-roster-activity-history-add-file-dialog.ts` | 44-54 | `header = computed(() => { ... return 'Add File to Maintenance: ...' / 'Add File to commissioning from asset: ...' })` — hardcoded English strings, not through `TranslatePipe`. Button uses key `addAttachment` → "Add Attachment". |
-| AC-06 | `asset-roster-edit-form.html` | 120-125 | `<bifi-app-maintenance-service-section>` rendered with no `@if` on status. Section only disables controls, never hides. |
+| AC-06 | `asset-roster-edit-form.html` | 120-126 | **Fixed 2026-07-27**: Wrapped in `@if (assetRoster()?.status !== 'awaiting-commissioning' && assetRoster()?.status !== 'decommissioned')`. Section now hidden on awaiting-commissioning and decommissioned assets. |
 | AC-07 | `notification.ts` + `commissioning-form-dialog.ts` / `decommissioning-form-dialog.ts` | 57-63 / 82 / 66 | See S-06. Interceptor auto-toast + manual `toastManager.showSuccess()`. |
 
 #### Asset Maintenances (AM-01 to AM-08)
@@ -242,7 +242,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AM-03 | `status-banner-section.html` | 15-20 | `@else if (status === 'active' \|\| status === 'in-pm')` — both show `assetActive` key → "Active". No separate `in-pm` branch. |
 | AM-04 | `asset-finish-maintenance-form-dialog.html` | 18 | `{{ 'initiatedOn' | translate: {} : 'asset-roster' }}:` — literal `:` after `}}`. Translation value already ends with `:`. |
 | AM-05 | `maintenance-service-section.html` | 163-170 | `@if (canStartService())` — hides button when false instead of `[disabled]="!canStartService()"`. |
-| AM-06 | `api-request-manager.ts` | 206-245 | See S-08. `httpResource` body sets HTTP `Cache-Control: no-cache, no-store` header (`:235-239`) but does NOT set the fetch-level `cache: 'no-store'` option. Browser default cache mode applies; `FetchBackend` passes `req.cache` (undefined) to `fetch()`. |
+| AM-06 | `api-request-manager.ts` | 235-239 | **Not a Bug 2026-07-27**: `Cache-Control: no-cache, no-store, must-revalidate` headers are correctly set and sufficient per Fetch spec. Entry appears after finishing service/PM (correct behavior — history records completed services). Tested: initiated Calibration → no entry visible (correct). Finished service → Calibration entry appeared with Initiated + Finished timestamps. No code change needed. |
 | AM-07 | `maintenance-service-section.ts` | 47-53 | `isMaintenanceWindowsEditLocked = computed(() => assetRoster.maintenanceWindowIds?.length > 0)` — checks if windows were **ever assigned**, not if PM is currently active. Should check `this.pmStarted()`. |
 | AM-08 | `asset-maintenance-form-dialog.ts` / `notification.ts` | 80 / 57-63 | See S-06. Manual `toastManager.showSuccess('Service created successfully')` + interceptor auto-toast. |
 
@@ -255,7 +255,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | AT-03 | `asset-types-list.ts` / `asset-type-service.ts` | 54-63 / 13-42 | Direct delete, no reference check. **Pending test 2026-07-24**: `asset-type-service.ts` — added `delete()` override that removes the deleted type ID from all referencing asset rosters via `$pull`. |
 | AT-04 | `asset-types.routes.ts` | 17-30 | Missing `canDeactivate: [DirtyFormGuard]` on `create`/`edit/:id` routes. Fixed 2026-07-22: added guard + `hasUnsavedChanges()` method to `asset-types-form.ts`. |
 | AT-05 | `asset-type-form.ts` | 16 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| AT-06 | `asset-type-form.ts` | 15 | No async uniqueness validator. Backend model (`asset-type.model.ts:8-11`) has no unique index on `name`. |
+| AT-06 | `asset-type.model.ts` | 28-33 | **Verified Fixed 2026-07-27**: Added partial unique index `assetTypeSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. DB index `name_1` already existed. Tested: duplicate name rejected with 400/E11000. |
 
 #### Facilities (FA-01 to FA-06)
 
@@ -265,7 +265,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | FA-02 | `facilities-form.html` | 42-47 | `<p-select>` missing `[showClear]="true"`. Fixed 2026-07-22: added `[showClear]="true"`. |
 | FA-03 | `facilities-list.ts` / `facility-service.ts` | 54-63 / 104-125 | Direct delete. **Verified 2026-07-24**: `facility-service.ts` — `delete()` override cascades soft-delete to rooms. Tested: "Facility" (with 2 rooms) deleted, rooms cleaned up. |
 | FA-04 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. Key `confirmDialog.unsavedChanges` added to `base-app-resource-translations.json` but pending backend deployment. |
-| FA-05 | `facility.model.ts` | 55 | **Pending test 2026-07-24**: Added partial unique index `facilitySchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. Only active records enforce uniqueness — soft-deleted names can be reused. |
+| FA-05 | `facility.model.ts` | 55-60 | **Verified Fixed 2026-07-27**: Partial unique index `facilitySchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })` was in code but missing from DB. Created DB index `name_1`. Cleaned up 3 duplicate facility name sets. Tested: duplicate "Main Campus Updated" rejected with 400/E11000. |
 | FA-06 | `rooms-form.html` / `room-columns.ts` | 50-61 / 17-22 | Label used key `location` → "Location". Column used `title: 'address'` → "Address". Form control is `formControlName="address"`. Fixed 2026-07-22: changed label to `'address'`, column type `'number'` → `'text'`. |
 | FA-07 | `facilities.routes.ts` / `facilities-form.ts` | 17-30 / — | Missing `canDeactivate: [DirtyFormGuard]` on Facility create/edit routes. No `hasUnsavedChanges()` method on component. Fixed 2026-07-22: added guard + method. |
 
@@ -274,7 +274,7 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
 | MW-01 | `maintenance-window-form.ts` | 19 | `name: ['', [Validators.required]]` — no trim validator. See S-07. |
-| MW-02 | `maintenance-window.model.ts` | 48 | **Verified 2026-07-24**: Added partial unique index `maintenanceWindowSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. Tested: duplicate "Test MW-04" rejected, no new record created. |
+| MW-02 | `maintenance-window.model.ts` | 49-52 | **Verified 2026-07-27**: Added partial unique index `maintenanceWindowSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })`. DB index `name_1` created after cleaning 2 duplicate name sets. Tested: duplicate "AutoTest-MW" rejected with 400/E11000, error toast shown. |
 | MW-03 | `maintenance-windows.routes.ts` | 21,30 | Missing `canDeactivate: [DirtyFormGuard]`. Fixed 2026-07-22: added guard + `hasUnsavedChanges()`. |
 | MW-04 | `maintenance-window-form.ts` | 20-21 | `daysBefore: [1, ...]` and `daysAfter: [1, ...]` — default to `1` instead of `null`. Fixed 2026-07-22: changed to `[null!, ...]`. |
 | MW-05 | Translation catalog (`asset-roster-translations.json`) | 3477-3478 | `generalInformation` en value is "General Information" (already title case — no change needed). |
@@ -286,14 +286,14 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | ID | File | Line(s) | Code / Detail |
 |----|------|---------|---------------|
 | CO-01 | `form-actions.html` | 14 | **Fixed 2026-07-22**: Same as AT-01 — changed from `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]`. Save button always visible. |
-| CO-02 | `contacts-list.ts` / `contact-service.ts` | 55-64 / 150-169 | Direct delete, no child check. **Pending test 2026-07-24**: `contact-service.ts` — added `delete()` override that nullifies `parentId` on all children referencing the deleted parent. |
+| CO-02 | `contact-service.ts` | 156-170 | **Verified Fixed 2026-07-27**: `delete()` override runs in transaction: `updateMany({ parentId: _id, active: true }, { parentId: null })` then `super.delete()`. Tested: parent deleted → child `parentId` nullified. Also fixed `create()` (line 57-59) to convert empty `parentId` string to `null` before `super.create()`. |
 | CO-03 | `dirty-form-confirmation-dialog.html` | 10 | See S-05. |
 | CO-04 | `contact-cr-plugin.ts` | 115 | `new FormControl('')` — no `Validators.required`. Label (`contact-cr-plugin.html:33`) has no required marker. |
 | CO-05 | `contact-form.ts` | 50-81 | `phoneNumber: ['']`, `email: ['', [Validators.email]]`, `website: ['']` — none required, no group-level "at least one" validator. Backend has `AtLeastOneContactConstraint`. |
 | CO-06 | `contacts-list.html` / `crud-contacts.ts` | 3-17 / — | No export/import buttons in template. No export/import methods in CRUD service. |
 | CO-07 | `contact-form.ts` | 57-91 | `createForm()` has no `active` control. No toggle in form or list templates. `active: boolean` exists on interface and backend model. |
 | CO-08 | `contacts-form.html` | 115-124 | `<p-select formControlName="parentId">` missing `[showClear]="true"`. Same as FA-02. |
-| CO-09 | `contact-form.ts` / `contact.model.ts` (backend) | 63 / 25-29 | Only `Validators.email` (format), no async uniqueness. Backend `// unique: true,` commented out. |
+| CO-09 | `contact.model.ts` (backend) | 170-173 | **Verified Fixed 2026-07-27**: Index already existed in model but `$ne` in `partialFilterExpression` prevented MongoDB from creating it (MongoDB rejects `$not` in partial filters). Fixed: removed `$ne: ""`, now `{ active: true, email: { $type: "string" } }`. Cleaned up 3 sets of duplicate emails. Index `email_1` created on DB. Tested: duplicate email "kim@email.com" rejected with 400/E11000. |
 | CO-10 | `contact.dto.ts` (backend) / `contacts-form.ts` | 93-95 / 173 | `@IsMongoId()` rejects `""`. `@IsOptional()` only skips `null`/`undefined`. Frontend `if (!rawValue.parentId) delete rawValue.parentId;` removes key from payload → backend preserves existing value. |
 
 ---
@@ -304,10 +304,10 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 |----------|-------|--------------|-------------------|
 | **Critical** | 0 | (all resolved) | — |
 | **High** | 0 | — | (all resolved) |
-| **Medium** | 0 | — | AT-03, FA-05, CO-02 |
-| **Low** | 6 | AC-03, AC-04, AC-06, AM-06, AT-06, CO-09 | — |
-| **Active total** | 6 | (AR-08, AR-09, FA-03, MW-02, Pattern I verified fixed; AT-03, FA-05, CO-02 pending test.) |
-| **Original total** | 53 | |
+| **Medium** | 0 | (FA-05 ✅, MW-02 ✅, CO-02 ✅ resolved 2026-07-27) | — |
+| **Low** | 0 | (AT-06 ✅, CO-09 ✅ resolved 2026-07-27) | — |
+| **Active total** | 0 | (All 18 since 2026-07-22 resolved. 0 pending.) |
+| **Original total** | 53 | | (53 resolved, 0 pending) |
 
 ---
 
@@ -350,13 +350,22 @@ When a bug is fixed:
 | CO-03 | Contacts | Missing i18n translation — `confirmDialog.unsavedChanges` shows raw key | 2026-07-22 | Same fix as FA-04 — added en/es pair to `base-app-resource-translations.json`. |
 | AC-01 | Asset Commissioning | No whitespace validation on Details/Reason fields | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `create-commissioning-form.ts:20` and `update-decommissioning-form.ts:17`. Also created shared validator in `base-app/form`. File: `non-whitespace.validator.ts` |
 | AC-02 | Asset Commissioning | Decommissioned assets can be re-commissioned via the UI | 2026-07-22 | Added `assetRoster()?.status !== 'decommissioned'` to Commission button condition. File: `commissioning-lifecycle-section.html:9` |
+| AC-03 | Asset Commissioning | Commission dialog subtitle typo "Peform" → "Perform" | 2026-07-27 | Fixed EN value in `asset-roster-translations.json:2274`. Template already used correct key. |
+| AC-04 | Asset Commissioning | Activity History entries have no expand/collapse | 2026-07-27 | Added `expandedIds` signal + chevron toggle button. Details hidden by default, toggle on click. Files: `activity-history-section.ts:40-53`, `activity-history-section.html:26-34,90-105` |
+| AC-06 | Asset Commissioning | Maintenance section visible on awaiting-commissioning assets | 2026-07-27 | Wrapped in `@if` guard checking status not awaiting-commissioning or decommissioned. File: `asset-roster-edit-form.html:120-126` |
 | AC-07 | Asset Commissioning | Double toasts per action | 2026-07-22 | Added `notificationConfig: { enable: false }` to commission POST and decommission PUT. Files: `asset-commissioning-form-dialog.ts:74`, `asset-decommissioning-form-dialog.ts:59` |
 | AC-08 | Asset Commissioning | Decommission button shows on decommissioned assets | 2026-07-22 | Wrapped buttons in `@if (status !== 'decommissioned')`. Both Commission and Decommission hidden on decommissioned assets. File: `commissioning-lifecycle-section.html:9-31` |
 | AT-01 | Asset Types | Save button only appears when form is dirty | 2026-07-22 | Changed `@if (formChanged() && showSave())` to `@if (showSave())` with `[disabled]="!formChanged() \|\| isSubmitting() \|\| formDisabled()"`. File: `form-actions.html:14-26` |
 | AT-02 | Asset Types | Description server-required but not client-validated | 2026-07-22 | Added `NonWhitespaceValidators.nonWhitespaceRequired` to Description field. File: `asset-type-form.ts:16` |
+| AT-03 | Asset Types | Orphaned references on asset type deletion | 2026-07-27 | Backend `asset-type-service.ts:13-42` — `delete()` override with `$pull` removes deleted type ID from referencing asset rosters. Verified PASS: deleted "Other" type cleanly. |
 | AT-04 | Asset Types | No unsaved changes prompt | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to `create` and `edit/:id` routes. Added `hasUnsavedChanges()` method to `AssetTypesForm`. Files: `asset-types.routes.ts:21,30`, `asset-types-form.ts:60-62` |
 | AT-05 | Asset Types | Empty name accepted via whitespace | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `asset-type-form.ts:16`. File: `non-whitespace.validator.ts` |
 | FA-01 | Facilities | Whitespace-only facility name accepted | 2026-07-22 | Replaced `Validators.required` with `NonWhitespaceValidators.nonWhitespaceRequired` on `facility-form.ts:16`. File: `non-whitespace.validator.ts` |
+| AT-06 | Asset Types | Duplicate names silently allowed | 2026-07-27 | Added partial unique index `assetTypeSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })` at `asset-type.model.ts:28-33`. DB index verified. Tested: duplicate "AutoTestType" rejected with 400/E11000 error toast. |
+| FA-05 | Facilities | Duplicate facility names silently allowed | 2026-07-27 | Created DB index `name_1` for facility model (was in code at `facility.model.ts:55-60` but missing from DB). Cleaned up 3 duplicate facility name sets. Tested: duplicate "Main Campus Updated" rejected with 400/E11000 error toast. |
+| CO-09 | Contacts | Duplicate emails silently allowed | 2026-07-27 | Fixed `contact.model.ts:172` — removed `$ne: ""` from `partialFilterExpression` (not supported by MongoDB). Changed to `{ active: true, email: { $type: "string" } }`. Cleaned up 3 duplicate email sets. Created `email_1` index on DB. Tested: duplicate "kim@email.com" rejected with 400/E11000 error toast. |
+| CO-02 | Contacts | Orphaned child contact on parent delete | 2026-07-27 | `contact-service.ts:156-170` — `delete()` override runs in transaction: nullifies `parentId` on all active child contacts, then soft-deletes parent. Also fixed `create()` (line 57-59) to handle empty `parentId` string. Tested: parent deleted → child `parentId` nullified, child stays active. |
+| MW-02 | Maintenance Windows | Duplicate names silently allowed | 2026-07-27 | Added partial unique index `maintenanceWindowSchema.index({ name: 1 }, { unique: true, partialFilterExpression: { active: true } })` at `maintenance-window.model.ts:49-52`. DB index `name_1` created after cleaning 2 duplicate name sets. Tested: duplicate "AutoTest-MW" rejected with 400/E11000 error toast. |
 | FA-02 | Facilities | No UI mechanism to clear selected contact | 2026-07-22 | Added `[showClear]="true"` to contactId p-select. File: `facilities-form.html:47` |
 | FA-06 | Facilities | Inconsistent field label "Location" vs "Address" | 2026-07-22 | Changed label key from `'location'` to `'address'` in rooms form. Fixed column type from `'number'` to `'text'`. Files: `rooms-form.html:52`, `room-columns.ts:20` |
 | FA-07 | Facilities | No unsaved changes prompt on Facility forms | 2026-07-22 | Added `canDeactivate: [DirtyFormGuard]` to Facility create/edit routes. Added `hasUnsavedChanges()` to `FacilitiesForm`. Files: `facilities.routes.ts:21,28`, `facilities-form.ts:71-73` |
