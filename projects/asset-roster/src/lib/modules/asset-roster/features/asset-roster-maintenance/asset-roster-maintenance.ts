@@ -246,6 +246,9 @@ export class AssetRosterMaintenance implements DirtyComponent {
       (la: any) => la?.locationId && la?.assignedQuantity > 0
     );
 
+    // always remove aiquestion from the value before sending to the API
+    delete value.aiquestion;
+
     const assetRosterRequest = this.crudAssetRoster.put({
       _id: this.assetRoster()?._id || '',
       fileFields: ['photo'],
