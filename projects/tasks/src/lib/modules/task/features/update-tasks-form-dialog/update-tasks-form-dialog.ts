@@ -208,6 +208,11 @@ export class UpdateTasksFormDialog extends BaseDialog {
   handleSubmit(data: FormValueState<UpdateTaskFormModel>) {
     const { dirtyValue, rawValue } = data;
 
+    // Normalize cleared projectId for the backend (showClear sets it to null)
+    if (dirtyValue.projectId !== undefined && !dirtyValue.projectId) {
+      dirtyValue.projectId = '';
+    }
+
     // Validate the dates are correct before submitting if they have been changed
     if (dirtyValue.plannedStartDate || dirtyValue.plannedEndDate) {
       const plannedStartDate = dayjs(rawValue.plannedStartDate as Date | undefined);
