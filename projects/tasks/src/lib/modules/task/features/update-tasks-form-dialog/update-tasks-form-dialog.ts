@@ -94,6 +94,19 @@ export class UpdateTasksFormDialog extends BaseDialog {
     triggerRequest: this.dialogState,
   });
 
+  taskProjectResource = this.crudProjects.get({
+    id: computed(() => this.task()?.projectId?._id ?? ''),
+    triggerRequest: computed(() => {
+      if (!this.dialogState()) return false;
+      const task = this.task();
+      if (!task?.projectId?._id) return false;
+      const isInList = this.taskProjectsResource.value()?.some(
+        p => p._id === task.projectId!._id
+      );
+      return !isInList;
+    }),
+  });
+
   taskStagesResource = this.crudTaskStages.get({
     triggerRequest: this.dialogState,
   });
@@ -110,7 +123,11 @@ export class UpdateTasksFormDialog extends BaseDialog {
   task = this.taskResource.value;
   tasks = this.tasksResource.value;
   parentTasks = computed(() => this.tasks().filter(t => t.parentId?._id !== this._id()));
-  taskProjects = this.taskProjectsResource.value;
+  taskProjects = computed(() => {
+    const activeProjects = this.taskProjectsResource.value() || [];
+    const taskProject = this.taskProjectResource.value();
+    return taskProject ? [...activeProjects, taskProject] : activeProjects;
+  });
   taskStages = this.taskStagesResource.value;
   taskTypes = this.taskTypesResource.value;
   users = this.usersResource.value;
@@ -128,6 +145,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
     () =>
       this.taskResource.isLoading() ||
       this.taskProjectsResource.isLoading() ||
+      this.taskProjectResource.isLoading() ||
       this.taskStagesResource.isLoading() ||
       this.taskTypesResource.isLoading() ||
       this.tasksResource.isLoading()
