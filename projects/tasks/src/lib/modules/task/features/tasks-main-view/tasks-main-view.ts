@@ -193,6 +193,12 @@ export class TasksMainView {
     // After the first render, allow the _view URL sync effect to write.
     afterNextRender(() => {
       this._viewRestored.set(true);
+
+      // Auto-open update dialog if navigated from notification (?id=xxx)
+      const taskId = this.route.snapshot.queryParamMap.get('id');
+      if (taskId) {
+        this.tasksMaintenanceContext.openUpdateTaskDialog(taskId);
+      }
     });
 
     // Sync _view to the URL independently of ResourceManager's list-state sync.
