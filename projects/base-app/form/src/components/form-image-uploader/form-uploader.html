@@ -20,6 +20,19 @@
     </p-fileupload>
   </ng-content>
 
+  @if (formValue().length > 0 && !inline()) {
+    <div class="flex flex-col gap-1 mt-2">
+      @for (item of formValue(); track $index) {
+        @let file = item.file;
+        @if (file) {
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <i class="pi pi-file"></i>
+            <span>{{ file.name }}</span>
+          </div>
+        }
+      }
+    </div>
+  }
   @if (formValue().length > 0) {
     @if (!inline()) {
       <div class="mt-1"></div>

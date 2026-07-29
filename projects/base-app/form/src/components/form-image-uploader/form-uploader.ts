@@ -195,7 +195,8 @@ export class FormUploader implements OnInit {
     console.log('[Form uploader] syncPrimeNGFiles', value);
 
     if (value && value.length) {
-      uploader.files = value.map(file => file.file);
+      const files = value.map(f => f.file).filter((f): f is File => f != null);
+      uploader.files = files;
     } else {
       uploader.clear();
     }
