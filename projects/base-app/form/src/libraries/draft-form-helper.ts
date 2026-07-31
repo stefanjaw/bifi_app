@@ -83,38 +83,50 @@ export function autoForm<T>(
   beforePatch?: (draft: Record<string, unknown>) => void
 ): AutoFormResult {
   const restored = signal(false);
+  let lastUrl = '';
 
-  effect(() => {
-    const current = data();
+  effect(
+    () => {
+      const current = data();
+      const currentUrl = router.url;
 
-    if (restored()) return;
+      // If the URL has changed (e.g., navigated to a different record while component is reused),
+      // we must reset the restored flag so we can process the draft or load the data for the new URL.
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        restored.set(false);
+      }
 
-    // If we are in update mode, wait for the data to arrive before proceeding
-    if (isUpdate() && !current) {
-      return;
-    }
+      if (restored()) return;
 
-    const draftWrapper = draftService.getDraft(router.url);
+      // If we are in update mode, wait for the data to arrive before proceeding
+      if (isUpdate() && !current) {
+        return;
+      }
 
-    if (draftWrapper) {
-      // Draft exists: restore from draft directly, skip async load.
-      // The load callback may be async (e.g. resetValueToInitialState awaits
-      // file resolution), which would clobber the synchronously-applied draft
-      // values once the async continuation runs. Blocking load here ensures
-      // the draft values are the final state.
-      const { data: draft, dirtyKeys } = draftWrapper;
-      beforePatch?.(draft);
-      form.patchValue(draft);
-      markDraftControlsDirty(form, draft, dirtyKeys);
-      draftService.clearDraft(router.url);
-    } else if (current) {
-      load(current);
-    } else {
-      form.reset();
-    }
+      const draftWrapper = draftService.getDraft(currentUrl);
 
-    restored.set(true);
-  });
+      if (draftWrapper) {
+        // Draft exists: restore from draft directly, skip async load.
+        // The load callback may be async (e.g. resetValueToInitialState awaits
+        // file resolution), which would clobber the synchronously-applied draft
+        // values once the async continuation runs. Blocking load here ensures
+        // the draft values are the final state.
+        const { data: draft, dirtyKeys } = draftWrapper;
+        beforePatch?.(draft);
+        form.patchValue(draft);
+        markDraftControlsDirty(form, draft, dirtyKeys);
+        draftService.clearDraft(currentUrl);
+      } else if (current) {
+        load(current);
+      } else {
+        form.reset();
+      }
+
+      restored.set(true);
+    },
+    { allowSignalWrites: true }
+  );
 
   return { draftRestored: restored };
 }
