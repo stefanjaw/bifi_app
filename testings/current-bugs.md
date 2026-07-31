@@ -1,7 +1,7 @@
 # Current Bugs — Aggregated from All Test Runs
 
 > **Source:** Compiled from all test result files under `testings/` (asset-roster suite + contacts).
-> **Last updated:** 2026-07-27 (AC-03 ✅, AC-04 ✅, AC-06 ✅, AT-03 ✅ Fixed & Verified. AM-06 dismissed. AR-08/AR-09 ✅, FA-03 ✅, MW-02 ✅ verified Fixed. AT-06 ✅, CO-09 ✅, FA-05 ✅, CO-02 ✅ Fixed & Verified. 0 active, 0 pending test, 53 resolved.)
+> **Last updated:** 2026-07-29 (SA-01 to SA-06 added — Sales module. 6 active, 0 pending test, 53 resolved.)
 > **Testing method:** Automated UI tests via Playwright MCP against `http://localhost:4200` (logged in as `opencode@test.com`).
 >
 > Bugs are grouped by module. Each table includes a **Root Cause** column with `file:line` reference and a brief explanation. Full root-cause details are in the **Root Cause Analysis** section at the bottom. Cross-cutting patterns are summarized under **Recurring Patterns**.
@@ -132,6 +132,21 @@ Source: `contacts/contacts_results_20260721.md` and `contacts/contacts_results_2
 | CO-08 | ~ | **No UI mechanism to clear parent company** — ✅ **RESOLVED 2026-07-22**: Added `[showClear]="true"` to parentId p-select. Also changed submit handler to send `parentId: null` instead of deleting the key (fixes CO-10 frontend component). Files: `contacts-form.html:115-124`, `contacts-form.ts:179`. | **Fixed** |
 | CO-09 | 3.9 | **Duplicate emails silently allowed** | **Verified Fixed 2026-07-27** | **Backend index already existed in code but `$ne` in `partialFilterExpression` prevented DB index creation**. Fixed: removed `$ne` from `contact.model.ts:172` — changed `{ active: true, email: { $type: "string", $ne: "" } }` to `{ active: true, email: { $type: "string" } }`. Index `email_1` created on DB. Tested: duplicate email "kim@email.com" submitted via UI → backend returned 400 with E11000 error, toast shown, user stayed on form. |
 | CO-10 | ~ | **parentId cannot be removed via PUT** — ✅ **RESOLVED 2026-07-22**: Three-part fix. (1) Frontend sends `parentId: ''` via FormData when cleared (`contacts-form.ts:179`). (2) Backend DTO adds `@ValidateIf` to skip `@IsMongoId()` for empty/null (`contact.dto.ts:93-95`). (3) Backend service converts `''` → `null` before `super.update()` (`contact-service.ts`). Verified: PUT returns 200, request body shows empty `parentId`. | **Fixed** |
+
+---
+
+## 8. Sales
+
+Source: `sales/sales_results_20260729.md`
+
+| ID | Test | Description | Severity | Root Cause (file:line) |
+|----|------|-------------|----------|------------------------|
+| SA-01 | 5.8 | **Save triggers DirtyFormGuard instead of submitting.** When the Create Opportunity form is filled with valid data and the Save button is clicked, the DirtyFormGuard "unsaved changes" confirmation dialog appears instead of submitting to `POST /api/crm`. The `handleSubmit()` calls `goBack()` on success without first resetting the form's dirty state. | **High** | `crm-form.ts` `handleSubmit()` calls `goBack()` without calling `formService.reset()` or `formService.form.markAsPristine()` first. The DirtyFormGuard `canDeactivate` intercepts the navigation because `hasUnsavedChanges()` still returns true. |
+| SA-02 | 3.7, 24.8 | **Won/Lost button permission inconsistency.** Won/Lost buttons in the opportunities list use `*bifiAppHasPermission="'sales:update:model'"` (generic `sales` resource), while row edit/delete buttons use `sales/opportunities`. A user with `sales:update:model` but without `sales/opportunities:update:view` can mark deals Won/Lost but cannot edit them. | **Medium** | `opportunities-list.html:52,61` — uses generic `sales` resource instead of `sales/opportunities`. |
+| SA-03 | 4.4, 24.9 | **Kanban Won/Lost buttons have no permission gate.** The Won/Lost buttons in the kanban/pipeline view have NO `*bifiAppHasPermission` directive — any user who can see the pipeline can mark deals Won/Lost. | **Medium** | `sales-pipeline.ts`/`sales-pipeline.html` — missing permission directives on kanban Won/Lost buttons. |
+| SA-04 | 4.8, 24.10 | **Kanban empty-column "Add opportunity" link has no permission gate.** The "Add opportunity" link in empty kanban columns has no `*bifiAppHasPermission`. While the route guard still applies, the link is visible to users who may not have `sales/opportunities/create` permission. | **Low** | `sales-pipeline.html:81-87` — missing permission directive. |
+| SA-05 | 13.2, 24.11 | **Line items "Add item"/remove buttons use inconsistent permission resource.** Gated by `*bifiAppHasPermission="'sales-orders:update:model'"` (hyphenated `sales-orders`), while route-level resource uses `sales/orders` (slash). | **Low** | `line-items-table.html:L113,L275,L316` — uses `sales-orders:update:model` instead of `sales/orders:update:model`. |
+| SA-06 | 7.1, 7.7 | **Mark Won auto-creates sales order with HTTP 400.** Clicking "Won" triggers `markWon()` which attempts `POST /api/sales-orders` to auto-create a sales order. The request fails with 400, likely because the payload is missing required fields (e.g., `closeDate`, valid `currency` ObjectId). | **High** | `opportunities-list.ts:markWon()` (lines 96-165) — constructs sales order payload from CRM deal but may not properly map all required `SalesOrderDTO` fields. `closeDate` is optional on CRM `expectedCloseDate` but required on `SalesOrderDTO`; currency ObjectId may be the string code "CRC" instead of the MongoDB ObjectId. |
 
 ---
 
@@ -303,11 +318,11 @@ These root causes live in `@avalantec/base-app` and affect multiple modules:
 | Severity | Count | IDs (active) | IDs (pending test) |
 |----------|-------|--------------|-------------------|
 | **Critical** | 0 | (all resolved) | — |
-| **High** | 0 | — | (all resolved) |
-| **Medium** | 0 | (FA-05 ✅, MW-02 ✅, CO-02 ✅ resolved 2026-07-27) | — |
-| **Low** | 0 | (AT-06 ✅, CO-09 ✅ resolved 2026-07-27) | — |
-| **Active total** | 0 | (All 18 since 2026-07-22 resolved. 0 pending.) |
-| **Original total** | 53 | | (53 resolved, 0 pending) |
+| **High** | 2 | SA-01 (Save triggers DirtyFormGuard), SA-06 (Mark Won auto-order 400) | — |
+| **Medium** | 2 | SA-02 (Won/Lost permission inconsistency), SA-03 (Kanban buttons no gate) | — |
+| **Low** | 2 | SA-04 (Kanban "Add" no gate), SA-05 (Resource naming mismatch) | — |
+| **Active total** | 6 | (SA-01 to SA-06 — Sales module, 2026-07-29) |
+| **Original total** | 59 | | (53 resolved, 6 active) |
 
 ---
 
