@@ -125,11 +125,39 @@ export class Scaffold {
     return links;
   });
 
+  // Set of ALL registered route paths across all menu items (from every provide*() call)
+  private allRegisteredLinks = computed<Set<string>>(() => {
+    const items = this.menuItems();
+    const links = new Set<string>();
+    const toLink = (rl: string | string[] | undefined): string | null => {
+      if (!rl) return null;
+      return (Array.isArray(rl) ? (rl as string[]) : [rl as string]).join('/').replace(/^\//, '');
+    };
+    const walk = (list: MenuItem[]) => {
+      for (const item of list) {
+        const l = toLink(item.routerLink as string | string[]);
+        if (l) links.add(l);
+        if (item.items) walk(item.items as MenuItem[]);
+      }
+    };
+    walk(items);
+    return links;
+  });
+
   filteredShortcuts = computed(() => {
     const all = this.userShortcutsService.shortcuts();
+    const registered = this.allRegisteredLinks();
+
+    // Drop shortcuts whose route is no longer registered (provide*() was removed)
+    const available = all.filter(s => {
+      const link = (s.routerLink ?? []).join('/').replace(/^\//, '');
+      return link === '' || registered.has(link);
+    });
+
+    // Then apply contextual filter (active module subtree)
     const links = this.activeDescendantLinks();
-    if (!links) return all;
-    return all.filter(s => {
+    if (!links) return available;
+    return available.filter(s => {
       const link = (s.routerLink ?? []).join('/').replace(/^\//, '');
       return links.has(link);
     });
