@@ -42,7 +42,7 @@ import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
-  host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
+  host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4', style: 'overflow-anchor: none' },
   providers: [provideResourceManager(CrudAssetRoster)],
   imports: [
     RouterLink,
@@ -84,7 +84,7 @@ export class AssetRosterList {
   isGrid = signal<boolean>(false);
 
   // Scroll detection
-  private scrollSentinel = viewChild<ElementRef>('scrollSentinel');
+
   isScrolled = signal(false);
 
   optionsView = [
@@ -166,22 +166,20 @@ export class AssetRosterList {
       });
 
     afterNextRender(() => {
-      const sentinel = this.scrollSentinel()?.nativeElement;
-      if (!sentinel) return;
+      const container = document.getElementById('bifi-app-scaffold-outlet');
+      if (!container) return;
 
-      let scrollTimeout: ReturnType<typeof setTimeout>;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            this.isScrolled.set(!entry.isIntersecting);
-          }, 150);
-        },
-        { threshold: 0 }
-      );
-      observer.observe(sentinel);
+      const handleScroll = () => {
+        const y = container.scrollTop;
+        if (y > 50 && !this.isScrolled()) {
+          this.isScrolled.set(true);
+        } else if (y < 10 && this.isScrolled()) {
+          this.isScrolled.set(false);
+        }
+      };
 
-      this.destroy$.onDestroy(() => observer.disconnect());
+      container.addEventListener('scroll', handleScroll, { passive: true });
+      this.destroy$.onDestroy(() => container.removeEventListener('scroll', handleScroll));
     });
 
     effect(() => {
