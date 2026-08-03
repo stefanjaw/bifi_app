@@ -33,6 +33,8 @@ import {
 } from '@avalantec/base-app/resource';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { BadgeModule } from 'primeng/badge';
+import { CrudSequences } from '@avalantec/base-app/sequences';
 
 @Component({
   selector: 'bifi-app-ticket-form',
@@ -50,6 +52,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     TranslatePipe,
     DatePickerModule,
     ToggleSwitchModule,
+    BadgeModule,
   ],
   templateUrl: './ticket-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +69,7 @@ export class TicketsForm {
   private fileResolver = inject(FileResolver);
   private crudActivityHistories = inject(CrudActivityHistories);
   private translationService = inject(TranslationService);
+  private crudSequences = inject(CrudSequences);
 
   id = input<string>('');
 
@@ -93,6 +97,50 @@ export class TicketsForm {
   userOptions = this.usersResource.value;
   allTasks = this.tasksResource.value;
   activityHistories = this.activityHistoriesResource.value;
+
+  sequenceResource = this.crudSequences.get({
+    searchParams: signal({ name: 'Tickets' }),
+  });
+
+  allTickets = this.crudTickets.get({});
+
+  currentIndex = computed(() => {
+    const list = this.allTickets.value() ?? [];
+    const id = this.id();
+    if (!id || list.length === 0) return -1;
+    return list.findIndex(a => a._id === id);
+  });
+
+  totalTickets = computed(() => (this.allTickets.value() ?? []).length);
+
+  prevTicketId = computed<string | null>(() => {
+    const list = this.allTickets.value() ?? [];
+    const idx = this.currentIndex();
+    return idx > 0 ? (list[idx - 1]._id ?? null) : null;
+  });
+
+  nextTicketId = computed<string | null>(() => {
+    const list = this.allTickets.value() ?? [];
+    const idx = this.currentIndex();
+    return idx >= 0 && idx < list.length - 1 ? (list[idx + 1]._id ?? null) : null;
+  });
+
+  previewNumber = computed(() => {
+    const entry = this.entry();
+    if (entry && entry.number) return entry.number;
+
+    const seqs = this.sequenceResource.value();
+    if (seqs && Array.isArray(seqs) && seqs.length > 0) {
+      const seq = seqs[0] as any;
+      const prefix = seq.prefix ?? '';
+      const suffix = seq.suffix ?? '';
+      const num = seq.number ?? 1;
+      const size = seq.size ?? 5;
+      const padded = num.toString().padStart(size, '0');
+      return `${prefix}${padded}${suffix}`;
+    }
+    return 'TKT-XXXXX';
+  });
 
   isLoading = computed(
     () =>
@@ -218,9 +266,9 @@ export class TicketsForm {
 
     const tags = rawValue.tagsInput
       ? rawValue.tagsInput
-          .split(',')
-          .map((t: string) => t.trim())
-          .filter(Boolean)
+        .split(',')
+        .map((t: string) => t.trim())
+        .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {
@@ -297,5 +345,17 @@ export class TicketsForm {
 
   activityFieldLabel(field: string): string {
     return this.translationService.translate('activityField.' + field, {}, 'helpdesk');
+  }
+
+  handleNavigatePrevTicket() {
+    const id = this.prevTicketId();
+    if (!id) return;
+    this.router.navigate(['../', id], { relativeTo: this.route });
+  }
+
+  handleNavigateNextTicket() {
+    const id = this.nextTicketId();
+    if (!id) return;
+    this.router.navigate(['../', id], { relativeTo: this.route });
   }
 }
