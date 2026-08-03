@@ -26,7 +26,11 @@ function atLeastOneContactMethod(control: AbstractControl): ValidationErrors | n
   const phone = control.get('phoneNumber')?.value;
   const email = control.get('email')?.value;
   const website = control.get('website')?.value;
-  return phone || email || website ? null : { atLeastOneContactMethod: true };
+  const type = control.get('type')?.value;
+
+  const hasWebsite = type === 'company' && !!website;
+  
+  return phone || email || hasWebsite ? null : { atLeastOneContactMethod: true };
 }
 
 @Injectable({
@@ -52,6 +56,32 @@ export class ContactForm extends BaseForm<ContactFormModel> {
         this.form.controls.childIds.disable({ emitEvent: false });
       }
     });
+
+    const syncContactErrors = () => {
+      const hasError = this.form.hasError('atLeastOneContactMethod');
+      const controls = [this.form.controls.email, this.form.controls.phoneNumber, this.form.controls.website];
+      
+      controls.forEach(ctrl => {
+        if (hasError) {
+          if (!ctrl.hasError('atLeastOneContactMethod')) {
+            ctrl.setErrors({ ...ctrl.errors, atLeastOneContactMethod: true });
+          }
+        } else {
+          if (ctrl.hasError('atLeastOneContactMethod')) {
+            const errs = { ...ctrl.errors };
+            delete errs['atLeastOneContactMethod'];
+            ctrl.setErrors(Object.keys(errs).length ? errs : null);
+          }
+        }
+      });
+    };
+
+    this.form.valueChanges.subscribe(() => {
+      setTimeout(syncContactErrors);
+    });
+
+    // Run once on init to set initial errors
+    setTimeout(syncContactErrors);
   }
 
   override createForm() {
