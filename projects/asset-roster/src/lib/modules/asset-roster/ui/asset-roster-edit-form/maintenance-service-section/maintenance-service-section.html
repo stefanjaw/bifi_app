@@ -53,7 +53,7 @@
                     @if (isMaintenanceWindowsEditLocked()) {
                       <bifi-app-form-hint>
                         <small class="text-orange-300">
-                          Cannot change: PM has been logged for this schedule.
+                          {{ 'cannotChangePmLogged' | translate: {} : 'asset-roster' }}
                         </small>
                       </bifi-app-form-hint>
                     }

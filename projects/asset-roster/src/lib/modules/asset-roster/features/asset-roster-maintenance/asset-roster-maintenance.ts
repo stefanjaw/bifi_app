@@ -210,6 +210,8 @@ export class AssetRosterMaintenance implements DirtyComponent {
             this.formService.addLocationAssignment();
           }
         }
+
+        delete draft['aiquestion'];
       }
     );
 
@@ -467,6 +469,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
       salvageValue: assetRoster.salvageValue ?? null,
       depreciationMethod: assetRoster.depreciationMethod ?? 'straight-line',
       accelerationFactor: assetRoster.accelerationFactor ?? 200,
+      aiquestion: null,
       ...((parsedImage && {
         photo: [
           {
