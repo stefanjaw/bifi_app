@@ -41,7 +41,7 @@ export function initializeSales() {
             routerLink: ['/sales/orders'],
             label: 'sales.nav.orders',
             scope: 'sales',
-            resource: 'sales/orders/menu',
+            resource: 'sales-orders/menu',
           },
           {
             icon: PrimeIcons.FLAG,

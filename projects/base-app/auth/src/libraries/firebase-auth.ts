@@ -10,7 +10,6 @@ import {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
-  setPersistence,
   browserLocalPersistence,
   GoogleAuthProvider,
 } from '@angular/fire/auth';
@@ -83,7 +82,7 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
   constructor() {
     super();
 
-    setPersistence(this.authClient, browserLocalPersistence);
+    this.authClient.setPersistence(browserLocalPersistence);
 
     authState(this.authClient)
       .pipe(

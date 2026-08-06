@@ -101,6 +101,10 @@ export class CrmStagesForm {
     });
   }
 
+  hasUnsavedChanges(): boolean {
+    return this.formService.hasUnsavedChanges();
+  }
+
   goBack() {
     const route = this.isUpdate() ? '../../list' : '../list';
     this.router.navigate([route], { relativeTo: this.route });

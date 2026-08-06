@@ -130,6 +130,12 @@
             </div>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          @if (form.errors?.['mutuallyExclusive']) {
+            <p class="text-red-500 text-sm">
+              {{ 'sales.validation.mutuallyExclusive' | translate: {} : 'sales' }}
+            </p>
+          }
         </div>
       </bifi-app-form-section>
     } @else if (error()) {

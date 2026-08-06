@@ -49,7 +49,7 @@
   >
     <ng-template #actions let-element>
       <p-button
-        *bifiAppHasPermission="'sales:update:model'"
+        *bifiAppHasPermission="'sales/opportunities:update:model'"
         severity="success"
         [label]="'sales.actions.won' | translate: {} : 'sales'"
         icon="pi pi-check"
@@ -58,7 +58,7 @@
         (onClick)="markWon($event, element)"
       ></p-button>
       <p-button
-        *bifiAppHasPermission="'sales:update:model'"
+        *bifiAppHasPermission="'sales/opportunities:update:model'"
         severity="danger"
         [label]="'sales.actions.lost' | translate: {} : 'sales'"
         icon="pi pi-times"

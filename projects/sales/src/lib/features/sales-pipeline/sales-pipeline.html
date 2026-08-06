@@ -64,6 +64,7 @@
                   [loading]="actionLoadingId() === deal._id"
                   (onClick)="markWon(deal)"
                   styleClass="flex-1"
+                  *bifiAppHasPermission="'sales/opportunities:update:model'"
                 ></p-button>
                 <p-button
                   [label]="'sales.actions.lost' | translate: {} : 'sales'"
@@ -73,6 +74,7 @@
                   [loading]="actionLoadingId() === deal._id"
                   (onClick)="markLost(deal)"
                   styleClass="flex-1"
+                  *bifiAppHasPermission="'sales/opportunities:update:model'"
                 ></p-button>
               </div>
             }

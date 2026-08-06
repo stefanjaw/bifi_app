@@ -13,6 +13,7 @@ import { crm } from '../../interfaces/crm';
 import { CrudSalesOrders } from '../../services/crud-sales-orders';
 import { CurrencyPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HasPermission } from '@avalantec/base-app/auth';
 import { LocaleDatePipe, TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
@@ -30,6 +31,7 @@ import { RouterLink } from '@angular/router';
     LocaleDatePipe,
     TranslatePipe,
     RouterLink,
+    HasPermission,
     ProgressBarModule,
     ButtonModule,
     ToastModule,

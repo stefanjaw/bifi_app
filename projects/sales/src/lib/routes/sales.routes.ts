@@ -45,21 +45,21 @@ export const SALES_ROUTES: Routes = [
     path: 'orders',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/orders-list/orders-list').then(c => c.OrdersList),
-    data: { resource: 'sales/orders/list' },
+    data: { resource: 'sales-orders/list' },
   },
   {
     path: 'orders/new',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/sales-order-detail/sales-order-detail').then(c => c.SalesOrderDetail),
-    data: { resource: 'sales/orders/create' },
+    data: { resource: 'sales-orders/create' },
   },
   {
     path: 'orders/edit/:id',
     canActivate: [permissionGuard],
     loadComponent: () =>
       import('../features/sales-order-detail/sales-order-detail').then(c => c.SalesOrderDetail),
-    data: { resource: 'sales/orders/update' },
+    data: { resource: 'sales-orders/update' },
   },
   {
     path: 'order-stages',

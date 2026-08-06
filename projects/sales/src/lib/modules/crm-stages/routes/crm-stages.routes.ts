@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '@avalantec/base-app/auth';
+import { DirtyFormGuard } from '@avalantec/base-app/form';
 
 export const CRM_STAGES_ROUTES: Routes = [
   {
@@ -17,6 +18,7 @@ export const CRM_STAGES_ROUTES: Routes = [
   {
     path: 'create',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/crm-stages-form/crm-stages-form').then(m => m.CrmStagesForm),
     data: { resource: 'crm-stages/create' },
@@ -24,6 +26,7 @@ export const CRM_STAGES_ROUTES: Routes = [
   {
     path: 'edit/:id',
     canActivate: [permissionGuard],
+    canDeactivate: [DirtyFormGuard],
     loadComponent: () =>
       import('../features/crm-stages-form/crm-stages-form').then(m => m.CrmStagesForm),
     data: { resource: 'crm-stages/update' },

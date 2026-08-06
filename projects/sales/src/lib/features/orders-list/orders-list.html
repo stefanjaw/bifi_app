@@ -6,7 +6,7 @@
     severity="secondary"
     icon="pi pi-plus"
     (onClick)="navigateToNew()"
-    *bifiAppHasPermission="'sales/orders/create:view'"
+    *bifiAppHasPermission="'sales-orders/create:view'"
   ></p-button>
 </div>
 
@@ -21,12 +21,12 @@
   [data]="entries"
   [scope]="'sales'"
   [onClickRow]="onClickRow"
-  clickRowPermission="sales/orders/update:view"
+  clickRowPermission="sales-orders/update:view"
 >
   <ng-template #actions let-element>
     <bifi-app-buttons-actions
       (deleteClicked)="deleteEntry(element._id)"
-      resource="sales/orders"
+      resource="sales-orders"
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>

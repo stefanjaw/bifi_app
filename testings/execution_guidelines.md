@@ -189,6 +189,7 @@ Test in dependency order:
 - **Create bug sub-issues** as children of the parent section issue using `linear_save_issue` with `parentId`.
 - Each bug issue must include: reproduction steps, actual behavior, expected behavior, and root cause analysis.
 - Link related bugs across sections (e.g. same root cause for multiple sections).
+- **Always set the `team` parameter** when creating issues. For sub-issues (bugs), omit the `project` parameter — they automatically inherit the parent's project. For standalone test issues, set both `team` and `project` explicitly.
 
 ### 5. Results Management
 
@@ -266,9 +267,16 @@ When testing across multiple issues in a project, use this convention for consis
 
 | Status | When to use |
 |--------|-------------|
-| **Todo** | Issue created but not yet tested |
-| **In Progress** | Testing started; bugs found with sub-issues open; items still failing |
-| **Done** | All testable items verified pass; no code bugs found (partial = config/blocked only) |
+| **Todo** | Issue created but not yet tested. **Bug sub-issues** use this when not started. |
+| **In Progress** | Testing started; bugs found with sub-issues open; items still failing. A **test issue** stays In Progress until all its bugs are fixed and retested. |
+| **Done** | All testable items verified pass, **and** no code bugs found (partial = config/blocked only). If any bug sub-issue exists, the parent **cannot** be Done. |
 | **Canceled** | Section not applicable; duplicate of another issue |
+
+### Rules for parent issues with bug sub-issues:
+
+1. **Parent test issue** → `In Progress` — bugs found, sub-issues open. **Never** set a parent to `Done` while any bug sub-issue is open.
+2. **Bug sub-issues** → `Todo` when filed but not started; `In Progress` when being fixed/tested; `Done` when the fix is verified.
+3. **Parent transitions to `Done`** only after all its bug sub-issues are `Done` and the test items are re-verified.
+4. **Parent with no bugs, all items pass** → `Done` directly (no need for In Progress).
 
 Apply status changes immediately after completing a section's testing cycle.
