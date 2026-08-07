@@ -124,7 +124,7 @@ export class OpportunitiesList {
             contact: deal.contact?._id,
             company: deal.company?._id,
             amount: deal.amount,
-            currency: deal.currency,
+            currency: deal.currency?._id,
             closeDate: new Date().toISOString(),
           };
           if (salespersonId) orderPayload['salesperson'] = salespersonId;
