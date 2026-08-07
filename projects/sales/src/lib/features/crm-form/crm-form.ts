@@ -169,6 +169,8 @@ export class CrmsForm implements DirtyComponent {
     action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
       next: () => {
         this.isSubmitLoading.set(false);
+        this.formService.form.markAsUntouched();
+        this.formService.form.markAsPristine();
         this.goBack();
       },
       error: () => {

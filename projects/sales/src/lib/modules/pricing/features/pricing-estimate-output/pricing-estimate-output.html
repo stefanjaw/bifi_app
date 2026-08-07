@@ -23,7 +23,7 @@
         </span>
         <p-toggleswitch
           [ngModel]="isDistributorView()"
-          (ngModelChange)="toggleView()"
+          (ngModelChange)="isDistributorView.set($event)"
         ></p-toggleswitch>
         <span
           class="text-sm"

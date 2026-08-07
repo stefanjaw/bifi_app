@@ -119,6 +119,14 @@ export class SalesPipeline {
       });
       return;
     }
+    if (!deal.company?._id) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translationService.translate('sales.toast.error', {}, 'sales'),
+        detail: this.translationService.translate('sales.toast.markWonNoCompany', {}, 'sales'),
+      });
+      return;
+    }
     this.actionLoadingId.set(deal._id);
     this.crudCrm
       .put({ _id: deal._id, data: { stage: wonStage._id } as any })
@@ -132,6 +140,7 @@ export class SalesPipeline {
             crmId: deal._id,
             contact: deal.contact?._id,
             company: deal.company?._id,
+            amount: deal.amount,
             currency: currencyId,
             closeDate: new Date().toISOString(),
           };

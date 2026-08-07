@@ -68,10 +68,6 @@ export class PricingEstimateOutput implements OnInit {
       });
   }
 
-  protected toggleView() {
-    this.isDistributorView.update(v => !v);
-  }
-
   protected downloadPdf() {
     const est = this.estimate();
     if (!est?._id) return;

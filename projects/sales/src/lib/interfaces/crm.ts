@@ -8,7 +8,7 @@ export interface crm {
   _id: string;
   title: string;
   amount: number;
-  currency: currency;
+  currency: currency | null;
   stage?: crmStage;
   probability: number;
   expectedCloseDate?: string;
