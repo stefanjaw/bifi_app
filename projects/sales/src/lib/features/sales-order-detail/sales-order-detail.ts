@@ -27,6 +27,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { startWith } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
+import { InputText } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -46,6 +47,7 @@ import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
     ReactiveFormsModule,
     ButtonModule,
     SelectModule,
+    InputText,
     InputNumberModule,
     TextareaModule,
     DatePickerModule,
@@ -296,6 +298,7 @@ export class SalesOrderDetail {
           salesperson: salespersonId,
           stageId,
           status: entry.status ?? 'draft',
+          title: entry.title || '',
           amount: entry.amount,
           currency: currencyId,
           closeDate: new Date(entry.closeDate),
@@ -335,6 +338,27 @@ export class SalesOrderDetail {
         const defCurrency = this.defaultCurrencyId();
         if (defCurrency && !this.form.controls.currency.value) {
           this.formService.patchValue({ currency: defCurrency });
+        }
+
+        const crmIdParam = this.route.snapshot.queryParamMap.get('crmId');
+        if (crmIdParam && !this.form.controls.crmId.value) {
+          const crmEntry = this.crmOptions().find((c: any) => c._id === crmIdParam);
+          if (crmEntry) {
+            const crmCurrency = crmEntry.currency as any;
+            this.formService.patchValue({
+              crmId: crmEntry._id,
+              title: crmEntry.title ?? '',
+              contact: crmEntry.contact?._id ?? '',
+              company: crmEntry.company?._id ?? '',
+              salesperson: crmEntry.salesperson?._id ?? '',
+              currency: crmCurrency?._id ?? this.defaultCurrencyId(),
+              closeDate: crmEntry.expectedCloseDate
+                ? new Date(crmEntry.expectedCloseDate)
+                : new Date(),
+              notes: crmEntry.notes ?? '',
+            });
+            this.form.markAsDirty();
+          }
         }
       }
     });
@@ -418,6 +442,7 @@ export class SalesOrderDetail {
       salesperson: rawValue.salesperson || undefined,
       stageId: rawValue.stageId || undefined,
       status: rawValue.status as salesOrderStatus,
+      title: rawValue.title,
       currency: rawValue.currency,
       closeDate: rawValue.closeDate ? new Date(rawValue.closeDate).toISOString() : undefined,
       notes: rawValue.notes,

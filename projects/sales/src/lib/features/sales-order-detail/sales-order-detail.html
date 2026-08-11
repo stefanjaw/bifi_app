@@ -214,6 +214,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>
+              {{ 'sales.form.title' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <input
+              pInputText
+              formControlName="title"
+              [placeholder]="'sales.placeholder.title' | translate: {} : 'sales'"
+            />
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
               {{ 'sales.form.opportunity' | translate: {} : 'sales' }}
             </bifi-app-form-label>
             <p-select

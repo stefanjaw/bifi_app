@@ -146,6 +146,7 @@ export class SalesPipeline {
           };
           if (salespersonId) orderPayload['salesperson'] = salespersonId;
           if (deal.notes) orderPayload['notes'] = deal.notes;
+          if (deal.title) orderPayload['title'] = deal.title;
 
           this.crudSalesOrders
             .post({ data: orderPayload as any })

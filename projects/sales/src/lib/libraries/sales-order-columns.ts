@@ -3,6 +3,12 @@ import { salesOrder } from '../interfaces/sales-order';
 
 export const salesOrderColumns: tableColumn<salesOrder>[] = [
   {
+    field: 'title',
+    title: 'sales.columns.title',
+    type: 'text',
+    sortable: true,
+  },
+  {
     field: 'number',
     title: 'sales.columns.orderNumber',
     type: 'text',

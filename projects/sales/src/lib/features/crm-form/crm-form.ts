@@ -28,6 +28,7 @@ import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { DraftService, DirtyComponent, autoForm } from '@avalantec/base-app/form';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { HasPermission } from '@avalantec/base-app/auth';
 
 @Component({
   selector: 'bifi-app-crm-form',
@@ -42,6 +43,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     TextareaModule,
     ProgressBarModule,
     TranslatePipe,
+    HasPermission,
   ],
   templateUrl: './crm-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -181,6 +183,13 @@ export class CrmsForm implements DirtyComponent {
 
   goBack() {
     this.router.navigate(['/sales/opportunities']);
+  }
+
+  /** Navigates to the order creation form pre-filled from this opportunity (update view only) */
+  createOrderFromOpportunity() {
+    this.router.navigate(['/sales/orders/new'], {
+      queryParams: { crmId: this.id() },
+    });
   }
 
   hasUnsavedChanges(): boolean {

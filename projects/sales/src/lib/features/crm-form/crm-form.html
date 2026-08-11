@@ -19,6 +19,20 @@
       [formChanged]="form.dirty"
     ></bifi-app-form-actions>
 
+    @if (isUpdate() && entry()) {
+      <div class="flex justify-end">
+        <p-button
+          *bifiAppHasPermission="'sales-orders/create:view'"
+          [label]="'sales.actions.createOrder' | translate: {} : 'sales'"
+          icon="pi pi-shopping-cart"
+          severity="secondary"
+          [outlined]="true"
+          type="button"
+          (onClick)="createOrderFromOpportunity()"
+        ></p-button>
+      </div>
+    }
+
     @if (!isLoading()) {
       <bifi-app-form-section
         [title]="'sales.section.dealInformation' | translate: {} : 'sales'"

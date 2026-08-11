@@ -75,7 +75,7 @@
             </bifi-app-form-label>
             <p-select
               formControlName="locationId"
-              [options]="filteredLocations()"
+              [options]="filteredLocations() || []"
               optionLabel="name"
               optionValue="_id"
               [placeholder]="'selectLocationFirst' | translate: {} : 'inventory'"

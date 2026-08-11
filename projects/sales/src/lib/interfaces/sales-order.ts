@@ -25,6 +25,7 @@ export interface salesOrder {
   salesperson?: user;
   stageId?: salesOrderStage;
   status?: salesOrderStatus;
+  title?: string;
   amount: number;
   currency?: currency;
   closeDate: string;

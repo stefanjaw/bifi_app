@@ -18,6 +18,7 @@ export interface SalesOrderFormModel {
   salesperson: string;
   stageId: string;
   status: string;
+  title: string;
   amount: number;
   currency: string;
   closeDate: Date;
@@ -39,6 +40,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       salesperson: [''],
       stageId: [''],
       status: ['draft'],
+      title: [''],
       amount: [0],
       currency: ['', [Validators.required]],
       closeDate: [new Date(), [Validators.required]],
