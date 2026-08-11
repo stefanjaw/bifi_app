@@ -9,7 +9,7 @@ import {
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
-import { CurrencyPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -23,14 +23,14 @@ import { HasPermission } from '@avalantec/base-app/auth';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 
 const DEFAULT_WIDTHS: Record<string, number> = {
-  sku: 96,
-  description: 280,
-  quantity: 80,
-  uom: 72,
-  unitPrice: 128,
-  discount: 128,
-  taxes: 160,
-  total: 112,
+  sku: 150,
+  description: 320,
+  quantity: 160,
+  uom: 100,
+  unitPrice: 150,
+  discount: 150,
+  taxes: 240,
+  total: 140,
 };
 
 @Component({
@@ -43,7 +43,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
     InputNumberModule,
     SelectModule,
     MultiSelectModule,
-    CurrencyPipe,
+    DecimalPipe,
     HasPermission,
     CdkDropList,
     CdkDrag,

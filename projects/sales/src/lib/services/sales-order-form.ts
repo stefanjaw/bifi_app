@@ -39,7 +39,7 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       company: ['', [Validators.required]],
       salesperson: [''],
       stageId: [''],
-      status: ['draft'],
+      status: [{ value: 'draft', disabled: true }],
       title: [''],
       amount: [0],
       currency: ['', [Validators.required]],

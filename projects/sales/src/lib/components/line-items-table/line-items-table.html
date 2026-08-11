@@ -124,11 +124,11 @@
         @for (control of lineItemsArray.controls; track $index) {
           <tr class="hover:bg-gray-50" [formGroup]="$any(control)" cdkDrag>
             @if (!readonly()) {
-              <td class="p-2 border-b text-gray-300" cdkDragHandle>
+              <td class="px-3 py-2 border-b text-gray-300" cdkDragHandle>
                 <span class="pi pi-bars text-sm cursor-grab active:cursor-grabbing"></span>
               </td>
             }
-            <td class="p-2 border-b overflow-hidden">
+            <td class="px-3 py-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-select
                   formControlName="productId"
@@ -154,7 +154,7 @@
                 <span class="font-mono text-xs">{{ getProductSku($index) }}</span>
               }
             </td>
-            <td class="p-2 border-b overflow-hidden">
+            <td class="px-3 py-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <input
                   pInputText
@@ -166,7 +166,7 @@
                 {{ $any(control).value.description }}
               }
             </td>
-            <td class="p-2 border-b overflow-hidden">
+            <td class="px-3 py-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-inputnumber
                   formControlName="quantity"
@@ -197,10 +197,10 @@
                 {{ $any(control).value.quantity }}
               }
             </td>
-            <td class="p-2 border-b text-gray-500 overflow-hidden">
+            <td class="px-3 py-2 border-b text-gray-500 overflow-hidden">
               {{ getUom($index) }}
             </td>
-            <td class="p-2 border-b overflow-hidden">
+            <td class="px-3 py-2 border-b overflow-hidden">
               @if (!readonly()) {
                 <p-inputnumber
                   formControlName="unitPrice"
@@ -211,11 +211,11 @@
                   (onInput)="onUnitPriceChange($index, $event.value)"
                 ></p-inputnumber>
               } @else {
-                {{ $any(control).value.unitPrice | currency }}
+                {{ $any(control).value.unitPrice | number: '1.2-2' }}
               }
             </td>
             @if (discountOptions().length > 0) {
-              <td class="p-2 border-b overflow-hidden">
+              <td class="px-3 py-2 border-b overflow-hidden">
                 @if (!readonly()) {
                   <p-select
                     formControlName="discountId"
@@ -241,7 +241,7 @@
               </td>
             }
             @if (taxOptions().length > 0) {
-              <td class="p-2 border-b overflow-hidden">
+              <td class="px-3 py-2 border-b overflow-hidden">
                 @if (!readonly()) {
                   <p-multiselect
                     [ngModel]="getLineTaxIds($index)"
@@ -262,15 +262,15 @@
                     </ng-template>
                   </p-multiselect>
                 } @else {
-                  <span class="text-gray-500">{{ getLineTaxPerUnit($index) | currency }}</span>
+                  <span class="text-gray-500">{{ getLineTaxPerUnit($index) | number: '1.2-2' }}</span>
                 }
               </td>
             }
-            <td class="p-2 border-b font-semibold overflow-hidden">
-              {{ getLineGrossTotal($index) | currency }}
+            <td class="px-3 py-2 border-b font-semibold overflow-hidden">
+              {{ getLineGrossTotal($index) | number: '1.2-2' }}
             </td>
             @if (!readonly()) {
-              <td class="p-2 border-b">
+              <td class="px-3 py-2 border-b">
                 <p-button
                   *bifiAppHasPermission="'sales-orders:update:model'"
                   icon="pi pi-trash"
