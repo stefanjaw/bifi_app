@@ -153,6 +153,13 @@
                 <p-button
                   [label]="'sales.actions.markShipped' | translate: {} : 'sales'"
                   icon="pi pi-truck"
+                  [disabled]="!canShip()"
+                  [pTooltip]="
+                    canShip()
+                      ? ''
+                      : ('sales.orderDetail.warehouseRequiredToShip' | translate: {} : 'sales')
+                  "
+                  tooltipPosition="bottom"
                   (onClick)="markAsShipped()"
                 ></p-button>
               }
@@ -284,6 +291,43 @@
               [placeholder]="'sales.placeholder.selectSalesperson' | translate: {} : 'sales'"
               [filter]="true"
             ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.form.warehouse' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="warehouseId"
+              [options]="warehouseOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'sales.placeholder.selectWarehouse' | translate: {} : 'sales'"
+              [filter]="true"
+              filterBy="name,code"
+              [showClear]="true"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'sales.form.location' | translate: {} : 'sales' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="locationId"
+              [options]="locationOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'sales.placeholder.selectLocation' | translate: {} : 'sales'"
+              [filter]="true"
+              filterBy="name,code"
+              [showClear]="true"
+            ></p-select>
+            <small class="text-gray-500">
+              {{ 'sales.orderDetail.warehouseRequiredToShip' | translate: {} : 'sales' }}
+            </small>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 

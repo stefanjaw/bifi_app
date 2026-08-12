@@ -15,7 +15,12 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudCompanies } from '@avalantec/base-app/companies';
 import { CrudUsers } from '@avalantec/base-app/users';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
-import { CrudProducts, CrudStockBalances } from '@avalantec/inventory';
+import {
+  CrudProducts,
+  CrudStockBalances,
+  CrudWarehouses,
+  CrudLocations,
+} from '@avalantec/inventory';
 import { CrudTaxes } from '@avalantec/base-app/taxes';
 import { CrudDiscounts } from '@avalantec/accounting';
 import { CrudSalesOrderStages } from '../../modules/sales-order-stages';
@@ -69,6 +74,8 @@ export class SalesOrderDetail {
   private crudCurrencies = inject(CrudCurrencies);
   private crudProducts = inject(CrudProducts);
   private crudStockBalances = inject(CrudStockBalances);
+  private crudWarehouses = inject(CrudWarehouses);
+  private crudLocations = inject(CrudLocations);
   private crudSalesOrderStages = inject(CrudSalesOrderStages);
   private crudTaxes = inject(CrudTaxes);
   private crudDiscounts = inject(CrudDiscounts);
@@ -92,6 +99,8 @@ export class SalesOrderDetail {
   currenciesResource = this.crudCurrencies.get({});
   productsResource = this.crudProducts.get({});
   stockResource = this.crudStockBalances.get({});
+  warehousesResource = this.crudWarehouses.get({});
+  locationsResource = this.crudLocations.get({});
   stagesResource = this.crudSalesOrderStages.get({});
   taxesResource = this.crudTaxes.get({});
   discountsResource = this.crudDiscounts.get({});
@@ -104,6 +113,17 @@ export class SalesOrderDetail {
   userOptions = computed(() => (this.usersResource.value() as any[]) ?? []);
 
   productOptions = computed(() => (this.productsResource.value() as any[]) ?? []);
+  warehouseOptions = computed(() => (this.warehousesResource.value() as any[]) ?? []);
+  locationOptions = computed(() => {
+    const locations = (this.locationsResource.value() as any[]) ?? [];
+    const warehouseId = this.form.controls.warehouseId.value;
+    if (!warehouseId) return locations;
+    return locations.filter((l: any) => {
+      const w = l.warehouseId as any;
+      const wid = typeof w === 'object' ? w?._id : w;
+      return wid === warehouseId;
+    });
+  });
   stageOptions = computed(() => (this.stagesResource.value() as any[]) ?? []);
 
   currencyOptions = computed(() =>
@@ -153,6 +173,8 @@ export class SalesOrderDetail {
       this.usersResource.isLoading() ||
       this.currenciesResource.isLoading() ||
       this.productsResource.isLoading() ||
+      this.warehousesResource.isLoading() ||
+      this.locationsResource.isLoading() ||
       this.stagesResource.isLoading() ||
       this.taxesResource.isLoading() ||
       this.discountsResource.isLoading()
@@ -160,6 +182,16 @@ export class SalesOrderDetail {
   isSubmitLoading = signal(false);
   isPdfLoading = signal(false);
   isUpdate = computed(() => !!this.id());
+
+  canShip = computed(() => {
+    const entry = this.entry();
+    if (!entry) return false;
+    const warehouseId =
+      typeof entry.warehouseId === 'object' ? (entry.warehouseId?._id ?? '') : entry.warehouseId;
+    const locationId =
+      typeof entry.locationId === 'object' ? (entry.locationId?._id ?? '') : entry.locationId;
+    return !!warehouseId && !!locationId;
+  });
 
   form = this.formService.form;
 
@@ -271,6 +303,24 @@ export class SalesOrderDetail {
     this.form.controls.amount.disable({ emitEvent: false });
 
     effect(() => {
+      const warehouseId = this.form.controls.warehouseId.value;
+      const locationId = this.form.controls.locationId.value;
+      if (!warehouseId) {
+        this.form.controls.locationId.setValue('', { emitEvent: false });
+        return;
+      }
+      if (!locationId) return;
+      const locations = (this.locationsResource.value() as any[]) ?? [];
+      const loc = locations.find((l: any) => l._id === locationId);
+      if (!loc) return;
+      const w = loc.warehouseId as any;
+      const wid = typeof w === 'object' ? w?._id : w;
+      if (wid && wid !== warehouseId) {
+        this.form.controls.locationId.setValue('', { emitEvent: false });
+      }
+    });
+
+    effect(() => {
       const preview = this.totalsPreview();
       this.form.controls.amount.setValue(preview.grandTotal, { emitEvent: false });
     });
@@ -286,6 +336,10 @@ export class SalesOrderDetail {
         const companyId = companyData?._id ?? companyData ?? '';
         const salespersonData = entry.salesperson as any;
         const salespersonId = salespersonData?._id ?? salespersonData ?? '';
+        const warehouseData = entry.warehouseId as any;
+        const warehouseId = warehouseData?._id ?? warehouseData ?? '';
+        const locationData = entry.locationId as any;
+        const locationId = locationData?._id ?? locationData ?? '';
         const stageData = entry.stageId as any;
         const stageId = stageData?._id ?? stageData ?? '';
         const currencyData = entry.currency as any;
@@ -296,6 +350,8 @@ export class SalesOrderDetail {
           contact: contactId,
           company: companyId,
           salesperson: salespersonId,
+          warehouseId,
+          locationId,
           stageId,
           status: entry.status ?? 'draft',
           title: entry.title || '',
@@ -440,6 +496,8 @@ export class SalesOrderDetail {
       contact: rawValue.contact,
       company: rawValue.company,
       salesperson: rawValue.salesperson || undefined,
+      warehouseId: rawValue.warehouseId || undefined,
+      locationId: rawValue.locationId || undefined,
       stageId: rawValue.stageId || undefined,
       status: rawValue.status as salesOrderStatus,
       title: rawValue.title,

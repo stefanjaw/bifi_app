@@ -1,5 +1,6 @@
 import { contact, company, user } from '@avalantec/base-app/interfaces';
 import { currency } from '@avalantec/base-app/currency';
+import { warehouse, location } from '@avalantec/inventory';
 import { crm } from './crm';
 import { lineItem } from './line-item';
 import { salesOrderStage } from '../modules/sales-order-stages';
@@ -23,6 +24,8 @@ export interface salesOrder {
   contact?: contact;
   company?: company;
   salesperson?: user;
+  warehouseId?: warehouse;
+  locationId?: location;
   stageId?: salesOrderStage;
   status?: salesOrderStatus;
   title?: string;
