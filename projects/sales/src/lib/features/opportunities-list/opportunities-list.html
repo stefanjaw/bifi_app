@@ -48,24 +48,26 @@
     clickRowPermission="sales/opportunities/update:view"
   >
     <ng-template #actions let-element>
-      <p-button
-        *bifiAppHasPermission="'sales/opportunities:update:model'"
-        severity="success"
-        [label]="'sales.actions.won' | translate: {} : 'sales'"
-        icon="pi pi-check"
-        size="small"
-        [loading]="markingId() === element._id"
-        (onClick)="markWon($event, element)"
-      ></p-button>
-      <p-button
-        *bifiAppHasPermission="'sales/opportunities:update:model'"
-        severity="danger"
-        [label]="'sales.actions.lost' | translate: {} : 'sales'"
-        icon="pi pi-times"
-        size="small"
-        [loading]="markingId() === element._id"
-        (onClick)="markLost($event, element)"
-      ></p-button>
+      @if (!(element.stage?.isWon || element.stage?.isLost)) {
+        <p-button
+          *bifiAppHasPermission="'sales/opportunities:update:model'"
+          severity="success"
+          [label]="'sales.actions.won' | translate: {} : 'sales'"
+          icon="pi pi-check"
+          size="small"
+          [loading]="markingId() === element._id"
+          (onClick)="markWon($event, element)"
+        ></p-button>
+        <p-button
+          *bifiAppHasPermission="'sales/opportunities:update:model'"
+          severity="danger"
+          [label]="'sales.actions.lost' | translate: {} : 'sales'"
+          icon="pi pi-times"
+          size="small"
+          [loading]="markingId() === element._id"
+          (onClick)="markLost($event, element)"
+        ></p-button>
+      }
       <bifi-app-buttons-actions
         (deleteClicked)="deleteEntry(element._id)"
         resource="sales/opportunities"

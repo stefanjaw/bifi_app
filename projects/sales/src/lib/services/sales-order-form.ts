@@ -52,9 +52,9 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
       lineItems: {
         template: {
           productId: [''],
-          description: [''],
-          quantity: [1],
-          unitPrice: [0],
+          description: ['', [Validators.required]],
+          quantity: [1, [Validators.required]],
+          unitPrice: [0, [Validators.required]],
           total: [0],
           discountId: [''],
         },
@@ -75,9 +75,9 @@ export class SalesOrderForm extends BaseForm<SalesOrderFormModel> {
   createLineItemGroup(data: Partial<LineItemFormModel> = {}) {
     return this.fb.group<LineItemFormModel>({
       productId: [data.productId ?? ''],
-      description: [data.description ?? ''],
-      quantity: [data.quantity ?? 1],
-      unitPrice: [data.unitPrice ?? 0],
+      description: [data.description ?? '', [Validators.required]],
+      quantity: [data.quantity ?? 1, [Validators.required]],
+      unitPrice: [data.unitPrice ?? 0, [Validators.required]],
       total: [data.total ?? 0],
       discountId: [data.discountId ?? ''],
     });

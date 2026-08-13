@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { filter, filterGroup } from '../interfaces/filter';
+import dayjs from 'dayjs';
 
 @Injectable({
   providedIn: 'root',
@@ -86,6 +87,33 @@ export class FilterManager {
   private buildFilterObject(filter: filter<any>) {
     let operator = '';
     let value = filter.value;
+
+    // Date filters expand the picked calendar day into a full local-day UTC
+    // range so that strict equality ("On") and the inclusive boundary operators
+    // ("Before or on" / "After or on") match records whose stored datetime falls
+    // anywhere within that day. dayjs parses the YYYY-MM-DD value in the
+    // browser's local timezone, so the range honors the user's local day.
+    if (filter.type === 'date' && value != null && value !== '') {
+      const dayStart = dayjs(String(value)).startOf('day');
+      const nextDayStart = dayjs(String(value)).add(1, 'day').startOf('day');
+      const startIso = dayStart.toISOString();
+      const nextDayIso = nextDayStart.toISOString();
+
+      switch (filter.operator) {
+        case '==':
+          return { [filter.field]: { $gte: startIso, $lt: nextDayIso } };
+        case '!=':
+          return { [filter.field]: { $not: { $gte: startIso, $lt: nextDayIso } } };
+        case '>':
+          return { [filter.field]: { $gte: nextDayIso } };
+        case '<':
+          return { [filter.field]: { $lt: startIso } };
+        case '>=':
+          return { [filter.field]: { $gte: startIso } };
+        case '<=':
+          return { [filter.field]: { $lt: nextDayIso } };
+      }
+    }
 
     switch (filter.operator) {
       case '==':

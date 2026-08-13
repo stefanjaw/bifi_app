@@ -42,7 +42,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>
-              {{ 'sales.form.title' | translate: {} : 'sales' }}
+              {{ 'sales.form.title' | translate: {} : 'sales' }}<span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <input
               pInputText
@@ -70,11 +70,11 @@
 
           <bifi-app-form-field>
             <bifi-app-form-label>
-              {{ 'sales.form.amount' | translate: {} : 'sales' }}
+              {{ 'sales.form.amount' | translate: {} : 'sales' }}<span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-inputnumber
               formControlName="amount"
-              [min]="0"
+              [min]="0.01"
               mode="decimal"
               [placeholder]="'sales.placeholder.amount' | translate: {} : 'sales'"
             />
@@ -140,7 +140,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <bifi-app-form-field>
             <bifi-app-form-label>
-              {{ 'sales.form.contact' | translate: {} : 'sales' }}
+              {{ 'sales.form.contact' | translate: {} : 'sales' }}<span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-select
               formControlName="contact"

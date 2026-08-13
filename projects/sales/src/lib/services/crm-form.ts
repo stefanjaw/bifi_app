@@ -25,10 +25,10 @@ export class CrmForm extends BaseForm<CrmFormModel> {
   override createForm() {
     return this.fb.group<CrmFormModel>({
       title: ['', [Validators.required]],
-      amount: [0, [Validators.required, Validators.min(0)]],
-      currency: ['', [Validators.required]],
+      amount: [0, [Validators.required, Validators.min(0.01)]],
+      currency: [''],
       stage: [''],
-      probability: [10, [Validators.min(0), Validators.max(100), Validators.required]],
+      probability: [10, [Validators.min(0), Validators.max(100)]],
       expectedCloseDate: [''],
       contact: ['', [Validators.required]],
       company: [''],

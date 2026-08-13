@@ -134,6 +134,19 @@ export class CrmsForm implements DirtyComponent {
         this.formService.patchValue({ stage: stage._id });
       }
     });
+
+    // Auto-select the company's default currency when a company is chosen and
+    // no currency has been picked yet. The company's `defaultCurrencyId` is
+    // autopopulated by the backend.
+    this.form.controls.company.valueChanges
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(companyId => {
+        if (this.isUpdate()) return;
+        if (!this.form.controls.currency.value) {
+          const defaultId = this.companyDefaultCurrencyId(companyId ?? '');
+          if (defaultId) this.formService.patchValue({ currency: defaultId });
+        }
+      });
   }
 
   async handleSubmit(data: FormValueState<CrmFormModel>) {
@@ -150,13 +163,13 @@ export class CrmsForm implements DirtyComponent {
     const payload: Record<string, any> = {
       title: rawValue.title,
       amount: rawValue.amount,
-      currency: rawValue.currency,
-      probability: rawValue.probability,
       contact: rawValue.contact,
       company: rawValue.company,
       tags,
     };
 
+    if (rawValue.currency) payload['currency'] = rawValue.currency;
+    if (rawValue.probability != null) payload['probability'] = rawValue.probability;
     if (rawValue.stage) payload['stage'] = rawValue.stage;
     if (rawValue.owner) payload['owner'] = rawValue.owner;
     if (rawValue.salesperson) payload['salesperson'] = rawValue.salesperson;
@@ -183,6 +196,22 @@ export class CrmsForm implements DirtyComponent {
 
   goBack() {
     this.router.navigate(['/sales/opportunities']);
+  }
+
+  /**
+   * Resolves the default currency id configured on the given company.
+   * The backend autopopulates `defaultCurrencyId` on company records, so it
+   * may arrive as a populated object (`{ _id, code, ... }`) or a bare id.
+   * @param companyId - The selected company id (empty string allowed).
+   * @returns The company's default currency id, or an empty string when the
+   * company has no default currency or cannot be found.
+   */
+  private companyDefaultCurrencyId(companyId: string): string {
+    if (!companyId) return '';
+    const company = (this.companyOptions() as any[]).find((c: any) => c._id === companyId);
+    if (!company) return '';
+    const currency = (company as any).defaultCurrencyId;
+    return currency?._id ?? currency ?? '';
   }
 
   /** Navigates to the order creation form pre-filled from this opportunity (update view only) */

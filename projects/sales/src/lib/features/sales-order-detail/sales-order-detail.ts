@@ -146,12 +146,6 @@ export class SalesOrderDetail {
     return def?._id ?? '';
   });
 
-  defaultCurrencyId = computed(() => {
-    const currencies = this.currencyOptions();
-    const def = currencies.find((c: any) => c.isDefault);
-    return def?._id ?? '';
-  });
-
   stockMap = computed<Record<string, number>>(() => {
     const balances = (this.stockResource.value() as any[]) ?? [];
     return balances.reduce((map: Record<string, number>, balance: any) => {
@@ -302,6 +296,19 @@ export class SalesOrderDetail {
 
     this.form.controls.amount.disable({ emitEvent: false });
 
+    // Auto-select the company's default currency when a company is chosen on
+    // create and no currency has been picked yet. The company's
+    // `defaultCurrencyId` is autopopulated by the backend.
+    this.form.controls.company.valueChanges
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(companyId => {
+        if (this.isUpdate()) return;
+        if (!this.form.controls.currency.value) {
+          const defaultId = this.companyDefaultCurrencyId(companyId ?? '');
+          if (defaultId) this.formService.patchValue({ currency: defaultId });
+        }
+      });
+
     effect(() => {
       const warehouseId = this.form.controls.warehouseId.value;
       const locationId = this.form.controls.locationId.value;
@@ -391,10 +398,6 @@ export class SalesOrderDetail {
         if (defaultId) {
           this.formService.patchValue({ stageId: defaultId });
         }
-        const defCurrency = this.defaultCurrencyId();
-        if (defCurrency && !this.form.controls.currency.value) {
-          this.formService.patchValue({ currency: defCurrency });
-        }
 
         const crmIdParam = this.route.snapshot.queryParamMap.get('crmId');
         if (crmIdParam && !this.form.controls.crmId.value) {
@@ -405,9 +408,9 @@ export class SalesOrderDetail {
               crmId: crmEntry._id,
               title: crmEntry.title ?? '',
               contact: crmEntry.contact?._id ?? '',
+              currency: crmCurrency?._id ?? this.companyDefaultCurrencyId(crmEntry.company?._id ?? ''),
               company: crmEntry.company?._id ?? '',
               salesperson: crmEntry.salesperson?._id ?? '',
-              currency: crmCurrency?._id ?? this.defaultCurrencyId(),
               closeDate: crmEntry.expectedCloseDate
                 ? new Date(crmEntry.expectedCloseDate)
                 : new Date(),
@@ -423,6 +426,22 @@ export class SalesOrderDetail {
   goBack() {
     const isUpdate = this.isUpdate();
     this.router.navigate([isUpdate ? '../../' : '../'], { relativeTo: this.route });
+  }
+
+  /**
+   * Resolves the default currency id configured on the given company.
+   * The backend autopopulates `defaultCurrencyId` on company records, so it
+   * may arrive as a populated object (`{ _id, code, ... }`) or a bare id.
+   * @param companyId - The selected company id (empty string allowed).
+   * @returns The company's default currency id, or an empty string when the
+   * company has no default currency or cannot be found.
+   */
+  private companyDefaultCurrencyId(companyId: string): string {
+    if (!companyId) return '';
+    const company = (this.companyOptions() as any[]).find((c: any) => c._id === companyId);
+    if (!company) return '';
+    const currency = (company as any).defaultCurrencyId;
+    return currency?._id ?? currency ?? '';
   }
 
   markAsQuote() {

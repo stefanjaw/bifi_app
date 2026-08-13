@@ -250,6 +250,7 @@
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'sales.form.contactRequired' | translate: {} : 'sales' }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-select
               formControlName="contact"
@@ -266,6 +267,7 @@
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'sales.form.companyRequired' | translate: {} : 'sales' }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-select
               formControlName="company"
@@ -381,6 +383,7 @@
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'sales.form.currencyRequired' | translate: {} : 'sales' }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-select
               formControlName="currency"
@@ -397,6 +400,7 @@
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'sales.form.closeDateRequired' | translate: {} : 'sales' }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <p-datepicker
               formControlName="closeDate"

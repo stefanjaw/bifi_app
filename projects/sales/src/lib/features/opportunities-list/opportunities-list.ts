@@ -95,6 +95,10 @@ export class OpportunitiesList {
 
   markWon(event: Event, deal: crm) {
     event.stopPropagation();
+    // Defense-in-depth: ignore actions on deals already Won or Lost (the
+    // template also hides the buttons, this guards against stale clicks during
+    // the reload window and prevents a duplicate sales order from being created).
+    if (deal.stage?.isWon || deal.stage?.isLost) return;
     const wonStage = this.wonStage();
     if (!wonStage) {
       this.messageService.add({
@@ -114,7 +118,11 @@ export class OpportunitiesList {
     }
     this.markingId.set(deal._id);
     this.crudCrm
-      .put({ _id: deal._id, data: { stage: wonStage._id } as any })
+      .put({
+        _id: deal._id,
+        data: { stage: wonStage._id } as any,
+        notificationConfig: { enable: false },
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
@@ -131,7 +139,7 @@ export class OpportunitiesList {
           if (deal.notes) orderPayload['notes'] = deal.notes;
 
           this.crudSalesOrders
-            .post({ data: orderPayload as any })
+            .post({ data: orderPayload as any, notificationConfig: { enable: false } })
             .pipe(takeUntilDestroyed(this.destroy$))
             .subscribe({
               next: () => {
@@ -174,6 +182,10 @@ export class OpportunitiesList {
 
   markLost(event: Event, deal: crm) {
     event.stopPropagation();
+    // Defense-in-depth: ignore actions on deals already Won or Lost (the
+    // template also hides the buttons, this guards against stale clicks during
+    // the reload window).
+    if (deal.stage?.isWon || deal.stage?.isLost) return;
     const lostStage = this.lostStage();
     if (!lostStage) {
       this.messageService.add({
@@ -185,7 +197,11 @@ export class OpportunitiesList {
     }
     this.markingId.set(deal._id);
     this.crudCrm
-      .put({ _id: deal._id, data: { stage: lostStage._id } as any })
+      .put({
+        _id: deal._id,
+        data: { stage: lostStage._id } as any,
+        notificationConfig: { enable: false },
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {

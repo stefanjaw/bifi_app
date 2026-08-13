@@ -110,6 +110,10 @@ export class SalesPipeline {
   }
 
   markWon(deal: crm) {
+    // Defense-in-depth: ignore actions on deals already Won or Lost (the
+    // template also hides the buttons, this guards against stale clicks during
+    // the reload window and prevents a duplicate sales order from being created).
+    if (deal.stage?.isWon || deal.stage?.isLost) return;
     const wonStage = this.wonStage();
     if (!wonStage) {
       this.messageService.add({
@@ -129,7 +133,11 @@ export class SalesPipeline {
     }
     this.actionLoadingId.set(deal._id);
     this.crudCrm
-      .put({ _id: deal._id, data: { stage: wonStage._id } as any })
+      .put({
+        _id: deal._id,
+        data: { stage: wonStage._id } as any,
+        notificationConfig: { enable: false },
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
@@ -149,7 +157,7 @@ export class SalesPipeline {
           if (deal.title) orderPayload['title'] = deal.title;
 
           this.crudSalesOrders
-            .post({ data: orderPayload as any })
+            .post({ data: orderPayload as any, notificationConfig: { enable: false } })
             .pipe(takeUntilDestroyed(this.destroy$))
             .subscribe({
               next: () => {
@@ -191,6 +199,10 @@ export class SalesPipeline {
   }
 
   markLost(deal: crm) {
+    // Defense-in-depth: ignore actions on deals already Won or Lost (the
+    // template also hides the buttons, this guards against stale clicks during
+    // the reload window).
+    if (deal.stage?.isWon || deal.stage?.isLost) return;
     const lostStage = this.lostStage();
     if (!lostStage) {
       this.messageService.add({
@@ -202,7 +214,11 @@ export class SalesPipeline {
     }
     this.actionLoadingId.set(deal._id);
     this.crudCrm
-      .put({ _id: deal._id, data: { stage: lostStage._id } as any })
+      .put({
+        _id: deal._id,
+        data: { stage: lostStage._id } as any,
+        notificationConfig: { enable: false },
+      })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {

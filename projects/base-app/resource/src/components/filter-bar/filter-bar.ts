@@ -18,6 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
+import dayjs from 'dayjs';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 interface FilterRow {
@@ -211,7 +212,15 @@ export class FilterBar implements OnDestroy {
           operator: r.operator!,
           type: r.type as any,
           ...(r.operator !== 'empty' && {
-            value: r.value instanceof Date ? r.value.toISOString() : r.value,
+            // For date filters emit a local date-only string (YYYY-MM-DD) so the
+            // FilterManager can expand it to a full local-day range with dayjs.
+            // Other types pass the raw value through unchanged.
+            value:
+              r.type === 'date' && r.value instanceof Date
+                ? dayjs(r.value).format('YYYY-MM-DD')
+                : r.value instanceof Date
+                  ? r.value.toISOString()
+                  : r.value,
           }),
         }));
 
