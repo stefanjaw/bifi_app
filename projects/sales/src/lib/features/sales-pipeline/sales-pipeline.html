@@ -45,7 +45,7 @@
             <p class="text-xs text-gray-500 mt-0.5">{{ deal.company?.name }}</p>
             <div class="mt-2 flex justify-between items-center">
               <span class="text-sm font-bold text-green-600">
-                {{ deal.amount | currency: (deal.currency?.code ?? 'USD') }}
+                {{ deal.amount | currency: deal.currency?.code ?? 'USD' }}
               </span>
               @if (deal.expectedCloseDate) {
                 <span class="text-xs text-gray-400">

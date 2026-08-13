@@ -79,13 +79,20 @@ export class FacilitiesForm {
   }
 
   constructor() {
-    autoForm(this.form, this.router, this.draftService, this.facility, computed(() => !!this.id()), data => {
-      this.form.patchValue({
-        name: data.name,
-        contactId: data.contactId?._id,
-      });
-      this.formService.resetDirtyState();
-    });
+    autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.facility,
+      computed(() => !!this.id()),
+      data => {
+        this.form.patchValue({
+          name: data.name,
+          contactId: data.contactId?._id,
+        });
+        this.formService.resetDirtyState();
+      }
+    );
   }
 
   handleSubmit(values: FormValueState<FacilityFormModel>) {

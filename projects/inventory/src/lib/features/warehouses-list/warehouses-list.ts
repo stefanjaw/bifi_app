@@ -55,7 +55,7 @@ export class WarehousesList {
       .subscribe({ next: () => this.entries.reload() });
   }
 
-  gotoEditWarehouse = (element: warehouse) => {
-    this.router.navigate([`../warehouses/${element._id}/edit`], { relativeTo: this.route });
+  gotoWarehouseDetail = (element: warehouse) => {
+    this.router.navigate([`../warehouses/${element._id}`], { relativeTo: this.route });
   };
 }

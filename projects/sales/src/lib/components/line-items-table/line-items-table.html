@@ -271,7 +271,9 @@
                     </ng-template>
                   </p-multiselect>
                 } @else {
-                  <span class="text-gray-500">{{ getLineTaxPerUnit($index) | number: '1.2-2' }}</span>
+                  <span class="text-gray-500">
+                    {{ getLineTaxPerUnit($index) | number: '1.2-2' }}
+                  </span>
                 }
               </td>
             }

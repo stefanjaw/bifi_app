@@ -75,15 +75,22 @@ export class RoomsForm implements DirtyComponent {
   isSubmitLoading = signal<boolean>(false);
 
   constructor() {
-    autoForm(this.form, this.router, this.draftService, this.room, computed(() => !!this.id()), data => {
-      this.form.patchValue({
-        name: data.name,
-        code: data.code,
-        address: data.address,
-        facilityId: data.facilityId?._id,
-      });
-      this.formService.resetDirtyState();
-    });
+    autoForm(
+      this.form,
+      this.router,
+      this.draftService,
+      this.room,
+      computed(() => !!this.id()),
+      data => {
+        this.form.patchValue({
+          name: data.name,
+          code: data.code,
+          address: data.address,
+          facilityId: data.facilityId?._id,
+        });
+        this.formService.resetDirtyState();
+      }
+    );
   }
 
   handleSubmit(values: FormValueState<RoomFormModel>) {

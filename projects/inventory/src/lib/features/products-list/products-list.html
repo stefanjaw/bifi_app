@@ -19,17 +19,19 @@
   [infiniteScroll]="true"
   [columns]="productColumns"
   [data]="entries"
-  [onClickRow]="gotoEditProduct"
-  clickRowPermission="inventory/products/update:view"
+  [onClickRow]="gotoProductDetail"
+  clickRowPermission="inventory/products/read:view"
   [scope]="'inventory'"
 >
   <ng-template #actions let-element>
     <p-button
+      (click)="$event.stopPropagation()"
       severity="secondary"
-      [label]="'view' | translate: {} : 'inventory'"
-      icon="pi pi-eye"
+      [label]="'edit' | translate: {} : 'inventory'"
+      icon="pi pi-pencil"
       size="small"
-      routerLink="/inventory/products/{{ element._id }}"
+      routerLink="/inventory/products/{{ element._id }}/edit"
+      *bifiAppHasPermission="'inventory/products/update:view'"
     ></p-button>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"

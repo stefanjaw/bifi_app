@@ -52,7 +52,7 @@ export class ProductsList {
       .subscribe({ next: () => this.entries.reload() });
   }
 
-  gotoEditProduct = (element: product) => {
-    this.router.navigate([`../products/${element._id}/edit`], { relativeTo: this.route });
+  gotoProductDetail = (element: product) => {
+    this.router.navigate([`../products/${element._id}`], { relativeTo: this.route });
   };
 }

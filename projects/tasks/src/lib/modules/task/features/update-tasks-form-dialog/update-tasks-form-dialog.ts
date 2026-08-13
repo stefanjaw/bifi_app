@@ -100,9 +100,7 @@ export class UpdateTasksFormDialog extends BaseDialog {
       if (!this.dialogState()) return false;
       const task = this.task();
       if (!task?.projectId?._id) return false;
-      const isInList = this.taskProjectsResource.value()?.some(
-        p => p._id === task.projectId!._id
-      );
+      const isInList = this.taskProjectsResource.value()?.some(p => p._id === task.projectId!._id);
       return !isInList;
     }),
   });

@@ -19,17 +19,19 @@
   [infiniteScroll]="true"
   [columns]="warehouseColumns"
   [data]="entries"
-  [onClickRow]="gotoEditWarehouse"
-  clickRowPermission="inventory/warehouses/update:view"
+  [onClickRow]="gotoWarehouseDetail"
+  clickRowPermission="inventory/warehouses/read:view"
   [scope]="'inventory'"
 >
   <ng-template #actions let-element>
     <p-button
+      (click)="$event.stopPropagation()"
       severity="secondary"
-      [label]="'view' | translate: {} : 'inventory'"
-      icon="pi pi-eye"
+      [label]="'edit' | translate: {} : 'inventory'"
+      icon="pi pi-pencil"
       size="small"
-      routerLink="/inventory/warehouses/{{ element._id }}"
+      routerLink="/inventory/warehouses/{{ element._id }}/edit"
+      *bifiAppHasPermission="'inventory/warehouses/update:view'"
     ></p-button>
     <bifi-app-buttons-actions
       (deleteClicked)="delete(element._id)"

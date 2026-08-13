@@ -266,9 +266,9 @@ export class TicketsForm {
 
     const tags = rawValue.tagsInput
       ? rawValue.tagsInput
-        .split(',')
-        .map((t: string) => t.trim())
-        .filter(Boolean)
+          .split(',')
+          .map((t: string) => t.trim())
+          .filter(Boolean)
       : [];
 
     const payload: Record<string, any> = {

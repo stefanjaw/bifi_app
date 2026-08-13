@@ -29,7 +29,7 @@ export class CrmStageForm extends BaseForm<CrmStageFormModel> {
         isLost: [false],
         isDefault: [false],
       },
-      { validators: this.mutuallyExclusiveValidator },
+      { validators: this.mutuallyExclusiveValidator }
     );
   }
 

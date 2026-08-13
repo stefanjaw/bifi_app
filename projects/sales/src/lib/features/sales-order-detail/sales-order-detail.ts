@@ -408,7 +408,8 @@ export class SalesOrderDetail {
               crmId: crmEntry._id,
               title: crmEntry.title ?? '',
               contact: crmEntry.contact?._id ?? '',
-              currency: crmCurrency?._id ?? this.companyDefaultCurrencyId(crmEntry.company?._id ?? ''),
+              currency:
+                crmCurrency?._id ?? this.companyDefaultCurrencyId(crmEntry.company?._id ?? ''),
               company: crmEntry.company?._id ?? '',
               salesperson: crmEntry.salesperson?._id ?? '',
               closeDate: crmEntry.expectedCloseDate

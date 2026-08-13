@@ -29,7 +29,7 @@ function atLeastOneContactMethod(control: AbstractControl): ValidationErrors | n
   const type = control.get('type')?.value;
 
   const hasWebsite = type === 'company' && !!website;
-  
+
   return phone || email || hasWebsite ? null : { atLeastOneContactMethod: true };
 }
 
@@ -59,8 +59,12 @@ export class ContactForm extends BaseForm<ContactFormModel> {
 
     const syncContactErrors = () => {
       const hasError = this.form.hasError('atLeastOneContactMethod');
-      const controls = [this.form.controls.email, this.form.controls.phoneNumber, this.form.controls.website];
-      
+      const controls = [
+        this.form.controls.email,
+        this.form.controls.phoneNumber,
+        this.form.controls.website,
+      ];
+
       controls.forEach(ctrl => {
         if (hasError) {
           if (!ctrl.hasError('atLeastOneContactMethod')) {

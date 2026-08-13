@@ -118,7 +118,10 @@
                   />
 
                   <!-- the maintenance service of the assetRoster -->
-                  @if (assetRoster()?.status !== 'awaiting-commissioning' && assetRoster()?.status !== 'decommissioned') {
+                  @if (
+                    assetRoster()?.status !== 'awaiting-commissioning' &&
+                    assetRoster()?.status !== 'decommissioned'
+                  ) {
                     <bifi-app-maintenance-service-section
                       [assetRoster]="assetRoster()"
                       [maintenanceWindows]="maintenanceWindows()"
