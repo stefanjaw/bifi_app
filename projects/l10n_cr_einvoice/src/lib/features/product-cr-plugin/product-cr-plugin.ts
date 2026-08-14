@@ -11,36 +11,39 @@ import { ProductForm } from '@avalantec/inventory';
   standalone: true,
   imports: [ReactiveFormsModule, FormModule, SelectModule, InputTextModule],
   template: `
-    <ng-container [formGroup]="hostForm">
-      <bifi-app-form-field>
-        <bifi-app-form-label>Código Comercial (CR)</bifi-app-form-label>
-        <input pInputText formControlName="codigoComercial" placeholder="Código comercial" />
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
+    <div class="border-t border-gray-200 mt-4 pt-4 flex flex-col gap-4">
+      <h3 class="text-sm font-semibold text-gray-700 mb-3">Costa Rica (CR)</h3>
+      <ng-container [formGroup]="hostForm">
+        <bifi-app-form-field>
+          <bifi-app-form-label>Código Comercial (CR)</bifi-app-form-label>
+          <input pInputText formControlName="codigoComercial" placeholder="Código comercial" />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-      <bifi-app-form-field>
-        <bifi-app-form-label>Tipo de Producto (CR)</bifi-app-form-label>
-        <p-select
-          formControlName="productKind"
-          [options]="productKindOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select type"
-        ></p-select>
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Tipo de Producto (CR)</bifi-app-form-label>
+          <p-select
+            formControlName="productKind"
+            [options]="productKindOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select type"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
 
-      <bifi-app-form-field>
-        <bifi-app-form-label>Partida Arancelaria</bifi-app-form-label>
-        <input
-          pInputText
-          formControlName="crPartidaArancelaria"
-          placeholder="Ej. 847130"
-          maxlength="20"
-        />
-        <bifi-app-form-error></bifi-app-form-error>
-      </bifi-app-form-field>
-    </ng-container>
+        <bifi-app-form-field>
+          <bifi-app-form-label>Partida Arancelaria</bifi-app-form-label>
+          <input
+            pInputText
+            formControlName="crPartidaArancelaria"
+            placeholder="Ej. 847130"
+            maxlength="20"
+          />
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </ng-container>
+    </div>
   `,
 })
 export class ProductCrPlugin implements OnInit {

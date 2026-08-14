@@ -148,7 +148,7 @@
             <p-select
               formControlName="contact"
               [options]="contactOptions()"
-              optionLabel="name"
+              optionLabel="displayName"
               optionValue="_id"
               [placeholder]="'sales.placeholder.selectContact' | translate: {} : 'sales'"
               [filter]="true"
@@ -198,7 +198,7 @@
             <p-select
               formControlName="owner"
               [options]="userOptions()"
-              optionLabel="username"
+              optionLabel="contactId.displayName"
               optionValue="_id"
               [placeholder]="'sales.placeholder.selectOwner' | translate: {} : 'sales'"
               [filter]="true"
@@ -214,7 +214,7 @@
             <p-select
               formControlName="salesperson"
               [options]="userOptions()"
-              optionLabel="username"
+              optionLabel="contactId.displayName"
               optionValue="_id"
               [placeholder]="'sales.placeholder.selectSalesperson' | translate: {} : 'sales'"
               [filter]="true"
