@@ -13,9 +13,9 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "tailwindcss-primeui": "^0.6.1",
-    "@avalantec/base-app": "^0.1.1",
-    "@avalantec/accounting": "^0.1.1",
-    "@avalantec/inventory": "^0.1.1"
+    "@avalantec/base-app": "^0.2.0",
+    "@avalantec/accounting": "^0.2.0",
+    "@avalantec/inventory": "^0.2.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
