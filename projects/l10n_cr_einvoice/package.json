@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/l10n_cr_einvoice",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "peerDependencies": {
     "@angular/animations": "^20.3.28",
     "@angular/cdk": "^20.2.14",
