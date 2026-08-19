@@ -1,6 +1,6 @@
 {
   "name": "@avalantec/sales",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "peerDependencies": {
     "@angular/animations": "^20.3.28",
     "@angular/cdk": "^20.2.14",
@@ -14,9 +14,9 @@
     "tailwindcss": "^4.1.11",
     "dayjs": "^1.11.13",
     "tailwindcss-primeui": "^0.6.1",
-    "@avalantec/base-app": "^0.2.0",
-    "@avalantec/inventory": "^0.2.0",
-    "@avalantec/accounting": "^0.2.0"
+    "@avalantec/base-app": "^0.2.1",
+    "@avalantec/inventory": "^0.2.1",
+    "@avalantec/accounting": "^0.2.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
