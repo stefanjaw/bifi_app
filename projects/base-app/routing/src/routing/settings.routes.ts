@@ -86,6 +86,11 @@ export const SETTINGS_ROUTES: Routes = [
     loadChildren: () => import('@avalantec/base-app/translation').then(m => m.LANGUAGE_ROUTES),
   },
   {
+    path: 'api-keys',
+    canActivate: [authGuard],
+    loadChildren: () => import('@avalantec/base-app/api-keys').then(m => m.API_KEY_ROUTES),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@avalantec/base-app/users').then(m => m.UserProfile),
   },

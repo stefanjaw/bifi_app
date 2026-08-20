@@ -10,6 +10,7 @@ import { TranslationService, provideT } from '../services/translation';
  */
 const BASE_APP_SCOPES = [
   'base-app/ai-settings',
+  'base-app/api-keys',
   'base-app/auth',
   'base-app/branch-office',
   'base-app/bug-reporting',

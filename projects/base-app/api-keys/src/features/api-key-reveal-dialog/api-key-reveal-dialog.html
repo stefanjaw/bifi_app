@@ -1,0 +1,30 @@
+@let scope = 'base-app/api-keys';
+
+<p-dialog
+  [header]="'revealDialog.title' | translate: {} : scope"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-md"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-sm text-amber-700">
+      {{ 'revealDialog.warning' | translate: {} : scope }}
+    </p>
+
+    <textarea pTextarea readonly class="field-sizing-content">{{ key() }}</textarea>
+
+    <div class="flex justify-end gap-2">
+      <p-button
+        icon="pi pi-copy"
+        severity="secondary"
+        [label]="'revealDialog.copy' | translate: {} : scope"
+        [cdkCopyToClipboard]="key()"
+        (cdkCopyToClipboardCopied)="showKeyCopiedToast()"
+      ></p-button>
+      <p-button
+        [label]="'revealDialog.confirm' | translate: {} : scope"
+        (onClick)="closeDialog()"
+      ></p-button>
+    </div>
+  </div>
+</p-dialog>

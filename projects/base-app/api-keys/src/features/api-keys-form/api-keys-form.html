@@ -1,0 +1,58 @@
+@let isEditing = isUpdate();
+@let scope = 'base-app/api-keys';
+
+<p-dialog
+  [header]="(isEditing ? 'form.pageTitle.update' : 'form.pageTitle.create') | translate: {} : scope"
+  [(visible)]="dialogState"
+  [modal]="true"
+  styleClass="w-full max-w-full sm:max-w-sm md:max-w-2xl max-h-[90vh]"
+>
+  <form
+    [formGroup]="form"
+    bifiAppFormActionsHandler
+    (appSubmit)="handleSubmit($event)"
+    class="flex flex-col gap-6"
+  >
+    <bifi-app-form-field>
+      <bifi-app-form-label>
+        {{ 'form.generalInfo.name' | translate: {} : scope }}
+      </bifi-app-form-label>
+      <input
+        pInputText
+        formControlName="name"
+        type="text"
+        [placeholder]="'form.generalInfo.namePlaceholder' | translate: {} : scope"
+      />
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    <bifi-app-form-field>
+      <bifi-app-form-label>
+        {{ 'form.generalInfo.expiresAt' | translate: {} : scope }}
+      </bifi-app-form-label>
+      <p-datepicker
+        formControlName="expiresAt"
+        [showIcon]="true"
+        appendTo="body"
+        [showClear]="true"
+      ></p-datepicker>
+      <bifi-app-form-error></bifi-app-form-error>
+    </bifi-app-form-field>
+
+    @if (isEditing) {
+      <div class="flex items-center gap-3">
+        <p-toggle-switch formControlName="active" inputId="api-key-active"></p-toggle-switch>
+        <label for="api-key-active" class="text-sm text-surface-700">
+          {{ 'form.generalInfo.active' | translate: {} : scope }}
+        </label>
+      </div>
+    }
+
+    <bifi-app-form-actions
+      [isSubmitting]="isSubmitLoading()"
+      (cancelClicked)="closeDialog()"
+      [cancelLabel]="'cancel' | translate: {} : scope"
+      [formChanged]="form.dirty"
+    ></bifi-app-form-actions>
+  </form>
+</p-dialog>

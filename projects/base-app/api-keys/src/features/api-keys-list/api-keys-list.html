@@ -1,0 +1,31 @@
+@let scope = 'base-app/api-keys';
+
+<h1 class="text-2xl font-bold mb-4">{{ 'pageTitle' | translate: {} : scope }}</h1>
+
+<div class="flex gap-2 mb-4">
+  <p-button
+    [label]="'addNew' | translate: {} : scope"
+    severity="secondary"
+    icon="pi pi-plus"
+    (onClick)="openCreateDialog()"
+    *bifiAppHasPermission="'api-keys/create:view'"
+  ></p-button>
+</div>
+
+<bifi-app-search-bar
+  [label]="'searchPlaceholder' | translate: {} : scope"
+  [searchFilters]="filters"
+></bifi-app-search-bar>
+
+<bifi-app-table-layout [infiniteScroll]="true" [columns]="columns" [data]="data" [scope]="scope">
+  <ng-template #actions let-element>
+    <bifi-app-buttons-actions
+      (deleteClicked)="revoke(element._id)"
+      resource="api-keys"
+    ></bifi-app-buttons-actions>
+  </ng-template>
+</bifi-app-table-layout>
+
+<bifi-app-api-keys-form (created)="onCreated($event)"></bifi-app-api-keys-form>
+
+<bifi-app-api-key-reveal-dialog [key]="pendingKey()"></bifi-app-api-key-reveal-dialog>

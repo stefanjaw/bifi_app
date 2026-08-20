@@ -20,6 +20,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { FileResolver } from '@avalantec/base-app/resource';
 import { FileUploadModule } from 'primeng/fileupload';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'bifi-app-user-profile',
@@ -31,6 +32,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     ProgressBarModule,
     FileUploadModule,
     TranslatePipe,
+    RouterLink,
   ],
   templateUrl: './user-profile.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

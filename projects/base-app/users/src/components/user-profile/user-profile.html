@@ -162,6 +162,15 @@
           }
         </section>
       </bifi-app-form-section>
+
+      <div class="flex justify-end px-4 pt-2">
+        <p-button
+          [label]="'manageKeys' | translate: {} : 'base-app/api-keys'"
+          severity="secondary"
+          icon="pi pi-key"
+          [routerLink]="'/settings/api-keys/list'"
+        ></p-button>
+      </div>
     } @else if (error()) {
       <p>{{ 'profile.error' | translate: {} : 'base-app/users' }} {{ error() }}</p>
     } @else {

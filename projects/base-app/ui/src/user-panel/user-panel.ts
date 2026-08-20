@@ -127,6 +127,11 @@ export class UserPanel {
         command: () => this.router.navigate(['settings', 'profile']),
       },
       {
+        label: this.translationService.translate('apiKeys', {}, 'base-app/api-keys'),
+        icon: 'pi pi-key',
+        command: () => this.router.navigate(['settings', 'api-keys', 'list']),
+      },
+      {
         label: this.translationService.translate('userPanel.reportBug', {}, 'base-app/ui'),
         icon: 'pi pi-exclamation-circle',
         command: () => {
