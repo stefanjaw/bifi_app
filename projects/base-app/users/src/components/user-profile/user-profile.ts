@@ -136,8 +136,8 @@ export class UserProfile {
         website: value.website,
         type: this.type(),
       },
-      uploadedPictureId: value.uploadedPictureId || undefined,
-      confirmed: true,
+      ...(value.uploadedPictureId && { uploadedPictureId: value.uploadedPictureId }),
+      ...(this.user()?.confirmed === false && { confirmed: true }),
     };
 
     this.isSubmitLoading.set(true);
