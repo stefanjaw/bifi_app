@@ -20,6 +20,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DialogModule } from 'primeng/dialog';
 import { ApiKeyForm, apiKeyFormModel } from '../../services/api-key-form';
 import { ApiKeyCreateResponse, CrudApiKeys } from '../../services/crud-api-keys';
+import dayjs from 'dayjs';
 
 /**
  * Create/edit dialog for a self-service API key. On create the backend returns the
@@ -67,11 +68,18 @@ export class ApiKeysForm extends BaseDialog {
     if (existing) {
       this.formService.patchValue({
         name: existing.name,
+        expires: !!existing.expiresAt,
         expiresAt: existing.expiresAt ?? '',
         active: existing.active,
       });
-      this.formService.resetDirtyState();
+    } else {
+      // Create mode: expires by default 30 days from now. (4.4)
+      this.formService.patchValue({
+        expires: true,
+        expiresAt: dayjs().add(30, 'day').format('YYYY-MM-DD'),
+      });
     }
+    this.formService.resetDirtyState();
     super.openDialog();
   }
 
@@ -86,7 +94,11 @@ export class ApiKeysForm extends BaseDialog {
 
     const payload: Record<string, unknown> = {
       name: rawValue.name,
-      ...(rawValue.expiresAt && {
+      // `expires: false` tells the backend this key explicitly NEVER expires
+      // (otherwise the server would default it to 30 days). Send the picker date
+      // only when the "expires" toggle is on. (4.3 / never-expire fix)
+      expires: rawValue.expires,
+      ...(rawValue.expires && rawValue.expiresAt && {
         expiresAt: this.toIsoString(rawValue.expiresAt),
       }),
       active: rawValue.active,
@@ -131,6 +143,6 @@ export class ApiKeysForm extends BaseDialog {
    * @returns The ISO-8601 representation.
    */
   private toIsoString(value: string | Date): string {
-    return typeof value === 'string' ? value : value.toISOString();
+    return dayjs(value).toISOString();
   }
 }

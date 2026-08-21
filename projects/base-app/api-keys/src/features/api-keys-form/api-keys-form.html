@@ -26,18 +26,34 @@
       <bifi-app-form-error></bifi-app-form-error>
     </bifi-app-form-field>
 
-    <bifi-app-form-field>
-      <bifi-app-form-label>
-        {{ 'form.generalInfo.expiresAt' | translate: {} : scope }}
-      </bifi-app-form-label>
-      <p-datepicker
-        formControlName="expiresAt"
-        [showIcon]="true"
-        appendTo="body"
-        [showClear]="true"
-      ></p-datepicker>
-      <bifi-app-form-error></bifi-app-form-error>
-    </bifi-app-form-field>
+    <div class="flex items-center gap-3">
+      <p-toggle-switch formControlName="expires" inputId="api-key-expires"></p-toggle-switch>
+      <label for="api-key-expires" class="text-sm text-surface-700">
+        {{ 'form.generalInfo.expires' | translate: {} : scope }}
+      </label>
+    </div>
+
+    @if (form.controls.expires.value) {
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'form.generalInfo.expiresAt' | translate: {} : scope }}
+        </bifi-app-form-label>
+        <p-datepicker
+          formControlName="expiresAt"
+          [showIcon]="true"
+          appendTo="body"
+          [showClear]="false"
+        ></p-datepicker>
+        <small class="text-surface-500">
+          {{ 'form.generalInfo.expiresHint' | translate: {} : scope }}
+        </small>
+        <bifi-app-form-error></bifi-app-form-error>
+      </bifi-app-form-field>
+    } @else {
+      <p class="text-sm text-surface-500">
+        {{ 'form.generalInfo.neverExpires' | translate: {} : scope }}
+      </p>
+    }
 
     @if (isEditing) {
       <div class="flex items-center gap-3">
