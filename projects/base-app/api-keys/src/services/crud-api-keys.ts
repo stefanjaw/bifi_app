@@ -50,4 +50,17 @@ export class CrudApiKeys extends ApiRequestManager<apiKey> {
       notificationConfig,
     }) as Observable<ApiKeyCreateResponse | undefined>;
   }
+
+  /**
+   * Renews (rotates) an API key: the backend mints a fresh raw key on the same
+   * record, invalidating the previous one immediately.
+   * @param id - The API key record id to renew.
+   * @returns An observable of the renewed key including the one-time raw `key`.
+   */
+  renewKey(id: string): Observable<ApiKeyCreateResponse | undefined> {
+    return this._httpClient.post<ApiKeyCreateResponse | undefined>(
+      `${this.formatFullURL()}/${id}/renew`,
+      null
+    );
+  }
 }

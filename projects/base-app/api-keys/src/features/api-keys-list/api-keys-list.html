@@ -19,13 +19,26 @@
 
 <bifi-app-table-layout [infiniteScroll]="true" [columns]="columns" [data]="data" [scope]="scope">
   <ng-template #actions let-element>
-    <bifi-app-buttons-actions
-      (deleteClicked)="revoke(element._id)"
-      resource="api-keys"
-    ></bifi-app-buttons-actions>
+    <section class="col-span-full flex justify-end gap-2">
+      <p-button
+        type="button"
+        (click)="renew(element)"
+        severity="secondary"
+        icon="pi pi-refresh"
+        [size]="'small'"
+        [variant]="'text'"
+        [title]="'table.renew' | translate: {} : scope"
+      ></p-button>
+      <bifi-app-buttons-actions
+        (deleteClicked)="revoke(element._id)"
+        resource="api-keys"
+      ></bifi-app-buttons-actions>
+    </section>
   </ng-template>
 </bifi-app-table-layout>
 
 <bifi-app-api-keys-form (created)="onCreated($event)"></bifi-app-api-keys-form>
 
 <bifi-app-api-key-reveal-dialog [key]="pendingKey()"></bifi-app-api-key-reveal-dialog>
+
+<p-confirmDialog></p-confirmDialog>

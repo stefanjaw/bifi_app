@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { apiKey } from '@avalantec/base-app/interfaces';
 import { HasPermission } from '@avalantec/base-app/auth';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -18,6 +18,8 @@ import {
   TableLayout,
 } from '@avalantec/base-app/resource';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { apiKeyColumns } from '../../libraries/api-key-columns';
 import { apiKeyFilters } from '../../libraries/api-key-filters';
 import { ApiKeyCreateResponse, CrudApiKeys } from '../../services/crud-api-keys';
@@ -32,7 +34,7 @@ import { ApiKeysForm } from '../api-keys-form/api-keys-form';
  */
 @Component({
   selector: 'bifi-app-api-keys-list',
-  providers: [provideResourceManager(CrudApiKeys)],
+  providers: [provideResourceManager(CrudApiKeys), ConfirmationService],
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4' },
   imports: [
     TableLayout,
@@ -40,6 +42,7 @@ import { ApiKeysForm } from '../api-keys-form/api-keys-form';
     SearchBar,
     HasPermission,
     ButtonsActions,
+    ConfirmDialogModule,
     TranslatePipe,
     ApiKeysForm,
     ApiKeyRevealDialog,
@@ -50,6 +53,7 @@ import { ApiKeysForm } from '../api-keys-form/api-keys-form';
 export class ApiKeysList {
   private resourceManager = inject<ResourceManager<apiKey>>(ResourceManager);
   private crud = inject(CrudApiKeys);
+  private confirmationService = inject(ConfirmationService);
   private destroy$ = inject(DestroyRef);
 
   columns = apiKeyColumns;
@@ -89,6 +93,37 @@ export class ApiKeysList {
       .subscribe({
         next: res => {
           if (res) this.data.reload();
+        },
+      });
+  }
+
+  /**
+   * Asks for confirmation, then renews (rotates) the given API key.
+   * @param row - The API key to renew.
+   */
+  renew(row: apiKey) {
+    this.confirmationService.confirm({
+      header: t('renew.confirmTitle', {}, 'base-app/api-keys'),
+      message: t('renew.confirmMessage', {}, 'base-app/api-keys'),
+      accept: () => this.doRenew(row._id),
+    });
+  }
+
+  /**
+   * Executes the renewal, revealing the new one-time raw key and refreshing the list.
+   * @param id - The API key record id to renew.
+   */
+  private doRenew(id: string) {
+    this.crud
+      .renewKey(id)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res?.key) {
+            this.pendingKey.set(res.key);
+            this.revealDialog()?.openDialog();
+            this.data.reload();
+          }
         },
       });
   }
