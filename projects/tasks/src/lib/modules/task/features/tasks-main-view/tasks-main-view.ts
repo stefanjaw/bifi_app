@@ -37,7 +37,9 @@ import {
   flattenVisible,
   GanttDependency,
   GanttNode,
+  GanttSwitcher,
   GanttView,
+  GanttViewMode,
   injectResourceManager,
   ListStateManager,
   provideResourceManager,
@@ -70,6 +72,7 @@ const TASKS_VIEW_QUERY_KEY = '_view';
     PopoverModule,
     TasksListView,
     GanttView,
+    GanttSwitcher,
     HasPermission,
     CreateTasksFormDialog,
     UpdateTasksFormDialog,
@@ -100,6 +103,8 @@ export class TasksMainView {
 
   // states
   viewState = signal<'gantt' | 'list' | 'timeline' | 'calendar'>('gantt');
+  /** Owned by this view so the external toolbar switcher can drive gantt-view. */
+  ganttViewMode = signal<GanttViewMode>('Week');
   isListView = computed(() => this.viewState() === 'list');
 
   // data / loading / error — all owned by ResourceManager

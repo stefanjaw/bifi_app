@@ -123,6 +123,12 @@
     (onClick)="filterPopover.toggle($event)"
     [ariaLabel]="'tasks.openFilters' | translate: {} : 'tasks'"
   />
+
+  @if (viewState() === 'gantt') {
+    <div class="ml-auto">
+      <bifi-app-gantt-switcher [(mode)]="ganttViewMode"></bifi-app-gantt-switcher>
+    </div>
+  }
 </div>
 
 <p-popover #filterPopover>
@@ -161,6 +167,8 @@
   <!-- Gantt View -->
   <bifi-app-gantt-view
     [title]="'tasks.ganttTitle' | translate: {} : 'tasks'"
+    [showSwitcher]="false"
+    [(viewMode)]="ganttViewMode"
     [flat]="ganttFlat()"
     [map]="ganttMap()"
     [dependencies]="ganttDependencies()"

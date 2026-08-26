@@ -63,8 +63,11 @@ export class GanttView implements OnDestroy {
   map = input<Map<string, GanttNode<GanttItem>>>(new Map());
   dependencies = input<GanttDependency[]>([]);
 
-  // Two-way bindable view mode (owns the switcher internally)
+  // Two-way bindable view mode. When `showSwitcher` is true (default) the
+  // switcher is rendered inside this component's header; when false the
+  // consumer renders its own external switcher and binds `viewMode` two-way.
   viewMode = model<GanttViewMode>('Week');
+  showSwitcher = input<boolean>(true);
 
   // Outputs — consumer handles domain logic
   cardDateChange = output<{ id: string; start: dayjs.Dayjs; end: dayjs.Dayjs }>();
@@ -246,27 +249,32 @@ export class GanttView implements OnDestroy {
     }
 
     if (mode === 'Week') {
-      const today = dayjs().startOf('day');
+      const now = dayjs();
+      const today = now.startOf('day');
       const monday = today.subtract((today.day() + 6) % 7, 'day');
       const anchor = monday.add(pan, 'day');
       const daysSinceStart = today.diff(anchor, 'day');
       if (daysSinceStart < 0 || daysSinceStart >= 7) return -1;
-      return daysSinceStart * ppu + ppu / 2;
+      const fracOfDay = (now.hour() * 60 + now.minute()) / 1440;
+      return daysSinceStart * ppu + fracOfDay * ppu;
     }
 
     if (mode === 'Month') {
-      const today = dayjs().startOf('day');
+      const now = dayjs();
+      const today = now.startOf('day');
       const anchor = dayjs().startOf('month').add(pan, 'day');
       const daysSinceStart = today.diff(anchor, 'day');
       if (daysSinceStart < 0 || daysSinceStart >= 30) return -1;
-      return daysSinceStart * ppu + ppu / 2;
+      const fracOfDay = (now.hour() * 60 + now.minute()) / 1440;
+      return daysSinceStart * ppu + fracOfDay * ppu;
     }
 
-    const today = dayjs();
+    const now = dayjs();
     const anchor = dayjs().startOf('year').add(pan, 'month');
-    const monthsSinceStart = today.diff(anchor, 'month');
+    const monthsSinceStart = now.startOf('month').diff(anchor, 'month');
     if (monthsSinceStart < 0 || monthsSinceStart >= 12) return -1;
-    return monthsSinceStart * ppu + ppu / 2;
+    const fracOfMonth = (now.date() - 1 + now.hour() / 24) / now.daysInMonth();
+    return monthsSinceStart * ppu + fracOfMonth * ppu;
   });
 
   //#endregion
@@ -514,6 +522,20 @@ export class GanttView implements OnDestroy {
 
   getOverviewItemWidth(itemId: string): number {
     return this.overviewLayout()?.get(itemId)?.width ?? OVERVIEW_CARD_WIDTH;
+  }
+
+  /**
+   * Returns true when the given grid date falls on the current calendar day
+   * (or current month, in Year mode). Used to highlight the today column.
+   * @param date - The grid unit date to compare against today.
+   * @returns True if `date` is within the current day/month.
+   */
+  isToday(date: dayjs.Dayjs): boolean {
+    const mode = this.viewMode();
+    if (mode === 'Year') {
+      return date.isSame(dayjs(), 'month');
+    }
+    return date.isSame(dayjs(), 'day');
   }
 
   formatDateHeader(date: dayjs.Dayjs): string {
