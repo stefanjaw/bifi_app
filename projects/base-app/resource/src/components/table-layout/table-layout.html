@@ -36,6 +36,19 @@
     <!-- HEADER -->
     <ng-template #header>
       <tr>
+        @if (selectionEnabled()) {
+          <th class="w-10">
+            <input
+              type="checkbox"
+              class="h-4 w-4 cursor-pointer"
+              [attr.aria-label]="'table.selectAllRows' | translate: {} : scope()"
+              [checked]="allVisibleRowsSelected()"
+              (click)="$event.stopPropagation()"
+              (change)="onSelectAllChanged($event)"
+            />
+          </th>
+        }
+
         @if (expandContent()) {
           <th></th>
         }
@@ -68,6 +81,19 @@
         [class.cursor-pointer]="onClickRow() && hasClickRowPermission()"
         [class.hover:bg-gray-200!]="onClickRow() && hasClickRowPermission()"
       >
+        @if (selectionEnabled()) {
+          <td class="w-10">
+            <input
+              type="checkbox"
+              class="h-4 w-4 cursor-pointer"
+              [attr.aria-label]="'table.selectRow' | translate: {} : scope()"
+              [checked]="isRowSelected(element._id)"
+              (click)="$event.stopPropagation()"
+              (change)="onRowSelectionChanged(element._id, $event)"
+            />
+          </td>
+        }
+
         @if (expandContent()) {
           <td>
             <p-button
@@ -142,7 +168,14 @@
     @if (expandContent()) {
       <ng-template #expandedrow let-element>
         <tr>
-          <td [colSpan]="columns().length + (actions() ? 1 : 0) + 1">
+          <td
+            [colSpan]="
+              columns().length +
+              (actions() ? 1 : 0) +
+              (expandContent() ? 1 : 0) +
+              (selectionEnabled() ? 1 : 0)
+            "
+          >
             <ng-template
               [ngTemplateOutlet]="expandContent()"
               [ngTemplateOutletContext]="{ $implicit: element }"
@@ -155,7 +188,14 @@
     <!-- EMPTY -->
     <ng-template #emptymessage>
       <tr>
-        <td [colSpan]="columns().length + (actions() ? 1 : 0) + (expandContent() ? 1 : 0)">
+        <td
+          [colSpan]="
+            columns().length +
+            (actions() ? 1 : 0) +
+            (expandContent() ? 1 : 0) +
+            (selectionEnabled() ? 1 : 0)
+          "
+        >
           <div class="flex flex-col justify-center items-center h-full w-full rounded-md p-4">
             <i class="pi pi-search mb-4 font-bold" [bifiAppIcon]="'xl'"></i>
             <p class="mb-2 font-light text-2xl">

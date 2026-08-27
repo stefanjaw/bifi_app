@@ -29,4 +29,44 @@ export class CrudAssetRoster extends ApiRequestManager<assetRoster> {
       fileFields: ['attachments'],
     }) as any;
   }
+
+  /**
+   * Downloads a CSV containing only the Asset Roster records identified by IDs.
+   * @param ids - The Asset Roster ids to export.
+   */
+  exportSelectedCSV(ids: string[]): void {
+    const params = new URLSearchParams({
+      ids: ids.join(','),
+    });
+
+    const url = `${this.formatFullURL()}/export?${params.toString()}`;
+
+    this._fileResolver.downloadFileInBrowser({ url }, 'download');
+  }
+
+  /**
+   * Soft-archives the selected Asset Roster records.
+   * @param ids - The Asset Roster ids to archive.
+   * @returns Observable of the archived count, or undefined on failure.
+   */
+  archiveSelected(ids: string[]): Observable<{ archivedCount: number } | undefined> {
+    return this.post<{ archivedCount: number }>({
+      data: { ids },
+      specificEndpoint: 'archive',
+      notificationConfig: { enable: false },
+    });
+  }
+
+  /**
+   * Restores the selected archived Asset Roster records.
+   * @param ids - The Asset Roster ids to restore.
+   * @returns Observable of the unarchived count, or undefined on failure.
+   */
+  unarchiveSelected(ids: string[]): Observable<{ unarchivedCount: number } | undefined> {
+    return this.post<{ unarchivedCount: number }>({
+      data: { ids },
+      specificEndpoint: 'unarchive',
+      notificationConfig: { enable: false },
+    });
+  }
 }

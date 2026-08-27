@@ -98,9 +98,10 @@ export class ApiKeysForm extends BaseDialog {
       // (otherwise the server would default it to 30 days). Send the picker date
       // only when the "expires" toggle is on. (4.3 / never-expire fix)
       expires: rawValue.expires,
-      ...(rawValue.expires && rawValue.expiresAt && {
-        expiresAt: this.toIsoString(rawValue.expiresAt),
-      }),
+      ...(rawValue.expires &&
+        rawValue.expiresAt && {
+          expiresAt: this.toIsoString(rawValue.expiresAt),
+        }),
       active: rawValue.active,
     };
 
@@ -122,7 +123,7 @@ export class ApiKeysForm extends BaseDialog {
     }
 
     this.crud
-      .post({ data: payload })
+      .post<ApiKeyCreateResponse>({ data: payload })
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: res => {

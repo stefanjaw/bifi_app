@@ -71,7 +71,7 @@ export class CreateAssetRosterForm extends BaseForm<CreateAssetRosterFormModel> 
       const swConfig = this.form.controls.softwareConfiguration;
 
       if (dt === 'serialized' || !dt) {
-        serialCtrl.setValidators([Validators.required]);
+        serialCtrl.clearValidators();
         modelCtrl.setValidators([Validators.required]);
         descCtrl.clearValidators();
         swConfig.get('regulatoryClassification')?.clearValidators();
@@ -114,7 +114,7 @@ export class CreateAssetRosterForm extends BaseForm<CreateAssetRosterFormModel> 
       createdMake: {
         oemName: [null],
       },
-      serialNumber: [null, [Validators.required]],
+      serialNumber: [null],
       productModel: [null, [Validators.required]],
       description: [null],
       quantity: [null],

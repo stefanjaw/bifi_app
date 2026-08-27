@@ -39,7 +39,7 @@ export interface assetRoster {
   acquiredDate: Date;
   acquiredPrice: number;
   currentPrice: number;
-  condition: 'excellent' | 'good' | 'fair' | 'poor';
+  conditionId?: { _id: string; name: string; active: boolean };
   maintenanceWindowIds: maintenanceWindow[];
   photo: string;
   locationId?: room;

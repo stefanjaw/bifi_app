@@ -83,7 +83,7 @@ export class ApiRequestManager<T> {
    * @param specificEndpoint The specific endpoint to be used. If not provided, the default endpoint of the service will be used.
    * @returns An observable that resolves to the response of the request, or undefined if the request fails.
    */
-  post({
+  post<TResponse = T>({
     data,
     specificEndpoint = '',
     fileFields = [],
@@ -93,7 +93,7 @@ export class ApiRequestManager<T> {
     specificEndpoint?: string;
     fileFields?: string[];
     notificationConfig?: { enable?: boolean; successMessage?: string };
-  }): Observable<T | undefined> {
+  }): Observable<TResponse | undefined> {
     const fullURL = `${this.formatFullURL()}${specificEndpoint ? '/' + specificEndpoint : ''}`;
     const formData = this.createFormDataFromObject(data, fileFields);
     const context = this.createHttpContext('create');
@@ -106,7 +106,7 @@ export class ApiRequestManager<T> {
       } as NotificationTokenConfig);
     }
 
-    return this._httpClient.post<T | undefined>(fullURL, formData, { context });
+    return this._httpClient.post<TResponse | undefined>(fullURL, formData, { context });
   }
 
   /**

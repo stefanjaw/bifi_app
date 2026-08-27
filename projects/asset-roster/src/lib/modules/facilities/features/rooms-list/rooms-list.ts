@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, viewChild } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -15,6 +15,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HasPermission } from '@avalantec/base-app/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { RoomsImportPreviewDialog } from '../rooms-import-preview-dialog/rooms-import-preview-dialog';
 
 @Component({
   selector: 'bifi-app-rooms-list',
@@ -27,6 +28,7 @@ import { TranslatePipe } from '@avalantec/base-app/i18n';
     HasPermission,
     ButtonsActions,
     TranslatePipe,
+    RoomsImportPreviewDialog,
   ],
   host: {
     class: 'flex flex-col gap-2 p-6 ms-4 me-4',
@@ -38,7 +40,7 @@ export class RoomsList {
   private resourceManager = inject<ResourceManager<room>>(ResourceManager);
   private crudRooms = inject(CrudRooms);
   private destroy$ = inject(DestroyRef);
-
+  private importPreviewDialog = viewChild.required(RoomsImportPreviewDialog);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   roomColumns = roomColumns;
@@ -49,6 +51,21 @@ export class RoomsList {
   goToEditRoom = (element: room) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+
+  /**
+   * Opens the CSV import preview dialog with the selected file.
+   * @param event - The file input change event.
+   */
+  openImportPreview(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const csv = target.files?.[0];
+    // Allow selecting the same file again after closing the dialog.
+    target.value = '';
+    if (csv) {
+      this.importPreviewDialog().open(csv);
+    }
+  }
+
   deleteRoom(id: string) {
     this.crudRooms
       .delete({ _id: id })

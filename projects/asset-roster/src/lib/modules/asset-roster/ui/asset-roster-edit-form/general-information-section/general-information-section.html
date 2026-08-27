@@ -161,9 +161,18 @@
                 <bifi-app-form-label>
                   {{ 'conditionOptional' | translate: {} : 'asset-roster' }}
                 </bifi-app-form-label>
+                <bifi-app-form-preview>
+                  <ng-template #preview let-conditionId let-fallback>
+                    {{ assetRoster()?.conditionId?.name || fallback }}
+                  </ng-template>
+                </bifi-app-form-preview>
                 <p-select
-                  formControlName="condition"
-                  [options]="['excellent', 'good', 'fair', 'poor']"
+                  formControlName="conditionId"
+                  [options]="conditionOptions()"
+                  optionLabel="name"
+                  optionValue="_id"
+                  [showClear]="true"
+                  [placeholder]="'selectCondition' | translate: {} : 'asset-roster'"
                 ></p-select>
                 <bifi-app-form-error></bifi-app-form-error>
               </bifi-app-form-field>
@@ -192,7 +201,7 @@
                 <ng-template #footer>
                   <bifi-app-form-select-navigate-footer
                     resource="contacts"
-                    label="Other vendor +"
+                    [label]="'createNew' | translate: {} : 'asset-roster'"
                     controlName="vendorIds"
                     [createRoute]="['/contacts', 'create']"
                     [formGroup]="formService.form"
@@ -227,7 +236,7 @@
                   <ng-template #footer>
                     <bifi-app-form-select-navigate-footer
                       resource="rooms"
-                      label="Other room +"
+                      [label]="'createNew' | translate: {} : 'asset-roster'"
                       controlName="locationId"
                       [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
                       [formGroup]="formService.form"
@@ -332,7 +341,7 @@
                           <ng-template #footer>
                             <bifi-app-form-select-navigate-footer
                               resource="rooms"
-                              label="Other room +"
+                              [label]="'createNew' | translate: {} : 'asset-roster'"
                               [controlName]="'locationAssignments.' + $index + '.locationId'"
                               [createRoute]="['/settings', 'asset-roster', 'rooms', 'create']"
                               [draftFormValue]="formService.form.value"

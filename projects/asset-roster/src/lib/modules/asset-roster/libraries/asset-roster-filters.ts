@@ -11,7 +11,7 @@ export const assetRosterFilters: filter<assetRoster>[] = [
     type: 'string',
   },
   {
-    field: 'condition',
+    field: 'conditionId.name',
     type: 'string',
   },
   {

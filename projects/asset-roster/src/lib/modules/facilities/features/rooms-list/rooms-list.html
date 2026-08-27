@@ -2,12 +2,28 @@
 
 <div class="flex gap-2 mb-4">
   <p-button
+    [label]="'importCsv' | translate: {} : 'asset-roster'"
+    [outlined]="true"
+    icon="pi pi-upload"
+    (onClick)="fileInput.click()"
+    *bifiAppHasPermission="'rooms/import:create:model'"
+  ></p-button>
+
+  <p-button
     [label]="'addNewRoom' | translate: {} : 'asset-roster'"
     severity="secondary"
     icon="pi pi-plus"
     [routerLink]="['../create']"
     *bifiAppHasPermission="'rooms/create:view'"
   ></p-button>
+
+  <input
+    hidden
+    type="file"
+    #fileInput
+    accept=".csv,text/csv"
+    (change)="openImportPreview($event)"
+  />
 </div>
 
 <bifi-app-search-bar
@@ -30,3 +46,7 @@
     ></bifi-app-buttons-actions>
   </ng-template>
 </bifi-app-table-layout>
+
+<bifi-app-rooms-import-preview-dialog
+  (imported)="rooms.reload()"
+></bifi-app-rooms-import-preview-dialog>

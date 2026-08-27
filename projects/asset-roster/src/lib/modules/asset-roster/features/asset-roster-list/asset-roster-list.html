@@ -10,7 +10,7 @@
       <p-selectButton
         [options]="optionsView"
         optionValue="value"
-        (onChange)="isGrid.set($event.value)"
+        (onChange)="setView($event.value)"
       >
         <ng-template pTemplate="item" let-item>
           <i [class]="item.icon"></i>
@@ -49,6 +49,77 @@
         (onClick)="exportCSV()"
         *bifiAppHasPermission="'asset-rosters/export:read:model'"
       ></p-button>
+
+      <p-button
+        [label]="
+          (showingArchivedRecords() ? 'showActiveRecords' : 'showArchivedRecords')
+            | translate: {} : 'asset-roster'
+        "
+        [outlined]="true"
+        size="small"
+        [icon]="showingArchivedRecords() ? 'pi pi-list' : 'pi pi-box'"
+        (onClick)="toggleArchivedRecords()"
+        *bifiAppHasPermission="'asset-rosters:read:model'"
+      ></p-button>
+
+      @if (!isGrid()) {
+        <p-button
+          [label]="
+            (selectionMode() ? 'cancelSelection' : 'selectRecords') | translate: {} : 'asset-roster'
+          "
+          [outlined]="true"
+          size="small"
+          [icon]="selectionMode() ? 'pi pi-times' : 'pi pi-check-square'"
+          (onClick)="toggleSelectionMode()"
+        ></p-button>
+
+        @if (selectionMode()) {
+          @if (!showingArchivedRecords()) {
+            <p-button
+              [label]="
+                'exportSelected'
+                  | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
+              "
+              [outlined]="true"
+              size="small"
+              icon="pi pi-download"
+              [disabled]="selectedAssetRosterIds().length === 0"
+              (onClick)="exportSelectedCSV()"
+              *bifiAppHasPermission="'asset-rosters/export:read:model'"
+            ></p-button>
+
+            <p-button
+              [label]="
+                'archiveSelected'
+                  | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
+              "
+              severity="warn"
+              [outlined]="true"
+              size="small"
+              icon="pi pi-box"
+              [loading]="archivingSelected()"
+              [disabled]="selectedAssetRosterIds().length === 0 || archivingSelected()"
+              (onClick)="archiveSelected()"
+              *bifiAppHasPermission="'asset-rosters:update:model'"
+            ></p-button>
+          } @else {
+            <p-button
+              [label]="
+                'unarchiveSelected'
+                  | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
+              "
+              severity="success"
+              [outlined]="true"
+              size="small"
+              icon="pi pi-refresh"
+              [loading]="unarchivingSelected()"
+              [disabled]="selectedAssetRosterIds().length === 0 || unarchivingSelected()"
+              (onClick)="unarchiveSelected()"
+              *bifiAppHasPermission="'asset-rosters:update:model'"
+            ></p-button>
+          }
+        }
+      }
       <p-button
         [label]="'addNewAsset' | translate: {} : 'asset-roster'"
         severity="secondary"
@@ -58,7 +129,13 @@
         *bifiAppHasPermission="'asset-rosters:create:model'"
       ></p-button>
 
-      <input hidden type="file" #fileInput accept=".csv" (change)="importCSV($event)" />
+      <input
+        hidden
+        type="file"
+        #fileInput
+        accept=".csv,text/csv"
+        (change)="openImportPreview($event)"
+      />
     </div>
   </div>
 
@@ -116,6 +193,9 @@
     [scope]="'asset-roster'"
     [columns]="assetRosterColumns"
     [data]="assetRosters"
+    [selectionEnabled]="selectionMode()"
+    [selectedIds]="selectedAssetRosterIds()"
+    (selectedIdsChange)="selectedAssetRosterIds.set($event)"
     [onClickRow]="goToEditAssetRoster"
     clickRowPermission="asset-rosters/update:view"
   ></bifi-app-table-layout>
@@ -184,7 +264,7 @@
                 {{ 'location' | translate: {} : 'asset-roster' }}
               </span>
               <span class="text-right truncate">
-                {{ element.locationId?.address || ('notSet' | translate: {} : 'asset-roster') }}
+                {{ element.locationId?.name || ('notSet' | translate: {} : 'asset-roster') }}
               </span>
             </div>
           </div>
@@ -207,7 +287,12 @@
 }
 
 <bifi-app-asset-roster-form-dialog #createDialog></bifi-app-asset-roster-form-dialog>
+<p-confirmDialog></p-confirmDialog>
 <bifi-app-reporting-download-dialog
   #downloadReportDialog
   [model]="'AssetRoster'"
 ></bifi-app-reporting-download-dialog>
+
+<bifi-app-asset-roster-import-preview-dialog
+  (imported)="reloadAfterImport()"
+></bifi-app-asset-roster-import-preview-dialog>

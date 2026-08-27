@@ -20,6 +20,7 @@ import { FormFileControlHelper, FormModule } from '@avalantec/base-app/form';
 import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import { CrudContacts } from '@avalantec/base-app/contacts';
 import { CrudAssetRoster } from '../../../services/crud-asset-rosters';
+import { CrudAssetCondition } from '../../../../asset-conditions';
 import { AssetRosterMaintenanceContext } from '../../../services/asset-roster-maintenance-context';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -57,6 +58,11 @@ export class GeneralInformationSection {
   vendorsResource = this.crudVendorContacts.get({});
   roomsResources = this.crudRooms.get({});
   facilitiesResource = this.crudFacilities.get({});
+  private crudAssetCondition = inject(CrudAssetCondition);
+  /** All available Asset Conditions for the condition picker. */
+  conditionsResource = this.crudAssetCondition.get({});
+  /** Select options derived from {@link conditionsResource}. */
+  conditionOptions = computed(() => this.conditionsResource.value() ?? []);
   assetRosters = this.crudAssetRoster.get({});
 
   vendorName = model('');

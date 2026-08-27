@@ -90,12 +90,12 @@ export class AssetRosterFormDialog extends BaseDialog {
 
   assetTypeOptions = computed(() => {
     const types = this.assetTypes.value();
-    return [{ _id: undefined, name: 'Other' }, ...types];
+    return [{ _id: undefined, name: t('createNew', {}, 'asset-roster') }, ...types];
   });
 
   contactOptions = computed(() => {
     const contacts = this.contacts.value();
-    return [{ _id: undefined, name: 'Other' }, ...contacts];
+    return [{ _id: undefined, name: t('createNew', {}, 'asset-roster') }, ...contacts];
   });
 
   get typeIdControl() {

@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   input,
+  output,
   ResourceRef,
   signal,
   TemplateRef,
@@ -66,6 +67,18 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   infiniteScroll = input<boolean>(false);
   scope = input<string | undefined>(undefined);
 
+  /** Enables the checkbox selection column when true. */
+  selectionEnabled = input<boolean>(false);
+  /** The ids currently selected in the selection column. */
+  selectedIds = input<string[]>([]);
+  /** Emits the updated selection whenever a row or the header checkbox changes. */
+  selectedIdsChange = output<string[]>();
+  /** Whether every visible row on the current page is selected. */
+  allVisibleRowsSelected = computed(() => {
+    const ids = this.visibleRowIds();
+    return ids.length > 0 && ids.every(id => this.selectedIds().includes(id));
+  });
+
   // this is the permission that will be used to determine if the user has permission to click a row
   clickRowPermission = input<permission | undefined>(undefined);
 
@@ -123,6 +136,77 @@ export class TableLayout<T extends Record<string, any>> implements AfterViewInit
   });
 
   paginatorRows = computed(() => this.paginationManager.paginationOptions().limit);
+
+  /**
+   * Whether the given record id is currently selected.
+   * @param id - The record id to check.
+   * @returns True when the id is part of the selection.
+   */
+  isRowSelected(id: string): boolean {
+    return this.selectedIds().includes(id);
+  }
+
+  /**
+   * Adds or removes a single record from the selection.
+   * @param id - The record id to toggle.
+   * @param checked - Whether the row checkbox was checked.
+   */
+  toggleRowSelection(id: string, checked: boolean): void {
+    const selected = new Set(this.selectedIds());
+
+    if (checked) {
+      selected.add(id);
+    } else {
+      selected.delete(id);
+    }
+
+    this.selectedIdsChange.emit([...selected]);
+  }
+
+  /**
+   * Selects or deselects every visible row on the current page.
+   * @param checked - Whether the header checkbox was checked.
+   */
+  toggleVisibleRows(checked: boolean): void {
+    const selected = new Set(this.selectedIds());
+
+    for (const id of this.visibleRowIds()) {
+      if (checked) {
+        selected.add(id);
+      } else {
+        selected.delete(id);
+      }
+    }
+
+    this.selectedIdsChange.emit([...selected]);
+  }
+
+  /**
+   * Reads the checkbox state from a change event and toggles the visible rows.
+   * @param event - The header checkbox change event.
+   */
+  onSelectAllChanged(event: Event): void {
+    this.toggleVisibleRows((event.target as HTMLInputElement).checked);
+  }
+
+  /**
+   * Reads the checkbox state from a change event and toggles a single row.
+   * @param id - The record id to toggle.
+   * @param event - The row checkbox change event.
+   */
+  onRowSelectionChanged(id: string, event: Event): void {
+    this.toggleRowSelection(id, (event.target as HTMLInputElement).checked);
+  }
+
+  /**
+   * Returns the ids of every row currently rendered by the table state.
+   * @returns The list of visible record ids.
+   */
+  private visibleRowIds(): string[] {
+    return this.resourceState()
+      .value.map(row => String(row['_id']))
+      .filter(Boolean);
+  }
 
   constructor() {
     // Reactively accumulate pages as they arrive in infinite scroll mode.

@@ -5,6 +5,7 @@ import {
   FACILITIES_ROUTES,
   MAINTENANCE_WINDOWS_ROUTES,
   ASSET_TYPES_ROUTES,
+  ASSET_CONDITIONS_ROUTES,
   ROOMS_ROUTES,
 } from '../../modules';
 import { ASSET_ROASTER_ROUTES } from '../../routes/asset-roster.routes';
@@ -66,6 +67,13 @@ function initializeMenu() {
             resource: 'asset-types/menu',
             scope: 'asset-roster',
           },
+          {
+            icon: PrimeIcons.TAG,
+            routerLink: ['/settings/asset-roster/asset-conditions'],
+            label: 'conditions',
+            resource: 'asset-conditions/menu',
+            scope: 'asset-roster',
+          },
         ],
       },
       childOf: 'settings',
@@ -98,6 +106,10 @@ function initializeMenu() {
         {
           path: 'asset-types',
           children: ASSET_TYPES_ROUTES,
+        },
+        {
+          path: 'asset-conditions',
+          children: ASSET_CONDITIONS_ROUTES,
         },
       ],
     },

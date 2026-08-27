@@ -38,7 +38,7 @@ interface UpdateAssetRosterFormModel {
   locationAssignments: LocationAssignmentModel[];
   acquiredDate: Date | null;
   vendorIds: string;
-  condition: string | null;
+  conditionId: string | null;
   locationId: string;
   facilityId: string;
   acquiredPrice: number | null;
@@ -134,7 +134,7 @@ export class UpdateAssetRosterForm extends BaseForm<UpdateAssetRosterFormModel> 
       },
       acquiredDate: [null],
       vendorIds: [''],
-      condition: [null],
+      conditionId: [null],
       locationId: [''],
       facilityId: [''],
       acquiredPrice: [null],

@@ -84,10 +84,10 @@ export const assetRosterColumns = (
     type: 'text',
   },
   {
-    field: 'locationId.name',
+    field: 'locationId',
     title: 'location',
-    parseField: value => value?.name || t('status.fallback.notSet', {}, 'asset-roster'),
-
+    parseField: (value: { name?: string } | undefined) =>
+      value?.name || t('status.fallback.notSet', {}, 'asset-roster'),
     type: 'text',
   },
   {

@@ -3,6 +3,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   effect,
   ElementRef,
@@ -18,6 +19,7 @@ import {
   FileResolver,
   FilterManager,
   InfiniteScroll,
+  PaginationManager,
   provideResourceManager,
   ResourceManager,
   SearchBar,
@@ -27,6 +29,7 @@ import {
 import { CrudAssetRoster } from '../../services/crud-asset-rosters';
 import { AssetRosterStatusCard } from '../../ui/asset-roster-status-card/asset-roster-status-card';
 import { AssetRosterFormDialog } from '../asset-roster-form-dialog/asset-roster-form-dialog';
+import { AssetRosterImportPreviewDialog } from '../asset-roster-import-preview-dialog/asset-roster-import-preview-dialog';
 import { AssetRosterMaintenanceContext } from '../../services/asset-roster-maintenance-context';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AssetRosterStatusFilterManager } from '../../services/asset-roster-status-filter-manager';
@@ -37,13 +40,15 @@ import { AssetRosterStatusSelect } from '../../ui/asset-roster-status-select/ass
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { t, TranslatePipe } from '@avalantec/base-app/i18n';
 import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'bifi-app-asset-roster-list',
   host: { class: 'flex flex-col gap-2 p-6 ms-4 me-4', style: 'overflow-anchor: none' },
-  providers: [provideResourceManager(CrudAssetRoster)],
+  providers: [provideResourceManager(CrudAssetRoster), ConfirmationService],
   imports: [
     RouterLink,
     AssetRosterStatusCard,
@@ -54,12 +59,14 @@ import { AvatarModule } from 'primeng/avatar';
     TagModule,
     AssetRosterStatusSelect,
     AssetRosterFormDialog,
+    AssetRosterImportPreviewDialog,
     HasPermission,
     ReportingDownloadDialog,
     TooltipModule,
     SelectButtonModule,
     AvatarModule,
     InfiniteScroll,
+    ConfirmDialogModule,
     TranslatePipe,
   ],
   templateUrl: './asset-roster-list.html',
@@ -67,10 +74,13 @@ import { AvatarModule } from 'primeng/avatar';
 })
 export class AssetRosterList {
   private resourceManager = inject<ResourceManager<assetRoster>>(ResourceManager);
+  private paginationManager = inject(PaginationManager);
   private destroy$ = inject(DestroyRef);
+  private confirmationService = inject(ConfirmationService);
   private assetRosterMaintenanceContext = inject(AssetRosterMaintenanceContext);
   private crudAssetRoster = inject(CrudAssetRoster);
   private fileResolver = inject(FileResolver);
+  private importPreviewDialog = viewChild.required(AssetRosterImportPreviewDialog);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -82,6 +92,15 @@ export class AssetRosterList {
 
   //View
   isGrid = signal<boolean>(false);
+
+  // List-view selection is shared by the Export, Archive, and Unarchive actions.
+  selectionMode = signal(false);
+  selectedAssetRosterIds = signal<string[]>([]);
+  archivingSelected = signal(false);
+  unarchivingSelected = signal(false);
+
+  // ResourceManager uses true to request active: false records.
+  showingArchivedRecords = computed(() => this.resourceManager.getInactiveStatus() === true);
 
   // Scroll detection
 
@@ -213,34 +232,164 @@ export class AssetRosterList {
 
   /**
    * Exports all assetRosters in CSV format.
-   * @returns A Buffer containing the CSV data.
    */
-  exportCSV() {
+  exportCSV(): void {
     this.crudAssetRoster.exportCSV();
   }
 
-  importCSV(event: Event) {
+  /**
+   * Toggles between the active Asset Roster and the archived Asset Roster.
+   */
+  toggleArchivedRecords(): void {
+    const showArchived = !this.showingArchivedRecords();
+
+    this.exitSelectionMode();
+    this.paginationManager.resetPaginationOptions();
+    this.resourceManager.getInactiveStatus.set(showArchived);
+  }
+
+  /**
+   * Enables or exits List-view selection mode.
+   */
+  toggleSelectionMode(): void {
+    this.selectionMode.update(enabled => !enabled);
+    this.selectedAssetRosterIds.set([]);
+  }
+
+  /**
+   * Leaves selection mode and clears the current selection.
+   */
+  private exitSelectionMode(): void {
+    this.selectionMode.set(false);
+    this.selectedAssetRosterIds.set([]);
+  }
+
+  /**
+   * Clears selection mode when users change to Grid view, because checkboxes
+   * are implemented only for the table/list view in this first release.
+   */
+  setView(isGrid: boolean): void {
+    this.isGrid.set(isGrid);
+
+    // Bulk actions are available only in the List view.
+    if (isGrid) {
+      this.exitSelectionMode();
+    }
+  }
+
+  /**
+   * Downloads a CSV containing only the selected Asset Roster records.
+   */
+  exportSelectedCSV(): void {
+    const ids = this.selectedAssetRosterIds();
+
+    if (ids.length === 0) return;
+
+    this.crudAssetRoster.exportSelectedCSV(ids);
+  }
+
+  /**
+   * Opens the CSV import preview dialog with the selected file.
+   * @param event - The file input change event.
+   */
+  openImportPreview(event: Event): void {
     const target = event.target as HTMLInputElement;
     const csv = target.files?.[0];
 
-    // reset file input
+    // Allow selecting the same file again after closing the dialog.
     target.value = '';
 
+    if (csv) {
+      this.importPreviewDialog().open(csv);
+    }
+  }
+
+  /**
+   * Soft-archives the selected records after confirmation.
+   */
+  archiveSelected(): void {
+    const ids = this.selectedAssetRosterIds();
+
+    if (ids.length === 0 || this.archivingSelected()) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      header: t('archiveSelectedConfirmTitle', {}, 'asset-roster'),
+      message: t('archiveSelectedConfirmMessage', { count: ids.length }, 'asset-roster'),
+      accept: () => this.doArchiveSelected(ids),
+    });
+  }
+
+  /**
+   * Executes the archive request for the confirmed record ids.
+   * @param ids - The record ids to archive.
+   */
+  private doArchiveSelected(ids: string[]): void {
+    this.archivingSelected.set(true);
+
     this.crudAssetRoster
-      .post({ data: { csv }, specificEndpoint: 'import' })
+      .archiveSelected(ids)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => {
-          this.assetRosters.reload();
-
-          // reload counts
-          this.assetRostersUnderServiceCount.reload();
-          this.assetRostersOverdueCount.reload();
-          this.assetRostersDueCount.reload();
-          this.assetRostersInPMCount.reload();
-          this.assetRostersPMNotSetCount.reload();
+          this.archivingSelected.set(false);
+          this.exitSelectionMode();
+          this.reloadAfterImport();
+        },
+        error: () => {
+          this.archivingSelected.set(false);
         },
       });
+  }
+
+  /**
+   * Restores the selected archived records after confirmation.
+   */
+  unarchiveSelected(): void {
+    const ids = this.selectedAssetRosterIds();
+
+    if (ids.length === 0 || this.unarchivingSelected()) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      header: t('unarchiveSelectedConfirmTitle', {}, 'asset-roster'),
+      message: t('unarchiveSelectedConfirmMessage', { count: ids.length }, 'asset-roster'),
+      accept: () => this.doUnarchiveSelected(ids),
+    });
+  }
+
+  /**
+   * Executes the unarchive request for the confirmed record ids.
+   * @param ids - The record ids to restore.
+   */
+  private doUnarchiveSelected(ids: string[]): void {
+    this.unarchivingSelected.set(true);
+
+    this.crudAssetRoster
+      .unarchiveSelected(ids)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.unarchivingSelected.set(false);
+          this.exitSelectionMode();
+          this.reloadAfterImport();
+        },
+        error: () => {
+          this.unarchivingSelected.set(false);
+        },
+      });
+  }
+
+  /** Reloads the list and every status-count query after a data mutation. */
+  reloadAfterImport(): void {
+    this.assetRosters.reload();
+    this.assetRostersUnderServiceCount.reload();
+    this.assetRostersOverdueCount.reload();
+    this.assetRostersDueCount.reload();
+    this.assetRostersInPMCount.reload();
+    this.assetRostersPMNotSetCount.reload();
   }
 
   /**

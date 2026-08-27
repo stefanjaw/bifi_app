@@ -1,0 +1,166 @@
+@let scope = 'asset-roster';
+
+<p-dialog
+  [header]="'import.previewTitle' | translate: {} : scope"
+  [(visible)]="dialogState"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-[96vw] max-w-6xl"
+  [contentStyle]="{ overflow: 'auto', 'max-height': '70vh' }"
+>
+  <div class="flex flex-col gap-5">
+    <div>
+      <p class="m-0 text-sm text-surface-600">
+        {{ 'import.fileLabel' | translate: {} : scope }}
+        <strong>{{ fileName() }}</strong>
+      </p>
+      <p class="mt-1 mb-0 text-sm text-surface-500">
+        {{ 'import.instructions' | translate: {} : scope }}
+      </p>
+    </div>
+
+    @if (parseError(); as error) {
+      <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        {{ error }}
+      </div>
+    } @else {
+      <section class="flex flex-col gap-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="m-0 text-base font-semibold">
+              {{ 'import.columnsTitle' | translate: {} : scope }}
+            </h3>
+            <p class="mt-1 mb-0 text-sm text-surface-500">
+              {{
+                'import.columnsSelectedCount'
+                  | translate
+                    : { selected: selectedColumns().length, total: columns().length }
+                    : scope
+              }}
+            </p>
+          </div>
+
+          <div class="flex gap-2">
+            <p-button
+              [label]="'import.selectAll' | translate: {} : scope"
+              size="small"
+              [outlined]="true"
+              (onClick)="selectAllColumns()"
+            ></p-button>
+
+            <p-button
+              [label]="'import.clearSelection' | translate: {} : scope"
+              size="small"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="clearSelectedColumns()"
+            ></p-button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          @for (column of columns(); track column) {
+            <label
+              class="flex cursor-pointer items-center gap-2 rounded-md border border-surface-200 p-2 text-sm"
+            >
+              <input
+                type="checkbox"
+                [checked]="selectedColumns().includes(column)"
+                (change)="toggleColumn(column, $event)"
+              />
+              <span class="truncate">{{ column }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-3">
+        <div>
+          <h3 class="m-0 text-base font-semibold">
+            {{ 'import.previewTitlePreview' | translate: {} : scope }}
+          </h3>
+          <p class="mt-1 mb-0 text-sm text-surface-500">
+            {{
+              'import.previewRowsCount'
+                | translate: { shown: rows().slice(0, 10).length, total: rows().length } : scope
+            }}
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-md border border-surface-200">
+          <table class="min-w-full text-sm">
+            <thead class="bg-surface-50">
+              <tr>
+                @for (column of selectedColumns(); track column) {
+                  <th
+                    class="whitespace-nowrap border-b border-surface-200 px-3 py-2 text-left font-semibold"
+                  >
+                    {{ column }}
+                  </th>
+                }
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (row of rows().slice(0, 10); track $index) {
+                <tr>
+                  @for (column of selectedColumns(); track column) {
+                    <td class="max-w-56 truncate border-b border-surface-100 px-3 py-2">
+                      {{ row[column] }}
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      @if (validationMessage(); as message) {
+        <div
+          role="alert"
+          aria-live="assertive"
+          class="whitespace-pre-line rounded-md border p-3 text-sm"
+          [class]="
+            validationPassed()
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-700'
+          "
+        >
+          {{ message }}
+        </div>
+      }
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <p-button
+        [label]="'cancel' | translate: {} : scope"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="validating() || importing()"
+        (onClick)="closeImportDialog()"
+      ></p-button>
+
+      <p-button
+        [label]="'import.validate' | translate: {} : scope"
+        icon="pi pi-check-circle"
+        [loading]="validating()"
+        [disabled]="
+          !!parseError() || selectedColumns().length === 0 || rows().length === 0 || importing()
+        "
+        (onClick)="validateImport()"
+      ></p-button>
+
+      <p-button
+        [label]="'import.doImport' | translate: {} : scope"
+        icon="pi pi-upload"
+        [loading]="importing()"
+        [disabled]="!validationPassed() || validating()"
+        (onClick)="import()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -443,7 +443,7 @@ export class AssetRosterMaintenance implements DirtyComponent {
         licenseKey: assetRoster.softwareConfiguration?.licenseKey ?? null,
         preventAutoUpdate: assetRoster.softwareConfiguration?.preventAutoUpdate ?? false,
       },
-      condition: assetRoster.condition,
+      conditionId: assetRoster.conditionId?._id || null,
       currentPrice: assetRoster.currentPrice,
       acquiredDate: assetRoster.acquiredDate ? new Date(assetRoster.acquiredDate) : null,
       locationId: assetRoster.locationId?._id || '',
