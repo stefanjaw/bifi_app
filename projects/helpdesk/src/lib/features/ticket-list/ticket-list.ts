@@ -99,13 +99,6 @@ export class TicketList {
   constructor() {
     this._restoreViewState();
 
-    // Ensure initial view is captured so it is persisted when navigating away.
-    const pendingView = this.listStateManager.pendingRestore?.view;
-    const partialView = this.listStateManager.partialSave().view;
-    if (!pendingView && partialView === undefined) {
-      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
-    }
-
     effect(() => {
       const view = this.viewState();
       untracked(() => this.listStateManager.savePartialState({ view }));

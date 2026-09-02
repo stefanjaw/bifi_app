@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, untracked, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
@@ -129,13 +139,6 @@ export class ProjectsList {
 
   constructor() {
     this._restoreViewState();
-
-    // Ensure initial view is captured so it is persisted when navigating away.
-    const pendingView = this.listStateManager.pendingRestore?.view;
-    const partialView = this.listStateManager.partialSave().view;
-    if (!pendingView && partialView === undefined) {
-      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
-    }
 
     effect(() => {
       const view = this.viewState();

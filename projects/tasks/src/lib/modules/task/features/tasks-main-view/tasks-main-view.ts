@@ -188,13 +188,6 @@ export class TasksMainView {
     // Restore view state from pendingRestore (handled by ResourceManager).
     this._restoreViewState();
 
-    // Ensure initial view is captured so it is persisted when navigating away.
-    const pendingView = this.listStateManager.pendingRestore?.view;
-    const partialView = this.listStateManager.partialSave().view;
-    if (!pendingView && partialView === undefined) {
-      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
-    }
-
     // Sync viewState → ListStateManager for URL + localStorage persistence.
     effect(() => {
       const view = this.viewState();
