@@ -111,6 +111,7 @@ export class ResourceManager<T> {
         state = {
           searchText: partial.searchText,
           filterRows: partial.filterRows,
+          view: partial.view,
         };
       } else {
         const pagination = this.paginationManager.paginationOptions();
@@ -121,6 +122,7 @@ export class ResourceManager<T> {
           sort: sort as ListState['sort'],
           searchText: partial.searchText,
           filterRows: partial.filterRows,
+          view: partial.view,
         };
       }
 
@@ -153,6 +155,11 @@ export class ResourceManager<T> {
         triggerRequest: this._trigger,
       });
     }
+  }
+
+  /** Persist the current list state to localStorage immediately. */
+  persistStateNow(): void {
+    this._saveState();
   }
 
   /**
@@ -236,6 +243,7 @@ export class ResourceManager<T> {
         page: 1,
         limit: 10,
         sort: [],
+        view: partial.view,
       };
     } else {
       const pagination = this.paginationManager.paginationOptions();
@@ -246,6 +254,7 @@ export class ResourceManager<T> {
         page: pagination.page,
         limit: pagination.limit,
         sort: sort as ListState['sort'],
+        view: partial.view,
       };
     }
 

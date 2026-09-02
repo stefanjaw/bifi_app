@@ -1,16 +1,4 @@
-import {
-  afterNextRender,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  signal,
-  untracked,
-  viewChild,
-} from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
@@ -53,8 +41,6 @@ function calendarColorFromId(id: string | number): CalendarEvent['color'] {
   return CALENDAR_COLORS[h % CALENDAR_COLORS.length];
 }
 
-const PROJECTS_VIEW_QUERY_KEY = '_view';
-
 @Component({
   selector: 'bifi-app-projects-list',
   providers: [
@@ -86,11 +72,9 @@ export class ProjectsList {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private document = inject(DOCUMENT);
+  private listStateManager = inject(ListStateManager);
 
   private rm = injectResourceManager<project>();
-
-  private _viewRestored = signal(false);
 
   viewState = signal<'gantt' | 'list' | 'timeline' | 'calendar'>('gantt');
 
@@ -146,24 +130,16 @@ export class ProjectsList {
   constructor() {
     this._restoreViewState();
 
-    afterNextRender(() => {
-      this._viewRestored.set(true);
-    });
+    // Ensure initial view is captured so it is persisted when navigating away.
+    const pendingView = this.listStateManager.pendingRestore?.view;
+    const partialView = this.listStateManager.partialSave().view;
+    if (!pendingView && partialView === undefined) {
+      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
+    }
 
     effect(() => {
-      if (!this._viewRestored()) return;
       const view = this.viewState();
-      untracked(() => {
-        const win = this.document?.defaultView;
-        if (!win) return;
-        const existing = new URLSearchParams(win.location.search);
-        existing.set(PROJECTS_VIEW_QUERY_KEY, view);
-        win.history.replaceState(
-          win.history.state,
-          '',
-          win.location.pathname + '?' + existing.toString()
-        );
-      });
+      untracked(() => this.listStateManager.savePartialState({ view }));
     });
 
     effect(() => {
@@ -180,8 +156,12 @@ export class ProjectsList {
   }
 
   private _restoreViewState(): void {
-    const params = this.route.snapshot.queryParams as Record<string, string>;
-    const view = params[PROJECTS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline' | 'calendar';
+    const view = this.listStateManager.pendingRestore?.view as
+      | 'gantt'
+      | 'list'
+      | 'timeline'
+      | 'calendar'
+      | undefined;
     if (view && ['gantt', 'list', 'timeline', 'calendar'].includes(view)) this.viewState.set(view);
   }
 
@@ -221,10 +201,14 @@ export class ProjectsList {
   }
 
   goToEditProject(id: string): void {
+    // Persist list state now so it will be available on return (localStorage)
+    this.rm.persistStateNow();
     this.router.navigate(['../edit', id], { relativeTo: this.route });
   }
 
   onGanttAddSubitem(id: string): void {
+    // Persist list state now so it will be available on return (localStorage)
+    this.rm.persistStateNow();
     this.router.navigate(['../create'], {
       relativeTo: this.route,
       queryParams: { parentId: id },
@@ -278,6 +262,9 @@ export class ProjectsList {
     const filters = JSON.stringify([
       { field: 'projectId.name', operator: '==', value: project.name, type: 'string' },
     ]);
+
+    // Persist list state so Tasks view can restore context when navigating back
+    this.rm.persistStateNow();
 
     this.router.navigate(['/tasks/view'], {
       queryParams: { _filters: filters, _view: 'list' },

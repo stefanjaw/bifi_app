@@ -10,7 +10,6 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
@@ -58,8 +57,6 @@ function calendarColorFromId(id: string | number): CalendarEvent['color'] {
   return CALENDAR_COLORS[h % CALENDAR_COLORS.length];
 }
 
-const TASKS_VIEW_QUERY_KEY = '_view';
-
 @Component({
   selector: 'bifi-app-tasks-main-view',
   providers: [
@@ -90,16 +87,12 @@ export class TasksMainView {
   private crudTasks = inject(CrudTasks);
   private tasksMaintenanceContext = inject(TasksMaintenanceContext);
   private route = inject(ActivatedRoute);
-  private document = inject(DOCUMENT);
   private destroy$ = inject(DestroyRef);
+  private listStateManager = inject(ListStateManager);
 
   // ResourceManager (fetch-all mode) owns: filter→searchParams, active/inactive
   // logic, URL sync for list state, and localStorage save/restore.
   private rm = injectResourceManager<task>();
-
-  // Guard so the _view URL sync effect does not overwrite the restored URL
-  // on the initial render.
-  private _viewRestored = signal(false);
 
   // states
   viewState = signal<'gantt' | 'list' | 'timeline' | 'calendar'>('gantt');
@@ -192,35 +185,28 @@ export class TasksMainView {
   updateTasksFormDialog = viewChild<UpdateTasksFormDialog>('updateTasksFormDialog');
 
   constructor() {
-    // Restore only the _view param — ResourceManager restores list state.
+    // Restore view state from pendingRestore (handled by ResourceManager).
     this._restoreViewState();
 
-    // After the first render, allow the _view URL sync effect to write.
-    afterNextRender(() => {
-      this._viewRestored.set(true);
+    // Ensure initial view is captured so it is persisted when navigating away.
+    const pendingView = this.listStateManager.pendingRestore?.view;
+    const partialView = this.listStateManager.partialSave().view;
+    if (!pendingView && partialView === undefined) {
+      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
+    }
 
-      // Auto-open update dialog if navigated from notification (?id=xxx)
+    // Sync viewState → ListStateManager for URL + localStorage persistence.
+    effect(() => {
+      const view = this.viewState();
+      untracked(() => this.listStateManager.savePartialState({ view }));
+    });
+
+    // Auto-open update dialog if navigated from notification (?id=xxx)
+    afterNextRender(() => {
       const taskId = this.route.snapshot.queryParamMap.get('id');
       if (taskId) {
         this.tasksMaintenanceContext.openUpdateTaskDialog(taskId);
       }
-    });
-
-    // Sync _view to the URL independently of ResourceManager's list-state sync.
-    effect(() => {
-      if (!this._viewRestored()) return;
-      const view = this.viewState();
-      untracked(() => {
-        const win = this.document?.defaultView;
-        if (!win) return;
-        const existing = new URLSearchParams(win.location.search);
-        existing.set(TASKS_VIEW_QUERY_KEY, view);
-        win.history.replaceState(
-          win.history.state,
-          '',
-          win.location.pathname + '?' + existing.toString()
-        );
-      });
     });
 
     // Rebuild tree whenever ganttItems() changes; carry expand state from prevMap
@@ -276,11 +262,15 @@ export class TasksMainView {
       .subscribe(id => this.deleteTask(id));
   }
 
-  // Restores only the view mode (gantt/list/timeline) from the URL.
+  // Restores only the view mode (gantt/list/timeline) from pendingRestore.
   // ResourceManager handles all other list state (filters, search, page).
   private _restoreViewState(): void {
-    const params = this.route.snapshot.queryParams as Record<string, string>;
-    const view = params[TASKS_VIEW_QUERY_KEY] as 'gantt' | 'list' | 'timeline' | 'calendar';
+    const view = this.listStateManager.pendingRestore?.view as
+      | 'gantt'
+      | 'list'
+      | 'timeline'
+      | 'calendar'
+      | undefined;
     if (view && ['gantt', 'list', 'timeline', 'calendar'].includes(view)) this.viewState.set(view);
   }
 

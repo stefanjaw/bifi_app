@@ -1,10 +1,8 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
-  DOCUMENT,
   effect,
   inject,
   signal,
@@ -35,8 +33,6 @@ import { CreateTasksFormDialog } from '@avalantec/tasks';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 
-const TASKS_VIEW_QUERY_KEY = '_view';
-
 @Component({
   selector: 'bifi-app-ticket-list',
   providers: [ListStateManager, ...provideResourceManager(CrudTickets)],
@@ -65,11 +61,10 @@ export class TicketList {
   private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private document = inject(DOCUMENT);
+  private listStateManager = inject(ListStateManager);
 
   // states
   viewState = signal<'list' | 'calendar'>('list');
-  private _viewRestored = signal(false);
   isListView = computed(() => this.viewState() === 'list');
 
   columns = ticketColumns;
@@ -104,31 +99,21 @@ export class TicketList {
   constructor() {
     this._restoreViewState();
 
-    // After the first render, allow the _view URL sync effect to write.
-    afterNextRender(() => {
-      this._viewRestored.set(true);
-    });
+    // Ensure initial view is captured so it is persisted when navigating away.
+    const pendingView = this.listStateManager.pendingRestore?.view;
+    const partialView = this.listStateManager.partialSave().view;
+    if (!pendingView && partialView === undefined) {
+      untracked(() => this.listStateManager.savePartialState({ view: this.viewState() }));
+    }
 
     effect(() => {
-      if (!this._viewRestored()) return;
       const view = this.viewState();
-      untracked(() => {
-        const win = this.document?.defaultView;
-        if (!win) return;
-        const existing = new URLSearchParams(win.location.search);
-        existing.set(TASKS_VIEW_QUERY_KEY, view);
-        win.history.replaceState(
-          win.history.state,
-          '',
-          win.location.pathname + '?' + existing.toString()
-        );
-      });
+      untracked(() => this.listStateManager.savePartialState({ view }));
     });
   }
 
   private _restoreViewState(): void {
-    const params = this.route.snapshot.queryParams as Record<string, string>;
-    const view = params[TASKS_VIEW_QUERY_KEY] as 'list' | 'calendar';
+    const view = this.listStateManager.pendingRestore?.view as 'list' | 'calendar' | undefined;
     if (view && ['list', 'calendar'].includes(view)) this.viewState.set(view);
   }
 
@@ -161,6 +146,8 @@ export class TicketList {
   }
 
   gotoEditTicket = (element: ticket) => {
+    // Persist list state now so it will be available on return (localStorage)
+    this.resourceManager.persistStateNow();
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
 

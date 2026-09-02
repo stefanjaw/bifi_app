@@ -13,6 +13,7 @@ export interface ListState {
   page: number;
   limit: number;
   sort: { field: string; order: 'asc' | 'desc' }[];
+  view?: string;
 }
 
 export const LIST_STATE_QUERY_KEYS = {
@@ -21,6 +22,7 @@ export const LIST_STATE_QUERY_KEYS = {
   search: '_search',
   filters: '_filters',
   sort: '_sort',
+  view: '_view',
 } as const;
 
 @Injectable({
@@ -112,6 +114,7 @@ export class ListStateManager {
       [k.search]: state.searchText || null,
       [k.filters]: state.filterRows?.length ? JSON.stringify(state.filterRows) : null,
       [k.sort]: state.sort?.length ? JSON.stringify(state.sort) : null,
+      [k.view]: state.view || null,
     };
   }
 
@@ -129,13 +132,15 @@ export class ListStateManager {
       k.limit in params ||
       k.search in params ||
       k.filters in params ||
-      k.sort in params;
+      k.sort in params ||
+      k.view in params;
 
     if (!hasAny) return null;
 
     const page = params[k.page] ? parseInt(params[k.page], 10) : 1;
     const limit = params[k.limit] ? parseInt(params[k.limit], 10) : 10;
     const searchText = params[k.search] ?? '';
+    const view = params[k.view] ?? undefined;
 
     let filterRows: SerializableFilterRow[] = [];
     try {
@@ -151,6 +156,6 @@ export class ListStateManager {
       sort = [];
     }
 
-    return { page, limit, searchText, filterRows, sort };
+    return { page, limit, searchText, filterRows, sort, view };
   }
 }
