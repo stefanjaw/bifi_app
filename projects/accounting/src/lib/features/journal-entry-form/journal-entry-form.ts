@@ -25,6 +25,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { JournalEntryFormService, JournalEntryFormModel } from '../../services/journal-entry-form';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
+import { ToastManager } from '@avalantec/base-app/core';
 
 @Component({
   selector: 'bifi-app-journal-entry-form',
@@ -52,6 +53,7 @@ export class JournalEntryForm {
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
   private translationService = inject(TranslationService);
+  private toastManager = inject(ToastManager);
 
   id = input<string>('');
 
@@ -137,11 +139,11 @@ export class JournalEntryForm {
     const totalDebit = lines.reduce((s: number, l: any) => s + (l.debit ?? 0), 0);
     const totalCredit = lines.reduce((s: number, l: any) => s + (l.credit ?? 0), 0);
     if (Math.abs(totalDebit - totalCredit) > 0.0001) {
-      alert(this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting'));
+      this.toastManager.showError(this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting'));
       return;
     }
     if (lines.length < 2) {
-      alert(this.translationService.translate('validation.minLinesRequired', {}, 'accounting'));
+      this.toastManager.showError(this.translationService.translate('validation.minLinesRequired', {}, 'accounting'));
       return;
     }
 

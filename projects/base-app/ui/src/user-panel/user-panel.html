@@ -13,6 +13,6 @@
       [style]="{ width: '32px', height: '32px' }"
       [shape]="'circle'"
     ></p-avatar>
-    <span>{{ user()?.contactId?.name || user()?.username }}</span>
+    <span class="hidden sm:inline">{{ user()?.contactId?.name || user()?.username }}</span>
   </p-button>
 </div>

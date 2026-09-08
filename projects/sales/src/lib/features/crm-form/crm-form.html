@@ -78,6 +78,7 @@
               formControlName="amount"
               [min]="0.01"
               mode="decimal"
+              [prefix]="selectedCurrencySymbol()"
               [placeholder]="'sales.placeholder.amount' | translate: {} : 'sales'"
             />
             <bifi-app-form-error></bifi-app-form-error>

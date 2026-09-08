@@ -182,7 +182,7 @@
           <p-tabpanel value="0">
             <div class="flex flex-col gap-4 py-4">
               <div class="overflow-x-auto rounded border border-gray-200">
-                <table class="w-full border-collapse" style="table-layout: fixed">
+                <table class="w-full min-w-[1000px] border-collapse" style="table-layout: fixed">
                   <colgroup>
                     <col [style.width.px]="colWidths()['product']" />
                     <col [style.width.px]="colWidths()['description']" />
@@ -298,7 +298,6 @@
                             <p-inputNumber
                               [formControl]="$any(line.get('quantity'))"
                               [min]="0"
-                              [minFractionDigits]="2"
                               [placeholder]="'placeholders.1' | translate: {} : 'accounting'"
                               [showButtons]="true"
                               buttonLayout="horizontal"
@@ -313,10 +312,6 @@
                               [min]="0"
                               [minFractionDigits]="2"
                               [placeholder]="'placeholders.0.00' | translate: {} : 'accounting'"
-                              [showButtons]="true"
-                              buttonLayout="horizontal"
-                              decrementButtonIcon="pi pi-minus"
-                              incrementButtonIcon="pi pi-plus"
                               styleClass="w-full"
                             ></p-inputNumber>
                           </td>

@@ -2,80 +2,85 @@
 @let userConfirmed = loggedUser?.confirmed ?? false;
 
 @if (loggedUser) {
-  <p-toolbar class="w-full h-[75px]">
-    <ng-template #start>
-      @if (userConfirmed) {
+  <p-toolbar class="w-full h-[75px]" styleClass="!flex-nowrap">
+    <div class="flex w-full items-center justify-between flex-nowrap gap-2">
+      <!-- Izquierda: Boton de menu y titulo -->
+      <div class="flex items-center shrink-0 overflow-hidden">
+        @if (userConfirmed) {
+          <p-button
+            (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
+            variant="text"
+            severity="contrast"
+            [pTooltip]="
+              (isOpened() ? 'sidebar.collapse' : 'sidebar.expand') | translate: {} : 'base-app/ui'
+            "
+          >
+            @if (isOpened()) {
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+                <path d="m16 15-3-3 3-3" />
+              </svg>
+            } @else {
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+                <path d="m14 9 3 3-3 3" />
+              </svg>
+            }
+          </p-button>
+        }
         <p-button
-          (onClick)="isOpened() ? sidenavManager.closeSidenav() : sidenavManager.openSidenav()"
+          [label]="title()"
+          (onClick)="goHome()"
           variant="text"
           severity="contrast"
-          [pTooltip]="
-            (isOpened() ? 'sidebar.collapse' : 'sidebar.expand') | translate: {} : 'base-app/ui'
-          "
-        >
-          @if (isOpened()) {
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M9 3v18" />
-              <path d="m16 15-3-3 3-3" />
-            </svg>
-          } @else {
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M9 3v18" />
-              <path d="m14 9 3 3-3 3" />
-            </svg>
-          }
-        </p-button>
-      }
+          class="hidden sm:block shrink-0 truncate max-w-[150px] md:max-w-[250px]"
+        ></p-button>
+      </div>
 
-      <p-button
-        [label]="title()"
-        (onClick)="goHome()"
-        variant="text"
-        severity="contrast"
-      ></p-button>
-    </ng-template>
-    <ng-template #center>
-      @if (userConfirmed) {
-        <bifi-app-global-search></bifi-app-global-search>
-      }
-    </ng-template>
-    <ng-template #end>
-      @if (debugManager.debugEnable()) {
-        <small class="text-red-500 font-bold me-3">
-          {{ 'debug.enabled' | translate: {} : 'base-app/ui' }}
-          <p-button
-            size="small"
-            [label]="'debug.deactivate' | translate: {} : 'base-app/ui'"
-            variant="text"
-            severity="danger"
-            (onClick)="debugManager.toggleDebug()"
-          ></p-button>
-        </small>
-      }
+      <!-- Centro: Buscador flexible -->
+      <div class="flex-1 min-w-[50px] max-w-lg shrink">
+        @if (userConfirmed) {
+          <bifi-app-global-search></bifi-app-global-search>
+        }
+      </div>
 
-      <div class="flex items-center gap-2">
+      <!-- Derecha: Notificaciones y Usuario -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        @if (debugManager.debugEnable()) {
+          <small class="text-red-500 font-bold me-1 sm:me-3 hidden md:block">
+            {{ 'debug.enabled' | translate: {} : 'base-app/ui' }}
+            <p-button
+              size="small"
+              [label]="'debug.deactivate' | translate: {} : 'base-app/ui'"
+              variant="text"
+              severity="danger"
+              (onClick)="debugManager.toggleDebug()"
+            ></p-button>
+          </small>
+        }
+
         @for (item of toolbarItems(); track $index) {
           <p-button
             [icon]="item.icon"
@@ -90,7 +95,7 @@
         }
         <bifi-app-user-panel></bifi-app-user-panel>
       </div>
-    </ng-template>
+    </div>
   </p-toolbar>
 }
 
