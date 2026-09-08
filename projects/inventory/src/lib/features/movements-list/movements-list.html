@@ -27,4 +27,26 @@
   [columns]="movementColumns"
   [data]="entries"
   [scope]="'inventory'"
-></bifi-app-table-layout>
+>
+  <ng-template #actions let-element>
+    <p-button
+      type="button"
+      size="small"
+      variant="text"
+      severity="warn"
+      icon="pi pi-replay"
+      [pTooltip]="'reverse' | translate: {} : 'inventory'"
+      tooltipPosition="left"
+      [disabled]="isReversing()"
+      (onClick)="$event.stopPropagation(); openReverseDialog(element)"
+      *bifiAppHasPermission="'inventory/movements:create:model'"
+    ></p-button>
+  </ng-template>
+</bifi-app-table-layout>
+
+<bifi-app-buttons-confirmation-dialog
+  #reversalDialog
+  (confirmClicked)="reverseMovement()"
+></bifi-app-buttons-confirmation-dialog>
+
+<p-toast></p-toast>

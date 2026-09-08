@@ -39,6 +39,22 @@
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
 
+          @if (selectedType() === 'ADJUSTMENT') {
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'adjustmentDirection' | translate: {} : 'inventory' }} *
+              </bifi-app-form-label>
+              <p-select
+                formControlName="adjustmentDirection"
+                [options]="adjustmentDirections()"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'selectDirection' | translate: {} : 'inventory'"
+              ></p-select>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
+
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'product' | translate: {} : 'inventory' }} *
@@ -105,6 +121,22 @@
             ></p-inputNumber>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          @if (showUnitCost()) {
+            <bifi-app-form-field>
+              <bifi-app-form-label>
+                {{ 'unitCost' | translate: {} : 'inventory' }}
+              </bifi-app-form-label>
+              <p-inputNumber
+                formControlName="unitCost"
+                [min]="0"
+                mode="currency"
+                currency="USD"
+                [placeholder]="'unitCostPlaceholder' | translate: {} : 'inventory'"
+              ></p-inputNumber>
+              <bifi-app-form-error></bifi-app-form-error>
+            </bifi-app-form-field>
+          }
 
           <bifi-app-form-field>
             <bifi-app-form-label>

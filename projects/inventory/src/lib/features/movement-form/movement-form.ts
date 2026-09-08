@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -20,9 +21,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MovementFormService, MovementFormModel } from '../../services/movement-form';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
+import { product } from '../../interfaces/product';
 
 @Component({
   selector: 'bifi-app-movement-form',
@@ -64,6 +66,65 @@ export class MovementForm {
       value: 'ADJUSTMENT',
     },
   ]);
+
+  adjustmentDirections = computed(() => [
+    {
+      label: this.translationService.translate('adjustmentIncrease', {}, 'inventory'),
+      value: 'INCREASE',
+    },
+    {
+      label: this.translationService.translate('adjustmentDecrease', {}, 'inventory'),
+      value: 'DECREASE',
+    },
+  ]);
+
+  protected selectedType = toSignal(this.formService.form.controls.type.valueChanges, {
+    initialValue: 'IN',
+  });
+
+  protected selectedDirection = toSignal(
+    this.formService.form.controls.adjustmentDirection.valueChanges,
+    { initialValue: null }
+  );
+
+  private selectedProductId = toSignal(this.formService.form.controls.productId.valueChanges, {
+    initialValue: '',
+  });
+
+  /** Unit cost is only user-definable when the movement adds stock (IN or ADJUSTMENT/INCREASE); decreases consume at the current average */
+  showUnitCost = computed(
+    () =>
+      this.selectedType() === 'IN' ||
+      (this.selectedType() === 'ADJUSTMENT' && this.selectedDirection() === 'INCREASE')
+  );
+
+  constructor() {
+    effect(() => {
+      const type = this.selectedType();
+      if (type === 'ADJUSTMENT') {
+        if (!this.selectedDirection()) {
+          this.formService.form.controls.adjustmentDirection.setValue('INCREASE');
+        }
+      } else if (this.formService.form.controls.adjustmentDirection.value) {
+        this.formService.form.controls.adjustmentDirection.setValue(null);
+      }
+    });
+
+    effect(() => {
+      const selectedId = this.selectedProductId();
+      const products = (this.products() ?? []) as product[];
+      if (!selectedId || products.length === 0) {
+        return;
+      }
+      const matched = products.find(p => p._id === selectedId);
+      if (!matched) {
+        return;
+      }
+      this.formService.form.controls.unitCost.setValue(matched.costPrice ?? 0, {
+        emitEvent: false,
+      });
+    });
+  }
 
   productsResource = this.crudProducts.get({});
   warehousesResource = this.crudWarehouses.get({});

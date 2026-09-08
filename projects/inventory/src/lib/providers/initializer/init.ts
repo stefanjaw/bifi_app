@@ -53,6 +53,13 @@ export function initializeInventory() {
             scope: 'inventory',
           },
           {
+            icon: PrimeIcons.DOLLAR,
+            routerLink: ['/inventory/valuation'],
+            label: 'valuation',
+            resource: 'inventory/valuation/menu',
+            scope: 'inventory',
+          },
+          {
             icon: PrimeIcons.OBJECTS_COLUMN,
             routerLink: ['/inventory/uom-categories'],
             label: 'uomCategories',

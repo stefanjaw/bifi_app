@@ -32,18 +32,17 @@ export class CrudApiKeys extends ApiRequestManager<apiKey> {
    * @param options - Same options as the base post method.
    * @returns An observable of the created key including the raw `key` string.
    */
-  override post<TResponse>(
-    {
-      data,
-      specificEndpoint = '',
-      fileFields = [],
-      notificationConfig,
-    }: {
-      data: Record<string, any>;
-      specificEndpoint?: string;
-      fileFields?: string[];
-      notificationConfig?: { enable?: boolean; successMessage?: string };
-    }): Observable<TResponse | undefined> {
+  override post<TResponse>({
+    data,
+    specificEndpoint = '',
+    fileFields = [],
+    notificationConfig,
+  }: {
+    data: Record<string, any>;
+    specificEndpoint?: string;
+    fileFields?: string[];
+    notificationConfig?: { enable?: boolean; successMessage?: string };
+  }): Observable<TResponse | undefined> {
     return super.post<TResponse>({
       data,
       specificEndpoint,

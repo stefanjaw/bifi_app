@@ -136,6 +136,13 @@ export const INVENTORY_ROUTES: Routes = [
     data: { resource: 'inventory/transfer/create' },
   },
   {
+    path: 'valuation',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/valuation-report/valuation-report').then(c => c.ValuationReport),
+    data: { resource: 'inventory/valuation/list' },
+  },
+  {
     path: 'uom-categories',
     canActivate: [permissionGuard],
     loadComponent: () =>

@@ -9,6 +9,10 @@ export interface MovementFormModel {
   warehouseId: string;
   locationId: string;
   quantity: number;
+  /** Optional unit cost override; when omitted the server defaults to the product's cost price (IN) or the current weighted average (OUT) */
+  unitCost: number | null;
+  /** Only used for ADJUSTMENT movements (INCREASE adds stock, DECREASE removes stock) */
+  adjustmentDirection: 'INCREASE' | 'DECREASE' | null;
   reference: string;
   notes: string;
 }
@@ -28,6 +32,8 @@ export class MovementFormService extends BaseForm<MovementFormModel> {
       warehouseId: ['', [Validators.required]],
       locationId: ['', [Validators.required]],
       quantity: [1, [Validators.required, Validators.min(1)]],
+      unitCost: [null],
+      adjustmentDirection: [null],
       reference: [''],
       notes: [''],
     });

@@ -1,0 +1,236 @@
+<h1 class="text-2xl font-bold text-gray-800">
+  {{ 'valuationReport' | translate: {} : 'inventory' }}
+</h1>
+
+@if (isLoading()) {
+  <p-progress-bar mode="indeterminate" [style]="{ height: '5px' }"></p-progress-bar>
+}
+
+@if (error()) {
+  <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
+    {{ 'reportLoadError' | translate: {} : 'inventory' }}
+  </div>
+}
+
+<div
+  class="bg-white rounded-xl shadow p-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end"
+>
+  <div>
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+      {{ 'valuationMode' | translate: {} : 'inventory' }}
+    </p>
+    <p-select
+      [ngModel]="mode()"
+      (ngModelChange)="setMode($event)"
+      [options]="[
+        { label: ('asOf' | translate: {} : 'inventory'), value: 'AS_OF' },
+        { label: ('dateRange' | translate: {} : 'inventory'), value: 'DATE_RANGE' },
+      ]"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full"
+    ></p-select>
+  </div>
+
+  @if (mode() === 'AS_OF') {
+    <div>
+      <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+        {{ 'asOfDate' | translate: {} : 'inventory' }}
+      </p>
+      <p-datepicker
+        [ngModel]="asOfDate()"
+        (ngModelChange)="asOfDate.set($event)"
+        [showIcon]="true"
+        appendTo="body"
+        dateFormat="mm/dd/yy"
+      ></p-datepicker>
+    </div>
+  } @else {
+    <div class="md:col-span-2">
+      <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+        {{ 'dateRange' | translate: {} : 'inventory' }}
+      </p>
+      <p-datepicker
+        [ngModel]="rangeDates()"
+        (ngModelChange)="rangeDates.set($event)"
+        selectionMode="range"
+        [showIcon]="true"
+        appendTo="body"
+        dateFormat="mm/dd/yy"
+      ></p-datepicker>
+    </div>
+  }
+
+  <div>
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+      {{ 'warehouse' | translate: {} : 'inventory' }}
+    </p>
+    <p-select
+      [ngModel]="warehouseFilter()"
+      (ngModelChange)="onWarehouseChange($event)"
+      [options]="warehouses()"
+      [placeholder]="'selectWarehouse' | translate: {} : 'inventory'"
+      [showClear]="true"
+      styleClass="w-full"
+    ></p-select>
+  </div>
+
+  <div>
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+      {{ 'location' | translate: {} : 'inventory' }}
+    </p>
+    <p-select
+      [ngModel]="locationFilter()"
+      (ngModelChange)="locationFilter.set($event ?? '')"
+      [options]="locations()"
+      [placeholder]="'selectLocationFirst' | translate: {} : 'inventory'"
+      [showClear]="true"
+      styleClass="w-full"
+    ></p-select>
+  </div>
+
+  <div>
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+      {{ 'product' | translate: {} : 'inventory' }}
+    </p>
+    <p-select
+      [ngModel]="productFilter()"
+      (ngModelChange)="productFilter.set($event ?? '')"
+      [options]="products()"
+      [placeholder]="'selectProduct' | translate: {} : 'inventory'"
+      [showClear]="true"
+      [filter]="true"
+      filterBy="label"
+      styleClass="w-full"
+    ></p-select>
+  </div>
+
+  <div>
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-1">
+      {{ 'productType' | translate: {} : 'inventory' }}
+    </p>
+    <p-select
+      [ngModel]="productTypeFilter()"
+      (ngModelChange)="productTypeFilter.set($event ?? '')"
+      [options]="productTypes()"
+      [placeholder]="'selectProductType' | translate: {} : 'inventory'"
+      [showClear]="true"
+      styleClass="w-full"
+    ></p-select>
+  </div>
+</div>
+
+@if (report(); as data) {
+  @if (data.mode === 'DATE_RANGE') {
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      @for (card of rangeSummary(data); track card.label) {
+        <div
+          class="bg-white rounded-xl shadow p-4 border-l-4"
+          [class]="
+            card.emphasis === 'positive'
+              ? 'border-green-500'
+              : card.emphasis === 'negative'
+                ? 'border-red-500'
+                : card.emphasis === 'result'
+                  ? 'border-indigo-500'
+                  : 'border-gray-300'
+          "
+        >
+          <p class="text-xs text-gray-500 font-medium">
+            {{ card.label | translate: {} : 'inventory' }}
+          </p>
+          <p
+            class="text-lg font-bold mt-1"
+            [class]="
+              card.emphasis === 'positive'
+                ? 'text-green-600'
+                : card.emphasis === 'negative'
+                  ? 'text-red-600'
+                  : card.emphasis === 'result'
+                    ? 'text-indigo-700'
+                    : 'text-gray-700'
+            "
+          >
+            {{ card.value | currency }}
+          </p>
+        </div>
+      }
+    </div>
+    <p class="text-xs text-gray-400">
+      {{ 'rangeBreakdownHint' | translate: {} : 'inventory' }}
+    </p>
+  }
+
+  @if (data.mode === 'AS_OF' && data.totalValue === 0) {
+    <div class="text-center py-12 text-gray-400">
+      <p class="text-lg">{{ 'noReportData' | translate: {} : 'inventory' }}</p>
+    </div>
+  }
+
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+        <tr>
+          <th class="px-5 py-2.5 text-left font-medium">
+            {{ 'product' | translate: {} : 'inventory' }}
+          </th>
+          <th class="px-5 py-2.5 text-left font-medium">
+            {{ 'sku' | translate: {} : 'inventory' }}
+          </th>
+          <th class="px-5 py-2.5 text-right font-medium">
+            {{ 'quantity' | translate: {} : 'inventory' }}
+          </th>
+          <th class="px-5 py-2.5 text-right font-medium">
+            {{ 'unitCost' | translate: {} : 'inventory' }}
+          </th>
+          <th class="px-5 py-2.5 text-right font-medium">
+            {{ 'totalValue' | translate: {} : 'inventory' }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of data.rows; track row.productId) {
+          <tr class="border-t border-gray-50 hover:bg-gray-50 transition-colors">
+            <td class="px-5 py-2.5">
+              <a
+                [routerLink]="['/inventory/products', row.productId]"
+                class="text-indigo-600 hover:text-indigo-800 font-medium hover:underline"
+              >
+                {{ row.name }}
+              </a>
+            </td>
+            <td class="px-5 py-2.5 text-gray-500 font-mono text-xs">{{ row.sku }}</td>
+            <td class="px-5 py-2.5 text-right text-gray-700">{{ row.quantity }}</td>
+            <td class="px-5 py-2.5 text-right text-gray-700">{{ row.unitCost | currency }}</td>
+            <td class="px-5 py-2.5 text-right font-semibold text-gray-800">
+              {{ row.totalValue | currency }}
+            </td>
+          </tr>
+        }
+      </tbody>
+      <tfoot class="border-t-2 border-gray-200 text-sm">
+        <tr>
+          <td class="px-5 py-3 font-bold text-gray-700" colspan="4">
+            @if (data.mode === 'AS_OF') {
+              {{ 'totalInventoryValue' | translate: {} : 'inventory' }}
+            } @else {
+              {{ 'endingValue' | translate: {} : 'inventory' }}
+            }
+          </td>
+          <td class="px-5 py-3 text-right font-bold text-gray-900">
+            @if (data.mode === 'AS_OF') {
+              {{ data.totalValue | currency }}
+            } @else {
+              {{ data.endingValue | currency }}
+            }
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    @if (data.rows.length === 0) {
+      <div class="text-center py-10 text-gray-400">
+        <p>{{ 'noReportData' | translate: {} : 'inventory' }}</p>
+      </div>
+    }
+  </div>
+}

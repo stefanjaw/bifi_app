@@ -62,6 +62,27 @@
           </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'valuationMethod' | translate: {} : 'inventory'"
+        id="valuation-method"
+        [ordinal]="2"
+      >
+        <bifi-app-form-field>
+          <bifi-app-form-label>
+            {{ 'valuationMethod' | translate: {} : 'inventory' }}
+          </bifi-app-form-label>
+          <p-select
+            formControlName="valuationMethod"
+            [options]="valuationMethodOptions"
+            optionLabel="label"
+            optionValue="value"
+            optionDisabled="disabled"
+            class="w-full"
+          ></p-select>
+          <bifi-app-form-error></bifi-app-form-error>
+        </bifi-app-form-field>
+      </bifi-app-form-section>
     } @else {
       <p-progress-bar mode="indeterminate" [className]="'w-full h-1.25'"></p-progress-bar>
     }

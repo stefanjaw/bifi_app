@@ -20,7 +20,7 @@ import {
 } from '../../services/inventory-settings-form';
 import { CrudWarehouses } from '../../../../services/crud-warehouses';
 import { CrudLocations } from '../../../../services/crud-locations';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 @Component({
   selector: 'bifi-app-inventory-settings-form',
@@ -40,10 +40,24 @@ export class InventorySettingsFormComponent {
   private formService = inject(InventorySettingsForm);
   private crudWarehouses = inject(CrudWarehouses);
   private crudLocations = inject(CrudLocations);
+  private translationService = inject(TranslationService);
   private destroy$ = inject(DestroyRef);
 
   protected form = this.formService.form;
   protected isSubmitLoading = signal(false);
+
+  /** Valuation costing methods available for configuration (FIFO reserved for a future release) */
+  protected valuationMethodOptions = [
+    {
+      label: this.translationService.translate('valuationWeightedAverage', {}, 'inventory'),
+      value: 'WEIGHTED_AVERAGE',
+    },
+    {
+      label: `${this.translationService.translate('valuationFifo', {}, 'inventory')} (${this.translationService.translate('comingSoon', {}, 'inventory')})`,
+      value: 'FIFO',
+      disabled: true,
+    },
+  ];
 
   protected settingsResource = this.crudInventorySettings.getSettings();
   protected warehousesResource = this.crudWarehouses.get({});
@@ -76,6 +90,9 @@ export class InventorySettingsFormComponent {
         this.formService.patchValue({
           defaultWarehouseId: warehouseId,
           defaultLocationId: locationId,
+          valuationMethod:
+            ((raw as Record<string, unknown>)['valuationMethod'] as 'WEIGHTED_AVERAGE' | 'FIFO') ??
+            'WEIGHTED_AVERAGE',
         });
         this.formService.resetDirtyState();
       }
@@ -93,6 +110,7 @@ export class InventorySettingsFormComponent {
     const payload: Record<string, any> = {
       defaultWarehouseId: rawValue.defaultWarehouseId || null,
       defaultLocationId: rawValue.defaultLocationId || null,
+      valuationMethod: rawValue.valuationMethod,
     };
 
     this.crudInventorySettings

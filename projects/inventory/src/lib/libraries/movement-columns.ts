@@ -6,6 +6,8 @@ export const movementColumns: tableColumn<stockMovement>[] = [
   { field: 'warehouseId.name', title: 'warehouse', type: 'text' },
   { field: 'locationId.name', title: 'location', type: 'text' },
   { field: 'quantity', title: 'quantity', type: 'number' },
+  { field: 'unitCost', title: 'unitCost', type: 'currency' },
+  { field: 'totalCost', title: 'totalCost', type: 'currency' },
   { field: 'type', title: 'type', type: 'text' },
   { field: 'reference', title: 'reference', type: 'text' },
   { field: 'date', title: 'date', type: 'date' },

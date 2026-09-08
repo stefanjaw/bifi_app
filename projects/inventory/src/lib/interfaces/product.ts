@@ -11,6 +11,8 @@ export interface product {
   productTypeId?: productType;
   barcode?: string;
   costPrice: number;
+  /** Running weighted average cost used for inventory valuation */
+  averageCost?: number;
   salePrice: number;
   defaultSaleTaxIds?: string[];
   defaultPurchaseTaxIds?: string[];
