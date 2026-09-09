@@ -37,7 +37,7 @@
       icon="pi pi-replay"
       [pTooltip]="'reverse' | translate: {} : 'inventory'"
       tooltipPosition="left"
-      [disabled]="isReversing()"
+      [disabled]="isReversing() || !canReverse(element)"
       (onClick)="$event.stopPropagation(); openReverseDialog(element)"
       *bifiAppHasPermission="'inventory/movements:create:model'"
     ></p-button>

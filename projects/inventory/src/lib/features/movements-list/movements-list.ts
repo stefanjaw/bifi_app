@@ -73,6 +73,19 @@ export class MovementsList {
   }
 
   /**
+   * Whether the row is a reversal candidate: transfers cannot be reversed and
+   * movements already carrying a reversal (their own or of others) are rejected
+   * by the backend, so the action is pre-disabled for those rows.
+   * @param element - The movement row.
+   * @returns True when the movement can be reversed.
+   */
+  canReverse(element: stockMovement): boolean {
+    if (element.type === 'TRANSFER') return false;
+    if (element.reversalOf) return false;
+    return true;
+  }
+
+  /**
    * Reverses the pending movement after confirmation, creating an opposing
    * linked movement, then refreshes the list.
    */

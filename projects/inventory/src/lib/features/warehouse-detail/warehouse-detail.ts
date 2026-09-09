@@ -57,9 +57,16 @@ export class WarehouseDetail {
 
   stockValue = computed(() => {
     const balances = (this.balancesResource.value() as stockBalance[]) ?? [];
-    return balances
-      .filter(b => b.warehouseId?._id === this.id())
-      .reduce((sum, b) => sum + b.quantity * (b.productId?.costPrice ?? 0), 0);
+    return (
+      balances
+        .filter(b => b.warehouseId?._id === this.id())
+        // Valuation cost basis: weighted average, falling back to list cost when
+        // the product has no running average yet.
+        .reduce(
+          (sum, b) => sum + b.quantity * (b.productId?.averageCost ?? b.productId?.costPrice ?? 0),
+          0
+        )
+    );
   });
 
   deactivating = signal<string | null>(null);

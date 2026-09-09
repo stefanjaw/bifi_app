@@ -120,9 +120,10 @@ export class MovementForm {
       if (!matched) {
         return;
       }
-      this.formService.form.controls.unitCost.setValue(matched.costPrice ?? 0, {
-        emitEvent: false,
-      });
+      this.formService.form.controls.unitCost.setValue(
+        matched.averageCost || matched.costPrice || 0,
+        { emitEvent: false }
+      );
     });
   }
 

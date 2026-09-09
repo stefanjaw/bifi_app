@@ -41,6 +41,19 @@ export class CrudPurchaseOrders extends ApiRequestManager<purchaseOrder> {
   }
 
   /**
+   * Receives quantities against the order's line items, moving the goods into
+   * inventory (backend stamps costs and recomputes the weighted average).
+   * @param id - The purchase order ID
+   * @param lines - Quantities to receive per line item index
+   * @returns Observable of the updated purchase order
+   */
+  receive(id: string, lines: { index: number; quantity: number }[]): Observable<purchaseOrder> {
+    return this._httpClient.post<purchaseOrder>(`${this._apiURL}/${this.endpoint}/${id}/receive`, {
+      lines,
+    });
+  }
+
+  /**
    * Downloads the purchase order PDF as a file
    * @param id - The purchase order ID
    * @returns Observable that completes after the PDF is downloaded and opened

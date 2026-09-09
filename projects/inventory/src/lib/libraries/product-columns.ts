@@ -30,6 +30,7 @@ export const productColumns: tableColumn<product>[] = [
     },
   },
   { field: 'costPrice', title: 'purchasePrice', type: 'currency' },
+  { field: 'averageCost', title: 'averageCost', type: 'currency' },
   { field: 'salePrice', title: 'salePrice', type: 'currency' },
   { field: 'active', title: 'active', type: 'text' },
 ];

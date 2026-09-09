@@ -321,24 +321,72 @@ export class PurchaseOrderDetail {
       .subscribe({ next: () => this.orderResource.reload() });
   }
 
+  /**
+   * Computes the outstanding quantities (ordered minus already received) per
+   * line item, optionally filtered to a single line.
+   * @param lines - The order's line items.
+   * @param onlyIndex - When set, only that line index is included.
+   * @returns Receive payload for the backend receive endpoint.
+   */
+  private buildReceiveLines(
+    items: lineItem[],
+    onlyIndex?: number
+  ): { index: number; quantity: number }[] {
+    const lines: { index: number; quantity: number }[] = [];
+    items.forEach((item, index) => {
+      if (onlyIndex !== undefined && index !== onlyIndex) {
+        return;
+      }
+      const productId =
+        typeof item.productId === 'object'
+          ? (item.productId as { _id?: string })?._id
+          : item.productId;
+      const ordered = Number(item.quantity ?? 0);
+      const received = Number(item.receivedQuantity ?? 0);
+      const remaining = ordered - received;
+      if (productId && remaining > 0) {
+        lines.push({ index, quantity: remaining });
+      }
+    });
+    return lines;
+  }
+
+  /**
+   * Receives all outstanding quantities of every pending line via the receive
+   * endpoint (backend moves stock into inventory and stamps WAC costs).
+   */
   markAsReceived() {
-    if (!this.id()) return;
+    const entry = this.entry();
+    if (!this.id() || !entry) return;
+    const payload = this.buildReceiveLines((entry.lineItems ?? []) as lineItem[]);
+    if (payload.length === 0) return;
     this.crudPurchaseOrders
-      .updateStatus(this.id(), 'received')
+      .receive(this.id(), payload)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe({
         next: () => this.orderResource.reload(),
       });
   }
 
+  /**
+   * Performs a partial receipt: receives the outstanding quantity of the first
+   * pending line only (the backend sets the order to partially_received).
+   */
   markAsPartiallyReceived() {
-    if (!this.id()) return;
-    this.crudPurchaseOrders
-      .updateStatus(this.id(), 'partially_received')
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: () => this.orderResource.reload(),
-      });
+    const entry = this.entry();
+    if (!this.id() || !entry) return;
+    for (let index = 0; index < ((entry.lineItems ?? []) as lineItem[]).length; index++) {
+      const payload = this.buildReceiveLines((entry.lineItems ?? []) as lineItem[], index);
+      if (payload.length > 0) {
+        this.crudPurchaseOrders
+          .receive(this.id(), payload)
+          .pipe(takeUntilDestroyed(this.destroy$))
+          .subscribe({
+            next: () => this.orderResource.reload(),
+          });
+        return;
+      }
+    }
   }
 
   cancelOrder() {
