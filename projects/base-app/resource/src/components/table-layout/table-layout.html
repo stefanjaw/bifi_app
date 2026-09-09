@@ -145,7 +145,11 @@
                     : ('table.notSet' | translate: {} : 'base-app/resource')
                 }}
               } @else {
-                {{ value ?? ('table.notSet' | translate: {} : 'base-app/resource') }}
+                {{
+                  value === '' || value == null
+                    ? ('table.notSet' | translate: {} : 'base-app/resource')
+                    : value
+                }}
               }
             }
           </td>

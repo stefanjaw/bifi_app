@@ -15,7 +15,7 @@ export const crmFilters: filter<crm>[] = [
     type: 'string',
   },
   {
-    field: 'stage',
+    field: 'stage.name',
     type: 'string',
   },
 ];

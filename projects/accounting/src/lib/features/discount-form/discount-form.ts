@@ -17,7 +17,7 @@ import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DiscountFormService, DiscountFormModel } from '../../services/discount-form';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
@@ -57,6 +57,10 @@ export class DiscountForm {
   isSubmitLoading = signal(false);
 
   form = this.formService.form;
+
+  discountType = toSignal(this.form.controls.discountType.valueChanges, {
+    initialValue: this.form.controls.discountType.value,
+  });
 
   private translationService = inject(TranslationService);
 

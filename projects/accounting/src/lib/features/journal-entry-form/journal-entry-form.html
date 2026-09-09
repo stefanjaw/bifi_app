@@ -51,6 +51,7 @@
               optionValue="_id"
               [placeholder]="'placeholders.selectJournal' | translate: {} : 'accounting'"
               [filter]="true"
+              styleClass="w-full"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -63,6 +64,8 @@
               formControlName="date"
               [placeholder]="'placeholders.selectDate' | translate: {} : 'accounting'"
               [showIcon]="true"
+              styleClass="w-full"
+              inputStyleClass="w-full"
             ></p-datepicker>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -78,6 +81,7 @@
               optionValue="_id"
               [placeholder]="'placeholders.selectCurrency' | translate: {} : 'accounting'"
               [filter]="true"
+              styleClass="w-full"
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
@@ -90,6 +94,7 @@
               pInputText
               formControlName="reference"
               [placeholder]="'placeholders.e.g.inv-2024-001' | translate: {} : 'accounting'"
+              class="w-full"
             />
           </bifi-app-form-field>
         </div>
@@ -100,10 +105,10 @@
         id="entry-lines"
         [ordinal]="2"
       >
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-6 pb-4 pt-2">
           @for (line of lines; track $index) {
-            <div class="grid grid-cols-12 gap-3 items-end border rounded p-4">
-              <div class="col-span-3">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:items-end border border-gray-200 bg-gray-50/30 rounded-xl p-5">
+              <div class="lg:col-span-3">
                 <bifi-app-form-field>
                   <bifi-app-form-label>
                     {{ 'form.label.account' | translate: {} : 'accounting' }} *
@@ -115,10 +120,11 @@
                     optionValue="_id"
                     [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
                     [filter]="true"
+                    styleClass="w-full"
                   ></p-select>
                 </bifi-app-form-field>
               </div>
-              <div class="col-span-3">
+              <div class="lg:col-span-3">
                 <bifi-app-form-field>
                   <bifi-app-form-label>
                     {{ 'form.label.description' | translate: {} : 'accounting' }}
@@ -127,10 +133,11 @@
                     pInputText
                     [formControl]="$any(line.get('description'))"
                     [placeholder]="'placeholders.description' | translate: {} : 'accounting'"
+                    class="w-full"
                   />
                 </bifi-app-form-field>
               </div>
-              <div class="col-span-2">
+              <div class="lg:col-span-2">
                 <bifi-app-form-field>
                   <bifi-app-form-label>
                     {{ 'form.label.debit' | translate: {} : 'accounting' }}
@@ -139,10 +146,12 @@
                     [formControl]="$any(line.get('debit'))"
                     [min]="0"
                     [minFractionDigits]="2"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
                   ></p-inputNumber>
                 </bifi-app-form-field>
               </div>
-              <div class="col-span-2">
+              <div class="lg:col-span-2">
                 <bifi-app-form-field>
                   <bifi-app-form-label>
                     {{ 'form.label.credit' | translate: {} : 'accounting' }}
@@ -151,22 +160,26 @@
                     [formControl]="$any(line.get('credit'))"
                     [min]="0"
                     [minFractionDigits]="2"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
                   ></p-inputNumber>
                 </bifi-app-form-field>
               </div>
-              <div class="col-span-2">
+              <div class="lg:col-span-2 w-full mt-2 lg:mt-0">
                 <p-button
                   severity="danger"
                   icon="pi pi-trash"
                   [label]="'buttons.remove' | translate: {} : 'accounting'"
                   (onClick)="removeLine($index)"
+                  styleClass="w-full"
+                  [outlined]="true"
                 ></p-button>
               </div>
             </div>
           }
 
-          <div class="grid grid-cols-12 gap-3 items-center border-t pt-3">
-            <div class="col-span-3">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:items-center border-t border-gray-200 pt-5 mt-2">
+            <div class="lg:col-span-3 flex justify-center lg:justify-start mb-4 lg:mb-0">
               <p-button
                 severity="secondary"
                 icon="pi pi-plus"
@@ -174,17 +187,19 @@
                 (onClick)="addLine()"
               ></p-button>
             </div>
-            <div class="col-span-3"></div>
-            <div class="col-span-2 text-right text-sm font-semibold">
-              {{ totalDebit() | number: '1.2-2' }}
+            <div class="hidden lg:block lg:col-span-3"></div>
+            <div class="lg:col-span-2 flex justify-between lg:justify-end text-sm font-semibold border-t border-gray-200 lg:border-none pt-4 lg:pt-0">
+              <span class="lg:hidden text-gray-500">{{ 'form.label.debit' | translate: {} : 'accounting' }}</span>
+              <span>{{ totalDebit() | number: '1.2-2' }}</span>
             </div>
             <div
-              class="col-span-2 text-right text-sm font-semibold"
+              class="lg:col-span-2 flex justify-between lg:justify-end text-sm font-semibold pb-2 lg:pb-0"
               [class.text-red-500]="totalDebit() !== totalCredit()"
             >
-              {{ totalCredit() | number: '1.2-2' }}
+              <span class="lg:hidden text-gray-500">{{ 'form.label.credit' | translate: {} : 'accounting' }}</span>
+              <span>{{ totalCredit() | number: '1.2-2' }}</span>
             </div>
-            <div class="col-span-2"></div>
+            <div class="hidden lg:block lg:col-span-2"></div>
           </div>
         </div>
       </bifi-app-form-section>

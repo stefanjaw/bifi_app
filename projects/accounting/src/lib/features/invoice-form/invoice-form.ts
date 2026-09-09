@@ -42,7 +42,7 @@ const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
   product: 96,
   description: 240,
   account: 180,
-  quantity: 80,
+  quantity: 128,
   unitPrice: 128,
   taxes: 160,
   amount: 112,

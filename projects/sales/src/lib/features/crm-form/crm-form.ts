@@ -14,7 +14,7 @@ import { CrudCrm } from '../../services/crud-crm';
 import { CrudCrmStages } from '../../modules/crm-stages';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -101,6 +101,19 @@ export class CrmsForm implements DirtyComponent {
   companyNameModel = model('');
 
   form = this.formService.form;
+
+  selectedCurrencyId = toSignal(this.form.controls.currency.valueChanges, {
+    initialValue: this.form.controls.currency.value,
+  });
+
+  selectedCurrencySymbol = computed(() => {
+    const currencies = this.currencyOptions() as any[];
+    const id = this.selectedCurrencyId();
+    if (!currencies || !id) return '';
+    const found = currencies.find((c) => c._id === id);
+    return found?.symbol ? `${found.symbol} ` : '';
+  });
+
   constructor() {
     autoForm(
       this.form,

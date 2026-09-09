@@ -35,7 +35,7 @@ export class InvoiceFormService extends BaseForm<InvoiceFormModel> {
     return this.fb.group<InvoiceFormModel>({
       contactId: [''],
       paymentTermId: [''],
-      invoiceDate: [null, [Validators.required]],
+      invoiceDate: [new Date(), [Validators.required]],
       dueDate: [null],
       journalId: ['', [Validators.required]],
       paymentReference: [''],
