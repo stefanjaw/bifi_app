@@ -110,7 +110,7 @@ export class CrmsForm implements DirtyComponent {
     const currencies = this.currencyOptions() as any[];
     const id = this.selectedCurrencyId();
     if (!currencies || !id) return '';
-    const found = currencies.find((c) => c._id === id);
+    const found = currencies.find(c => c._id === id);
     return found?.symbol ? `${found.symbol} ` : '';
   });
 

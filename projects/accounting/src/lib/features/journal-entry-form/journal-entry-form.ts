@@ -139,11 +139,15 @@ export class JournalEntryForm {
     const totalDebit = lines.reduce((s: number, l: any) => s + (l.debit ?? 0), 0);
     const totalCredit = lines.reduce((s: number, l: any) => s + (l.credit ?? 0), 0);
     if (Math.abs(totalDebit - totalCredit) > 0.0001) {
-      this.toastManager.showError(this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting'));
+      this.toastManager.showError(
+        this.translationService.translate('validation.debitsEqualCredits', {}, 'accounting')
+      );
       return;
     }
     if (lines.length < 2) {
-      this.toastManager.showError(this.translationService.translate('validation.minLinesRequired', {}, 'accounting'));
+      this.toastManager.showError(
+        this.translationService.translate('validation.minLinesRequired', {}, 'accounting')
+      );
       return;
     }
 

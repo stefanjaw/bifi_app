@@ -1,11 +1,17 @@
-<section class="sticky top-0 z-10 bg-white py-4 px-6 flex flex-col gap-3 transition-shadow duration-300"
-  [class.shadow-md]="isScrolled()">
+<section
+  class="sticky top-0 z-10 bg-white py-4 px-6 flex flex-col gap-3 transition-shadow duration-300"
+  [class.shadow-md]="isScrolled()"
+>
   <div class="flex flex-col gap-1">
     <div class="flex justify-between items-center gap-2">
       <h1 class="text-xl md:text-2xl font-bold whitespace-nowrap">
         {{ 'assetDashboard' | translate: {} : 'asset-roster' }}
       </h1>
-      <p-selectButton [options]="optionsView" optionValue="value" (onChange)="setView($event.value)">
+      <p-selectButton
+        [options]="optionsView"
+        optionValue="value"
+        (onChange)="setView($event.value)"
+      >
         <ng-template pTemplate="item" let-item>
           <i [class]="item.icon"></i>
           {{ item.label }}
@@ -13,171 +19,280 @@
       </p-selectButton>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <p-button [label]="'reporting' | translate: {} : 'asset-roster'" severity="success" size="small"
-        icon="pi pi-file-pdf" (onClick)="downloadReportDialog.openDialog()"
+      <p-button
+        [label]="'reporting' | translate: {} : 'asset-roster'"
+        severity="success"
+        size="small"
+        icon="pi pi-file-pdf"
+        (onClick)="downloadReportDialog.openDialog()"
         *bifiAppHasPermission="'reporting/generate-report:read:model'"
-        [disabled]="downloadReportDialog.reportingTemplates().length === 0" [pTooltip]="
+        [disabled]="downloadReportDialog.reportingTemplates().length === 0"
+        [pTooltip]="
           downloadReportDialog.reportingTemplates().length === 0
             ? ('configureReportTemplate' | translate: {} : 'asset-roster')
             : undefined
-        "></p-button>
-      <p-button [label]="'importCsv' | translate: {} : 'asset-roster'" [outlined]="true" size="small"
-        icon="pi pi-upload" (onClick)="fileInput.click()"
-        *bifiAppHasPermission="'asset-rosters/import:create:model'"></p-button>
-      <p-button [label]="'exportCsv' | translate: {} : 'asset-roster'" [outlined]="true" size="small"
-        icon="pi pi-download" (onClick)="exportCSV()"
-        *bifiAppHasPermission="'asset-rosters/export:read:model'"></p-button>
+        "
+      ></p-button>
+      <p-button
+        [label]="'importCsv' | translate: {} : 'asset-roster'"
+        [outlined]="true"
+        size="small"
+        icon="pi pi-upload"
+        (onClick)="fileInput.click()"
+        *bifiAppHasPermission="'asset-rosters/import:create:model'"
+      ></p-button>
+      <p-button
+        [label]="'exportCsv' | translate: {} : 'asset-roster'"
+        [outlined]="true"
+        size="small"
+        icon="pi pi-download"
+        (onClick)="exportCSV()"
+        *bifiAppHasPermission="'asset-rosters/export:read:model'"
+      ></p-button>
 
-      <p-button [label]="
+      <p-button
+        [label]="
           (showingArchivedRecords() ? 'showActiveRecords' : 'showArchivedRecords')
             | translate: {} : 'asset-roster'
-        " [outlined]="true" size="small" [icon]="showingArchivedRecords() ? 'pi pi-list' : 'pi pi-box'"
-        (onClick)="toggleArchivedRecords()" *bifiAppHasPermission="'asset-rosters:read:model'"></p-button>
+        "
+        [outlined]="true"
+        size="small"
+        [icon]="showingArchivedRecords() ? 'pi pi-list' : 'pi pi-box'"
+        (onClick)="toggleArchivedRecords()"
+        *bifiAppHasPermission="'asset-rosters:read:model'"
+      ></p-button>
 
       @if (!isGrid()) {
-      <p-button [label]="
+        <p-button
+          [label]="
             (selectionMode() ? 'cancelSelection' : 'selectRecords') | translate: {} : 'asset-roster'
-          " [outlined]="true" size="small" [icon]="selectionMode() ? 'pi pi-times' : 'pi pi-check-square'"
-        (onClick)="toggleSelectionMode()"></p-button>
+          "
+          [outlined]="true"
+          size="small"
+          [icon]="selectionMode() ? 'pi pi-times' : 'pi pi-check-square'"
+          (onClick)="toggleSelectionMode()"
+        ></p-button>
 
-      @if (selectionMode()) {
-      @if (!showingArchivedRecords()) {
-      <p-button [label]="
+        @if (selectionMode()) {
+          @if (!showingArchivedRecords()) {
+            <p-button
+              [label]="
                 'exportSelected'
                   | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
-              " [outlined]="true" size="small" icon="pi pi-download" [disabled]="selectedAssetRosterIds().length === 0"
-        (onClick)="exportSelectedCSV()" *bifiAppHasPermission="'asset-rosters/export:read:model'"></p-button>
+              "
+              [outlined]="true"
+              size="small"
+              icon="pi pi-download"
+              [disabled]="selectedAssetRosterIds().length === 0"
+              (onClick)="exportSelectedCSV()"
+              *bifiAppHasPermission="'asset-rosters/export:read:model'"
+            ></p-button>
 
-      <p-button [label]="
+            <p-button
+              [label]="
                 'archiveSelected'
                   | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
-              " severity="warn" [outlined]="true" size="small" icon="pi pi-box" [loading]="archivingSelected()"
-        [disabled]="selectedAssetRosterIds().length === 0 || archivingSelected()" (onClick)="archiveSelected()"
-        *bifiAppHasPermission="'asset-rosters:update:model'"></p-button>
-      } @else {
-      <p-button [label]="
+              "
+              severity="warn"
+              [outlined]="true"
+              size="small"
+              icon="pi pi-box"
+              [loading]="archivingSelected()"
+              [disabled]="selectedAssetRosterIds().length === 0 || archivingSelected()"
+              (onClick)="archiveSelected()"
+              *bifiAppHasPermission="'asset-rosters:update:model'"
+            ></p-button>
+          } @else {
+            <p-button
+              [label]="
                 'unarchiveSelected'
                   | translate: { count: selectedAssetRosterIds().length } : 'asset-roster'
-              " severity="success" [outlined]="true" size="small" icon="pi pi-refresh"
-        [loading]="unarchivingSelected()" [disabled]="selectedAssetRosterIds().length === 0 || unarchivingSelected()"
-        (onClick)="unarchiveSelected()" *bifiAppHasPermission="'asset-rosters:update:model'"></p-button>
+              "
+              severity="success"
+              [outlined]="true"
+              size="small"
+              icon="pi pi-refresh"
+              [loading]="unarchivingSelected()"
+              [disabled]="selectedAssetRosterIds().length === 0 || unarchivingSelected()"
+              (onClick)="unarchiveSelected()"
+              *bifiAppHasPermission="'asset-rosters:update:model'"
+            ></p-button>
+          }
+        }
       }
-      }
-      }
-      <p-button [label]="'addNewAsset' | translate: {} : 'asset-roster'" severity="secondary" size="small"
-        icon="pi pi-plus" (onClick)="createDialog.openDialog()"
-        *bifiAppHasPermission="'asset-rosters:create:model'"></p-button>
+      <p-button
+        [label]="'addNewAsset' | translate: {} : 'asset-roster'"
+        severity="secondary"
+        size="small"
+        icon="pi pi-plus"
+        (onClick)="createDialog.openDialog()"
+        *bifiAppHasPermission="'asset-rosters:create:model'"
+      ></p-button>
 
-      <input hidden type="file" #fileInput accept=".csv,text/csv" (change)="openImportPreview($event)" />
+      <input
+        hidden
+        type="file"
+        #fileInput
+        accept=".csv,text/csv"
+        (change)="openImportPreview($event)"
+      />
     </div>
   </div>
 
   <div class="flex flex-col lg:flex-row gap-2">
-    <bifi-app-asset-roster-status-card [units]="assetRostersUnderServiceCount.value() || 0" variant="under-service"
-      [compact]="isScrolled()" class="w-full"></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersUnderServiceCount.value() || 0"
+      variant="under-service"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-    <bifi-app-asset-roster-status-card [units]="assetRostersOverdueCount.value() || 0" variant="overdue"
-      [compact]="isScrolled()" class="w-full"></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersOverdueCount.value() || 0"
+      variant="overdue"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-    <bifi-app-asset-roster-status-card [units]="assetRostersDueCount.value() || 0" variant="due"
-      [compact]="isScrolled()" class="w-full"></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersDueCount.value() || 0"
+      variant="due"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-    <bifi-app-asset-roster-status-card [units]="assetRostersInPMCount.value() || 0" variant="in-pm"
-      [compact]="isScrolled()" class="w-full"></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersInPMCount.value() || 0"
+      variant="in-pm"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
 
-    <bifi-app-asset-roster-status-card [units]="assetRostersPMNotSetCount.value() || 0" variant="pm-not-set"
-      [compact]="isScrolled()" class="w-full"></bifi-app-asset-roster-status-card>
+    <bifi-app-asset-roster-status-card
+      [units]="assetRostersPMNotSetCount.value() || 0"
+      variant="pm-not-set"
+      [compact]="isScrolled()"
+      class="w-full"
+    ></bifi-app-asset-roster-status-card>
   </div>
 </section>
 
 <section class="flex flex-col md:flex-row gap-2 mb-4">
-  <bifi-app-search-bar [searchFilters]="assetRosterFilters" [label]="'searchAssets' | translate: {} : 'asset-roster'"
-    class="md:w-7/10"></bifi-app-search-bar>
+  <bifi-app-search-bar
+    [searchFilters]="assetRosterFilters"
+    [label]="'searchAssets' | translate: {} : 'asset-roster'"
+    class="md:w-7/10"
+  ></bifi-app-search-bar>
   <bifi-app-asset-roster-status-select class="md:w-3/10"></bifi-app-asset-roster-status-select>
 </section>
 
 <!-- table -->
 @if (!isGrid()) {
-<bifi-app-table-layout [infiniteScroll]="true" [scope]="'asset-roster'" [columns]="assetRosterColumns"
-  [data]="assetRosters" [selectionEnabled]="selectionMode()" [selectedIds]="selectedAssetRosterIds()"
-  (selectedIdsChange)="selectedAssetRosterIds.set($event)" [onClickRow]="goToEditAssetRoster"
-  clickRowPermission="asset-rosters/update:view"></bifi-app-table-layout>
+  <bifi-app-table-layout
+    [infiniteScroll]="true"
+    [scope]="'asset-roster'"
+    [columns]="assetRosterColumns"
+    [data]="assetRosters"
+    [selectionEnabled]="selectionMode()"
+    [selectedIds]="selectedAssetRosterIds()"
+    (selectedIdsChange)="selectedAssetRosterIds.set($event)"
+    [onClickRow]="goToEditAssetRoster"
+    clickRowPermission="asset-rosters/update:view"
+  ></bifi-app-table-layout>
 
-<ng-template #actions let-element>
-  <p-tag routerLink="/asset-roster/equipment/maintenance/{{ element._id }}" class="cursor-pointer" severity="warn"
-    [value]="'viewDetails' | translate: {} : 'asset-roster'"
-    *bifiAppHasPermission="'asset-rosters/update:view'"></p-tag>
-</ng-template>
+  <ng-template #actions let-element>
+    <p-tag
+      routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+      class="cursor-pointer"
+      severity="warn"
+      [value]="'viewDetails' | translate: {} : 'asset-roster'"
+      *bifiAppHasPermission="'asset-rosters/update:view'"
+    ></p-tag>
+  </ng-template>
 
-<!-- grid -->
+  <!-- grid -->
 } @else {
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-  [bifiAppInfiniteScroll]="$any(assetRosters)">
-  @for (element of assetRosters.value()?.docs; track element._id) {
-  <p-card
-    class="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-    routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
-    *bifiAppHasPermission="'asset-rosters/update:view'">
-    <!-- IMAGE -->
-    <ng-template pTemplate="header">
-      <div class="relative w-full h-48 overflow-hidden rounded-t-xl bg-gray-50">
-        <img [src]="
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+    [bifiAppInfiniteScroll]="$any(assetRosters)"
+  >
+    @for (element of assetRosters.value()?.docs; track element._id) {
+      <p-card
+        class="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        routerLink="/asset-roster/equipment/maintenance/{{ element._id }}"
+        *bifiAppHasPermission="'asset-rosters/update:view'"
+      >
+        <!-- IMAGE -->
+        <ng-template pTemplate="header">
+          <div class="relative w-full h-48 overflow-hidden rounded-t-xl bg-gray-50">
+            <img
+              [src]="
                 assetPictures()[element._id] ||
                 'https://st2.depositphotos.com/3904951/8925/v/450/depositphotos_89250312-stock-illustration-photo-picture-web-icon-in.jpg'
-              " class="w-full h-full object-contain" alt="" />
+              "
+              class="w-full h-full object-contain"
+              alt=""
+            />
 
-        <!-- STATUS -->
-        <p-tag class="absolute top-3 right-3 text-xs capitalize shadow-sm" [value]="element.status.replace('-', ' ')"
-          severity="warn"></p-tag>
-      </div>
-    </ng-template>
+            <!-- STATUS -->
+            <p-tag
+              class="absolute top-3 right-3 text-xs capitalize shadow-sm"
+              [value]="element.status.replace('-', ' ')"
+              severity="warn"
+            ></p-tag>
+          </div>
+        </ng-template>
 
-    <!-- CONTENT -->
-    <ng-template pTemplate="content">
-      <span class="text-xs text-gray-500 font-medium">
-        {{ element.assetTypeIds[0]?.name || ('notSet' | translate: {} : 'asset-roster') }}
-      </span>
-
-      <div class="p-3 flex flex-col gap-1">
-        <span class="text-lg font-bold leading-tight">
-          {{ element.productModel }}
-        </span>
-
-        <div class="grid grid-cols-2 gap-y-1 text-xs text-gray-600 mt-2">
-          <span class="font-medium text-gray-400">
-            {{ 'serialNumber' | translate: {} : 'asset-roster' }}
+        <!-- CONTENT -->
+        <ng-template pTemplate="content">
+          <span class="text-xs text-gray-500 font-medium">
+            {{ element.assetTypeIds[0]?.name || ('notSet' | translate: {} : 'asset-roster') }}
           </span>
-          <span class="text-right">{{ element.serialNumber }}</span>
 
-          <span class="font-medium text-gray-400">
-            {{ 'location' | translate: {} : 'asset-roster' }}
-          </span>
-          <span class="text-right truncate">
-            {{ element.locationId?.name || ('notSet' | translate: {} : 'asset-roster') }}
-          </span>
-        </div>
-      </div>
-    </ng-template>
+          <div class="p-3 flex flex-col gap-1">
+            <span class="text-lg font-bold leading-tight">
+              {{ element.productModel }}
+            </span>
 
-    <!-- FOOTER -->
-    <ng-template pTemplate="footer">
-      <div class="flex justify-between items-center text-xs text-gray-500">
-        <span class="font-medium text-gray-400">
-          {{ 'nextPmOverdue' | translate: {} : 'asset-roster' }}
-        </span>
-        <span class="text-right capitalize">
-          {{ element.maintenanceDate }}
-        </span>
-      </div>
-    </ng-template>
-  </p-card>
-  }
-</div>
+            <div class="grid grid-cols-2 gap-y-1 text-xs text-gray-600 mt-2">
+              <span class="font-medium text-gray-400">
+                {{ 'serialNumber' | translate: {} : 'asset-roster' }}
+              </span>
+              <span class="text-right">{{ element.serialNumber }}</span>
+
+              <span class="font-medium text-gray-400">
+                {{ 'location' | translate: {} : 'asset-roster' }}
+              </span>
+              <span class="text-right truncate">
+                {{ element.locationId?.name || ('notSet' | translate: {} : 'asset-roster') }}
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- FOOTER -->
+        <ng-template pTemplate="footer">
+          <div class="flex justify-between items-center text-xs text-gray-500">
+            <span class="font-medium text-gray-400">
+              {{ 'nextPmOverdue' | translate: {} : 'asset-roster' }}
+            </span>
+            <span class="text-right capitalize">
+              {{ element.maintenanceDate }}
+            </span>
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  </div>
 }
 
 <bifi-app-asset-roster-form-dialog #createDialog></bifi-app-asset-roster-form-dialog>
 <p-confirmDialog></p-confirmDialog>
-<bifi-app-reporting-download-dialog #downloadReportDialog [model]="'AssetRoster'"></bifi-app-reporting-download-dialog>
+<bifi-app-reporting-download-dialog
+  #downloadReportDialog
+  [model]="'AssetRoster'"
+></bifi-app-reporting-download-dialog>
 
 <bifi-app-asset-roster-import-preview-dialog
-  (imported)="reloadAfterImport()"></bifi-app-asset-roster-import-preview-dialog>
+  (imported)="reloadAfterImport()"
+></bifi-app-asset-roster-import-preview-dialog>
