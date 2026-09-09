@@ -7,6 +7,8 @@
 - On the login screen, use the following credentians: email: opencode@test.com ; password: 123456
 - Once logged, the home screen will be presented.
 - If in page load, you are presented with home screen skipping login completely, login is taken as successful.
+- Also, if a backend specific endpoint consumption testing is desired, use ApiKey: bak_live_2MC3hy7ibSV9-4ftc1yn8F4OkkCHBuqkgqZd13znxA0_NEVEREXPIRES 
+- This ApiKey only works on localhost, the current environment, throught the "x-api-key" HEADER.
 
 ## TESTING Guidelines
 
