@@ -42,6 +42,23 @@
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.purchasePayableAccount' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="purchasePayableAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
+              [filter]="true"
+              [showClear]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 

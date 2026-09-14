@@ -20,9 +20,15 @@ import {
   AccountingSettingsFormModel,
 } from '../../services/accounting-settings-form';
 import { accountingSettings } from '../../interfaces/accounting-settings';
+import { account } from '../../../../interfaces/account';
+import { CrudAccounts } from '../../../../services/crud-accounts';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 
+/**
+ * Accounting configuration page (singleton settings). Phase A1 adds the
+ * purchase payable fallback account used by purchase-oriented invoices.
+ */
 @Component({
   selector: 'bifi-app-accounting-settings-form',
   imports: [
@@ -41,6 +47,7 @@ export class AccountingSettingsPage {
   private crudAccountingSettings = inject(CrudAccountingSettings);
   private formService = inject(AccountingSettingsForm);
   private crudSequences = inject(CrudSequences);
+  private crudAccounts = inject(CrudAccounts);
   private destroy$ = inject(DestroyRef);
 
   protected form = this.formService.form;
@@ -53,13 +60,25 @@ export class AccountingSettingsPage {
     getInactive: signal(false),
   });
 
+  private accountsResource = this.crudAccounts.get<account>({
+    triggerRequest: signal(true),
+  });
+
   protected sequenceOptions = computed<sequence[]>(() => {
     const data = this.sequencesResource.value();
     return Array.isArray(data) ? data : [];
   });
 
+  protected accountOptions = computed<account[]>(() => {
+    const data = this.accountsResource.value();
+    return Array.isArray(data) ? data : [];
+  });
+
   protected loading = computed(
-    () => this.settingsResource.isLoading() && !this.settingsResource.error()
+    () =>
+      (this.settingsResource.isLoading() && !this.settingsResource.error()) ||
+      this.sequencesResource.isLoading() ||
+      this.accountsResource.isLoading()
   );
 
   constructor() {
@@ -70,15 +89,17 @@ export class AccountingSettingsPage {
 
       this.formService.patchValue({
         invoiceSequence: this.resolveId(settings.invoiceSequence),
+        purchasePayableAccountId: this.resolveId(settings.purchasePayableAccountId),
         description: settings.description ?? '',
       });
     });
   }
 
-  private resolveId(value: sequence | string | undefined): string {
+  /** Resolves an autopopulated reference (object) or raw string into an _id */
+  private resolveId(value: unknown): string {
     if (!value) return '';
-    if (typeof value === 'object') return (value as sequence)._id;
-    return value;
+    if (typeof value === 'object' && (value as any)._id) return (value as any)._id;
+    return String(value);
   }
 
   protected handleSubmit(state: FormValueState<AccountingSettingsFormModel>) {
@@ -87,6 +108,8 @@ export class AccountingSettingsPage {
     const rawValue = state.rawValue;
     const payload: Record<string, any> = {};
     if (rawValue.invoiceSequence) payload['invoiceSequence'] = rawValue.invoiceSequence;
+    if (rawValue.purchasePayableAccountId)
+      payload['purchasePayableAccountId'] = rawValue.purchasePayableAccountId;
     if (rawValue.description) payload['description'] = rawValue.description;
 
     this.crudAccountingSettings
