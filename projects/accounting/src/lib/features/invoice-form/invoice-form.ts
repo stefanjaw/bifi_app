@@ -21,6 +21,7 @@ import { CrudPaymentTerms } from '../../services/crud-payment-terms';
 import { CrudDiscounts } from '../../services/crud-discounts';
 import { CrudProducts } from '@avalantec/inventory';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { InputText } from 'primeng/inputtext';
@@ -37,6 +38,7 @@ import { TagModule } from 'primeng/tag';
 import { InvoiceFormService, InvoiceFormModel } from '../../services/invoice-form';
 import { ColWidthManager } from '@avalantec/base-app/core';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { LocaleDatePipe } from '@avalantec/base-app/i18n';
 
 const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
   product: 96,
@@ -54,6 +56,7 @@ const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
     FormModule,
     PluginSlot,
     ReactiveFormsModule,
+    FormsModule,
     InputText,
     SelectModule,
     MultiSelectModule,
@@ -65,6 +68,7 @@ const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
     DecimalPipe,
     TagModule,
     TranslatePipe,
+    LocaleDatePipe,
   ],
   templateUrl: './invoice-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -116,6 +120,9 @@ export class InvoiceForm {
   isSubmitLoading = signal(false);
   isPosting = signal(false);
   isCancelling = signal(false);
+  isCreatingCreditNote = signal(false);
+
+  creditNoteUrl = signal<string | null>(null);
 
   form = this.formService.form;
   journals = this.journalsResource.value;
@@ -132,6 +139,36 @@ export class InvoiceForm {
   canPost = computed(() => this.isUpdate() && this.invoiceState() === 'draft');
   canCancel = computed(() => this.isUpdate() && this.invoiceState() !== 'cancel');
   isReadOnly = computed(() => this.isUpdate() && this.invoiceState() !== 'draft');
+  isCreditNote = computed(() => !!(this.invoiceResource.value() as any)?.isCreditNote);
+  canCreateCreditNote = computed(
+    () =>
+      this.isUpdate() &&
+      this.invoiceState() === 'posted' &&
+      this.invoiceAmountDue() > 0 &&
+      !this.isCreditNote()
+  );
+
+  // ---- Payments (Phase 2: register settlement payments against invoices) ----
+  payments = signal<any[]>([]);
+  paymentsLoading = signal<boolean>(false);
+  isRegisteringPayment = signal<boolean>(false);
+  settlementAmount = signal<number | null>(null);
+  settlementJournalId = signal<string>('');
+  settlementPaymentDate = signal<Date>(new Date());
+  settlementReference = signal<string>('');
+
+  // ---- Installment schedule (Phase 3 / B5: multi-due-date payment terms) ----
+  dueDateEntries = signal<{ amount: number; date: Date }[]>([]);
+
+  invoiceAmountDue = computed(() => (this.invoiceResource.value() as any)?.amountDue ?? 0);
+  invoiceTotal = computed(() => (this.invoiceResource.value() as any)?.totalAmount ?? 0);
+  invoiceCurrencyId = computed(() => {
+    const cur = (this.invoiceResource.value() as any)?.currencyId;
+    return cur?._id ?? cur ?? '';
+  });
+  canRegisterPayment = computed(
+    () => this.isUpdate() && this.invoiceState() === 'posted' && this.invoiceAmountDue() > 0
+  );
 
   private cwm = new ColWidthManager(INVOICE_DEFAULT_WIDTHS, 'lineItems.invoice.colWidths');
   colWidths = this.cwm.colWidths;
@@ -217,20 +254,43 @@ export class InvoiceForm {
     });
   }
 
+  /**
+   * Recomputes the full installment schedule whenever the payment term (or
+   * the invoice date) changes, using each line's `percentage`/`dueDays`.
+   * The `dueDate` control keeps the latest installment date.
+   * @param paymentTermId - Selected payment term ID
+   */
   onPaymentTermChange(paymentTermId: string) {
     const invoiceDate = this.form.get('invoiceDate')?.value;
     if (!invoiceDate || !paymentTermId) return;
     const pt = (this.paymentTerms() ?? []).find((p: any) => p._id === paymentTermId);
     if (!pt || !pt.lines || pt.lines.length === 0) return;
-    const dueDays = pt.lines[0].dueDays ?? 0;
-    const due = new Date(invoiceDate);
-    due.setDate(due.getDate() + dueDays);
-    this.form.patchValue({ dueDate: due });
+    const base = new Date(invoiceDate);
+    const addDays = (days: number) => {
+      const due = new Date(base);
+      due.setDate(due.getDate() + (days ?? 0));
+      return due;
+    };
+    const entries = (pt.lines as any[])
+      .map((l: any) => ({ dueDays: l.dueDays ?? 0, percentage: l.percentage ?? 0 }))
+      .sort((a: any, b: any) => a.dueDays - b.dueDays);
+    const totalValue = this.grandTotal() || 0;
+    const schedule =
+      entries.length === 1 && (entries[0].percentage === 0 || entries[0].percentage >= 100)
+        ? [{ amount: Math.round(totalValue * 100) / 100, date: addDays(entries[0].dueDays) }]
+        : entries.map((e: any) => ({
+            amount: Math.round(totalValue * (e.percentage / 100) * 100) / 100,
+            date: addDays(e.dueDays),
+          }));
+    this.dueDateEntries.set(schedule);
+    this.form.patchValue({ dueDate: schedule[schedule.length - 1].date });
   }
 
   constructor() {
     effect(() => {
       const entry = this.invoiceResource.value() as any;
+
+      // ---- Hydrate the form from the loaded invoice ----
       if (entry) {
         this.formService.patchValue({
           contactId: (entry.contactId as any)?._id ?? entry.contactId ?? '',
@@ -254,11 +314,75 @@ export class InvoiceForm {
           })),
         });
         this.formService.resetDirtyState();
+        this.settlementAmount.set(typeof entry.amountDue === 'number' ? entry.amountDue : null);
+        this.dueDateEntries.set(
+          (entry.dueDates ?? []).map((d: any) => ({
+            amount: d.amount ?? 0,
+            date: new Date(d.date),
+          }))
+        );
+        this.loadPayments();
+
+        // ---- Create mode: leave the form empty with one line ----
       } else if (!this.isUpdate()) {
         this.formService.reset();
         this.formService.addLine();
       }
     });
+  }
+
+  /**
+   * Fetches the payments registered against this invoice
+   */
+  loadPayments() {
+    if (!this.isUpdate()) return;
+    this.paymentsLoading.set(true);
+    this.crudInvoices
+      .getPayments(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: (res: any[]) => {
+          this.payments.set(res ?? []);
+          this.paymentsLoading.set(false);
+        },
+        error: () => this.paymentsLoading.set(false),
+      });
+  }
+
+  /**
+   * Registers a settlement payment against the invoice via the backend
+   * (which also creates the relieving journal entry) and refreshes state
+   */
+  registerInvoicePayment() {
+    // ---- [1] Local validation and posting flag ----
+    const amount = this.settlementAmount();
+    if (!amount || amount <= 0 || !this.settlementJournalId()) return;
+    if (this.isRegisteringPayment()) return;
+    this.isRegisteringPayment.set(true);
+    const journalId = this.settlementJournalId();
+    const currencyId = this.invoiceCurrencyId();
+
+    // ---- [2] Send to the backend (it also creates the settlement JE) ----
+    this.crudInvoices
+      .registerPayment(this.id(), {
+        amount,
+        paymentDate: this.settlementPaymentDate().toISOString(),
+        journalId,
+        currencyId,
+        reference: this.settlementReference() || undefined,
+      })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        // ---- [3] Reset the register form and refresh invoice + payments ----
+        next: () => {
+          this.isRegisteringPayment.set(false);
+          this.settlementAmount.set(null);
+          this.settlementReference.set('');
+          this.loadPayments();
+          this.invoiceResource.reload();
+        },
+        error: () => this.isRegisteringPayment.set(false),
+      });
   }
 
   handleSubmit(_state: FormValueState<InvoiceFormModel>) {
@@ -267,9 +391,11 @@ export class InvoiceForm {
 
     const val = this.form.getRawValue() as any;
 
+    // ---- [1] Clean up the raw value before sending ----
     // in case contactId is empty, delete it
     if (!val.contactId || val.contactId === '') delete val.contactId;
 
+    // ---- [2] Normalize line rows (default type/products/decimals) ----
     const lines = (val.lines ?? []).map((v: any) => ({
       lineType: v.lineType || 'product',
       productId: v.productId || undefined,
@@ -290,6 +416,7 @@ export class InvoiceForm {
       lines,
     };
 
+    // ---- [3] Update (reload invoice) vs create (navigate to edit) ----
     if (this.isUpdate()) {
       this.crudInvoices
         .put({ _id: this.id(), data: payload as any })
@@ -343,6 +470,26 @@ export class InvoiceForm {
           this.invoiceResource.reload();
         },
         error: () => this.isCancelling.set(false),
+      });
+  }
+
+  /**
+   * Creates a credit note against this invoice and navigates to its editor
+   */
+  createCreditNote() {
+    if (this.isCreatingCreditNote()) return;
+    this.isCreatingCreditNote.set(true);
+    this.crudInvoices
+      .createCreditNote(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isCreatingCreditNote.set(false);
+          const newId = res?._id;
+          if (newId) this.router.navigate(['/accounting/invoices/edit', newId]);
+          else this.invoiceResource.reload();
+        },
+        error: () => this.isCreatingCreditNote.set(false),
       });
   }
 

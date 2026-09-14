@@ -51,4 +51,16 @@ export class CrudInvoices extends ApiRequestManager<invoice> {
   cancelInvoice(invoiceId: string): Observable<any> {
     return this._httpClient.put<any>(`${this._apiURL}/accounting/invoices/${invoiceId}/cancel`, {});
   }
+
+  /**
+   * Creates a credit note (NC) against a posted invoice
+   * @param invoiceId - The source invoice ID
+   * @returns Observable of the newly created credit note
+   */
+  createCreditNote(invoiceId: string): Observable<any> {
+    return this._httpClient.post<any>(
+      `${this._apiURL}/accounting/invoices/${invoiceId}/credit-note`,
+      {}
+    );
+  }
 }

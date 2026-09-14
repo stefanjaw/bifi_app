@@ -3,7 +3,9 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
@@ -22,6 +24,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaymentFormService, PaymentFormModel } from '../../services/payment-form';
 import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
+/**
+ * Create/edit form for payments (Phase 2, B6 fix).
+ * Edit mode is enabled by the `payments/edit/:id` route: the payment is
+ * fetched when `id` is set and the form is patched from it; submission
+ * switches between `post` and `put` accordingly.
+ */
 @Component({
   selector: 'bifi-app-payment-form',
   imports: [
@@ -46,12 +54,20 @@ export class PaymentForm {
   private router = inject(Router);
   private destroy$ = inject(DestroyRef);
 
+  id = input<string>('');
+
+  paymentResource = this.crudPayments.get({
+    id: this.id,
+    triggerRequest: computed(() => !!this.id()),
+  });
   journalsResource = this.crudJournals.get({});
   currenciesResource = this.crudCurrencies.get({});
   contactsResource = this.crudContacts.get({});
 
+  isUpdate = computed(() => !!this.id());
   isLoading = computed(
     () =>
+      this.paymentResource.isLoading() ||
       this.journalsResource.isLoading() ||
       this.currenciesResource.isLoading() ||
       this.contactsResource.isLoading()
@@ -76,6 +92,29 @@ export class PaymentForm {
     },
   ];
 
+  /** Populates the form with the loaded payment in edit mode */
+  constructor() {
+    effect(() => {
+      const entry = this.paymentResource.value();
+      if (entry) {
+        this.formService.patchValue({
+          paymentType: entry.paymentType,
+          partnerId: (entry.partnerId as any)?._id ?? entry.partnerId ?? '',
+          journalId: (entry.journalId as any)?._id ?? entry.journalId ?? '',
+          amount: entry.amount ?? 0,
+          currencyId: (entry.currencyId as any)?._id ?? entry.currencyId ?? '',
+          paymentDate: entry.paymentDate ? new Date(entry.paymentDate) : null,
+          reference: entry.reference ?? '',
+          exchangeRate: entry.exchangeRate ?? 0,
+        });
+        this.formService.resetDirtyState();
+      } else if (!this.isUpdate()) {
+        this.formService.reset();
+      }
+    });
+  }
+
+  /** Submits the payment (create or update) and navigates back */
   handleSubmit(data: FormValueState<PaymentFormModel>) {
     this.isSubmitLoading.set(true);
     const { rawValue } = data;
@@ -88,16 +127,17 @@ export class PaymentForm {
           ? rawValue.paymentDate.toISOString()
           : rawValue.paymentDate,
     };
-    this.crudPayments
-      .post({ data: payload })
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.isSubmitLoading.set(false);
-          this.goBack();
-        },
-        error: () => this.isSubmitLoading.set(false),
-      });
+    const action = this.isUpdate()
+      ? this.crudPayments.put({ _id: this.id(), data: payload })
+      : this.crudPayments.post({ data: payload });
+
+    action.pipe(takeUntilDestroyed(this.destroy$)).subscribe({
+      next: () => {
+        this.isSubmitLoading.set(false);
+        this.goBack();
+      },
+      error: () => this.isSubmitLoading.set(false),
+    });
   }
 
   goBack() {

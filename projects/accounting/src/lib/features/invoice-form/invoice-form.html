@@ -57,6 +57,20 @@
             (onClick)="cancelInvoice()"
           ></p-button>
         }
+        @if (canCreateCreditNote()) {
+          <p-button
+            [label]="'buttons.createCreditNote' | translate: {} : 'accounting'"
+            icon="pi pi-undo"
+            [loading]="isCreatingCreditNote()"
+            (onClick)="createCreditNote()"
+          ></p-button>
+        }
+        @if (isCreditNote()) {
+          <p-tag
+            [value]="'invoice.creditNote' | translate: {} : 'accounting'"
+            severity="warn"
+          ></p-tag>
+        }
       </div>
     }
 
@@ -165,6 +179,21 @@
             />
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+          <!-- Installment schedule preview (multi-due-date payment terms) -->
+          @if (dueDateEntries().length > 1) {
+            <div class="col-span-1 md:col-span-2 flex flex-wrap gap-2 mt-1">
+              @for (entry of dueDateEntries(); track $index) {
+                <span
+                  class="inline-flex items-center gap-2 rounded-full bg-gray-100 border border-gray-200 px-3 py-1 text-xs"
+                >
+                  <span class="text-gray-600">
+                    {{ entry.date | localeDate: { dateStyle: 'medium' } }}
+                  </span>
+                  <span class="font-semibold">{{ entry.amount | number: '1.2-2' }}</span>
+                </span>
+              }
+            </div>
+          }
         </div>
 
         <bifi-app-plugin-slot name="invoice-form-general-information"></bifi-app-plugin-slot>
@@ -176,9 +205,12 @@
           @if (isUpdate()) {
             <p-tab value="1">{{ 'form.journalItems' | translate: {} : 'accounting' }}</p-tab>
           }
+          @if (isUpdate()) {
+            <p-tab value="2">{{ 'form.payments' | translate: {} : 'accounting' }}</p-tab>
+          }
         </p-tablist>
         <p-tabpanels>
-          <!-- ── Invoice Lines tab ────────────────────────────────────── -->
+          <!-- ---- Invoice Lines tab ---- -->
           <p-tabpanel value="0">
             <div class="flex flex-col gap-4 py-4">
               <div class="overflow-x-auto rounded border border-gray-200">
@@ -382,7 +414,7 @@
             </div>
           </p-tabpanel>
 
-          <!-- ── Journal Items tab ────────────────────────────────────── -->
+          <!-- ---- Journal Items tab ---- -->
           @if (isUpdate()) {
             <p-tabpanel value="1">
               <div class="py-4 flex flex-col gap-4">
@@ -494,6 +526,143 @@
                       <div class="col-span-2 text-right" [class.text-red-600]="!jeIsBalanced()">
                         {{ jeCreditTotal() | number: '1.2-2' }}
                       </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </p-tabpanel>
+          }
+
+          <!-- ---- Payments tab ---- -->
+          @if (isUpdate()) {
+            <p-tabpanel value="2">
+              <div class="py-4 flex flex-col gap-6">
+                <!-- Registered payments -->
+                <div class="flex flex-col gap-3">
+                  <div class="flex items-center gap-4 text-sm">
+                    <span class="text-gray-500">
+                      {{ 'totals.total' | translate: {} : 'accounting' }}
+                    </span>
+                    <span class="font-semibold">{{ invoiceTotal() | number: '1.2-2' }}</span>
+                    <span class="text-gray-500">
+                      {{ 'invoice.amountDue' | translate: {} : 'accounting' }}
+                    </span>
+                    <span
+                      class="font-semibold"
+                      [class.text-green-600]="invoiceAmountDue() === 0"
+                      [class.text-red-600]="invoiceAmountDue() > 0"
+                    >
+                      {{ invoiceAmountDue() | number: '1.2-2' }}
+                    </span>
+                  </div>
+
+                  @if (paymentsLoading()) {
+                    <p-progressbar mode="indeterminate" styleClass="h-1"></p-progressbar>
+                  }
+
+                  @if (payments().length === 0) {
+                    <span class="text-sm text-gray-400">
+                      {{ 'payments.none' | translate: {} : 'accounting' }}
+                    </span>
+                  } @else {
+                    <div class="overflow-x-auto rounded border border-gray-200">
+                      <table class="w-full min-w-[560px] border-collapse text-sm">
+                        <thead>
+                          <tr
+                            class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase"
+                          >
+                            <th class="px-2 py-2 text-left font-semibold">
+                              {{ 'form.label.date' | translate: {} : 'accounting' }}
+                            </th>
+                            <th class="px-2 py-2 text-left font-semibold">
+                              {{ 'form.label.reference' | translate: {} : 'accounting' }}
+                            </th>
+                            <th class="px-2 py-2 text-right font-semibold">
+                              {{ 'form.label.amount' | translate: {} : 'accounting' }}
+                            </th>
+                            <th class="px-2 py-2 text-center font-semibold">
+                              {{ 'form.label.status' | translate: {} : 'accounting' }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (pmt of payments(); track pmt._id) {
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                              <td class="px-2 py-2">
+                                {{ pmt.paymentDate | localeDate: { dateStyle: 'medium' } }}
+                              </td>
+                              <td class="px-2 py-2">{{ pmt.reference ?? '—' }}</td>
+                              <td class="px-2 py-2 text-right font-semibold">
+                                {{ pmt.amount | number: '1.2-2' }}
+                              </td>
+                              <td class="px-2 py-2 text-center">
+                                <p-tag
+                                  [value]="pmt.status ?? 'confirmed'"
+                                  severity="success"
+                                ></p-tag>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                </div>
+
+                <!-- Register payment -->
+                @if (canRegisterPayment()) {
+                  <div class="flex flex-col gap-3 border border-gray-200 rounded p-4">
+                    <span class="text-sm font-semibold">
+                      {{ 'payments.register' | translate: {} : 'accounting' }}
+                    </span>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <bifi-app-form-field>
+                        <bifi-app-form-label>
+                          {{ 'form.label.amount' | translate: {} : 'accounting' }} *
+                        </bifi-app-form-label>
+                        <p-inputNumber
+                          [(ngModel)]="settlementAmount"
+                          [min]="0"
+                          [minFractionDigits]="2"
+                        ></p-inputNumber>
+                      </bifi-app-form-field>
+                      <bifi-app-form-field>
+                        <bifi-app-form-label>
+                          {{ 'form.label.journal' | translate: {} : 'accounting' }} *
+                        </bifi-app-form-label>
+                        <p-select
+                          [(ngModel)]="settlementJournalId"
+                          [options]="journals() || []"
+                          optionLabel="name"
+                          optionValue="_id"
+                          [filter]="true"
+                        ></p-select>
+                      </bifi-app-form-field>
+                      <bifi-app-form-field>
+                        <bifi-app-form-label>
+                          {{ 'form.label.date' | translate: {} : 'accounting' }} *
+                        </bifi-app-form-label>
+                        <p-datepicker
+                          [(ngModel)]="settlementPaymentDate"
+                          [showIcon]="true"
+                        ></p-datepicker>
+                      </bifi-app-form-field>
+                      <bifi-app-form-field>
+                        <bifi-app-form-label>
+                          {{ 'form.label.reference' | translate: {} : 'accounting' }}
+                        </bifi-app-form-label>
+                        <input pInputText [(ngModel)]="settlementReference" />
+                      </bifi-app-form-field>
+                    </div>
+                    <div>
+                      <p-button
+                        [label]="'buttons.registerPayment' | translate: {} : 'accounting'"
+                        icon="pi pi-money-bill"
+                        severity="success"
+                        [loading]="isRegisteringPayment()"
+                        [disabled]="!settlementAmount() || !settlementJournalId()"
+                        (onClick)="registerInvoicePayment()"
+                      ></p-button>
                     </div>
                   </div>
                 }

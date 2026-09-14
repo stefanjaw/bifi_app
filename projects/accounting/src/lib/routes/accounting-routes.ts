@@ -82,6 +82,12 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: { resource: 'accounting/payments/create' },
   },
   {
+    path: 'payments/edit/:id',
+    canActivate: [permissionGuard],
+    loadComponent: () => import('../features/payment-form/payment-form').then(m => m.PaymentForm),
+    data: { resource: 'accounting/payments/update' },
+  },
+  {
     path: 'taxes',
     canActivate: [permissionGuard],
     loadComponent: () => import('../features/taxes-list/taxes-list').then(m => m.TaxesList),
