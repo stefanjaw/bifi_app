@@ -4,6 +4,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable, catchError, of } from 'rxjs';
 import { accountingSettings } from '../interfaces/accounting-settings';
 
+export interface glSweepResult {
+  posted: number;
+  skipped: number;
+  failed: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,5 +36,13 @@ export class CrudAccountingSettings extends ApiRequestManager<accountingSettings
    */
   putSettings(data: Record<string, any>): Observable<accountingSettings | undefined> {
     return this._httpClient.put<accountingSettings>(`${this._apiURL}/${this.endpoint}`, data);
+  }
+
+  /**
+   * Runs one pass of the GL sweep over pending stock movements (Phase B2)
+   * @returns Observable with the pass summary {posted, skipped, failed}
+   */
+  postPendingMovements(): Observable<glSweepResult> {
+    return this._httpClient.post<glSweepResult>(`${this._apiURL}/accounting/gl/post-pending`, {});
   }
 }

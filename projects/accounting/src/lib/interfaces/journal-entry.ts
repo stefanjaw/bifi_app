@@ -20,4 +20,5 @@ export interface journalEntry {
   status: 'draft' | 'posted';
   companyId?: company;
   lines: journalEntryLine[];
+  sourceStockMovementId?: string;
 }

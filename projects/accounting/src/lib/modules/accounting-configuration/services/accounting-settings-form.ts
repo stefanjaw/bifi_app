@@ -4,6 +4,14 @@ import { BaseForm } from '@avalantec/base-app/form';
 export interface AccountingSettingsFormModel {
   invoiceSequence: string;
   purchasePayableAccountId: string;
+  discountGrantedAccountId: string;
+  inventoryAccounts: {
+    inventoryAccountId: string;
+    cogsAccountId: string;
+    adjustmentLossAccountId: string;
+    apPendingAccountId: string;
+    defaultCurrencyId: string;
+  };
   description: string;
 }
 
@@ -16,6 +24,14 @@ export class AccountingSettingsForm extends BaseForm<AccountingSettingsFormModel
     return this.fb.group<AccountingSettingsFormModel>({
       invoiceSequence: [''],
       purchasePayableAccountId: [''],
+      discountGrantedAccountId: [''],
+      inventoryAccounts: {
+        inventoryAccountId: [''],
+        cogsAccountId: [''],
+        adjustmentLossAccountId: [''],
+        apPendingAccountId: [''],
+        defaultCurrencyId: [''],
+      },
       description: [''],
     });
   }

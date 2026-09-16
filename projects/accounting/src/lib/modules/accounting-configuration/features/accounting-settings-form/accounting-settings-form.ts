@@ -14,14 +14,16 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CrudAccountingSettings } from '../../services/crud-accounting-settings';
+import { CrudAccountingSettings, glSweepResult } from '../../services/crud-accounting-settings';
 import {
   AccountingSettingsForm,
   AccountingSettingsFormModel,
 } from '../../services/accounting-settings-form';
 import { accountingSettings } from '../../interfaces/accounting-settings';
 import { account } from '../../../../interfaces/account';
+import { currency } from '@avalantec/base-app/currency';
 import { CrudAccounts } from '../../../../services/crud-accounts';
+import { CrudCurrencies } from '@avalantec/base-app/currency';
 import { CrudSequences, sequence } from '@avalantec/base-app/sequences';
 import { TranslatePipe } from '@avalantec/base-app/i18n';
 
@@ -48,16 +50,23 @@ export class AccountingSettingsPage {
   private formService = inject(AccountingSettingsForm);
   private crudSequences = inject(CrudSequences);
   private crudAccounts = inject(CrudAccounts);
+  private crudCurrencies = inject(CrudCurrencies);
   private destroy$ = inject(DestroyRef);
 
   protected form = this.formService.form;
   protected isSubmitLoading = signal(false);
+  protected isSweepRunning = signal(false);
+  protected sweepResult = signal<glSweepResult | null>(null);
 
   protected settingsResource = this.crudAccountingSettings.getSettings();
 
   protected sequencesResource = this.crudSequences.get({
     id: signal(''),
     getInactive: signal(false),
+  });
+
+  private currenciesResource = this.crudCurrencies.get<currency>({
+    triggerRequest: signal(true),
   });
 
   private accountsResource = this.crudAccounts.get<account>({
@@ -71,6 +80,11 @@ export class AccountingSettingsPage {
 
   protected accountOptions = computed<account[]>(() => {
     const data = this.accountsResource.value();
+    return Array.isArray(data) ? data : [];
+  });
+
+  protected currencyOptions = computed<currency[]>(() => {
+    const data = this.currenciesResource.value();
     return Array.isArray(data) ? data : [];
   });
 
@@ -95,6 +109,25 @@ export class AccountingSettingsPage {
     });
   }
 
+  /**
+   * Runs one GL sweep pass over pending stock movements (Phase B2)
+   */
+  protected runGlSweep() {
+    if (this.isSweepRunning()) return;
+    this.isSweepRunning.set(true);
+    this.sweepResult.set(null);
+    this.crudAccountingSettings
+      .postPendingMovements()
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.isSweepRunning.set(false);
+          this.sweepResult.set(res);
+        },
+        error: () => this.isSweepRunning.set(false),
+      });
+  }
+
   /** Resolves an autopopulated reference (object) or raw string into an _id */
   private resolveId(value: unknown): string {
     if (!value) return '';
@@ -110,6 +143,18 @@ export class AccountingSettingsPage {
     if (rawValue.invoiceSequence) payload['invoiceSequence'] = rawValue.invoiceSequence;
     if (rawValue.purchasePayableAccountId)
       payload['purchasePayableAccountId'] = rawValue.purchasePayableAccountId;
+    if (rawValue.discountGrantedAccountId)
+      payload['discountGrantedAccountId'] = rawValue.discountGrantedAccountId;
+    const inv = rawValue.inventoryAccounts;
+    if (
+      inv &&
+      (inv.inventoryAccountId ||
+        inv.cogsAccountId ||
+        inv.adjustmentLossAccountId ||
+        inv.apPendingAccountId ||
+        inv.defaultCurrencyId)
+    )
+      payload['inventoryAccounts'] = inv;
     if (rawValue.description) payload['description'] = rawValue.description;
 
     this.crudAccountingSettings

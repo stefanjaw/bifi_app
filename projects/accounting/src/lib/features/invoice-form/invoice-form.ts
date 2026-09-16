@@ -12,6 +12,7 @@ import {
 import { FormModule, FormValueState } from '@avalantec/base-app/form';
 import { PluginSlot, providePluginContext } from '@avalantec/base-app/plugin-system';
 import { CrudInvoices } from '../../services/crud-invoices';
+import { CrudPayments } from '../../services/crud-payments';
 import { CrudJournals } from '../../services/crud-journals';
 import { CrudAccounts } from '../../services/crud-accounts';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
@@ -77,6 +78,7 @@ const INVOICE_DEFAULT_WIDTHS: Record<string, number> = {
 export class InvoiceForm {
   private formService = inject(InvoiceFormService);
   private crudInvoices = inject(CrudInvoices);
+  private crudPayments = inject(CrudPayments);
   private crudJournals = inject(CrudJournals);
   private crudAccounts = inject(CrudAccounts);
   private crudCurrencies = inject(CrudCurrencies);
@@ -153,12 +155,20 @@ export class InvoiceForm {
   paymentsLoading = signal<boolean>(false);
   isRegisteringPayment = signal<boolean>(false);
   settlementAmount = signal<number | null>(null);
+  settlementDiscountAmount = signal<number | null>(null);
   settlementJournalId = signal<string>('');
   settlementPaymentDate = signal<Date>(new Date());
   settlementReference = signal<string>('');
 
   // ---- Installment schedule (Phase 3 / B5: multi-due-date payment terms) ----
   dueDateEntries = signal<{ amount: number; date: Date }[]>([]);
+
+  // ---- Advance application (Phase A2b: anticipo 438 -> invoice) ----
+  advances = signal<any[]>([]);
+  advancesLoading = signal<boolean>(false);
+  isApplyingAdvance = signal<boolean>(false);
+  selectedAdvanceId = signal<string>('');
+  advanceError = signal<string>('');
 
   invoiceAmountDue = computed(() => (this.invoiceResource.value() as any)?.amountDue ?? 0);
   invoiceTotal = computed(() => (this.invoiceResource.value() as any)?.totalAmount ?? 0);
@@ -322,6 +332,7 @@ export class InvoiceForm {
           }))
         );
         this.loadPayments();
+        this.loadAdvances();
 
         // ---- Create mode: leave the form empty with one line ----
       } else if (!this.isUpdate()) {
@@ -329,6 +340,57 @@ export class InvoiceForm {
         this.formService.addLine();
       }
     });
+  }
+
+  /**
+   * Fetches pending advance payments of the invoice contact (A2b)
+   */
+  loadAdvances() {
+    const contactId = (this.invoiceResource.value() as any)?.contactId;
+    const partnerId = contactId?._id ?? contactId;
+    if (!this.isUpdate() || !partnerId) {
+      this.advances.set([]);
+      return;
+    }
+    this.advancesLoading.set(true);
+    this.crudPayments
+      .getPendingAdvances(partnerId)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: (res: any[]) => {
+          this.advances.set(res ?? []);
+          this.advancesLoading.set(false);
+        },
+        error: () => this.advancesLoading.set(false),
+      });
+  }
+
+  /**
+   * Applies the selected advance payment to this invoice (backend creates
+   * the settlement JE 438 deb / 430 credit and recalcs amountDue)
+   */
+  applyAdvance() {
+    const advanceId = this.selectedAdvanceId();
+    if (!advanceId || this.isApplyingAdvance()) return;
+    this.isApplyingAdvance.set(true);
+    this.advanceError.set('');
+    this.crudPayments
+      .applyPayment(advanceId, this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isApplyingAdvance.set(false);
+          this.selectedAdvanceId.set('');
+          this.loadPayments();
+          this.loadAdvances();
+          this.loadAdvances();
+          this.invoiceResource.reload();
+        },
+        error: (err: any) => {
+          this.isApplyingAdvance.set(false);
+          this.advanceError.set(err?.error?.message ?? ('generic.error' as string));
+        },
+      });
   }
 
   /**
@@ -366,6 +428,10 @@ export class InvoiceForm {
     this.crudInvoices
       .registerPayment(this.id(), {
         amount,
+        discountAmount:
+          this.settlementDiscountAmount() && this.settlementDiscountAmount()! > 0
+            ? this.settlementDiscountAmount()!
+            : undefined,
         paymentDate: this.settlementPaymentDate().toISOString(),
         journalId,
         currencyId,
@@ -377,8 +443,10 @@ export class InvoiceForm {
         next: () => {
           this.isRegisteringPayment.set(false);
           this.settlementAmount.set(null);
+          this.settlementDiscountAmount.set(null);
           this.settlementReference.set('');
           this.loadPayments();
+          this.loadAdvances();
           this.invoiceResource.reload();
         },
         error: () => this.isRegisteringPayment.set(false),

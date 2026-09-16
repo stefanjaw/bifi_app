@@ -59,6 +59,134 @@
             ></p-select>
             <bifi-app-form-error></bifi-app-form-error>
           </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.label.discountGrantedAccount' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="discountGrantedAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
+              [filter]="true"
+              [showClear]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+        </div>
+      </bifi-app-form-section>
+
+      <bifi-app-form-section
+        [title]="'form.inventoryPosting' | translate: {} : 'accounting'"
+        id="inventory-posting"
+        [ordinal]="3"
+      >
+        <p class="text-sm text-gray-500 mb-4">
+          {{ 'settings.inventoryPostingDesc' | translate: {} : 'accounting' }}
+        </p>
+
+        <div class="flex items-center gap-4 mb-6">
+          <p-button
+            [label]="'buttons.postPendingGl' | translate: {} : 'accounting'"
+            icon="pi pi-bolt"
+            [loading]="isSweepRunning()"
+            (onClick)="runGlSweep()"
+          ></p-button>
+          @if (sweepResult(); as result) {
+            <span class="text-sm">
+              {{ 'gl.sweepPosted' | translate: { posted: sweepResult()!.posted } : 'accounting' }}
+              ·
+              {{
+                'gl.sweepSkipped' | translate: { skipped: sweepResult()!.skipped } : 'accounting'
+              }}
+              @if (sweepResult()!.failed > 0) {
+                ·
+                {{ 'gl.sweepFailed' | translate: { failed: sweepResult()!.failed } : 'accounting' }}
+              }
+            </span>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" formGroupName="inventoryAccounts">
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.inventoryAccounts.inventoryLabel' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="inventoryAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [placeholder]="'placeholders.selectAccount' | translate: {} : 'accounting'"
+              [filter]="true"
+              [showClear]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.inventoryAccounts.cogsLabel' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="cogsAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.inventoryAccounts.adjustmentLossLabel' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="adjustmentLossAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.inventoryAccounts.apPendingLabel' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="apPendingAccountId"
+              [options]="accountOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
+
+          <bifi-app-form-field>
+            <bifi-app-form-label>
+              {{ 'form.inventoryAccounts.defaultCurrencyLabel' | translate: {} : 'accounting' }}
+            </bifi-app-form-label>
+            <p-select
+              formControlName="defaultCurrencyId"
+              [options]="currencyOptions()"
+              optionLabel="name"
+              optionValue="_id"
+              [filter]="true"
+              class="w-full"
+            ></p-select>
+            <bifi-app-form-error></bifi-app-form-error>
+          </bifi-app-form-field>
         </div>
       </bifi-app-form-section>
 
