@@ -163,11 +163,12 @@ export class CrudGlReports extends ApiRequestManager<trialBalanceRow> {
   /**
    * Generates the automatic closing entries (asientos 6/7/8 + apertura)
    * @param period - 4-digit fiscal year
+   * @param currencyId - Optional currency filter (omitted when empty so the DTO whitelist accepts the payload)
    */
   runClosingEntries(period: string, currencyId?: string): Observable<closingEntriesResult> {
     return this._httpClient.post<closingEntriesResult>(
       `${this._apiURL}/accounting/gl/closing-entries`,
-      { period, currencyId }
+      { period, ...(currencyId ? { currencyId } : {}) }
     );
   }
 }

@@ -67,7 +67,7 @@
       <p-progressbar mode="indeterminate" styleClass="h-1"></p-progressbar>
     }
 
-    <p-tabs value="balanza" (onChange)="onTabChange($event)">
+    <p-tabs [(value)]="currentView">
       <p-tablist>
         <p-tab value="balanza">
           {{ 'reports.balanza' | translate: {} : 'accounting' }}
@@ -187,7 +187,7 @@
         </p-tabpanel>
 
         <!-- ── Customer sales (Ej. 9 rappel base) ── -->
-        <p-tabpanel value="3">
+        <p-tabpanel value="customerSales">
           <bifi-app-table-layout
             [columns]="customerColumns"
             [data]="customerRows()"

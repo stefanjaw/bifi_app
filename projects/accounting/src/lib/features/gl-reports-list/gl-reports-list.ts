@@ -103,13 +103,6 @@ export class GlReportsList {
 
   protected currentView = signal<'balanza' | 'pyg' | 'iva' | 'customerSales'>('balanza');
 
-  /** Tab value strings map 1:1 to view names */
-  onTabChange(event: any) {
-    this.currentView.set(
-      (event.tab?.title ?? event.index) as 'balanza' | 'pyg' | 'iva' | 'customerSales'
-    );
-  }
-
   /** Runs the report matching the currently-active tab */
   runCurrentView() {
     switch (this.currentView()) {
