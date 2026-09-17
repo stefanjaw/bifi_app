@@ -175,6 +175,13 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: { resource: 'accounting/payment-terms/update' },
   },
   {
+    path: 'reports',
+    canActivate: [permissionGuard],
+    loadComponent: () =>
+      import('../features/gl-reports-list/gl-reports-list').then(m => m.GlReportsList),
+    data: { resource: 'accounting/reports/list' },
+  },
+  {
     path: 'invoices',
     canActivate: [permissionGuard],
     loadComponent: () =>

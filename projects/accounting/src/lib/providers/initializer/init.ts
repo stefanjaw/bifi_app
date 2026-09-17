@@ -81,6 +81,13 @@ export function initializeAccounting() {
             scope: 'accounting',
             resource: 'accounting/invoices/menu',
           },
+          {
+            icon: 'pi pi-chart-line',
+            routerLink: ['/accounting/reports'],
+            label: 'nav.reports',
+            scope: 'accounting',
+            resource: 'accounting/reports/menu',
+          },
         ],
       },
     },

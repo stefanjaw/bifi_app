@@ -1,0 +1,199 @@
+<bifi-app-form-layout
+  [title]="'reports.title' | translate: {} : 'accounting'"
+  titlePosition="center"
+  class="block px-4 bg-gray-50 py-4"
+>
+  <div class="min-h-screen flex flex-col gap-6 bg-gray-50 px-8 py-8">
+    <!-- Header actions -->
+    <div class="flex justify-end gap-4">
+      <p-button
+        [label]="'reports.generate' | translate: {} : 'accounting'"
+        icon="pi pi-sync"
+        [loading]="isLoading()"
+        (onClick)="runCurrentView()"
+      ></p-button>
+      <p-button
+        [label]="'reports.closing' | translate: {} : 'accounting'"
+        icon="pi pi-power-off"
+        [loading]="isClosingRunning()"
+        (onClick)="runClosing()"
+      ></p-button>
+    </div>
+
+    @if (closingResult(); as closeMessage) {
+      <p-tag [value]="closeMessage" severity="info"></p-tag>
+    }
+
+    <!-- Filters -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'reports.fromDate' | translate: {} : 'accounting' }}
+        </bifi-app-form-label>
+        <p-datepicker [(ngModel)]="fromDate" [showIcon]="true" [maxDate]="toDate()"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'reports.toDate' | translate: {} : 'accounting' }}
+        </bifi-app-form-label>
+        <p-datepicker [(ngModel)]="toDate" [showIcon]="true" [minDate]="fromDate()"></p-datepicker>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'reports.currency' | translate: {} : 'accounting' }}
+        </bifi-app-form-label>
+        <p-select
+          [(ngModel)]="selectedCurrencyId"
+          [options]="currencies()"
+          optionLabel="name"
+          optionValue="_id"
+          [filter]="true"
+          [showClear]="true"
+          class="w-full"
+        ></p-select>
+      </bifi-app-form-field>
+
+      <bifi-app-form-field>
+        <bifi-app-form-label>
+          {{ 'reports.year' | translate: {} : 'accounting' }}
+        </bifi-app-form-label>
+        <input pInputText type="number" [(ngModel)]="selectedYear" class="w-full" />
+      </bifi-app-form-field>
+    </div>
+
+    @if (isLoading()) {
+      <p-progressbar mode="indeterminate" styleClass="h-1"></p-progressbar>
+    }
+
+    <p-tabs value="balanza" (onChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab value="balanza">
+          {{ 'reports.balanza' | translate: {} : 'accounting' }}
+        </p-tab>
+        <p-tab value="pyg">
+          {{ 'reports.pyg' | translate: {} : 'accounting' }}
+        </p-tab>
+        <p-tab value="iva">
+          {{ 'reports.iva' | translate: {} : 'accounting' }}
+        </p-tab>
+        <p-tab value="customerSales">
+          {{ 'reports.customerSales' | translate: {} : 'accounting' }}
+        </p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <!-- ── Balanza (Ej. 35) with Ledger drill-down (Ej. 6) ── -->
+        <p-tabpanel value="balanza">
+          @if (ledgerReport(); as report) {
+            <!-- Ledger drill-down -->
+            <p-button
+              [label]="'reports.back' | translate: {} : 'accounting'"
+              icon="pi pi-arrow-left"
+              [text]="true"
+              (onClick)="backToBalanza()"
+            ></p-button>
+            <div class="mt-4 flex flex-col gap-4">
+              <p-tag [value]="'reports.ledgerOf ' + ledgerAccountName()" severity="info"></p-tag>
+              <bifi-app-table-layout
+                [columns]="glLedgerColumns"
+                [data]="report.rows"
+              ></bifi-app-table-layout>
+              <div class="flex flex-col items-end gap-1 text-sm">
+                <div class="flex gap-4">
+                  <span class="text-gray-500">
+                    {{ 'reports.opening' | translate: {} : 'accounting' }}
+                  </span>
+                  <span class="font-semibold">
+                    {{ report.openingBalance | number: '1.2-2' }}
+                  </span>
+                </div>
+                <div class="flex gap-4 border-t pt-2">
+                  <span class="text-gray-700 font-semibold">
+                    {{ 'reports.closing' | translate: {} : 'accounting' }}
+                  </span>
+                  <span class="font-bold text-base">
+                    {{ report.closingBalance | number: '1.2-2' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <!-- Trial balance + totals -->
+            <bifi-app-table-layout
+              [columns]="glTrialBalanceColumns"
+              [data]="trialRows()"
+            ></bifi-app-table-layout>
+            <div class="mt-6 flex flex-col items-end gap-1 text-sm">
+              <div class="flex gap-4">
+                <span class="text-gray-500">
+                  {{ 'totals.debit' | translate: {} : 'accounting' }}
+                </span>
+                <span class="font-semibold">{{ totalDebit() | number: '1.2-2' }}</span>
+              </div>
+              <div class="flex gap-4">
+                <span class="text-gray-500">
+                  {{ 'totals.credit' | translate: {} : 'accounting' }}
+                </span>
+                <span class="font-semibold">{{ totalCredit() | number: '1.2-2' }}</span>
+              </div>
+              <div class="flex gap-4 border-t pt-2">
+                <span class="text-gray-700 font-semibold">
+                  {{ 'reports.balanced' | translate: {} : 'accounting' }}
+                </span>
+                <p-tag
+                  [value]="
+                    balanced()
+                      ? ('reports.balanced.yes' | translate: {} : 'accounting')
+                      : ('reports.balanced.no' | translate: {} : 'accounting')
+                  "
+                  [severity]="balanced() ? 'success' : 'danger'"
+                ></p-tag>
+              </div>
+            </div>
+          }
+        </p-tabpanel>
+
+        <!-- ── PyG (Ej. 36 / source of the closing entries) ── -->
+        <p-tabpanel value="pyg">
+          <bifi-app-table-layout [columns]="pygColumns" [data]="pygRows()"></bifi-app-table-layout>
+          <div class="mt-6 flex flex-col items-end gap-1 text-sm">
+            <div class="flex gap-4">
+              <span class="text-gray-500">
+                {{ 'reports.incomeTotal' | translate: {} : 'accounting' }}
+              </span>
+              <span class="font-semibold text-green-600">
+                {{ incomeTotal() | number: '1.2-2' }}
+              </span>
+            </div>
+            <div class="flex gap-4">
+              <span class="text-gray-500">
+                {{ 'reports.expenseTotal' | translate: {} : 'accounting' }}
+              </span>
+              <span class="font-semibold text-red-600">{{ expenseTotal() | number: '1.2-2' }}</span>
+            </div>
+            <div class="flex gap-4 border-t pt-2">
+              <span class="text-gray-700 font-semibold">
+                {{ 'reports.result' | translate: {} : 'accounting' }}
+              </span>
+              <span class="font-bold text-base">{{ resultAmount() | number: '1.2-2' }}</span>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <!-- ── Taxes (Ej. 19 model-303 base) ── -->
+        <p-tabpanel value="iva">
+          <bifi-app-table-layout [columns]="taxColumns" [data]="ivaRows()"></bifi-app-table-layout>
+        </p-tabpanel>
+
+        <!-- ── Customer sales (Ej. 9 rappel base) ── -->
+        <p-tabpanel value="3">
+          <bifi-app-table-layout
+            [columns]="customerColumns"
+            [data]="customerRows()"
+          ></bifi-app-table-layout>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</bifi-app-form-layout>
