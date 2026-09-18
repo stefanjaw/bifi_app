@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, signal } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -45,11 +45,17 @@ export class RolesList {
   roleFilters = roleFilters;
 
   roles = this.resourceManager.data;
+  isImporting = signal(false);
   clickRowPermission = input<permission | undefined>(undefined);
 
   goToEditRole = (element: role) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
   };
+
+  /** Downloads all roles as a CSV file. */
+  exportCsv() {
+    this.crudRoles.exportCSV();
+  }
   deleteRole(id: string) {
     this.crudRoles
       .delete({ _id: id })
@@ -57,6 +63,38 @@ export class RolesList {
       .subscribe({
         next: res => {
           if (res) this.roles.reload();
+        },
+      });
+  }
+
+  /**
+   * Uploads the selected CSV to POST /roles/import.
+   * The backend import upserts on the model's unique index: existing rows are
+   * updated, missing rows are created, and duplicated rows within the file
+   * collapse (last one wins).
+   * @param event - The file input change event carrying the selected CSV.
+   */
+  importCsv(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    // Reset the input so picking the same file again still fires change.
+    input.value = '';
+
+    if (!file) return;
+
+    this.isImporting.set(true);
+
+    this.crudRoles
+      .post({ data: { csv: file }, specificEndpoint: 'import' })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isImporting.set(false);
+          this.roles.reload();
+        },
+        error: () => {
+          this.isImporting.set(false);
         },
       });
   }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -45,6 +45,7 @@ export class PoliciesList {
   policyFilters = policyFilters;
 
   policies = this.resourceManager.data;
+  isImporting = signal(false);
 
   gotoEditPolicy = (element: policy<string, string>) => {
     this.router.navigate(['../edit', element._id], { relativeTo: this.route });
@@ -66,5 +67,42 @@ export class PoliciesList {
 
   goToEdit(_id: string) {
     this.router.navigate(['edit', _id], { relativeTo: this.route.parent });
+  }
+
+  /** Downloads all policies as a CSV file. */
+  exportCsv() {
+    this.crudPolicies.exportCSV();
+  }
+
+  /**
+   * Uploads the selected CSV to POST /policies/import.
+   * The backend import upserts on the model's unique index: existing rows are
+   * updated, missing rows are created, and duplicated rows within the file
+   * collapse (last one wins).
+   * @param event - The file input change event carrying the selected CSV.
+   */
+  importCsv(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    // Reset the input so picking the same file again still fires change.
+    input.value = '';
+
+    if (!file) return;
+
+    this.isImporting.set(true);
+
+    this.crudPolicies
+      .post({ data: { csv: file }, specificEndpoint: 'import' })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isImporting.set(false);
+          this.policies.reload();
+        },
+        error: () => {
+          this.isImporting.set(false);
+        },
+      });
   }
 }

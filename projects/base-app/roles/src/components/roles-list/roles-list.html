@@ -8,6 +8,28 @@
     [routerLink]="['../create']"
     *bifiAppHasPermission="'roles/create:view'"
   ></p-button>
+  <p-button
+    [label]="'exportCsv' | translate: {} : 'base-app/roles'"
+    severity="secondary"
+    icon="pi pi-download"
+    (click)="exportCsv()"
+    *bifiAppHasPermission="'roles/export:read:model'"
+  ></p-button>
+  <p-button
+    [label]="'importCsv' | translate: {} : 'base-app/roles'"
+    severity="secondary"
+    icon="pi pi-upload"
+    (onClick)="importInput.click()"
+    [disabled]="isImporting()"
+    *bifiAppHasPermission="'roles/import:create:model'"
+  ></p-button>
+  <input
+    type="file"
+    accept=".csv"
+    #importInput
+    class="hidden"
+    (change)="importCsv($event)"
+  />
 </div>
 
 <bifi-app-search-bar
