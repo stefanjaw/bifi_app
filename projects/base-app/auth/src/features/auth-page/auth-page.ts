@@ -72,20 +72,21 @@ export class AuthPage {
   async handleSubmit(formValue: authFormModel) {
     const isLogin = this.isLogin();
 
-    // Login or register
-    if (isLogin) {
-      await this.authService.login({
-        email: formValue.emailOrUsername,
-        password: formValue.password,
-      });
-    } else {
-      await this.authService.register({
-        email: formValue.emailOrUsername,
-        password: formValue.password,
-      });
-    }
+    // Login or register — only navigate on success, otherwise the user stays
+    // on the form to review the error (and retry or toggle the mode).
+    const ok = isLogin
+      ? await this.authService.login({
+          email: formValue.emailOrUsername,
+          password: formValue.password,
+        })
+      : await this.authService.register({
+          email: formValue.emailOrUsername,
+          password: formValue.password,
+        });
 
-    this.router.navigate(['/home']);
+    if (ok) {
+      this.router.navigate(['/home']);
+    }
   }
 
   /**

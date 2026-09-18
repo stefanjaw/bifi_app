@@ -92,6 +92,7 @@
                 (type() === 'individual' ? 'profile.firstName' : 'profile.companyName')
                   | translate: {} : 'base-app/users'
               }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <input
               pInputText
@@ -109,6 +110,7 @@
             <bifi-app-form-field>
               <bifi-app-form-label>
                 {{ 'profile.lastName' | translate: {} : 'base-app/users' }}
+                <span class="text-red-500 ml-0.5">*</span>
               </bifi-app-form-label>
               <input
                 pInputText
@@ -136,6 +138,7 @@
           <bifi-app-form-field>
             <bifi-app-form-label>
               {{ 'profile.contactEmail' | translate: {} : 'base-app/users' }}
+              <span class="text-red-500 ml-0.5">*</span>
             </bifi-app-form-label>
             <input
               pInputText
@@ -163,14 +166,16 @@
         </section>
       </bifi-app-form-section>
 
-      <div class="flex justify-end px-4 pt-2">
-        <p-button
-          [label]="'manageKeys' | translate: {} : 'base-app/api-keys'"
-          severity="secondary"
-          icon="pi pi-key"
-          [routerLink]="'/settings/api-keys/list'"
-        ></p-button>
-      </div>
+      @if (isConfirmed) {
+        <div class="flex justify-end px-4 pt-2">
+          <p-button
+            [label]="'manageKeys' | translate: {} : 'base-app/api-keys'"
+            severity="secondary"
+            icon="pi pi-key"
+            [routerLink]="'/settings/api-keys/list'"
+          ></p-button>
+        </div>
+      }
     } @else if (error()) {
       <p>{{ 'profile.error' | translate: {} : 'base-app/users' }} {{ error() }}</p>
     } @else {

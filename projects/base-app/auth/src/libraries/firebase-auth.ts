@@ -229,6 +229,12 @@ export class FirebaseAuth<TUser extends user> extends IAuthService<TUser, Fireba
         this.error.set(error.message);
       }
 
+      // Settle the session back to `null` (loaded, not authenticated).
+      // Without this, a failed attempt leaves `_session` stuck at `undefined`
+      // and `authStateReady` never resolves, hanging noAuthGuard/authGuard
+      // and blocking all further navigation between auth routes.
+      this._session.set(null);
+
       return Promise.resolve(false);
     }
   }

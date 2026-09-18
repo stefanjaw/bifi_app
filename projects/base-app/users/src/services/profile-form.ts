@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { BaseForm, FormUploaderFile } from '@avalantec/base-app/form';
 
 export interface ProfileFormModel {
@@ -21,10 +22,10 @@ export class ProfileForm extends BaseForm<ProfileFormModel> {
     return this.fb.group<ProfileFormModel>({
       username: [{ value: '', disabled: true }],
       email: [{ value: '', disabled: true }],
-      name: [''],
-      lastName: [''],
+      name: ['', Validators.required],
+      lastName: ['', Validators.required],
       phoneNumber: [''],
-      contactEmail: [''],
+      contactEmail: ['', Validators.required],
       website: [''],
       uploadedPictureId: {
         template: {

@@ -126,6 +126,10 @@ export class UserProfile {
   handleSubmit(values: FormValueState<ProfileFormModel>) {
     const { value } = values;
 
+    // Only send the picture when a new file was actually selected — an empty
+    // array serializes to "[]" and fails the backend's @IsMongoId validation.
+    // The backend auto-confirms the user on a successful profile update, so
+    // `confirmed` is never sent from the client (the profile DTO forbids it).
     const data = {
       contactInformation: {
         _id: this.user()?.contactId?._id || undefined,
@@ -136,8 +140,7 @@ export class UserProfile {
         website: value.website,
         type: this.type(),
       },
-      ...(value.uploadedPictureId && { uploadedPictureId: value.uploadedPictureId }),
-      ...(this.user()?.confirmed === false && { confirmed: true }),
+      ...(value.uploadedPictureId?.length && { uploadedPictureId: value.uploadedPictureId }),
     };
 
     this.isSubmitLoading.set(true);
