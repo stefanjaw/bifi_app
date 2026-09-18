@@ -10,6 +10,7 @@ import {
 export const glTrialBalanceColumns: tableColumn<trialBalanceRow>[] = [
   { field: 'accountCode', title: 'code', type: 'text' },
   { field: 'accountName', title: 'name', type: 'text' },
+  { field: 'accountType', title: 'nature', type: 'text' },
   { field: 'currencyCode', title: 'currency', type: 'text' },
   { field: 'debit', title: 'debit', type: 'number' },
   { field: 'credit', title: 'credit', type: 'number' },

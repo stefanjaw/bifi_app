@@ -35,4 +35,17 @@ export class CrudPayments extends ApiRequestManager<payment> {
       { invoiceId }
     );
   }
+
+  /**
+   * Confirms a draft standalone payment (BUG-L fix): flips the payment and
+   * its settlement JE to CONFIRMED/POSTED, making it available as an advance
+   * @param paymentId - The payment ID
+   * @returns Observable of the confirmed payment
+   */
+  confirmPayment(paymentId: string): Observable<payment> {
+    return this._httpClient.put<payment>(
+      `${this._apiURL}/accounting/payments/${paymentId}/confirm`,
+      {}
+    );
+  }
 }

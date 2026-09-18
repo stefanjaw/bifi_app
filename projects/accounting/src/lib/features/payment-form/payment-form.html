@@ -1,5 +1,5 @@
 <bifi-app-form-layout
-  [title]="'form.newPayment' | translate: {} : 'accounting'"
+  [title]="(isUpdate() ? 'form.editPayment' : 'form.newPayment') | translate: {} : 'accounting'"
   titlePosition="center"
   class="block px-4 bg-gray-50 py-4"
 >
@@ -10,12 +10,25 @@
     (appSubmit)="handleSubmit($event)"
     class="min-h-screen flex flex-col gap-6"
   >
-    <bifi-app-form-actions
-      [isSubmitting]="isSubmitLoading()"
-      (cancelClicked)="goBack()"
-      class="mb-4"
-      [formChanged]="form.dirty"
-    ></bifi-app-form-actions>
+    <div class="flex items-start gap-2 mb-4">
+      <bifi-app-form-actions
+        [isSubmitting]="isSubmitLoading()"
+        (cancelClicked)="goBack()"
+        class="flex-1"
+        [formChanged]="form.dirty"
+      ></bifi-app-form-actions>
+      @if (isUpdate() && isDraftPayment()) {
+        <p-button
+          [label]="'payments.confirm' | translate: {} : 'accounting'"
+          icon="pi pi-check-circle"
+          severity="success"
+          [outlined]="true"
+          [loading]="isConfirmLoading()"
+          [disabled]="form.dirty"
+          (onClick)="confirmPayment()"
+        ></p-button>
+      }
+    </div>
 
     @if (!isLoading()) {
       <bifi-app-form-section

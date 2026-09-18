@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { FormModule } from '@avalantec/base-app/form';
+import { ToastManager } from '@avalantec/base-app/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -27,7 +29,7 @@ import {
   glCustomerColumns,
 } from '../../libraries/gl-report-columns';
 import { CrudCurrencies } from '@avalantec/base-app/currency';
-import { TranslatePipe } from '@avalantec/base-app/i18n';
+import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
 
 /**
  * Reports screen (Phase L3): Balanza (from->to) per (account+currency),
@@ -58,6 +60,8 @@ export class GlReportsList {
   private crudGlReports = inject(CrudGlReports);
   private crudCurrencies = inject(CrudCurrencies);
   private destroyRef = inject(DestroyRef);
+  private toastManager = inject(ToastManager);
+  private translationService = inject(TranslationService);
 
   protected isLoading = signal(false);
   protected isClosingRunning = signal(false);
@@ -66,9 +70,10 @@ export class GlReportsList {
   /** Selected year for income-expenses/customer-sales/closing (default now) */
   protected selectedYear = signal<number>(new Date().getFullYear());
 
-  /** Trial balance filters + results (Balanza tab) */
-  protected fromDate = signal<Date>(new Date(new Date().getFullYear(), 0, 1));
-  protected toDate = signal<Date>(new Date(new Date().getFullYear(), 11, 31));
+  /** Trial balance filters + results (Balanza tab). PrimeNG's datepicker can write
+   * `null` into the model (clear button / unparsable input), so the type is nullable. */
+  protected fromDate = signal<Date | null>(new Date(new Date().getFullYear(), 0, 1));
+  protected toDate = signal<Date | null>(new Date(new Date().getFullYear(), 11, 31));
   protected selectedCurrencyId = signal<string>('');
   protected trialRows = signal<trialBalanceRow[]>([]);
   protected totalDebit = signal<number>(0);
@@ -119,46 +124,55 @@ export class GlReportsList {
 
   protected currencyOptions = computed(() => this.currencies() ?? []);
 
-  protected onDateChange(event: any): void {
-    const dates = event as Date[];
-    if (Array.isArray(dates) && dates.length === 2) {
-      this.fromDate.set(dates[0]);
-      this.toDate.set(dates[1]);
+  /**
+   * Formats the selected From/To dates for the report queries.
+   * @returns The ISO date strings, or `null` when the datepicker was cleared
+   * (PrimeNG writes `null` into the model), so callers can bail out safely.
+   */
+  private dateRangeParams(): { from: string; to: string } | null {
+    const from = this.fromDate();
+    const to = this.toDate();
+    if (!from || !to) {
+      this.toastManager.showError(
+        this.translationService.translate('reports.invalidDates', {}, 'accounting')
+      );
+      return null;
     }
+    return { from: from.toISOString().slice(0, 10), to: to.toISOString().slice(0, 10) };
   }
 
+  /** Runs the trial balance (Balanza) for the selected range + currency */
   runBalanza() {
+    const range = this.dateRangeParams();
+    if (!range) return;
     this.isLoading.set(true);
-    const from = this.fromDate().toISOString().slice(0, 10);
-    const to = this.toDate().toISOString().slice(0, 10);
-    const currencyId = this.selectedCurrencyId();
-    this.crudGlReports.getTrialBalance(from, to, currencyId).subscribe({
-      next: report => {
+    this.crudGlReports
+      .getTrialBalance(range.from, range.to, this.selectedCurrencyId())
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe(report => {
         this.trialRows.set(report.rows ?? []);
         this.totalDebit.set(report.totalDebit ?? 0);
         this.totalCredit.set(report.totalCredit ?? 0);
         this.balanced.set(report.balanced ?? false);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
+      });
   }
 
-  drillDown(row: trialBalanceRow) {
+  /** Opens the Ledger drill-down of a Balanza row. Arrow property: the
+   * TableLayout invokes `[onClickRow]` as a bare callback, which would
+   * lose `this` for a regular method (found by the 2026-09-18 re-test). */
+  drillDown = (row: trialBalanceRow) => {
+    const range = this.dateRangeParams();
+    if (!range) return;
     this.isLoading.set(true);
-    const from = this.fromDate().toISOString().slice(0, 10);
-    const to = this.toDate().toISOString().slice(0, 10);
-    const currencyId = this.selectedCurrencyId();
-    this.crudGlReports.getLedger(row.accountId, from, to, currencyId).subscribe({
-      next: report => {
+    this.crudGlReports
+      .getLedger(row.accountId, range.from, range.to, this.selectedCurrencyId())
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe(report => {
         this.ledgerAccountId.set(row.accountId);
         this.ledgerAccountName.set(row.accountName ?? row.accountCode ?? null);
         this.ledgerReport.set(report);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
-  }
+      });
+  };
 
   backToBalanza() {
     this.ledgerAccountId.set(null);
@@ -180,17 +194,17 @@ export class GlReportsList {
     });
   }
 
+  /** Runs the tax balances (IVA) for the selected range */
   runIva() {
+    const range = this.dateRangeParams();
+    if (!range) return;
     this.isLoading.set(true);
-    const from = this.fromDate().toISOString().slice(0, 10);
-    const to = this.toDate().toISOString().slice(0, 10);
-    this.crudGlReports.getTaxBalances(from, to).subscribe({
-      next: res => {
+    this.crudGlReports
+      .getTaxBalances(range.from, range.to)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe(res => {
         this.ivaRows.set(res.rows ?? []);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
+      });
   }
 
   runCustomerSales() {

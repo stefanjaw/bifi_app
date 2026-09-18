@@ -628,6 +628,7 @@
                         </bifi-app-form-label>
                         <p-select
                           [(ngModel)]="selectedAdvanceId"
+                          [ngModelOptions]="{ standalone: true }"
                           [options]="advances()"
                           optionLabel="reference"
                           optionValue="_id"
@@ -670,6 +671,7 @@
                         </bifi-app-form-label>
                         <p-inputNumber
                           [(ngModel)]="settlementAmount"
+                          [ngModelOptions]="{ standalone: true }"
                           [min]="0"
                           [minFractionDigits]="2"
                         ></p-inputNumber>
@@ -680,6 +682,7 @@
                         </bifi-app-form-label>
                         <p-select
                           [(ngModel)]="settlementJournalId"
+                          [ngModelOptions]="{ standalone: true }"
                           [options]="journals() || []"
                           optionLabel="name"
                           optionValue="_id"
@@ -693,6 +696,7 @@
                         </bifi-app-form-label>
                         <p-inputNumber
                           [(ngModel)]="settlementDiscountAmount"
+                          [ngModelOptions]="{ standalone: true }"
                           [min]="0"
                           [minFractionDigits]="2"
                         ></p-inputNumber>
@@ -703,6 +707,7 @@
                         </bifi-app-form-label>
                         <p-datepicker
                           [(ngModel)]="settlementPaymentDate"
+                          [ngModelOptions]="{ standalone: true }"
                           [showIcon]="true"
                         ></p-datepicker>
                       </bifi-app-form-field>
@@ -710,7 +715,11 @@
                         <bifi-app-form-label>
                           {{ 'form.label.reference' | translate: {} : 'accounting' }}
                         </bifi-app-form-label>
-                        <input pInputText [(ngModel)]="settlementReference" />
+                        <input
+                          pInputText
+                          [(ngModel)]="settlementReference"
+                          [ngModelOptions]="{ standalone: true }"
+                        />
                       </bifi-app-form-field>
                     </div>
                     <div>

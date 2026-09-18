@@ -98,6 +98,7 @@
               <bifi-app-table-layout
                 [columns]="glLedgerColumns"
                 [data]="report.rows"
+                scope="accounting"
               ></bifi-app-table-layout>
               <div class="flex flex-col items-end gap-1 text-sm">
                 <div class="flex gap-4">
@@ -119,10 +120,13 @@
               </div>
             </div>
           } @else {
-            <!-- Trial balance + totals -->
+            <!-- Trial balance + totals (BUG-A fix: rows open the Ledger) -->
             <bifi-app-table-layout
               [columns]="glTrialBalanceColumns"
               [data]="trialRows()"
+              [onClickRow]="drillDown"
+              clickRowPermission="accounting/reports/list:view"
+              scope="accounting"
             ></bifi-app-table-layout>
             <div class="mt-6 flex flex-col items-end gap-1 text-sm">
               <div class="flex gap-4">
@@ -156,7 +160,11 @@
 
         <!-- ── PyG (Ej. 36 / source of the closing entries) ── -->
         <p-tabpanel value="pyg">
-          <bifi-app-table-layout [columns]="pygColumns" [data]="pygRows()"></bifi-app-table-layout>
+          <bifi-app-table-layout
+            [columns]="pygColumns"
+            [data]="pygRows()"
+            scope="accounting"
+          ></bifi-app-table-layout>
           <div class="mt-6 flex flex-col items-end gap-1 text-sm">
             <div class="flex gap-4">
               <span class="text-gray-500">
@@ -183,7 +191,11 @@
 
         <!-- ── Taxes (Ej. 19 model-303 base) ── -->
         <p-tabpanel value="iva">
-          <bifi-app-table-layout [columns]="taxColumns" [data]="ivaRows()"></bifi-app-table-layout>
+          <bifi-app-table-layout
+            [columns]="taxColumns"
+            [data]="ivaRows()"
+            scope="accounting"
+          ></bifi-app-table-layout>
         </p-tabpanel>
 
         <!-- ── Customer sales (Ej. 9 rappel base) ── -->
@@ -191,6 +203,7 @@
           <bifi-app-table-layout
             [columns]="customerColumns"
             [data]="customerRows()"
+            scope="accounting"
           ></bifi-app-table-layout>
         </p-tabpanel>
       </p-tabpanels>

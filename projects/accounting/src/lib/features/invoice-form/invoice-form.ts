@@ -271,6 +271,16 @@ export class InvoiceForm {
    * @param paymentTermId - Selected payment term ID
    */
   onPaymentTermChange(paymentTermId: string) {
+    this.rebuildDueDates();
+  }
+
+  /**
+   * Rebuilds `dueDateEntries` (chips) and the singular `dueDate` control from
+   * the CURRENT `paymentTermId` + `invoiceDate` form values (BUG-I fix: the
+   * invoice date is now a recalculation trigger, not only the term change).
+   */
+  private rebuildDueDates() {
+    const paymentTermId = this.form.get('paymentTermId')?.value;
     const invoiceDate = this.form.get('invoiceDate')?.value;
     if (!invoiceDate || !paymentTermId) return;
     const pt = (this.paymentTerms() ?? []).find((p: any) => p._id === paymentTermId);
@@ -297,6 +307,13 @@ export class InvoiceForm {
   }
 
   constructor() {
+    // BUG-I fix: changing the invoice date must recalculate the installment
+    // schedule (chips) and the singular dueDate, exactly like a term change.
+    this.form
+      .get('invoiceDate')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => this.rebuildDueDates());
+
     effect(() => {
       const entry = this.invoiceResource.value() as any;
 
@@ -462,6 +479,9 @@ export class InvoiceForm {
     // ---- [1] Clean up the raw value before sending ----
     // in case contactId is empty, delete it
     if (!val.contactId || val.contactId === '') delete val.contactId;
+    // BUG-D fix: paymentTermId is optional in the DTO, but the backend's
+    // @IsMongoId rejects an empty string — send undefined instead.
+    if (!val.paymentTermId || val.paymentTermId === '') delete val.paymentTermId;
 
     // ---- [2] Normalize line rows (default type/products/decimals) ----
     const lines = (val.lines ?? []).map((v: any) => ({

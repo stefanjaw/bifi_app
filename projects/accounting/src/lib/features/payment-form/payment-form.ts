@@ -16,6 +16,7 @@ import { CrudContacts } from '@avalantec/base-app/contacts';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputText } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -36,6 +37,7 @@ import { TranslatePipe, TranslationService } from '@avalantec/base-app/i18n';
     FormModule,
     ReactiveFormsModule,
     InputText,
+    ButtonModule,
     SelectModule,
     ProgressBarModule,
     InputNumberModule,
@@ -73,6 +75,9 @@ export class PaymentForm {
       this.contactsResource.isLoading()
   );
   isSubmitLoading = signal(false);
+  isConfirmLoading = signal(false);
+  /** BUG-L fix: only draft payments show the Confirm action */
+  isDraftPayment = computed(() => (this.paymentResource.value() as any)?.status === 'draft');
 
   form = this.formService.form;
   journals = this.journalsResource.value;
@@ -138,6 +143,25 @@ export class PaymentForm {
       },
       error: () => this.isSubmitLoading.set(false),
     });
+  }
+
+  /**
+   * Confirms the draft payment (BUG-L fix): flips the payment and its
+   * settlement JE to CONFIRMED/POSTED via the dedicated action endpoint
+   */
+  confirmPayment() {
+    if (!this.id() || this.isConfirmLoading()) return;
+    this.isConfirmLoading.set(true);
+    this.crudPayments
+      .confirmPayment(this.id())
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isConfirmLoading.set(false);
+          this.goBack();
+        },
+        error: () => this.isConfirmLoading.set(false),
+      });
   }
 
   goBack() {

@@ -139,10 +139,12 @@
                     : ('table.notSet' | translate: {} : 'base-app/resource')
                 }}
               } @else if (column.type === 'currency') {
+                <!-- 0 is a legitimate amount (e.g. a fully settled invoice):
+                     only null/undefined/'' render as "not set" -->
                 {{
-                  value
-                    ? (value | currency: column.currencySymbol ?? '$')
-                    : ('table.notSet' | translate: {} : 'base-app/resource')
+                  value === '' || value == null
+                    ? ('table.notSet' | translate: {} : 'base-app/resource')
+                    : (value | currency: column.currencySymbol ?? '$')
                 }}
               } @else {
                 {{
