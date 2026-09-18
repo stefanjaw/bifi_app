@@ -17,6 +17,21 @@
     (click)="exportCsv()"
     *bifiAppHasPermission="'translations/export:read:model'"
   ></p-button>
+  <p-button
+    [label]="'translations.importCsv' | translate: {} : 'base-app/translation'"
+    severity="secondary"
+    icon="pi pi-upload"
+    (onClick)="importInput.click()"
+    [disabled]="isImporting()"
+    *bifiAppHasPermission="'translations/import:create:model'"
+  ></p-button>
+  <input
+    type="file"
+    accept=".csv"
+    #importInput
+    class="hidden"
+    (change)="importCsv($event)"
+  />
 </div>
 
 <bifi-app-search-bar

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ButtonsActions,
   provideResourceManager,
@@ -39,12 +40,14 @@ import { languageFilters } from '../../libraries/language-filters';
 export class LanguagesList {
   private resourceManager = inject<ResourceManager<languageRecord>>(ResourceManager);
   private crudLanguages = inject(CrudLanguages);
+  private destroy$ = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   languageColumns = languageColumns;
   languageFilters = languageFilters;
   languages = this.resourceManager.data;
+  isImporting = signal(false);
 
   /**
    * Navigate to the edit form for a language row.
@@ -66,5 +69,37 @@ export class LanguagesList {
 
   downloadCsv() {
     this.crudLanguages.exportCSV();
+  }
+
+  /**
+   * Uploads the selected CSV to POST /languages/import.
+   * Existing locales are updated, missing ones are created, and duplicated
+   * rows within the file collapse (last one wins) — the backend import is an
+   * upsert, so the upload never crashes on existing locales.
+   * @param event - The file input change event carrying the selected CSV.
+   */
+  importCsv(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    // Reset the input so picking the same file again still fires change.
+    input.value = '';
+
+    if (!file) return;
+
+    this.isImporting.set(true);
+
+    this.crudLanguages
+      .post({ data: { csv: file }, specificEndpoint: 'import' })
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isImporting.set(false);
+          this.languages.reload();
+        },
+        error: () => {
+          this.isImporting.set(false);
+        },
+      });
   }
 }
